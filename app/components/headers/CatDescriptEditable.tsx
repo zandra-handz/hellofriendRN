@@ -4,8 +4,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
- import { useUser } from "@/src/context/UserContext"; 
-import EditDescriptionButton from "../home/EditDescriptionButton";
+ 
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
 import EditCategoryDescriptionView from "./EditCategoryDescriptionView";
 type Props = {
@@ -14,12 +13,12 @@ type Props = {
   onToggle: () => void;
 };
 
-const CatDescriptEditable = ({ nullTextInputView, categoryObject, editEnabled = true, onToggle }: Props) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { user } = useUser();
+const CatDescriptEditable = ({ userId, primaryColor='orange', nullTextInputView, categoryObject, editEnabled = true, onToggle }: Props) => {
+  const {  appFontStyles } = useGlobalStyle();
+ 
   const [showEdit, setShowEdit] = useState(false);
  
-  const { updateCategory } = useUpdateCategory({userId: user?.id});
+  const { updateCategory } = useUpdateCategory({userId: userId});
 
 
   const textInputRef = useRef(null);
@@ -60,8 +59,9 @@ const CatDescriptEditable = ({ nullTextInputView, categoryObject, editEnabled = 
         <TextInput
           ref={textInputRef}
           style={[
-            themeStyles.genericText,
+           
             {
+              color: primaryColor,
               flex: 1,
               fontSize: 15,
               textAlignVertical: "top",
@@ -80,7 +80,7 @@ const CatDescriptEditable = ({ nullTextInputView, categoryObject, editEnabled = 
         <MaterialCommunityIcons
           name={"check"}
           size={20}
-          color={themeStyles.footerIcon.color}
+          color={primaryColor}
         />
       </GlobalPressable>
     </>
@@ -101,7 +101,7 @@ const toggleEdit = () => {
           name={ "pencil-outline"}
           size={15}
           style={{opacity: .7}}
-          color={themeStyles.footerIcon.color}
+          color={primaryColor}
         />
       </GlobalPressable>
       {/* <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
@@ -144,10 +144,9 @@ const toggleEdit = () => {
       {/* {!showEdit && ( */}
         <ScrollView style={{ height: "auto", maxHeight: 200, width: "100%" }}>
           <Text
-            style={[
-              themeStyles.primaryText,
+            style={[ 
               appFontStyles.subWelcomeText,
-              { fontSize: 15, lineHeight: 22 },
+              { color: primaryColor, fontSize: 15, lineHeight: 22 },
             ]}
           >
 

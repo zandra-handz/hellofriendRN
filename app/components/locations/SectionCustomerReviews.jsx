@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import ItemCustomerReview from './ItemCustomerReview';  
 
-const SectionCustomerReviews = ({ reviews }) => { 
+const SectionCustomerReviews = ({ isLoading, reviews }) => { 
   const [revealReviews, setRevealReviews] = useState(false);
 
   const handleRevealReviews = () => {
@@ -27,7 +27,7 @@ const SectionCustomerReviews = ({ reviews }) => {
         <ScrollView horizontal contentContainerStyle={styles.reviewsContainer}>
           {reviews.map((review, index) => (
             <View key={index} style={styles.reviewCard}>
-              <ItemCustomerReview review={review} />
+              <ItemCustomerReview isLoading={isLoading} review={review} />
             </View>
           ))}
         </ScrollView>

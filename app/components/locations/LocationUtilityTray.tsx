@@ -3,8 +3,8 @@ import React from "react";
 import { Location } from "@/src/types/LocationTypes";
 import LocationSavingActions from "./LocationSavingActions";
 import LocationParking from "./LocationParking";
-import LocationNotes from "./LocationNotes"; 
-
+import LocationNotes from "./LocationNotes";
+import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";
 interface LocationUtilityTrayProps {
   location: Location;
 }
@@ -18,9 +18,11 @@ const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
   location,
   openEditModal,
   closeEditModal,
+  themeAheadOfLoading,
+  primaryColor,
 }) => {
   const iconSize = 26;
-  const fadeOpacity = 0.8; 
+  const fadeOpacity = 0.8;
 
   return (
     <View
@@ -32,30 +34,34 @@ const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
       }}
     >
       <LocationSavingActions
-      handleAddToFaves={onAddPress}
-      handleRemoveFromFaves={onRemovePress}
-      userId={userId}
-      friendId={friendId}
-      friendName={friendName}
+        handleAddToFaves={onAddPress}
+        handleRemoveFromFaves={onRemovePress}
+        userId={userId}
+        friendId={friendId}
+        friendName={friendName}
         location={location}
-      
         iconSize={iconSize}
         fadeOpacity={fadeOpacity}
+        themeAheadOfLoading={themeAheadOfLoading}
+        primaryColor={primaryColor}
       />
 
       <LocationParking
         location={location}
-          openEditModal={openEditModal}
-          closeEditModal={closeEditModal}
+        openEditModal={openEditModal}
+        closeEditModal={closeEditModal}
         iconSize={iconSize}
         fadeOpacity={fadeOpacity}
+        primaryColor={primaryColor}
       />
       <LocationNotes
         location={location}
-                  openEditModal={openEditModal}
-          closeEditModal={closeEditModal}
+        openEditModal={openEditModal}
+        closeEditModal={closeEditModal}
         iconSize={iconSize}
         fadeOpacity={fadeOpacity}
+            themeAheadOfLoading={themeAheadOfLoading}
+          primaryColor={primaryColor}
       />
     </View>
   );

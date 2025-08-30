@@ -1,6 +1,5 @@
 import { View, Text, DimensionValue, StyleSheet } from "react-native";
-import React, { useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState } from "react"; 
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image"; 
 
@@ -30,8 +29,9 @@ const ImageViewPage: React.FC<ImageViewPageProps> = ({
   height,
   currentIndexValue,
   cardScaleValue,
-}) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle(); 
+  welcomeTextStyle,
+  primaryColor="orange",
+}) => { 
   const navigation = useNavigation();
 
   const blurhash =
@@ -98,8 +98,8 @@ const ImageViewPage: React.FC<ImageViewPageProps> = ({
 
         <View style={[  ]}>
                 <View style={{ width: '100%', position: 'absolute'}}>
-        <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}> {item.title}</Text>
-        <Text style={themeStyles.primaryText}> {item.category}</Text>
+        <Text style={[welcomeTextStyle, { color: primaryColor}]}> {item.title}</Text>
+        <Text style={{color: primaryColor}}> {item.category}</Text>
         
         
       </View>

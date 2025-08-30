@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import OverlayLargeButton from "../appwide/button/OverlayLargeButton";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -12,7 +12,6 @@ import BookmarkAddress from "./BookmarkAddress";
 import SelectAddressModal from "./SelectAddressModal";
 import SelectFriendAddressModal from "./SelectFriendAddressModal";
 
- 
 import MakeAddressDefault from "./MakeAddressDefault";
 
 interface ActiveAddressesProps {
@@ -29,15 +28,17 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   setFriendAddress,
   primaryColor,
   overlayColor,
+  primaryBackground,
   welcomeTextStyle,
-}) => { 
+  manualGradientColors,
+}) => {
   const { selectedFriend } = useSelectedFriend();
 
   const [isUserAddressCurrent, setIsUserAddressCurrent] = useState(false);
 
   const {
     defaultUserAddress,
-   
+
     userAddresses,
     updateUserDefaultAddress,
     createUserAddress,
@@ -50,8 +51,6 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
     createFriendAddress,
     removeFriendAddress,
   } = useStartingFriendAddresses();
-
- 
 
   const handleFriendAddressDefault = () => {
     if (!friendAddress.is_default) {
@@ -109,8 +108,6 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
     }
   }, [userAddress, currentLocationDetails]);
 
- 
-
   // const closeModal = () => {};
 
   return (
@@ -118,20 +115,21 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
       {userAddress && friendAddress && (
         <View>
           <OverlayLargeButton
-          primaryColor={primaryColor}
-          overlayColor={overlayColor}
-          welcomeTextStyle={welcomeTextStyle}
+            primaryColor={primaryColor}
+            overlayColor={overlayColor}
+            welcomeTextStyle={welcomeTextStyle}
             label={`My Address: ${userAddress && userAddress.address}`}
             onPress={() => setUserAddressModalVisible(true)}
             addTopRowElement={true}
             topRowElement={
-              <> 
-                {isUserAddressCurrent && ( 
-                    <IsCurrentLocation
-                      onPress={() => console.log("hiiii")}
-                      isCurrent={true}
-                    /> 
-                )} 
+              <>
+                {isUserAddressCurrent && (
+                  <IsCurrentLocation
+                  primaryColor={primaryColor}
+                    onPress={() => console.log("hiiii")}
+                    isCurrent={true}
+                  />
+                )}
               </>
             }
             buttonOnBottom={true}
@@ -141,6 +139,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
                   <MakeAddressDefault
                     onPress={() => handleUserAddressDefault(userAddress.id)}
                     isDefault={userAddress?.is_default}
+                    primaryColor={primaryColor}
                   />
                 )}
                 <BookmarkAddress
@@ -154,6 +153,9 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
           />
           {selectedFriend && (
             <OverlayLargeButton
+              primaryColor={primaryColor}
+              overlayColor={overlayColor}
+              welcomeTextStyle={welcomeTextStyle}
               label={`${selectedFriend.name}'s Address: ${friendAddress && friendAddress.address}`}
               onPress={() => setFriendAddressModalVisible(true)}
               buttonOnBottom={true}
@@ -173,7 +175,8 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
                   <BookmarkAddress
                     onPress={() => handleBookmarkFriendAddress(friendAddress)}
                     isSaved={friendAddress?.id?.slice?.(0, 4) !== "temp"}
-                  />
+                 primaryColor={primaryColor}
+                 />
                 </View>
               }
             />
@@ -187,6 +190,10 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
             isVisible={userAddressModalVisible}
             closeModal={() => setUserAddressModalVisible(false)}
             addressSetter={setUserAddress}
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            welcomeTextStyle={welcomeTextStyle}
+            manualGradientColors={manualGradientColors}
           />
         </View>
       )}
@@ -197,6 +204,10 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
             isVisible={friendAddressModalVisible}
             closeModal={() => setFriendAddressModalVisible(false)}
             addressSetter={setFriendAddress}
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            welcomeTextStyle={welcomeTextStyle}
+            manualGradientColors={manualGradientColors}
           />
         </View>
       )}

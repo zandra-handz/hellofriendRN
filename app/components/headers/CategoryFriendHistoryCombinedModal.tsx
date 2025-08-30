@@ -2,8 +2,6 @@ import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import InfoItem from "./InfoItem";
 import CategoryFriendCurrentList from "./CategoryFriendCurrentList";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
@@ -11,20 +9,12 @@ import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
 
-import {
-  View, 
-  StyleSheet,
- 
-} from "react-native"; 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useCategories } from "@/src/context/CategoriesContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import ModalListWithView from "../alerts/ModalListWithView";
 
- 
-
-import CategoryFriendHistoryList from "./CategoryFriendHistoryList"; 
+import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
@@ -35,27 +25,25 @@ interface Props {
 }
 
 const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
+  userId,
+  friendId,
+  friendName,
   isVisible,
   closeModal,
   categoryId,
-  onSearchPress,
+  primaryColor = "orange",
+  primaryBackground = "red",
+  subWelcomeTextStyle,
+  manualGradientColors,
+  friendDefaultCategory,
+  userCategories,
+  capsuleList,
 }) => {
-  const { userCategories  } =
-    useCategories();
-
   // const { settings  } = useUserSettings();
   const { helloesList } = useHelloes();
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
-
- 
-  const { themeStyles,   manualGradientColors } = useGlobalStyle();
-  // const { selectedFriend  } =
-  //   useSelectedFriend();
-
-  //   const { friendDash } = useFriendDash();
-  const { capsuleList } = useCapsuleList();
 
   const startingText = category?.description || null;
 
@@ -86,14 +74,13 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   //   friendId: selectedFriend?.id,
   // });
 
-
-    const [textInputView, setTextInputView] = useState<null | ItemViewProps>(null);
+  const [textInputView, setTextInputView] = useState<null | ItemViewProps>(
+    null
+  );
 
   const handleNullTextInputView = () => {
     setTextInputView(null);
   };
-
-  
 
   const handleViewHello = (id, momentOriginalId) => {
     const helloIndex = helloesList.findIndex((hello) => hello.id === id);
@@ -171,34 +158,33 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   );
   const [showEdit, setShowEdit] = useState(false);
 
-const handleToggleTextInputView = (view) => {
-  setTextInputView({
-    topBarText: `Edit description`,
-    view: view, // already JSX
-    message: `hi hi hi`,
-    update: false,
-  });
-};
-
-  const toggleEdit = () => {
-    console.log("toggled edit");
-    setShowEdit((prev) => !prev);
-
-          setTextInputView({
-        topBarText: `Edit description`,
-        view: (<View></View>
-          // <HelloQuickView
-          //   data={helloObject}
-          //   momentOriginalId={momentOriginalId}
-          //   index={helloIndex}
-          // />
-        ),
-        message: `hi hi hi`,
-        update: false,
-      });
+  const handleToggleTextInputView = (view) => {
+    setTextInputView({
+      topBarText: `Edit description`,
+      view: view, // already JSX
+      message: `hi hi hi`,
+      update: false,
+    });
   };
 
- 
+  // const toggleEdit = () => {
+  //   console.log("toggled edit");
+  //   setShowEdit((prev) => !prev);
+
+  //         setTextInputView({
+  //       topBarText: `Edit description`,
+  //       view: (<View></View>
+  //         // <HelloQuickView
+  //         //   data={helloObject}
+  //         //   momentOriginalId={momentOriginalId}
+  //         //   index={helloIndex}
+  //         // />
+  //       ),
+  //       message: `hi hi hi`,
+  //       update: false,
+  //     });
+  // };
+
   const FOOTER_BUTTON_SPACE = 40;
   return (
     <ModalListWithView
@@ -211,18 +197,25 @@ const handleToggleTextInputView = (view) => {
       nullQuickView={handleNullQuickView}
       helpModeTitle="Help mode: Category History"
       useModalBar={true}
-      infoItem={<InfoItem fontSize={24} infoText={`${category.name}`} />}
+      infoItem={
+        <InfoItem
+          fontSize={24}
+          infoText={`${category.name}`}
+          primaryColor={primaryColor}
+        />
+      }
       secondInfoItem={
         <View
           style={{
-          
             height: showEdit ? "100%" : "auto",
             maxHeight: showEdit ? "100%" : 160,
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: primaryBackground,
             width: "100%",
           }}
         >
           <CatDescriptEditable
+            userId={userId}
+            primaryColor={primaryColor}
             nullTextInputView={handleNullTextInputView}
             onToggle={handleToggleTextInputView}
             categoryObject={category}
@@ -249,7 +242,15 @@ const handleToggleTextInputView = (view) => {
               },
             ]}
           >
-            <MakeDefaultCats categoryId={categoryId} />
+            <MakeDefaultCats
+              userId={userId}
+              friendId={friendId}
+              friendName={friendName}
+              categoryId={categoryId}
+              friendDefaultCategory={friendDefaultCategory}
+              primaryColor={primaryColor}
+              subWelcomeTextStyle={subWelcomeTextStyle}
+            />
           </View>
           {!showEdit && (
             <View style={[styles.sectionContainer, { flexGrow: 1 }]}>

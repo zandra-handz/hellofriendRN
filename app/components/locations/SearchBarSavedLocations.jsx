@@ -1,133 +1,176 @@
-import React, { useState, forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { View, TouchableOpacity, StyleSheet, TextInput, FlatList, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import ListCheckSvg from '@/app/assets/svgs/list-check.svg';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
+import React, {
+  useState,
+  forwardRef,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+} from "react";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress, mountingText = 'default', triggerAnimation, onTextChange, searchStringRef }, ref) => {
-  
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState([]); 
-  const textInputRef = useRef();
-  const [ showFullList, setShowFullList ] = useState(true);
-
-
-const INPUT_CONTAINER_BORDER_RADIUS = 10;
- 
-  useEffect(() => { 
-    if (textInputRef.current) {
-      textInputRef.current.setNativeProps({ text: mountingText });
-      setSearchQuery(mountingText); 
-    }
-  }, []);
-
-
-  useEffect(() => {
-    if (locationListDrilledTwice && !mountingText) {
-      
-      populateFullList();
-    }
-  }, [locationListDrilledTwice]);
-
-  useImperativeHandle(ref, () => ({
-    setText: (text) => {
-      if (textInputRef.current) {
-        textInputRef.current.setNativeProps({ text });
-        setSearchQuery(text);  
-      }
+const SearchBarSavedLocations = forwardRef(
+  (
+    {
+      locationListDrilledTwice,
+      onPress,
+      mountingText = "default",
+      triggerAnimation,
+      onTextChange,
+      searchStringRef,
+      manualGradientColors,
+      primaryColor,
+      primaryBackground,
     },
-    clearText: () => {
+    ref
+  ) => { 
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredData, setFilteredData] = useState([]);
+    const textInputRef = useRef();
+    const [showFullList, setShowFullList] = useState(true);
+
+    const INPUT_CONTAINER_BORDER_RADIUS = 10;
+
+    useEffect(() => {
       if (textInputRef.current) {
-        textInputRef.current.clear();
-        setSearchQuery(''); // Reset the state
+        textInputRef.current.setNativeProps({ text: mountingText });
+        setSearchQuery(mountingText);
       }
-    },
-    
-  })); 
+    }, []);
 
-  const handleSearch = (text) => {
-    setSearchQuery(text);
-    onTextChange(text);
+    useEffect(() => {
+      if (locationListDrilledTwice && !mountingText) {
+        populateFullList();
+      }
+    }, [locationListDrilledTwice]);
 
-    const filtered = Array.isArray(locationListDrilledTwice) ? locationListDrilledTwice.filter((item) => {
-      const searchText = text.toLowerCase();
-      return ['address', 'title'].some((key) => {
-        const itemValue = item[key];
-        return typeof itemValue === 'string' && itemValue.toLowerCase().includes(searchText);
-      });
-    }) : [];
-  
+    useImperativeHandle(ref, () => ({
+      setText: (text) => {
+        if (textInputRef.current) {
+          textInputRef.current.setNativeProps({ text });
+          setSearchQuery(text);
+        }
+      },
+      clearText: () => {
+        if (textInputRef.current) {
+          textInputRef.current.clear();
+          setSearchQuery(""); // Reset the state
+        }
+      },
+    }));
 
-    if (text) {
-      setShowFullList(false);
-    
+    const handleSearch = (text) => {
+      setSearchQuery(text);
+      onTextChange(text);
 
-    //console.log('setting filtered list', filtered);
-    setFilteredData(filtered);
-  } else {
-    console.log('setting full list of locations'); 
-    populateFullList(); 
-  }
+      const filtered = Array.isArray(locationListDrilledTwice)
+        ? locationListDrilledTwice.filter((item) => {
+            const searchText = text.toLowerCase();
+            return ["address", "title"].some((key) => {
+              const itemValue = item[key];
+              return (
+                typeof itemValue === "string" &&
+                itemValue.toLowerCase().includes(searchText)
+              );
+            });
+          })
+        : [];
 
-  };
- 
+      if (text) {
+        setShowFullList(false);
 
-  const populateFullList = () => {
-    const fullList = Array.isArray(locationListDrilledTwice)
-    ? locationListDrilledTwice.map((item) => ({
-        address: item.address,
-        title: item.title,
-      }))
-    : [];
+        //console.log('setting filtered list', filtered);
+        setFilteredData(filtered);
+      } else {
+        console.log("setting full list of locations");
+        populateFullList();
+      }
+    };
 
-    setShowFullList(true);
+    const populateFullList = () => {
+      const fullList = Array.isArray(locationListDrilledTwice)
+        ? locationListDrilledTwice.map((item) => ({
+            address: item.address,
+            title: item.title,
+          }))
+        : [];
 
-    setFilteredData(fullList);
+      setShowFullList(true);
 
+      setFilteredData(fullList);
+    };
 
+    const handleItemPress = (item) => {
+      onPress(item);
+      handleOutsidePress();
+      setSearchQuery(""); // Reset search query after item is selected
+    };
 
-  };
+    const handleOutsidePress = () => {
+      Keyboard.dismiss();
+      setFilteredData([]);
+    };
 
-  const handleItemPress = (item) => {
-    onPress(item);
-    handleOutsidePress();
-    setSearchQuery(''); // Reset search query after item is selected
-  };
+    return (
+      <>
+        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+          <View
+            style={[
+              styles.inputContainer, 
+              {
+                backgroundColor: primaryBackground,
+                borderRadius: INPUT_CONTAINER_BORDER_RADIUS,
+                borderColor: primaryColor,
+              },
+            ]}
+          >
+            <TextInput
+              ref={textInputRef}
+              autoFocus={mountingText.length > 0 ? true : false}
+              style={[styles.searchInput, {color: primaryColor}]}
+              placeholder={"Search"}
+              placeholderTextColor={primaryColor}
+              value={searchQuery}
+              onChangeText={handleSearch}
+            />
+            <MaterialCommunityIcons
+            name={'playlist-star'}
+              size={28}
+              color={manualGradientColors.lightColor}
+              style={styles.icon}
+            />
+          </View>
+        </TouchableWithoutFeedback>
 
-  const handleOutsidePress = () => {
-    Keyboard.dismiss();
-    setFilteredData([]);
-  };
-
-  return ( 
-    <>
-      <TouchableWithoutFeedback  onPress={handleOutsidePress}>
-        <View style={[styles.inputContainer, themeStyles.genericTextBackground, { borderRadius: INPUT_CONTAINER_BORDER_RADIUS, borderColor: themeStyles.primaryText.color}]}>
-         
-         
-          <TextInput
-            ref={textInputRef}
-            autoFocus={mountingText.length > 0 ? true : false}
-            style={[styles.searchInput, themeStyles.genericText]}
-            placeholder={'Search'}
-            placeholderTextColor={themeStyles.genericText.color}
-            value={searchQuery} 
-            onChangeText={handleSearch}
-          />
-          <ListCheckSvg width={28} height={28} color={manualGradientColors.lightColor} style={styles.icon} />
-        </View>
-      </TouchableWithoutFeedback>
-
-      {(searchQuery.length > 0 && filteredData.length > 0 || (filteredData.length > 0 && showFullList)) && (  
- 
-          <View style={[styles.dropdownContainer, themeStyles.genericTextBackground]}>
+        {((searchQuery.length > 0 && filteredData.length > 0) ||
+          (filteredData.length > 0 && showFullList)) && (
+          <View
+            style={[
+              styles.dropdownContainer,
+             {backgroundColor: primaryBackground}
+            ]}
+          >
             <FlatList
               data={filteredData}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleItemPress(item)} style={[styles.itemContainer, themeStyles.genericTextBackground]}>
-                  <Text style={[styles.itemText, themeStyles.genericText]}>
-                    {['address', 'title'].map((key) => item[key]).join(' - ')}
+                <TouchableOpacity
+                  onPress={() => handleItemPress(item)}
+                  style={[
+                    styles.itemContainer,
+                    {backgroundColor: primaryBackground}
+                  ]}
+                >
+                  <Text style={[styles.itemText, {color: primaryColor}]}>
+                    {["address", "title"].map((key) => item[key]).join(" - ")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -135,45 +178,46 @@ const INPUT_CONTAINER_BORDER_RADIUS = 10;
               keyboardShouldPersistTaps="handled"
               nestedScrollEnabled={true}
             />
-          </View> 
-      )}
-    </>
-  );
-});
+          </View>
+        )}
+      </>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   inputContainer: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center', 
-    justifyContent: 'center',
-    width: '100%', 
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     height: 48,
     backgroundColor: "transparent",
-    paddingLeft: "4%", 
-    paddingVertical: '3%',
-    borderWidth: StyleSheet.hairlineWidth
+    paddingLeft: "4%",
+    paddingVertical: "3%",
+    borderWidth: StyleSheet.hairlineWidth,
   },
   searchInput: {
     flex: 1,
     fontSize: 15,
-    textAlign: 'left',
+    textAlign: "left",
     paddingRight: 2,
     height: 48,
   },
   icon: {
-    marginRight: '3%',
+    marginRight: "3%",
   },
   dropdownContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 54,
-    left: 0, 
+    left: 0,
     maxHeight: 300,
     borderRadius: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
-    width: '114%',
+    width: "114%",
     zIndex: 2100,
     elevation: 2100,
   },
@@ -187,13 +231,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 0,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    backgroundColor: '#f9f9f9',
+    borderBottomColor: "#eee",
+    backgroundColor: "#f9f9f9",
     borderRadius: 0,
   },
   itemText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
 });
 

@@ -12,20 +12,24 @@
 //  extrapolate: "clamp",
 //});
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import SwitchSvg from "@/app/assets/svgs/switch.svg";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+ 
+import {  Octicons } from "@expo/vector-icons";
 import SearchBarGoogleAddress from "./SearchBarGoogleAddress";
 import SearchBarSavedLocations from "./SearchBarSavedLocations";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import SearchBarAnimationWrapper from "../foranimations/SearchBarAnimationWrapper";
 
 const DualLocationSearcher = ({
   onPress,
   isFavoritesList = false,
   locationListDrilledOnce,
+  primaryColor,
+  primaryBackground,
+  welcomeTextStyle,
+  manualGradientColors,
 }) => {
-    const HEADER_HEIGHT = 60;
-  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
+  const HEADER_HEIGHT = 60;
+
   const searchStringRef = useRef(null);
   const [savedLocationsSearchIsVisible, setSavedLocationsVisibility] =
     useState(false);
@@ -45,8 +49,6 @@ const DualLocationSearcher = ({
     setSavedLocationsVisibility(!savedLocationsSearchIsVisible);
   };
 
-
-
   return (
     <View style={[styles.container, {}]}>
       <>
@@ -58,14 +60,36 @@ const DualLocationSearcher = ({
             position: "absolute",
             top: 0,
             flex: 1,
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: primaryBackground,
             height: HEADER_HEIGHT,
           }}
         >
-        {savedLocationsSearchIsVisible && <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: appFontStyles.welcomeText.fontSize - 6}]}>
-           Saved locations </Text>}
-                   {!savedLocationsSearchIsVisible && <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: appFontStyles.welcomeText.fontSize - 6}]}>
-           Google maps </Text>}
+          {savedLocationsSearchIsVisible && (
+            <Text
+              style={[
+                welcomeTextStyle,
+                {
+                  color: primaryColor,
+                  fontSize: welcomeTextStyle.fontSize - 6,
+                },
+              ]}
+            >
+              Saved locations{" "}
+            </Text>
+          )}
+          {!savedLocationsSearchIsVisible && (
+            <Text
+              style={[
+                welcomeTextStyle,
+                {
+                  color: primaryColor,
+                  fontSize: welcomeTextStyle.fontSize - 6,
+                },
+              ]}
+            >
+              Google maps{" "}
+            </Text>
+          )}
         </View>
         {!savedLocationsSearchIsVisible && (
           <View
@@ -79,7 +103,12 @@ const DualLocationSearcher = ({
               top: HEADER_HEIGHT,
             }}
           >
-            <View style={[styles.googleSearchContainer, themeStyles.primaryBackground]}>
+            <View
+              style={[
+                styles.googleSearchContainer,
+                { backgroundColor: primaryBackground },
+              ]}
+            >
               <SearchBarAnimationWrapper>
                 <SearchBarGoogleAddress
                   ref={searchStringRef}
@@ -87,6 +116,8 @@ const DualLocationSearcher = ({
                   onPress={onPress}
                   visible={true}
                   onTextChange={updateSearchString}
+                  primaryColor={primaryColor}
+                  primaryBackground={primaryBackground}
                 />
               </SearchBarAnimationWrapper>
             </View>
@@ -105,7 +136,15 @@ const DualLocationSearcher = ({
               top: HEADER_HEIGHT,
             }}
           >
-            <View style={[styles.savedLocationsContainer, themeStyles.primaryBackground, {backgroundColor: themeStyles.primaryBackground.backgroundColor}]}>
+            <View
+              style={[
+                styles.savedLocationsContainer,
+
+                {
+                  backgroundColor: primaryBackground,
+                },
+              ]}
+            >
               <SearchBarAnimationWrapper>
                 <SearchBarSavedLocations
                   locationListDrilledTwice={locationListDrilledOnce}
@@ -113,47 +152,52 @@ const DualLocationSearcher = ({
                   mountingText={mountingText}
                   triggerAnimation={savedLocationsSearchIsVisible}
                   onTextChange={updateSearchString}
-
                   onPress={onPress}
                   searchStringRef={searchStringRef}
+                  manualGradientColors={manualGradientColors}
+                  primaryColor={primaryColor}
+                  primaryBackground={primaryBackground}
                 />
               </SearchBarAnimationWrapper>
             </View>
           </View>
         )}
 
-        <View style={[styles.buttonContainer, themeStyles.primaryBackground]}> 
-          <TouchableOpacity
+        <View
+          style={[
+            styles.buttonContainer,
+            { backgroundColor: primaryBackground },
+          ]}
+        >
+          <Pressable
             onPress={switchViews}
             style={[
               styles.circleButton,
-              //themeStyles.footerIcon,
               { backgroundColor: manualGradientColors.homeDarkColor },
             ]}
           >
             {!savedLocationsSearchIsVisible && !isFavoritesList && (
-              <SwitchSvg
-                width={24}
-                height={24}
+              <Octicons
+                name={"arrow-switch"}
+                size={24}
                 color={manualGradientColors.lightColor}
               />
             )}
             {!savedLocationsSearchIsVisible && isFavoritesList && (
-              <SwitchSvg
-                width={24}
-                height={24}
+               <Octicons
+                name={"arrow-switch"}
+                size={24}
                 color={manualGradientColors.lightColor}
               />
             )}
-            {savedLocationsSearchIsVisible && (
-              //<GoogleLogoSvg width={24} height={24} />
-              <SwitchSvg
-                width={24}
-                height={24}
+            {savedLocationsSearchIsVisible && ( 
+              <Octicons
+                name={"arrow-switch"}
+                size={24}
                 color={manualGradientColors.lightColor}
               />
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </>
     </View>
@@ -173,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     position: "absolute",
-    right: 0, 
+    right: 0,
     zIndex: 6000,
     marginBottom: 2,
     height: "auto",
@@ -245,15 +289,15 @@ const styles = StyleSheet.create({
   savedLocationsContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    width: "100%", 
+    width: "100%",
     zIndex: 2200,
-    elevation: 2200, 
+    elevation: 2200,
   },
   googleSearchContainer: {
     justifyContent: "center",
-    width: "100%", 
+    width: "100%",
     //backgroundColor: 'pink',
-    // flex: 1, 
+    // flex: 1,
 
     zIndex: 3000,
   },

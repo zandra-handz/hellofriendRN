@@ -97,6 +97,7 @@ const { navigateToHelloes } = useAppNavigations();
   const RenderHelloesScreenFooter = useCallback(() => {
     return (
       <HelloesScreenFooter
+      primaryColor={lightDarkTheme.primaryText}
         helloesList={helloesData}
         flattenHelloes={flattenHelloes}
         onFilterPress={toggleHelloesFiltering}
@@ -111,6 +112,7 @@ const { navigateToHelloes } = useAppNavigations();
     flattenHelloes,
     themeAheadOfLoading,
     manualGradientColors,
+    lightDarkTheme,
     toggleHelloesFiltering,
     handleSearchPress,
     handleOpenSearch,
@@ -174,6 +176,7 @@ const { navigateToHelloes } = useAppNavigations();
                   fetchNextPage={fetchNextPage}
                   hasNextPage={hasNextPage}
                   onPress={navigateToSingleView}
+                  primaryColor={lightDarkTheme.primaryText}
                 />
               )}
           </View>

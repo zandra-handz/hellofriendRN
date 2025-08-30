@@ -3,9 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
 import LoadingPage from '../appwide/spinner/LoadingPage';
  
-import StarsRatingUI from './StarsRatingUI';
-import { useLocations } from '@/src/context/LocationsContext';
-
+import StarsRatingUI from './StarsRatingUI'; 
 //import useLocationFunctions from '../hooks/useLocationFunctions';
 
 // Function to format Unix timestamp to a readable date
@@ -14,21 +12,15 @@ const formatDate = (timestamp) => {
   return date.toLocaleDateString(); // Formats as "MM/DD/YYYY" by default
 };
 
-const ItemCustomerReview = ({ review }) => {
-  const { loadingAdditionalDetails } = useLocations();
-
-  const [revealReviews, setRevealReviews] = useState(true);
-
-  const handleRevealReviews = () => {
-    setRevealReviews(true);
-  };
+const ItemCustomerReview = ({ isLoading=false, review }) => {
+ 
 
   return (
     <View style={styles.review}>
-      {loadingAdditionalDetails && (
-        <LoadingPage loading={loadingAdditionalDetails} spinnerType='wander' />
+      {isLoading && (
+        <LoadingPage loading={true} spinnerType='wander' />
       )}
-      {!loadingAdditionalDetails && (
+      {!isLoading && (
         <ScrollView>
           <View style={styles.reviewAuthorRatingContainer}>
             <Text style={styles.reviewAuthor}>{review.author_name}</Text>

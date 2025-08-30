@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
  
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,10 +14,10 @@ import LocationTravelTimes from "../locations/LocationTravelTimes";
 
 interface Props {
   data: object;
-   isPartialData?: boolean;
+  isPartialData?: boolean;
   visibilityValue: SharedValue;
   currentIndexValue: SharedValue;
- 
+
   extraData: object;
   totalItemCount?: number;
   useButtons: boolean;
@@ -32,15 +30,18 @@ const ItemFooter: React.FC<Props> = ({
   isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
   visibilityValue,
-  
+
   totalItemCount,
   extraData, // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
   useButtons = true,
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
-}) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
- 
+  primaryColor,
+  overlayColor,
+  dividerStyle,
+  welcomeTextStyle,
+  themeAheadOfLoading,
+}) => { 
   const [currentIndex, setCurrentIndex] = useState(false);
   //   useEffect(() => {
   //     if (location) {
@@ -52,7 +53,7 @@ const ItemFooter: React.FC<Props> = ({
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
- 
+
   const totalCount = totalItemCount
     ? totalItemCount
     : data?.length
@@ -104,7 +105,7 @@ const ItemFooter: React.FC<Props> = ({
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: overlayColor,
           },
           visibilityStyle,
         ]}
@@ -122,17 +123,15 @@ const ItemFooter: React.FC<Props> = ({
             >
               <Text
                 style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { fontSize: 44 },
+                  welcomeTextStyle,
+                  { color: primaryColor, fontSize: 44 },
                 ]}
               >
                 {currentIndex + 1}
                 <Text
                   style={[
-                    themeStyles.primaryText,
-                    appFontStyles.welcomeText,
-                    { fontSize: 22 },
+                    welcomeTextStyle,
+                    { color: primaryColor, fontSize: 22 },
                   ]}
                 >
                   /{data.length}{" "}
@@ -150,21 +149,20 @@ const ItemFooter: React.FC<Props> = ({
               }}
             >
               <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { fontSize: 44 },
+                style={[ 
+                  welcomeTextStyle,
+                  { color: primaryColor, fontSize: 44 },
                 ]}
               >
                 {currentIndex + 1}
                 <Text
-                  style={[
-                    themeStyles.primaryText,
-                    appFontStyles.welcomeText,
-                    { fontSize: 22 },
+                  style={[ 
+                   welcomeTextStyle,
+                    { color: primaryColor, fontSize: 22 },
                   ]}
                 >
-                  {/* /{data.length}{" "} */}/{totalCount}{" "}{isPartialData ? "loaded" : "total"}
+                  {/* /{data.length}{" "} */}/{totalCount}{" "}
+                  {isPartialData ? "loaded" : "total"}
                 </Text>
               </Text>
             </View>
@@ -173,7 +171,7 @@ const ItemFooter: React.FC<Props> = ({
 
         {useButtons && (
           <>
-            <View style={[styles.divider, themeStyles.divider]} />
+            <View style={[styles.divider, dividerStyle]} />
             <View style={{ flex: 1 }}>
               <>
                 {extraData &&
@@ -183,6 +181,8 @@ const ItemFooter: React.FC<Props> = ({
                       location={item}
                       userAddress={extraData.userAddress}
                       friendAddress={extraData.friendAddress}
+                      themeAheadOfLoading={themeAheadOfLoading}
+                      primaryColor={primaryColor}
                     />
                   )}
                 {!extraData && useButtons && (
@@ -192,17 +192,15 @@ const ItemFooter: React.FC<Props> = ({
                       flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
-                      opacity: pressed ? 0.6 : 1, // optional visual feedback
+                      opacity: pressed ? 0.6 : 1, 
                     })}
                   >
                     <MaterialCommunityIcons
                       name="send"
                       size={50}
-                      color={themeStyles.primaryText.color}
+                      color={primaryColor}
                     />
-                    {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
-              
-             /{data.length} </Text></Text> */}
+ 
                   </Pressable>
                 )}
               </>
@@ -211,7 +209,7 @@ const ItemFooter: React.FC<Props> = ({
         )}
         {extraData && (
           <>
-            <View style={[styles.divider, themeStyles.divider]} />
+            <View style={[styles.divider, dividerStyle]} />
             <View style={{ flex: 1 }}>
               <Pressable
                 onPress={onRightPressSecondAction}
@@ -219,26 +217,20 @@ const ItemFooter: React.FC<Props> = ({
                   flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
-                  opacity: pressed ? 0.6 : 1, // optional visual feedback
+                  opacity: pressed ? 0.6 : 1, 
                 })}
               >
                 <MaterialCommunityIcons
                   name="send"
                   size={50}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
-                {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
-              
-             /{data.length} </Text></Text> */}
+ 
               </Pressable>
             </View>
           </>
         )}
       </Animated.View>
-
- 
- 
- 
     </>
   );
 };

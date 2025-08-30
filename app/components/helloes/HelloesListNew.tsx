@@ -1,18 +1,15 @@
-import { View, Pressable, Text, FlatList } from "react-native";
-import React, { useEffect, useCallback, useRef } from "react";
-import { FlashList, AnimatedFlashList } from "@shopify/flash-list";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, Pressable} from "react-native";
+import React, { useEffect, useCallback, useRef } from "react"; 
 import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 import Animated, {
   LinearTransition,
-  JumpingTransition,
-  CurvedTransition,
-  EntryExitTransition,
-  SequencedTransition,
-  FadingTransition,
-} from "react-native-reanimated";
-import { useNavigation } from "@react-navigation/native";
+  // JumpingTransition,
+  // CurvedTransition,
+  // EntryExitTransition,
+  // SequencedTransition,
+  // FadingTransition,
+} from "react-native-reanimated"; 
 type Props = {
   friendName: string;
   helloesListFull: object[];
@@ -31,15 +28,15 @@ const HelloesListNew = ({
   fetchNextPage,
   hasNextPage,
   triggerScroll,
+  primaryColor='orange',
   onPress,
 }: Props) => {
   const ITEM_HEIGHT = 90;
   const ITEM_BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
-  const navigation = useNavigation();
+ 
   const flatListRef = useRef(null);
-
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+ 
 
   useEffect(() => {
     if (triggerScroll) {
@@ -115,7 +112,7 @@ const HelloesListNew = ({
         ListFooterComponent={
           <InfiniteScrollSpinner
             isFetchingNextPage={isFetchingNextPage}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
             height={200}
           />
         }

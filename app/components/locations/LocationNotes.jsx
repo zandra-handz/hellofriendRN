@@ -12,9 +12,7 @@ import {
   Text, 
   Pressable,
   StyleSheet,
-} from "react-native"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native";   
 import { useNavigation } from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -24,10 +22,9 @@ const LocationNotes = ({
   iconSize = 26, 
   openEditModal,
   closeEditModal,
-}) => {
-  const { themeAheadOfLoading } = useFriendStyle(); 
-  const { themeStyles } = useGlobalStyle();
-  // const [hasNotes, setHasNotes] = useState(false);
+  themeAheadOfLoading,
+  primaryColor,
+}) => {  
 
   const navigation = useNavigation();
 
@@ -84,7 +81,7 @@ const LocationNotes = ({
         color={
           hasNotes
             ? themeAheadOfLoading.lightColor
-            : themeStyles.genericText.color
+            : primaryColor
         }
         style={{ marginRight: 4 }}
       />
@@ -93,7 +90,7 @@ const LocationNotes = ({
       hasNotes,
       iconSize,
       themeAheadOfLoading.lightColor,
-      themeStyles.genericText.color,
+      primaryColor,
     ]
   );
 
@@ -111,7 +108,7 @@ const LocationNotes = ({
             })}
           >
             {memoizedIcon}
-            <Text style={[themeStyles.primaryText, {}]}>Notes</Text>
+            <Text style={  {color: primaryColor}}>Notes</Text>
           </Pressable> 
         </View>
       )}

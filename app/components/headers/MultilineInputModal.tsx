@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { View, TextInput, ScrollView, StyleSheet } from "react-native";
+import React  from "react";
+import { View,   StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import MomentsSearchBar from "../moments/MomentsSearchBar";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+ 
 import MultiInputBox from "../appwide/input/MultiInputBox"; 
 
 interface Props {
@@ -21,19 +20,11 @@ const MultilineInputModal: React.FC<Props> = ({
   value,
   onChangeText,
   ref=null,
+  primaryColor='orange',
 }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
  
 
-  const headerIconSize = 26;
-  const searchInputIconSize = 14;
-  const autoFocus = true;
-
-  const handleSearchPress = (moment) => {
-    onSearchPress(moment);
-    closeModal();
-  };
-
+ 
 
   
   // React.useEffect(() => {
@@ -48,18 +39,19 @@ const MultilineInputModal: React.FC<Props> = ({
       headerIcon={
         <MaterialCommunityIcons
           name={"pencil"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={primaryColor}
         />
       }
       questionText="Edit message"
       children={
-        < View contentContainerStyle={styles.bodyContainer}>
+        < View style={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
             <MultiInputBox  
             value={value}
             onChangeText={onChangeText}
               autoFocus={isVisible}
+              primaryColor={primaryColor}
               // height={40}
               // width={"100%"}
               // borderColor={themeStyles.primaryText.color}

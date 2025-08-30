@@ -6,6 +6,8 @@ import CardMidpointLocation from './CardMidpointLocation';
 
 
 const ResultsMidpointFinds = ({ 
+    userId,
+    lightDarkTheme,
     userAddress, 
     friendAddress,  
     search,
@@ -13,7 +15,7 @@ const ResultsMidpointFinds = ({
     length,
     triggerFetch 
 }) => {
-    
+    const primaryColor = lightDarkTheme.primaryText;
     const [midpointLocationResults, setMidpointLocationResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [sortOrder, setSortOrder] = useState(null); // No initial sorting
@@ -35,7 +37,7 @@ const ResultsMidpointFinds = ({
                         length: parseFloat(length),
                     };
 
-                    console.log('Request data:', locationData);
+                    // console.log('Request data:', locationData);
 
                     const results = await SearchForMidpointLocations(locationData);
                     console.log('Search for Midpoint Response:', results);
@@ -87,6 +89,9 @@ const ResultsMidpointFinds = ({
                     renderItem={({ item }) => (
                         <View>
                             <CardMidpointLocation
+                            userId={userId}
+                            primaryColor={primaryColor}
+                            lightDarkTheme={lightDarkTheme}
                                 fullLocationData={item}
                                 name={item.name}
                                 address={item.address}
@@ -131,8 +136,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         paddingVertical: 0,
-        paddingHorizontal: 0,
-        backgroundColor: 'white',
+        paddingHorizontal: 0, 
     },
     message: {
         fontSize: 16,

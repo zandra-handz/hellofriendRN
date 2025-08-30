@@ -19,6 +19,7 @@ const MapScreenFooter = ({
   manualGradientColors,
     overlayColor,
     primaryColor,
+    primaryBackground,
  
   dividerStyle,
  
@@ -150,7 +151,9 @@ const MapScreenFooter = ({
         <View>
           <SetAddressesModal
           primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
           overlayColor={overlayColor}
+          manualGradientColors={manualGradientColors}
           welcomeTextStyle={welcomeTextStyle}
             userAddress={userAddress}
             setUserAddress={setUserAddress}

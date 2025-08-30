@@ -20,8 +20,9 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   getThemeAheadOfLoading,
   setFriend,
   selectFriend,
-  friendList,
-  themeStyles,
+  friendList, 
+  primaryColor = 'orange',
+  overlayColor, 
   manualGradientColors,
   startAtIndex = 1,
   height,
@@ -31,9 +32,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 }) => { 
   const navigation = useNavigation();  
  
-  const itemColor = themeStyles.primaryText.color;
-  const elementBackgroundColor =
-    themeStyles.overlayBackgroundColor.backgroundColor;
+  const itemColor = primaryColor;
+  const elementBackgroundColor = overlayColor;
 
   const handleDoublePress = useCallback(
     (hello) => {
@@ -81,7 +81,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         <SoonItemButton
           textColor={itemColor}
           backgroundColor={elementBackgroundColor}
-          themeStyles={themeStyles}
+    
+          overlayColor={overlayColor}
           manualGradientColors={manualGradientColors}
           height={"100%"}
           friendName={item.friend.name}
@@ -138,7 +139,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
               <Text
                 style={[
                   {
-                    color: themeStyles.genericTextBackground.backgroundColor,
+                    color: primaryColor,
                     fontSize: 18,
                   },
                 ]}

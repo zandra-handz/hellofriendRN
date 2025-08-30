@@ -1,25 +1,19 @@
 import { View, Text, DimensionValue } from "react-native";
 import React, { useCallback, useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-  
+
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
- 
- import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+
 import LocationNumber from "./LocationNumber";
-import LocationAddress from "./LocationAddress";
- import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-import { useLocations } from "@/src/context/LocationsContext";
-import LocationUtilityTray from "./LocationUtilityTray"; 
+import LocationAddress from "./LocationAddress"; 
+import LocationUtilityTray from "./LocationUtilityTray";
 import Animated, {
-  useSharedValue,
   SharedValue,
   useAnimatedStyle,
   useAnimatedReaction,
   runOnJS,
 } from "react-native-reanimated";
 import LocationCustomerReviews from "./LocationCustomerReviews";
- 
+import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 
 import Hours from "./Hours";
 
@@ -35,33 +29,32 @@ interface LocationPageViewProps {
 }
 
 const LocationViewPage: React.FC<LocationPageViewProps> = ({
+  userId,
+  friendId,
+  friendName,
   item,
-  test,
   index,
   width,
-  height,
-  faveLocations,
-  nonFaveLocations,
+
   onAddPress,
   onRemovePress,
   currentIndexValue,
   cardScaleValue,
   currentDay, // object with .index and .day
-  selectedDay, 
+  selectedDay,
   handleSelectedDay,
   openModal,
   closeModal,
+  themeAheadOfLoading,
+  manualGradientColors,
+  primaryColor,
+  primaryBackground,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
 }) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
- const { user } = useUser();
-  const { useFetchAdditionalDetails } = useLocations();
-
-
-
-  const { checkIfOpen } = useLocationDetailFunctions();
-const { selectedFriend } = useSelectedFriend();
  
-  const [currentIndex, setCurrentIndex] = useState();
+
+    const [currentIndex, setCurrentIndex] = useState();
 
   useAnimatedReaction(
     () => currentIndexValue.value,
@@ -73,6 +66,12 @@ const { selectedFriend } = useSelectedFriend();
     []
   );
 
+console.log(index);
+  const { additionalDetails } = useFetchAdditionalDetails({userId: userId, locationObject: item, enabled:Math.abs(index - currentIndex) <= 1 })
+
+  const { checkIfOpen } = useLocationDetailFunctions();
+
+
   const cardScaleAnimation = useAnimatedStyle(() => ({
     transform: [{ scale: cardScaleValue.value }],
   }));
@@ -83,10 +82,6 @@ const { selectedFriend } = useSelectedFriend();
   };
 
   // console.log('LOCATION VIEW SCREEN RERENDERED', item.id);
-  const { data: additionalDetails } = useFetchAdditionalDetails(
-    item,
-    Math.abs(index - currentIndex) <= 1
-  );
 
   const RenderOpenStatus = () => {
     let isOpenNow;
@@ -97,7 +92,7 @@ const { selectedFriend } = useSelectedFriend();
         ? manualGradientColors.lightColor
         : isOpenNow === false
           ? "red"
-          : themeStyles.primaryText.color;
+          : primaryColor;
 
     return (
       <>
@@ -122,13 +117,7 @@ const { selectedFriend } = useSelectedFriend();
               },
             ]}
           >
-            <Text
-              style={[
-                themeStyles.genericText,
-                appFontStyles.subWelcomeText,
-                { color: color },
-              ]}
-            >
+            <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
               {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
             </Text>
           </View>
@@ -148,18 +137,15 @@ const { selectedFriend } = useSelectedFriend();
     // });
   };
 
-  // const [ selectedDay, setSelectedDay ] = useState(null);
+  // const [ selectedDay, setSelectedDay ] = useStater(null);
 
-  const [rerenderCards, setRerenderCards ] = useState(null);
+  const [rerenderCards, setRerenderCards] = useState(null);
 
-  const handleViewDayHrs = (sD) => {
+  const handleViewDayHrs = (sD) => { 
 
-    // console.log('function passed in to onDaySelect,', sD);
-    
     handleSelectedDay(sD);
     setRerenderCards(sD);
-
-    // console.log('index: ', sD.index,'day: ', sD.day);
+ 
   };
 
   const handleDelete = (item) => {
@@ -177,140 +163,160 @@ const { selectedFriend } = useSelectedFriend();
     // }
   };
 
- 
-const renderHoursComponent = useCallback(() => {
-  if (!additionalDetails?.hours?.weekday_text) return null;
-// console.log('rerendering cards!', rerenderCards);
-  return (
-    <Hours
-      buttonHightlightColor={manualGradientColors.lightColor}
-      currentDay={currentDay}
-      onDaySelect={handleViewDayHrs}
-      daysHrsData={additionalDetails.hours.weekday_text}
-      initiallySelectedDay={ selectedDay?.current || null}
-    />
-  );
-}, [
-  additionalDetails?.hours?.weekday_text,
-  manualGradientColors.lightColor,
-  currentDay,
-  handleViewDayHrs,
-  selectedDay?.current,
- 
-]);
+  const renderHoursComponent = useCallback(() => {
+    if (!additionalDetails?.hours?.weekday_text) return null;
+    // console.log('rerendering cards!', rerenderCards);
+    return (
+      <Hours
+        buttonHightlightColor={manualGradientColors.lightColor}
+        currentDay={currentDay}
+        onDaySelect={handleViewDayHrs}
+        daysHrsData={additionalDetails.hours.weekday_text}
+        initiallySelectedDay={selectedDay?.current || null}
+        welcomeTextStyle={welcomeTextStyle}
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
+      />
+    );
+  }, [
+    additionalDetails?.hours?.weekday_text,
+    manualGradientColors.lightColor,
+    currentDay,
+    handleViewDayHrs,
+    selectedDay?.current,
+  ]);
   return (
     // <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
-      <Animated.View
-        style={[
-          cardScaleAnimation,
-          {
-            gap: 20,
+    <Animated.View
+      style={[
+        cardScaleAnimation,
+        {
+          gap: 20,
 
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "transparent",
-            padding: 4,
-            paddingBottom: 0,
-            borderWidth: 0,
-            //   height: ITEM_HEIGHT,
-            width: width,
-          },
-        ]}
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "transparent",
+          padding: 4,
+          paddingBottom: 0,
+          borderWidth: 0,
+          //   height: ITEM_HEIGHT,
+          width: width,
+        },
+      ]}
+    >
+      <View
+        style={{
+          backgroundColor: primaryBackground,
+          padding: 10,
+          borderRadius: 10,
+          borderRadius: 40,
+          width: "100%",
+          height: "100%",
+          zandleviewday: 1,
+          overflow: "hidden",
+        }}
       >
         <View
           style={{
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
-            padding: 10,
-            borderRadius: 10,
-            borderRadius: 40,
+            flexDirection: "column",
+            flexWrap: "wrap",
             width: "100%",
-            height: "100%",
-            zandleviewday: 1,
-            overflow: "hidden",
+            paddingHorizontal: 0,
+            paddingTop: 20,
           }}
         >
-          <View
-            style={{
-              flexDirection: "column",
-              flexWrap: "wrap",
-              width: "100%",
-              paddingHorizontal: 0,
-              paddingTop: 20,
-            }}
+          <Text
+            numberOfLines={2}
+            style={[
+              welcomeTextStyle,
+              {
+                color: primaryColor,
+                flexDirection: "row",
+                width: "90%",
+                flexWrap: "wrap",
+              },
+            ]}
           >
+            {item.title}
+          </Text>
+
+          <LocationAddress
+            address={item?.address}
+            primaryColor={primaryColor}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+          />
+        </View>
+        <LocationNumber
+          phoneNumber={additionalDetails?.phone}
+          primaryColor={primaryColor}
+          subWelcomeTextStyle={subWelcomeTextStyle}
+        />
+
+        <View style={{}}>
+          <RenderOpenStatus />
+        </View>
+        <LocationUtilityTray
+          themeAheadOfLoading={themeAheadOfLoading}
+          primaryColor={primaryColor}
+          onAddPress={onAddPress}
+          onRemovePress={onRemovePress}
+          userId={userId}
+          friendId={friendId}
+          friendName={friendName}
+          location={item}
+          openEditModal={openModal}
+          closeEditModal={closeModal}
+        />
+        {additionalDetails && (
+          <>
             <Text
               numberOfLines={2}
               style={[
-                themeStyles.primaryText,
-                appFontStyles.welcomeText,
-                { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+                welcomeTextStyle,
+                {
+                  color: primaryColor,
+                  flexDirection: "row",
+                  width: "90%",
+                  flexWrap: "wrap",
+                },
               ]}
             >
-              {item.title}
+              Reviews
             </Text>
+            <View style={{ marginVertical: 10 }}>
+              <LocationCustomerReviews
+                formatDate={formatDate}
+                reviews={additionalDetails.reviews}
+                primaryColor={primaryColor}
+                primaryBackground={primaryBackground}
+              />
+            </View>
 
-            <LocationAddress address={item?.address} />
-          </View>
-          <LocationNumber phoneNumber={additionalDetails?.phone} />
+            <Text
+              numberOfLines={2}
+              style={[
+                welcomeTextStyle,
+                {
+                  color: primaryColor,
+                  flexDirection: "row",
+                  width: "90%",
+                  flexWrap: "wrap",
+                },
+              ]}
+            >
+              Hours
+            </Text>
+            <View style={{ marginVertical: 10 }}>
+              {renderHoursComponent()}
 
-          <View style={{}}>
-            <RenderOpenStatus />
-          </View>
-          <LocationUtilityTray
-          onAddPress={onAddPress}
-          onRemovePress={onRemovePress}
-          userId={user?.id}
-          friendId={selectedFriend?.id}
-          friendName={selectedFriend?.name}
-            location={item}
-            openEditModal={openModal}
-            closeEditModal={closeModal}
-          />
-          {additionalDetails && (
-            <>
-              <Text
-                numberOfLines={2}
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { flexDirection: "row", width: "90%", flexWrap: "wrap" },
-                ]}
-              >
-                Reviews
-              </Text>
-              <View style={{ marginVertical: 10 }}>
-                <LocationCustomerReviews
-                  formatDate={formatDate}
-                  reviews={additionalDetails.reviews}
-                />
-              </View>
+              {!additionalDetails?.hours?.weekday_text && (
+                <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+                  No hours available
+                </Text>
+              )}
+            </View>
 
-              <Text
-                numberOfLines={2}
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { flexDirection: "row", width: "90%", flexWrap: "wrap" },
-                ]}
-              >
-                Hours
-              </Text>
-              <View style={{ marginVertical: 10 }}>
-                {renderHoursComponent()}
-
-                {!additionalDetails?.hours?.weekday_text && (
-                  <Text
-                    style={[
-                      appFontStyles.subWelcomeText,
-                      themeStyles.primaryText,
-                    ]}
-                  >
-                    No hours available
-                  </Text>
-                )}
-              </View>
-
-              {/* 
+            {/* 
             {additionalDetails && additionalDetails?.hours && (
               <View style={{marginTop: 70}}>
               <LocationHoursOfOperation
@@ -322,23 +328,23 @@ const renderHoursComponent = useCallback(() => {
                 
               </View>
             )} */}
-            </>
-          )}
-          {/* <EditPencilOutlineSvg
+          </>
+        )}
+        {/* <EditPencilOutlineSvg
           height={20}
           width={20}
           onPress={handleEditLocation}
           color={themeStyles.genericText.color}
         /> */}
-          {/* <SlideToDeleteHeader
+        {/* <SlideToDeleteHeader
           itemToDelete={item}
           onPress={handleDelete}
           sliderWidth={"100%"}
           targetIcon={TrashOutlineSvg}
           sliderTextColor={themeStyles.primaryText.color}
         /> */}
-        </View>
-      </Animated.View>
+      </View>
+    </Animated.View>
     // </SafeViewAndGradientBackground>
   );
 };

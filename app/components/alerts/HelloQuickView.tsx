@@ -1,12 +1,12 @@
-import { View,  Text, FlatList } from "react-native";
-import React, { useCallback, useEffect, useState } from "react"; 
-import useFullHelloes from "@/src/hooks/useFullHelloes"; 
+import { View, Text, FlatList } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import useFullHelloes from "@/src/hooks/useFullHelloes";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FullHello } from "@/src/types/HelloTypes";
 import ModalInfoText from "../headers/ModalInfoText";
-import LoadingPage from "../appwide/spinner/LoadingPage"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import LoadingPage from "../appwide/spinner/LoadingPage";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 
 type Props = {
@@ -16,13 +16,13 @@ type Props = {
 };
 
 const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
-  const { lightDarkTheme} = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
- 
+const primaryColor = lightDarkTheme.primaryText;
   const [highlightedMoment, setHighlightedMoment] = useState(undefined);
 
-  const SPINNER_SIZE = 30;  
+  const SPINNER_SIZE = 30;
   const renderListItem = useCallback(
     ({ item, index }: { item: [string, any]; index: number }) => (
       <View
@@ -42,11 +42,10 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
     [highlightedMoment]
   );
 
-  const {
-    helloesListFull,
-    fetchUntilIndex,
- 
-  } = useFullHelloes({ friendId: selectedFriend?.id, indexNeeded: index });
+  const { helloesListFull, fetchUntilIndex } = useFullHelloes({
+    friendId: selectedFriend?.id,
+    indexNeeded: index,
+  });
 
   fetchUntilIndex(index);
 
@@ -54,7 +53,6 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
   const [helloCapsuleData, setHelloCapsuleData] = useState(undefined);
 
   const helloCapsules = helloToView?.thought_capsules_shared ?? null;
- 
 
   useEffect(() => {
     if (helloCapsules) {
@@ -71,7 +69,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
           console.warn(highlight);
           setHighlightedMoment(highlight[0]);
         }
-      } 
+      }
     }
   }, [helloCapsules]);
 
@@ -83,7 +81,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
 
   const ICON_MARGIN_RIGHT = 10;
   const ICON_SIZE = 20;
- 
+
   return (
     <>
       {!helloToView && (
@@ -98,7 +96,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
           }}
         >
           <LoadingPage
-            loading={true} 
+            loading={true}
             spinnerType="circle"
             spinnerSize={SPINNER_SIZE}
             color={themeAheadOfLoading.lightColor}
@@ -120,7 +118,10 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
               size={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
-            <ModalInfoText infoText={helloToView.past_date_in_words} />
+            <ModalInfoText
+              infoText={helloToView.past_date_in_words}
+              primaryColor={primaryColor}
+            />
           </View>
           <View
             style={{
@@ -137,7 +138,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
               size={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
-            <ModalInfoText infoText={helloToView.type} />
+            <ModalInfoText infoText={helloToView.type} primaryColor={primaryColor} />
           </View>
           {helloToView?.location_name && (
             <View
@@ -159,6 +160,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
                 fontSize={14}
                 lineHeight={18}
                 infoText={helloToView.location_name}
+                              primaryColor={primaryColor}
               />
             </View>
           )}
@@ -186,7 +188,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
               </View>
-              <ModalInfoText infoText={helloToView.additional_notes} />
+              <ModalInfoText infoText={helloToView.additional_notes}               primaryColor={primaryColor} />
             </View>
           )}
 
@@ -205,7 +207,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
                   flexDirection: "column",
                   height: "100%",
                   justifyContent: "flex-start",
-                  height: 200, 
+                  height: 200,
                   width: "100%",
                 }}
               >
@@ -219,7 +221,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
                   <View
                     style={{
                       width: "100%",
-                      height: 200, 
+                      height: 200,
                     }}
                   >
                     <FlatList
@@ -230,10 +232,8 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
                   </View>
                 )}
               </View>
- 
             </View>
           )}
- 
         </View>
       )}
     </>

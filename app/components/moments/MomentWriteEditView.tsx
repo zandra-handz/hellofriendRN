@@ -7,7 +7,7 @@ import {
   Alert,
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import TextMomentBox from "./TextMomentBox"; 
+import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
@@ -43,6 +43,7 @@ const MomentWriteEditView = ({
   momentText,
   catCreatorVisible,
   welcomeTextStyle,
+  subWelcomeTextStyle,
   primaryColor,
   primaryBackground,
   darkerOverlayColor,
@@ -55,10 +56,9 @@ const MomentWriteEditView = ({
   escortBarSpacer,
   cardPadding = 4, // controls padding around the shaded card
   friendId,
+  friendName,
   friendFaves,
-}: Props) => {  
- 
-
+}: Props) => {
   const { handleCreateMoment, createMomentMutation } = useCreateMoment({
     userId: userId,
     friendId: friendId,
@@ -94,7 +94,7 @@ const MomentWriteEditView = ({
         !userChangedCategory &&
         momentTextRef &&
         momentTextRef.current
-      ) { 
+      ) {
         momentTextRef.current.setText(momentText);
       }
       // else {
@@ -341,13 +341,18 @@ const MomentWriteEditView = ({
                 //marginBottom: marginBottom, in momentsviewpage but not here since keyboard is up + no footer bar
                 zIndex: 1,
                 overflow: "hidden",
-                backgroundColor:
-                  darkerOverlayColor,
+                backgroundColor: darkerOverlayColor,
               }}
             >
               <MomentFocusTray
-              primaryColor={primaryColor}
-              welcomeTextStyle={welcomeTextStyle}
+                userId={userId}
+                primaryColor={primaryColor}
+                primaryBackground={primaryBackground}
+                manualGradientColors={manualGradientColors}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                capsuleList={capsuleList}
+                userCategories={userCategories}
+                welcomeTextStyle={welcomeTextStyle}
                 paddingTop={TOPPER_PADDING_TOP}
                 friendDefaultCategory={
                   friendFaves?.friend_default_category || null
@@ -358,6 +363,7 @@ const MomentWriteEditView = ({
                 label={selectedCategory}
                 categoryId={selectedUserCategory}
                 friendId={friendId}
+                friendName={friendName}
               />
               {createMomentMutation.isPending && (
                 <View
@@ -404,11 +410,11 @@ const MomentWriteEditView = ({
         </View>
 
         <CategoryCreator
-        primaryColor={primaryColor}
-        primaryBackground={primaryBackground}
-        manualGradientColors={manualGradientColors}
-        capsuleList={capsuleList}
-        userCategories={userCategories}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          manualGradientColors={manualGradientColors}
+          capsuleList={capsuleList}
+          userCategories={userCategories}
           freezeCategory={userChangedCategory}
           friendDefaultCategory={friendFaves?.friend_default_category || null}
           isVisible={catCreatorVisible}

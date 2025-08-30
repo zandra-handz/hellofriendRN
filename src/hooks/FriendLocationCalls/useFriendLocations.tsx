@@ -55,12 +55,12 @@ const useFriendLocations = ({
         return makeSplitLists(
           locationList,
           friendFaveIds?.length
-            ? (location) => friendFaveIds.includes(location.id)
+            ? (location) => friendFaveIds.includes(location?.id)
             : () => false,
   
           (location) =>
             inPersonHelloes
-              .filter((hello) => hello.location === location.id)
+              .filter((hello) => hello.location === location?.id)
               .map((hello) => ({
                 id: hello.id,
                 date: hello.date,

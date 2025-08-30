@@ -1,11 +1,10 @@
-import React, { useLayoutEffect, useState, useMemo } from "react";
+import React, {  useMemo } from "react";
 import {
   View,
   Text, 
   StyleSheet,
   Pressable,
-} from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native"; 
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import useDynamicUIFunctions from "@/src/hooks/useDynamicUIFunctions";
 import { useNavigation } from "@react-navigation/native";
@@ -17,16 +16,13 @@ const LocationParking = ({
   fadeOpacity = 0.8,
   openEditModal,
   closeEditModal,
-}) => {
-  const { themeStyles } = useGlobalStyle();
+  primaryColor,
+}) => { 
   const { getNumericParkingScore } = useLocationDetailFunctions();
 
-  const { getScoreColor } = useDynamicUIFunctions();
-  // const [hasNotes, setHasNotes] = useState(location.parking_score);
-  const { label, score } = getNumericParkingScore(location.parking_score);
-
-  // const [scoreColor, setScoreColor] = useState(getScoreColor([1, 6], score));
-  // const [scoreLabel, setScoreLabel] = useState(label);
+  const { getScoreColor } = useDynamicUIFunctions(); 
+  // const { label, score } = getNumericParkingScore(location.parking_score);
+ 
 
   const navigation = useNavigation();
 
@@ -58,20 +54,9 @@ const LocationParking = ({
       onPress: () => handleGoToLocationEditScreenFocusParking(),
     };
     openEditModal(modalData);
-    //setModalVisible(true);
+ 
   };
-
-  // useLayoutEffect(() => {
-  //   if (location && location.parking_score) {
-  //     let { label, score } = getNumericParkingScore(location.parking_score);
-
-  //     setScoreColor(getScoreColor([1, 6], score));
-  //     setScoreLabel(label);
-  //     setHasNotes(true);
-  //   } else {
-  //     setHasNotes(false);
-  //   }
-  // }, [location]);
+ 
 
 
   const { scoreLabel, scoreColor, hasNotes } = useMemo(() => {
@@ -85,10 +70,10 @@ const LocationParking = ({
   }
   return {
     scoreLabel: "Set parking score",
-    scoreColor: themeStyles.genericText.color,
+    scoreColor: primaryColor,
     hasNotes: false,
   };
-}, [location, themeStyles]);
+}, [location, primaryColor]);
 
   // since it's going inside of a TouchableOpacity which, I think, turns out, uses Animated View to control opacity of children
   // and is a mildly ugly color in DevTools when I profile
@@ -96,11 +81,11 @@ const memoizedIcon = useMemo(() => (
   <MaterialCommunityIcons
     name={hasNotes ? "car" : "car-cog"}
     size={iconSize}
-    color={hasNotes ? scoreColor : themeStyles.genericText.color}
+    color={hasNotes ? scoreColor : primaryColor}
     opacity={hasNotes ? 1 : fadeOpacity}
     style={{ marginRight: 4 }}
   />
-), [hasNotes, iconSize, scoreColor, themeStyles, fadeOpacity]);
+), [hasNotes, iconSize, scoreColor, primaryColor, fadeOpacity]);
 
 
   return (
@@ -116,7 +101,7 @@ const memoizedIcon = useMemo(() => (
             })}
           >
             {memoizedIcon}
-            <Text style={[themeStyles.primaryText, {}]}>{scoreLabel}</Text>
+            <Text style={  {color: primaryColor}}>{scoreLabel}</Text>
           </Pressable>
         </View>
       )}

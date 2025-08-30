@@ -1,15 +1,13 @@
 import { View } from "react-native";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useWindowDimensions } from "react-native";
 import Animated, {
   useAnimatedRef,
-  runOnJS,
   useAnimatedScrollHandler,
   useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
-import ItemFooter from "../headers/ItemFooter"; 
+import ItemFooter from "../headers/ItemFooter";
 import CarouselItemModal from "./carouselItemModal";
 
 type Props = {
@@ -37,8 +35,14 @@ const CarouselSliderInfinite = ({
   hasNextPage,
 
   footerData,
+  primaryColor,
+  overlayColor,
+  dividerStyle,
+  welcomeTextStyle,
+  themeAheadOfLoading,
+  manualGradientColors,
 }: Props) => {
-  const { height, width } = useWindowDimensions(); 
+  const { height, width } = useWindowDimensions();
 
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
@@ -63,9 +67,6 @@ const CarouselSliderInfinite = ({
       index,
     };
   };
-
- 
- 
 
   // const scrollToStart = () => {
   //   flatListRef.current?.scrollToIndex({
@@ -195,6 +196,11 @@ const CarouselSliderInfinite = ({
           onRightPressSecondAction={() =>
             onRightPressSecondAction(data[currentIndex.value])
           }
+          primaryColor={primaryColor}
+          overlayColor={overlayColor}
+          dividerStyle={dividerStyle}
+          welcomeTextStyle={welcomeTextStyle}
+          themeAheadOfLoading={themeAheadOfLoading}
         />
 
         {/* )} */}
@@ -210,6 +216,7 @@ const CarouselSliderInfinite = ({
             isVisible={itemModalVisible}
             closeModal={() => setItemModalVisible(false)}
             onPress={modalData?.onPress}
+            manualGradientColors={manualGradientColors}
           />
         </View>
       )}

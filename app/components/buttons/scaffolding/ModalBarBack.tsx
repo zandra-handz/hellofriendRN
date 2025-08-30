@@ -1,8 +1,6 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
-
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
 
@@ -43,8 +41,9 @@ const ModalBarBack = ({
   borderTopRightRadius = 0,
   borderTopLeftRadius = 0,
   isDisabled = true,
-}: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  primaryColor='orange', 
+  overlayColor='gray',
+}: Props) => { 
 
   return (
     <GlobalPressable
@@ -64,17 +63,7 @@ const ModalBarBack = ({
         },
       ]}
     >
-      {/* <LinearGradient
-        colors={[
-          isDisabled ? "gray" : manualGradientColors.darkColor,
-          isDisabled ? "gray" : manualGradientColors.lightColor,
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          ...StyleSheet.absoluteFillObject,
-        }}
-      /> */}
+ 
       <View
         style={{
           flex: 1,
@@ -88,7 +77,7 @@ const ModalBarBack = ({
           borderBottomRightRadius: borderBottomRightRadius - dynamicPadding,
           borderTopRightRadius: borderTopRightRadius - dynamicPadding,
           borderTopLeftRadius: borderTopLeftRadius - dynamicPadding,
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          backgroundColor: overlayColor,
         }}
       >
         <Text
@@ -98,7 +87,7 @@ const ModalBarBack = ({
               paddingHorizontal: labelPaddingHorizontal,
 
               fontSize: labelSize,
-              color: themeStyles.primaryText.color,
+              color: primaryColor,
             },
           ]}
         >

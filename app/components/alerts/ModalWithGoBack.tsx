@@ -1,20 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Text } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { StyleSheet, View, Modal, Text } from "react-native"; 
 import Animated, {
-  SharedValue,
-  SlideInLeft,
-  SlideOutRight,
-  FadeInUp,
-  SlideInUp,
-  SlideOutDown,
-  FadeOutDown,
+ 
   useSharedValue,
-  useAnimatedStyle,
-  useAnimatedReaction,
+  useAnimatedStyle, 
   withTiming,
   withDelay,
 } from "react-native-reanimated";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
 
@@ -43,7 +36,8 @@ const ModalWithGoBack: React.FC<Props> = ({
 
   onClose,
 }) => {
-  const { themeStyles } = useGlobalStyle();
+
+  const { lightDarkTheme } = useLDTheme(); 
   // const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const xAnim = useSharedValue(500);
@@ -52,8 +46,8 @@ const ModalWithGoBack: React.FC<Props> = ({
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const MODAL_CONTENT_PADDING = 10;
-  const MODAL_BORDER_RADIUS = 40;
+  // const MODAL_CONTENT_PADDING = 10;
+  // const MODAL_BORDER_RADIUS = 40;
 
   const [internalIsVisible, setInternalIsVisible] = useState(isVisible);
 
@@ -110,10 +104,9 @@ const ModalWithGoBack: React.FC<Props> = ({
         <Animated.View
           style={[
             styles.modalContent,
-            themeStyles.genericTextBackground,
-            {
-              borderColor:
-                themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+     
+            { 
+              backgroundColor: lightDarkTheme.primaryBackground,
               borderRadius: borderRadius,
             },
           ]}
@@ -133,7 +126,7 @@ const ModalWithGoBack: React.FC<Props> = ({
           >
             {headerIcon && headerIcon}
             {questionText && (
-              <Text style={[styles.questionText, themeStyles.genericText]}>
+              <Text style={[styles.questionText, {color: lightDarkTheme.primaryText}]}>
                 {questionText}
               </Text>
             )}
@@ -188,6 +181,9 @@ const ModalWithGoBack: React.FC<Props> = ({
               borderTopLeftRadius={borderRadius / 3}
               borderTopRightRadius={borderRadius / 3}
               onPress={handleCustomClose} // adds a delay to let inside component animation run before modal closes
+           primaryColor={lightDarkTheme.primaryText}
+              overlayColor={lightDarkTheme.overlayBackground}
+            
             />
           )}
         </Animated.View>

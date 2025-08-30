@@ -1,10 +1,9 @@
 import { View, Text, Linking } from "react-native";
 import React, { useCallback } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
-const LocationAddress = ({ address }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+const LocationAddress = ({ address, primaryColor, subWelcomeTextStyle }) => {
+ 
 
   const handleGetDirections = useCallback(() => {
     if (address) {
@@ -19,15 +18,14 @@ const LocationAddress = ({ address }) => {
       <MaterialCommunityIcons
         name="map-marker"
         size={20}
-        color={themeStyles.primaryText.color}
+        color={primaryColor}
       />
       <Text
         numberOfLines={1}
         onPress={address ? handleGetDirections : () => {}}
-        style={[
-          themeStyles.primaryText,
-          appFontStyles.subWelcomeText,
-          { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+        style={[ 
+          subWelcomeTextStyle,
+          { color: primaryColor, flexDirection: "row", width: "90%", flexWrap: "wrap" },
         ]}
       >
         {" "}

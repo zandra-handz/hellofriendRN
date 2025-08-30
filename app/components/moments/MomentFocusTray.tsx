@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import SwitchFriend from "../home/SwitchFriend";
 
@@ -15,8 +15,14 @@ type Props = {
 };
 
 const MomentFocusTray = ({
+  userId,
   welcomeTextStyle,
   primaryColor,
+  primaryBackground,
+  manualGradientColors,
+  subWelcomeTextStyle,
+  userCategories,
+  capsuleList,
   updateExistingMoment,
   paddingTop = 10,
   freezeCategory,
@@ -24,6 +30,7 @@ const MomentFocusTray = ({
   label,
   categoryId,
   friendId,
+  friendName,
   friendDefaultCategory,
 }: Props) => {
   const ICON_SIZE = 20;
@@ -65,8 +72,17 @@ const MomentFocusTray = ({
         </View>
         <View style={{ maxWidth: "50%" }}>
           <SelectedCategoryButton
-            welcomeTextStyle={welcomeTextStyle}
+          userId={userId}
             friendId={friendId}
+            friendName={friendName}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+         subWelcomeTextStyle={subWelcomeTextStyle}
+            manualGradientColors={manualGradientColors}
+            userCategories={userCategories}
+            capsuleList={capsuleList}
+            welcomeTextStyle={welcomeTextStyle}
+          
             friendDefaultCategory={friendDefaultCategory}
             maxWidth={"100%"}
             zIndex={3}

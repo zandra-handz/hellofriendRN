@@ -12,7 +12,7 @@ import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
+
 import { useHelloes } from "@/src/context/HelloesContext";
 import { useLocations } from "@/src/context/LocationsContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -28,8 +28,8 @@ const ScreenLocationView = () => {
   const currentIndex = route.params?.index ?? null;
   const userAddress = route?.params?.userAddress ?? null;
   const friendAddress = route?.params?.friendAddress ?? null;
-  const { lightDarkTheme} = useLDTheme();
-  const {  manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
@@ -45,10 +45,7 @@ const ScreenLocationView = () => {
   //   setStickToLocation,
   // } = useFriendLocationsContext();
 
-
-
-  
-    const { friendDash } = useFriendDash();
+  const { friendDash } = useFriendDash();
   const friendFaveIds = friendDash?.friend_faves?.locations;
   const { locationList } = useLocations();
 
@@ -57,27 +54,30 @@ const ScreenLocationView = () => {
     (hello) => hello.type === "in person"
   );
 
-    const { faveLocations, nonFaveLocations } = useFriendLocations({
-      inPersonHelloes: inPersonHelloes,
-      locationList: locationList,
-      friendFaveIds: friendFaveIds,
-    });
+  const { faveLocations, nonFaveLocations } = useFriendLocations({
+    inPersonHelloes: inPersonHelloes,
+    locationList: locationList,
+    friendFaveIds: friendFaveIds,
+  });
 
   useEffect(() => {
     if (!friendDash) {
-     return;
-      
+      return;
     }
 
     if (locationId) {
       setStickToLocation(locationId);
     }
-    
-
   }, [friendDash, locationId]);
- 
-  const { handleAddToFaves } = useAddToFaves({userId: user?.id, friendId: selectedFriend?.id })
-    const { handleRemoveFromFaves } = useRemoveFromFaves({userId: user?.id, friendId: selectedFriend?.id })
+
+  const { handleAddToFaves } = useAddToFaves({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
+  const { handleRemoveFromFaves } = useRemoveFromFaves({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
   // console.log(`current day: `, currentDay.day);
   // const numberOfDays = 14;
   // console.log(
@@ -85,36 +85,31 @@ const ScreenLocationView = () => {
   //   getNumOfDaysFrom(numberOfDays).day
   // );
 
-  const [ stickToLocation, setStickToLocation ] = useState(null);
+  const [stickToLocation, setStickToLocation] = useState(null);
 
-    const [ locationId, setLocationId ] = useState(null);
+  const [locationId, setLocationId] = useState(null);
 
-  const handleAddToFavesAndStick = ({locationId}) => {
-    console.log('adding!');
+  const handleAddToFavesAndStick = ({ locationId }) => {
+    console.log("adding!");
     if (!locationId) {
       return;
     }
 
-    handleAddToFaves({locationId: locationId});
+    handleAddToFaves({ locationId: locationId });
     // setStickToLocation(locationId);
-    setLocationId(locationId)
+    setLocationId(locationId);
+  };
 
-  }
-
-    const handleRemoveFromFavesAndStick = ({locationId}) => {
-          console.log('removin functino in parent');
+  const handleRemoveFromFavesAndStick = ({ locationId }) => {
+    console.log("removin functino in parent");
     if (!locationId) {
       return;
     }
 
-
-
-    handleRemoveFromFaves({locationId: locationId});
+    handleRemoveFromFaves({ locationId: locationId });
     setLocationId(locationId);
     // setStickToLocation(locationId);
-
-  }
-
+  };
 
   const selectedDay = useRef({ index: null, day: "" });
 
@@ -144,7 +139,7 @@ const ScreenLocationView = () => {
     });
   };
 
-  return ( 
+  return (
     <SafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
@@ -164,18 +159,31 @@ const ScreenLocationView = () => {
         children={(props) => (
           <LocationViewPage
             {...props}
-            faveLocations={faveLocations}
-            nonFaveLocations={nonFaveLocations}
+            userId={user?.id}
+            friendId={selectedFriend?.id}
+            friendName={selectedFriend?.name}
             currentDay={currentDay}
             selectedDay={selectedDay}
             handleSelectedDay={handleSelectedDay}
             onAddPress={handleAddToFavesAndStick}
             onRemovePress={handleRemoveFromFavesAndStick}
+            themeAheadOfLoading={themeAheadOfLoading}
+            manualGradientColors={manualGradientColors}
+            primaryColor={lightDarkTheme.primaryText}
+            primaryBackground={lightDarkTheme.primaryBackground}
+            welcomeTextStyle={appFontStyles.welcomeText}
+            subWelcomeTextStyle={appFontStyles.subWelcomeText}
           />
         )}
         type={"location"}
         footerData={{ userAddress, friendAddress }}
         onRightPressSecondAction={handleNavToSendText}
+        primaryColor={lightDarkTheme.primaryText}
+        overlayColor={lightDarkTheme.overlayBackground}
+        dividerStyle={lightDarkTheme.divider}
+        welcomeTextStyle={appFontStyles.welcomeText}
+        themeAheadOfLoading={themeAheadOfLoading}
+        manualGradientColors={manualGradientColors}
       />
     </SafeViewAndGradientBackground>
   );

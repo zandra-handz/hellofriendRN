@@ -10,11 +10,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { View, Text, StyleSheet, Alert, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
- import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
- import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const LocationSavingActions = ({
   userId,
@@ -26,26 +22,18 @@ const LocationSavingActions = ({
   favorite = false,
   handleAddToFaves,
   handleRemoveFromFaves,
-
   family = "Poppins-Bold",
-
   style,
+  themeAheadOfLoading,
+  primaryColor,
 }) => {
-  const { themeAheadOfLoading } = useFriendStyle();
- 
- 
-  const { themeStyles } = useGlobalStyle();
-
-  // const { handleAddToFaves } = useAddToFaves({userId: userId, friendId: friendId })
-  //   const { handleRemoveFromFaves } = useRemoveFromFaves({userId: userId, friendId: friendId })
-  
-  const navigation = useNavigation();
-
   const [isFave, setIsFave] = useState(location.isFave);
 
-const handleGoToLocationSaveScreen = useCallback(() => {
-  navigation.navigate("LocationCreate", { location });
-}, [navigation, location]);
+  const navigation = useNavigation();
+
+  const handleGoToLocationSaveScreen = useCallback(() => {
+    navigation.navigate("LocationCreate", { location });
+  }, [navigation, location]);
 
   useEffect(() => {
     if (favorite && location && location.id) {
@@ -53,69 +41,68 @@ const handleGoToLocationSaveScreen = useCallback(() => {
     }
   }, [location]);
 
-const handlePressAdd = useCallback(() => {
-  if (location && !isFave) {
-    Alert.alert(
-      `Bookmark`,
-      `Add ${location.title} to ${friendName}'s bookmarks?`,
-      [
-        { text: "Cancel", onPress: () => {} },
-        {
-          text: "Add",
-          onPress: () => {
-            addToFaves(location);
-            setIsFave(true);
+  const handlePressAdd = useCallback(() => {
+    if (location && !isFave) {
+      Alert.alert(
+        `Bookmark`,
+        `Add ${location.title} to ${friendName}'s bookmarks?`,
+        [
+          { text: "Cancel", onPress: () => {} },
+          {
+            text: "Add",
+            onPress: () => {
+              addToFaves(location);
+              setIsFave(true);
+            },
           },
-        },
-      ]
-    );
-  }
-}, [location, isFave, friendName, addToFaves]);
-
-const handlePressRemove = useCallback(() => {
-  if (location && isFave) {
-    Alert.alert(
-      `Remove`,
-      `Remove ${location.title} from ${friendName}'s bookmarks? (This can be readded, but will not be connected to any Helloes.)`,
-      [
-        { text: "Cancel", onPress: () => {} },
-        {
-          text: "Remove",
-          onPress: () => {
-            removeFromFaves(location.id);
-            setIsFave(false);
-          },
-        },
-      ]
-    );
-  }
-}, [location, isFave, friendName, removeFromFaves]);
-
-
-const removeFromFaves = useCallback(async () => {
-  if (friendId && location && isFave) {
-    console.log('removing!');
-    handleRemoveFromFaves({locationId: location?.id});
-  }
-}, [friendId, userId, location, isFave, handleRemoveFromFaves]);
-
-const addToFaves = useCallback(async () => {
-  try {
-    if (String(location.id).startsWith("temp")) {
-      console.log(
-        "location not a saved object yet/add code to ButtonSaveLocation pls"
+        ]
       );
-
-      setIsEditing(false);
-    } else {
-      if (friendId && location) {
-        handleAddToFaves({locationId: location?.id});
-      }
     }
-  } catch (error) {
-    console.error("Error saving new location in handleSave:", error);
-  }
-}, [location, friendId, userId, handleAddToFaves]);
+  }, [location, isFave, friendName, addToFaves]);
+
+  const handlePressRemove = useCallback(() => {
+    if (location && isFave) {
+      Alert.alert(
+        `Remove`,
+        `Remove ${location.title} from ${friendName}'s bookmarks? (This can be readded, but will not be connected to any Helloes.)`,
+        [
+          { text: "Cancel", onPress: () => {} },
+          {
+            text: "Remove",
+            onPress: () => {
+              removeFromFaves(location.id);
+              setIsFave(false);
+            },
+          },
+        ]
+      );
+    }
+  }, [location, isFave, friendName, removeFromFaves]);
+
+  const removeFromFaves = useCallback(async () => {
+    if (friendId && location && isFave) {
+      console.log("removing!");
+      handleRemoveFromFaves({ locationId: location?.id });
+    }
+  }, [friendId, userId, location, isFave, handleRemoveFromFaves]);
+
+  const addToFaves = useCallback(async () => {
+    try {
+      if (String(location.id).startsWith("temp")) {
+        console.log(
+          "location not a saved object yet/add code to ButtonSaveLocation pls"
+        );
+
+        setIsEditing(false);
+      } else {
+        if (friendId && location) {
+          handleAddToFaves({ locationId: location?.id });
+        }
+      }
+    } catch (error) {
+      console.error("Error saving new location in handleSave:", error);
+    }
+  }, [location, friendId, userId, handleAddToFaves]);
 
   const memoizedAddIcon = useMemo(
     () => (
@@ -123,10 +110,10 @@ const addToFaves = useCallback(async () => {
         name="plus-circle-outline"
         size={iconSize}
         opacity={fadeOpacity}
-        color={themeStyles.genericText.color}
+        color={primaryColor}
       />
     ),
-    [iconSize, fadeOpacity, themeStyles.genericText.color]
+    [iconSize, fadeOpacity, primaryColor]
   );
 
   const MemoizedFaveIcon = React.useMemo(
@@ -134,94 +121,80 @@ const addToFaves = useCallback(async () => {
       <MaterialCommunityIcons
         name={isFave ? "bookmark-remove" : "bookmark-plus-outline"}
         size={iconSize}
-        color={
-          isFave
-            ? themeAheadOfLoading.lightColor
-            : themeStyles.genericText.color
-        }
+        color={isFave ? themeAheadOfLoading.lightColor : primaryColor}
         style={{ marginRight: 4 }}
       />
     ),
-    [
-      isFave,
-      iconSize,
-      themeAheadOfLoading.lightColor,
-      themeStyles.genericText.color,
-    ]
+    [isFave, iconSize, themeAheadOfLoading.lightColor, primaryColor]
   );
-const memoizedContent = React.useMemo(() => {
-  if (!location) return null;
+  const memoizedContent = React.useMemo(() => {
+    if (!location) return null;
 
-  const isTemp = String(location.id).startsWith("temp");
+    const isTemp = String(location.id).startsWith("temp");
 
-  if (isTemp) {
-    return (
-      <Pressable
-        onPress={handleGoToLocationSaveScreen}
-        style={({ pressed }) => [
-          styles.container,
-          style,
-          { opacity: pressed ? 0.6 : 1 },
-        ]}
-      >
-        {memoizedAddIcon}
-        <Text
-          style={[
-            styles.saveText,
-            {
-              color: themeStyles.genericText.color,
-              fontFamily: family,
-              opacity: fadeOpacity,
-            },
+    if (isTemp) {
+      return (
+        <Pressable
+          onPress={handleGoToLocationSaveScreen}
+          style={({ pressed }) => [
+            styles.container,
+            style,
+            { opacity: pressed ? 0.6 : 1 },
           ]}
         >
-          Add
-        </Text>
-      </Pressable>
+          {memoizedAddIcon}
+          <Text
+            style={[
+              styles.saveText,
+              {
+                color: primaryColor,
+                fontFamily: family,
+                opacity: fadeOpacity,
+              },
+            ]}
+          >
+            Add
+          </Text>
+        </Pressable>
+      );
+    }
+
+    // else not temp
+    return (
+      <View style={styles.container}>
+        <Pressable
+          onPress={isFave ? handlePressRemove : handlePressAdd}
+          style={({ pressed }) => ({
+            flexDirection: "row",
+            alignItems: "center",
+            opacity: pressed ? 0.6 : 1,
+          })}
+        >
+          {MemoizedFaveIcon}
+          {isFave ? (
+            <Text style={{ color: primaryColor }}>Remove</Text>
+          ) : (
+            <Text style={{ color: primaryColor }}>Bookmark</Text>
+          )}
+        </Pressable>
+      </View>
     );
-  }
+  }, [
+    location,
+    style,
+    memoizedAddIcon,
+    primaryColor,
+    family,
+    fadeOpacity,
+    isFave,
+    handlePressAdd,
+    handlePressRemove,
+    MemoizedFaveIcon,
+    primaryColor,
+    handleGoToLocationSaveScreen,
+  ]);
 
-  // else not temp
-  return (
-    <View style={styles.container}>
-      <Pressable
-        onPress={isFave ? handlePressRemove : handlePressAdd}
-        style={({ pressed }) => ({
-          flexDirection: "row",
-          alignItems: "center",
-          opacity: pressed ? 0.6 : 1,
-        })}
-      >
-        {MemoizedFaveIcon}
-        {isFave ? (
-          <Text style={[themeStyles.primaryText]}>Remove</Text>
-        ) : (
-          <Text style={[themeStyles.primaryText]}>Bookmark</Text>
-        )}
-      </Pressable>
-    </View>
-  );
-}, [
-  location,
-  style,
-  memoizedAddIcon,
-  themeStyles.genericText.color,
-  family,
-  fadeOpacity,
-  isFave,
-  handlePressAdd,
-  handlePressRemove,
-  MemoizedFaveIcon,
-  themeStyles.primaryText,
-  handleGoToLocationSaveScreen,
-]);
-
-
-  return (
-    <View>
-      {memoizedContent}
-    </View>
-  );
+  return <View>{memoizedContent}</View>;
 };
 
 const styles = StyleSheet.create({

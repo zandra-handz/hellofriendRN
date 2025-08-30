@@ -2,8 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import React from "react";
 import {
   ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet, 
   View,
   Text,
   AccessibilityInfo,

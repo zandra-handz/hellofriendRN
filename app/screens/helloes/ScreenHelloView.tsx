@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useHelloes } from "@/src/context/HelloesContext"; 
+import { useHelloes } from "@/src/context/HelloesContext";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage";
@@ -16,14 +16,15 @@ const ScreenHelloView = () => {
   const { selectedFriend } = useSelectedFriend();
   const { helloesList } = useHelloes();
   const { lightDarkTheme } = useLDTheme();
-     const {   manualGradientColors } = useGlobalStyle();
- 
-   const { themeAheadOfLoading } = useFriendStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useFullHelloes({ friendId: selectedFriend?.id, indexNeeded: startingIndex });
-
- 
+    useFullHelloes({
+      friendId: selectedFriend?.id,
+      indexNeeded: startingIndex,
+    });
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
 
@@ -41,44 +42,60 @@ const ScreenHelloView = () => {
   //     setHelloesListData(helloesListFull);
   //   }
   // }, [inPersonFilter]);
-    // const [ totalHelloesCount, setTotalHelloesCount ] = helloesList?.length || 0;
+  // const [ totalHelloesCount, setTotalHelloesCount ] = helloesList?.length || 0;
 
-    const helloesDataFiltered = useMemo(() => {
+  const helloesDataFiltered = useMemo(() => {
     return inPersonFilter
       ? helloesListFull.filter((hello) => hello.type === "in person")
       : helloesListFull;
   }, [helloesListFull, inPersonFilter]);
 
- const totalHelloesCount = useMemo(() => {
-  return inPersonFilter && helloesDataFiltered && helloesDataFiltered.length > 0
-  ? helloesDataFiltered.length
-  : helloesList && helloesList.length > 0 ?
-  helloesList.length : 0;
-
- }, [inPersonFilter, helloesDataFiltered, helloesList]);
+  const totalHelloesCount = useMemo(() => {
+    return inPersonFilter &&
+      helloesDataFiltered &&
+      helloesDataFiltered.length > 0
+      ? helloesDataFiltered.length
+      : helloesList && helloesList.length > 0
+        ? helloesList.length
+        : 0;
+  }, [inPersonFilter, helloesDataFiltered, helloesList]);
 
   return (
-    <SafeViewAndGradientBackground 
-         startColor={manualGradientColors.lightColor}
+    <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
-    
-    
-    style={{ flex: 1 }}>
+      style={{ flex: 1 }}
+    >
       <CarouselSliderInfinite
-      totalItemCount={totalHelloesCount}
-      isFiltered={inPersonFilter}
+        totalItemCount={totalHelloesCount}
+        isFiltered={inPersonFilter}
         initialIndex={currentIndex} // should this be startingIndex?
-       // data={helloesListData}
+        // data={helloesListData}
         data={helloesDataFiltered}
-        children={HelloViewPage}
+        children={(props) => (
+          <HelloViewPage
+            welcomeTextStyle={appFontStyles.welcomeText}
+            primaryColor={lightDarkTheme.primaryText}
+            lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+            primaryBackground={lightDarkTheme.primaryBackground}
+            overlayColor={lightDarkTheme.overlayBackground}
+            {...props}
+          />
+        )}
         isFetchingNextPage={isFetchingNextPage}
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         useButtons={false}
+        primaryColor={lightDarkTheme.primaryText}
+        overlayColor={lightDarkTheme.overlayBackground}
+        dividerStyle={lightDarkTheme.divider}
+        welcomeTextStyle={lightDarkTheme.welcomeText}
+        themeAheadOfLoading={themeAheadOfLoading}
+        manualGradientColors={manualGradientColors}
       />
     </SafeViewAndGradientBackground>
   );

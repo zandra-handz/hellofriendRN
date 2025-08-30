@@ -1,30 +1,31 @@
-import React, { useState }  from "react";
-import { View,  StyleSheet } from "react-native";
- 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
+
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import {  MaterialIcons } from "@expo/vector-icons";
- 
-import DualLocationSearcher from "./DualLocationSearcher"; 
+import { MaterialIcons } from "@expo/vector-icons";
+
+import DualLocationSearcher from "./DualLocationSearcher";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 interface Props {
   isVisible: boolean; // = is editing address
   closeModal: () => void;
-      addressSetter: React.Dispatch<React.SetStateAction<string | null>>; // the set of a useState
+  addressSetter: React.Dispatch<React.SetStateAction<string | null>>; // the set of a useState
 }
 
-const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addressSetter }) => {
-  const { themeStyles  } = useGlobalStyle();
-  
+const SelectFriendAddressModal: React.FC<Props> = ({
+  isVisible,
+  closeModal,
+  addressSetter,
+  primaryColor,
+  primaryBackground,
+  welcomeTextStyle,
+  manualGradientColors,
+}) => {
+  const { friendAddresses } = useStartingFriendAddresses();
 
-  const { 
-    friendAddresses, 
-  } = useStartingFriendAddresses();
+  const [isExistingAddress, setIsExistingAddress] = useState(false);
 
- 
-     const [isExistingAddress, setIsExistingAddress] = useState(false);
-
-      const handleCheckIfExistingAndSelect = (address) => {
+  const handleCheckIfExistingAndSelect = (address) => {
     setIsExistingAddress(false); //to clear
     const isExisting = friendAddresses.find(
       (menuAddress) =>
@@ -32,46 +33,52 @@ const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addr
     );
 
     if (isExisting) {
-        addressSetter(isExisting); 
-      console.log(`isExisting set friend address in selector via parent function`, address);
+      addressSetter(isExisting);
+      console.log(
+        `isExisting set friend address in selector via parent function`,
+        address
+      );
     } else {
-   addressSetter(address);
+      addressSetter(address);
       console.log(`set friend address in selector via parent function`);
     }
     setIsExistingAddress(!!isExisting);
   };
 
-
-    const handleAddressSelect = (address) => {
+  const handleAddressSelect = (address) => {
     if (address) {
       handleCheckIfExistingAndSelect(address);
-  
+
       closeModal();
     }
   };
 
-  return ( 
-      <ModalWithGoBack
-        isVisible={isVisible}
-        headerIcon={
-          <MaterialIcons
+  return (
+    <ModalWithGoBack
+      isVisible={isVisible}
+      headerIcon={
+        <MaterialIcons
           name={"edit-location-alt"}
-               size={30}
-            color={themeStyles.modalIconColor.color}
-          />
-        }
-        questionText="Select address"
-        children={
-          <View style={styles.bodyContainer}>
-
+          size={30}
+          color={primaryColor}
+        />
+      }
+      questionText="Select address"
+      children={
+        <View style={styles.bodyContainer}>
           <DualLocationSearcher
-          onPress={handleAddressSelect}
-          locationListDrilledOnce={friendAddresses}/>
- 
-          </View>
-        } 
-        onClose={closeModal} 
-      /> 
+            onPress={handleAddressSelect}
+            locationListDrilledOnce={friendAddresses}
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            welcomeTextStyle={welcomeTextStyle}
+            manualGradientColors={manualGradientColors}
+            welcomeTextStyle={welcomeTextStyle}
+          />
+        </View>
+      }
+      onClose={closeModal}
+    />
   );
 };
 

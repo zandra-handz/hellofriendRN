@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
- 
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const ButtonBaseSpecialSave = ({
@@ -8,18 +8,13 @@ const ButtonBaseSpecialSave = ({
   primaryColor,
   onPress,
   label = "ADD NEW IMAGE",
-  labelSize = 20,
   height = 60,
-  fontFamily = "Poppins-Regular",
-  maxHeight = 90,
   imageSize = 90,
   image = require("@/app/assets/shapes/redheadcoffee.png"),
   imagePositionHorizontal = 0,
   imagePositionVertical = 8,
   dynamicPadding = 5,
   labelPlacement = "center",
-  labelPaddingHorizontal = 10,
-  borderColor = "transparent",
   borderRadius = 10,
   borderBottomLeftRadius = 10,
   borderBottomRightRadius = 10,
@@ -27,7 +22,7 @@ const ButtonBaseSpecialSave = ({
   borderTopLeftRadius = 0,
   isDisabled = true,
 }) => {
-  const {   appFontStyles } = useGlobalStyle();
+  const { appFontStyles } = useGlobalStyle();
 
   return (
     <Pressable
@@ -35,29 +30,11 @@ const ButtonBaseSpecialSave = ({
       style={[
         styles.container,
         {
-          // borderColor: borderColor,
           borderRadius: borderRadius,
-          // borderBottomLeftRadius: borderBottomLeftRadius,
-          // borderBottomRightRadius: borderBottomRightRadius,
-          // borderTopRightRadius: borderTopRightRadius,
-          // borderTopLeftRadius: borderTopLeftRadius,
-          height: height,   
-      
-        
+          height: height,
         },
       ]}
     >
-      {/* <LinearGradient
-        colors={[
-          isDisabled ? "gray" : manualGradientColors.darkColor,
-          isDisabled ? "gray" : manualGradientColors.lightColor,
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          ...StyleSheet.absoluteFillObject,
-        }}
-      /> */}
       <View
         style={{
           flex: 1,
@@ -67,8 +44,8 @@ const ButtonBaseSpecialSave = ({
           alignItems: "center",
           height: "100%",
           width: 100,
-          right: 0, 
-bottom: 0,
+          right: 0,
+          bottom: 0,
           flex: 1,
           position: "absolute",
           top: imagePositionVertical,
@@ -78,7 +55,7 @@ bottom: 0,
           borderBottomRightRadius: borderBottomRightRadius - dynamicPadding,
           borderTopRightRadius: borderTopRightRadius - dynamicPadding,
           borderTopLeftRadius: borderTopLeftRadius - dynamicPadding,
-         // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
         }}
       >
         {image && (
@@ -105,14 +82,14 @@ bottom: 0,
         }}
       >
         <Text
-          style={[ 
+          style={[
             appFontStyles.welcomeText,
             {
-              color: primaryColor || 'hotpink',
+              color: primaryColor || "hotpink",
               fontSize: 20,
               lineHeight: 20,
               fontFamily: "Poppins-Bold",
-              color: manualGradientColors?.homeDarkColor || 'orange',
+              color: manualGradientColors?.homeDarkColor || "orange",
             },
           ]}
         >
@@ -120,13 +97,12 @@ bottom: 0,
         </Text>
         <Text
           style={[
-        
             appFontStyles.subWelcomeText,
             {
-              color: primaryColor || 'hotpink',
+              color: primaryColor || "hotpink",
               fontSize: 14,
               fontFamily: "Poppins-Bold",
-              color: manualGradientColors?.homeDarkColor || 'orange',
+              color: manualGradientColors?.homeDarkColor || "orange",
             },
           ]}
         >
@@ -143,12 +119,11 @@ const styles = StyleSheet.create({
     //  flex: 1,
     width: "100%",
     alignContent: "center",
-  //  borderWidth: StyleSheet.hairlineWidth,
+    //  borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     overflow: "hidden",
     zIndex: 5000,
     elevation: 5000,
-    
   },
 });
 

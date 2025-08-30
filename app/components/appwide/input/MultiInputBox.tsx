@@ -1,6 +1,5 @@
-import { View, Text, TextInput } from "react-native";
+import { View, TextInput } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 interface Props {
   value: string;
@@ -9,9 +8,12 @@ interface Props {
   autoFocus: boolean; //triggers autofocus when outer modal is visible
 }
 
-const MultiInputBox: React.FC<Props> = ({ value, onChangeText, autoFocus }) => {
-  const { themeStyles } = useGlobalStyle();
-
+const MultiInputBox: React.FC<Props> = ({
+  value,
+  onChangeText,
+  autoFocus,
+  primaryColor = "orange",
+}) => {
   const textInputRef = useRef(value);
 
   const [triggerAutoFocus, setTriggerAutoFocus] = useState(false);
@@ -24,7 +26,7 @@ const MultiInputBox: React.FC<Props> = ({ value, onChangeText, autoFocus }) => {
         if (textInputRef && textInputRef.current) {
           textInputRef.current.focus();
         }
-      }, 100); // adjust delay (in ms) as needed
+      }, 100);
 
       return () => clearTimeout(timeout); // cleanup if autoFocus changes early
     }
@@ -35,9 +37,7 @@ const MultiInputBox: React.FC<Props> = ({ value, onChangeText, autoFocus }) => {
       <TextInput
         ref={textInputRef}
         autoFocus={triggerAutoFocus}
-        style={[
-          themeStyles.genericText, 
-        ]}
+        style={{ color: primaryColor }}
         value={value}
         onChangeText={onChangeText}
         multiline

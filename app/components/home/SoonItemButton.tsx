@@ -28,9 +28,9 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   onPress = () => console.log("Soon Item button single press"),
   onDoublePress = () => console.log("Soon Item button dounle press"),
   disabled = false,
-  textColor = "white",
-  backgroundColor = "red",
-  themeStyles,
+  textColor = "white", 
+  
+  overlayColor = 'hotpink',
   manualGradientColors,
 }) => {
   const lastPress = useRef(0);
@@ -77,7 +77,7 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
     >
       <LinearGradient
         colors={[
-          themeStyles.overlayBackgroundColor.backgroundColor,
+        overlayColor,
           manualGradientColors.homeDarkColor,
         ]}
         start={{ x: 0, y: 1 }}

@@ -62,15 +62,21 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           onPress={onPress}
           borderRadius={10}
           height={"100%"}
-          borderColor="black"
+          manualGradientColors={manualGradientColors}
+          welcomeTextStyle={welcomeTextStyle}
+          subWelcomeTextStyle={subWelcomeTextStyle}
+          primaryColor={primaryColor}
+          overlayColor={primaryOverlayColor}
+          primaryBackground={primaryBackgroundColor}
+          // borderColor="black"
         />
       )}
       {isFriendSelected && (
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
-          userId={userId}
-          userCategories={userCategories}
-          manualGradientColors={manualGradientColors}
+            userId={userId}
+            userCategories={userCategories}
+            manualGradientColors={manualGradientColors}
             appColorsStyle={appColorsStyle}
             friendStyle={friendStyle}
             primaryColor={primaryColor}

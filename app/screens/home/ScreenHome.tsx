@@ -418,6 +418,7 @@ const { fontStyles } = useFontStyles(appFontStyles);
             : lightDarkTheme.primaryBackground
         }
         textColor={lightDarkTheme.primaryText}
+        subWelcomeTextStyle={appFontStyles.subWelcomeTextStyle}
         dividerStyle={lightDarkTheme.divider}
         userId={userId}
         friendId={friendId}

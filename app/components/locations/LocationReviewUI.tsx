@@ -1,10 +1,7 @@
-import React, { useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
 import StarsRatingUI from "./StarsRatingUI";
-
-// import { useLocations } from "@/src/context/LocationsContext";
 
 interface Review {
   author_name: string;
@@ -26,22 +23,7 @@ const LocationReviewUI: React.RC<Props> = ({
   textColor = "black",
   formatDate,
 }) => {
-  // const { loadingAdditionalDetails } = useLocations();
-
-  //   const formatDate = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   return date.toLocaleDateString();
-
-  // };
-
- 
-const formattedDate = formatDate(review.time);
-
-  // if (loadingAdditionalDetails) {
-  //   return (
-  //     <LoadingPage loading={loadingAdditionalDetails} spinnerType="wander" />
-  //   );
-  // }
+  const formattedDate = formatDate(review.time);
 
   return (
     <View style={[styles.review, { backgroundColor: backgroundColor }]}>

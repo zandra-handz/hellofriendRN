@@ -4,37 +4,28 @@
 //<Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
 //midpoints screen is crashing right now so commented out
 
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   Platform,
   Keyboard,
   Text,
-  Dimensions,
   FlatList,
+  Alert,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
- 
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
-import FocusedLocationCardUI from "./FocusedLocationCardUI"; 
+import FocusedLocationCardUI from "./FocusedLocationCardUI";
 import { useLocations } from "@/src/context/LocationsContext";
 
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 
 import DualLocationSearcher from "./DualLocationSearcher";
- 
 
 const LocationsMapView = ({
   userAddress,
@@ -44,22 +35,27 @@ const LocationsMapView = ({
   nonFaveLocations,
   currentDayDrilledOnce,
   bermudaCoordsDrilledOnce,
+  themeAheadOfLoading,
+  primaryColor,
+  overlayColor,
+  primaryBackground,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+  manualGradientColors,
 }) => {
   const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
-console.log(`past helloes`,pastHelloLocations);
+  console.log(`past helloes`, pastHelloLocations);
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
 
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
- 
+
   const { locationList } = useLocations();
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
-  const [focusedLocation, setFocusedLocation] = useState(null); 
+  const [focusedLocation, setFocusedLocation] = useState(null);
 
   const listItemIconSize = 15;
   const listItemIconPadding = 6;
@@ -72,13 +68,13 @@ console.log(`past helloes`,pastHelloLocations);
   // use item.isFave (property added when sorting in parent screen) to differentiate UI for saved locations
   const renderLocationItem = useCallback(
     ({ item, index }) => (
-      <TouchableOpacity
+      <Pressable
         style={{
           height: 60,
           padding: 10,
           width: "100%",
           flexDirection: "row",
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          backgroundColor: overlayColor,
           marginVertical: 0.5,
           justifyContent: "space-between",
         }}
@@ -87,11 +83,11 @@ console.log(`past helloes`,pastHelloLocations);
         <View
           style={{ flexDirection: "column", alignText: "left", flexShrink: 1 }}
         >
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
             {item.title}
           </Text>
 
-          <Text style={[themeStyles.primaryText, { fontSize: 11 }]}>
+          <Text style={{ color: primaryColor, fontSize: 11 }}>
             {item.address}
           </Text>
         </View>
@@ -104,7 +100,7 @@ console.log(`past helloes`,pastHelloLocations);
                 height: listItemIconTwoDiameter,
                 width: listItemIconTwoDiameter,
                 borderRadius: listItemIconTwoDiameter / 2,
-                backgroundColor: themeStyles.primaryText.color,
+                backgroundColor: primaryColor,
               }}
             >
               <View
@@ -139,7 +135,7 @@ console.log(`past helloes`,pastHelloLocations);
                 height: listItemIconDiameter,
                 width: listItemIconDiameter,
                 borderRadius: listItemIconDiameter / 2,
-                backgroundColor: themeStyles.primaryText.color,
+                backgroundColor: primaryColor,
               }}
             >
               <MaterialCommunityIcons
@@ -151,7 +147,7 @@ console.log(`past helloes`,pastHelloLocations);
             </View>
           )}
         </View>
-      </TouchableOpacity>
+      </Pressable>
     ),
     [faveLocations, nonFaveLocations]
   );
@@ -175,29 +171,24 @@ console.log(`past helloes`,pastHelloLocations);
     let index = combinedLocations.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
     );
- 
 
     if (index !== -1) {
-      console.log('LOCATION EXISTS!');
+      console.log("LOCATION EXISTS!");
       matchedLocation = { ...combinedLocations[index], matchedIndex: index };
-       setFocusedLocation(matchedLocation);
-    } 
-    
-    else {
+      setFocusedLocation(matchedLocation);
+    } else {
       // index = locationList.findIndex(
       //   (location) =>
       //     String(location.address) === String(locationDetails.address)
       // );
 
-
       //if no match is found, findIndex returns -1, whereas if index 0 will return 0
       // if (index !== -1) {
       //   matchedLocation = { ...locationList[index], matchedIndex: index };
-        locationIsOutsideFaves = true;
-          setFocusedLocation( locationDetails);
+      locationIsOutsideFaves = true;
+      setFocusedLocation(locationDetails);
       // }
-    } 
-  
+    }
 
     // return {
     //   matchedLocation: matchedLocation || locationDetails,
@@ -230,30 +221,39 @@ console.log(`past helloes`,pastHelloLocations);
   };
 
   const handleGoToLocationViewScreen = () => {
-   
-  if (
-  typeof focusedLocation.matchedIndex === "number" &&
-  focusedLocation.matchedIndex !== -1
-) {
-  
-    navigation.navigate("LocationView", {
-      startingLocation: focusedLocation,
-      index: focusedLocation.matchedIndex,
-      userAddress: userAddress,
-      friendAddress: friendAddress,
-    });
-  } else {
-    navigation.navigate("UnsavedLocationView", {
-      unsavedLocation: focusedLocation,
-      userAddress: userAddress,
-      friendAddress: friendAddress,
-    })
+    if (
+      typeof focusedLocation.matchedIndex === "number" &&
+      focusedLocation.matchedIndex !== -1
+    ) {
+      navigation.navigate("LocationView", {
+        startingLocation: focusedLocation,
+        index: focusedLocation.matchedIndex,
+        userAddress: userAddress,
+        friendAddress: friendAddress,
+      });
+    } else {
+      navigation.navigate("UnsavedLocationView", {
+        unsavedLocation: focusedLocation,
+        userAddress: userAddress,
+        friendAddress: friendAddress,
+      });
+    }
+  };
+const handleGoToMidpointLocationSearchScreen = () => {
+  if (!userAddress?.id || !friendAddress?.id) {
+    Alert.alert(
+      "Missing address",
+      "Both you and your friend need to have an address set before searching."
+    );
+    return; // stop here
   }
-  };
 
-  const handleGoToMidpointLocationSearchScreen = () => {
-    navigation.navigate("MidpointLocationSearch", { userAddress: userAddress, friendAddress: friendAddress});
-  };
+  navigation.navigate("MidpointLocationSearch", {
+    userAddress,
+    friendAddress,
+  });
+};
+
 
   //i had taken this out but brought it back in because if i use sorted
   //list for the bottom scroll, it doesn't update when a new favorite is added;
@@ -304,8 +304,6 @@ console.log(`past helloes`,pastHelloLocations);
     }
   };
 
- 
-
   const handlePress = (location) => {
     if (location) {
       handleLocationAlreadyExists(location, true); //true is for addMessage
@@ -313,7 +311,6 @@ console.log(`past helloes`,pastHelloLocations);
       //   (item) => item.id === location.id
       // );
       // setAppOnlyLocationData(appOnly || null); // this is just the id... ??????????
-  
     }
   };
 
@@ -489,7 +486,7 @@ console.log(`past helloes`,pastHelloLocations);
             alignItems: "center",
             justifyContent: "flex-start",
             padding: 5,
-            width: 'auto',
+            width: "auto",
             flex: 1,
           }}
         >
@@ -504,7 +501,7 @@ console.log(`past helloes`,pastHelloLocations);
                 backgroundColor: "yellow",
                 padding: 4,
                 borderRadius: 20,
-                fontSize: 12, 
+                fontSize: 12,
               }}
             >
               {location.helloCount}
@@ -521,16 +518,13 @@ console.log(`past helloes`,pastHelloLocations);
     );
   });
 
-
- 
-
   const renderLocationsMap = (locations) => (
     <>
       <MapView
         {...(Platform.OS === "android" && { provider: PROVIDER_GOOGLE })}
         ref={mapRef}
         liteMode={isKeyboardVisible ? true : false}
-        style={[ { width: '100%', height: isKeyboardVisible ? "100%" : "100%" }]}
+        style={[{ width: "100%", height: isKeyboardVisible ? "100%" : "100%" }]}
         initialRegion={currentRegion || null}
         scrollEnabled={isKeyboardVisible ? false : true}
         enableZoomControl={true}
@@ -544,7 +538,7 @@ console.log(`past helloes`,pastHelloLocations);
         ))}
       </MapView>
 
-{/* 
+      {/* 
       {!isKeyboardVisible && (
         <TouchableOpacity
           style={[
@@ -600,46 +594,47 @@ console.log(`past helloes`,pastHelloLocations);
             <DualLocationSearcher
               onPress={handlePress}
               locationListDrilledOnce={locationList}
+              primaryColor={primaryColor}
+              primaryBackground={primaryBackground}
+              welcomeTextStyle={welcomeTextStyle}
+              manualGradientColors={manualGradientColors}
             />
           </View>
           {!isKeyboardVisible && (
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.midpointsButton,
                 {
                   zIndex: 7000,
-                  backgroundColor:
-                    themeStyles.genericTextBackground.backgroundColor,
+                  backgroundColor: primaryBackground,
                 },
               ]}
               onPress={handleGoToMidpointLocationSearchScreen}
             >
-              <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
+              <Text style={[styles.zoomOutButtonText, { color: primaryColor }]}>
                 Midpoints
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
 
           {!isKeyboardVisible && (
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.zoomOutButton,
                 {
                   zIndex: 7000,
-                  backgroundColor:
-                    themeStyles.genericTextBackground.backgroundColor,
+                  backgroundColor: primaryBackground,
                 },
               ]}
               onPress={fitToMarkers}
             >
-              <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
+              <Text style={[styles.zoomOutButtonText, { color: primaryColor }]}>
                 Show All
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
 
-
-{/* performance seems worse using the separated component below */}
+          {/* performance seems worse using the separated component below */}
           {/* <MapViewWithHelloes
             ref={mapRef}
             locations={pastHelloLocations}
@@ -666,11 +661,15 @@ console.log(`past helloes`,pastHelloLocations);
                 focusedLocation={focusedLocation}
                 onSendPress={handleGoToLocationSendScreen}
                 onViewPress={handleGoToLocationViewScreen}
+                manualGradientColors={manualGradientColors}
+                primaryColor={primaryColor}
+                primaryBackground={primaryBackground}
+                welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
               />
               <View
                 style={{
-                  backgroundColor:
-                    themeStyles.overlayBackgroundColor.backgroundColor,
+                  backgroundColor: overlayColor,
                   // flex: 1,
                   height: 230,
                   width: "100%",

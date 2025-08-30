@@ -1,78 +1,75 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, Keyboard, Pressable } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import MultilineInputModal from "../headers/MultilineInputModal";
-// import useLocationFunctions from "../hooks/useLocationFunctions";
+import React, { useState  } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import MultilineInputModal from "../headers/MultilineInputModal"; 
 import Animated from "react-native-reanimated";
-import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
+// import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 
 import HoursSelector from "./HoursSelector";
 
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({
   messageData,
-  currentDay,
-  finalMessage,
+  currentDay, 
   handleSetUserMessage,
   handleDaySelect,
-  style,
+ 
   additionalDetails,
   location,
   handleGetDirections,
 
   initiallySelectedDay,
+  themeAheadOfLoading,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+  primaryColor,
+  primaryBackground,
 }) => {
   const [multilineInputVisible, setMultilineInputVisible] = useState(false);
 
-  const { themeStyles, appContainerStyles, appSpacingStyles, appFontStyles } =
-    useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
-
  
-  const { checkIfOpen } = useLocationDetailFunctions();
+  // const { checkIfOpen } = useLocationDetailFunctions();
  
 
-  const renderOpenStatus = (data) => {
-    let isOpenNow;
-    isOpenNow = checkIfOpen(data);
+  // const renderOpenStatus = (data) => {
+  //   let isOpenNow;
+  //   isOpenNow = checkIfOpen(data);
 
-    return (
-      <View
-        style={[
-          {
-            marginRight: "2%",
-            borderWidth: 2,
-            borderColor: isOpenNow
-              ? `lightgreen`
-              : isOpenNow === false
-                ? `red`
-                : "transparent",
-            backgroundColor:
-              themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+  //   return (
+  //     <View
+  //       style={[
+  //         {
+  //           marginRight: "2%",
+  //           borderWidth: 2,
+  //           borderColor: isOpenNow
+  //             ? `lightgreen`
+  //             : isOpenNow === false
+  //               ? `red`
+  //               : "transparent",
+  //           backgroundColor:
+  //             themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
 
-            width: "auto",
-            paddingHorizontal: "3%",
-            paddingVertical: "1%",
-            borderRadius: 20,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            themeStyles.genericText,
-            {
-              fontSize: 12,
-              fontWeight: "bold",
-            },
-          ]}
-        >
-          {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
-        </Text>
-      </View>
-    );
-  };
+  //           width: "auto",
+  //           paddingHorizontal: "3%",
+  //           paddingVertical: "1%",
+  //           borderRadius: 20,
+  //         },
+  //       ]}
+  //     >
+  //       <Text
+  //         style={[
+  //           themeStyles.genericText,
+  //           {
+  //             fontSize: 12,
+  //             fontWeight: "bold",
+  //           },
+  //         ]}
+  //       >
+  //         {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
 
   return (
     <Animated.View // taken from the ViewPages to match the spacing/style. could add an animation here I suppose
@@ -91,9 +88,9 @@ const LocationInviteBody = ({
     >
       <View
         style={[
-          appContainerStyles.talkingPointCard,
+          styles.talkingPointCard,
           {
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: primaryBackground,
           },
         ]}
       >
@@ -110,10 +107,9 @@ const LocationInviteBody = ({
         >
           <Text
             numberOfLines={2}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.welcomeText,
-              { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+            style={[ 
+              welcomeTextStyle,
+              { color: primaryColor, flexDirection: "row", width: "90%", flexWrap: "wrap" },
             ]}
           >
             {location.title}
@@ -121,10 +117,9 @@ const LocationInviteBody = ({
           <Text
             numberOfLines={1}
             onPress={handleGetDirections}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.subWelcomeText,
-              { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+            style={[ 
+             subWelcomeTextStyle,
+              { color: primaryColor, flexDirection: "row", width: "90%", flexWrap: "wrap" },
             ]}
           >
             {" "}
@@ -139,6 +134,9 @@ const LocationInviteBody = ({
                 onDaySelect={handleDaySelect}
                 daysHrsData={additionalDetails?.hours?.weekday_text}
                 initiallySelectedDay={initiallySelectedDay.index}
+                welcomeTextStyle={welcomeTextStyle}
+                primaryColor={primaryColor}
+                primaryBackground={primaryBackground}
               />
             </>
           )}
@@ -157,13 +155,13 @@ const LocationInviteBody = ({
           >
             <MaterialCommunityIcons
               name={"pencil"}
-              size={appSpacingStyles.modalHeaderIconSize}
-              color={themeStyles.footerIcon.color}
+              size={30}
+              color={primaryColor}
               style={{marginRight: 10}}
             />
 
             <Text
-              style={[themeStyles.primaryText, appFontStyles.welcomeText, { fontSize: 20}]}
+              style={[ welcomeTextStyle, { color: primaryColor, fontSize: 20}]}
             >
               Edit message
             </Text>
@@ -176,6 +174,7 @@ const LocationInviteBody = ({
           closeModal={() => setMultilineInputVisible(false)}
           value={messageData.userMessage}
           onChangeText={handleSetUserMessage}
+          primaryColor={primaryColor}
         />
       )}
     </Animated.View>
@@ -183,48 +182,14 @@ const LocationInviteBody = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
-  },
-  selectFriendContainer: {
-    width: "100%",
-    justifyContent: "center",
-    minHeight: 30,
-    maxHeight: 30,
-    height: 30,
-  },
-  locationDetailsContainer: {
-    borderRadius: 8,
-    marginVertical: "2%",
-  },
-  locationTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  locationAddress: {
-    fontSize: 16,
-  },
-  previewContainer: {
+  talkingPointCard: { // not actually using for large talking point anymore
+    // used with: backgroundColor: themeStyles.primaryBackground.backgroundColor,
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 40,
     width: "100%",
-    height: "auto",
-    flex: 1,
-    flexShrink: 1,
-    marginBottom: 44, // temp to keep above button
-  },
-  previewTitle: {
-    fontSize: 16,
-    marginBottom: "4%",
-  },
-  textInput: {
-    textAlign: "top",
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 10,
-    height: 100,
+    height: "100%",
+    zIndex: 1,
+    overflow: "hidden",
   },
 });
 

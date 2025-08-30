@@ -1,49 +1,49 @@
-import { View  } from "react-native";
+import { View } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
-import { useWindowDimensions } from "react-native"; 
+import { useWindowDimensions } from "react-native";
 import Animated, {
   useAnimatedRef,
-  runOnJS,
   useAnimatedScrollHandler,
   useSharedValue,
-  withSpring,
   withTiming,
-} from "react-native-reanimated"; 
-import ItemFooter from "../headers/ItemFooter"; 
- 
-import CarouselItemModal from "./carouselItemModal"; 
+} from "react-native-reanimated";
+import ItemFooter from "../headers/ItemFooter";
 
+import CarouselItemModal from "./carouselItemModal";
+import { manualInitialDisplaySpans } from "@sentry/react-native/dist/js/tracing";
 
 type Props = {
   initialIndex: number;
   data: object[];
   useButtons: boolean;
-  
-
 };
 
 const CarouselSlider = ({
-  initialIndex, 
+  initialIndex,
   data,
-  useButtons=true,
+  useButtons = true,
   children: Children,
   onRightPress,
-  onRightPressSecondAction, 
+  onRightPressSecondAction,
   stickToLocation,
   setStickToLocation,
- 
+
   footerData,
+  primaryColor,
+  overlayColor,
+  dividerStyle,
+  welcomeTextStyle,
+  themeAheadOfLoading,
+  manualGradientColors,
 }: Props) => {
-  const { height, width } = useWindowDimensions(); 
- 
+  const { height, width } = useWindowDimensions();
+
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2;
   const flatListRef = useAnimatedRef(null);
 
   const [itemModalVisible, setItemModalVisible] = useState(false);
-
- 
 
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -64,16 +64,14 @@ const CarouselSlider = ({
 
   useEffect(() => {
     if (stickToLocation) {
-       console.log("scrolling to index for location id", stickToLocation);
+      console.log("scrolling to index for location id", stickToLocation);
 
       const newIndex = data.findIndex((item) => item.id === stickToLocation);
       console.log("scrolling to index", newIndex);
 
-      if ((newIndex >= 0) && newIndex < data.length) {
-
-
-     scrollToIndexAfterEdit(newIndex);
-           }
+      if (newIndex >= 0 && newIndex < data.length) {
+        scrollToIndexAfterEdit(newIndex);
+      }
       //scrollToEditCompleted();
     }
   }, [stickToLocation]);
@@ -89,16 +87,16 @@ const CarouselSlider = ({
     setStickToLocation(null);
   };
 
-  const scrollToStart = () => {
-    flatListRef.current?.scrollToIndex({
-      index: 0,
-      animated: true,
-    });
-  };
+  // const scrollToStart = () => {
+  //   flatListRef.current?.scrollToIndex({
+  //     index: 0,
+  //     animated: true,
+  //   });
+  // };
 
-  const scrollToEnd = () => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  };
+  // const scrollToEnd = () => {
+  //   flatListRef.current?.scrollToEnd({ animated: true });
+  // };
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 
@@ -170,29 +168,6 @@ const CarouselSlider = ({
           closeModal={() => setItemModalVisible(false)}
         />
       </View>
-
-      //   <View
-      //     style={{
-      //         gap: 20,
-      //         justifyContent: 'center',
-      //         alignItems: 'center',
-      //       backgroundColor: "transparent",
-      //       padding: 4,
-      //       borderWidth: 0,
-      //     //   height: ITEM_HEIGHT,
-      //       width: COMBINED,
-      //     }}
-      //   >
-      //     <View style={{ backgroundColor: "pink", padding: 10, borderRadius: 10, width: '100%', height: '100%' }}>
-      //          <Text>{item.id}</Text>
-      //             <Text>{item.locationName}</Text>
-      //             <Text>{item.date}</Text>
-      //             <Text>{item.additionalNotes}</Text>
-      //     </View>
-
-      //   </View>
-
-      // </View>
     ),
     [width, height, currentIndex]
   );
@@ -200,99 +175,6 @@ const CarouselSlider = ({
   return (
     <>
       <>
-        {/* <View
-        style={{ 
-          //position: "absolute",
-          zIndex: 1000,
-
-          height: 40,
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "center",
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          alignItems: "center",
-          paddingHorizontal: 10,
-        }}
-      >
-
-
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            position: "absolute",
-            left: 10,
-            width: "29%",
-          }}
-        >
-          <TouchableOpacity onPress={scrollToStart}>
-            <MaterialCommunityIcons
-              name="step-backward"
-              size={20}
-              color={themeStyles.primaryText.color}
-            />
-            {/* <Text
-              style={[
-                themeStyles.primaryText,
-                { fontSize: 14, fontWeight: "bold" },
-              ]}
-            >
-              Start
-            </Text> */}
-        {/* </TouchableOpacity>
-          <TouchableOpacity onPress={scrollToEnd}>
-                        <MaterialCommunityIcons
-              name="step-forward"
-              size={20}
-              color={themeStyles.primaryText.color}
-            />
-            {/* <Text
-              style={[
-                themeStyles.primaryText,
-                { fontSize: 14, fontWeight: "bold" },
-              ]}
-            >
-              End
-            </Text> */}
-        {/* </TouchableOpacity>   */}
-        {/* </View> */}
-        {/* <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "center",
-            flexGrow: 1,
-            width: "100%",
-          }}
-        > */}
-        {/* <Text
-          numberOfLines={1}
-          style={[
-            themeStyles.primaryText,
-            { fontSize: 14, fontWeight: "bold" },
-          ]}
-        >
-          {" "}
-          {currentCategory?.length > 20
-            ? currentCategory.slice(0, 20) + "…"
-            : currentCategory}
-        </Text>
-        {/* </View> */}
-        {/* <Text
-          style={[
-            themeStyles.primaryText,
-            {
-              position: "absolute",
-              right: 10,
-              fontSize: 14,
-              fontWeight: "bold",
-            },
-          ]}
-        >
-          {currentIndex} / {data.length}
-        </Text>
-      </View>    */}
-
         <Animated.FlatList
           data={data}
           ref={flatListRef}
@@ -329,7 +211,14 @@ const CarouselSlider = ({
           extraData={footerData}
           useButtons={useButtons}
           onRightPress={() => onRightPress(currentIndex.value)}
-             onRightPressSecondAction={() => onRightPressSecondAction(data[currentIndex.value])}
+          onRightPressSecondAction={() =>
+            onRightPressSecondAction(data[currentIndex.value])
+          }
+          primaryColor={primaryColor}
+          overlayColor={overlayColor}
+          dividerStyle={dividerStyle}
+          welcomeTextStyle={welcomeTextStyle}
+          themeAheadOfLoading={themeAheadOfLoading}
         />
 
         {/* )} */}
@@ -345,6 +234,7 @@ const CarouselSlider = ({
             isVisible={itemModalVisible}
             closeModal={() => setItemModalVisible(false)}
             onPress={modalData?.onPress}
+            manualGradientColors={manualGradientColors}
           />
         </View>
       )}

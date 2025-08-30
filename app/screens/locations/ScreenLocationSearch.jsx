@@ -8,7 +8,7 @@ import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useLocations } from "@/src/context/LocationsContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -23,7 +23,7 @@ import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHell
 const ScreenLocationSearch = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles,  manualGradientColors } = useGlobalStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const { getDefaultAddress, getDefaultUserAddress } = useMenues();
 
   const { friendDash } = useFriendDash();
@@ -44,7 +44,7 @@ const ScreenLocationSearch = () => {
     locationList: locationList,
     friendFaveIds: friendFaveIds,
   });
-  const { getCurrentDay } = useLocationDetailFunctions(); 
+  const { getCurrentDay } = useLocationDetailFunctions();
 
   const { pastHelloLocations } = usePastHelloesLocations({
     inPersonHelloes: inPersonHelloes,
@@ -110,6 +110,7 @@ const ScreenLocationSearch = () => {
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
         overlayColor={lightDarkTheme.overlayBackground}
+        primaryBackground={lightDarkTheme.primaryBackground}
         primaryColor={lightDarkTheme.primaryText}
         welcomeTextStyle={appFontStyles.welcomeText}
         dividerStyle={lightDarkTheme.divider}
@@ -147,6 +148,13 @@ const ScreenLocationSearch = () => {
               nonFaveLocations={nonFaveLocations}
               currentDayDrilledOnce={getCurrentDay()}
               bermudaCoordsDrilledOnce={bermudaCoords}
+              themeAheadOfLoading={themeAheadOfLoading}
+              primaryColor={lightDarkTheme.primaryText}
+              overlayColor={lightDarkTheme.overlayBackground}
+              primaryBackground={lightDarkTheme.primaryBackground}
+              welcomeTextStyle={appFontStyles.welcomeText}
+              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              manualGradientColors={manualGradientColors}
             />
           </View>
         </>

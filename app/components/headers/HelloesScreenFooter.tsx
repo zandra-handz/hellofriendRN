@@ -19,6 +19,7 @@ import GradientBackground from "../appwide/display/GradientBackground";
  
 
 const HelloesScreenFooter = ({
+  primaryColor,
   helloesList,
   flattenHelloes,
   onFilterPress,
@@ -87,6 +88,7 @@ const handleOpenSearchModal = () => {
    const RenderSearchButton = useCallback(
     () => (
       <FooterButtonIconVersion
+      primaryColor={primaryColor}
         label="Search"
         icon={
           <MaterialCommunityIcons
@@ -107,6 +109,7 @@ const handleOpenSearchModal = () => {
     () => (
       <FooterButtonIconVersion
         label={ filterOn? "reset" : "In-person only"}
+primaryColor={primaryColor}
         icon={
           <MaterialCommunityIcons
             name={"filter"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
@@ -167,8 +170,8 @@ const handleOpenSearchModal = () => {
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
-          <View style={styles.section}>
-            <RenderFilterButton />
+                      <View style={styles.section}>
+                        <RenderFilterButton />
           </View>
         </>
 

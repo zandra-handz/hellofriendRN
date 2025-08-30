@@ -25,6 +25,7 @@ const HelloFriendFooter = ({
   userCategories,
   lightDarkTheme,
   manualGradientColors,
+  subWelcomeTextStyle,
   themeAheadOfLoading,
   overlayColor,
   textColor,
@@ -51,6 +52,9 @@ const HelloFriendFooter = ({
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
 
+  const primaryColor = lightDarkTheme.primaryText;
+  const primaryBackground = lightDarkTheme.primaryBackground;
+ 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -294,6 +298,11 @@ const HelloFriendFooter = ({
             userId={userId}
             userCategories={userCategories}
             manualGradientColors={manualGradientColors}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             isVisible={categoriesModalVisible}
             isKeyboardVisible={isKeyboardVisible}
             bottomSpacer={footerHeight - 30} //for safe view

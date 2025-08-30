@@ -1,9 +1,8 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, View } from "react-native";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
 // import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
@@ -26,9 +25,15 @@ const HomeButtonUpNext = ({
   height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
+  manualGradientColors,
+  primaryColor,
+  primaryBackground,
+  overlayColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
 }) => {
   // const { getThemeAheadOfLoading } = useFriendStyle();
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+
   const { setFriend, selectFriend } = useSelectedFriend();
 
   const onPress = () => {
@@ -67,15 +72,22 @@ const HomeButtonUpNext = ({
             style={{ width: "100%", height: 200 }}
           >
             <Pressable onPress={onPress} style={[styles.textContainer]}>
-              <Text style={[styles.headerText, appFontStyles.welcomeText]}>
+              <Text
+                style={[
+                  subWelcomeTextStyle,
+                  { fontSize: 20, color: manualGradientColors.homeDarkColor },
+                ]}
+              >
                 {header}
               </Text>
 
               <Text
                 style={[
-                  appFontStyles.welcomeText,
+                  welcomeTextStyle,
                   {
-                    color: themeStyles.primaryBackground.backgroundColor,
+                    fontSize: 33,
+                    lineHeight: 60,
+                    color: manualGradientColors.homeDarkColor,
                   },
                 ]}
               >
@@ -87,7 +99,18 @@ const HomeButtonUpNext = ({
                   : "Please add a friend to use this feature!"}
               </Text>
 
-              <Text style={[styles.subtitleText, appFontStyles.subWelcomeText]}>
+              <Text
+                style={[
+                  styles.subtitleText,
+                  subWelcomeTextStyle,
+                  {
+                    fontSize: 22,
+                    lineHeight: 26,
+                    // marginTop: 20,
+                    color: manualGradientColors.homeDarkColor,
+                  },
+                ]}
+              >
                 Say hi on{" "}
                 {upcomingHelloes && upcomingHelloes[0]
                   ? upcomingHelloes[0].future_date_in_words
@@ -113,7 +136,8 @@ const HomeButtonUpNext = ({
               setFriend={setFriend}
               selectFriend={selectFriend}
               friendList={friendList}
-              themeStyles={themeStyles}
+              primaryColor={primaryColor}
+              overlayColor={overlayColor}
               manualGradientColors={manualGradientColors}
               height={"100%"}
               maxHeight={700}
@@ -146,6 +170,7 @@ const HomeButtonUpNext = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
+
     width: "100%",
     padding: 0,
     minHeight: 190,
@@ -162,17 +187,14 @@ const styles = StyleSheet.create({
   textContainer: {
     zIndex: 5,
     position: "absolute",
-    width: "82%",
+    width: "78%",
 
+    flexWrap: "flex",
     flexDirection: "column",
 
     justifyContent: "space-around",
   },
-  headerText: {
-    // fontFamily: "Poppins-Regular",
-    // fontWeight: "bold",
-    // fontSize: 20,
-  },
+
   subtitleText: {
     fontFamily: "Poppins-Regular",
 

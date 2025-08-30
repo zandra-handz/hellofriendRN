@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
-import { fetchLocationDetails } from '@/src/calls/api'; // Adjust the import path as needed
-import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
-import CallNumberLink from './CallNumberLink';
-import DirectionsLink from './DirectionsLink';
-import ButtonMakeTempLocation from '../buttons/locations/ButtonMakeTempLocation';
-import StarsRatingUI from './StarsRatingUI';
+import React, { useState } from "react";
+import { fetchLocationDetails } from "@/src/calls/api"; // Adjust the import path as needed
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Button,
+} from "react-native";
+import CallNumberLink from "./CallNumberLink";
+import DirectionsLink from "./DirectionsLink";
+import ButtonMakeTempLocation from "../buttons/locations/ButtonMakeTempLocation";
+import StarsRatingUI from "./StarsRatingUI";
 
-const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, address, mydistance, frienddistance, mytraveltime, friendtraveltime, timeDifference, distanceDifference }) => {
-
+const CardMidpointLocation = ({
+  userId,
+  lightDarkTheme,
+  fullLocationData,
+ 
+  name,
+  address,
+  mydistance,
+  frienddistance,
+  mytraveltime,
+  friendtraveltime,
+  timeDifference,
+  distanceDifference,
+}) => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false); // Start with false since we are not loading by default
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+
+
+  const primaryColor = lightDarkTheme.primaryText;
 
   const fetchDetails = async () => {
     try {
@@ -31,92 +52,102 @@ const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, addres
   };
 
   return (
-    <View style={styles.container}> 
+    <View style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.headerContainer}>
-          <Text style={styles.name}>{name}</Text> 
-          <ButtonMakeTempLocation location={fullLocationData} />
+          <Text style={[styles.name, { color: primaryColor }]}>
+            {name}
+          </Text>
+          <ButtonMakeTempLocation userId={userId} location={fullLocationData} />
         </View>
-        
+
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : details ? (
           <>
-            <StarsRatingUI rating={details.rating} starSize={10} /> 
-            <DirectionsLink address={details.address} />
-            <CallNumberLink phoneNumber={details.phone} />
+            <StarsRatingUI rating={details.rating} starSize={10} />
+            <DirectionsLink address={details.address} fontColor={primaryColor} />
+            <CallNumberLink phoneNumber={details.phone} primaryColor={primaryColor} />
           </>
         ) : (
           <Button title="Load Details" onPress={fetchDetails} />
         )}
 
         <View style={styles.bottomBar}>
-          <Text style={styles.iconButton}>me: {mytraveltime} | {mydistance.toFixed(2)} mi</Text>
-          <Text style={styles.iconButton}>friend: {friendtraveltime} | {frienddistance.toFixed(2)} mi</Text>
+          <Text style={[styles.iconButton, { color: primaryColor}]}>
+            me: {mytraveltime} | {mydistance.toFixed(2)} mi
+          </Text>
+          <Text style={[styles.iconButton, {color: primaryColor}]}>
+            friend: {friendtraveltime} | {frienddistance.toFixed(2)} mi
+          </Text>
         </View>
         <View style={styles.bottomBar}>
-          <Text style={styles.iconButton}>time difference: {timeDifference.toFixed(2)}</Text>
-          <Text style={styles.iconButton}>distance difference: {distanceDifference.toFixed(2)}</Text>
+          <Text style={[styles.iconButton, {color: primaryColor}]}>
+            time difference: {timeDifference.toFixed(2)}
+          </Text>
+            <Text style={[styles.iconButton, {color: primaryColor}]}>
+            distance difference: {distanceDifference.toFixed(2)}
+          </Text>
         </View>
-        
+
         {error && (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Error: {error}</Text>
+            <Text style={[styles.errorText, {color: primaryColor}]}>Error: {error}</Text>
           </View>
         )}
-        
+{/* 
         {!details && !error && !loading && (
           <View style={styles.noDataContainer}>
             <Text style={styles.noDataText}></Text>
           </View>
-        )}
+        )} */}
       </View>
     </View>
   );
 };
- 
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+
     borderRadius: 8,
-    padding:10,
+    padding: 10,
     marginVertical: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    width: '100%',
-    borderTopWidth: 0.5, 
-    borderTopColor: '#ccc',
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
+    // elevation: 2,
+    width: "100%",
+    borderTopWidth: 0.5,
+    
+    borderTopColor: "#ccc",
   },
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center', 
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 2,
   },
   secondHeaderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center', 
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 4,
   },
   name: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
     flex: 1,
   },
   iconPlaceholderContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     width: 40,
   },
   iconPlaceholder: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'hotpink', // Adjusted color to match your style
+    backgroundColor: "hotpink", // Adjusted color to match your style
   },
   contentContainer: {
     flex: 1,
@@ -124,49 +155,49 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    color: '#000',
+    fontFamily: "Poppins-Bold",
+    color: "#000",
   },
   address: {
     fontSize: 16,
-    fontFamily: 'Poppins-Regular',
-    color: '#000',
+    fontFamily: "Poppins-Regular",
+    color: "#000",
     marginVertical: 4,
   },
   bottomBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
   },
   iconButton: {
     fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    color: '#000',
+    fontFamily: "Poppins-Regular",
+    color: "#000",
   },
   rightPlaceholderContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     width: 40,
   },
   rightPlaceholder: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'hotpink', // Adjusted color to match your style
+    backgroundColor: "hotpink", // Adjusted color to match your style
   },
   errorContainer: {
     marginTop: 10,
   },
   errorText: {
     fontSize: 14,
-    color: 'red',
+    color: "red",
   },
   noDataContainer: {
     marginTop: 10,
   },
   noDataText: {
     fontSize: 14,
-    color: '#999',
+    color: "#999",
   },
 });
 

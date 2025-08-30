@@ -1,10 +1,9 @@
 import { View, Text, Linking } from "react-native";
 import React, { useCallback } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-const LocationNumber = ({ phoneNumber }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+ 
+const LocationNumber = ({ phoneNumber, primaryColor, subWelcomeTextStyle }) => {
+ 
 
   const handleCallLocation = useCallback(() => {
     if (phoneNumber) {
@@ -16,15 +15,14 @@ const LocationNumber = ({ phoneNumber }) => {
       <MaterialCommunityIcons
         name="phone"
         size={20}
-        color={themeStyles.primaryText.color}
+        color={primaryColor}
       />
       <Text
         numberOfLines={1}
         onPress={phoneNumber ? handleCallLocation : () => {}}
-        style={[
-          themeStyles.primaryText,
-          appFontStyles.subWelcomeText,
-          { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+        style={[ 
+          subWelcomeTextStyle,
+          { color: primaryColor, flexDirection: "row", width: "90%", flexWrap: "wrap" },
         ]}
       >
         {" "}

@@ -1,6 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface FocusedLocation {
@@ -18,14 +17,16 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
   focusedLocation,
   onViewPress,
   onSendPress,
-  
+  manualGradientColors,
+  primaryColor,
+  primaryBackground,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
 }) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
-
   return (
     <View
       style={{
-        backgroundColor: themeStyles.primaryBackground.backgroundColor,
+        backgroundColor: primaryBackground,
         padding: 10,
         height: 110,
         width: "100%",
@@ -46,19 +47,22 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
           >
             <Text
               numberOfLines={2}
-              style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+              style={[welcomeTextStyle, { color: primaryColor }]}
             >
               {focusedLocation && focusedLocation.title}
             </Text>
-            <Text
-              style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
-            >
+            <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
               {focusedLocation && focusedLocation.address}
             </Text>
           </View>
-          <View style={{ flexDirection: "column", justifyContent: "flex-end", height: '100%' }}>
-           
-                       <TouchableOpacity
+          <View
+            style={{
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              height: "100%",
+            }}
+          >
+            <TouchableOpacity
               onPress={onViewPress}
               style={{
                 marginBottom: 8,
@@ -78,7 +82,7 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
                 color={manualGradientColors.lightColor}
               />
             </TouchableOpacity>
-           
+
             <TouchableOpacity
               onPress={onSendPress}
               style={{

@@ -75,7 +75,7 @@ import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
 import ScreenAuth from "./app/screens/authflow/ScreenAuth";
 import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
 import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
-import ScreenLocation from "./app/screens/locations/ScreenLocation";
+ 
 
 // Don't think I am using
 // import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
@@ -562,19 +562,7 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 /> */}
-              <Stack.Screen
-                name="Location"
-                component={ScreenLocation}
-                options={({ route }) => ({
-                  headerShown: false,
-                  // header: () => (
-                  //   <HeaderLocationSingle
-                  //     location={route.params?.location}
-                  //     favorite={route.params?.favorite}
-                  //   />
-                  // ),
-                })}
-              />
+ 
               <Stack.Screen
                 name="LocationSend"
                 component={ScreenLocationSend}

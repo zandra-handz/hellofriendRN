@@ -3,42 +3,40 @@ import { StyleSheet, Linking, Text, Alert } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
-import { useLocations } from "@/src/context/LocationsContext";
+ 
 import { useUser } from "@/src/context/UserContext";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- import { useFriendDash } from "@/src/context/FriendDashContext";
- import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 const ScreenLocationSend = () => {
   const route = useRoute();
   const { user } = useUser();
   const location = route.params?.location ?? null;
   const username = route.params?.username ?? "A Hellofriend user";
   const selectedDay = route.params?.selectedDay ?? null;
-const { getCurrentDay } = useLocationDetailFunctions();
-const currentDay = getCurrentDay();
-  // console.log(`screen location send`, selectedDay);
-  const { getCachedAdditionalDetails } = useLocations();
-  const {  selectedFriend } = useSelectedFriend();
+  const { getCurrentDay } = useLocationDetailFunctions();
+  const currentDay = getCurrentDay();
+  // console.log(`screen location send`, selectedDay); 
+  const { additionalDetails } = useFetchAdditionalDetails({userId: user?.id, locationObject: location, enabled: true})
+  const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash();
   //weekdayTextData is coming from LocationHoursOfOperation component
   const { lightDarkTheme } = useLDTheme();
-  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
-  const additionalDetails = getCachedAdditionalDetails(location?.id);
- const { themeAheadOfLoading } = useFriendStyle();
-  const phoneNumber =
-    friendDash?.suggestion_settings?.phone_number || null;
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+
+  const { themeAheadOfLoading } = useFriendStyle();
+  const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
 
   const [messageData, setMessageData] = useState({
     userMessage: `${user.username} has sent you a meet up site from the hellofriend app!`,
     daySelected: selectedDay || "",
     hours: null,
   });
-
-  
 
   useMemo(() => {
     if (user && user?.username) {
@@ -86,7 +84,12 @@ const currentDay = getCurrentDay();
       }
       if (messageData.hours) {
         return (
-          <Text style={[ appFontStyles.subWelcomeText, { color: lightDarkTheme.primaryText}]}>
+          <Text
+            style={[
+              appFontStyles.subWelcomeText,
+              { color: lightDarkTheme.primaryText },
+            ]}
+          >
             {messageData.userMessage}{" "}
             <Text style={[{ opacity: 0.5 }]}>
               {selected} hours for {location?.title} are: {messageData.hours}.
@@ -97,7 +100,12 @@ const currentDay = getCurrentDay();
       }
 
       return (
-        <Text style={[ appFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
+        <Text
+          style={[
+            appFontStyles.subWelcomeText,
+            { color: lightDarkTheme.primaryText },
+          ]}
+        >
           {messageData.userMessage}{" "}
           <Text style={[{ opacity: 0.5 }]}>
             Here are directions: {directionLink}`;
@@ -144,7 +152,6 @@ const currentDay = getCurrentDay();
         `You haven't set a phone number for ${selectedFriend.name}`,
         `You can set this in ${selectedFriend.name}'s settings to make this faster in the future!`,
         [
-                   
           {
             text: "Go back",
             onPress: () => console.log("Cancel Pressed"),
@@ -169,7 +176,7 @@ const currentDay = getCurrentDay();
   };
 
   const handleDaySelect = (day, hours) => {
-    console.log('send screen day select');
+    console.log("send screen day select");
     setMessageData((prev) => ({
       ...prev,
       daySelected: day,
@@ -185,16 +192,17 @@ const currentDay = getCurrentDay();
   };
 
   return (
-    <SafeViewAndGradientBackground 
-    
-        startColor={manualGradientColors.lightColor}
+    <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}style={{ flex: 1 }}>
+      friendId={selectedFriend?.id}
+      style={{ flex: 1 }}
+    >
       <LocationInviteBody
-      currentDay={currentDay}
+        currentDay={currentDay}
         messageData={messageData}
         finalMessage={FinalMessage}
         handleDaySelect={handleDaySelect}
@@ -204,6 +212,11 @@ const currentDay = getCurrentDay();
         handleGetDirections={handleGetDirections}
         handleSendText={handleSendText}
         initiallySelectedDay={selectedDay}
+        themeAheadOfLoading={themeAheadOfLoading}
+        welcomeTextStyle={appFontStyles.welcomeText}
+        subWelcomeTextStyle={appFontStyles.subWelcomeText}
+        primaryColor={lightDarkTheme.primaryText}
+        primaryBackground={lightDarkTheme.primaryBackground}
       />
 
       <ButtonItemFooterStyle

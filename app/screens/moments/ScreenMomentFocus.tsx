@@ -151,11 +151,13 @@ const ScreenMomentFocus = () => {
           capsuleList={capsuleList}
           userCategories={userCategories}
           friendId={selectedFriend?.id}
+          friendName={selectedFriend?.name}
           userId={user?.id}
           primaryColor={lightDarkTheme.primaryText}
            primaryBackground={lightDarkTheme.primaryBackground}
           darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
           welcomeTextStyle={appFontStyles.welcomeText}
+              subWelcomeTextStyle={appFontStyles.subWelcomeText}
           friendFaves={friendDash?.friend_faves}
             screenCameFromToParent={screenCameFrom}
             triggerSaveFromLateral={triggerSaveFromLateral}

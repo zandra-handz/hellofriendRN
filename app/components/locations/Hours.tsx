@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback  } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, Text, Pressable, StyleSheet } from "react-native"; 
 import useLocationHours from "@/src/hooks/useLocationHours";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
@@ -13,8 +12,10 @@ const Hours = ({
   
   daysHrsData,
   initiallySelectedDay, 
-}) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  welcomeTextStyle,
+  primaryColor,
+  primaryBackground = 'red',
+}) => { 
   const { fullDays, daysOfWeek, hoursForAllDays, hoursForAllDaysNiceString } =
     useLocationHours(daysHrsData); 
   const [selectedDay, setSelectedDay] = useState(initiallySelectedDay || currentDay || null);  // Change to null to handle "All Days"
@@ -43,7 +44,7 @@ const Hours = ({
     useCallback(() => {
       // console.log('FOCUS EFFECT'); 
 
-      setSelectedDay(initiallySelectedDay.index);
+      setSelectedDay(initiallySelectedDay?.index);
         onDaySelect(initiallySelectedDay); 
     }, [  
       initiallySelectedDay, 
@@ -55,7 +56,7 @@ const Hours = ({
   useEffect(() => {
   if (currentDay && selectedDay === undefined) { 
     console.log('SETTING CARD WITH CURENT');
-    handleDayPress(currentDay.index);
+    handleDayPress(currentDay?.index);
   }
 }, [currentDay, selectedDay]);
  
@@ -68,7 +69,7 @@ const renderHours = useCallback(() => {
         {Object.entries(hoursForAllDays).map(([day, time], index) => (
           <Text
             key={index}
-            style={[styles.hoursText, themeStyles.genericText]}
+            style={[styles.hoursText, {color: primaryColor}]}
           >
             {day}: {time}
           </Text>
@@ -87,7 +88,7 @@ const renderHours = useCallback(() => {
             width: '100%',
           }}
         >
-          <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
+          <Text style={[  welcomeTextStyle, {color: primaryColor}]}>
             {fullDays && fullDays[selectedDay]}
           </Text>
         </View>
@@ -99,14 +100,14 @@ const renderHours = useCallback(() => {
             width: '100%',
           }}
         >
-          <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
+       <Text style={[  welcomeTextStyle, {color: primaryColor}]}>
             {hoursForAllDays[selectedDayName]}
           </Text>
         </View>
       </View>
     );
   }
-}, [selectedDay, hoursForAllDays, daysOfWeek, fullDays, styles, themeStyles, appFontStyles]);
+}, [selectedDay, hoursForAllDays, daysOfWeek, fullDays, styles, primaryColor, welcomeTextStyle]);
 
   const renderDayButton = useCallback(
     ({ item, index }) => (
@@ -124,23 +125,24 @@ const renderHours = useCallback(() => {
         <Text
           style={[
             styles.dayText,
-            themeStyles.genericText,
+         
             selectedDay === index && styles.selectedDayText,
+            {color: primaryColor}
           ]}
         >
           {item}
         </Text>
       </Pressable>
     ),
-    [styles, handleDayPress, themeStyles, selectedDay]
+    [styles, handleDayPress, primaryColor, selectedDay]
   );
 
   return (
     <View
       style={[
         styles.container,
-        themeStyles.genericTextBackground,
-        { flexShrink: 1 },
+ 
+        { backgroundColor: primaryBackground, flexShrink: 1 },
       ]}
     >
       <View
@@ -167,8 +169,7 @@ const renderHours = useCallback(() => {
           <Text
             style={[
               styles.title,
-              themeStyles.primaryText,
-              // appFontStyles.welcomeText,
+              { color: primaryColor }
             ]}
           >
             {/* Hours */}

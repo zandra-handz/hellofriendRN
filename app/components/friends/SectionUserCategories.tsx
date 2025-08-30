@@ -8,11 +8,10 @@ import {
   FlatList,
   Alert,
 } from "react-native";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-import Animated, { FadeInUp } from "react-native-reanimated";
  
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Animated, { FadeInUp } from "react-native-reanimated";
+
 import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
 import useDeleteCategory from "@/src/hooks/CategoryCalls/useDeleteCategory";
@@ -22,11 +21,17 @@ import AddNewCategory from "../headers/AddNewCategory";
 type Props = {
   userId: number;
   userCategories: object[];
-}
+};
 
-const SectionUserCategories = ({userId, userCategories}) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
- 
+const SectionUserCategories = ({
+  userId,
+  userCategories,
+  manualGradientColors,
+  subWelcomeTextStyle,
+  primaryColor = 'orange',
+  primaryBackground = 'orange',
+  lighterOverlayColor = 'orange',
+}) => {
  
 
   const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory(
@@ -36,10 +41,9 @@ const SectionUserCategories = ({userId, userCategories}) => {
     userId: userId,
   });
 
-    const { deleteCategory, deleteCategoryMutation } = useDeleteCategory({
+  const { deleteCategory, deleteCategoryMutation } = useDeleteCategory({
     userId: userId,
   });
-
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -147,7 +151,7 @@ const SectionUserCategories = ({userId, userCategories}) => {
           justifyContent: "space-between",
           height: 40,
           borderRadius: 10,
-          backgroundColor: themeStyles.lighterOverlayBackgroundColor,
+          backgroundColor: lighterOverlayColor,
           width: "100%",
           marginVertical: 8,
           alignItems: "center",
@@ -164,12 +168,12 @@ const SectionUserCategories = ({userId, userCategories}) => {
           <MaterialCommunityIcons
             name="tree"
             size={26}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          <Text style={[ subWelcomeTextStyle, { color: primaryColor }]}>
             {item.name}
           </Text>
         </View>
@@ -178,7 +182,7 @@ const SectionUserCategories = ({userId, userCategories}) => {
             name="pencil"
             size={20}
             style={{ opacity: 0.4 }}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         </Pressable>
       </Animated.View>
@@ -249,7 +253,7 @@ const SectionUserCategories = ({userId, userCategories}) => {
                 <MaterialCommunityIcons
                   name={"delete"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
             </>
@@ -261,14 +265,14 @@ const SectionUserCategories = ({userId, userCategories}) => {
                 <MaterialCommunityIcons
                   name={"cancel"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
               <Pressable onPress={handleSave}>
                 <MaterialCommunityIcons
                   name={"check"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
             </>
@@ -287,11 +291,11 @@ const SectionUserCategories = ({userId, userCategories}) => {
         >
           <TextInput
             ref={newCategoryRef}
-            style={[
-              themeStyles.primaryText,
+            style={[ 
               {
+                color: primaryColor,
                 borderWidth: StyleSheet.hairlineWidth,
-                borderColor: themeStyles.primaryText.color,
+                borderColor: primaryColor,
                 borderRadius: 10,
                 width: "100%",
               },
@@ -308,7 +312,12 @@ const SectionUserCategories = ({userId, userCategories}) => {
       {userCategories &&
         !showEdit && ( //showList && (
           <View style={{ width: "100%", flexShrink: 1 }}>
-            <AddNewCategory userId={userId} userCategories={userCategories} fontStyle={2} />
+            <AddNewCategory
+              userId={userId}
+              userCategories={userCategories}
+              fontStyle={2}
+              manualGradientColors={manualGradientColors}
+            />
 
             <FlatList
               data={userCategories}

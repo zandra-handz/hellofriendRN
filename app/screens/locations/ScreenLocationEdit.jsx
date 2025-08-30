@@ -6,15 +6,14 @@ import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice"
 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
-import { useLocations } from "@/src/context/LocationsContext";
+import { useUser } from "@/src/context/UserContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import ButtonBaseSpecialSave from "@/app/components/buttons/scaffolding/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
-
+import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";
 import BodyStyling from "@/app/components/scaffolding/BodyStyling";
 import BelowHeaderContainer from "@/app/components/scaffolding/BelowHeaderContainer";
-
+import useUpdateLocation from "@/src/hooks/LocationCalls/useUpdateLocation";
 import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,16 +28,17 @@ const ScreenLocationEdit = () => {
   const parking = route.params?.parking ?? null;
   const focusOn = route.params?.focusOn ?? null;
 
+
+  const { user } = useUser();
+
+
+  const { handleDeleteLocation, deleteLocationMutation } = useDeleteLocation({userId: user?.id, locationId: location?.id});
+  const { handleUpdateLocation, updateLocationMutation } = useUpdateLocation({userId: user?.id, locationId: location?.id});
+
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const navigation = useNavigation();
-
-  const {
-    handleUpdateLocation,
-    updateLocationMutation,
-    handleDeleteLocation,
-    deleteLocationMutation,
-  } = useLocations();
+ 
 const { lightDarkTheme } = useLDTheme(); 
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -109,9 +109,9 @@ const { lightDarkTheme } = useLDTheme();
 
   //weekdayTextData is coming from LocationHoursOfOperation component
 
-  const handleDelete = (location) => {
+  const handleDelete = (fluff) => {
     try {
-      handleDeleteLocation(location.id);
+      handleDeleteLocation();
     } catch (error) {
       console.log("error, location not deleted: ", error, location);
     }

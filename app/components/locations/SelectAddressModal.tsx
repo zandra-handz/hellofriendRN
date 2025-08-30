@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
+import { View, StyleSheet } from "react-native";
 
-import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import DualLocationSearcher from "./DualLocationSearcher";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
@@ -20,12 +17,14 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
   isVisible,
   closeModal,
   addressSetter,
+  primaryColor,
+  primaryBackground,
+  welcomeTextStyle,
+  manualGradientColors,
 }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
-
   const {
     usingCurrent,
-    userAddresses, 
+    userAddresses,
     defaultUserAddress,
     updateUserDefaultAddress,
     createUserAddress,
@@ -69,8 +68,8 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
       headerIcon={
         <MaterialIcons
           name={"edit-location-alt"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.modalIconColor.color}
+          size={30}
+          color={primaryColor}
         />
       }
       questionText="Select address"
@@ -79,6 +78,10 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
           <DualLocationSearcher
             onPress={handleAddressSelect}
             locationListDrilledOnce={userAddresses}
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            welcomeTextStyle={welcomeTextStyle}
+            manualGradientColors={manualGradientColors}
           />
         </View>
       }

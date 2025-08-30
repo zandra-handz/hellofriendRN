@@ -18,7 +18,9 @@ const SetAddressesModal: React.FC<Props> = ({
   isVisible,
   closeModal,
   primaryColor,
+  primaryBackground,
   overlayColor,
+  manualGradientColors,
   welcomeTextStyle,
   userAddress,
   setUserAddress,
@@ -29,9 +31,11 @@ const SetAddressesModal: React.FC<Props> = ({
     if (userAddress && friendAddress) {
       return (
         <ActiveAddresses
-        primaryColor={primaryColor}
-        overlayColor={overlayColor}
-        welcomeTextStyle={welcomeTextStyle}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          overlayColor={overlayColor}
+          manualGradientColors={manualGradientColors}
+          welcomeTextStyle={welcomeTextStyle}
           userAddress={userAddress}
           setUserAddress={setUserAddress}
           friendAddress={friendAddress}

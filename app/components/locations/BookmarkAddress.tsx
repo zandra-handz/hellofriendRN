@@ -1,5 +1,5 @@
-import { View, TouchableOpacity, Text, DimensionValue } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import {   Pressable, Text } from "react-native";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
  
 import React from "react";
@@ -8,23 +8,23 @@ interface Props {
   
   onPress: () => void; 
   isSaved?: boolean;
+  primaryColor: string;
 }
 
-const BookmarkAddress: React.FC<Props> = ({ onPress,   isSaved=false }) => {
-  const { themeStyles } = useGlobalStyle();
+const BookmarkAddress: React.FC<Props> = ({ onPress,   isSaved=false, primaryColor='orange' }) => {
+ 
 
 
   const iconSize = 26;
 
   return ( 
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       style={{ marginLeft: 20, flexDirection: "row", alignItems: "center" }}
     >
       <Text
-        style={[
-          themeStyles.primaryText,
-          { fontWeight: "bold", fontSize: 13, marginRight: 6 },
+        style={[ 
+          { color: primaryColor, fontWeight: "bold", fontSize: 13, marginRight: 6 },
         ]}
       >
         {isSaved && `Remove`}
@@ -36,11 +36,11 @@ const BookmarkAddress: React.FC<Props> = ({ onPress,   isSaved=false }) => {
         //name={"menu-swap"}
         name={"bookmark"}
         size={iconSize}
-        color={themeStyles.primaryText.color}
+        color={primaryColor}
       />
       
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

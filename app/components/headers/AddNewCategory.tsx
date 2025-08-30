@@ -6,8 +6,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState, useEffect, useRef, useMemo } from "react"; 
 import {  MaterialIcons } from "@expo/vector-icons";
 import Animated, { SlideInLeft } from "react-native-reanimated"; 
  

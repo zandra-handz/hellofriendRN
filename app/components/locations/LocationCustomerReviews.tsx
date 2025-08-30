@@ -1,17 +1,19 @@
 import React, { useCallback } from "react";
-import { View, ScrollView, StyleSheet, Text, FlatList } from "react-native";
-import LocationReviewUI from "./LocationReviewUI";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, StyleSheet} from "react-native";
+import LocationReviewUI from "./LocationReviewUI"; 
 import { FlashList } from "@shopify/flash-list";
 
 interface Props {
   reviews: object[];
-    formatDate?: (timestamp: number) => string;
- 
+  formatDate?: (timestamp: number) => string;
 }
 
-const LocationCustomerReviews: React.FC<Props> = ({ reviews, formatDate }) => {
-  const { themeStyles } = useGlobalStyle();
+const LocationCustomerReviews: React.FC<Props> = ({
+  primaryColor,
+  primaryBackground,
+  reviews,
+  formatDate,
+}) => { 
 
   if (!reviews || reviews.length === 0) {
     return null;
@@ -30,30 +32,27 @@ const LocationCustomerReviews: React.FC<Props> = ({ reviews, formatDate }) => {
 
   const renderListItem = useCallback(
     ({ item, index }) => (
-      <View style={{ width: '100%', height: 'auto', marginBottom: 20, }}>
+      <View style={{ width: "100%", height: "auto", marginBottom: 20 }}>
         <LocationReviewUI
           // locationReviewId={`${locationId}-${index}`}
           formatDate={formatDate}
           review={item}
           reviewIndex={index}
-
-          backgroundColor={themeStyles.genericTextBackground.backgroundColor}
-          textColor={themeStyles.genericText.color}
+          backgroundColor={primaryBackground}
+          textColor={primaryColor}
         />
       </View>
     ),
-    [themeStyles]
+    [primaryColor, primaryBackground]
   );
 
-
   return (
-    
     <View style={[styles.container]}>
       <FlashList
         data={reviews}
         renderItem={renderListItem}
         fadingEdgeLength={20}
-    estimatedItemSize={150}
+        estimatedItemSize={150}
         nestedScrollEnabled
         // pagingEnabled
         snapToAlignment="start"
@@ -74,27 +73,26 @@ const LocationCustomerReviews: React.FC<Props> = ({ reviews, formatDate }) => {
           ))}
           <View style={{width: 400}}></View>
         </ScrollView>  */}
-    </View> 
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 160, 
+    height: 160,
     paddingHorizontal: 10,
-    width: "100%", 
+    width: "100%",
     flexDirection: "row",
-    justifyContent: 'flex-start',
- 
+    justifyContent: "flex-start",
   },
   title: {
     fontSize: 15,
     lineHeight: 21,
     textTransform: "uppercase",
   },
-  listContent: { 
+  listContent: {
     alignItems: "flex-start",
-  }, 
+  },
   toggleButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,

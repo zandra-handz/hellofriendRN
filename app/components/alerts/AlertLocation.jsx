@@ -6,18 +6,18 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
  
 
-
+// WARNING OBSOLETE ?????????
 const AlertLocation = ({
   isModalVisible,
   toggleModal,
   modalContent,
   modalTitle,
 }) => {
-  const { setSelectedLocation, loadingAdditionalDetails } = useLocations();
+  const {   loadingAdditionalDetails } = useLocations();
   const [useSpinner, setUseSpinner] = useState(true);
  
   const handleCloseModal = () => {
-    setSelectedLocation(null);
+    // setSelectedLocation(null);
     toggleModal();
   };
 

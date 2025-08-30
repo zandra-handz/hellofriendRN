@@ -2,13 +2,9 @@ import { View, Text, ScrollView } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
- 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { useUser } from "@/src/context/UserContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 
@@ -18,22 +14,27 @@ type Props = {
   categoryId: number;
 };
 
-const MakeDefaultCats = ({ categoryId }: Props) => {
-  const { user } = useUser();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend } =
-    useSelectedFriend();
+const MakeDefaultCats = ({
+  userId,
+  friendId,
+  friendName = "friend name here",
+  friendDefaultCategory,
+  categoryId,
+  primaryColor,
+  subWelcomeTextStyle,
+}: Props) => { 
 
-    const { friendDash } = useFriendDash();
+  // const { friendDash } = useFriendDash();
   const { settings } = useUserSettings();
- 
 
-  const { updateSettings } = useUpdateSettings({userId: user?.id});
-  const {handleUpdateDefaultCategory } = useUpdateDefaultCategory({userId: user?.id, friendId: selectedFriend?.id})
+  const { updateSettings } = useUpdateSettings({ userId: userId });
+  const { handleUpdateDefaultCategory } = useUpdateDefaultCategory({
+    userId: userId,
+    friendId: friendId,
+  });
 
   const isUserDefault = categoryId === settings.user_default_category;
-  const isFriendDefault =
-    categoryId === friendDash?.friend_faves.friend_default_category;
+  const isFriendDefault = categoryId === friendDefaultCategory;
 
   const handleRemoveUserDefault = async () => {
     await updateSettings({ user_default_category: null });
@@ -56,7 +57,7 @@ const MakeDefaultCats = ({ categoryId }: Props) => {
 
   return (
     <ScrollView
-    horizontal
+      horizontal
       contentContainerStyle={{
         flexDirection: "row",
         // backgroundColor: "pink",
@@ -64,7 +65,7 @@ const MakeDefaultCats = ({ categoryId }: Props) => {
 
         // width: "100%",
         alignItems: "center",
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       <GlobalPressable
@@ -77,22 +78,21 @@ const MakeDefaultCats = ({ categoryId }: Props) => {
           paddingHorizontal: 20,
           borderRadius: 999,
           flexDirection: "row",
-           width: '100%',
+          width: "100%",
 
-       //   backgroundColor: "red",
+          //   backgroundColor: "red",
         }}
       >
         <MaterialCommunityIcons
           name={isUserDefault ? "star" : "star-outline"}
-          color={themeStyles.primaryText.color}
+          color={primaryColor}
           style={{ marginRight: 10 }}
           size={ICON_SIZE}
         />
         <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.subWelcomeText,
-            { fontSize: FONT_SIZE },
+          style={[ 
+            subWelcomeTextStyle,
+            { color: primaryColor, fontSize: FONT_SIZE },
           ]}
         >
           {isUserDefault ? `app default` : `Make app default`}{" "}
@@ -108,31 +108,28 @@ const MakeDefaultCats = ({ categoryId }: Props) => {
           paddingHorizontal: 20,
           borderRadius: 999,
           flexDirection: "row",
-        width: '100%',
-        //  backgroundColor: "red",
-          height: 'auto',
+          width: "100%",
+          //  backgroundColor: "red",
+          height: "auto",
         }}
       >
         <MaterialCommunityIcons
           name={isFriendDefault ? "star" : "star-outline"}
-          color={themeStyles.primaryText.color}
+          color={primaryColor}
           style={{ marginRight: 10 }}
           size={ICON_SIZE}
         />
-     
-            
+
         <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.subWelcomeText,
-            { fontSize: FONT_SIZE  },
+          style={[ 
+            subWelcomeTextStyle,
+            {color: primaryColor, fontSize: FONT_SIZE },
           ]}
         >
           {isFriendDefault
-            ? `default for ${selectedFriend.name}`
-            : `Make default for ${selectedFriend.name} `}{" "}
+            ? `default for ${friendName}`
+            : `Make default for ${friendName} `}{" "}
         </Text>
-         
       </GlobalPressable>
     </ScrollView>
   );

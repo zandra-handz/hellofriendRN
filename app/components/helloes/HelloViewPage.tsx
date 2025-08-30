@@ -7,11 +7,10 @@ import {
   ScrollView,
   DimensionValue,
 } from "react-native";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { FlashList } from "@shopify/flash-list"; 
-import Animated, {
-  useSharedValue,
+import React, { useState  } from "react";
+ 
+import { FlashList } from "@shopify/flash-list";
+import Animated, { 
   SharedValue,
   useAnimatedStyle,
   useAnimatedReaction,
@@ -23,8 +22,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 
-import { useNavigation } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useNavigation } from "@react-navigation/native"; 
 
 interface Props {
   item: object;
@@ -46,26 +44,26 @@ const HelloViewPage: React.FC<Props> = ({
   listLength,
   currentIndexValue,
   cardScaleValue,
-}) => {
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
-
-
+  welcomeTextStyle,
+  primaryColor = "orange",
+  primaryBackground = "red",
+  lighterOverlayColor = "yellow",
+}) => { 
 
   //  console.log(item.thought_capsules_shared);
   const listifiedCapsules = item.thought_capsules_shared
-  ? Object.keys(item.thought_capsules_shared).map((key) => {
-    const capsule = item.thought_capsules_shared[key];
+    ? Object.keys(item.thought_capsules_shared).map((key) => {
+        const capsule = item.thought_capsules_shared[key];
 
-    return {
-      id: key,
-      capsule: capsule.capsule,
-      typed_category: capsule.typed_capsule,
-      user_category: capsule.user_category,
-      user_category_name: capsule.user_category_name,
-
-    };
-  
-  }) : [];
+        return {
+          id: key,
+          capsule: capsule.capsule,
+          typed_category: capsule.typed_capsule,
+          user_category: capsule.user_category,
+          user_category_name: capsule.user_category_name,
+        };
+      })
+    : [];
   // console.log(`listifiedCapsules`, listifiedCapsules);
 
   const [momentsViewing, setMomentsViewing] = useState(listifiedCapsules);
@@ -77,7 +75,6 @@ const HelloViewPage: React.FC<Props> = ({
 
   const pointsCount = listifiedCapsules?.length || null;
 
-  
   const dePluralizer = pointsCount === 1 ? "" : "s";
 
   const [currentIndex, setCurrentIndex] = useState();
@@ -101,7 +98,9 @@ const HelloViewPage: React.FC<Props> = ({
 
   const handleCategoryFilterPress = (category) => {
     setMomentsViewing(
-      listifiedCapsules.filter((capsule) => capsule.user_category_name === category)
+      listifiedCapsules.filter(
+        (capsule) => capsule.user_category_name === category
+      )
     );
     setSelectedCategory(category);
   };
@@ -135,228 +134,230 @@ const HelloViewPage: React.FC<Props> = ({
     >
       <View
         style={[
-          appContainerStyles.talkingPointCard,
+          styles.talkingPointCard,
           {
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: primaryBackground,
           },
         ]}
       >
         <View style={{ height: "90%", width: "100%" }}>
           <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
-            <Text
-              style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
-            >
+            <Text style={[  welcomeTextStyle, {color: primaryColor}]}>
               {/* Hello # {currentIndex + 1} */}
-                  Hello details
-                  {/* # {listLength - currentIndex} */}
-            </Text> 
+              Hello details
+              {/* # {listLength - currentIndex} */}
+            </Text>
 
-            <View style={{padding: 10}}>
-      
-
-            <View style={{ flexDirection: "row" }}>
-              <Fontisto
-                name="date"
-                size={iconSize}
-                color={themeStyles.primaryText.color}
-                style={{ marginRight: iconTextSpacer }}
-              />
-              <Text style={themeStyles.primaryText}>{item.date}</Text>
-            </View>
-               <View style={{ flexDirection: "row" }}>
-              <MaterialCommunityIcons
-                name="map-marker-radius-outline"
-                size={iconSize}
-                color={themeStyles.primaryText.color}
-                style={{ marginRight: iconTextSpacer }}
-              />
-              <Text style={themeStyles.primaryText}>{item.location_name}</Text>
-            </View>
-            <View style={{ flexDirection: "row" }}>
-              <MaterialCommunityIcons
-                name="message-outline"
-                size={iconSize}
-                color={themeStyles.primaryText.color}
-                style={{ marginRight: iconTextSpacer }}
-              />
-              <Text style={themeStyles.primaryText}>{item.type}</Text>
-            </View>
-            {pointsCount > 0 && (
-              <>
-                <View style={styles.row}>
-                  <MaterialIcons
-                    name="tips-and-updates"
-                    size={iconSize}
-                    color={themeStyles.primaryText.color}
-                    style={{ marginRight: iconTextSpacer }}
-                  />
-                  <Text style={themeStyles.primaryText}>
-                    {item?.thought_capsules_shared?.length} point{dePluralizer} talked
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleNavToReload()}
-                    style={{ marginHorizontal: categoryButtonSpacer }}
-                  >
-                    <Text
-                      style={[themeStyles.primaryText, { fontWeight: "bold" }]}
-                    >
-                      Reload?
+            <View style={{ padding: 10 }}>
+              <View style={{ flexDirection: "row" }}>
+                <Fontisto
+                  name="date"
+                  size={iconSize}
+                  color={primaryColor}
+                  style={{ marginRight: iconTextSpacer }}
+                />
+                <Text style={{color: primaryColor}}>{item.date}</Text>
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <MaterialCommunityIcons
+                  name="map-marker-radius-outline"
+                  size={iconSize}
+                  color={primaryColor}
+                  style={{ marginRight: iconTextSpacer }}
+                />
+                <Text style={{color: primaryColor}}>
+                  {item.location_name}
+                </Text>
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <MaterialCommunityIcons
+                  name="message-outline"
+                  size={iconSize}
+                  color={primaryColor}
+                  style={{ marginRight: iconTextSpacer }}
+                />
+                <Text style={{color: primaryColor}}>{item.type}</Text>
+              </View>
+              {pointsCount > 0 && (
+                <>
+                  <View style={styles.row}>
+                    <MaterialIcons
+                      name="tips-and-updates"
+                      size={iconSize}
+                      color={primaryColor}
+                      style={{ marginRight: iconTextSpacer }}
+                    />
+                    <Text style={{color: primaryColor}}>
+                      {item?.thought_capsules_shared?.length} point
+                      {dePluralizer} talked
                     </Text>
-                  </TouchableOpacity>
-                </View>
+                    <TouchableOpacity
+                      onPress={() => handleNavToReload()}
+                      style={{ marginHorizontal: categoryButtonSpacer }}
+                    >
+                      <Text
+                        style={[ 
+                          { color: primaryColor, fontWeight: "bold" },
+                        ]}
+                      >
+                        Reload?
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
 
-                <View
-                  style={{
-                    height: 200,
-                    width: "100%",
-                    overflow: "hidden",
-                    borderRadius: 20,
-                    padding: 10,
-                    backgroundColor: "limegreen",
-                  }}
-                >
-                  <View style={{ height: 40, width: "100%" }}>
-                    <FlashList
-                      ListHeaderComponent={
-                        <TouchableOpacity
-                          style={{ marginRight: categoryButtonSpacer }}
-                          onPress={() => handleRemoveCategoryFilter()}
-                        >
-                          <Text
-                            style={{
-                              color:
-                                themeStyles.primaryBackground.backgroundColor,
-                            }}
-                          >
-                            All
-                          </Text>
-                        </TouchableOpacity>
-                      }
-                      ListFooterComponent={<View style={{ width: 100 }}></View>}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      estimatedItemSize={100}
-                      nestedScrollEnabled
-                      data={[
-                        ...new Set(
-                          listifiedCapsules.map(
-                            (capsule) => capsule.user_category_name
-                          )
-                        ),
-                      ]}
-                      renderItem={({ item, index }) => {
-                        return (
+                  <View
+                    style={{
+                      height: 200,
+                      width: "100%",
+                      overflow: "hidden",
+                      borderRadius: 20,
+                      padding: 10,
+                   //   backgroundColor: "limegreen",
+                    }}
+                  >
+                    <View style={{ height: 40, width: "100%" }}>
+                      <FlashList
+                        ListHeaderComponent={
                           <TouchableOpacity
-                            onPress={() => handleCategoryFilterPress(item)}
-                            style={{
-                              marginHorizontal: categoryButtonSpacer,
-                              height: 30,
-                            }}
+                            style={{ marginRight: categoryButtonSpacer }}
+                            onPress={() => handleRemoveCategoryFilter()}
                           >
                             <Text
-                              numberOfLines={1}
-                              style={[
-                                themeStyles.primaryText,
-                                {
-                                  backgroundColor:
-                                    themeStyles.lighterOverlayBackgroundColor
-                                      .backgroundColor,
-                                  borderRadius: 10,
-                                  paddingHorizontal: 14,
-                                  paddingVertical: 3,
-                                  fontSize: 12,
-                                  fontWeight: "bold",
-                                  color:
-                                    selectedCategory === item
-                                      ? "red"
-                                      : themeStyles.primaryBackground
-                                          .backgroundColor,
-                                  opacity: selectedCategory === item ? 1 : 0.8,
-                                },
-                              ]}
+                              style={{
+                                color:
+                                  primaryBackground
+                              }}
                             >
-                              {item}
-                              {selectedCategory === item &&
-                                ` (${momentsViewing.length}) `}
+                              All
                             </Text>
                           </TouchableOpacity>
+                        }
+                        ListFooterComponent={
+                          <View style={{ width: 100 }}></View>
+                        }
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        estimatedItemSize={100}
+                        nestedScrollEnabled
+                        data={[
+                          ...new Set(
+                            listifiedCapsules.map(
+                              (capsule) => capsule.user_category_name
+                            )
+                          ),
+                        ]}
+                        renderItem={({ item, index }) => {
+                          return (
+                            <TouchableOpacity
+                              onPress={() => handleCategoryFilterPress(item)}
+                              style={{
+                                marginHorizontal: categoryButtonSpacer,
+                                height: 30,
+                              }}
+                            >
+                              <Text
+                                numberOfLines={1}
+                                style={[ 
+                                  {
+                                    color: primaryColor, 
+                                    backgroundColor: lighterOverlayColor,
+                                    borderRadius: 10,
+                                    paddingHorizontal: 14,
+                                    paddingVertical: 3,
+                                    fontSize: 12,
+                                    fontWeight: "bold",
+                                    color:
+                                      selectedCategory === item
+                                        ? "red"
+                                        : primaryBackground,
+                                    opacity:
+                                      selectedCategory === item ? 1 : 0.8,
+                                  },
+                                ]}
+                              >
+                                {item}
+                                {selectedCategory === item &&
+                                  ` (${momentsViewing.length}) `}
+                              </Text>
+                            </TouchableOpacity>
+                          );
+                        }}
+                      />
+                    </View>
+                    <FlatList
+                      data={momentsViewing}
+                      keyExtractor={extractItemKey}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <View
+                            style={{
+                              height: "auto",
+                              width: "100%",
+                              marginVertical: 4,
+                              padding: 20,
+                              flexWrap: "flex",
+                              borderRadius: 10,
+                              // backgroundColor:
+                              //   themeStyles.genericTextBackgroundShadeTwo
+                              //     .backgroundColor,
+                            }}
+                          >
+                            <Text style={[{color: primaryColor}]}>
+                              {item.user_category_original_name} {item.capsule}
+                            </Text>
+                          </View>
                         );
                       }}
                     />
                   </View>
-                  <FlatList
-                    data={momentsViewing}
-                    keyExtractor={extractItemKey}
-                    renderItem={({ item, index }) => {
-                      return (
-                        <View
-                          style={{
-                            height: "auto",
-                            width: "100%",
-                            marginVertical: 4,
-                            padding: 20,
-                            flexWrap: "flex",
-                            borderRadius: 10,
-                            backgroundColor:
-                              themeStyles.genericTextBackgroundShadeTwo
-                                .backgroundColor,
-                          }}
-                        >
-                          <Text style={[themeStyles.primaryText]}>
-                            {item.user_category_original_name} {item.capsule}
-                          </Text>
-                        </View>
-                      );
-                    }}
-                  />
-                </View>
-              </>
-            )}
-            {item?.additional_notes && (
-              <>
-                <View style={[styles.row, { marginVertical: 10 }]}>
-                  <MaterialIcons
-                    name="notes"
-                    size={iconSize}
-                    color={themeStyles.primaryText.color}
-                    style={{ marginRight: iconTextSpacer }}
-                  />
-                  <Text style={themeStyles.primaryText}>additional notes</Text>
-                </View>
-                <View
-                  style={{
-                    height: 'auto',
-                    flex: 1,
-                    width: "100%",
-                    overflow: "hidden",
-                    borderRadius: 20,
-                    padding: 10,
-                    flexGrow: 1,
-                    backgroundColor: "limegreen",
-                  }}
-                >
+                </>
+              )}
+              {item?.additional_notes && (
+                <>
+                  <View style={[styles.row, { marginVertical: 10 }]}>
+                    <MaterialIcons
+                      name="notes"
+                      size={iconSize}
+                      color={primaryColor}
+                      style={{ marginRight: iconTextSpacer }}
+                    />
+                    <Text style={{color: primaryColor}}>
+                      additional notes
+                    </Text>
+                  </View>
                   <View
                     style={{
                       height: "auto",
+                      flex: 1,
                       width: "100%",
-                      marginVertical: 4,
-                      padding: 20,
-
-                      flexWrap: "flex",
-                      borderRadius: 10,
-                      backgroundColor:
-                        themeStyles.genericTextBackgroundShadeTwo
-                          .backgroundColor,
+                      overflow: "hidden",
+                      borderRadius: 20,
+                      padding: 10,
+                      flexGrow: 1,
+                      backgroundColor: "limegreen",
                     }}
                   >
-                    <Text style={themeStyles.primaryText}>
-                      {item.additional_notes}
-                    </Text>
+                    <View
+                      style={{
+                        height: "auto",
+                        width: "100%",
+                        marginVertical: 4,
+                        padding: 20,
+
+                        flexWrap: "flex",
+                        borderRadius: 10,
+                        // backgroundColor:
+                        //   themeStyles.genericTextBackgroundShadeTwo
+                        //     .backgroundColor,
+                      }}
+                    >
+                      <Text style={{color: primaryColor}}>
+                        {item.additional_notes}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </>
-            )}
-                    
+                </>
+              )}
             </View>
           </ScrollView>
         </View>
@@ -371,6 +372,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "100%",
     height: "100%",
+  },
+  talkingPointCard: {
+    // not actually using for large talking point anymore
+    // used with: backgroundColor: themeStyles.primaryBackground.backgroundColor,
+    padding: 20,
+    borderRadius: 40,
+    width: "100%",
+    height: "100%",
+    zIndex: 1,
+    overflow: "hidden",
   },
   row: {
     marginBottom: 4,

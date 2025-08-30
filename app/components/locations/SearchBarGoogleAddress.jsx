@@ -7,16 +7,15 @@ import React, {
   useEffect,
   useImperativeHandle,
 } from "react";
-import {   StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import GoogleLogoSvg from "@/app/assets/svgs/google-logo.svg"; 
+ 
+import GoogleLogoSvg from "@/app/assets/svgs/google-logo.svg";
 
 // The component wrapped with forwardRef
 const SearchBarGoogleAddress = forwardRef(
-  ({ onPress, mountingText, onTextChange }, ref) => {
-    const { themeStyles } = useGlobalStyle();
+  ({ onPress, mountingText, onTextChange, primaryColor, primaryBackground }, ref) => {
+ 
     const googlePlacesRef = useRef();
     const [searchText, setSearchText] = useState("");
 
@@ -48,7 +47,7 @@ const SearchBarGoogleAddress = forwardRef(
     };
 
     const handlePress = (data, details = null) => {
-      console.log('handlePress triggered in SearchBarGoogleAddress');
+      console.log("handlePress triggered in SearchBarGoogleAddress");
       if (details) {
         const { lat, lng } = details.geometry.location;
         console.log(lat, lng);
@@ -64,21 +63,17 @@ const SearchBarGoogleAddress = forwardRef(
           friends: [],
         };
 
-        onPress(newLocation);
-        //handleGoToLocationViewScreen(newLocation);
+        onPress(newLocation); 
         googlePlacesRef.current?.setAddressText("");
       }
       googlePlacesRef.current?.setAddressText("");
     };
 
     const handleTextInputChange = (text) => {
-      setSearchText(text); // Update local state
-      onTextChange?.(text); // Notify parent of the change
+      setSearchText(text);  
+      onTextChange?.(text); // UPDATE PARENT
     };
-
-    // useEffect(() => {
-    //   console.log("Current search text:", searchText);
-    // }, [searchText]);
+ 
 
     return (
       <GooglePlacesAutocomplete
@@ -88,8 +83,8 @@ const SearchBarGoogleAddress = forwardRef(
         keepResultsAfterBlur={true} // if remove, onPress won't work
         textInputProps={{
           autoFocus: mountingText.length > 0 ? true : false,
-          placeholderTextColor: themeStyles.genericText.color,
-          onChangeText: handleTextInputChange, // Capture typing updates
+          placeholderTextColor: primaryColor,
+          onChangeText: handleTextInputChange,  
         }}
         minLength={2}
         numberOfLines={1}
@@ -105,9 +100,23 @@ const SearchBarGoogleAddress = forwardRef(
         styles={{
           textInputContainer: [
             styles.inputContainer,
-            themeStyles.genericTextBackground, {borderRadius: INPUT_CONTAINER_BORDER_RADIUS, borderColor: themeStyles.primaryText.color}
+           
+            {
+              backgroundColor: primaryBackground,
+              borderRadius: INPUT_CONTAINER_BORDER_RADIUS,
+              borderColor: primaryColor,
+            },
           ],
-          textInput: [[ themeStyles.genericText, {paddingHorizontal: 5, height: 24, backgroundColor: 'transparent'}]],
+          textInput: [
+            [ 
+              {
+                color: primaryColor,
+                paddingHorizontal: 5,
+                height: 24,
+                backgroundColor: "transparent",
+              },
+            ],
+          ],
         }}
         renderLeftButton={() => (
           <GoogleLogoSvg width={26} height={26} style={styles.iconStyle} />
@@ -118,35 +127,33 @@ const SearchBarGoogleAddress = forwardRef(
 );
 
 const styles = StyleSheet.create({
- 
   textInputContainer: {
     backgroundColor: "transparent",
-    width: "100%", 
-    paddingRight: 2, 
+    width: "100%",
+    paddingRight: 2,
   },
   inputContainer: {
-    //flexDirection: "row-reverse", 
+    //flexDirection: "row-reverse",
     alignItems: "center",
-   // width: "80%", // Make input field take up full width
+    // width: "80%", // Make input field take up full width
     borderWidth: StyleSheet.hairlineWidth,
-     
+
     backgroundColor: "transparent", // NEED THIS TO OVERRIDE
     paddingLeft: "4%",
-    paddingVertical: '3%',
-  }, 
+    paddingVertical: "3%",
+  },
   listView: {
     marginTop: -4,
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "white",
     maxHeight: 300,
-    width: "100%", 
+    width: "100%",
   },
   predefinedPlacesDescription: {
     color: "#1faadb",
   },
-  iconStyle: { 
-  },
+  iconStyle: {},
 });
 
 export default SearchBarGoogleAddress;

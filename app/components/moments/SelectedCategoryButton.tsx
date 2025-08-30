@@ -1,8 +1,7 @@
 import { View, Text, Alert } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable"; 
-import CategoryFriendDetailsModal from "../headers/CategoryFriendHistoryCombinedModal";
- 
+import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useUser } from "@/src/context/UserContext";
@@ -25,9 +24,17 @@ type Props = {
 };
 
 const SelectedCategoryButton = ({
+  userId,
+  manualGradientColors,
+  primaryColor,
+  primaryBackground,
+  subWelcomeTextStyle,
+  userCategories,
+  capsuleList,
   friendId,
+  friendName,
   friendDefaultCategory,
-welcomeTextStyle,
+  welcomeTextStyle,
   zIndex = 3,
   categoryId,
   freezeCategory,
@@ -39,23 +46,16 @@ welcomeTextStyle,
   editMode,
   maxWidth = 100,
   iconSize = 20,
-}: Props) => {
+}: Props) => { 
 
-  const { user } = useUser(); 
-  const { lightDarkTheme} = useLDTheme();
- 
-  const { 
-    handleUpdateDefaultCategory,
-    updateFriendDefaultCategoryMutation,
-  } = useUpdateDefaultCategory({userId: user?.id, friendId: friendId});
+  const { handleUpdateDefaultCategory, updateFriendDefaultCategoryMutation } =
+    useUpdateDefaultCategory({ userId: userId, friendId: friendId });
 
   const handleMakeFriendDefault = () => {
     handleUpdateDefaultCategory({ categoryId: categoryId });
   };
 
-  const isFriendDefault =
-    categoryId === friendDefaultCategory ||
-    false;
+  const isFriendDefault = categoryId === friendDefaultCategory || false;
 
   const isFrozen = freezeCategory;
 
@@ -119,7 +119,7 @@ welcomeTextStyle,
             <View
               style={{
                 flexDirection: "column",
-             
+
                 marginRight: 4,
                 paddingBottom: 6, // EYEBALL
                 justifyContent: "flex-end",
@@ -129,25 +129,25 @@ welcomeTextStyle,
                 name={"pencil-outline"}
                 size={iconSize}
                 style={{ height: iconSize }}
-                color={lightDarkTheme.primaryText }
+                color={primaryColor}
               />
             </View>
           )}
-<Text
-  numberOfLines={1}
-  ellipsizeMode="tail"
-  style={[
-    welcomeTextStyle,
-    {
-      zIndex: 2,
-      color: lightDarkTheme.primaryText,
-      fontSize: editMode ? fontSizeEditMode : fontSize,
-      maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
-    },
-  ]}
->
-  {label ? label : `Pick category`}
-</Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[
+              welcomeTextStyle,
+              {
+                zIndex: 2,
+                color: primaryColor,
+                fontSize: editMode ? fontSizeEditMode : fontSize,
+                maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
+              },
+            ]}
+          >
+            {label ? label : `Pick category`}
+          </Text>
           <View
             style={{
               flexDirection: "row",
@@ -161,7 +161,7 @@ welcomeTextStyle,
                 name={"star"}
                 size={16}
                 style={{ height: 20 }}
-                color={lightDarkTheme.primaryText}
+                color={primaryColor}
               />
             )}
             {isFrozen && (
@@ -169,11 +169,10 @@ welcomeTextStyle,
                 name={"pin"}
                 size={16}
                 style={{ height: 20 }}
-                color={lightDarkTheme.primaryText}
+                color={primaryColor}
               />
             )}
           </View>
-         
         </View>
         {editMode && (
           <View
@@ -183,10 +182,20 @@ welcomeTextStyle,
       </GlobalPressable>
       {detailsModalVisible && (
         <View>
-          <CategoryFriendDetailsModal
+          <CategoryFriendHistoryCombinedModal
+          userId={userId}
+          friendId={friendId}
+          friendName={friendName}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          subWelcomeTextStyle={subWelcomeTextStyle}
+          friendDefaultCategory={friendDefaultCategory}
             isVisible={detailsModalVisible}
             closeModal={() => setDetailsModalVisible(false)}
             categoryId={categoryId}
+            manualGradientColors={manualGradientColors}
+            userCategories={userCategories}
+            capsuleList={capsuleList}
           />
         </View>
       )}

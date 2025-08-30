@@ -18,6 +18,10 @@ const CategoriesModal: React.FC<Props> = ({
   userId,
   userCategories,
   manualGradientColors,
+  primaryColor,
+  primaryBackground,
+  lighterOverlayColor,
+  subWelcomeTextStyle,
   isVisible,
   isKeyboardVisible = false,
   closeModal,
@@ -50,6 +54,10 @@ const CategoriesModal: React.FC<Props> = ({
             userId={userId}
             userCategories={userCategories}
             manualGradientColors={manualGradientColors}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            lighterOverlayColor={lighterOverlayColor}
           />
           {helperMessage && (
             <HelperMessage
@@ -64,7 +72,7 @@ const CategoriesModal: React.FC<Props> = ({
       infoItem={
         <>
           {userCategories.length > 0 && (
-            <InfoItem
+            <InfoItem primaryColor={primaryColor}
               infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
             />
           )}

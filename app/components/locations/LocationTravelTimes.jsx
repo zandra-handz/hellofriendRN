@@ -11,9 +11,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import {
   SimpleLineIcons, 
   FontAwesome5,
-} from "@expo/vector-icons"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";  
+} from "@expo/vector-icons";   
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useTravelTimes from "@/src/hooks/useTravelTimes";
@@ -24,9 +22,9 @@ const LocationTravelTimes = ({
   userAddress,
   friendAddress, 
   iconSize = 34,
-}) => {
-  const { themeAheadOfLoading } = useFriendStyle(); 
-  const { themeStyles, appContainerStyles } = useGlobalStyle();  
+  themeAheadOfLoading,
+  primaryColor = 'orange',
+}) => {   
   const { defaultUserAddress } = useStartingUserAddresses();
   const { defaultAddress } = useStartingFriendAddresses();
 
@@ -148,7 +146,7 @@ const LocationTravelTimes = ({
           <FontAwesome5
             name="user-clock"
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         </View>
         <View style={{ position: "absolute", right: 0, top: 10 }}>
@@ -195,7 +193,7 @@ const LocationTravelTimes = ({
       {location && !String(location.id).startsWith("temp") && (
         <>
           {isTravelTimesLoading && (
-            <View style={appContainerStyles.loadingFriendProfileButtonWrapper}>
+            <View style={styles.loadingFriendProfileButtonWrapper}>
               <LoadingPage
                 loading={true}
                 color={themeAheadOfLoading.darkColor}
@@ -229,7 +227,7 @@ const LocationTravelTimes = ({
 
                     <View style={styles.travelTimesTextContainer}>
                       <Text
-                        style={[styles.travelTimeText, themeStyles.genericText]}
+                        style={[styles.travelTimeText, {color: primaryColor}]}
                       >
                         {travelTimeResults?.compare_directions?.Me?.duration ||
                           cachedData?.compare_directions?.Me?.duration ||
@@ -265,6 +263,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "100%",
     overflow: "hidden",
+  },
+    loadingFriendProfileButtonWrapper: {
+    flex: 0.4,
+    paddingRight: 0,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    alignContent: "flex-start",
   },
   saveText: {
     marginLeft: 8,

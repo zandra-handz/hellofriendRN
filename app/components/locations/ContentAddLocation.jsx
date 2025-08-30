@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
-
-import { useLocations } from "@/src/context/LocationsContext";
-
+ 
+import useCreateLocation from "@/src/hooks/LocationCalls/useCreateLocation";
 import { View, Text, TextInput, Keyboard, StyleSheet } from "react-native";
 
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
@@ -13,7 +12,7 @@ import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice"
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 
 const ContentAddLocation = ({
-
+userId,
   lightDarkTheme,
   themeAheadOfLoading,
   title,
@@ -27,7 +26,7 @@ const ContentAddLocation = ({
 
   const navigation = useNavigation();
 
-  const { handleCreateLocation, createLocationMutation } = useLocations();
+  const { handleCreateLocation, createLocationMutation } = useCreateLocation({userId: userId})
 
   const parkingScores = [
     { label: "Free parking", value: "location has free parking lot" },
