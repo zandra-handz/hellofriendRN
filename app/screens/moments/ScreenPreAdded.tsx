@@ -7,7 +7,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import PreAddedList from "@/app/components/moments/PreAddedList";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
- 
+
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useUser } from "@/src/context/UserContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
@@ -16,8 +16,8 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenPreAdded = () => {
   const { selectedFriend } = useSelectedFriend();
   const { user } = useUser();
-const { lightDarkTheme} = useLDTheme();
-  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
   const { loadingDash } = useFriendDash();
   const { preAdded, allCapsulesList } = useCapsuleList();
@@ -34,8 +34,7 @@ const { lightDarkTheme} = useLDTheme();
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground
-      }
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
@@ -46,10 +45,13 @@ const { lightDarkTheme} = useLDTheme();
         <View style={{ flex: 1, padding: 10 }}>
           {preAdded && (
             <PreAddedList
+              manualGradientColors={manualGradientColors}
+              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              primaryColor={lightDarkTheme.primaryText}
+              primaryBackground={lightDarkTheme.primaryBackground}
               updateCapsule={handlePreAddMoment}
               preAdded={preAdded}
-              allCapsulesList={allCapsulesList}
-              textStyle={lightDarkTheme.primaryText}
+              allCapsulesList={allCapsulesList} 
               specialTextStyle={appFontStyles.welcomeText}
               friendId={selectedFriend?.id}
             />

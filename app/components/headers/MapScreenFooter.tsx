@@ -18,10 +18,12 @@ const MapScreenFooter = ({
   themeAheadOfLoading,
   manualGradientColors,
     overlayColor,
+    primaryColor,
  
   dividerStyle,
-  textColor,
+ 
   friendId,
+  welcomeTextStyle,
 }) => {  
  
   const [addressesModalVisible, setAddressesModalVisible] = useState(false);
@@ -66,37 +68,39 @@ const MapScreenFooter = ({
   const RenderAddressesButton = useCallback(
     () => (
       <FooterButtonIconVersion
+            primaryColor={primaryColor}
         label="Addresses"
         icon={
           <MaterialIcons
             name={"location-pin"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={() => setAddressesModalVisible(true)}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   const RenderFilterButton = useCallback(
     () => (
       <FooterButtonIconVersion
+      primaryColor={primaryColor}
         label="Filter"
         icon={
           <MaterialCommunityIcons
             name={"filter"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={handleTestAlert}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   return (
@@ -124,9 +128,7 @@ const MapScreenFooter = ({
           },
         ]}
       >
- 
-
-        <View style={[styles.divider, dividerStyle]} />
+  
         <>
           <View style={styles.section}>
             <RenderAddressesButton />
@@ -147,6 +149,9 @@ const MapScreenFooter = ({
       {addressesModalVisible && (
         <View>
           <SetAddressesModal
+          primaryColor={primaryColor}
+          overlayColor={overlayColor}
+          welcomeTextStyle={welcomeTextStyle}
             userAddress={userAddress}
             setUserAddress={setUserAddress}
             friendAddress={friendAddress}

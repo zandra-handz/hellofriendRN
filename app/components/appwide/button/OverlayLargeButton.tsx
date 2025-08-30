@@ -1,6 +1,5 @@
 import { Text, View, TouchableOpacity } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface OverlayLargeButtonProps {
@@ -23,16 +22,19 @@ const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
   buttonOnBottom = false,
   customButton,
   addressSetter,
-}) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  primaryColor,
+  overlayColor,
+  welcomeTextStyle,
+}) => { 
 
   const iconSize = 30;
 
   return (
     <TouchableOpacity
       style={[
-        themeStyles.overlayBackgroundColor,
+     
         {
+          backgroundColor: overlayColor,
           marginVertical: 2,
           padding: 20,
           width: "100%",
@@ -55,7 +57,7 @@ const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
       </View>
       
       )}
-      <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>
+      <Text style={[  welcomeTextStyle, { color: primaryColor}]}>
         {label}
       </Text>
       {buttonOnBottom && (
@@ -80,8 +82,8 @@ const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
             >
               <Text
                 style={[
-                  themeStyles.primaryText,
-                  { fontWeight: "bold", fontSize: 13, marginRight: 6 },
+                 
+                  { color: primaryColor, fontWeight: "bold", fontSize: 13, marginRight: 6 },
                 ]}
               >
                 Change
@@ -90,7 +92,7 @@ const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
                 //name={"menu-swap"}
                 name={"swap-horizontal-circle"}
                 size={iconSize}
-                color={themeStyles.primaryText.color}
+                color={primaryColor}
               />
             </TouchableOpacity>
           </>

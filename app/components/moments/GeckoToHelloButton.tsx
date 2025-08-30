@@ -1,16 +1,17 @@
-import {   Pressable  } from "react-native";
-import React from "react"; 
+import { Pressable } from "react-native";
+import React from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/src/types/NavigationTypes";
 import { useNavigation } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons  } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-type Props = {};
+type Props = {
+  appLightColor;
+  homeDarkColor;
+};
 
-const GeckoToHelloButton = (props: Props) => {
-  const { manualGradientColors } = useGlobalStyle();
+const GeckoToHelloButton = ({ appLightColor, homeDarkColor }: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const navigateToFinalize = () => {
     navigation.navigate("Finalize");
@@ -22,19 +23,19 @@ const GeckoToHelloButton = (props: Props) => {
         width: "auto",
         height: "100%",
         paddingHorizontal: 10,
-        alignItems: 'center',
-     justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         borderRadius: 5,
 
-        backgroundColor: manualGradientColors.lightColor,
+        backgroundColor: appLightColor,
       }}
       onPress={navigateToFinalize}
     >
-        <MaterialCommunityIcons
-        name={'arrow-right'}
+      <MaterialCommunityIcons
+        name={"arrow-right"}
         size={25}
-        color={manualGradientColors.homeDarkColor}
-        /> 
+        color={homeDarkColor}
+      />
     </Pressable>
   );
 };

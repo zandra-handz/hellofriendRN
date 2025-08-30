@@ -1,11 +1,9 @@
 import React, { useState }  from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
-
-import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
+import { View,  StyleSheet } from "react-native";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {  MaterialIcons } from "@expo/vector-icons";
  
 import DualLocationSearcher from "./DualLocationSearcher"; 
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
@@ -16,15 +14,11 @@ interface Props {
 }
 
 const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addressSetter }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
   
 
   const { 
-    friendAddresses,
-    defaultAddress,
-    updateFriendDefaultAddress,
-    createFriendAddress,
-    removeFriendAddress,
+    friendAddresses, 
   } = useStartingFriendAddresses();
 
  
@@ -62,7 +56,7 @@ const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addr
         headerIcon={
           <MaterialIcons
           name={"edit-location-alt"}
-               size={appSpacingStyles.modalHeaderIconSize}
+               size={30}
             color={themeStyles.modalIconColor.color}
           />
         }

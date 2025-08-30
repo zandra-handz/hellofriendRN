@@ -1,6 +1,5 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState } from "react"; 
 import { useNavigation } from "@react-navigation/native";
 import Animated, {
   SlideInDown,
@@ -9,27 +8,30 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
 interface MomentsAddedProps {
   visibilityValue: SharedValue<number>;
 }
 
-const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+const MomentsAdded: React.FC<MomentsAddedProps> = ({
+  subWelcomeTextStyle,
+  overlayBackgroundColor,
+  darkerOverlayColor,
+  primaryColor,
+  capsuleList,
+  preAdded,
+  visibilityValue,
+}) => { 
 
   const [hide, setHide] = useState(false);
-  const { capsuleList, preAdded } = useCapsuleList();
   const navigation = useNavigation();
 
-  const preAddedCount = preAdded.length;
-  const capsuleCount = capsuleList.length + preAddedCount;
+  // const preAddedCount = preAdded.length;
+  // const capsuleCount = capsuleList.length + preAddedCount;
 
   useAnimatedReaction(
     () => visibilityValue.value,
     (newVal, oldVal) => {
       if (newVal !== oldVal) {
-    
         runOnJS(setHide)(!!newVal);
       }
     }
@@ -59,8 +61,8 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
           <Animated.View
             entering={SlideInDown.duration(0)}
             style={[
-              themeStyles.overlayBackgroundColor,
               {
+                backgroundColor: overlayBackgroundColor,
                 flexDirection: "column",
                 textAlign: "center",
                 alignItems: "center",
@@ -74,13 +76,12 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
             ]}
           >
             <Text
-              style={[
-                themeStyles.primaryText,
-                appFontStyles.welcomeText,
-                { fontSize: 14 },
+              style={[ 
+                subWelcomeTextStyle,
+                { color: primaryColor, fontSize: 14 },
               ]}
             >
-              Total ideas: {capsuleCount}
+              Total ideas: {capsuleList?.length + preAdded?.length}
             </Text>
             <View
               style={{
@@ -91,31 +92,30 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
               }}
             >
               <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { fontSize: 14 },
+                style={[ 
+                  subWelcomeTextStyle,
+                  { color: primaryColor, fontSize: 14 },
                 ]}
               >
-                Added to hello: {preAddedCount}
+                Added to hello: {preAdded?.length}
               </Text>
 
-              {preAddedCount > 0 && (
+              {preAdded?.length > 0 && (
                 <Pressable
                   style={[{ height: "100%", alignItems: "center" }]}
                   onPress={() => navigation.navigate("PreAdded")}
                 >
                   <Text
-                    style={[
-                      themeStyles.primaryText,
-                      appFontStyles.welcomeText,
+                    style={[ 
+                      subWelcomeTextStyle,
                       {
+                        color: primaryColor,
                         marginLeft: 10,
                         fontSize: 14,
                         paddingHorizontal: 14,
                         borderRadius: 999,
                         // fontFamily: "Poppins-Bold",
-                        backgroundColor: themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+                        backgroundColor: darkerOverlayColor,
                       },
                     ]}
                   >

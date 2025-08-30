@@ -1,18 +1,29 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState } from "react"; 
 import { MaterialIcons } from "@expo/vector-icons";
-import Animated, { SlideInUp, SlideOutUp, FadeOut, SharedValue, useAnimatedReaction, runOnJS } from "react-native-reanimated";
+import Animated, {
+  SlideInUp,
+  SlideOutUp,
+  FadeOut,
+  SharedValue,
+  useAnimatedReaction,
+  runOnJS,
+} from "react-native-reanimated";
 
 type Props = {
   label: string;
   flipLabel: string;
-   visibilityValue: SharedValue<number>;
+  visibilityValue: SharedValue<number>;
 };
 
-const SwipeDown = ({ label = "label" , flipLabel = 'flip label', visibilityValue}: Props) => {
-  const [hide, setHide ] = useState(false);
-  const { themeStyles } = useGlobalStyle();
+const SwipeDown = ({
+  primaryColor = "red",
+  primaryOverlayColor = "orange",
+  label = "label",
+  flipLabel = "flip label",
+  visibilityValue,
+}: Props) => {
+  const [hide, setHide] = useState(false); 
 
   useAnimatedReaction(
     () => visibilityValue.value,
@@ -21,40 +32,40 @@ const SwipeDown = ({ label = "label" , flipLabel = 'flip label', visibilityValue
         runOnJS(setHide)(!!newVal);
       }
     }
-  )
+  );
   return (
-    <> 
-    <Animated.View
-    // entering={SlideInUp}
-    // // exiting={SlideOutUp.duration(0)}
-    // exiting={FadeOut}
-      style={{
-        flexDirection: "column",
-        justifyContent: "center",
-        alignContent: "center",
-        borderRadius: 10,
-        backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-        padding: 4,
-        opacity: 0.6,
-      }}
-    > 
-      <Text
-        style={[
-          themeStyles.primaryText,
-          { fontSize: 12, fontWeight: "bold", lineHeight: 22 },
-        ]}
+    <>
+      <Animated.View
+        style={{
+          flexDirection: "column",
+          justifyContent: "center",
+          alignContent: "center",
+          borderRadius: 10,
+          backgroundColor: primaryOverlayColor,
+          padding: 4,
+          opacity: 0.6,
+        }}
       >
-        {hide ? label : flipLabel}
-      </Text>
-      <View style={{ flexDirection: "row", justifyContent: "center" }}>
-        <MaterialIcons
-          name={hide? "swipe-down" : "swipe-up"}
-          size={20}
-          color={themeStyles.primaryText.color}
-        />
-      </View>
-    </Animated.View>
-     
+        <Text
+          style={[
+            {
+              color: primaryColor,
+              fontSize: 12,
+              fontWeight: "bold",
+              lineHeight: 22,
+            },
+          ]}
+        >
+          {hide ? label : flipLabel}
+        </Text>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <MaterialIcons
+            name={hide ? "swipe-down" : "swipe-up"}
+            size={20}
+            color={primaryColor}
+          />
+        </View>
+      </Animated.View>
     </>
   );
 };

@@ -91,6 +91,7 @@ const SectionAccessibilitySettings = ({
       }}
     >
       <Toggle
+       manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Manual theme"
         icon={
@@ -105,6 +106,7 @@ const SectionAccessibilitySettings = ({
       />
       {manualTheme && (
         <Toggle
+         manualGradientColors={manualGradientColors}
           primaryColor={primaryColor}
           label="Light/Dark"
           icon={

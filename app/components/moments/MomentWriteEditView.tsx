@@ -7,8 +7,7 @@ import {
   Alert,
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import TextMomentBox from "./TextMomentBox";
-import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
+import TextMomentBox from "./TextMomentBox"; 
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
@@ -36,12 +35,16 @@ type Props = {
 };
 
 const MomentWriteEditView = ({
+  manualGradientColors,
+  capsuleList,
+  userCategories,
   userId,
   screenCameFromToParent,
   momentText,
   catCreatorVisible,
   welcomeTextStyle,
   primaryColor,
+  primaryBackground,
   darkerOverlayColor,
   openCatCreator,
   closeCatCreator,
@@ -53,9 +56,8 @@ const MomentWriteEditView = ({
   cardPadding = 4, // controls padding around the shaded card
   friendId,
   friendFaves,
-}: Props) => { 
-  const { capsuleList } =
-    useCapsuleList(); // NEED THIS TO ADD NEW
+}: Props) => {  
+ 
 
   const { handleCreateMoment, createMomentMutation } = useCreateMoment({
     userId: userId,
@@ -92,8 +94,7 @@ const MomentWriteEditView = ({
         !userChangedCategory &&
         momentTextRef &&
         momentTextRef.current
-      ) {
-        // console.error("RESETTING", momentText, userChangedCategory);
+      ) { 
         momentTextRef.current.setText(momentText);
       }
       // else {
@@ -378,6 +379,8 @@ const MomentWriteEditView = ({
                   onTextChange={updateMomentText}
                   triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
                   isKeyboardVisible={isKeyboardVisible}
+                  welcomeTextStyle={welcomeTextStyle}
+                  primaryColor={primaryColor}
                 />
               )}
             </View>
@@ -401,6 +404,11 @@ const MomentWriteEditView = ({
         </View>
 
         <CategoryCreator
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
+        manualGradientColors={manualGradientColors}
+        capsuleList={capsuleList}
+        userCategories={userCategories}
           freezeCategory={userChangedCategory}
           friendDefaultCategory={friendFaves?.friend_default_category || null}
           isVisible={catCreatorVisible}

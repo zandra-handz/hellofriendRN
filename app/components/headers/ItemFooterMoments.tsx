@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
+import { View, StyleSheet, Text  } from "react-native";
+ 
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-import EscortBarReadOnly from "../moments/EscortBarReadOnly";
+import EscortBarMoments from "../moments/EscortBarMoments";
  
 import Animated, {
   SharedValue,
@@ -34,10 +33,11 @@ const ItemFooterMoments: React.FC<Props> = ({
   marginBottom,
   fontStyle,
   primaryColor,
-  isPartialData, // if is partial then will add 'loaded' to total item count
+  primaryBackground,
+  // isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
   visibilityValue,
-  categoryColorsMap,
+  categoryColorsMap, // in case want category colors
   totalItemCount,
   useButtons = true,
   onRightPress = () => {},
@@ -115,7 +115,9 @@ const ItemFooterMoments: React.FC<Props> = ({
           visibilityStyle,
         ]}
       >
-        <EscortBarReadOnly
+        <EscortBarMoments
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
         categoryColorsMap={categoryColorsMap}
         
           onLeftPress={handleScrollToPrev}

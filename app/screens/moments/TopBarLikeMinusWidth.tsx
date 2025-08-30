@@ -1,5 +1,5 @@
 import { View, Pressable, Text } from "react-native";
-import React from "react"; 
+import React from "react";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Animated from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -17,28 +17,27 @@ type Props = {
 
 const TopBarLikeMinusWidth = ({
   backgroundColor,
+  manualGradientColors,
   primaryBackground,
   primaryColor,
   fontStyle,
   forwardFlowOn = true,
   onPress,
-  onPressLabel='Save',
+  onPressLabel = "Save",
   onExpandPress,
- marginTop = 6,
+  marginTop = 6,
   label = "categories",
-  
-}: Props) => { 
+}: Props) => {
   const { navigateBack } = useAppNavigations();
   return (
     <View style={{ paddingHorizontal: 10 }}>
       <View //could make whole bar a pressable instead
         style={[
-        
           {
             backgroundColor: primaryBackground,
             height: 50,
             paddingHorizontal: 10,
-            flexDirection: "row", 
+            flexDirection: "row",
 
             // paddingTop: paddingTop,
             // paddingBottom: paddingBottom,
@@ -48,7 +47,6 @@ const TopBarLikeMinusWidth = ({
             borderRadius: 10,
             // marginVertical: 10,
             marginTop: marginTop,
-      
           },
         ]}
       >
@@ -58,7 +56,7 @@ const TopBarLikeMinusWidth = ({
             width: "100%",
             alignItems: "center",
             flexDirection: "row",
-          //  backgroundColor: "red",
+            //  backgroundColor: "red",
             height: "100%",
           }}
         >
@@ -68,28 +66,22 @@ const TopBarLikeMinusWidth = ({
               alignItems: "center",
               position: "absolute",
               width: "100%",
-             // backgroundColor: "orange",
+              // backgroundColor: "orange",
               justifyContent: "center",
             }}
           >
             <MaterialIcons
               name={"keyboard-arrow-up"}
               size={16}
-            //   color={manualGradientColors.homeDarkColor}
+              //   color={manualGradientColors.homeDarkColor}
               // color={themeStyles.primaryText.color}
-              color={'transparent'}
+              color={"transparent"}
               style={{
                 position: "absolute",
                 bottom: 17,
               }}
             />
-            <Text
-              style={[
-           
-                fontStyle,
-                { color: primaryColor, fontSize: 13 },
-              ]}
-            >
+            <Text style={[fontStyle, { color: primaryColor, fontSize: 13 }]}>
               {label}
             </Text>
           </Pressable>
@@ -98,8 +90,8 @@ const TopBarLikeMinusWidth = ({
         <View
           style={{
             flexDirection: "row",
-            width: '100%', 
-            justifyContent: 'space-between',
+            width: "100%",
+            justifyContent: "space-between",
           }}
         >
           <Pressable
@@ -108,7 +100,7 @@ const TopBarLikeMinusWidth = ({
               borderRadius: 999,
               padding: 4,
               //backgroundColor:
-               // themeStyles.overlayBackgroundColor.backgroundColor,
+              // themeStyles.overlayBackgroundColor.backgroundColor,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -124,15 +116,25 @@ const TopBarLikeMinusWidth = ({
 
           <View style={{ alignItems: "center", flexDirection: "row" }}>
             <Text
-              style={[ 
+              style={[
                 fontStyle,
-                {color: primaryColor, fontSize: 13, marginRight: 12 },
+                { color: primaryColor, fontSize: 13, marginRight: 12 },
               ]}
             >
               {onPressLabel}
             </Text>
-            {forwardFlowOn && <ToNextButton onPress={onPress} />}
-            {!forwardFlowOn && <ActionAndBack onPress={onPress} />}
+            {forwardFlowOn && (
+              <ToNextButton
+                manualGradientColors={manualGradientColors}
+                onPress={onPress}
+              />
+            )}
+            {!forwardFlowOn && (
+              <ActionAndBack
+                manualGradientColors={manualGradientColors}
+                onPress={onPress}
+              />
+            )}
           </View>
         </View>
       </View>

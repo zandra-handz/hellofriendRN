@@ -10,7 +10,17 @@ import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
-const ReloadList = ({ capsuleList, userId, friendId, friendDash, items }) => {
+const ReloadList = ({
+  manualGradientColors,
+  subWelcomeTextStyle,
+  primaryColor,
+  primaryBackground,
+  capsuleList,
+  userId,
+  friendId,
+  friendDash,
+  items,
+}) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
@@ -48,6 +58,8 @@ const ReloadList = ({ capsuleList, userId, friendId, friendDash, items }) => {
           isSelected={isSelected}
           height={ITEM_HEIGHT}
           onPress={handleCheckboxChange}
+          manualGradientColors={manualGradientColors}
+          primaryColor={primaryColor}
         />
       );
     },
@@ -104,13 +116,7 @@ const ReloadList = ({ capsuleList, userId, friendId, friendDash, items }) => {
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `reload-${index}`;
 
-  //   const getItemLayout = (item, index) => {
-  //     return {
-  //       length: COMBINED_HEIGHT,
-  //       offset: COMBINED_HEIGHT * index,
-  //       index,
-  //     };
-  //   };
+ 
 
   return (
     <>
@@ -132,6 +138,10 @@ const ReloadList = ({ capsuleList, userId, friendId, friendDash, items }) => {
         />
       </View>
       <EscortBar
+        manualGradientColors={manualGradientColors}
+        subWelcomeTextStyle={subWelcomeTextStyle}
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
         forwardFlowOn={false}
         label={"Reload Selected"}
         onPress={handleBulkCreateMoments}

@@ -172,12 +172,14 @@ const CarouselSliderMoments = ({
           data={data}
           scrollTo={scrollTo}
           primaryColor={lightDarkTheme.primaryText}
+          primaryBackground={lightDarkTheme.primaryBackground}
           fontStyle={fontStyle}
           height={50} // matches escort read only bar inside
           marginBottom={10} // eyeballed to match finalize styling honestly
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
           categoryColorsMap={categoryColorsMap}
+      
           useButtons={useButtons}
           onRightPress={() => onRightPress(currentIndex.value)}
           onRightPressSecondAction={() =>

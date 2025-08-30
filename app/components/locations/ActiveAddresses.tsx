@@ -27,6 +27,9 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   setUserAddress,
   friendAddress,
   setFriendAddress,
+  primaryColor,
+  overlayColor,
+  welcomeTextStyle,
 }) => { 
   const { selectedFriend } = useSelectedFriend();
 
@@ -48,15 +51,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
     removeFriendAddress,
   } = useStartingFriendAddresses();
 
-  // put these in parent screen so that i could send them to the next screen
-  // const [userAddress, setUserAddress] = useState({
-  //   address: `No address selected`,
-  //   id: "",
-  // });
-  // const [friendAddress, setFriendAddress] = useState({
-  //   address: `No address selected`,
-  //   id: "",
-  // });
+ 
 
   const handleFriendAddressDefault = () => {
     if (!friendAddress.is_default) {
@@ -116,13 +111,16 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
 
  
 
-  const closeModal = () => {};
+  // const closeModal = () => {};
 
   return (
     <>
       {userAddress && friendAddress && (
         <View>
           <OverlayLargeButton
+          primaryColor={primaryColor}
+          overlayColor={overlayColor}
+          welcomeTextStyle={welcomeTextStyle}
             label={`My Address: ${userAddress && userAddress.address}`}
             onPress={() => setUserAddressModalVisible(true)}
             addTopRowElement={true}

@@ -1,27 +1,26 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Pressable } from "react-native";
 import React, { ReactElement } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
 import GlobalPressable from "../appwide/button/GlobalPressable";
-
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = {
   categoryColorsMap: object;
+  primaryColor: string;
+  primaryBackground: string;
   children: ReactElement;
   onLeftPress: () => void;
   onRightPress: () => void;
 };
 
-const EscortBarReadOnly = ({
-  categoryColorsMap,
+const EscortBarMoments = ({
+  primaryBackground,
+  primaryColor,
   onLeftPress,
   onRightPress,
   children,
 }: Props) => {
-  const { themeStyles } = useGlobalStyle();
   const { navigateBack } = useAppNavigations();
   return (
     <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
@@ -36,7 +35,7 @@ const EscortBarReadOnly = ({
             alignItems: "center",
             justifyContent: "space-between",
             borderRadius: 10,
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: primaryBackground,
           },
         ]}
       >
@@ -53,7 +52,7 @@ const EscortBarReadOnly = ({
           <MaterialIcons
             name={"keyboard-arrow-left"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         </Pressable>
 
@@ -70,20 +69,18 @@ const EscortBarReadOnly = ({
             style={{
               marginHorizontal: 10,
               marginRight: 14, // eyeballing/instance of needing a weird customization
-              //backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
               borderRadius: 9999,
               alignItems: "center",
               justifyContent: "center",
               alignContent: "center",
-            }}
-            //   onPress={navigateBack}
+            }} 
             onPress={onLeftPress}
           >
             <MaterialIcons
               name={"keyboard-double-arrow-left"}
               size={20}
               style={{ opacity: 0.6 }}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
             />
           </Pressable>
           {children}
@@ -91,9 +88,8 @@ const EscortBarReadOnly = ({
             hitSlop={20}
             style={{
               marginHorizontal: 10,
-              marginLeft: 6, // eyeballing/instance of needing a weird customization
-              //backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
-              borderRadius: 9999,
+              marginLeft: 6,  
+               borderRadius: 9999,
               alignItems: "center",
               justifyContent: "center",
               alignContent: "center",
@@ -104,7 +100,7 @@ const EscortBarReadOnly = ({
               name={"keyboard-double-arrow-right"}
               size={20}
               style={{ opacity: 0.6 }}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
             />
           </Pressable>
         </View>
@@ -130,4 +126,4 @@ const EscortBarReadOnly = ({
   );
 };
 
-export default EscortBarReadOnly;
+export default EscortBarMoments;

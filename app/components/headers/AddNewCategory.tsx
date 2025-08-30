@@ -29,14 +29,15 @@ type Props = {
 };
 
 const AddNewCategory = ({
+  primaryColor,
+  primaryBackground,
+  manualGradientColors,
   userId,
   userCategories,
   height = 60,
   fontStyle = 1,
   addToOnPress,
-}: Props) => {
-  //fontStyle two for modal
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+}: Props) => { 
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
  
@@ -192,8 +193,8 @@ const AddNewCategory = ({
         >
           <Text
             style={[
-              themeStyles.primaryText,
-              { fontSize: 13, fontWeight: "bold" },
+          
+              { color: primaryColor, fontSize: 13, fontWeight: "bold" },
             ]}
           >
             max amount of categories
@@ -217,7 +218,7 @@ const AddNewCategory = ({
         >
           <MaterialIcons
             name={!inputActive ? "add" : "keyboard-backspace"}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
             color={manualGradientColors.homeDarkColor}
             size={16}
             style={{
@@ -237,9 +238,9 @@ const AddNewCategory = ({
               }}
             >
               <Text
-                style={[
-                  themeStyles.primaryText,
+                style={[ 
                   {
+                    color: primaryColor,
                     fontSize: fontStyle === 2 ? 18 : 15,
                     fontWeight: fontStyle === 2 ? "regular" : "bold",
                     fontFamily: fontStyle === 2 ? "Poppins-Regular" : undefined,
@@ -264,14 +265,14 @@ const AddNewCategory = ({
             >
               <TextInput
                 ref={newCategoryRef}
-                style={[
-                  themeStyles.primaryText,
+                style={[ 
                   {
+                    color: primaryColor,
                     fontFamily: "Poppins-Regular",
                     fontSize: 14,
                     lineHeight: 14,
                     borderWidth: StyleSheet.hairlineWidth,
-                    borderColor: themeStyles.primaryText.color,
+                    borderColor: primaryColor,
                     borderRadius: fontStyle === 2 ? 20 : 0,
                     width: "100%",
                     flex: 1,
@@ -281,8 +282,7 @@ const AddNewCategory = ({
                     alignContents: "center",
                     paddingLeft: 12,
                     paddingRight: ENTER_MESSAGE_WIDTH + 12, // space for enter message
-                    backgroundColor:
-                      themeStyles.primaryBackground.backgroundColor,
+                    backgroundColor: primaryBackground,
                   },
                 ]}
                 autoFocus={true}
@@ -312,9 +312,9 @@ const AddNewCategory = ({
                     }}
                   >
                     <Text
-                      style={[
-                        themeStyles.primaryText,
+                      style={[ 
                         {
+                          color: primaryColor,
                           opacity: 0.6,
                           fontSize: 13,
                           lineHeight: 12,

@@ -9,18 +9,12 @@ import Animated, {
   SlideOutUp,
   SlideInDown,
   SlideOutDown,
-} from "react-native-reanimated";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialIcons } from "@expo/vector-icons"; 
+} from "react-native-reanimated"; 
+import { MaterialIcons } from "@expo/vector-icons";
 import AddNewCategory from "../headers/AddNewCategory";
-
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/src/types/NavigationTypes";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { useCategories } from "@/src/context/CategoriesContext";
-import CategoryButtonForCreator from "./CategoryButtonForCreator"; 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+import CategoryButtonForCreator from "./CategoryButtonForCreator";
 
 type Props = {
   freezeCategory: boolean;
@@ -36,9 +30,14 @@ type Props = {
   selectedId: number;
 };
 const CategoryCreator = ({
+  primaryColor,
+  primaryBackground,
+  manualGradientColors,
   freezeCategory,
   friendDefaultCategory,
- 
+  capsuleList,
+  userCategories,
+
   isVisible,
   onPress,
   addToOnPress,
@@ -46,18 +45,10 @@ const CategoryCreator = ({
   existingId,
   categoryColorsMap,
   onClose,
-}: Props) => {
-  const { capsuleList } = useCapsuleList();
-  const { userCategories } = useCategories();
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
-  
+}: Props) => { 
 
   const {
-    categorySizes,
-    // addCategoryItem,
-    // moveCategoryCount,
-    // generateGradientColors,
-    // generateRandomColors,
+    categorySizes, 
   } = useMomentSortingFunctions({
     listData: capsuleList,
   });
@@ -143,11 +134,8 @@ const CategoryCreator = ({
       return;
     }
 
-    if (friendDefaultCategory && userCategories && (userCategories.length > 0)) {
-      console.log(
-        `friend default:`,
-        friendDefaultCategory
-      );
+    if (friendDefaultCategory && userCategories && userCategories.length > 0) {
+      console.log(`friend default:`, friendDefaultCategory);
       const friendDefault = friendDefaultCategory;
       const name = userCategories.find(
         (category) => category.id === friendDefault
@@ -198,6 +186,8 @@ const CategoryCreator = ({
                 style={[styles.buttonWrapper, { marginRight: 10 }]}
               >
                 <CategoryButtonForCreator
+                primaryColor={primaryColor}
+                manualGradientColors={manualGradientColors}
                   height={"auto"}
                   selectedId={selectedId}
                   label={name}
@@ -230,13 +220,17 @@ const CategoryCreator = ({
             styles.categoryNavigatorContainer,
             {
               paddingHorizontal: HORIZONTAL_PADDING,
-              backgroundColor:
-                // themeStyles.overlayBackgroundColor.backgroundColor,
-                themeStyles.primaryBackground.backgroundColor,
+              backgroundColor: 
+                primaryBackground,
             },
           ]}
         >
-          <AddNewCategory addToOnPress={handleSelectCreated} />
+          <AddNewCategory
+                 primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
+            manualGradientColors={manualGradientColors}
+            addToOnPress={handleSelectCreated}
+          />
           {userCategories && (
             <View
               showsVerticalScrollIndicator={false}
@@ -259,7 +253,7 @@ const CategoryCreator = ({
           >
             <MaterialIcons
               name={"keyboard-arrow-down"}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
               color={manualGradientColors.homeDarkColor}
               size={16}
               style={{

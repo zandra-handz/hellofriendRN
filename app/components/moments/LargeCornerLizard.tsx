@@ -1,11 +1,9 @@
 import React from "react";
-import { StyleSheet } from 'react-native';
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { StyleSheet } from 'react-native'; 
  
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 
-const LargeCornerLizard = ({color}) => {
-  const { themeStyles  } = useGlobalStyle();
+const LargeCornerLizard = ({color}) => { 
   return (
     //   <LizardSvg
     //     height={300}

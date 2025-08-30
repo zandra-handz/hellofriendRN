@@ -121,6 +121,7 @@ const ScreenMomentFocus = () => {
           style={{ height: topBarTotalHeight, zIndex: 60000 }}
         >
           <TopBarLikeMinusWidth
+          manualGradientColors={manualGradientColors}
           primaryColor={lightDarkTheme.primaryText}
           primaryBackground={lightDarkTheme.primaryBackground}
           fontStyle={appFontStyles.subWelcomeText}
@@ -146,9 +147,13 @@ const ScreenMomentFocus = () => {
           }}
         >
           <MomentWriteEditView
+          manualGradientColors={manualGradientColors}
+          capsuleList={capsuleList}
+          userCategories={userCategories}
           friendId={selectedFriend?.id}
           userId={user?.id}
           primaryColor={lightDarkTheme.primaryText}
+           primaryBackground={lightDarkTheme.primaryBackground}
           darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
           welcomeTextStyle={appFontStyles.welcomeText}
           friendFaves={friendDash?.friend_faves}

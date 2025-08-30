@@ -1,14 +1,12 @@
 import {
   View,
-  Text,
-  TouchableOpacity,
+  Text, 
   Pressable,
   FlatList,
 } from "react-native";
-import React, { useCallback, useState } from "react"; 
+import React, { useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { CheckBox } from "react-native-elements";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { CheckBox } from "react-native-elements"; 
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
@@ -27,6 +25,10 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   data,
   categories,
   preSelected,
+  manualGradientColors,
+  subWelcomeTextStyle,
+  primaryColor,
+  primaryBackground,
 }) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
@@ -36,14 +38,13 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const [changedMoments, setChangedMoments] = useState<Moment[]>([]);
   const [visibleCategories, setVisibleCategories] = useState<Moment[]>(data); //so that we can use the same value for All and for individual ones
 
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const { handlePreAddMoment } = usePreAddMoment({
     userId: userId,
     friendId: friendId,
   });
-
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+ 
 
   const handleCategoryFilterPress = (category: string) => {
     const filtered = data.filter(
@@ -133,10 +134,10 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
                 flexShrink: 1,
                 color: isSelected
                   ? manualGradientColors.lightColor
-                  : themeStyles.primaryText.color,
+                  : primaryColor,
                 fontSize: 13,
               }}
-              uncheckedColor={themeStyles.primaryText.color}
+              uncheckedColor={primaryColor}
               checkedColor={manualGradientColors.lightColor}
               iconRight={true}
               right={true}
@@ -147,14 +148,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     },
     [selectedMoments, manualGradientColors]
   );
-  //   useEffect(() => {
-
-  //   }, [updateCapsuleMutation]);
-
-  // all at once
-  // const handleRestore = async () => {
-  //   await Promise.all(selectedMoments.map(moment => updateCapsule(moment.id, false)));
-  // };
+ 
+ 
 
   const handleUpdateMoments = () => {
     if (!friendId) {
@@ -196,13 +191,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `finalize-${index}`;
 
-  //   const getItemLayout = (item, index) => {
-  //     return {
-  //       length: COMBINED_HEIGHT,
-  //       offset: COMBINED_HEIGHT * index,
-  //       index,
-  //     };
-  //   };
+ 
 
   const renderCategoryButton = ({ item, index }) => {
     return (
@@ -216,7 +205,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
             justifyContent: "center",
           }}
         >
-          <Text style={themeStyles.genericText}># {item}</Text>
+          <Text style={{color: primaryColor}}># {item}</Text>
         </Pressable>
       </View>
     );
@@ -242,9 +231,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
                 }}
               >
                 <Text
-                  style={[
-                    themeStyles.primaryText,
-                    { fontSize: 13, fontWeight: "bold" },
+                  style={[ 
+                    { color: primaryColor, fontSize: 13, fontWeight: "bold" },
                   ]}
                 >
                   All categories
@@ -260,16 +248,19 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           estimatedItemSize={90}
           renderItem={renderListItem}
           keyExtractor={extractItemKey}
-          //  getItemLayout={getItemLayout}
-          // initialNumToRender={10}
-          // maxToRenderPerBatch={10}
-          // windowSize={10}
+ 
           removeClippedSubviews={true}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => <View style={{ height: 100 }} />}
         />
       </View>
-      <EscortBar onPress={handleUpdateMoments} />
+      <EscortBar
+        manualGradientColors={manualGradientColors}
+        subWelcomeTextStyle={subWelcomeTextStyle}
+        onPress={handleUpdateMoments}
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
+      />
     </>
   );
 };

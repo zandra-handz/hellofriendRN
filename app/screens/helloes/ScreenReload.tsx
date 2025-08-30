@@ -17,11 +17,11 @@ const ScreenReload = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-const { capsuleList} = useCapsuleList();
+  const { capsuleList } = useCapsuleList();
   const { friendDash, loadingDash } = useFriendDash();
-  const { lightDarkTheme} = useLDTheme();
+  const { lightDarkTheme } = useLDTheme();
   const { appFontStyles, manualGradientColors } = useGlobalStyle();
-  console.log('reload screen');
+  console.log("reload screen");
 
   return (
     <SafeViewAndGradientBackground
@@ -30,8 +30,7 @@ const { capsuleList} = useCapsuleList();
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-             backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-     
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
@@ -41,9 +40,9 @@ const { capsuleList} = useCapsuleList();
       {selectedFriend && !loadingDash && (
         <View style={{ flex: 1, padding: 10 }}>
           <Text
-            style={[ 
+            style={[
               appFontStyles.welcomeText,
-              {color: lightDarkTheme.primaryText, fontSize: 22 },
+              { color: lightDarkTheme.primaryText, fontSize: 22 },
             ]}
           >
             Reload ideas
@@ -51,7 +50,11 @@ const { capsuleList} = useCapsuleList();
 
           {savedMoments && selectedFriend && friendDash && (
             <ReloadList
-            capsuleList={capsuleList}
+              manualGradientColors={manualGradientColors}
+              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              primaryColor={lightDarkTheme.primaryText}
+              primaryBackground={lightDarkTheme.primaryBackground}
+              capsuleList={capsuleList}
               userId={user?.id}
               friendId={selectedFriend?.id}
               friendDash={friendDash}

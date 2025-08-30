@@ -1,21 +1,23 @@
 import { Pressable } from "react-native";
-import React from "react";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/src/types/NavigationTypes";
-import { useNavigation } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+interface Colors {
+  lightColor: string;
+  homeDarkColor: string;
+}
 
 type Props = {
+  manualGradientColors: Colors;
   onPress: () => void;
   iconName?: string;
 };
 
-const ActionAndBack = ({ onPress, iconName='check'}: Props) => {
-  const { manualGradientColors } = useGlobalStyle();
- 
-
+const ActionAndBack = ({
+  manualGradientColors,
+  onPress,
+  iconName = "check",
+}: Props) => {
   return (
     <Pressable
       style={{

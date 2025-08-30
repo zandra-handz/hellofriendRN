@@ -11,8 +11,7 @@ import Animated, {
   Extrapolation,
   withTiming,
   withRepeat,
-} from "react-native-reanimated";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native-reanimated"; 
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -47,8 +46,14 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   pulseValue,
   onSend,
   categoryColorsMap,
-}) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  subWelcomeTextStyle,
+  homeDarkColor,
+  appLightColor,
+  primaryColor,
+  primaryBackgroundColor,
+  darkerOverlayColor,
+  lighterOverlayColor,
+}) => { 
 
   const startingPosition = index * combinedHeight;
   const { height } = useWindowDimensions();
@@ -102,19 +107,19 @@ const MomentItem: React.FC<MomentItemsProps> = ({
       ? interpolateColor(
           pulseValue.value,
           [0, 1],
-          [manualGradientColors.lightColor, friendColor]
+          [appLightColor, friendColor]
         )
       : "transparent"; // manualGradientColors.homeDarkColor;
 
     const iconColor = isPressed
-      ? manualGradientColors.homeDarkColor
+      ? homeDarkColor
       : // interpolateColor(
         //     pulseValue.value,
         //     [0, 1],
         //     [themeStyles.primaryText.color, manualGradientColors.homeDarkColor]
         //   )
 
-        themeStyles.primaryText.color;
+        primaryColor;
 
     return {
       backgroundColor,
@@ -179,7 +184,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   return (
     <Animated.View
       style={[
-        themeStyles.genericTextBackground,
+        primaryBackgroundColor,
 
         {
           textAlign: "left",
@@ -197,7 +202,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           borderRadius: 999, //cardBorderRadius,
 
           backgroundColor:
-            themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+            darkerOverlayColor,
           // borderTopLeftRadius: 60,
           // borderTopRightRadius: 10,
           // borderBottomLeftRadius: 10,
@@ -211,7 +216,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
         name={"leaf"}
         size={40}
         style={{ position: "absolute", bottom: 14, right: 8 }}
-        color={themeStyles.lighterOverlayBackgroundColor.backgroundColor}
+        color={lighterOverlayColor}
         color={categoryColor}
       />
       <View
@@ -240,10 +245,9 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           <View style={{ position: "relative", alignSelf: "flex-start" }}>
             <Text
               numberOfLines={1}
-              style={[
-                themeStyles.primaryText,
+              style={[ 
                 {
-                  color: themeStyles.primaryText.color,
+                  color: primaryColor,
                   fontSize: 14,
                   fontWeight: "bold",
                   textShadowColor: categoryColor,
@@ -271,10 +275,9 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             //    numberOfLines={talkingPointNumberOfLines}
             numberOfLines={1}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.subWelcomeText,
-              { fontSize: 13, lineHeight: 28, fontFamily: "Poppins-Regular" },
+            style={[ 
+              subWelcomeTextStyle,
+              { color: primaryColor, fontSize: 13, lineHeight: 28, fontFamily: "Poppins-Regular" },
             ]}
           >
             {/* {momentData && momentData?.capsule} */}

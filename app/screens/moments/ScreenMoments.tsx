@@ -26,7 +26,7 @@ const ScreenMoments = () => {
 const { lightDarkTheme } = useLDTheme();
   const {user } = useUser();
     const { selectedFriend, setFriend } = useSelectedFriend();
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList, preAdded } = useCapsuleList();
 
   const { handlePreAddMoment } = usePreAddMoment({userId: user?.id, friendId: selectedFriend?.id})
 
@@ -136,11 +136,13 @@ const { lightDarkTheme } = useLDTheme();
             {capsuleList && categoryColorsMap && (
               <MomentsList
                 capsuleList={capsuleList}
+                preAdded={preAdded}
                 updateCapsule={handlePreAddMoment}
                 categoryNames={categoryNames}
                 categoryStartIndices={categoryStartIndices}
                 navigateToMomentView={navigateToMomentView}
                 darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
+                  lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
 
                 // EscortBarMinusWidth
                 navigateBack={navigateBack}

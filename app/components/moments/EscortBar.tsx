@@ -1,14 +1,14 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import ToNextButton from "./ToNextButton";
 import ActionAndBack from "./ActionAndBack";
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons  } from "@expo/vector-icons";
 
 type Props = {
   onPress: () => void;
@@ -22,8 +22,11 @@ const EscortBar = ({
   label = "Save and Continue",
   iconName = "keyboard-arrow-left",
   forwardFlowOn = true,
-}: Props) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  manualGradientColors,
+  subWelcomeTextStyle,
+  primaryColor,
+  primaryBackground,
+}: Props) => { 
   const { navigateBack } = useAppNavigations();
   return (
     <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
@@ -38,7 +41,7 @@ const EscortBar = ({
             alignItems: "center",
             justifyContent: "space-between",
             borderRadius: 10, 
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: primaryBackground,
             // backgroundColor: "pink",
           },
         ]}
@@ -55,22 +58,21 @@ const EscortBar = ({
           <MaterialIcons
             name={`${iconName}`}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         </Pressable>
 
         <View style={{ alignItems: "center", flexDirection: "row"  }}>
           <Text
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.subWelcomeText,
-              { fontSize: 13, marginRight: 12 },
+            style={[ 
+              subWelcomeTextStyle,
+              { color: primaryColor, fontSize: 13, marginRight: 12 },
             ]}
           >
             {label}
           </Text>
-          {forwardFlowOn && <ToNextButton onPress={onPress} />}
-          {!forwardFlowOn && <ActionAndBack onPress={onPress} />}
+          {forwardFlowOn && <ToNextButton manualGradientColors={manualGradientColors} onPress={onPress} />}
+          {!forwardFlowOn && <ActionAndBack manualGradientColors={manualGradientColors} onPress={onPress} />}
         </View>
       </GlobalPressable>
     </Animated.View>

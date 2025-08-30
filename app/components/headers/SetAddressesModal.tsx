@@ -1,55 +1,57 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native"; 
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
-import ActiveAddresses from "../locations/ActiveAddresses"; 
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
+import ActiveAddresses from "../locations/ActiveAddresses";
 
 interface Props {
-    userAddress: object;
-    friendAddress: object;
-    setUserAddress: React.Dispatch<React.SetStateAction<string | null>>;
-    setFriendAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  userAddress: object;
+  friendAddress: object;
+  setUserAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  setFriendAddress: React.Dispatch<React.SetStateAction<string | null>>;
   isVisible: boolean;
   closeModal: () => void;
 }
 
-const SetAddressesModal: React.FC<Props> = ({ isVisible, closeModal, userAddress, setUserAddress, friendAddress, setFriendAddress }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
- 
-  
-
+const SetAddressesModal: React.FC<Props> = ({
+  isVisible,
+  closeModal,
+  primaryColor,
+  overlayColor,
+  welcomeTextStyle,
+  userAddress,
+  setUserAddress,
+  friendAddress,
+  setFriendAddress,
+}) => {
   const renderActiveAddresses = useCallback(() => {
-  if (userAddress && friendAddress) {
-    return (
-      <ActiveAddresses
-        userAddress={userAddress}
-        setUserAddress={setUserAddress}
-        friendAddress={friendAddress}
-        setFriendAddress={setFriendAddress}
-      />
-    );
-  }
-  return null;
-}, [userAddress, friendAddress, setUserAddress, setFriendAddress]);
+    if (userAddress && friendAddress) {
+      return (
+        <ActiveAddresses
+        primaryColor={primaryColor}
+        overlayColor={overlayColor}
+        welcomeTextStyle={welcomeTextStyle}
+          userAddress={userAddress}
+          setUserAddress={setUserAddress}
+          friendAddress={friendAddress}
+          setFriendAddress={setFriendAddress}
+        />
+      );
+    }
+    return null;
+  }, [userAddress, friendAddress, setUserAddress, setFriendAddress]);
 
   return (
     <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
-        <MaterialIcons
-          name={"location-pin"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
-        />
+        <MaterialIcons name={"location-pin"} size={30} color={primaryColor} />
       }
       questionText="Starting point addresses"
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
-          <View style={styles.sectionContainer}>
-            {renderActiveAddresses()}
-          </View>
+          <View style={styles.sectionContainer}>{renderActiveAddresses()}</View>
         </ScrollView>
       }
       onClose={closeModal}

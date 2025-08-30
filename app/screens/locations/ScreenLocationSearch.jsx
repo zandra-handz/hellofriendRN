@@ -23,7 +23,7 @@ import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHell
 const ScreenLocationSearch = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { lightDarkTheme } = useLDTheme();
-  const {   manualGradientColors } = useGlobalStyle();
+  const { appFontStyles,  manualGradientColors } = useGlobalStyle();
   const { getDefaultAddress, getDefaultUserAddress } = useMenues();
 
   const { friendDash } = useFriendDash();
@@ -109,8 +109,9 @@ const ScreenLocationSearch = () => {
         setFriendAddress={setFriendAddress}
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
-        overlayColor={lightDarkTheme.overlayBackgroundColor}
-        textColor={lightDarkTheme.primaryText}
+        overlayColor={lightDarkTheme.overlayBackground}
+        primaryColor={lightDarkTheme.primaryText}
+        welcomeTextStyle={appFontStyles.welcomeText}
         dividerStyle={lightDarkTheme.divider}
       />
     );

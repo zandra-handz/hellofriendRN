@@ -44,16 +44,17 @@ const MomentsList = ({
   primaryBackgroundColor,
   homeDarkColor,
   appLightColor,
-  primaryTextStyle,
   primaryColor,
   primaryOverlayColor,
   darkerOverlayColor,
+  lighterOverlayColor,
   subWelcomeTextStyle,
   navigateBack, // escort bar
 
   categoryNames,
   categoryStartIndices,
   capsuleList,
+  preAdded,
   updateCapsule,
   navigateToMomentView,
 
@@ -247,6 +248,13 @@ const MomentsList = ({
         })}
       >
         <MomentItem
+          subWelcomtTextStyle={subWelcomeTextStyle}
+          homeDarkColor={homeDarkColor}
+          appLightColor={appLightColor}
+          primaryColor={primaryColor}
+          primaryBackgroundColor={primaryBackgroundColor}
+          darkerOverlayColor={darkerOverlayColor}
+          lighterOverlayColor={lighterOverlayColor}
           friendColor={friendColor}
           momentData={item}
           combinedHeight={COMBINED_HEIGHT}
@@ -292,6 +300,8 @@ const MomentsList = ({
           label={`Undo`}
           flipLabel={`Back`}
           visibilityValue={listVisibility}
+          primaryColor={primaryColor}
+          primaryOverlayColor={primaryOverlayColor}
         />
       </View>
       {!categoryNavigatorVisible && (
@@ -300,11 +310,19 @@ const MomentsList = ({
           entering={FadeIn}
           style={{ flex: 1, position: "absolute", bottom: 0 }}
         >
-          <LargeCornerLizard  color={darkerOverlayColor}/>
+          <LargeCornerLizard color={darkerOverlayColor} />
         </Animated.View>
       )}
 
-      <MomentsAdded visibilityValue={listVisibility} />
+      <MomentsAdded
+        subWelcomeTextStyle={subWelcomeTextStyle}
+        overlayBackgroundColor={primaryOverlayColor} 
+        primaryColor={primaryColor}
+        darkerOverlayColor={darkerOverlayColor}
+        capsuleList={capsuleList}
+        preAdded={preAdded}
+        visibilityValue={listVisibility}
+      />
       <View
         style={{
           alignContent: "center",
@@ -373,7 +391,7 @@ const MomentsList = ({
           Object.keys(categoryColorsMap).length > 0 && (
             <CategoryNavigator
               capsuleList={capsuleList}
-                primaryColor={primaryColor}
+              primaryColor={primaryColor}
               backgroundColor={primaryBackgroundColor}
               homeDarkColor={homeDarkColor}
               arrowBackgroundColor={appLightColor}
@@ -409,7 +427,7 @@ const MomentsList = ({
                 justifyContent: "flex-end",
               }}
             >
-              <GeckoToHelloButton />
+              <GeckoToHelloButton  appLightColor={appLightColor} homeDarkColor={homeDarkColor} />
             </Animated.View>
           )}
 

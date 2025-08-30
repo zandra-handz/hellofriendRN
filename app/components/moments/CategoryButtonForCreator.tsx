@@ -1,6 +1,5 @@
-import { TouchableOpacity  } from "react-native";
-import React, {  useEffect } from "react"; 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { TouchableOpacity, StyleSheet  } from "react-native";
+import React, {  useEffect } from "react";  
 import Animated, { SharedValue } from "react-native-reanimated";
  
 import {
@@ -28,6 +27,8 @@ type Props = {
 };
 
 const CategoryButtonForCreator = ({
+  primaryColor,
+  manualGradientColors,
   label,
   itemId,
   onPress,
@@ -36,69 +37,25 @@ const CategoryButtonForCreator = ({
   pulseDuration = 2000,
   highlightColor = "#ccc",
 }: Props) => {
-  const {
-    themeStyles,
-    appContainerStyles,
-    appFontStyles,
-    manualGradientColors,
-  } = useGlobalStyle();
-   
+ 
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
-
-  // not sure how to add animations to Pressable
-  //   const AnimatedPressable =
-  // Animated.createAnimatedComponent(Pressable);
-
+ 
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
   const endColor = useSharedValue("red");
-  const textColor = useSharedValue(themeStyles.genericText.color);
+  const textColor = useSharedValue(primaryColor);
 
-  //  show animation based on if top item in FlatList in parent
-  // useAnimatedReaction(
-  //   () => {
-  //     return Boolean(selectedId === label);
-  //   },
-  //   (isVisible, prevIsVisible) => {
-  //     if (isVisible !== prevIsVisible) {
-  //       if (isVisible) {
-  //         // startColor.value = themeAheadOfLoading.darkColor;
-  //         startColor.value = highlightColor;
-  //         // endColor.value = manualGradientColors.lighterLightColor || "red";
-  //         endColor.value = themeStyles.primaryText.color || "red";
-  //         textColor.value = manualGradientColors.homeDarkColor;
-
-  //         progress.value = withRepeat(
-  //           withTiming(1, { duration: pulseDuration }),
-  //           -1,
-  //           true
-  //         );
-  //       } else {
-  //         progress.value = withTiming(0, { duration: 200 });
-  //         translateYx2.value = withTiming(0, { duration: 200 });
-  //         startColor.value = "transparent";
-  //         endColor.value = "transparent";
-  //         // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-  //         // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-  //         textColor.value = themeStyles.genericText.color;
-  //       }
-  //     }
-  //   },
-  //   [selectedId]
-  // );
-
+ 
   useEffect(() => {
     if (!selectedId || !itemId) {
       return;
     } 
     const isSelected = Number(selectedId) === Number(itemId);
-            if (isSelected) {
-          // startColor.value = themeAheadOfLoading.darkColor;
-          startColor.value = highlightColor;
-          // endColor.value = manualGradientColors.lighterLightColor || "red";
-          endColor.value = themeStyles.primaryText.color || "red";
+            if (isSelected) { 
+          startColor.value = highlightColor; 
+          endColor.value = primaryColor || "red";
           textColor.value = manualGradientColors.homeDarkColor;
 
           progress.value = withRepeat(
@@ -110,10 +67,8 @@ const CategoryButtonForCreator = ({
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
           startColor.value = "transparent";
-          endColor.value = "transparent";
-          // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-          // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-          textColor.value = themeStyles.genericText.color;
+          endColor.value = "transparent"; 
+          textColor.value = primaryColor;
         }
 
 
@@ -138,11 +93,10 @@ const CategoryButtonForCreator = ({
     <AnimatedTouchableOpacity
       style={[
         animatedCardsStyle,
-        appContainerStyles.categoryButton,
+        styles.categoryButton,
         {
           width: "auto",
-          padding: 10,
-          //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          padding: 10, 
           height: height,
         },
       ]}
@@ -154,18 +108,14 @@ const CategoryButtonForCreator = ({
         numberOfLines={1}
         style={[
           animatedCardsStyle,
-          themeStyles.genericText,
-          // animatedCardsStyle,
+       
           {
-            // fontWeight: "bold",
+            color: primaryColor, 
             fontSize: 14,
             fontFamily: "Poppins-Bold",
-            fontWeight: "bold",
-            //   textTransform: "uppercase",
+            fontWeight: "bold", 
             height: "100%",
             alignSelf: "center",
-
-            //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
             borderRadius: 999,
             padding: 2,
           },
@@ -176,5 +126,25 @@ const CategoryButtonForCreator = ({
     </AnimatedTouchableOpacity>
   );
 };
+
+
+const styles = StyleSheet.create({
+    categoryButton: {
+      // borderBottomWidth: 0.8,
+      borderWidth: StyleSheet.hairlineWidth,
+      alignText: "left",
+      alignContent: "center",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "row",
+      paddingVertical: 2,
+      paddingHorizontal: 10,
+     
+      borderRadius: 16,
+      // marginBottom: "3%",
+      height: "auto",
+    },
+
+});
 
 export default CategoryButtonForCreator;

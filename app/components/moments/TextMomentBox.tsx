@@ -12,26 +12,23 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native"; 
  
 
 // Forwarding ref to the parent to expose the TextInput value
-const TextMomentBox = forwardRef(
-  //width and height are original settings being used in location notes
+const TextMomentBox = forwardRef( 
   (
-    { 
-      // editScreen,
+    {  
       mountingText = "",
       triggerReFocus,
       onTextChange,
       helperText,
       isKeyboardVisible,
+      welcomeTextStyle,
+      primaryColor,
     },
     ref
-  ) => {
-    const { themeStyles, appFontStyles } =
-      useGlobalStyle();
+  ) => { 
     const [editedMessage, setEditedMessage] = useState(mountingText);
     const textInputRef = useRef();
 
@@ -76,7 +73,7 @@ const TextMomentBox = forwardRef(
  
         <View style={{ flex: 1 }}>
           {helperText && (
-            <Text style={[styles.helperText, themeStyles.genericText]}>
+            <Text style={[styles.helperText, {color: primaryColor}]}>
               {helperText}
             </Text>
           )}
@@ -90,11 +87,10 @@ const TextMomentBox = forwardRef(
             <TextInput
               ref={textInputRef}
               autoFocus={true}
-              style={[
-                themeStyles.genericText,
-                appFontStyles.welcomeText,
-                {
-                  // paddingTop: 0,
+              style={[ 
+                welcomeTextStyle,
+                { 
+                  color: primaryColor,
                   fontSize: 15,
                   lineHeight: 24, // same as moment view page
                   flex: 1,

@@ -1,6 +1,5 @@
 import { View } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { CheckBox } from "react-native-elements";
 
 import { Moment } from "@/src/types/MomentContextTypes";
@@ -14,13 +13,14 @@ type Props = {
 };
 
 const CheckboxListItem = ({
+  manualGradientColors,
+  primaryColor = 'red',
   item,
   selectedItems,
   isSelected = false,
   height = 50,
   onPress,
-}: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+}: Props) => { 
   return (
     <View
       style={[
@@ -71,10 +71,10 @@ const CheckboxListItem = ({
             width: "82%",
             color: isSelected
               ? manualGradientColors.lightColor
-              : themeStyles.primaryText.color,
+              : primaryColor,
             fontSize: 13,
           }}
-          uncheckedColor={themeStyles.primaryText.color}
+          uncheckedColor={primaryColor}
           checkedColor={manualGradientColors.lightColor}
           iconRight={true}
           right={true}

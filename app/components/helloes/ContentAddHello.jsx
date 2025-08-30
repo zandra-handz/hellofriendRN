@@ -421,7 +421,7 @@ const ContentAddHello = ({
                         height={180}
                         title={`Talked: ${momentsAdded.length}`}
                         children={
-                          <TotalMomentsAddedUI momentsAdded={momentsAdded} backgroundColor={backgroundColor} />
+                          <TotalMomentsAddedUI momentsAdded={momentsAdded} primaryColor={primaryColor} backgroundColor={backgroundColor} />
                         }
                       />
                     )}

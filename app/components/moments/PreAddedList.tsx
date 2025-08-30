@@ -1,19 +1,28 @@
 import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
- 
+
 import { FlashList } from "@shopify/flash-list";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage"; // no error message for this one
- 
-import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import CheckboxListItem from "./CheckboxListItem";
 import EscortBar from "./EscortBar";
-const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, specialTextStyle, friendId }) => {
+const PreAddedList = ({
+  updateCapsule,
+  preAdded,
+  allCapsulesList,
+  specialTextStyle,
+  friendId,
+  manualGradientColors,
+  subWelcomeTextStyle,
+  primaryColor,
+  primaryBackground,
+}) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
 
- 
   const { navigateToMoments } = useAppNavigations();
 
   const renderListItem = ({ item, index }) => {
@@ -28,19 +37,15 @@ const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, spe
         isSelected={isSelected}
         height={ITEM_HEIGHT}
         onPress={handleCheckboxChange}
+        manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
       />
     );
   };
- 
 
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
-  );
-
-  // all at once
-  // const handleRestore = async () => {
-  //   await Promise.all(selectedMoments.map(moment => updateCapsule(moment.id, false)));
-  // };
+  ); 
 
   const handleRestore = () => {
     if (!friendId) {
@@ -96,13 +101,7 @@ const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, spe
           paddingHorizontal: 10,
         }}
       >
-        <Text
-          style={[
-            textStyle,
-           specialTextStyle,
-            { fontSize: 22 },
-          ]}
-        >
+        <Text style={[specialTextStyle, { color: primaryColor, fontSize: 22 }]}>
           Undo add
         </Text>
         <View
@@ -118,8 +117,7 @@ const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, spe
           >
             <Text
               style={[
-                textStyle,
-                { fontSize: 12, fontWeight: "bold" },
+                { color: primaryColor, fontSize: 12, fontWeight: "bold" },
               ]}
             >
               Select all
@@ -136,8 +134,7 @@ const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, spe
           >
             <Text
               style={[
-                textStyle,
-                { fontSize: 12, fontWeight: "bold" },
+                { color: primaryColor, fontSize: 12, fontWeight: "bold" },
               ]}
             >
               Reset
@@ -151,16 +148,16 @@ const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, spe
           estimatedItemSize={90}
           renderItem={renderListItem}
           keyExtractor={extractItemKey}
-          //  getItemLayout={getItemLayout}
-          // initialNumToRender={10}
-          // maxToRenderPerBatch={10}
-          // windowSize={10}
           removeClippedSubviews={true}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => <View style={{ height: 100 }} />}
         />
       </View>
       <EscortBar
+        manualGradientColors={manualGradientColors}
+        subWelcomeTextStyle={subWelcomeTextStyle}
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
         forwardFlowOn={false}
         label={"Restore Selected"}
         onPress={handleRestore}
