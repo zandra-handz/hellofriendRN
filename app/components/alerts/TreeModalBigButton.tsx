@@ -1,20 +1,8 @@
 import { View, Text, OpaqueColorValue } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-// ((
-//   FOR REFERENCE interface ThemeAheadOfLoading {
-//   darkColor: Friend["theme_color_dark"];
-//   lightColor: Friend["theme_color_light"];
-//   fontColor: Friend["theme_color_font"];
-//   fontColorSecondary: Friend["theme_color_font_secondary"];
-// }
-// ))
-
-// only friends setting uses theme, so passing it in is optional so only friend settings will be
-// in friendlist rerender tree
+ 
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 
@@ -27,13 +15,14 @@ type Props = {
 };
 
 const TreeModalBigButton = ({
-  onClose,
-  friendTheme,
+  onClose, 
   rightSideElement,
+  manualGradientColors,
+ welcomeTextStyle,
+  subWelcomeTextStyle,
   label,
   labelColor,
-}: Props) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+}: Props) => { 
 
   return (
     <GlobalPressable
@@ -90,10 +79,10 @@ const TreeModalBigButton = ({
         }}
       >
         <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.welcomeText,
+          style={[ 
+            welcomeTextStyle,
             {
+              // color: primaryColor,
               fontSize: 20,
 
               fontFamily: "Poppins-Bold",
@@ -103,7 +92,7 @@ const TreeModalBigButton = ({
         >
           {label}
         </Text>
-        <Text style={[ appFontStyles.subWelcomeText, {lineHeight: 12, fontFamily: 'Poppins-Bold', color: manualGradientColors.darkHomeColor, fontSize: 11}]}>Close</Text>
+        <Text style={[ subWelcomeTextStyle, {lineHeight: 12, fontFamily: 'Poppins-Bold', color: manualGradientColors.darkHomeColor, fontSize: 11}]}>Close</Text>
         <MaterialIcons
           name={`keyboard-arrow-down`}
           size={17}

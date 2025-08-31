@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useRef,
-  useState,
-  useEffect,
-
-} from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { View, StyleSheet, Image, Keyboard } from "react-native";
 
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
@@ -14,20 +8,25 @@ import InputSingleValue from "@/app/components/appwide/input/InputSingleValue";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import { useFocusEffect } from "@react-navigation/native";
-import useCreateImage from "@/src/hooks/ImageCalls/useCreateImage"; 
- 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { LinearGradient } from "expo-linear-gradient";
+import useCreateImage from "@/src/hooks/ImageCalls/useCreateImage";
+
 import { useNavigation } from "@react-navigation/native";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
-const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
+const ContentAddImage = ({
+  userId,
+  friendId,
+  friendName,
+  themeAheadOfLoading,
+  primaryColor,
+  imageUri,
+  backgroundColor,
+}) => {
   const { resizeImage } = useImageUploadFunctions();
- 
- 
+
   const [canContinue, setCanContinue] = useState("");
-  const { themeAheadOfLoading } = useFriendStyle();
+
   const [imageTitle, setImageTitle] = useState("");
   const [imageCategory, setImageCategory] = useState("Misc");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -37,7 +36,10 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
   const imageTitleRef = useRef(null);
   const imageCategoryRef = useRef(null);
 
-  const { createImage, createImageMutation } = useCreateImage({userId: userId, friendId: friendId})
+  const { createImage, createImageMutation } = useCreateImage({
+    userId: userId,
+    friendId: friendId,
+  });
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -127,17 +129,7 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
   };
 
   return (
-    // <KeyboardAvoidingView
-    //   style={styles.container}
-    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    //   keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust if needed
-    // >
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.container, { flex: 1 }]}
-    >
+    <View style={[styles.container, { flex: 1 }]}>
       <>
         <View
           style={{
@@ -150,7 +142,11 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
         >
           <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
             <FriendModalIntegrator
-            navigationDisabled={true}
+              primaryColor={primaryColor}
+              themeAheadOfLoading={themeAheadOfLoading}
+              friendId={friendId}
+              friendName={friendName}
+              navigationDisabled={true}
               includeLabel={true}
               width="100%"
             />
@@ -159,8 +155,11 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
           <View
             style={[
               styles.backColorContainer,
-             
-              { backgroundColor: backgroundColor, borderColor: themeAheadOfLoading.lightColor },
+
+              {
+                backgroundColor: backgroundColor,
+                borderColor: themeAheadOfLoading.lightColor,
+              },
             ]}
           >
             {imageUri && (
@@ -168,7 +167,7 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
                 <View
                   style={[
                     styles.previewContainer,
-                  //  themeStyles.genericTextBackgroundShadeTwo,
+                    //  themeStyles.genericTextBackgroundShadeTwo,
                   ]}
                 >
                   <View style={[styles.previewImageContainer]}>
@@ -181,6 +180,8 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
                   <View style={styles.inputContainer}>
                     <View style={{ paddingBottom: 6 }}>
                       <InputSingleValue
+                        primaryColor={primaryColor}
+                        underlineColor={"red"}
                         ref={imageTitleRef}
                         autoFocus={true}
                         onSubmitEditing={handleTitleEnterPress}
@@ -191,6 +192,8 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
                     </View>
                     <View>
                       <InputSingleValue
+                        primaryColor={primaryColor}
+                        underlineColor={"red"}
                         ref={imageCategoryRef}
                         onSubmitEditing={handleCategoryEnterPress}
                         handleValueChange={handleImageCategoryChange}
@@ -236,8 +239,7 @@ const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
           />
         </View>
       )}
-    </LinearGradient>
-    // </KeyboardAvoidingView>
+    </View>
   );
 };
 

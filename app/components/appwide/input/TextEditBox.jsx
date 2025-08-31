@@ -5,8 +5,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, Text, TextInput, StyleSheet } from "react-native"; 
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
 // Forwarding ref to the parent to expose the TextInput value
@@ -22,11 +21,12 @@ const TextEditBox = forwardRef(
       width = "90%",
       height = "60%",
       multiline = true,
-      iconColor = 'red',
+      iconColor = "red",
+      primaryColor = "orange",
     },
     ref
   ) => {
-    const { themeStyles } = useGlobalStyle();
+ 
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const textInputRef = useRef();
 
@@ -65,46 +65,37 @@ const TextEditBox = forwardRef(
     };
 
     return (
-      <View
-        style={[
-          styles.container,
-          themeStyles.genericTextBackgroundShadeTwo,
-          { width: width, height: height },
-        ]}
-      >
+      <View style={[styles.container, { width: width, height: height }]}>
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             width: "100%",
             height: "auto",
-            alignItems: 'center',
+            alignItems: "center",
           }}
         >
-           <EditPencilOutlineSvg height={20} width={20} color={iconColor} />
-          <View style={{flexDirection: 'row', height: '100%', alignItems: 'center'}}>
-          <Text style={[styles.title, themeStyles.genericText]}>
-            {title}
-          </Text>
+          <EditPencilOutlineSvg height={20} width={20} color={iconColor} />
+          <View
+            style={{
+              flexDirection: "row",
+              height: "100%",
+              alignItems: "center",
+            }}
+          >
+            <Text style={[styles.title, { color: primaryColor }]}>{title}</Text>
           </View>
-
-         
         </View>
         <View style={{ flex: 1 }}>
-
-        {helperText && (
-            <Text style={[styles.helperText, themeStyles.genericText]}>
+          {helperText && (
+            <Text style={[styles.helperText, { color: primaryColor }]}>
               {helperText}
             </Text>
           )}
           <TextInput
             ref={textInputRef}
             autoFocus={autoFocus}
-            style={[
-              styles.textInput,
-              themeStyles.genericText,
-              themeStyles.genericTextBackgroundShadeTwo,
-            ]}
+            style={[styles.textInput, { color: primaryColor }]}
             value={editedMessage}
             onChangeText={handleTextInputChange} // Update local state
             multiline={multiline}
@@ -133,7 +124,7 @@ const styles = StyleSheet.create({
   helperText: {
     fontSize: 16,
     lineHeight: 20,
-    opacity: .5,
+    opacity: 0.5,
     //marginLeft: '6%'
     //textTransform: "uppercase",
   },

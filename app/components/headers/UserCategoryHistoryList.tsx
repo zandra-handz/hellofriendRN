@@ -1,56 +1,28 @@
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FlatList, StyleSheet } from "react-native";
+import React, { useCallback, useMemo } from "react";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
- 
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
+
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
 
 type Props = {
   categoryId: number;
-//   closeModal: () => void;
-//   onViewHelloPress: () => void;
 };
 
 const UserCategoryHistoryList = ({
+  friendList,
   categoryId,
-//   closeModal,
-//   onViewHelloPress, // data not available for unselected friends
+  primaryColor = "orange",
 }: Props) => {
-  const { friendList } = useFriendList();
-  // const [categoryID, setCategoryID] = useState(null);
-  // const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);
-  const { themeStyles } = useGlobalStyle();
-
-  
-
-  // useEffect(() => {
-  //   if (categoryId && stats) {
-  //     // setCategoryID(categoryId);
-
-  //     const matchedCategoryStats = stats.find(
-  //       (category) => category.id === categoryId
-  //     );
-
-  //     if (matchedCategoryStats && matchedCategoryStats?.capsule_ids) {
-  //       const count = matchedCategoryStats?.capsule_ids?.length;
-
-  //       setCompletedCapsuleCount(count);
-  //     }
-  //   }
-  // }, [categoryId, stats]);
-
   const {
     categoryHistory,
-    isLoading,
-    isFetching,
+    // isLoading,
+    // isFetching,
     isFetchingNextPage,
-    isError,
+    // isError,
     fetchNextPage,
     hasNextPage,
-  } = useCategoryHistoryLookup({ categoryId: categoryId }); //do we need categoryID ? friend list version doesn't need
+  } = useCategoryHistoryLookup({ categoryId: categoryId });  
 
   const formatCapsuleCreationDate = (createdOn) => {
     if (!createdOn) return "";
@@ -84,14 +56,19 @@ const UserCategoryHistoryList = ({
 
   const renderMiniMomentItem = useCallback(
     ({ item, index }) => (
-      <UserHistoryMomentItem item={item} index={index} friendName={getFriendNameFromList(item.friend)} />
+      <UserHistoryMomentItem
+        item={item}
+        index={index}
+        friendName={getFriendNameFromList(item.friend)}
+        primaryColor={primaryColor}
+      />
     ),
     [
       getFriendNameFromList,
       formatCapsuleCreationDate,
       // getHelloDateFromList,
 
-      themeStyles,
+      primaryColor,
       styles,
     ]
   );
@@ -116,7 +93,7 @@ const UserCategoryHistoryList = ({
           ListFooterComponent={
             <InfiniteScrollSpinner
               isFetchingNextPage={isFetchingNextPage}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
               height={50}
             />
           }
@@ -135,9 +112,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   momentItemText: {
-    fontSize: 11, 
+    fontSize: 11,
     fontFamily: "Poppins-Regular",
- 
   },
   momentCheckboxContainer: {
     flexDirection: "row",

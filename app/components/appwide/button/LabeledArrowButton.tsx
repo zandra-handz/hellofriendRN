@@ -1,6 +1,5 @@
 import { View, Text, Pressable  } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface LabeledArrowButtonProps {
@@ -25,7 +24,7 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
   onPress,
   color='white',
 }) => {
-  const { manualGradientColors } = useGlobalStyle();
+ 
 
   const handleOnPress = () => {
 

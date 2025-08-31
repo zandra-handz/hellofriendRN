@@ -29,6 +29,8 @@ const HelloesListNew = ({
   hasNextPage,
   triggerScroll,
   primaryColor='orange',
+  welcomeTextStyle,
+  subWelcomeTextStyle,
   onPress,
 }: Props) => {
   const ITEM_HEIGHT = 90;
@@ -78,10 +80,13 @@ const HelloesListNew = ({
           bottomMargin={ITEM_BOTTOM_MARGIN}
           helloData={item}
           index={index}
+          primaryColor={primaryColor}
+          welcomeTextStyle={welcomeTextStyle}
+          subWelcomeTextStyle={subWelcomeTextStyle}
         />
       </Pressable>
     ),
-    [handleNavigateToSingleView]
+    [handleNavigateToSingleView, primaryColor]
   );
 
   return (

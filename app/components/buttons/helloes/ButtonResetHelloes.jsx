@@ -1,15 +1,13 @@
 import React from "react";
 import { Alert, StyleSheet, Pressable } from "react-native";
  import { useRemixUpcomingHelloes } from "@/src/hooks/useRemixUpcomingHelloes";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
-const ButtonResetHelloes = ({ userId, iconSize = 15 }) => {
+const ButtonResetHelloes = ({ userId, iconSize = 15, manualGradientColors }) => {
   const { handleRemixAllNextHelloes } =
     useRemixUpcomingHelloes({userId}); // MOVE TO CONTEXT
 
-  const {   manualGradientColors } = useGlobalStyle();
-
+ 
   const handleOnPress = () => {
     Alert.alert(
       "Warning!",

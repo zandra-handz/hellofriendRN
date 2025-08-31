@@ -1,5 +1,4 @@
 //Derivative of TextEditBox
-
 import React, {
   useCallback,
   useState,
@@ -19,10 +18,8 @@ import {
   Pressable,
   Keyboard,
 } from "react-native";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
- 
-import { useUserSettings } from "@/src/context/UserSettingsContext"; 
-// import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
@@ -35,14 +32,13 @@ interface QuickWriteMomentProps {
   height?: string | number;
   multiline?: boolean;
   friendModalOpened: boolean;
-
-
 }
 
 // Forwarding ref to the parent to expose the TextInput value
 const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
   (
     { 
+      focusMode,
       mountingText = "Start typing",
       onTextChange, 
       multiline = true,  
@@ -52,10 +48,8 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
         primaryOverlayColor, 
     },
     ref
-  ) => { 
-
-    const { settings } = useUserSettings(); 
-    const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
+  ) => {  
+    const [editedMessage, setEditedMessage] = useState(mountingText); 
 
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
@@ -67,15 +61,13 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
         const timeout = setTimeout(() => {
           if (
             textInputRef.current &&
-            settings.simplify_app_for_focus === true
+            focusMode === true // not sure if there was a specific reason I added === true, so leaving as is 
           ) {
             textInputRef.current.focus();
-          } else {
-            //  console.log("Not focusing TextInput");
-          }
+          } 
         }, 50); // Small delay for rendering
-        return () => clearTimeout(timeout); // Cleanup timeout
-      }, [settings])
+        return () => clearTimeout(timeout); 
+      }, [focusMode])
     );
 
 const handleManualFocus = useCallback(() => {
@@ -95,8 +87,7 @@ const handleManualFocus = useCallback(() => {
         setEditedMessage(mountingText);
       }
     }, []);
-
-    // Expose the current value of the TextInput via the ref
+ 
     useImperativeHandle(ref, () => ({
       setText: (text) => {
         if (textInputRef.current) {
@@ -112,8 +103,7 @@ const handleManualFocus = useCallback(() => {
       },
       getText: () => editedMessage,
       focus: () => {
-        
-        console.log('focus!');
+         
        textInputRef.current.blur(); // YA THIS WORKS. Gotta blur manually for some reason to get it to work more than one time in a row
         handleManualFocus();
       },
@@ -142,22 +132,19 @@ const handleManualFocus = useCallback(() => {
               borderRadius: 0,
               backgroundColor: multiline
                 ? primaryBackgroundColor
-                : // ? manualGradientColors.homeDarkColor
-                  primaryOverlayColor
+                :   primaryOverlayColor
             },
           
           ]}
         >
           <>
             <View style={{ flex: 1 }}>
-       
               {!editedMessage && (
                 <>
                   <View
                     style={{
                       position: "absolute",
-                      flexDirection: "row",
-                      // backgroundColor: 'red',
+                      flexDirection: "row", 
                       top: 0,
                       left: 0,
                       right: 0,
@@ -191,14 +178,6 @@ const handleManualFocus = useCallback(() => {
                       ]}
                     >
                       {"  "}Add talking point
-                      {/* {selectedFriend ? ( 
-                        <Text style={{ fontWeight: "bold" }}>
-                          {selectedFriend.name}
-                        </Text>
-                      ) : ( 
-                        <Text>a friend</Text>
-                      )} */}
-                      {/* ? */}
                     </Text>
 
                     {!multiline && (
@@ -207,13 +186,9 @@ const handleManualFocus = useCallback(() => {
                         style={{
                           flexDirection: "row",
                           marginLeft: 30,
-                          zIndex: 6000,
-                          // position: "absolute",
+                          zIndex: 6000, 
                           flexDirection: "row",
-                          zIndex: 4000,
-                          // backgroundColor: 'red',
-                          // top: 0,
-                          // left: 180,
+                          zIndex: 4000, 
                           height: 30,
                           width: "auto",
                           alignItems: "center",
@@ -251,21 +226,14 @@ const handleManualFocus = useCallback(() => {
                     {!multiline && (
                       <Pressable
                         onPress={handleSelectImage}
-                        style={{
-                          //  position: "absolute",
+                        style={{ 
                           flexDirection: "row",
                           marginLeft: 30,
                           zIndex: 5000,
                           zIndex: 5000,
-                          elevation: 5000,
-                          // width: 60,
-                          width: "auto",
-                          // backgroundColor: 'red',
-                          // top: 0,
-                          // left: 266,
-                          // right: 0,
-                          height: 30,
-                          //backgroundColor: 'orange',
+                          elevation: 5000, 
+                          width: "auto", 
+                          height: 30, 
                           alignItems: "center",
                           opacity: multiline ? 0 : 0.9,
                         }}
@@ -287,8 +255,7 @@ const handleManualFocus = useCallback(() => {
                             size={20}
                           />
                         </View>
-                        <Text
-                          // numberOfLines={1}
+                        <Text 
                           style={[
                             styles.helperText, 
                             { color: primaryColor, fontFamily: "Poppins-Regular" },
@@ -301,8 +268,7 @@ const handleManualFocus = useCallback(() => {
                   </View>
                 </>
               )}
-              <KeyboardAvoidingView
-                // keyboardVerticalOffset={100}
+              <KeyboardAvoidingView 
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={[{ flex: 1, paddingBottom: multiline ? 120 : 0 }]}
               >
@@ -312,27 +278,18 @@ const handleManualFocus = useCallback(() => {
                     paddingTop: 3,
                     paddingLeft: 4,
                   }}
-                >
-                  {/* <View
-                  style={{
-                    flexShrink: 1,
-                    justifyContent: "flex-start",
-                    width: "auto",
-                  }}
-                ></View> */}
-                  {settings && (
+                > 
                     <TextInput
                       ref={textInputRef}
-                      autoFocus={settings.simplify_app_for_focus}
+                      autoFocus={focusMode}
                       style={[styles.textInput, {color: primaryColor}]}
                       value={editedMessage}
                       placeholder={""}
                       onBlur={() => console.log('lost focus')}
                       placeholderTextColor={"white"}
-                      onChangeText={handleTextInputChange} // Update local state
+                      onChangeText={handleTextInputChange} 
                       multiline={multiline}
                     />
-                  )}
                 </View>
               </KeyboardAvoidingView>
             </View>
@@ -356,12 +313,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 4,
   },
-  
-
   title: {
     fontSize: 15,
     lineHeight: 32,
-
     fontFamily: "Poppins-Regular",
   },
   helperText: {

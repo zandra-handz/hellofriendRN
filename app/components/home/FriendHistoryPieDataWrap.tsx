@@ -15,6 +15,9 @@ type Props = {
 };
 const FriendHistoryPieDataWrap = React.memo(
   ({
+    friendId,
+    friendList,
+    helloesList,
     chartRadius = 90,
     chartBorder = 6,
     chartBorderColor = "hotpink",
@@ -22,12 +25,13 @@ const FriendHistoryPieDataWrap = React.memo(
     showLabels = false,
     friendStyle,
     selectedFriendName,
-    primaryColor,
-    appColorsStyle,
+    primaryColor, 
+    manualGradientColors,
     welcomeTextStyle,
     subWelcomeTextStyle,
     primaryOverlayColor,
     darkerOverlayBackgroundColor,
+    themeAheadOfLoading,
   }: Props) => {
     const { selectedFriendStats } = useSelectedFriendStats();
 
@@ -62,7 +66,7 @@ const FriendHistoryPieDataWrap = React.memo(
       const rgbToHex = (rgb) =>
         "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
 
-      const start = hexToRgb(appColorsStyle.darkColor);
+      const start = hexToRgb(manualGradientColors.darkColor);
       const end = hexToRgb(friendStyle.darkColor);
 
       return Array.from({ length: count }, (_, i) => {
@@ -74,7 +78,7 @@ const FriendHistoryPieDataWrap = React.memo(
       });
     }, [
       friendHistorySortedList,
-      appColorsStyle.darkColor,
+      manualGradientColors.darkColor,
       friendStyle.darkColor,
     ]);
 
@@ -152,6 +156,10 @@ const FriendHistoryPieDataWrap = React.memo(
         {largeFriendChartVisible && (
           <View>
             <FriendHistoryModal
+            friendId={friendId}
+            friendList={friendList}
+            helloesList={helloesList}
+            themeAheadOfLoading={themeAheadOfLoading}
               darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
               primaryColor={primaryColor}
               primaryOverlayColor={primaryOverlayColor}

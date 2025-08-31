@@ -1,10 +1,9 @@
 import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Slider from '@react-native-community/slider';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
+import Slider from '@react-native-community/slider'; 
 
-const EffortSettingSlider = forwardRef(({ height=200, friendEffort,  sliderColor='limegreen', trackColor='limegreen' }, ref) => {
-  const { themeStyles } = useGlobalStyle();
+const EffortSettingSlider = forwardRef(({ height=200, friendEffort,  sliderColor='limegreen', trackColor='limegreen', primaryColor='orange' }, ref) => {
+ 
   
   // Messages for the slider
   const effortMessages = [
@@ -39,7 +38,7 @@ const EffortSettingSlider = forwardRef(({ height=200, friendEffort,  sliderColor
 
   return (
     <View style={[styles.container, {height: height}]}>
-      <Text style={[styles.sectionTitle, themeStyles.genericText]}>
+      <Text style={[styles.sectionTitle, {color: primaryColor}]}>
         Effort needed to maintain friendship
       </Text>
       <View style={styles.innerContainer}>
@@ -56,7 +55,7 @@ const EffortSettingSlider = forwardRef(({ height=200, friendEffort,  sliderColor
           thumbTintColor={sliderColor}
           minimumTrackTintColor={trackColor}
         />
-        {selectedMessage && <Text style={[styles.value, themeStyles.subHeaderText]}>{selectedMessage}</Text>}
+        {selectedMessage && <Text style={[styles.value, {color: primaryColor}]}>{selectedMessage}</Text>}
       </View>
     </View>
   );

@@ -8,15 +8,15 @@ import React, {
 } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
- 
+
 import { Ionicons } from "@expo/vector-icons";
-import Donut from "../headers/Donut"; 
+import Donut from "../headers/Donut";
 // import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; // moved to parent
 import { AppState, AppStateStatus } from "react-native";
 import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
 import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-  import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 // import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting"; // moved to parent
 
 type Props = {
@@ -25,13 +25,15 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
+  friendList,
+  helloesList,
+  userCategories,
+  friendStyle,
   capsuleListCount,
   categoryStartIndices,
   categorySizes,
   generateGradientColors,
-  userCategories,
-  friendStyle,
-  appColorsStyle,
+  manualGradientColors,
   loadingNewFriend,
   selectedFriendId,
   selectedFriendName,
@@ -41,18 +43,18 @@ const TalkingPointsChart = ({
   subWelcomeTextStyle,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
-  outerPadding,
+  themeAheadOfLoading,
+ 
 }: Props) => {
-
-    const isFocused = useIsFocused(); 
+  const isFocused = useIsFocused();
 
   const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } =
-    useAppNavigations(); 
+    useAppNavigations();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
   // const { categoryStartIndices } = useTalkingPCategorySorting({
   //   listData: capsuleList,
-  // }); 
+  // });
 
   const [showHistory, setShowHistory] = useState(false);
   // const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
@@ -145,7 +147,7 @@ const TalkingPointsChart = ({
 
   useEffect(
     useCallback(() => {
-             if (!capsuleListCount || capsuleListCount < 1) {
+      if (!capsuleListCount || capsuleListCount < 1) {
         return;
       }
 
@@ -190,7 +192,6 @@ const TalkingPointsChart = ({
 
   return (
     <>
- 
       <Pressable
         onPress={toggleShowHistory}
         style={{
@@ -213,8 +214,12 @@ const TalkingPointsChart = ({
         />
         {!showHistory && (
           <Text
-            style={[ 
-              { color: primaryColor, fontFamily: "Poppins-Regular", fontSize: 13 },
+            style={[
+              {
+                color: primaryColor,
+                fontFamily: "Poppins-Regular",
+                fontSize: 13,
+              },
             ]}
           >
             {"   "}category history
@@ -265,36 +270,34 @@ const TalkingPointsChart = ({
         </View>
 
         {isFocused && (
-     
-        <View
-          style={{
-            marginHorizontal: 0,
-            alignItems: "center",
-            flexDirection: "column",
-            height: "74%",
-          }}
-        >
-          <Donut
-            friendStyle={friendStyle}
-            primaryColor={primaryColor}
-            darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-            onCategoryPress={handleMomentViewScrollTo}
-            onCenterPress={handleMomentScreenNoScroll}
-            onPlusPress={handleNavigateToCreateNew}
-            totalJS={capsuleListCount}
-            radius={CHART_RADIUS}
-            strokeWidth={CHART_STROKE_WIDTH}
-            outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-            gap={GAP}
-            labelsSize={LABELS_SIZE}
-            labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-            labelsSliceEnd={LABELS_SLICE_END}
-            data={categories?.sortedList || []}
-            colors={colors}
-            centerTextSize={CENTER_TEXT_SIZE}
-          />
-        </View>
-             
+          <View
+            style={{
+              marginHorizontal: 0,
+              alignItems: "center",
+              flexDirection: "column",
+              height: "74%",
+            }}
+          >
+            <Donut
+              friendStyle={friendStyle}
+              primaryColor={primaryColor}
+              darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+              onCategoryPress={handleMomentViewScrollTo}
+              onCenterPress={handleMomentScreenNoScroll}
+              onPlusPress={handleNavigateToCreateNew}
+              totalJS={capsuleListCount}
+              radius={CHART_RADIUS}
+              strokeWidth={CHART_STROKE_WIDTH}
+              outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+              gap={GAP}
+              labelsSize={LABELS_SIZE}
+              labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+              labelsSliceEnd={LABELS_SLICE_END}
+              data={categories?.sortedList || []}
+              colors={colors}
+              centerTextSize={CENTER_TEXT_SIZE}
+            />
+          </View>
         )}
 
         {showHistory && selectedFriendId && !loadingNewFriend && (
@@ -318,7 +321,7 @@ const TalkingPointsChart = ({
               }}
             >
               <Text
-                style={[ 
+                style={[
                   subWelcomeTextStyle,
                   { color: primaryColor, alignSelf: "center" },
                 ]}
@@ -326,6 +329,9 @@ const TalkingPointsChart = ({
                 History{"  "}
               </Text>
               <FriendHistoryPieDataWrap
+              friendId={selectedFriendId}
+              friendList={friendList}
+              helloesList={helloesList}
                 friendStyle={friendStyle}
                 selectedFriendName={selectedFriendName}
                 primaryColor={primaryColor}
@@ -333,7 +339,8 @@ const TalkingPointsChart = ({
                 darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
                 welcomeTextStyle={welcomeTextStyle}
                 subWelcomeTextStyle={subWelcomeTextStyle}
-                appColorsStyle={appColorsStyle}
+                manualGradientColors={manualGradientColors}
+                themeAheadOfLoading={themeAheadOfLoading}
                 chartBorder={SMALL_CHART_BORDER}
                 chartBorderColor={primaryBackgroundColor}
                 showLabels={false}
@@ -350,13 +357,15 @@ const TalkingPointsChart = ({
             </Text>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <UserHistoryPieDataWrap
-              friendStyle={friendStyle}
+              friendList={friendList}
+              // helloesList={helloesList}
+                friendStyle={friendStyle}
                 primaryColor={primaryColor}
                 primaryOverlayColor={primaryOverlayColor}
                 darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
                 welcomeTextStyle={welcomeTextStyle}
                 subWelcomeTextStyle={subWelcomeTextStyle}
-                appColorsStyle={appColorsStyle}
+                manualGradientColors={manualGradientColors}
                 chartBorder={SMALL_CHART_BORDER}
                 chartBorderColor={primaryBackgroundColor}
                 showLabels={false}

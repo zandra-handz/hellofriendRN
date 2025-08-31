@@ -1,10 +1,9 @@
 import { View, Text, TextInput, ScrollView } from "react-native";
-import React, { useState, useRef, useCallback } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState, useRef, useCallback } from "react"; 
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
- 
+
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
 import EditCategoryDescriptionView from "./EditCategoryDescriptionView";
 type Props = {
@@ -13,13 +12,20 @@ type Props = {
   onToggle: () => void;
 };
 
-const CatDescriptEditable = ({ userId, primaryColor='orange', nullTextInputView, categoryObject, editEnabled = true, onToggle }: Props) => {
-  const {  appFontStyles } = useGlobalStyle();
+const CatDescriptEditable = ({
+  userId,
+  primaryColor = "orange",
+  subWelcomeTextStyle,
+  nullTextInputView,
+  categoryObject,
+  editEnabled = true,
+  onToggle,
+}: Props) => {
  
-  const [showEdit, setShowEdit] = useState(false);
- 
-  const { updateCategory } = useUpdateCategory({userId: userId});
 
+  const [showEdit, setShowEdit] = useState(false);
+
+  const { updateCategory } = useUpdateCategory({ userId: userId });
 
   const textInputRef = useRef(null);
 
@@ -43,7 +49,6 @@ const CatDescriptEditable = ({ userId, primaryColor='orange', nullTextInputView,
 
   const handleUpdateCategory = () => {
     updateCategory({
-  
       id: categoryObject.id,
 
       updates: { description: textInputRef.current.value },
@@ -53,44 +58,52 @@ const CatDescriptEditable = ({ userId, primaryColor='orange', nullTextInputView,
   };
 
   const renderEditView = () => {
-  return (
-    <>
-      <View style={{ height: 100, width: "100%" }}>
-        <TextInput
-          ref={textInputRef}
-          style={[
-           
-            {
-              color: primaryColor,
-              flex: 1,
-              fontSize: 15,
-              textAlignVertical: "top",
-              textAlign: "left",
-              paddingRight: 2,
-              height: 200,
-            },
-          ]}
-          autoFocus={true}
-          value={textInput}
-          onChangeText={handleTextChange}
-          multiline
-        />
-      </View>
-      <GlobalPressable onPress={handleUpdateCategory}>
-        <MaterialCommunityIcons
-          name={"check"}
-          size={20}
-          color={primaryColor}
-        />
-      </GlobalPressable>
-    </>
-  );
-};
+    return (
+      <>
+        <View style={{ height: 100, width: "100%" }}>
+          <TextInput
+            ref={textInputRef}
+            style={[
+              {
+                color: primaryColor,
+                flex: 1,
+                fontSize: 15,
+                textAlignVertical: "top",
+                textAlign: "left",
+                paddingRight: 2,
+                height: 200,
+              },
+            ]}
+            autoFocus={true}
+            value={textInput}
+            onChangeText={handleTextChange}
+            multiline
+          />
+        </View>
+        <GlobalPressable onPress={handleUpdateCategory}>
+          <MaterialCommunityIcons
+            name={"check"}
+            size={20}
+            color={primaryColor}
+          />
+        </GlobalPressable>
+      </>
+    );
+  };
 
-const toggleEdit = () => {
-  onToggle(<EditCategoryDescriptionView nullTextInputView={nullTextInputView} categoryId={categoryObject.id} startingText={startingText} onSave={handleUpdateCategory}/>); // pass the function, not the JSX
-  setShowEdit((prev) => !prev);
-};
+  const toggleEdit = () => {
+    onToggle(
+      <EditCategoryDescriptionView
+      userId={userId}
+        nullTextInputView={nullTextInputView}
+        categoryId={categoryObject.id}
+        startingText={startingText}
+        onSave={handleUpdateCategory}
+        primaryColor={primaryColor}
+      />
+    ); // pass the function, not the JSX
+    setShowEdit((prev) => !prev);
+  };
   return (
     <>
       <GlobalPressable
@@ -98,9 +111,9 @@ const toggleEdit = () => {
         onPress={toggleEdit}
       >
         <MaterialCommunityIcons
-          name={ "pencil-outline"}
+          name={"pencil-outline"}
           size={15}
-          style={{opacity: .7}}
+          style={{ opacity: 0.7 }}
           color={primaryColor}
         />
       </GlobalPressable>
@@ -114,8 +127,6 @@ const toggleEdit = () => {
 
             />
       </View> */}
-
-      
 
       {/* <View
         style={{
@@ -139,20 +150,17 @@ const toggleEdit = () => {
         </Text>
       </View> */}
 
-
-
       {/* {!showEdit && ( */}
-        <ScrollView style={{ height: "auto", maxHeight: 200, width: "100%" }}>
-          <Text
-            style={[ 
-              appFontStyles.subWelcomeText,
-              { color: primaryColor, fontSize: 15, lineHeight: 22 },
-            ]}
-          >
-
-            {categoryObject?.description}
-          </Text>
-        </ScrollView>
+      <ScrollView style={{ height: "auto", maxHeight: 200, width: "100%" }}>
+        <Text
+          style={[
+            subWelcomeTextStyle,
+            { color: primaryColor, fontSize: 15, lineHeight: 22 },
+          ]}
+        >
+          {categoryObject?.description}
+        </Text>
+      </ScrollView>
       {/* )} */}
     </>
   );

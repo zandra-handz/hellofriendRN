@@ -1,7 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
+import { Text, ScrollView } from "react-native";
 import React from "react";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import GlobalPressable from "../appwide/button/GlobalPressable"; 
 
 // import { useFriendDash } from "@/src/context/FriendDashContext"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,6 +15,7 @@ type Props = {
 
 const MakeDefaultCats = ({
   userId,
+  userDefaultCategory,
   friendId,
   friendName = "friend name here",
   friendDefaultCategory,
@@ -23,9 +23,7 @@ const MakeDefaultCats = ({
   primaryColor,
   subWelcomeTextStyle,
 }: Props) => { 
-
-  // const { friendDash } = useFriendDash();
-  const { settings } = useUserSettings();
+ 
 
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const { handleUpdateDefaultCategory } = useUpdateDefaultCategory({
@@ -33,7 +31,7 @@ const MakeDefaultCats = ({
     friendId: friendId,
   });
 
-  const isUserDefault = categoryId === settings.user_default_category;
+  const isUserDefault = categoryId === userDefaultCategory;
   const isFriendDefault = categoryId === friendDefaultCategory;
 
   const handleRemoveUserDefault = async () => {

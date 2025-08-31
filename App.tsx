@@ -56,8 +56,10 @@ import * as Linking from "expo-linking";
 
 import * as MediaLibrary from "expo-media-library";
 
-import { useGlobalStyle } from "./src/context/GlobalStyleContext";
+// import { useGlobalStyle } from "./src/context/GlobalStyleContext";
+// import { useLDTheme } from "./src/context/LDThemeContext";
 // import ResultMessage from "./app/components/alerts/ResultMessage";
+
 import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
@@ -395,12 +397,13 @@ const linking = {
 };
 
 export const Layout = () => {
-  const { themeStyles } = useGlobalStyle();
+ 
+  // const { lightDarkTheme} = useLDTheme();
   const { user, isInitializing } = useUser();
 
   // console.warn('LAYOUT RERENDERED');
   const { settings } = useUserSettings();
-  const manualDarkMode = settings?.manual_dark_mode;
+  // const manualDarkMode = settings?.manual_dark_mode;
 
   const receiveNotifications =
     settings?.receive_notifications === true
@@ -431,8 +434,8 @@ export const Layout = () => {
           screenOptions={{
             headerShown: true,
             headerMode: "screen",
-            headerStyle: themeStyles.header,
-            headerTintColor: themeStyles.headerTextColor,
+            // headerStyle: lightDarkTheme.header,
+            // headerTintColor: lightDarkTheme.headerTextColor,
             contentContainerStyle: { flexGrow: 1 },
             cardStyle: { backgroundColor: "#000002" },
           }}

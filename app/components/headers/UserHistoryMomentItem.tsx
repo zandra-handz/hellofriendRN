@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type Props = {
@@ -9,8 +8,8 @@ type Props = {
   friendName: string;
 };
 
-const UserHistoryMomentItem = ({ item, index, friendName }: Props) => {
-  const { themeStyles } = useGlobalStyle();
+const UserHistoryMomentItem = ({ item, index, friendName, primaryColor='orange' }: Props) => {
+ 
   return (
     <View
       style={[
@@ -19,8 +18,7 @@ const UserHistoryMomentItem = ({ item, index, friendName }: Props) => {
           paddingBottom: 10,
           paddingTop: 10,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: themeStyles.primaryText.color,
-        //  backgroundColor: 'orange',
+          borderBottomColor: primaryColor, 
         },
       ]}
     >
@@ -29,7 +27,7 @@ const UserHistoryMomentItem = ({ item, index, friendName }: Props) => {
           <MaterialCommunityIcons
             name={"leaf"}
             size={24}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         </View>
 
@@ -45,15 +43,14 @@ const UserHistoryMomentItem = ({ item, index, friendName }: Props) => {
           >
             <Text
               style={[
-                styles.momentItemText,
-                themeStyles.primaryText,
-                { fontFamily: "Poppins-Bold" },
+                styles.momentItemText, 
+                { color: primaryColor, fontFamily: "Poppins-Bold" },
               ]}
             >
               @ {friendName} on {item.formattedDate}
             </Text>
           </View>
-          <Text style={[styles.momentItemText, themeStyles.primaryText]}>
+          <Text style={[styles.momentItemText, {color: primaryColor}]}>
             {item.capsule}
           </Text>
         </View>

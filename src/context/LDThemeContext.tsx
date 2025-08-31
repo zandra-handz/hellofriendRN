@@ -60,8 +60,7 @@ export const LDThemeProvider = ({ children }) => {
     );
   }, [settings?.manual_dark_mode, colorScheme]);
 
-  const lightDarkTheme =
-    styles.theme === "dark" ? darkTheme : lightTheme;
+  const lightDarkTheme = styles.theme === "dark" ? darkTheme : lightTheme;
 
   const contextValue = useMemo(
     () => ({
@@ -80,22 +79,28 @@ export const LDThemeProvider = ({ children }) => {
 
 export const lightTheme = {
   // colors: {
-    overlayBackground: "rgba(255, 255, 255, 0.3)",
-    darkerOverlayBackground: "rgba(255, 255, 255, 0.6)",
-    lighterOverlayBackground: "rgba(0, 0, 0, 0.6)",
-    primaryText: "#121212",
-    primaryBackground: "#ffffff",
-    darkerBackground: "#ccc",
-    darkestBackground: "#ccc",
-    dangerZoneText: "#B22222",
-    modalIconColor: "#121212",
-    toggleButtonColor: "#ccc",
-    toggleOn: "#4cd137",
-    toggleOff: "#dcdde1",
-      divider: {
+  overlayBackground: "rgba(255, 255, 255, 0.3)",
+  darkerOverlayBackground: "rgba(255, 255, 255, 0.6)",
+  lighterOverlayBackground: "rgba(0, 0, 0, 0.6)",
+  primaryText: "#121212",
+  primaryBackground: "#ffffff",
+  darkerBackground: "#ccc",
+  darkestBackground: "#ccc",
+  dangerZoneText: "#B22222",
+ 
+  toggleButtonColor: "#ccc",
+  toggleOn: "#4cd137",
+  toggleOff: "#dcdde1",
+  divider: {
     width: 1,
     backgroundColor: "gray",
   },
+    header: {
+    backgroundColor: "white",
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+  },
+  headerTextColor: "#121212",
   // },
   // styles: StyleSheet.create({
   //   input: {
@@ -120,23 +125,30 @@ export const lightTheme = {
 
 export const darkTheme = {
   // colors: {
-    overlayBackground: "rgba(0, 0, 0, 0.6)",
-    darkerOverlayBackground: "rgba(0, 0, 0, 0.75)",
-    lighterOverlayBackground: "rgba(255, 255, 255, 0.3)",
-    primaryText: "#d3d3d3",
-    primaryBackground: "#121212",
-    signInButton: "#ebebeb",
-    darkerBackground: "#2B2B2B",
-    darkestBackground: "#242424",
-    dangerZoneText: "#B22222",
-    borderColor: "#121212",
-    toggleButtonColor: "#ccc",
-    toggleOn: "#4cd137",
-    toggleOff: "#dcdde1",
-      divider: {
+  overlayBackground: "rgba(0, 0, 0, 0.6)",
+  darkerOverlayBackground: "rgba(0, 0, 0, 0.75)",
+  lighterOverlayBackground: "rgba(255, 255, 255, 0.3)",
+  primaryText: "#d3d3d3",
+  primaryBackground: "#121212",
+  signInButton: "#ebebeb",
+  darkerBackground: "#2B2B2B",
+  darkestBackground: "#242424",
+  dangerZoneText: "#B22222",
+  borderColor: "#121212",
+  toggleButtonColor: "#ccc",
+  toggleOn: "#4cd137",
+  toggleOff: "#dcdde1",
+  divider: {
     width: 0.4,
     backgroundColor: "#ccc",
   },
+    header: {
+    backgroundColor: "black",
+    borderBottomColor: "darkgray",
+    borderBottomWidth: 1,
+  },
+  headerTextColor: "#d3d3d3",
+
   // },
   // styles: StyleSheet.create({
   //   input: {

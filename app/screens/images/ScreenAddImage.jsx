@@ -35,6 +35,9 @@ const ScreenAddImage = () => {
         <ContentAddImage
           userId={user?.id}
           friendId={selectedFriend?.id}
+          friendName={selectedFriend?.name}
+          primaryColor={lightDarkTheme.primaryText}
+          themeAheadOfLoading={themeAheadOfLoading}
           imageUri={imageUri}
           backgroundColor={lightDarkTheme.primaryBackground}
         />

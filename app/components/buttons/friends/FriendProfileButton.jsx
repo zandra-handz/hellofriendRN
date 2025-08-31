@@ -1,27 +1,31 @@
 import React from "react";
-import { View, Text  } from "react-native";
-  
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { View, Text, StyleSheet } from "react-native";
+
 import LoadingPage from "../../appwide/spinner/LoadingPage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 
-const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPress }) => {
- 
+const FriendProfileButton = ({
+  friendId,
+  friendName,
+  primaryColor = "orange",
+  themeAheadOfLoading,
+  manualGradientColors,
+  onPress,
+}) => {
   const { dashLoaded, loadingDash, friendDash } = useFriendDash();
-  const { themeStyles, appFontStyles, appContainerStyles, manualGradientColors } = useGlobalStyle();
- 
-
 
   const circleSize = 27;
   const iconSize = 28;
 
-  const renderProfileIcon = () => { 
+  const renderProfileIcon = () => {
     return (
       <View
         style={{
-          backgroundColor: friendId ? themeAheadOfLoading.lightColor : manualGradientColors.lightColor,
+          backgroundColor: friendId
+            ? themeAheadOfLoading.lightColor
+            : manualGradientColors.lightColor,
           borderRadius: 999,
           width: friendId ? circleSize : circleSize + 20,
           height: friendId ? circleSize : circleSize + 20,
@@ -54,7 +58,7 @@ const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPres
         )}
         <Text
           style={[
-            appFontStyles.friendProfileButtonText,
+            styles.friendProfileButtonText,
             {
               color:
                 dashLoaded && friendDash && friendId
@@ -81,7 +85,7 @@ const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPres
       }}
     >
       {loadingDash && (
-        <View style={appContainerStyles.loadingFriendProfileButtonWrapper}>
+        <View style={styles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
             loading={true}
             color={themeAheadOfLoading.darkColor}
@@ -96,7 +100,7 @@ const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPres
         <GlobalPressable
           onPress={onPress}
           // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
-          style={{   }}
+          style={{}}
         >
           <View>
             {renderProfileIcon()}
@@ -112,7 +116,7 @@ const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPres
                 <MaterialIcons
                   name="display-settings"
                   size={iconSize - 2}
-                  color={themeStyles.footerIcon.color}
+                  color={primaryColor}
                 />
               )}
             </View>
@@ -122,5 +126,22 @@ const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPres
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingFriendProfileButtonWrapper: {
+    flex: 0.4,
+    paddingRight: 0,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    alignContent: "flex-start",
+  },
+  friendProfileButtonText: {
+    fontSize: 17,
+    paddingVertical: 0,
+    alignSelf: "center",
+    fontFamily: "Poppins-Bold",
+    paddingLeft: 0,
+  },
+});
 
 export default FriendProfileButton;

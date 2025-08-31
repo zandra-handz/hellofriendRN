@@ -18,6 +18,11 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TextInputView = ({
+  manualGradientColors,
+  primaryColor,
+  primaryBackground,
+  overlayColor,
+  subWelcomeTextStyle,
   message,
   view,
   isInsideModal = false,
@@ -38,8 +43,7 @@ const TextInputView = ({
   const translateX = useSharedValue(-600);
   const translateY = useSharedValue(-300);
 
-  const fade = useSharedValue(1);
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const fade = useSharedValue(1); 
 
   useEffect(() => {
     fade.value = 1;
@@ -105,13 +109,13 @@ const TextInputView = ({
             flex: 1,
             paddingHorizontal: 6,
             paddingVertical: 2,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: overlayColor,
           }}
         >
           <Text
-            style={[
-              themeStyles.primaryText,
+            style={[ 
               {
+                color: primaryColor,
                 fontFamily: "Poppins-Bold",
                 fontSize: 14,
                 padding: 4,
@@ -128,9 +132,8 @@ const TextInputView = ({
       <Animated.View
         style={[
           styles.messageContainer,
-          animatedStyle,
-          themeStyles.primaryBackground,
-          { borderRadius: 20, marginTop: 0 },
+          animatedStyle, 
+          { backgroundColor: primaryBackground, borderRadius: 20, marginTop: 0 },
         ]}
       >
         {!update && (
@@ -154,7 +157,7 @@ const TextInputView = ({
           </View>
         )}
         {update && (
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          <Text style={[ subWelcomeTextStyle, { color: primaryColor}]}>
             update
           </Text>
         )}
@@ -175,9 +178,8 @@ const TextInputView = ({
           }}
         >
           <Text
-            style={[
-              themeStyles.primaryText,
-              { fontFamily: "Poppins-Bold", fontSize: 13, marginRight: 5 },
+            style={[ 
+              { color: primaryColor, fontFamily: "Poppins-Bold", fontSize: 13, marginRight: 5 },
             ]}
           >
             Got it!

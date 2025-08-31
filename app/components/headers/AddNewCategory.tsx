@@ -28,7 +28,7 @@ type Props = {
 };
 
 const AddNewCategory = ({
-  primaryColor,
+  primaryColor='orange',
   primaryBackground,
   manualGradientColors,
   userId,

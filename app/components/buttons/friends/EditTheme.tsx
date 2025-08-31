@@ -1,10 +1,8 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import useReadableColors from "@/src/hooks/useReadableColors";
 import ColorSwatchesSvg from "../../friends/ColorSwatchesSvg";
 import useUpdateFaveTheme from "@/src/hooks/SelectedFriendCalls/useUpdateFavesTheme";
@@ -14,14 +12,22 @@ import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 
 import Toggle from "../../user/Toggle";
 
-const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) => {
- 
-  const { friendList } = useFriendList();
-  const { themeAheadOfLoading,  handleSetTheme  } =
-    useFriendStyle();
+const EditTheme = ({
+  primaryColor='orange',
+  lighterOverlayColor='yellow',
+  manualGradientColors,
+  themeAheadOfLoading,
+  friendList,
+  userId,
+  friendId,
+  manualThemeOn,
+}) => { 
+  const {  handleSetTheme } = useFriendStyle();
 
-
-    const {updateFriendListColorsExcludeSaved} = useUpdateFriendListColors({userId: userId, setThemeState: handleSetTheme})
+  const { updateFriendListColorsExcludeSaved } = useUpdateFriendListColors({
+    userId: userId,
+    setThemeState: handleSetTheme,
+  });
   const { handleUpdateFavesTheme } = useUpdateFaveTheme({
     userId: userId,
     friendId: friendId,
@@ -33,10 +39,7 @@ const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) =>
     useReadableColors(friendList, friendId);
 
   // console.log(friendDashboardData);
-    const [manualTheme, setManualTheme] = useState<boolean>(!!manualThemeOn);
-
-
- 
+  const [manualTheme, setManualTheme] = useState<boolean>(!!manualThemeOn);
 
   const toggleUseFriendColorTheme = async () => {
     const newValue = !manualTheme;
@@ -105,8 +108,7 @@ const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) =>
       }
     }
   };
-
-  const { themeStyles } = useGlobalStyle();
+ 
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -132,21 +134,21 @@ const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) =>
         width: "100%",
         alignSelf: "flex-start",
         backgroundColor: showEdit
-          ? themeStyles.lighterOverlayBackgroundColor.backgroundColor
+          ? lighterOverlayColor
           : "transparent",
         padding: showEdit ? 10 : 0,
         borderRadius: showEdit ? 10 : 0,
       }}
     >
       <Toggle
-          manualGradientColors={manualGradientColors}
-         primaryColor={themeStyles.primaryText.color}
+        manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
         label="Manual theme"
         icon={
           <MaterialCommunityIcons
             name={"palette"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         value={manualTheme}
@@ -171,7 +173,7 @@ const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) =>
                 flexDirection: "row",
               }}
             ></View>
-            <Text style={[styles.label, themeStyles.modalText]}></Text>
+            <Text style={[styles.label, { color: primaryColor}]}></Text>
           </View>
 
           {!showEdit && (
@@ -190,14 +192,14 @@ const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) =>
                 <MaterialCommunityIcons
                   name={"cancel"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
               <Pressable onPress={handleSaveNewTheme}>
                 <MaterialCommunityIcons
                   name={"check"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
             </>

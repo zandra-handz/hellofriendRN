@@ -1,16 +1,20 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import HelloDayWrapper from "../helloes/HelloDayWrapper";
 
-import { View, Text, StyleSheet, Animated, Pressable } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { Text, View, StyleSheet,   Pressable } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  SlideInDown,
+  SlideOutDown,
+} from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
+
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-import { useHelloes } from "@/src/context/HelloesContext";
 import HelloQuickView from "../alerts/HelloQuickView";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
-import { ShowQuickView } from "@/src/utils/ShowQuickView";
-import QuickView from "../alerts/QuickView";
 
 interface Props {
   isVisible: boolean;
@@ -23,10 +27,60 @@ interface Props {
   onLongPress: (categoryId: number | null) => void;
 }
 
-const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
-  const { helloesList } = useHelloes();
-  const {  manualGradientColors } =
-    useGlobalStyle();
+const MonthModal: React.FC<Props> = ({
+  friendId,
+  helloesList,
+  manualGradientColors,
+  themeAheadOfLoading,
+ primaryColor,
+  isVisible,
+  closeModal,
+  monthData,
+}) => {
+
+
+
+
+  const pieScale = useSharedValue(1);
+  const pieY = useSharedValue(1);
+  const pieX = useSharedValue(1);
+
+
+const radius = 100;
+const daySquareWidth = 50;
+const daySquareHeight = daySquareWidth * .8;
+
+  const [viewHelloId, setViewHelloId] = useState(undefined);
+
+
+
+  useEffect(() => {
+    if (viewHelloId) {
+      pieScale.value = withTiming(0.5, { duration: 200 });
+      pieX.value = withSpring(
+        -radius * 1.2,
+        withTiming(-radius * 1.2, { duration: 200 })
+      );
+      pieY.value = withTiming(-radius * 0.6, { duration: 200 });
+    } else {
+      pieScale.value = withTiming(1, { duration: 200 });
+      pieX.value = withTiming(1, { duration: 200 });
+      pieY.value = withTiming(1, { duration: 200 });
+    }
+  }, [viewHelloId]);
+
+
+  const pieScaleStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { scale: pieScale.value },
+        { translateX: pieX.value },
+        { translateY: pieY.value },
+      ],
+    };
+  });
+
+
   const opacityMinusAnimation = 1;
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -57,6 +111,10 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
   const year = monthData.monthData.year?.slice(0, 4) ?? "";
 
   const handleViewHello = (id) => {
+    if (id === viewHelloId) {
+      setViewHelloId(null);
+      return;
+    }
     const helloIndex = helloesList.findIndex((hello) => hello.id === id);
     const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
 
@@ -64,13 +122,21 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
       const daysSince = daysSincedDateField(helloObject.date);
 
       const word = Number(daysSince) != 1 ? `days` : `day`;
-      console.log("helloobject@@");
-      setQuickView({
-        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-        view: <HelloQuickView data={helloObject} index={helloIndex} />,
-        message: `hi hi hi`,
-        update: false,
-      });
+     setViewHelloId(id);
+      // setQuickView({
+      //   topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+      //   view: (
+      //     <HelloQuickView
+      //       friendId={friendId}
+      //       data={helloObject}
+      //       index={helloIndex}
+      //       primaryColor={primaryColor}
+      //       themeAheadOfLoading={themeAheadOfLoading}
+      //     />
+      //   ),
+      //   message: `hi hi hi`,
+      //   update: false,
+      // });
     }
   };
 
@@ -84,6 +150,9 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
           style={[
             styles.daySquare,
             {
+                                width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
+                  height:  viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
+            
               opacity: opacityMinusAnimation,
               borderRadius: daySquareBorderRadius,
               borderColor: daySquareBorderColor,
@@ -103,6 +172,8 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
           style={[
             styles.daySquare,
             {
+                                width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
+                  height:  viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
               opacity: opacityMinusAnimation,
               borderRadius: daySquareBorderRadius,
               borderColor: daySquareBorderColor,
@@ -120,13 +191,15 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
           hitSlop={20}
           onPress={() => handleViewHello(id)}
           key={key}
-          style={{ height: 50, width: 50, overflow: "hidden" }}
+          style={{  overflow: "hidden" }}
         >
           <HelloDayWrapper isVisible={lightUp}>
             <Animated.View
               style={[
                 styles.daySquare,
                 {
+                  width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
+                  height:  viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
                   borderRadius: daySquareBorderRadius,
                   backgroundColor:
                     voidedDay && !isManualReset
@@ -145,7 +218,7 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
   };
 
   const renderWeeks = (totalDays, startingIndex, highlightDays = []) => {
-    // Generate all days of the month including filler days
+ 
     const allDays = [];
 
     // console.error(highlightDays);
@@ -176,7 +249,9 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
           const weekData = allDays.slice(rowStart, rowEnd);
 
           return (
-            <View style={styles.weekRow} key={`week-${rowIndex}`}>
+            <View style={[styles.weekRow, 
+              {height: viewHelloId ? daySquareHeight / 1.5 + 8 : daySquareHeight + 10}
+            ]} key={`week-${rowIndex}`}>
               {weekData.map((day, index) => {
                 if (day === null) {
                   // filler day - no highlight or void
@@ -229,27 +304,16 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
       const year = item.monthData.year.slice(0, 4);
 
       return (
-        <View style={styles.calendarContainer}>
-          {/* <AnimatedPressable>
-            <Text
-              style={{
-                fontFamily: "Poppins-Regular",
-                fontSize: 12,
-                opacity: opacityMinusAnimation,
-                color: daySquareBorderColor,
-              }}
-            >
-              {month} {year}
-            </Text>
-          </AnimatedPressable> */}
-          <View style={styles.innerCalendarContainer}>
+   
+ 
+          <Animated.View style={[ pieScaleStyle, styles.innerCalendarContainer]}>
             {renderWeeks(
               item.monthData.daysInMonth,
               indexRangeStart,
               highlightDays
             )}
-          </View>
-        </View>
+          </Animated.View>
+     
       );
     },
     [
@@ -285,9 +349,22 @@ const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
           buttonTitle={`${month} ${year}`}
           children={
             <View style={styles.bodyContainer}>
-              <View>
+          
                 {monthData && renderCalendarMonth({ item: monthData })}
-              </View>
+                      {viewHelloId && (
+              <Animated.View
+                entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
+                exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
+                style={{
+                  //  backgroundColor: "red",
+                  height: viewHelloId ? "75%" : "0%",
+                  flexGrow: 1,
+                  width: "100%",
+                }}
+              >
+              
+              </Animated.View>
+            )}
             </View>
           }
           onClose={closeModal}
@@ -338,13 +415,13 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   calendarContainer: {
-    height: 80,
-    width: 80,
+   backgroundColor: 'pink',
+   
 
     borderRadius: 10,
   },
   innerCalendarContainer: {
-    paddingHorizontal: "4%",
+ 
     flex: 1,
   },
   weekRow: {
@@ -353,8 +430,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
   daySquare: {
-    height: "80%",
-    width: 50,
+    // height: "80%",
+    // width: 50,
     justifyContent: "center", // Center content inside the square
     alignItems: "center", // Center content inside the square
     overflow: "hidden",

@@ -2,25 +2,24 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, TextInput } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext"; 
+import GlobalPressable from "../appwide/button/GlobalPressable"; 
+ 
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
  
 export default function EditCategoryDescriptionView({
+  userId,
   categoryId,
   startingText,
   nullTextInputView,
   onSave,
+  primaryColor='orange',
 }: {
   startingText?: string;
   categoryId: number;
   nullTextInputView: () => void;
   onSave: (newText: string) => void;
-}) {
-  const { themeStyles } = useGlobalStyle();
- const { user } = useUser();
-  const { updateCategory, updateCategoryMutation } = useUpdateCategory({userId: user?.id});
+}) {  
+  const { updateCategory, updateCategoryMutation } = useUpdateCategory({userId: userId});
   const [text, setText] = useState(startingText || "");
   const textInputRef = useRef<TextInput>(null);
 
@@ -51,9 +50,9 @@ useEffect(() => {
       <View style={{ height: 100, width: "100%" }}>
         <TextInput
           ref={textInputRef}
-          style={[
-            themeStyles.genericText,
+          style={[ 
             {
+              color: primaryColor,
               flex: 1,
               fontSize: 15,
               textAlignVertical: "top",
@@ -73,44 +72,9 @@ useEffect(() => {
         <MaterialCommunityIcons
           name="check"
           size={20}
-          color={themeStyles.footerIcon.color}
+          color={primaryColor}
         />
       </GlobalPressable>
     </>
   );
 }
-
-
-//   const renderEditView = () => {
-//   return (
-//     <>
-//       <View style={{ height: 100, width: "100%" }}>
-//         <TextInput
-//           ref={textInputRef}
-//           style={[
-//             themeStyles.genericText,
-//             {
-//               flex: 1,
-//               fontSize: 15,
-//               textAlignVertical: "top",
-//               textAlign: "left",
-//               paddingRight: 2,
-//               height: 200,
-//             },
-//           ]}
-//           autoFocus={true}
-//           value={textInput}
-//           onChangeText={handleTextChange}
-//           multiline
-//         />
-//       </View>
-//       <GlobalPressable onPress={handleUpdateCategory}>
-//         <MaterialCommunityIcons
-//           name={"check"}
-//           size={20}
-//           color={themeStyles.footerIcon.color}
-//         />
-//       </GlobalPressable>
-//     </>
-//   );
-// };

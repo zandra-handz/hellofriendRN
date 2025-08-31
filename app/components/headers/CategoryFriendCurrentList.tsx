@@ -1,34 +1,30 @@
 import { View, Text, FlatList } from "react-native";
 import React, { useEffect, useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 type Props = {
   categoryId: number;
 };
 
-const CategoryFriendCurrentList = ({ categoryId }: Props) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+const CategoryFriendCurrentList = ({
+  categoryId,
+  // friendId, // available if needed
+  friendName,
+  primaryColor, 
+  subWelcomeTextStyle,
+}: Props) => {
   const { allCapsulesList } = useCapsuleList(); // to include preadded
   const [allMomentsInCategory, setAllMomentsInCategory] = useState();
-
-  // useFocusEffect(
-  //     useCallback(() => {
-
-  //     }, [categoryId, allCapsulesList])
-  // )
+ 
 
   useEffect(() => {
-    if (!categoryId || !allCapsulesList || !selectedFriend) {
+    if (!categoryId || !allCapsulesList || !friendName) {
       return;
     }
 
     if (allCapsulesList.length > 0) {
- 
       const capsulesInCategory = allCapsulesList.filter(
         (capsule) => capsule?.user_category === categoryId
       );
@@ -43,8 +39,7 @@ const CategoryFriendCurrentList = ({ categoryId }: Props) => {
           flexDirection: "row",
           justifyContent: "space-between",
           height: 40,
-          borderRadius: 10,
-          backgroundColor: themeStyles.lighterOverlayBackgroundColor,
+          borderRadius: 10, 
           width: "100%",
           marginVertical: 6,
           alignItems: "center",
@@ -61,22 +56,26 @@ const CategoryFriendCurrentList = ({ categoryId }: Props) => {
           <MaterialCommunityIcons
             name={"comment-outline"}
             size={20}
-            color={themeStyles.primaryText.color}
-            style={{opacity: item.preAdded ? .4 : 1 }}
+            color={primaryColor}
+            style={{ opacity: item.preAdded ? 0.4 : 1 }}
           />
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-          <Text style={[themeStyles.primaryText, {opacity: item.preAdded ? .4 : 1 }]}>{item.capsule}</Text>
+          <Text
+            style={{ color: primaryColor, opacity: item.preAdded ? 0.4 : 1 }}
+          >
+            {item.capsule}
+          </Text>
         </View>
       </View>
     ),
-    [allMomentsInCategory, themeStyles]
+    [allMomentsInCategory, primaryColor]
   );
 
   return (
     <>
-      {selectedFriend && (
+      {friendName && (
         <FlatList
           ListHeaderComponent={
             <View
@@ -85,14 +84,11 @@ const CategoryFriendCurrentList = ({ categoryId }: Props) => {
                 width: "100%",
                 backgroundColor: "teal",
                 height: "auto",
-               // height: 30,
-                
+                // height: 30,
               }}
             >
-              <Text
-                style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
-              >
-                Current ideas {selectedFriend.name}
+              <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+                Current ideas {friendName}
               </Text>
             </View>
           }

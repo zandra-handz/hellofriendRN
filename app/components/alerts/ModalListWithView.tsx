@@ -20,6 +20,7 @@ import QuickView from "./QuickView";
 import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import TextInputView from "./TextInputView";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
@@ -65,7 +66,8 @@ const ModalListWithView: React.FC<Props> = ({
   onClose,
   secondInfoItem,
 }) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
@@ -162,6 +164,11 @@ const ModalListWithView: React.FC<Props> = ({
       <>
         {textInputView && (
           <TextInputView
+          manualGradientColors={manualGradientColors}
+          primaryColor={lightDarkTheme.primaryText}
+          primaryBackground={lightDarkTheme.primaryBackground}
+          overlayColor={lightDarkTheme.overlayBackground}
+          subWelcomeTextStyle={appFontStyles.subWelcomeText}
             topBarText={textInputView.topBarText}
             isInsideModal={true}
             message={textInputView.message}
@@ -195,11 +202,11 @@ const ModalListWithView: React.FC<Props> = ({
           <Animated.View //if you put padding here it will affect the info item
             style={[
               styles.modalContent,
-              themeStyles.primaryBackground,
+          
               {
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                borderRadius: borderRadius,
+                backgroundColor: lightDarkTheme.primaryBackground,
+ 
+                  borderRadius: borderRadius,
               },
             ]}
           >
@@ -233,12 +240,11 @@ const ModalListWithView: React.FC<Props> = ({
                       paddingBottom: 26,
                       borderTopWidth: StyleSheet.hairlineWidth,
                       borderColor:
-                        themeStyles.lighterOverlayBackgroundColor
-                          .backgroundColor,
+                        lightDarkTheme.lighterOverlayBackground,
 
                       // marginBottom: 0,
                       backgroundColor:
-                        themeStyles.primaryBackground.backgroundColor,
+                        lightDarkTheme.primaryBackground,
 
                       alignItems: "center",
                       height: "auto",
@@ -267,12 +273,9 @@ const ModalListWithView: React.FC<Props> = ({
                       paddingBottom: 26,
                       borderTopWidth: StyleSheet.hairlineWidth,
                       borderColor:
-                        themeStyles.lighterOverlayBackgroundColor
-                          .backgroundColor,
-
+                        lightDarkTheme.lighterOverlayBackground,
                       // marginBottom: 0,
-                      backgroundColor:
-                        themeStyles.primaryBackground.backgroundColor,
+                      backgroundColor: lightDarkTheme.primaryBackground,
 
                       alignItems: "center",
                       height: "auto",

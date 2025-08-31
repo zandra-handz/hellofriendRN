@@ -6,8 +6,7 @@ import {
   PanResponder,
   Dimensions,
   StyleSheet,
-} from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native"; 
 import DragRightThickOutlineSvg from "@/app/assets/svgs/drag-right-thick-outline.svg";
 
 const SlideToDeleteHeader = ({
@@ -18,13 +17,13 @@ const SlideToDeleteHeader = ({
   sliderColor = "red",
   targetIcon: TargetIcon,
   width = Dimensions.get("window").width - 50,
+  appLightColor='hotpink',
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
   const isDraggingRef = useRef(false);
-  const deleteItemRef = useRef(null);
-  const { gradientColorsHome  } = useGlobalStyle();
+  const deleteItemRef = useRef(null); 
   const [deleteItem, setDeleteItem] = useState();
 
   const handlePress = () => {
@@ -126,7 +125,7 @@ const SlideToDeleteHeader = ({
           <TargetIcon
             height={30}
             width={30}
-            color={isDragging ? gradientColorsHome.lightColor : "transparent"}
+            color={isDragging ? appLightColor : "transparent"}
           />
         </View>
       )}

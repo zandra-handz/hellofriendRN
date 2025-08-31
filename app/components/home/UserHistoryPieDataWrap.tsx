@@ -16,13 +16,14 @@ type Props = {
 };
 
 const UserHistoryPieDataWrap = ({
+  friendList,
   friendStyle,
   chartRadius = 90,
   chartBorder = 6,
   chartBorderColor = "hotpink",
   labelsSize = 9,
   showLabels = false,
-  appColorsStyle,
+  manualGradientColors,
   darkerOverlayBackgroundColor,
   primaryColor,
   primaryOverlayColor,
@@ -59,7 +60,7 @@ const UserHistoryPieDataWrap = ({
     const rgbToHex = (rgb) =>
       "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
 
-    const start = hexToRgb(appColorsStyle.darkColor);
+    const start = hexToRgb(manualGradientColors.darkColor);
     const end = hexToRgb(friendStyle.darkColor);
 
     return Array.from({ length: count }, (_, i) => {
@@ -69,7 +70,7 @@ const UserHistoryPieDataWrap = ({
       );
       return rgbToHex(interpolated);
     });
-  }, [userHistorySortedList, appColorsStyle.darkColor, friendStyle.darkColor]);
+  }, [userHistorySortedList, manualGradientColors.darkColor, friendStyle.darkColor]);
 
   const seriesData = useMemo(() => {
     if (!userHistorySortedList) return;
@@ -133,13 +134,14 @@ const UserHistoryPieDataWrap = ({
       {largeUserChartVisible && (
         <View>
           <UserHistoryModal
+          friendList={friendList}
             seriesData={seriesData}
             isVisible={largeUserChartVisible}
             closeModal={handleCloseLargeUserChart}
             listData={stats}
             // radius={180} this is now the default
-            labelsSize={labelsSize * 1.4}
-            appColorsStyle={appColorsStyle}
+            labelsSize={labelsSize * 1.4} 
+            manualGradientColors={manualGradientColors}
             darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
             primaryColor={primaryColor}
             primaryOverlayColor={primaryOverlayColor}

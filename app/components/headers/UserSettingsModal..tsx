@@ -1,18 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
+// import { AccessibilityInfo } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
-
+ 
 interface Props {
   userId: number;
   isVisible: boolean;
@@ -22,14 +19,14 @@ interface Props {
 
 const UserSettingsModal: React.FC<Props> = ({
   userId,
+  settings,
   isVisible,
   bottomSpacer,
   closeModal,
-}) => {
-  const { lightDarkTheme } = useLDTheme();
-  const {   appSpacingStyles, manualGradientColors } =
-    useGlobalStyle();
-  const { settings } = useUserSettings();
+  lightDarkTheme,
+  manualGradientColors,
+}) => { 
+  
  
 
   return (
@@ -39,7 +36,7 @@ const UserSettingsModal: React.FC<Props> = ({
       headerIcon={
         <MaterialCommunityIcons
           name={"wrench"}
-          size={appSpacingStyles.modalHeaderIconSize}
+          size={30}
           color={lightDarkTheme.primaryText}
         />
       }
@@ -68,6 +65,7 @@ const UserSettingsModal: React.FC<Props> = ({
             <SectionFriendManagerSettings
               userId={userId}
               primaryColor={lightDarkTheme.primaryText}
+              manualGradientColors={manualGradientColors}
             />
           </View>
 

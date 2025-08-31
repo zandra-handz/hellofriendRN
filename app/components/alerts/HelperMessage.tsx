@@ -15,6 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -35,9 +36,9 @@ const HelperMessage = ({
 }) => {
   const scale = useSharedValue(0);
   const translateX = useSharedValue(-600);
-
+const { lightDarkTheme} = useLDTheme();
   const fade = useSharedValue(1);
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   
   useEffect(() => {
     fade.value = 1;
@@ -98,13 +99,14 @@ const HelperMessage = ({
             flex: 1,
             paddingHorizontal: 6,
             paddingVertical: 2,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: lightDarkTheme.overlayBackground,
           }}
         >
           <Text
             style={[
-              themeStyles.primaryText,
+            
               { 
+                color: lightDarkTheme.primaryText,
                 fontFamily: "Poppins-Bold",
                 fontSize: 14,
                 padding: 4,
@@ -122,8 +124,8 @@ const HelperMessage = ({
         style={[
           styles.messageContainer,
           animatedStyle,
-          themeStyles.primaryBackground,
-          { borderRadius: 20, marginTop: 0 },
+        
+          { backgroundColor: lightDarkTheme.primaryBackground, borderRadius: 20, marginTop: 0 },
         ]}
       >
  
@@ -132,10 +134,9 @@ const HelperMessage = ({
             contentContainerStyle={{ flexDirection: "row", alignItems: "center", padding: 10 }}
           >
             <Text
-              style={[
-                themeStyles.primaryText,
+              style={[ 
                 appFontStyles.subWelcomeText,
-                { lineHeight: 24 },
+                { color: lightDarkTheme.primaryText, lineHeight: 24 },
               ]}
             >
               {" "}
@@ -145,7 +146,7 @@ const HelperMessage = ({
           </ScrollView>
         )}
         {update && (
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          <Text style={[ appFontStyles.subWelcomeText, { color: lightDarkTheme.primaryText}]}>
             update
           </Text>
         )}
@@ -166,9 +167,8 @@ const HelperMessage = ({
           }}
         >
           <Text
-            style={[
-              themeStyles.primaryText,
-              { fontFamily: "Poppins-Bold", fontSize: 13, marginRight: 5 },
+            style={[ 
+              { color: lightDarkTheme.primaryText, fontFamily: "Poppins-Bold", fontSize: 13, marginRight: 5 },
             ]}
           >
             Got it!
@@ -176,7 +176,7 @@ const HelperMessage = ({
           <MaterialCommunityIcons
             name={"check-circle"}
             size={24}
-            color={themeStyles.primaryText.color}
+            color={lightDarkTheme.primaryText}
             color={manualGradientColors.lightColor}
           />
         </Pressable>

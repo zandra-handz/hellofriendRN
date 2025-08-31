@@ -11,10 +11,8 @@ import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
  
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
  
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useHelloes } from "@/src/context/HelloesContext"; 
+  
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
  
 
@@ -25,26 +23,19 @@ type Props = {
 };
 
 const CategoryFriendHistoryList = ({
+  friendId,
   categoryId,
+  friendList,
+  helloesList,
+  primaryColor,
   closeModal,
   onViewHelloPress,
-}: Props) => {
-  const { selectedFriend } = useSelectedFriend(); 
-  const { friendList } = useFriendList();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { helloesList } = useHelloes();
+}: Props) => {  
+  const { appFontStyles } = useGlobalStyle();
+ 
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
   
-  const [quickView, setQuickView] = useState<null | {
-    topBarText: String;
-    view: React.ReactElement;
-    message: string;
-    update: boolean;
-  }>(null);
-  if (!categoryId || !selectedFriend?.id) {
-    return;
-  }
-
+ 
   const {
     categoryHistory,
     isLoading,
@@ -55,7 +46,7 @@ const CategoryFriendHistoryList = ({
     hasNextPage,
   } = useCategoryHistoryLookup({
     categoryId: categoryId,
-    friendId: selectedFriend.id,
+    friendId: friendId,
   });
 
   useEffect(() => {
@@ -110,7 +101,9 @@ const CategoryFriendHistoryList = ({
       item={item}
       index={index}
       onHelloPress={handlePress}
+      friendId={friendId}
       friendName={getFriendNameFromList(item.friend)}
+        primaryColor={primaryColor}
       helloDate={getHelloDateFromList(item.hello)}/>
       
     ),
@@ -119,7 +112,7 @@ const CategoryFriendHistoryList = ({
       getHelloDateFromList,
       handlePress,
       // handleOnPress,
-      themeStyles,
+      primaryColor,
       styles,
     ]
   );
@@ -141,7 +134,7 @@ const CategoryFriendHistoryList = ({
               }}
             >
               <Text
-                style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
+                style={[ appFontStyles.subWelcomeText, { color: primaryColor}]}
               >
                 History {getCapsuleCount(completedCapsuleCount)}
               </Text>
@@ -160,7 +153,7 @@ const CategoryFriendHistoryList = ({
           ListFooterComponent={
             <InfiniteScrollSpinner
               isFetchingNextPage={isFetchingNextPage}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
               height={50}
             />
           }

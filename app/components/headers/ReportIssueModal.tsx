@@ -3,11 +3,8 @@ import React from "react";
 import { ScrollView, StyleSheet, View, Text } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import { Linking } from "react-native";
-import { useUser } from "@/src/context/UserContext";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 interface Props {
@@ -17,26 +14,22 @@ interface Props {
 }
 
 const ReportIssueModal: React.FC<Props> = ({
+  username,
+  primaryColor = 'orange',
+  subWelcomeTextStyle,
+  manualGradientColors,
+
   isVisible,
   bottomSpacer,
   closeModal,
-}) => {
-  const { user } = useUser();
-  const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
-    useGlobalStyle();
+}) => { 
 
   const generateUniqueEmailURL = () => {
     const uniqueId = uuidv4(); // Generate a unique ID
     const subject = `Hellofriend Bug Report\n\nID: ${uniqueId}`;
-    const body = `Hi ${user?.username}! Thank you for taking the time to provide feedback. Please describe what went wrong while using the app:\n\n`;
+    const body = `Hi ${username}! Thank you for taking the time to provide feedback. Please describe what went wrong while using the app:\n\n`;
     return `mailto:tzandrabuilds@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
-
-  //   React.useEffect(() => {
-  //     if (isModalVisible) {
-  //       AccessibilityInfo.announceForAccessibility("Information opened");
-  //     }
-  //   }, [isModalVisible]);
 
   return (
     <ModalScaleLikeTree
@@ -45,8 +38,8 @@ const ReportIssueModal: React.FC<Props> = ({
       headerIcon={
         <MaterialCommunityIcons
           name={"bug-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={primaryColor}
         />
       }
       buttonTitle={`Report a bug`}
@@ -61,14 +54,14 @@ const ReportIssueModal: React.FC<Props> = ({
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
-            <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
-               
-              Please report any issues 
+            <Text
+              style={[subWelcomeTextStyle, { color: primaryColor}]}
+            >
+              Please report any issues
               <Text
                 onPress={() => Linking.openURL(generateUniqueEmailURL())}
                 style={[
-                  styles.linkText,
-                  themeStyles.genericText,
+                  styles.linkText, 
                   { color: manualGradientColors.lightColor },
                 ]}
               >

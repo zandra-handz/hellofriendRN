@@ -1,6 +1,5 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import Animated from "react-native-reanimated";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
  

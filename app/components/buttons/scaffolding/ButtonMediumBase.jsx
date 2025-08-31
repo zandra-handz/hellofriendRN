@@ -1,15 +1,12 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 const ButtonMediumBase = ({ 
   onPress,
   label,
   height = 58,
-  radius = 12,
-  labelFontSize = 22,
-  labelColor = 'white',
+  radius = 12, 
   backgroundColor = 'transparent', 
   fontMargin = 10, 
   showGradient = true,
@@ -28,8 +25,7 @@ const ButtonMediumBase = ({
   shapeLabelFontSize = 16,  
   shapeLabelColor = 'black',  
   shapeLabelPositionRight = '93%'
-}) => {
-  const globalStyles = useGlobalStyle();  
+}) => { 
 
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -44,19 +40,9 @@ const ButtonMediumBase = ({
     }
   };
 
-  const adjustFontSize = (fontSize) => {
-    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
-  };
+ 
 
-  const textStyles = (fontSize, color) => ({
-    fontSize: adjustFontSize(fontSize),
-    color,
-    ...(globalStyles.highContrast && {
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 1,
-    }),
-  });
+ 
 
   return (
     <TouchableOpacity
@@ -98,8 +84,7 @@ const ButtonMediumBase = ({
       )}
       {shapeLabel && (
         <Text
-          style={[
-            textStyles(shapeLabelFontSize, shapeLabelColor),
+          style={[ 
             {
               position: 'absolute',
               top: shapePositionValueVertical ? shapePositionValueVertical + shapeHeight / 2.4 - shapeLabelFontSize / 3 : shapeHeight / 2 - shapeLabelFontSize / 2,
@@ -116,8 +101,7 @@ const ButtonMediumBase = ({
       )}
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
         <Text
-          style={[
-            textStyles(labelFontSize, labelColor),
+          style={[ 
             { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
           ]}
         >

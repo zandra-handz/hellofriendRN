@@ -1,14 +1,13 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text  } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable"; 
 import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import { useUser } from "@/src/context/UserContext";
+ 
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-
+ 
 type Props = {
   userChangedCategory: boolean;
   zIndex?: number;
@@ -25,12 +24,17 @@ type Props = {
 
 const SelectedCategoryButton = ({
   userId,
+  userDefaultCategory,
   manualGradientColors,
+  themeAheadOfLoading,
   primaryColor,
   primaryBackground,
+  lighterOverlayColor,
   subWelcomeTextStyle,
   userCategories,
   capsuleList,
+  friendList,
+  helloesList,
   friendId,
   friendName,
   friendDefaultCategory,
@@ -184,18 +188,23 @@ const SelectedCategoryButton = ({
         <View>
           <CategoryFriendHistoryCombinedModal
           userId={userId}
+          userDefaultCategory={userDefaultCategory}
           friendId={friendId}
           friendName={friendName}
           primaryColor={primaryColor}
+          lighterOverlayColor={lighterOverlayColor}
           primaryBackground={primaryBackground}
           subWelcomeTextStyle={subWelcomeTextStyle}
           friendDefaultCategory={friendDefaultCategory}
+          themeAheadOfLoading={themeAheadOfLoading}
             isVisible={detailsModalVisible}
             closeModal={() => setDetailsModalVisible(false)}
             categoryId={categoryId}
             manualGradientColors={manualGradientColors}
             userCategories={userCategories}
             capsuleList={capsuleList}
+            friendList={friendList}
+            helloesList={helloesList}
           />
         </View>
       )}

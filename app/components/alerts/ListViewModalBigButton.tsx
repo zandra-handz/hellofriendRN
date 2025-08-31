@@ -34,7 +34,7 @@ const ListViewModalBigButton = ({
   label,
   labelColor,
 }: Props) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
 
   return (
     <GlobalPressable

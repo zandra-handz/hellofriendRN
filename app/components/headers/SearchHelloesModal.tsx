@@ -1,8 +1,7 @@
 import React  from "react";
 import { View,  StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import MomentsSearchBar from "../moments/MomentsSearchBar";
  
 
@@ -18,28 +17,15 @@ const SearchHelloesModal: React.FC<Props> = ({
   closeModal,
   onSearchPress,
   flattenHelloes,
-}) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+  primaryColor='orange',
+}) => { 
  
-// useEffect(() => {
-//   if (flattenHelloes) {
-//     console.log('flattenhelloesin seach modal!', flattenHelloes);
-//   }
-
-// }, [flattenHelloes]); 
-
+ 
   const handleSearchPress = (hello) => {
     onSearchPress(hello.id);
     closeModal();
   };
-
-
-  
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+ 
 
   return (
     <ModalWithGoBack
@@ -47,22 +33,22 @@ const SearchHelloesModal: React.FC<Props> = ({
       headerIcon={
         <MaterialCommunityIcons
           name={"comment-search-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={primaryColor}
         />
       }
       questionText="Search helloes"
       children={
-        < View contentContainerStyle={styles.bodyContainer}>
+        < View style={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
             <MomentsSearchBar
               data={flattenHelloes}
               autoFocus={isVisible}
               height={40}
               width={"100%"}
-              borderColor={themeStyles.primaryText.color}
+              borderColor={primaryColor}
               placeholderText={"Search"}
-              textAndIconColor={themeStyles.primaryText.color}
+              textAndIconColor={primaryColor}
               backgroundColor={"transparent"}
               onPress={handleSearchPress}
                searchKeys={["capsule", "additionalNotes", "date", "location"]}

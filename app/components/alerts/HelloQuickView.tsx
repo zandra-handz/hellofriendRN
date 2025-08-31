@@ -1,13 +1,10 @@
 import { View, Text, FlatList } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import useFullHelloes from "@/src/hooks/useFullHelloes";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import useFullHelloes from "@/src/hooks/useFullHelloes"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FullHello } from "@/src/types/HelloTypes";
 import ModalInfoText from "../headers/ModalInfoText";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useLDTheme } from "@/src/context/LDThemeContext";
 
 type Props = {
   data: FullHello;
@@ -15,11 +12,14 @@ type Props = {
   index: number;
 };
 
-const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
-  const { lightDarkTheme } = useLDTheme();
-  const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendStyle();
-const primaryColor = lightDarkTheme.primaryText;
+const HelloQuickView = ({
+  data,
+  friendId,
+  momentOriginalId,
+  index, 
+  primaryColor,
+  themeAheadOfLoading,
+}: Props) => {  
   const [highlightedMoment, setHighlightedMoment] = useState(undefined);
 
   const SPINNER_SIZE = 30;
@@ -43,7 +43,7 @@ const primaryColor = lightDarkTheme.primaryText;
   );
 
   const { helloesListFull, fetchUntilIndex } = useFullHelloes({
-    friendId: selectedFriend?.id,
+    friendId: friendId,
     indexNeeded: index,
   });
 
@@ -114,7 +114,7 @@ const primaryColor = lightDarkTheme.primaryText;
           >
             <MaterialCommunityIcons
               name={"calendar"}
-              color={lightDarkTheme.primaryText}
+              color={primaryColor}
               size={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
@@ -134,11 +134,14 @@ const primaryColor = lightDarkTheme.primaryText;
           >
             <MaterialCommunityIcons
               name={"calendar"}
-              color={lightDarkTheme.primaryText}
+              color={primaryColor}
               size={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
-            <ModalInfoText infoText={helloToView.type} primaryColor={primaryColor} />
+            <ModalInfoText
+              infoText={helloToView.type}
+              primaryColor={primaryColor}
+            />
           </View>
           {helloToView?.location_name && (
             <View
@@ -152,7 +155,7 @@ const primaryColor = lightDarkTheme.primaryText;
             >
               <MaterialCommunityIcons
                 name={"calendar"}
-                color={lightDarkTheme.primaryText}
+                color={primaryColor}
                 size={ICON_SIZE}
                 style={{ marginRight: ICON_MARGIN_RIGHT }}
               />
@@ -160,7 +163,7 @@ const primaryColor = lightDarkTheme.primaryText;
                 fontSize={14}
                 lineHeight={18}
                 infoText={helloToView.location_name}
-                              primaryColor={primaryColor}
+                primaryColor={primaryColor}
               />
             </View>
           )}
@@ -183,12 +186,15 @@ const primaryColor = lightDarkTheme.primaryText;
               >
                 <MaterialCommunityIcons
                   name={"pencil"}
-                  color={lightDarkTheme.primaryText}
+                  color={primaryColor}
                   size={ICON_SIZE}
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
               </View>
-              <ModalInfoText infoText={helloToView.additional_notes}               primaryColor={primaryColor} />
+              <ModalInfoText
+                infoText={helloToView.additional_notes}
+                primaryColor={primaryColor}
+              />
             </View>
           )}
 
@@ -213,7 +219,7 @@ const primaryColor = lightDarkTheme.primaryText;
               >
                 <MaterialCommunityIcons
                   name={"pencil"}
-                  color={lightDarkTheme.primaryText}
+                  color={primaryColor}
                   size={ICON_SIZE}
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />

@@ -1,6 +1,5 @@
 import { View, Text, DimensionValue, StyleSheet } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type Props = {
@@ -33,8 +32,10 @@ const HelloItem = ({
   bottomMargin,
   combinedHeight,
   index,
-}: Props) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  primaryColor='orange',
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+}: Props) => { 
   return (
     <View
       style={[
@@ -51,10 +52,9 @@ const HelloItem = ({
     >
       <View style={{ flexDirection: "column" }}>
         <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.welcomeText,
-            { lineHeight: 22, fontSize: 18 },
+          style={[ 
+            welcomeTextStyle,
+            { color: primaryColor, lineHeight: 22, fontSize: 18 },
           ]}
         >
           {formatDate(helloData.date)}
@@ -62,9 +62,9 @@ const HelloItem = ({
         <View style={{flexDirection: 'row', width: '90%'}}>
           <MaterialCommunityIcons
           name={"map-marker"}
-          color={themeStyles.primaryText.color}
+          color={primaryColor}
           size={20}/>
-        <Text numberOfLines={1} style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+        <Text numberOfLines={1} style={[  subWelcomeTextStyle, { color: primaryColor}]}>
           {helloData.type}
           {helloData.location_name && " at " + helloData.location_name}
         </Text>

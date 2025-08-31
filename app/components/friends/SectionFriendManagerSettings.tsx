@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Reset from "../appwide/button/Reset";
- 
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-
-const SectionFriendManagerSettings = ({userId, primaryColor}) => {
- 
-
+const SectionFriendManagerSettings = ({
+  userId,
+  primaryColor,
+  manualGradientColors,
+}) => {
   return (
     <View
       style={{
@@ -18,10 +19,8 @@ const SectionFriendManagerSettings = ({userId, primaryColor}) => {
         alignSelf: "flex-start",
       }}
     >
-
-      
       <Reset
-      userId={userId}
+        userId={userId}
         label="Reset all hello dates"
         icon={
           <MaterialCommunityIcons
@@ -30,8 +29,9 @@ const SectionFriendManagerSettings = ({userId, primaryColor}) => {
             color={primaryColor}
           />
         }
-      /> 
-
+        primaryColor={primaryColor}
+        manualGradientColors={manualGradientColors}
+      />
     </View>
   );
 };

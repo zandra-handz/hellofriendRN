@@ -5,11 +5,11 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 
 import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 interface FriendModalIntegratorProps {
   addToPress: () => void;
@@ -36,13 +36,15 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   includeLabel = false,
   iconSize = 22,
   width = "auto",
+  // friendId, // trying to just use name, but this is available if needed
+  friendName,
+  themeAheadOfLoading,
+  primaryColor='orange',
 }) => {
   // console.log("FRIEND SELECTOR RERENDERED");
-  const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation();
-  const { selectedFriend } = useSelectedFriend();
-  const { loadingDash } = useFriendDash();
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
+  const navigation = useNavigation(); 
+  const { loadingDash } = useFriendDash(); 
 
   const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
 
@@ -58,9 +60,9 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
           customFontStyle ? customFontStyle : defaultLabelStyle,
           {
             color:
-              selectedFriend && !useGenericTextColor
+              friendName && !useGenericTextColor
                 ? themeAheadOfLoading.fontColorSecondary
-                : themeStyles.primaryText.color,
+                : primaryColor,
 
             zIndex: 2,
           },
@@ -68,7 +70,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
         numberOfLines={1}
         ellipsizeMode="tail"
       >
-        {(!useGenericTextColor && `For:  ${selectedFriend?.name}`) ||
+        {(!useGenericTextColor && `For:  ${friendName}`) ||
           firstSelectLabel}
       </Text>
     ),
@@ -76,9 +78,9 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
       customFontStyle,
 
       defaultLabelStyle,
-      selectedFriend,
+      friendName,
       themeAheadOfLoading,
-      themeStyles,
+      primaryColor,
     ]
   );
 
@@ -90,13 +92,13 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
         color={
           loadingDash
             ? "transparent"
-            : selectedFriend && !useGenericTextColor
+            : friendName && !useGenericTextColor
               ? color || themeAheadOfLoading.fontColorSecondary
-              : themeStyles.primaryText.color
+              : primaryColor
         }
       />
     ),
-    [loadingDash, selectedFriend, themeAheadOfLoading, themeStyles]
+    [loadingDash, friendName, themeAheadOfLoading, primaryColor]
   );
 
   return (

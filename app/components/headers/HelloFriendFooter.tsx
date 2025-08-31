@@ -18,28 +18,28 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+ 
 const HelloFriendFooter = ({
+  userId,
+  username,
+  settings,
+  friendId,
+  friendName,
+  friendList,
+  friendDash,
   userCategories,
   lightDarkTheme,
   manualGradientColors,
   subWelcomeTextStyle,
   themeAheadOfLoading,
   overlayColor,
-  textColor,
   dividerStyle,
-  userId,
-  friendId,
-  friendName,
-  friendDash,
+  deselectFriend,
+  resetTheme,
 }) => {
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const { deselectFriend } = useSelectedFriend();
-  const { resetTheme } = useFriendStyle();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
@@ -52,9 +52,9 @@ const HelloFriendFooter = ({
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
 
-  const primaryColor = lightDarkTheme.primaryText;
+  const primaryColor = lightDarkTheme.primaryText; 
   const primaryBackground = lightDarkTheme.primaryBackground;
- 
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -80,7 +80,7 @@ const HelloFriendFooter = ({
   const RenderSignOutButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        primaryColor={textColor}
+        primaryColor={primaryColor}
         confirmationRequired={true}
         confirmationTitle={"Just to be sure"}
         confirmationMessage={"Sign out?"}
@@ -91,19 +91,19 @@ const HelloFriendFooter = ({
             // name={"keyboard-backspace"}
             name={"logout"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={() => onSignOut()}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   const RenderDeselectButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        primaryColor={textColor}
+        primaryColor={primaryColor}
         confirmationRequired={true}
         confirmationTitle={"Just to be sure"}
         confirmationMessage={"Deselect friend?"}
@@ -114,50 +114,50 @@ const HelloFriendFooter = ({
             // name={"keyboard-backspace"}
             name={"home-outline"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={() => handleDeselectFriend()}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   const RenderSettingsButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        primaryColor={textColor}
+        primaryColor={primaryColor}
         label="Settings"
         icon={
           <MaterialIcons
             name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={() => setSettingsModalVisible(true)}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   const RenderReportIssueButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        primaryColor={textColor}
+        primaryColor={primaryColor}
         label="Report"
         icon={
           <MaterialCommunityIcons
             name={"bug-outline"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={() => setReportModalVisible(true)}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   const handleCenterButtonToggle = () => {
@@ -172,9 +172,12 @@ const HelloFriendFooter = ({
   const RenderFriendProfileButton = useCallback(
     () => (
       <FriendProfileButton
-        themeAheadOfLoading={themeAheadOfLoading}
-        friendId={friendId}
+              friendId={friendId}
         friendName={friendName}
+       primaryColor={primaryColor}
+        themeAheadOfLoading={themeAheadOfLoading}
+        manualGradientColors={manualGradientColors}
+
         onPress={() => handleCenterButtonToggle()}
       />
     ),
@@ -184,19 +187,19 @@ const HelloFriendFooter = ({
   const RenderAboutAppButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        primaryColor={textColor}
+        primaryColor={primaryColor}
         label="About"
         icon={
           <MaterialCommunityIcons
             name={"information-outline"}
             size={footerIconSize}
-            color={textColor}
+            color={primaryColor}
           />
         }
         onPress={() => setAboutModalVisible(true)}
       />
     ),
-    [textColor]
+    [primaryColor]
   );
 
   return (
@@ -268,9 +271,12 @@ const HelloFriendFooter = ({
         <View>
           <UserSettingsModal
             userId={userId}
+            settings={settings}
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
+            lightDarkTheme={lightDarkTheme}
+            manualGradientColors={manualGradientColors}
           />
         </View>
       )}
@@ -278,14 +284,15 @@ const HelloFriendFooter = ({
       {friendSettingsModalVisible && !!friendId && (
         <View>
           <FriendSettingsModal
-          manualGradientColors={manualGradientColors}
-          lightDarkTheme={lightDarkTheme}
+            manualGradientColors={manualGradientColors}
+            lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={friendSettingsModalVisible}
             themeAheadOfLoading={themeAheadOfLoading}
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}
+            friendList={friendList}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}
           />
@@ -299,7 +306,6 @@ const HelloFriendFooter = ({
             userCategories={userCategories}
             manualGradientColors={manualGradientColors}
             subWelcomeTextStyle={subWelcomeTextStyle}
-
             primaryColor={primaryColor}
             primaryBackground={primaryBackground}
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
@@ -316,6 +322,7 @@ const HelloFriendFooter = ({
             isVisible={aboutModalVisible}
             closeModal={() => setAboutModalVisible(false)}
             bottomSpacer={footerHeight - 30} //for safe view
+            primaryColor={primaryColor}
           />
         </View>
       )}
@@ -323,6 +330,10 @@ const HelloFriendFooter = ({
       {reportModalVisible && (
         <View>
           <ReportIssueModal
+            username={username}
+            primaryColor={primaryColor}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+            manualGradientColors={manualGradientColors}
             isVisible={reportModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setReportModalVisible(false)}

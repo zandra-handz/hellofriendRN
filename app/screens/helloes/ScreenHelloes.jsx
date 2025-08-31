@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
- 
+
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesListNew from "@/app/components/helloes/HelloesListNew";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
@@ -19,12 +19,12 @@ const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
-  const {   appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
   const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
-const { navigateToHelloes } = useAppNavigations();
+  const { navigateToHelloes } = useAppNavigations();
   // console.log(helloesListFull);
   const { flattenHelloes } = useHelloesManips({ helloesData: helloesListFull });
   //  console.log(`FLATTEENEEDDEDD`, flattenHelloes);
@@ -97,7 +97,10 @@ const { navigateToHelloes } = useAppNavigations();
   const RenderHelloesScreenFooter = useCallback(() => {
     return (
       <HelloesScreenFooter
-      primaryColor={lightDarkTheme.primaryText}
+        friendId={selectedFriend?.id}
+        primaryColor={lightDarkTheme.primaryText}
+        overlayColor={lightDarkTheme.overlayBackground}
+        dividerStyle={lightDarkTheme.divider}
         helloesList={helloesData}
         flattenHelloes={flattenHelloes}
         onFilterPress={toggleHelloesFiltering}
@@ -124,30 +127,28 @@ const { navigateToHelloes } = useAppNavigations();
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground }
-        backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-     
-     
-        friendId={selectedFriend?.id}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
+      friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
       useOverlay={true}
       style={{ flex: 1 }}
-    > 
+    >
       <CalendarChart
-      helloesList={helloesList}
-      navigateToHelloes={navigateToHelloes}
+        helloesList={helloesList}
+        navigateToHelloes={navigateToHelloes}
         friendId={selectedFriend?.id}
         themeAheadOfLoading={themeAheadOfLoading}
-     
         lightDarkTheme={lightDarkTheme}
+        manualGradientColors={manualGradientColors}
         showTopBar={false}
         useBackgroundOverlay={false}
       />
       <View
         style={{
           padding: 20,
-          alignItems: "center", 
+          alignItems: "center",
           borderRadius: 30,
           height: "auto",
           marginVertical: 0,
@@ -155,7 +156,10 @@ const { navigateToHelloes } = useAppNavigations();
       >
         <Text
           numberOfLines={2}
-          style={[ appFontStyles.welcomeText, {color: lightDarkTheme.primaryText}]}
+          style={[
+            appFontStyles.welcomeText,
+            { color: lightDarkTheme.primaryText },
+          ]}
         >
           Hello history for {selectedFriend?.name}
         </Text>
@@ -177,6 +181,8 @@ const { navigateToHelloes } = useAppNavigations();
                   hasNextPage={hasNextPage}
                   onPress={navigateToSingleView}
                   primaryColor={lightDarkTheme.primaryText}
+                  welcomeTextStyle={appFontStyles.welcomeText}
+                  subWelcomeTextStyle={appFontStyles.subWelcomeText}
                 />
               )}
           </View>

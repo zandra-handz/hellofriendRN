@@ -35,8 +35,12 @@ type Props = {
 };
 
 const MomentWriteEditView = ({
+  defaultCategory,
   manualGradientColors,
+  themeAheadOfLoading,
   capsuleList,
+  friendList,
+  helloesList,
   userCategories,
   userId,
   screenCameFromToParent,
@@ -46,6 +50,7 @@ const MomentWriteEditView = ({
   subWelcomeTextStyle,
   primaryColor,
   primaryBackground,
+  lighterOverlayColor,
   darkerOverlayColor,
   openCatCreator,
   closeCatCreator,
@@ -331,26 +336,29 @@ const MomentWriteEditView = ({
             <View
               style={{
                 padding: 10,
-                // paddingTop: TEXT_INPUT_PADDING_TOP, // controls space between top row and text input
-                borderRadius: 40,
+              borderRadius: 40,
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 width: "100%",
                 flex: 1,
                 marginBottom: escortBarSpacer,
-                //marginBottom: marginBottom, in momentsviewpage but not here since keyboard is up + no footer bar
-                zIndex: 1,
+              zIndex: 1,
                 overflow: "hidden",
                 backgroundColor: darkerOverlayColor,
               }}
             >
               <MomentFocusTray
                 userId={userId}
+                userDefaultCategory={defaultCategory}
+                themeAheadOfLoading={themeAheadOfLoading}
                 primaryColor={primaryColor}
+                lighterOverlayColor={lighterOverlayColor}
                 primaryBackground={primaryBackground}
                 manualGradientColors={manualGradientColors}
                 subWelcomeTextStyle={subWelcomeTextStyle}
                 capsuleList={capsuleList}
+                friendList={friendList}
+                helloesList={helloesList}
                 userCategories={userCategories}
                 welcomeTextStyle={welcomeTextStyle}
                 paddingTop={TOPPER_PADDING_TOP}
@@ -390,22 +398,7 @@ const MomentWriteEditView = ({
                 />
               )}
             </View>
-            {/* <View
-              style={{
-                height: 50,
-                paddingHorizontal: 6, // WEIRD NUMBER because + 4 padding above I think
-                marginBottom: 6, // WEIRD NUMBER because + 4 padding above
-                flexShrink: 1,
-                flexDirection: "column",
-                justifyContent: "flex-end",
-              }}
-            >
-              <EscortBar
-                forwardFlowOn={true}
-                label={`Save`}
-                onPress={handleSave}
-              />
-            </View> */}
+ 
           </View>
         </View>
 

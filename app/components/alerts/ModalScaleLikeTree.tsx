@@ -1,16 +1,11 @@
-import React, {
-  useEffect,
-  useState,
-  useRef, 
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { StyleSheet, View, Modal } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
   FadeInUp,
   FadeOutUp,
   useSharedValue,
-  useAnimatedStyle, 
+  useAnimatedStyle,
   withTiming,
   withDelay,
 } from "react-native-reanimated";
@@ -21,6 +16,7 @@ import QuickView from "./QuickView";
 import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { ItemViewProps } from "@/src/types/MiscTypes";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 interface Props {
   isVisible: boolean;
   isFullscreen?: boolean;
@@ -58,8 +54,14 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   nullQuickView,
   onClose,
 }) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const welcomeTextStyle = appFontStyles.welcomeText;
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
 
+  const { lightDarkTheme } = useLDTheme();
+  const primaryColor = lightDarkTheme.primaryText;
+  const primaryBackground = lightDarkTheme.primaryBackground;
+  const lighterOverlayColor = lightDarkTheme.lighterOverlayBackground;
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
 
@@ -175,10 +177,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
           <Animated.View //if you put padding here it will affect the info item
             style={[
               styles.modalContent,
-              themeStyles.primaryBackground,
+
               {
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                backgroundColor: primaryBackground,
                 borderRadius: borderRadius,
               },
             ]}
@@ -213,9 +214,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                       paddingTop: 18,
                       paddingBottom: 26,
                       borderTopWidth: StyleSheet.hairlineWidth,
-                      borderColor:
-                        themeStyles.lighterOverlayBackgroundColor
-                          .backgroundColor,
+                      borderColor: lighterOverlayColor,
 
                       alignItems: "center",
                       height: "auto",
@@ -223,7 +222,11 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                   >
                     {infoItem}
 
-                    <HelpButton onPress={handleHelpButtonPress} />
+                    <HelpButton
+                      iconColor={primaryColor}
+                      fontColor={primaryColor}
+                      onPress={handleHelpButtonPress}
+                    />
                   </Animated.View>
                 )}
               </View>
@@ -250,6 +253,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 onClose={handleCustomClose}
                 friendTheme={friendTheme}
                 label={buttonTitle}
+                welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                manualGradientColors={manualGradientColors}
                 labelColor={
                   friendTheme === undefined
                     ? manualGradientColors.homeDarkColor

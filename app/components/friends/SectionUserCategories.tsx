@@ -151,7 +151,7 @@ const SectionUserCategories = ({
           justifyContent: "space-between",
           height: 40,
           borderRadius: 10,
-          backgroundColor: lighterOverlayColor,
+        //  backgroundColor: primaryBackground,
           width: "100%",
           marginVertical: 8,
           alignItems: "center",
@@ -317,6 +317,7 @@ const SectionUserCategories = ({
               userCategories={userCategories}
               fontStyle={2}
               manualGradientColors={manualGradientColors}
+              primaryColor={primaryColor}
             />
 
             <FlatList

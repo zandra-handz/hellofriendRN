@@ -33,6 +33,7 @@ const Pie = ({
   return (
     <View style={styles.container}>
       <AnimatedPieChart
+      duration={400}
         darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
   primaryColor={primaryColor}
   primaryOverlayColor={primaryOverlayColor}

@@ -222,6 +222,9 @@ const ScreenLocationSend = () => {
       <ButtonItemFooterStyle
         onPress={handleSendText}
         previewData={FinalMessage}
+        primaryColor={lightDarkTheme.primaryText}
+        primaryBackground={lightDarkTheme.primaryBackground}
+        welcomeTextStyle={appFontStyles.welcomeText}
       />
     </SafeViewAndGradientBackground>
   );

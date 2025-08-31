@@ -1,14 +1,19 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useCallback } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useCallback } from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // could use the animated styles in ItemFooter here maybe; no specific use case in mind yet so haven't included
-const ButtonItemFooterStyle = ({ item, onPress, previewData }) => {
-  const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
+const ButtonItemFooterStyle = ({
+  item,
+  onPress,
+  previewData,
+  primaryColor = "orange",
+  primaryBackground = "red",
+  welcomeTextStyle,
+}) => { 
 
-  const footerHeight = 90;
-  const footerWithPreviewHeight = 340;
+  // const footerHeight = 90;
+  // const footerWithPreviewHeight = 340;
   const footerPaddingBottom = 20;
 
   const iconHorizontalSpacing = 20;
@@ -19,9 +24,9 @@ const ButtonItemFooterStyle = ({ item, onPress, previewData }) => {
         onPress={onPress}
         style={({ pressed }) => ({
           //flex: 1,
-          width: 'auto',
-          marginLeft: iconHorizontalSpacing, 
-         
+          width: "auto",
+          marginLeft: iconHorizontalSpacing,
+
           alignItems: "center",
           justifyContent: "center",
           opacity: pressed ? 0.6 : 1, // optional visual feedback
@@ -30,14 +35,11 @@ const ButtonItemFooterStyle = ({ item, onPress, previewData }) => {
         <MaterialCommunityIcons
           name="send"
           size={50}
-          color={themeStyles.primaryText.color}
-        />
-        {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
-                  
-                 /{data.length} </Text></Text> */}
+          color={primaryColor}
+        /> 
       </Pressable>
     ),
-    [onPress, themeStyles]
+    [onPress, primaryColor]
   );
 
   return (
@@ -45,46 +47,37 @@ const ButtonItemFooterStyle = ({ item, onPress, previewData }) => {
       style={[
         styles.container,
         {
-          height: 'auto',
+          height: "auto",
           borderWidth: StyleSheet.hairlineWidth,
-          borderColor: themeStyles.primaryText.color,
+          borderColor: primaryColor,
           borderRadius: 30,
           paddingBottom: footerPaddingBottom,
-         // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          backgroundColor: themeStyles.primaryBackground.backgroundColor,
+          // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          backgroundColor: primaryBackground,
         },
       ]}
     >
       {/* <View style={[styles.divider, themeStyles.divider]} /> */}
-          <View
-            style={[styles.previewContainer]}
-          > 
-          <View style={{flexDirection: 'row', width: '100%', marginVertical: 10}}>
-            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>Preview</Text>
+      <View style={[styles.previewContainer]}>
+        <View
+          style={{ flexDirection: "row", width: "100%", marginVertical: 10 }}
+        >
+          <Text style={[welcomeTextStyle, { color: primaryColor}]}>
+            Preview
+          </Text>
+        </View>
+        {previewData}
+      </View>
+      <View style={styles.section}>
+        <>
+          <Text style={[welcomeTextStyle, {color: primaryColor}]}>
+            Send SMS
+          </Text>
 
-          </View>
-          {previewData}
-  
-          </View>
-        <View style={styles.section}>
-          <>
-            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>Send SMS</Text>
-
-            <RenderIconButton/>
-            </>
-        </View> 
-
-      {/* <View style={[styles.divider, themeStyles.divider]} />
-   
-        <View style={styles.section}>
-            <RenderIconButton/>
-        </View> 
-
-      <View style={[styles.divider, themeStyles.divider]} />
-   
-        <View style={styles.section}>
-            <RenderIconButton/>
-        </View>  */}
+          <RenderIconButton />
+        </>
+      </View>
+ 
     </View>
   );
 };
@@ -108,13 +101,13 @@ const styles = StyleSheet.create({
   divider: {
     marginVertical: 10,
   },
-    previewContainer: {
-     paddingVertical: 20, 
-     borderRadius: 10,
-    width: '100%',
-    height: 'auto',
+  previewContainer: {
+    paddingVertical: 20,
+    borderRadius: 10,
+    width: "100%",
+    height: "auto",
     flex: 1,
-    flexShrink: 1, 
+    flexShrink: 1,
   },
 });
 

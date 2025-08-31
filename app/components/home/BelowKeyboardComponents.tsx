@@ -21,6 +21,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   userCategories,
   upcomingHelloes,
   isLoading,
+  themeAheadOfLoading,
   getThemeAheadOfLoading,
   friendList,
   friendStyle,
@@ -31,7 +32,6 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
   manualGradientColors,
-  appColorsStyle,
   spinnerStyle,
   loadingDash,
   friendDash,
@@ -75,9 +75,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
             userId={userId}
+            friendList={friendList}
             userCategories={userCategories}
             manualGradientColors={manualGradientColors}
-            appColorsStyle={appColorsStyle}
+            appColorsStyle={manualGradientColors}
             friendStyle={friendStyle}
             primaryColor={primaryColor}
             welcomeTextStyle={welcomeTextStyle}
@@ -85,6 +86,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             primaryOverlayColor={primaryOverlayColor}
             primaryBackgroundColor={primaryBackgroundColor}
             darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+            themeAheadOfLoading={themeAheadOfLoading}
             spinnerStyle={spinnerStyle}
             loadingDash={loadingDash}
             friendDash={friendDash}
@@ -94,6 +96,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             borderRadius={10}
             borderColor="black"
             height={"100%"}
+
           />
         </View>
       )}

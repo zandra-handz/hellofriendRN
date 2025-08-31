@@ -1,12 +1,11 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";  
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";   
  
 import useFriendFunctions from "@/src/hooks/useFriendFunctions"; 
 import PrioritySettingSlider from "../../friends/PrioritySettingSlider";
-const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
+const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority, primaryColor}) => {
   
  
 
@@ -27,8 +26,7 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
       console.error(error);
     }
   };
-
-  const { themeStyles  } = useGlobalStyle();
+ 
   const { handleUpdateFriendSettings } = useFriendFunctions();
 
   const [showEdit, setShowEdit] = useState(false);
@@ -70,10 +68,10 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
             <MaterialCommunityIcons
               name={"alert"}
               size={20}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
             />
           </View>
-          <Text style={[styles.label, themeStyles.modalText]}>
+          <Text style={[styles.label, {color: primaryColor}]}>
             Priority: {priority}
           </Text>
         </View>
@@ -84,7 +82,7 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
               <MaterialCommunityIcons
                 name={"pencil"}
                 size={20}
-                color={themeStyles.primaryText.color}
+                color={primaryColor}
               />
             </Pressable>
           )}
@@ -95,14 +93,14 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
                 <MaterialCommunityIcons
                   name={"cancel"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
               <Pressable onPress={handleSave}>
                 <MaterialCommunityIcons
                   name={"check"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
             </>
@@ -128,6 +126,7 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
                   friendPriority={priority} // Passing friendEffort state as value
                   sliderColor={themeAheadOfLoading.lightColor}
                   trackColor={themeAheadOfLoading.darkColor}
+                  primaryColor={primaryColor}
                 />
         </View>
       )}

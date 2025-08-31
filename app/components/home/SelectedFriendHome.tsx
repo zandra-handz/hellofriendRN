@@ -13,9 +13,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import LoadingPage from "../appwide/spinner/LoadingPage";
+// import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-
 
 import { useHelloes } from "@/src/context/HelloesContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -23,13 +22,10 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 
-
-
-
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import SuggestedHello from "./SuggestedHello"; 
+import SuggestedHello from "./SuggestedHello";
 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -40,8 +36,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
   userCategories,
   manualGradientColors,
-  friendStyle,
-  appColorsStyle,
+  friendStyle, 
+  friendList,
   borderRadius = 20,
   borderColor = "transparent",
   primaryColor,
@@ -55,20 +51,18 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   friendDash,
   selectedFriendId,
   selectedFriendName,
+  themeAheadOfLoading,
 }) => {
   const headerRef = useRef(null);
-const { capsuleList } = useCapsuleList();
+  const { capsuleList } = useCapsuleList();
 
   const { categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
-  }); 
-
-    const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
-    listData: capsuleList,
   });
 
-
-
+  const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
 
   const { helloesList } = useHelloes();
 
@@ -145,7 +139,7 @@ const { capsuleList } = useCapsuleList();
                 },
               ]}
             >
-              <Text style={[ subWelcomeTextStyle, { color: primaryColor}]}>
+              <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
                 {selectedFriendName}
               </Text>
             </Animated.View>
@@ -195,7 +189,7 @@ const { capsuleList } = useCapsuleList();
                   primaryColor={primaryColor}
                   primaryBackground={primaryBackgroundColor}
                   welcomeTextStyle={welcomeTextStyle}
-                subWelcomeTextStyle={subWelcomeTextStyle}
+                  subWelcomeTextStyle={subWelcomeTextStyle}
                   friendFutureDate={
                     friendDash?.future_date_in_words || "No date available"
                   }
@@ -206,12 +200,14 @@ const { capsuleList } = useCapsuleList();
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
-                  capsuleListCount={capsuleList.length}
-                  categoryStartIndices={categoryStartIndices}
-                  categorySizes={categorySizes}
-                  generateGradientColors={generateGradientColors}
+                  friendList={friendList}
+                  helloesList={helloesList}
+                    capsuleListCount={capsuleList.length}
+                    categoryStartIndices={categoryStartIndices}
+                    categorySizes={categorySizes}
+                    generateGradientColors={generateGradientColors}
                     userCategories={userCategories}
-                    appColorsStyle={appColorsStyle}
+                    manualGradientColors={manualGradientColors}
                     friendStyle={friendStyle}
                     primaryColor={primaryColor}
                     primaryBackgroundColor={primaryBackgroundColor}
@@ -220,9 +216,11 @@ const { capsuleList } = useCapsuleList();
                     welcomeTextStyle={welcomeTextStyle}
                     subWelcomeTextStyle={subWelcomeTextStyle}
                     loadingNewFriend={loadingDash}
-                    selectedFriendId={!!selectedFriendId}
+                    selectedFriendId={selectedFriendId}
                     selectedFriendName={selectedFriendName}
-                    outerPadding={spacerAroundCalendar}
+                    themeAheadOfLoading={themeAheadOfLoading}
+                 
+                    
                   />
                 </View>
 

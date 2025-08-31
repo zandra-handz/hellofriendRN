@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { View, StyleSheet } from "react-native"; 
+import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import UserHistoryBigPie from "../home/UserHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
@@ -15,10 +15,11 @@ interface Props {
   listData: object[];
   radius: number;
   labelsSize: number;
-  seriesData: any; 
+  seriesData: any;
 }
 
 const UserHistoryModal: React.FC<Props> = ({
+  friendList,
   isVisible,
   closeModal,
 
@@ -26,15 +27,14 @@ const UserHistoryModal: React.FC<Props> = ({
   radius = 180, //default instead of multiplying the radius of the preview
   labelsSize,
   seriesData,
-  appColorsStyle,
-    darkerOverlayBackgroundColor,
+  manualGradientColors,
+  darkerOverlayBackgroundColor,
   primaryColor,
   primaryOverlayColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
-  // onLongPress,
-}) => { 
-
+ 
+}) => {
   const [viewCategoryId, setViewCategoryId] = useState(undefined);
 
   const handleUpDrillCategoryId = (categoryId) => {
@@ -59,7 +59,7 @@ const UserHistoryModal: React.FC<Props> = ({
         <MaterialCommunityIcons
           name={`chart-pie`}
           size={50}
-          color={appColorsStyle.darkHomeColor}
+          color={manualGradientColors.darkHomeColor}
         />
       }
       buttonTitle={"All category history"}
@@ -67,18 +67,18 @@ const UserHistoryModal: React.FC<Props> = ({
         <View style={styles.bodyContainer}>
           <View>
             <UserHistoryBigPie
-             upDrillCategoryId={handleUpDrillCategoryId}
+              upDrillCategoryId={handleUpDrillCategoryId}
               showPercentages={true}
               listData={listData}
               radius={radius}
               labelsSize={labelsSize}
               showFooterLabel={false}
               seriesData={seriesData}
-                        darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-          primaryColor={primaryColor}
-          primaryOverlayColor={primaryOverlayColor}
-          welcomeTextStyle={welcomeTextStyle}
-          subWelcomeTextStyle={subWelcomeTextStyle}
+              darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+              primaryColor={primaryColor}
+              primaryOverlayColor={primaryOverlayColor}
+              welcomeTextStyle={welcomeTextStyle}
+              subWelcomeTextStyle={subWelcomeTextStyle}
             />
 
             {viewCategoryId && (
@@ -92,7 +92,7 @@ const UserHistoryModal: React.FC<Props> = ({
                   width: "100%",
                 }}
               >
-                <UserCategoryHistoryList categoryId={viewCategoryId} />
+                <UserCategoryHistoryList friendList={friendList} categoryId={viewCategoryId} primaryColor={primaryColor}/>
               </Animated.View>
             )}
           </View>

@@ -1,21 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import SliderBase from './SliderBase';
+ 
 
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 
-
-const SliderAddFriendPriority = ({ friendPriority, setFriendPriority }) => {
-    
-    const { themeStyles } = useGlobalStyle();
+const SliderAddFriendPriority = ({ friendPriority, setFriendPriority, primaryColor='orange' }) => {
+     
     
     return (
     <View style={styles.sectionContainer}>
-        <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>Priority placed on friendship</Text>
+        <Text style={[styles.sectionTitle, {color: primaryColor}]}>Priority placed on friendship</Text>
         <SliderBase
             value={friendPriority}
             onValueChange={setFriendPriority}
-            labelStyle={themeStyles.subHeaderText}
+            labelStyle={{color: primaryColor}}
             min={1}
             max={3}
             messages={{

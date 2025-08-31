@@ -6,7 +6,8 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+ 
 
 type Props = {
   message: string;
@@ -20,7 +21,7 @@ const TinyFlashMessage = ({
   triggerMessage,
   visibleDuration = 2000,
 }: Props) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme(); 
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timeoutRef2 = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,7 +86,7 @@ const TinyFlashMessage = ({
           <Animated.View
             style={[
               animatedStyle,
-              themeStyles.primaryBackground,
+              lightDarkTheme.primaryBackground,
               {
                 width: "100%",
                 height: "auto",
@@ -97,7 +98,7 @@ const TinyFlashMessage = ({
               },
             ]}
           >
-            <Text style={themeStyles.primaryText}>{message}</Text>
+            <Text style={lightDarkTheme.primaryText}>{message}</Text>
           </Animated.View>
         </View>
       )}

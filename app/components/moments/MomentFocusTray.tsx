@@ -16,15 +16,19 @@ type Props = {
 
 const MomentFocusTray = ({
   userId,
+  userDefaultCategory,
+  themeAheadOfLoading,
   welcomeTextStyle,
   primaryColor,
   primaryBackground,
+  lighterOverlayColor,
   manualGradientColors,
   subWelcomeTextStyle,
   userCategories,
   capsuleList,
+  friendList,
+  helloesList,
   updateExistingMoment,
-  paddingTop = 10,
   freezeCategory,
   onPress,
   label,
@@ -72,17 +76,21 @@ const MomentFocusTray = ({
         </View>
         <View style={{ maxWidth: "50%" }}>
           <SelectedCategoryButton
-          userId={userId}
+            userId={userId}
             friendId={friendId}
             friendName={friendName}
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-         subWelcomeTextStyle={subWelcomeTextStyle}
+            userDefaultCategory={userDefaultCategory}
+            themeAheadOfLoading={themeAheadOfLoading}
+            primaryColor={primaryColor}
+            lighterOverlayColor={lighterOverlayColor}
+            primaryBackground={primaryBackground}
+            subWelcomeTextStyle={subWelcomeTextStyle}
             manualGradientColors={manualGradientColors}
             userCategories={userCategories}
             capsuleList={capsuleList}
+            friendList={friendList}
+            helloesList={helloesList}
             welcomeTextStyle={welcomeTextStyle}
-          
             friendDefaultCategory={friendDefaultCategory}
             maxWidth={"100%"}
             zIndex={3}

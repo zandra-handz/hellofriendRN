@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState  } from "react";
 import Animated, {
   SlideInDown,
-  SlideUpOut,
+ 
   SlideOutDown,
 } from "react-native-reanimated";
 import { View, StyleSheet } from "react-native";
@@ -10,8 +10,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendHistoryBigPie from "../home/FriendHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
-import { daysSincedDateField } from "@/src/utils/DaysSince";
-import { useHelloes } from "@/src/context/HelloesContext";
+import { daysSincedDateField } from "@/src/utils/DaysSince"; 
 import HelloQuickView from "../alerts/HelloQuickView";
 
 interface Props {
@@ -27,11 +26,15 @@ interface Props {
 }
 
 const FriendHistoryModal: React.FC<Props> = ({
+  friendId,
+  friendList,
+  helloesList,
   darkerOverlayBackgroundColor,
   primaryColor,
   primaryOverlayColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
+  themeAheadOfLoading,
   isVisible,
   closeModal,
   friendName,
@@ -46,8 +49,7 @@ const FriendHistoryModal: React.FC<Props> = ({
   const nullQuickView = () => {
     setQuickView(null);
   };
-
-  const { helloesList } = useHelloes();
+ 
   const [viewCategoryId, setViewCategoryId] = useState(undefined);
 
   const handleViewHello = (id, momentOriginalId) => {
@@ -63,9 +65,12 @@ const FriendHistoryModal: React.FC<Props> = ({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
         view: (
           <HelloQuickView
+          friendId={friendId}
             data={helloObject}
             momentOriginalId={momentOriginalId}
             index={helloIndex}
+            themeAheadOfLoading={themeAheadOfLoading}
+            primaryColor={primaryColor}
           />
         ),
         message: `hi hi hi`,
@@ -140,9 +145,13 @@ const FriendHistoryModal: React.FC<Props> = ({
                   }}
                 >
                   <CategoryFriendHistoryList
+                  friendId={friendId}
+                  friendList={friendList}
+                  helloesList={helloesList}
                     categoryId={viewCategoryId}
                     closeModal={handleFakeClose}
                     onViewHelloPress={handleViewHello}
+                    primaryColor={primaryColor}
                   />
                 </Animated.View>
               )}

@@ -1,4 +1,3 @@
-import { useShareIntentContext } from "expo-share-intent";
 //import * as Sentry from "@sentry/react-native";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
@@ -8,87 +7,84 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
-import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
-import TopBarHome from "@/app/components/home/TopBarHome";
+
+// app state
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useNavigation } from "@react-navigation/native";
-import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponents";
-import { useFocusEffect } from "@react-navigation/native";
-import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
-import { useSharedValue } from "react-native-reanimated";
-import { useCategories } from "@/src/context/CategoriesContext";
-import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
-import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
-import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useCategories } from "@/src/context/CategoriesContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
+// app utils
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
+// app hooks
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+import useFontStyles from "@/src/hooks/StylesCalls/useFontStyles";
+
+// third party
+import { useShareIntentContext } from "expo-share-intent";
 import * as FileSystem from "expo-file-system";
+import { useNavigation } from "@react-navigation/native";
+
+import { useFocusEffect } from "@react-navigation/native";
+import { useSharedValue } from "react-native-reanimated";
+
+// app components
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import useFontStyles from "@/src/hooks/StylesCalls/useFontStyles"; 
+import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
+import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
+import TopBarHome from "@/app/components/home/TopBarHome";
+import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
+import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponents";
+import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
+import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
+import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+
 const ScreenHome = () => {
+  const { user } = useUser();
+  const { settings } = useUserSettings();
+
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const { userCategories } = useCategories();
 
   const { lightDarkTheme } = useLDTheme();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const navigation = useNavigation();
-  const {
- 
-    appFontStyles,
-    manualGradientColors,
-  
-  } = useGlobalStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
 
-
- 
-const { fontStyles } = useFontStyles(appFontStyles);
+  const { fontStyles } = useFontStyles(appFontStyles);
 
   const welcomeTextStyle = appFontStyles.welcomeText;
   const subWelcomeTextStyle = appFontStyles.subWelcomeText;
- 
 
- 
- 
+  const spinnerStyle = "flow";
 
-  const spinnerStyle = 'flow';
-
-  const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
-
-  const appColorsStyle = manualGradientColors;
-  const themeAheadOfLoadingStyle = themeAheadOfLoading;
+  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
+    useFriendStyle();
 
   const { navigateToMomentFocusWithText, navigateToSelectFriend } =
     useAppNavigations();
-  const { user } = useUser();
-
-  const { friendDash, loadingDash } = useFriendDash();
-  const { selectedFriend } = useSelectedFriend();
-  const friendId = selectedFriend?.id;
-  const friendName = selectedFriend?.name;
-  const userId = user?.id;
-  const username = user?.username;
-  const userCreatedOn = user?.created_on;
-
-  const { friendList, friendListFetched } = useFriendList();
-  const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
-
   const { requestPermission, imageUri, resizeImage } =
     useImageUploadFunctions();
+
+  const { friendList, friendListFetched } = useFriendList();
+  const { selectedFriend, deselectFriend } = useSelectedFriend();
+  const { friendDash, loadingDash } = useFriendDash();
+
+  const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const newMomentTextRef = useRef(null);
 
+  const userCreatedOn = user?.created_on;
   const isNewUser =
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
 
@@ -246,16 +242,16 @@ const { fontStyles } = useFontStyles(appFontStyles);
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={
         friendList?.length > 0
-          ? lightDarkTheme.primaryBackground 
+          ? lightDarkTheme.primaryBackground
           : lightDarkTheme.overlayBackground
       }
-      friendId={friendId}
+      friendId={selectedFriend?.id}
       includeBackgroundOverlay={true}
       backgroundOverlayHeight={
         isKeyboardVisible ? "100%" : friendList?.length > 0 ? 90 : 66
       }
       backgroundOverlayBottomRadius={0}
-      useFriendColors={friendId ? true : false}
+      useFriendColors={!!selectedFriend?.id}
       style={{ flex: 1 }}
       // header={HellofriendHeader}
     >
@@ -301,20 +297,19 @@ const { fontStyles } = useFontStyles(appFontStyles);
               <View
                 style={{ width: "100%", paddingHorizontal: 0, marginTop: 0 }}
               >
-                {friendId && (
+                {selectedFriend?.id && (
                   <TopBarHome
                     loading={loadingDash}
-                    style={themeAheadOfLoadingStyle}
-                  
+                    style={themeAheadOfLoading}
                     fontStyle={fontStyles?.welcome}
-                    textColor={lightDarkTheme.primaryText} 
+                    textColor={lightDarkTheme.primaryText}
                     backgroundColor={lightDarkTheme.primaryBackground}
                     onPress={navigateToSelectFriend}
                   />
                 )}
               </View>
 
-              {!friendId && (
+              {!selectedFriend?.id && (
                 <>
                   {friendList?.length < 1 && (
                     <NoFriendsMessageUI
@@ -322,9 +317,8 @@ const { fontStyles } = useFontStyles(appFontStyles);
                       backgroundColor={lightDarkTheme.primaryBackgroundColor}
                       backgroundColor={lightDarkTheme.primaryOverlayColor}
                       primaryColor={lightDarkTheme.primaryText}
-                   
                       welcomeTextStyle={welcomeTextStyle}
-                      username={username || ""}
+                      username={user?.username || ""}
                       userCreatedOn={userCreatedOn || ""}
                     />
                   )}
@@ -335,10 +329,13 @@ const { fontStyles } = useFontStyles(appFontStyles);
                         primaryColor={lightDarkTheme.primaryText}
                         welcomeTextStyle={welcomeTextStyle}
                         subWelcomeTextStyle={subWelcomeTextStyle}
-                        username={username}
+                        username={user?.username}
                         isNewUser={isNewUser}
-                        backgroundColor={lightDarkTheme.primaryBackground
-                        }
+                        friendId={selectedFriend?.id}
+                        friendName={selectedFriend?.name}
+                        themeAheadOfLoading={themeAheadOfLoading}
+                      
+                        backgroundColor={lightDarkTheme.primaryBackground}
                         borderBottomLeftRadius={0}
                         borderBottomRightRadius={0}
                         // isKeyboardVisible={isKeyboardVisible}
@@ -346,13 +343,16 @@ const { fontStyles } = useFontStyles(appFontStyles);
                         isKeyboardVisible={isKeyboardVisible}
                       />
 
-                      <QuickWriteMoment 
+                      <QuickWriteMoment
+                        focusMode={settings?.simplify_app_for_focus}
                         primaryColor={lightDarkTheme.primaryText}
-                        primaryBackgroundColor={lightDarkTheme.primaryBackground}
+                        primaryBackgroundColor={
+                          lightDarkTheme.primaryBackground
+                        }
                         primaryOverlayColor={lightDarkTheme.overlayBackground}
                         darkerOverlayBackgroundColor={
                           lightDarkTheme.darkerOverlayBackground
-                        } 
+                        }
                         width={"100%"}
                         height={"100%"}
                         ref={newMomentTextRef}
@@ -363,10 +363,10 @@ const { fontStyles } = useFontStyles(appFontStyles);
                         multiline={isKeyboardVisible}
                       />
                       <KeyboardCoasters
-                      manualGradientColors={manualGradientColors}
-                      primaryColor={lightDarkTheme.primaryText}
+                        manualGradientColors={manualGradientColors}
+                        primaryColor={lightDarkTheme.primaryText}
                         isKeyboardVisible={isKeyboardVisible}
-                        isFriendSelected={friendId}
+                        isFriendSelected={!!selectedFriend?.id}
                         showMomentScreenButton={showMomentScreenButton}
                         onPress={navigateToAddMomentScreen}
                       />
@@ -376,27 +376,29 @@ const { fontStyles } = useFontStyles(appFontStyles);
               )}
               {!isKeyboardVisible && !loadingDash && friendList.length > 0 && (
                 <BelowKeyboardComponents
-                userId={userId}
+                  userId={user?.id}
                   userCategories={userCategories}
                   upcomingHelloes={upcomingHelloes}
                   isLoading={isLoading}
                   getThemeAheadOfLoading={getThemeAheadOfLoading}
+                  themeAheadOfLoading={themeAheadOfLoading}
                   friendList={friendList}
                   manualGradientColors={manualGradientColors}
-                  appColorsStyle={appColorsStyle}
-                  friendStyle={themeAheadOfLoadingStyle}
-                  selectedFriendId={friendId}
-                  selectedFriendName={friendName}
+                  friendStyle={themeAheadOfLoading}
+                  selectedFriendId={selectedFriend?.id}
+                  selectedFriendName={selectedFriend?.name}
                   primaryOverlayColor={lightDarkTheme.overlayBackground}
                   primaryColor={lightDarkTheme.primaryText}
                   welcomeTextStyle={welcomeTextStyle}
                   subWelcomeTextStyle={subWelcomeTextStyle}
                   primaryBackgroundColor={lightDarkTheme.primaryBackground}
-                  darkerOverlayBackgroundColor={lightDarkTheme.darkerOverlayBackground}
+                  darkerOverlayBackgroundColor={
+                    lightDarkTheme.darkerOverlayBackground
+                  }
                   spinnerStyle={spinnerStyle}
                   slideAnim={slideAnim}
                   friendListLength={friendList?.length || 0}
-                  isFriendSelected={!!friendId}
+                  isFriendSelected={!!selectedFriend?.id}
                   onPress={navigateToAddMomentScreen}
                   loadingDash={loadingDash}
                   friendDash={friendDash}
@@ -408,6 +410,13 @@ const { fontStyles } = useFontStyles(appFontStyles);
       </>
 
       <HelloFriendFooter
+        userId={user?.id}
+        username={user?.username}
+        settings={settings}
+        friendId={selectedFriend?.id}
+        friendName={selectedFriend?.name}
+        friendDash={friendDash}
+        friendList={friendList}
         userCategories={userCategories}
         manualGradientColors={manualGradientColors}
         lightDarkTheme={lightDarkTheme}
@@ -416,14 +425,11 @@ const { fontStyles } = useFontStyles(appFontStyles);
           friendList?.length > 0
             ? lightDarkTheme.overlayBackground
             : lightDarkTheme.primaryBackground
-        }
-        textColor={lightDarkTheme.primaryText}
+        } 
         subWelcomeTextStyle={appFontStyles.subWelcomeTextStyle}
         dividerStyle={lightDarkTheme.divider}
-        userId={userId}
-        friendId={friendId}
-        friendName={friendName}
-        friendDash={friendDash}
+        deselectFriend={deselectFriend}
+        resetTheme={resetTheme}
       />
     </SafeViewAndGradientBackground>
   );

@@ -11,7 +11,6 @@ import CatDescriptEditable from "./CatDescriptEditable";
 
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useHelloes } from "@/src/context/HelloesContext";
 import ModalListWithView from "../alerts/ModalListWithView";
 
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
@@ -26,12 +25,17 @@ interface Props {
 
 const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   userId,
+  userDefaultCategory,
   friendId,
   friendName,
+  friendList,
+  helloesList,
+  themeAheadOfLoading,
   isVisible,
   closeModal,
   categoryId,
   primaryColor = "orange",
+  lighterOverlayColor = "yellow",
   primaryBackground = "red",
   subWelcomeTextStyle,
   manualGradientColors,
@@ -39,8 +43,6 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   userCategories,
   capsuleList,
 }) => {
-  // const { settings  } = useUserSettings();
-  const { helloesList } = useHelloes();
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
@@ -56,23 +58,6 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   };
 
   const textInputRef = useRef(null);
-
-  // const isUserDefault = categoryId === settings.user_default_category;
-  // const isFriendDefault =
-  //   categoryId === friendDash?.friend_faves.friend_default_category;
-
-  // const {
-  //   categoryHistory,
-  //   isLoading,
-  //   isFetching,
-  //   isFetchingNextPage,
-  //   isError,
-  //   fetchNextPage,
-  //   hasNextPage,
-  // } = useCategoryHistoryLookup({
-  //   categoryId: categoryId,
-  //   friendId: selectedFriend?.id,
-  // });
 
   const [textInputView, setTextInputView] = useState<null | ItemViewProps>(
     null
@@ -96,8 +81,11 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
         view: (
           <HelloQuickView
             data={helloObject}
+            friendId={friendId}
             momentOriginalId={momentOriginalId}
             index={helloIndex}
+            themeAheadOfLoading={themeAheadOfLoading}
+            primaryColor={primaryColor}
           />
         ),
         message: `hi hi hi`,
@@ -216,6 +204,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
           <CatDescriptEditable
             userId={userId}
             primaryColor={primaryColor}
+            subWelcomeTextStyle={subWelcomeTextStyle}
             nullTextInputView={handleNullTextInputView}
             onToggle={handleToggleTextInputView}
             categoryObject={category}
@@ -244,6 +233,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
           >
             <MakeDefaultCats
               userId={userId}
+              userDefaultCategory={userDefaultCategory}
               friendId={friendId}
               friendName={friendName}
               categoryId={categoryId}
@@ -255,10 +245,21 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
           {!showEdit && (
             <View style={[styles.sectionContainer, { flexGrow: 1 }]}>
               <View style={{ maxHeight: 300 }}>
-                <CategoryFriendCurrentList categoryId={categoryId} />
+                <CategoryFriendCurrentList
+                  friendId={friendId}
+                  friendName={friendName}
+                  primaryColor={primaryColor}
+                  lighterOverlayColor={lighterOverlayColor}
+                  subWelcomeTextStyle={subWelcomeTextStyle}
+                  categoryId={categoryId}
+                />
               </View>
               <CategoryFriendHistoryList
+                friendId={friendId}
                 categoryId={categoryId}
+                friendList={friendList}
+                helloesList={helloesList}
+                primaryColor={primaryColor}
                 closeModal={closeModal}
                 onViewHelloPress={handleViewHello}
               />

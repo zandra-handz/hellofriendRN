@@ -6,30 +6,37 @@ import {
   Text,
   StyleSheet,
   Pressable,
- 
 } from "react-native";
 import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
- 
+
 import { ShowQuickView } from "@/src/utils/ShowQuickView";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
- 
+
 import HelloQuickView from "../alerts/HelloQuickView";
 
 const CalendarLights = ({
   helloesList,
   friendId,
+  primaryColor,
+  themeAheadOfLoading,
   onMonthPress,
   combinedData,
   daySquareBorderColor = "white",
-  daySquareBorderRadius = 0, 
-  animationColor = "orange",
-}) => {  
+  daySquareBorderRadius = 0,
+  height, // includes margin below
+  monthButtonMargin,
+}) => {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const backgroundColor = "transparent"; // use this to give just the calendar tray a background color. borderRadius already set
   const opacityMinusAnimation = 1;
   const flatListRef = useRef(null);
+  const animationColor = themeAheadOfLoading.lightColor;
 
-  useEffect(() => { 
+  const CALENDAR_HEIGHT = 100;
+  const MONTH_BUTTON_BOTTOM_MARGIN = 10;
+  const COMBINED_HEIGHT = CALENDAR_HEIGHT + MONTH_BUTTON_BOTTOM_MARGIN;
+
+  useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: false });
     }
@@ -43,10 +50,18 @@ const CalendarLights = ({
       const daysSince = daysSincedDateField(helloObject.date);
 
       const word = Number(daysSince) != 1 ? `days` : `day`;
-      console.log("helloobject@@");
+
       ShowQuickView({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-        view: <HelloQuickView friendId={friendId} data={helloObject} index={helloIndex} />,
+        view: (
+          <HelloQuickView
+            friendId={friendId}
+            primaryColor={primaryColor}
+            themeAheadOfLoading={themeAheadOfLoading}
+            data={helloObject}
+            index={helloIndex}
+          />
+        ),
         message: `hi hi hi`,
         update: false,
       });
@@ -97,7 +112,7 @@ const CalendarLights = ({
               borderColor: daySquareBorderColor,
               backgroundColor: "transparent",
             },
-          ]} 
+          ]}
         ></View>
       );
     }
@@ -204,8 +219,6 @@ const CalendarLights = ({
     );
   };
 
-  
-
   const renderCalendarMonth = useCallback(
     ({ item }) => {
       // console.log(item.helloData);
@@ -219,11 +232,21 @@ const CalendarLights = ({
 
       return (
         <View style={styles.calendarContainer}>
-          <AnimatedPressable onPress={() => onMonthPress(item)}>
+ <AnimatedPressable
+  onPress={() => onMonthPress(item)}
+  style={({ pressed }) => [
+    {
+      backgroundColor: pressed ? "darkorange" : "orange",
+      marginBottom: monthButtonMargin,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+  ]}
+>
             <Text
               style={{
                 fontFamily: "Poppins-Regular",
-                fontSize: 12,
+                fontSize: 13,
                 opacity: opacityMinusAnimation,
                 color: daySquareBorderColor,
               }}
@@ -252,7 +275,7 @@ const CalendarLights = ({
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+    <View style={[styles.container, { backgroundColor: "red", height: height }]}>
       {combinedData && (
         <FlatList
           ref={flatListRef}
@@ -276,6 +299,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: 100,
+    backgroundColor: "red",
     borderRadius: 20,
     padding: 10,
   },

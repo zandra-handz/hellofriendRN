@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, Pressable, View, Text, TextInput } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
-const EditPhone = ({  friendId, friendPhone }) => {
+const EditPhone = ({  friendId, friendPhone, primaryColor }) => {
   const [phoneNumber, setPhoneNumber] = useState(friendPhone);
-
-  const { themeStyles } = useGlobalStyle();
+ 
   const { handleUpdateFriendSettings } = useFriendFunctions();
 
   const [showEdit, setShowEdit] = useState(false);
@@ -67,10 +65,10 @@ const EditPhone = ({  friendId, friendPhone }) => {
             <MaterialCommunityIcons
               name={"phone"}
               size={20}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
             />
           </View>
-          <Text style={[styles.label, themeStyles.modalText]}>
+          <Text style={[styles.label, {color: primaryColor}]}>
             {phoneNumber || `None`}
           </Text>
         </View>
@@ -81,7 +79,7 @@ const EditPhone = ({  friendId, friendPhone }) => {
               <MaterialCommunityIcons
                 name={"pencil"}
                 size={20}
-                color={themeStyles.primaryText.color}
+                color={primaryColor}
               />
             </Pressable>
           )}
@@ -92,14 +90,14 @@ const EditPhone = ({  friendId, friendPhone }) => {
                 <MaterialCommunityIcons
                   name={"cancel"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
               <Pressable onPress={handleUpdatePhoneNumber}>
                 <MaterialCommunityIcons
                   name={"check"}
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                 />
               </Pressable>
             </>
@@ -118,7 +116,7 @@ const EditPhone = ({  friendId, friendPhone }) => {
         >
           <TextInput
             style={[
-              themeStyles.primaryText,
+             {color: primaryColor}
               // Uncomment or add additional styling as needed
               // styles.textInput,
               // themeStyles.genericText,

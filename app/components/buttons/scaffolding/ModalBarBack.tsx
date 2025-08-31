@@ -1,7 +1,6 @@
 import React from "react";
-import { Pressable, Text, StyleSheet, Image, View } from "react-native";
- 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { Text, StyleSheet,  View } from "react-native";
+  
 import GlobalPressable from "../../appwide/button/GlobalPressable";
 
 type Props = {

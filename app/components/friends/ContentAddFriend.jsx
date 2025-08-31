@@ -4,10 +4,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
- 
+
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 import InputAddFriendName from "./InputAddFriendName";
- 
+
 import SliderAddFriendEffort from "@/app/components/foranimations/SliderAddFriendEffort";
 import SliderAddFriendPriority from "@/app/components/foranimations/SliderAddFriendPriority";
 import PickerAddFriendLastDate from "@/app/components/selectors/PickerAddFriendLastDate";
@@ -17,16 +17,14 @@ import AlertList from "../alerts/AlertList";
 import AlertSuccessFail from "../alerts/AlertSuccessFail";
 
 // import { useUser } from "@/src/context/UserContext";
-import { useFriendList } from "@/src/context/FriendListContext"; 
+import { useFriendList } from "@/src/context/FriendListContext";
 
-const ContentAddFriend = () => {
-  // const { user } = useUser(); 
-  const { friendList  } = useFriendList();
+const ContentAddFriend = ({ friendList, lightDarkTheme }) => {
+  const primaryColor = lightDarkTheme.primaryText;
 
   const navigation = useNavigation();
 
-  const { handleCreateFriend  } =
-    useFriendFunctions();
+  const { handleCreateFriend } = useFriendFunctions();
 
   const [friendName, setFriendName] = useState("");
   const [friendEffort, setFriendEffort] = useState(3);
@@ -79,7 +77,6 @@ const ContentAddFriend = () => {
       };
       await handleCreateFriend(postData);
 
-
       // if (!user.app_setup_complete) {
       //   //move this into RQ onSuccess when refactoring?
       //   await updateAppSetup();
@@ -94,7 +91,7 @@ const ContentAddFriend = () => {
     }
   };
 
-  const successOk = () => { 
+  const successOk = () => {
     navigateToMainScreen();
     setSuccessModalVisible(false);
   };
@@ -110,6 +107,7 @@ const ContentAddFriend = () => {
           <MessagePage
             message="Sorry! You have already added the max amount of friends."
             fontSize={20}
+            primaryColor={primaryColor}
           />
         </View>
       )}
@@ -130,11 +128,13 @@ const ContentAddFriend = () => {
               <SliderAddFriendEffort
                 friendEffort={friendEffort}
                 setFriendEffort={setFriendEffort}
+                primaryColor={primaryColor}
               />
 
               <SliderAddFriendPriority
                 friendPriority={friendPriority}
                 setFriendPriority={setFriendPriority}
+                primaryColor={primaryColor}
               />
 
               <View style={{ width: "100%", height: 50 }}>

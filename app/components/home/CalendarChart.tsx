@@ -4,7 +4,7 @@ import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MonthModal from "../headers/MonthModal";
 import useHelloesManips from "@/src/hooks/useHelloesManips";
- 
+
 type Props = {
   outerPadding: DimensionValue;
   combinedData: any;
@@ -20,22 +20,29 @@ const CalendarChart = ({
   useBackgroundOverlay = true,
   outerPadding = 10,
   themeAheadOfLoading,
- 
+  manualGradientColors,
   lightDarkTheme,
-}: Props) => { 
-
+}: Props) => {
   const reversedHelloesList = Array.isArray(helloesList)
     ? [...helloesList].reverse()
     : [];
   const { combinedData } = useHelloesManips({
     helloesData: reversedHelloesList,
   });
-
+const primaryColor = lightDarkTheme.primaryText;
   const [monthModalVisible, setMonthModalVisible] = useState(false);
   const [monthData, setMonthData] = useState(null);
 
-  const HEIGHT = 160;
+
+
+  const CALENDAR_HEIGHT = 100;
+  const MONTH_BUTTON_BOTTOM_MARGIN = 20;
+  const COMBINED_HEIGHT = CALENDAR_HEIGHT + MONTH_BUTTON_BOTTOM_MARGIN;
+  
   const PADDING = 20;
+
+    const HEIGHT = COMBINED_HEIGHT + (PADDING*3); 
+
 
   const handleMonthPress = (data) => {
     setMonthData(data);
@@ -44,7 +51,7 @@ const CalendarChart = ({
   };
 
   return (
-    <>
+    <View style={{height: HEIGHT}}>
       <View
         style={[
           {
@@ -52,7 +59,7 @@ const CalendarChart = ({
             height: HEIGHT,
             padding: PADDING,
             backgroundColor: useBackgroundOverlay
-              ? lightDarkTheme.overlayBackground 
+              ? lightDarkTheme.overlayBackground
               : "transparent",
             borderRadius: 20,
           },
@@ -78,7 +85,7 @@ const CalendarChart = ({
                 style={{ marginBottom: 0 }}
               />
               <Text
-                style={[ 
+                style={[
                   {
                     color: lightDarkTheme.primaryText,
                     marginLeft: 6,
@@ -93,8 +100,12 @@ const CalendarChart = ({
 
             <Pressable hitSlop={10} onPress={navigateToHelloes}>
               <Text
-                style={[ 
-                  { color: lightDarkTheme.primaryText, fontWeight: "bold", fontSize: 13 },
+                style={[
+                  {
+                    color: lightDarkTheme.primaryText,
+                    fontWeight: "bold",
+                    fontSize: 13,
+                  },
                 ]}
               >
                 Details
@@ -105,14 +116,17 @@ const CalendarChart = ({
         {combinedData && (
           <HomeScrollCalendarLights
             helloesList={helloesList}
-            friendId={friendId}
+            friendId={friendId} 
+           primaryColor={primaryColor}
+            themeAheadOfLoading={themeAheadOfLoading}
             onMonthPress={handleMonthPress}
             combinedData={combinedData}
             itemColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.overlayBackground}
-            height={70}
-            borderRadius={20}
-            themeAheadOfLoading={themeAheadOfLoading}
+            // height={70}
+           height={COMBINED_HEIGHT}
+           monthButtonMargin={MONTH_BUTTON_BOTTOM_MARGIN}
+            borderRadius={20} 
           />
         )}
         <View style={{ width: "100%", height: 10 }}></View>
@@ -120,12 +134,17 @@ const CalendarChart = ({
 
       {monthModalVisible && (
         <MonthModal
+          friendId={friendId}
+          helloesList={helloesList}
+          manualGradientColors={manualGradientColors}
+          primaryColor={lightDarkTheme.primaryText}
+          themeAheadOfLoading={themeAheadOfLoading}
           isVisible={monthModalVisible}
           monthData={monthData}
           closeModal={() => setMonthModalVisible(false)}
         />
       )}
-    </>
+    </View>
   );
 };
 

@@ -1,10 +1,10 @@
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { View,  Pressable } from "react-native";
 import React  from "react"; 
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import Animated, {
  
   SlideInLeft, 
-} from "react-native-reanimated";
+} from "react-native-reanimated"; 
 
 interface WelcomeMessageUIProps {
   username: string;
@@ -22,6 +22,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   primaryColor,
   welcomeTextStyle,
    subWelcomeTextStyle,
+   friendId,
+   friendName,
+   themeAheadOfLoading,
   username = "",
   isNewUser = false,
   borderBottomRightRadius = 10,
@@ -87,6 +90,10 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
             <FriendModalIntegrator
               includeLabel={true}
               height={"100%"}
+              friendId={friendId}
+              friendName={friendName}
+              primaryColor={primaryColor}
+              themeAheadOfLoading={themeAheadOfLoading}
               iconSize={subWelcomeTextStyle.fontSize + 4}
               customLabel={"Pick friend"}
               customFontStyle={subWelcomeTextStyle}

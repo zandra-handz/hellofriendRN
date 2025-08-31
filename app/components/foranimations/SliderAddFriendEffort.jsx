@@ -1,20 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import SliderBase from './SliderBase';
-
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-
-const SliderAddFriendEffort = ({ friendEffort, setFriendEffort }) => {
-    const { themeStyles } = useGlobalStyle();
+ 
+const SliderAddFriendEffort = ({ friendEffort, setFriendEffort, primaryColor='orange' }) => {
+ 
     
     
     return ( 
     <View style={styles.sectionContainer}>
-        <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>Effort needed to maintain friendship</Text>
+        <Text style={[styles.sectionTitle, {color: primaryColor}]}>Effort needed to maintain friendship</Text>
         <SliderBase
             value={friendEffort}
             onValueChange={setFriendEffort}
-            labelStyle={themeStyles.subHeaderText}
+            labelStyle={{color: primaryColor}}
             min={1}
             max={5}
             messages={{

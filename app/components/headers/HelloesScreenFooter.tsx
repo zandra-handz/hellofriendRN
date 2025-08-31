@@ -1,25 +1,23 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
  
-// app state
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
 import SearchHelloesModal from "./SearchHelloesModal";
 // app components
- 
+
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import ButtonData from "../buttons/scaffolding/ButtonData";
- 
-import {  MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
- 
- 
 
 const HelloesScreenFooter = ({
+  friendId,
   primaryColor,
+  overlayColor,
+  dividerStyle,
   helloesList,
   flattenHelloes,
   onFilterPress,
@@ -27,110 +25,78 @@ const HelloesScreenFooter = ({
   onSearchPress,
   themeAheadOfLoading,
   manualGradientColors,
-}) => {
- 
- 
-  const { themeStyles } = useGlobalStyle();
-  const { selectedFriend  } = useSelectedFriend();
+}) => { 
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
- 
+
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
- 
- 
- const [ filterOn, setFilterOn ] = useState(false);
 
-const handleOpenSearchModal = () => {
-  addToModalOpenPress();
-  setSearchModalVisible(true);
+  const [filterOn, setFilterOn] = useState(false);
 
-}
+  const handleOpenSearchModal = () => {
+    addToModalOpenPress();
+    setSearchModalVisible(true);
+  };
 
- const handleToggleFilterOn = () => {
+  const handleToggleFilterOn = () => {
     if (!filterOn) {
-        onFilterPress(true);
-        setFilterOn(true);
+      onFilterPress(true);
+      setFilterOn(true);
     } else {
-        onFilterPress(false);
-        setFilterOn(false);
+      onFilterPress(false);
+      setFilterOn(false);
     }
-
- };
- 
+  };
  
 
-  //   const RenderDeselectButton = useCallback(
-  //     () => (
-  //       <FooterButtonIconVersion
-  //         confirmationRequired={true}
-  //         confirmationTitle={"Just to be sure"}
-  //         confirmationMessage={"Deselect friend?"}
-  //         // label="Deselect"
-  //         label="Home"
-  //         icon={
-  //           <MaterialCommunityIcons
-  //             // name={"keyboard-backspace"}
-  //             name={"home-outline"}
-  //             size={footerIconSize}
-  //             color={themeStyles.footerIcon.color}
-  //           />
-  //         }
-  //         onPress={() => deselectFriend()}
-  //       />
-  //     ),
-  //     [themeStyles]
-  //   );
-
- 
-   const RenderSearchButton = useCallback(
+  const RenderSearchButton = useCallback(
     () => (
       <FooterButtonIconVersion
-      primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label="Search"
         icon={
           <MaterialCommunityIcons
             name={"database-search"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={primaryColor}
           />
-        }
-        // onPress={() => setSearchModalVisible(true)}
+        } 
         onPress={handleOpenSearchModal}
       />
     ),
-    [themeStyles]
+    [primaryColor]
   );
 
   const RenderFilterButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        label={ filterOn? "reset" : "In-person only"}
-primaryColor={primaryColor}
+        label={filterOn ? "reset" : "In-person only"}
+        primaryColor={primaryColor}
         icon={
           <MaterialCommunityIcons
             name={"filter"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
-            //  name={"app-settings-alt"}
+ 
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={primaryColor}
           />
         }
         onPress={handleToggleFilterOn}
       />
     ),
-    [themeStyles, handleToggleFilterOn]
+    [primaryColor, handleToggleFilterOn]
   );
- 
+
   return (
     <GradientBackground
-      useFriendColors={!!selectedFriend}
-                  startColor={manualGradientColors.lightColor}
-            endColor={manualGradientColors.darkColor}
-            friendColorDark={themeAheadOfLoading.darkColor}
-            friendColorLight={themeAheadOfLoading.lightColor}
+      useFriendColors={!!friendId}
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
         styles.container,
         {
@@ -146,56 +112,36 @@ primaryColor={primaryColor}
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: overlayColor,
           },
         ]}
-      >
-        {/* <View style={styles.section}>
-          {!selectedFriend ? <RenderSignOutButton /> : <RenderDeselectButton />}
-        </View> 
-
-        <View style={[styles.divider, themeStyles.divider]} /> */}
-        {/* <>
-          <View style={styles.section}>
-            <RenderSettingsButton />
-          </View>
-        </> */}
-
-        {/* <View style={[styles.divider, themeStyles.divider]} /> */}
+      > 
         <>
           <View style={styles.section}>
             <RenderSearchButton />
           </View>
         </>
 
-        <View style={[styles.divider, themeStyles.divider]} />
-        <>
-                      <View style={styles.section}>
-                        <RenderFilterButton />
-          </View>
-        </>
-
-        {/* <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderAboutAppButton />
+            <RenderFilterButton />
           </View>
-        </> */}
+        </>
+ 
       </View>
 
-            {searchModalVisible && (
+      {searchModalVisible && (
         <View>
           <SearchHelloesModal
             isVisible={searchModalVisible}
             closeModal={() => setSearchModalVisible(false)}
             onSearchPress={onSearchPress}
             flattenHelloes={flattenHelloes}
+            primaryColor={primaryColor}
           />
         </View>
       )}
-
- 
- 
     </GradientBackground>
   );
 };
