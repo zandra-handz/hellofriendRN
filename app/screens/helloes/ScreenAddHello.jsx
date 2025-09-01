@@ -7,12 +7,11 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
 const ScreenAddHello = () => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
-  const { manualGradientColors, appContainerStyles, appFontStyles } =
-    useGlobalStyle();
+  const { manualGradientColors, appFontStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -23,14 +22,17 @@ const ScreenAddHello = () => {
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
+      backgroundOverlayHeight=""
+      includeBackgroundOverlay={true}
+      useOverlay={true}
       styles={[{ flex: 1 }]}
     >
       <ContentAddHello
         userId={user?.id}
         primaryColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.overlayBackground}
-        containerStyle={appContainerStyles.talkingPointCard}
         fontStyle={appFontStyles.welcomeText}
         manualGradientColors={manualGradientColors}
       />

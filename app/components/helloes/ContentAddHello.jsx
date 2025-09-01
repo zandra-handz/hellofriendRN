@@ -45,7 +45,7 @@ import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefet
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({
   userId,
-  containerStyle,
+ 
   fontStyle,
   primaryColor,
   backgroundColor,
@@ -294,9 +294,10 @@ const ContentAddHello = ({
   return (
     <View
       style={[
-        containerStyle,
+        // containerStyle,
         {
           backgroundColor: backgroundColor,
+          flex: 1,
         },
       ]}
     >
