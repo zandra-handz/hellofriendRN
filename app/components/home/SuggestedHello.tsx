@@ -1,7 +1,7 @@
 import { View, Pressable, Text, StyleSheet } from "react-native";
 import React, { useRef, useMemo, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons"; 
-
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
@@ -59,11 +59,7 @@ const SuggestedHello = ({
         timeoutRef.current = null;
       }, DOUBLE_PRESS_DELAY);
     }
-  };
-  // const navigateToMoments = () => {
-  //   navigation.navigate("Moments", { scrollTo: null });
-  // };
-
+  }; 
   const renderSuggestedHello = useMemo(() => {
     return (
       <View>
@@ -75,8 +71,7 @@ const SuggestedHello = ({
                 fontSize: subWelcomeTextStyle.fontSize + 3,
 
                 color: primaryColor,
-                opacity: 0.9,
-                // color: manualGradientColors.homeDarkColor,
+                opacity: 0.9, 
               },
             ]}
           >

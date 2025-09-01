@@ -32,10 +32,6 @@ const CalendarLights = ({
   const flatListRef = useRef(null);
   const animationColor = themeAheadOfLoading.lightColor;
 
-  const CALENDAR_HEIGHT = 100;
-  const MONTH_BUTTON_BOTTOM_MARGIN = 10;
-  const COMBINED_HEIGHT = CALENDAR_HEIGHT + MONTH_BUTTON_BOTTOM_MARGIN;
-
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: false });
@@ -232,17 +228,18 @@ const CalendarLights = ({
 
       return (
         <View style={styles.calendarContainer}>
- <AnimatedPressable
-  onPress={() => onMonthPress(item)}
-  style={({ pressed }) => [
-    {
-      backgroundColor: pressed ? "darkorange" : "orange",
-      marginBottom: monthButtonMargin,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-  ]}
->
+          <AnimatedPressable
+            onPress={() => onMonthPress(item)}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? "darkorange" : "transparent",
+                borderRadius: 999,
+                marginBottom: monthButtonMargin,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            ]}
+          >
             <Text
               style={{
                 fontFamily: "Poppins-Regular",
@@ -275,7 +272,14 @@ const CalendarLights = ({
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: "red", height: height }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          height: height,
+        },
+      ]}
+    >
       {combinedData && (
         <FlatList
           ref={flatListRef}
@@ -299,7 +303,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     height: 100,
-    backgroundColor: "red",
+    // backgroundColor: "red",
     borderRadius: 20,
     padding: 10,
   },
