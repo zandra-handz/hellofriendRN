@@ -9,7 +9,7 @@ import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
- 
+import { useUserSettings } from "@/src/context/UserSettingsContext";
 interface Props {
   userId: number;
   isVisible: boolean;
@@ -19,7 +19,7 @@ interface Props {
 
 const UserSettingsModal: React.FC<Props> = ({
   userId,
-  settings,
+ 
   isVisible,
   bottomSpacer,
   closeModal,
@@ -27,7 +27,7 @@ const UserSettingsModal: React.FC<Props> = ({
   manualGradientColors,
 }) => { 
   
- 
+ const { settings } = useUserSettings();
 
   return (
     <ModalScaleLikeTree

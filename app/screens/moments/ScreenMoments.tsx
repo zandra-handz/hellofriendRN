@@ -14,28 +14,31 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
+
 const ScreenMoments = () => {
   const route = useRoute();
   const scrollTo = route?.params?.scrollTo ?? null;
-const { lightDarkTheme } = useLDTheme();
-  const {user } = useUser();
-    const { selectedFriend, setFriend } = useSelectedFriend();
+  const { lightDarkTheme } = useLDTheme();
+  const { user } = useUser();
+  const { selectedFriend, selectFriend } = useSelectedFriend();
   const { capsuleList, preAdded } = useCapsuleList();
 
-  const { handlePreAddMoment } = usePreAddMoment({userId: user?.id, friendId: selectedFriend?.id})
+  const { handlePreAddMoment } = usePreAddMoment({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
-  }); 
+  });
 
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
-  const { navigateToMomentView,navigateToMomentFocus, navigateBack } = useAppNavigations();
+  const { navigateToMomentView, navigateBack } = useAppNavigations();
 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
@@ -55,7 +58,7 @@ const { lightDarkTheme } = useLDTheme();
   const handleSelectUpNext = () => {
     const { id, name } = upcomingHelloes[0].friend;
     const selectedFriend = id === null ? null : { id: id, name: name };
-    setFriend(selectedFriend);
+    selectFriend(selectedFriend);
     const friend = friendList.find((friend) => friend.id === id);
     getThemeAheadOfLoading(friend);
   };
@@ -95,8 +98,6 @@ const { lightDarkTheme } = useLDTheme();
 
   return (
     <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -105,11 +106,15 @@ const { lightDarkTheme } = useLDTheme();
       style={{ flex: 1 }}
     >
       <TopBarWithAddMoment
-      navigateToMomentFocus={navigateToMomentFocus}
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.primaryBackground}
-        manualGradientColors={manualGradientColors}
       />
+      {/* <View style={{ position: "absolute", top: -150, left: -170 }}>
+        <LoadingCircle size={400} loading={true} />
+      </View>
+      <View style={{ position: "absolute", left: -100 }}>
+        <LoadingCircle size={1200} delay={200} loading={true} />
+      </View> */}
       <View
         style={{
           width: "100%",
@@ -126,7 +131,7 @@ const { lightDarkTheme } = useLDTheme();
       ></View>
       <View style={{ width: "100%", height: 4 }}></View>
       <Loading
-        backgroundColor={lightDarkTheme.primaryBackground }
+        backgroundColor={lightDarkTheme.primaryBackground}
         isLoading={loadingDash}
       />
 
@@ -142,22 +147,14 @@ const { lightDarkTheme } = useLDTheme();
                 categoryStartIndices={categoryStartIndices}
                 navigateToMomentView={navigateToMomentView}
                 darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
-                  lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
-
+                lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
                 // EscortBarMinusWidth
                 navigateBack={navigateBack}
-
                 // Moment item
                 friendColor={themeAheadOfLoading.darkColor}
-
                 primaryBackgroundColor={lightDarkTheme.primaryBackground}
-                homeDarkColor={manualGradientColors.homeDarkColor}
-                appLightColor={manualGradientColors.lightColor}
                 primaryColor={lightDarkTheme.primaryText}
                 primaryOverlayColor={lightDarkTheme.overlayBackground}
-                subWelcomeTextStyle={appFontStyles.subwelcomeText}
-
-
                 friendId={selectedFriend?.id}
                 scrollTo={scrollTo}
                 categoryColorsMap={categoryColorsMap}

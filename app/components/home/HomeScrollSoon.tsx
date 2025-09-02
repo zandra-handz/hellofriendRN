@@ -18,7 +18,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   upcomingHelloes,
   isLoading,
   getThemeAheadOfLoading,
-  setFriend,
+ 
   selectFriend,
   friendList, 
   primaryColor = 'orange',
@@ -45,7 +45,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       selectFriend(selectedFriend);
       navigation.navigate("Moments");
     },
-    [friendList, getThemeAheadOfLoading, setFriend, navigation]
+    [friendList, getThemeAheadOfLoading, selectFriend, navigation]
   );
 
   const handlePress = useCallback(
@@ -59,9 +59,9 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
       const friend = friendList.find((friend) => friend.id === id);
       getThemeAheadOfLoading(friend);
-      setFriend(selectedFriend);
+      selectFriend(selectedFriend);
     },
-    [friendList, getThemeAheadOfLoading, setFriend, navigation]
+    [friendList, getThemeAheadOfLoading, selectFriend, navigation]
   );
 
   const renderListItem = useCallback(

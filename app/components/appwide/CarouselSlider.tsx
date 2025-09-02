@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -33,8 +34,7 @@ const CarouselSlider = ({
   overlayColor,
   dividerStyle,
   welcomeTextStyle,
-  themeAheadOfLoading,
-  manualGradientColors,
+  themeAheadOfLoading, 
 }: Props) => {
   const { height, width } = useWindowDimensions();
 

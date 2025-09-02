@@ -4,11 +4,10 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useUser } from "@/src/context/UserContext";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import ContentAddImage from "@/app/components/images/ContentAddImage";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 // nav
 import { useRoute } from "@react-navigation/native";
 
@@ -16,8 +15,7 @@ const ScreenAddImage = () => {
   const route = useRoute();
   const imageUri = route.params?.imageUri ?? false;
   const { user } = useUser();
-  const { lightDarkTheme } = useLDTheme();
-  const { manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
 

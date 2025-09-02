@@ -16,7 +16,6 @@ import Animated, {
 // import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
-import { useHelloes } from "@/src/context/HelloesContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
@@ -26,7 +25,6 @@ import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
-
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -34,10 +32,10 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
-  userCategories,
+
   manualGradientColors,
-  friendStyle, 
-  friendList,
+  friendStyle,
+
   borderRadius = 20,
   borderColor = "transparent",
   primaryColor,
@@ -64,7 +62,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     listData: capsuleList,
   });
 
-  const { helloesList } = useHelloes();
+  const loading = loadingDash;
+  //const loading = true;
 
   const handleScroll = (event) => {
     if (!headerRef.current) return;
@@ -183,6 +182,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 {/* {!loadingDash && selectedFriendId && ( */}
                 <SuggestedHello
+                  isLoading={loading}
                   friendId={selectedFriendId}
                   manualGradientColors={manualGradientColors}
                   primaryOverlayColor={primaryOverlayColor}
@@ -200,13 +200,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
-                  friendList={friendList}
-                  helloesList={helloesList}
+                    isLoading={loading}
                     capsuleListCount={capsuleList.length}
                     categoryStartIndices={categoryStartIndices}
                     categorySizes={categorySizes}
                     generateGradientColors={generateGradientColors}
-                    userCategories={userCategories}
                     manualGradientColors={manualGradientColors}
                     friendStyle={friendStyle}
                     primaryColor={primaryColor}
@@ -219,13 +217,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     selectedFriendId={selectedFriendId}
                     selectedFriendName={selectedFriendName}
                     themeAheadOfLoading={themeAheadOfLoading}
-                 
-                    
                   />
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Pics
+                    isLoading={loading}
                     primaryColor={primaryColor}
                     primaryOverlayColor={primaryOverlayColor}
                     userId={userId}
@@ -235,9 +232,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Helloes
+                    isLoading={loading}
                     primaryColor={primaryColor}
                     primaryOverlayColor={primaryOverlayColor}
-                    helloesList={helloesList}
                     friendId={selectedFriendId}
                   />
                 </View>

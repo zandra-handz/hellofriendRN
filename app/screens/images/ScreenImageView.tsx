@@ -7,22 +7,20 @@ import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import ImageViewPage from "@/app/components/images/ImageViewPage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import ImageViewPage from "@/app/components/images/ImageViewPage"; 
 import { useUser } from "@/src/context/UserContext";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useDeleteImage from "@/src/hooks/ImageCalls/useDeleteImage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenImageView = () => {
   const route = useRoute();
   const startingIndex = route.params?.index ?? null;
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { imageList } = useImages({
     userId: user?.id,
     friendId: selectedFriend?.id,
@@ -88,9 +86,7 @@ const ScreenImageView = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -113,8 +109,7 @@ const ScreenImageView = () => {
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={appFontStyles.welcomeText}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading} 
       />
       {/* <View style={{ bottom: 62 }}>
         <ImageMenuButton />

@@ -1,9 +1,9 @@
 import { View, Pressable, Text, StyleSheet } from "react-native";
 import React, { useRef, useMemo, useState } from "react";
-import { FontAwesome6 } from "@expo/vector-icons"; 
+import { FontAwesome6 } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import LoadingBlock from "../appwide/spinner/LoadingBlock";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import GoOptionsModal from "../headers/GoOptionsModal";
 
@@ -15,6 +15,7 @@ type Props = {
 };
 
 const SuggestedHello = ({
+  isLoading, // ( = loadingDash )
   friendId,
   manualGradientColors,
   primaryColor,
@@ -27,7 +28,7 @@ const SuggestedHello = ({
   height,
   borderRadius = 10,
 }: Props) => {
-  const { navigateToFinalize } = useAppNavigations(); 
+  const { navigateToFinalize } = useAppNavigations();
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
@@ -59,7 +60,7 @@ const SuggestedHello = ({
         timeoutRef.current = null;
       }, DOUBLE_PRESS_DELAY);
     }
-  }; 
+  };
   const renderSuggestedHello = useMemo(() => {
     return (
       <View>
@@ -71,7 +72,7 @@ const SuggestedHello = ({
                 fontSize: subWelcomeTextStyle.fontSize + 3,
 
                 color: primaryColor,
-                opacity: 0.9, 
+                opacity: 0.9,
               },
             ]}
           >
@@ -97,7 +98,8 @@ const SuggestedHello = ({
   }, [
     friendId,
     friendFutureDate,
-    welcomeTextStyle, subWelcomeTextStyle,
+    welcomeTextStyle,
+    subWelcomeTextStyle,
     primaryColor,
     manualGradientColors,
     styles,
@@ -107,7 +109,7 @@ const SuggestedHello = ({
     <View
       style={{
         marginVertical: 4,
-
+        minHeight: 96, // EYEBALL
         maxHeight: height + 40,
         flexShrink: 1,
         alignItems: "center",
@@ -119,72 +121,79 @@ const SuggestedHello = ({
         padding: padding,
         paddingRight: 10,
         width: "100%",
-        backgroundColor: primaryOverlayColor,
+        backgroundColor: isLoading? 'transparent' : primaryOverlayColor,
       }}
     >
-      <View style={styles.textContainer}>
-        {renderSuggestedHello}
-        <Pressable
-          // onPress={navigateToMoments}
-          onPress={handleGoPress}
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            backgroundColor: manualGradientColors.lightColor,
-            justifyContent: "center",
-            borderRadius: 10,
-            padding: 4,
-            width: "auto",
-            minWidth: 50,
-            height: "100%",
-            overflow: "hidden",
-          }}
-        >
-          <View
+      {isLoading && (
+        <LoadingBlock
+        loading={true}
+        />
+      )}
+      {!isLoading && (
+        <View style={styles.textContainer}>
+          {renderSuggestedHello}
+          <Pressable
+            // onPress={navigateToMoments}
+            onPress={handleGoPress}
             style={{
               position: "absolute",
-              opacity: 0.9,
-              position: "absolute",
-              top: -60,
               right: 0,
-              transform: [{ rotate: "90deg" }],
+              top: 0,
+              backgroundColor: manualGradientColors.lightColor,
+              justifyContent: "center",
+              borderRadius: 10,
+              padding: 4,
+              width: "auto",
+              minWidth: 50,
+              height: "100%",
+              overflow: "hidden",
             }}
           >
-            <GeckoSolidSvg
-              width={140}
-              height={140}
-              color={manualGradientColors.homeDarkColor}
-              style={{ opacity: 1 }}
-            />
-          </View>
-          <View
-            style={{
-              bottom: -1,
-              position: "absolute",
-              alignItems: "center",
-              flexDirection: "row",
-              width: "100%",
-              left: 2,
-            }}
-          >
-            <Text
+            <View
               style={{
-                color: manualGradientColors.homeDarkColor,
-                fontSize: 18,
-                fontWeight: "bold",
+                position: "absolute",
+                opacity: 0.9,
+                position: "absolute",
+                top: -60,
+                right: 0,
+                transform: [{ rotate: "90deg" }],
               }}
             >
-              GO{" "}
-            </Text>
-            <FontAwesome6
-              name={"arrow-right"}
-              size={20}
-              color={manualGradientColors.homeDarkColor}
-            />
-          </View>
-        </Pressable>
-      </View>
+              <GeckoSolidSvg
+                width={140}
+                height={140}
+                color={manualGradientColors.homeDarkColor}
+                style={{ opacity: 1 }}
+              />
+            </View>
+            <View
+              style={{
+                bottom: -1,
+                position: "absolute",
+                alignItems: "center",
+                flexDirection: "row",
+                width: "100%",
+                left: 2,
+              }}
+            >
+              <Text
+                style={{
+                  color: manualGradientColors.homeDarkColor,
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                GO{" "}
+              </Text>
+              <FontAwesome6
+                name={"arrow-right"}
+                size={20}
+                color={manualGradientColors.homeDarkColor}
+              />
+            </View>
+          </Pressable>
+        </View>
+      )}
 
       <View
         style={{
@@ -196,13 +205,14 @@ const SuggestedHello = ({
           justifyContent: "center",
         }}
       ></View>
+
       {optionsModalVisible && (
         <GoOptionsModal
-        primaryColor={primaryColor}
-        backgroundColor={primaryOverlayColor}
-        modalBackgroundColor={primaryBackground}
-        manualGradientColors={manualGradientColors}
-        subWelcomeTextStyle={subWelcomeTextStyle}
+          primaryColor={primaryColor}
+          backgroundColor={primaryOverlayColor}
+          modalBackgroundColor={primaryBackground}
+          manualGradientColors={manualGradientColors}
+          subWelcomeTextStyle={subWelcomeTextStyle}
           isVisible={optionsModalVisible}
           closeModal={() => setOptionsModalVisible(false)}
         />

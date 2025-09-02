@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { StyleSheet, View, Modal } from "react-native"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
  
   FadeInUp,
@@ -66,8 +67,7 @@ const ModalListWithView: React.FC<Props> = ({
   onClose,
   secondInfoItem,
 }) => {
-  const { lightDarkTheme} = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme(); 
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);

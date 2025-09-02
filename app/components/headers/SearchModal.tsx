@@ -2,7 +2,7 @@ import React from "react";
 import { View,  StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
- 
+ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
 
  
@@ -18,11 +18,12 @@ const SearchModal: React.FC<Props> = ({
   isVisible,
   closeModal,
   onSearchPress,
-  capsuleList,
+
   textColor,
   primaryBackgroundColor,
 }) => { 
  
+  const { capsuleList } = useCapsuleList();
 
   const handleSearchPress = (moment) => {
     onSearchPress(moment);

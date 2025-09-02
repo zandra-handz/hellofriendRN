@@ -1,7 +1,6 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { appFontStyles } from "@/src/hooks/StaticFonts"; 
 
 const ButtonBaseSpecialSave = ({
   manualGradientColors,
@@ -21,8 +20,7 @@ const ButtonBaseSpecialSave = ({
   borderTopRightRadius = 0,
   borderTopLeftRadius = 0,
   isDisabled = true,
-}) => {
-  const { appFontStyles } = useGlobalStyle();
+}) => { 
 
   return (
     <Pressable

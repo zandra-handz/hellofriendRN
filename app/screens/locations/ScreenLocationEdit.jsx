@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
 

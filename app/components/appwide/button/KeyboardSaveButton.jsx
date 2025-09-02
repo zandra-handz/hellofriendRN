@@ -1,12 +1,11 @@
 import { TouchableOpacity, Text, StyleSheet, View, Image } from "react-native";
 
-import { LinearGradient } from "expo-linear-gradient";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { LinearGradient } from "expo-linear-gradient"; 
 
 //to use friend colors:
 //darkColor={friendColorTheme.useFriendColorTheme != false  ? themeAheadOfLoading.darkColor : undefined}
 //lightColor={friendColorTheme.useFriendColorTheme != false ? themeAheadOfLoading.lightColor : undefined}
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 const KeyboardSaveButton = ({
   onPress,
   label = "ADD NEW IMAGE",
@@ -21,8 +20,7 @@ const KeyboardSaveButton = ({
   borderColor = "transparent",
   borderRadius = 10,
   isDisabled = true,
-}) => {
-  const { manualGradientColors } = useGlobalStyle();
+}) => { 
 
   return (
     <TouchableOpacity

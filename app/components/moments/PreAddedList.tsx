@@ -3,18 +3,16 @@ import React, { useState } from "react";
 
 import { FlashList } from "@shopify/flash-list";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage"; // no error message for this one
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import CheckboxListItem from "./CheckboxListItem";
 import EscortBar from "./EscortBar";
 const PreAddedList = ({
   updateCapsule,
   preAdded,
-  allCapsulesList,
-  specialTextStyle,
+  allCapsulesList, 
   friendId,
-  manualGradientColors,
-  subWelcomeTextStyle,
+  manualGradientColors, 
   primaryColor,
   primaryBackground,
 }) => {
@@ -101,7 +99,7 @@ const PreAddedList = ({
           paddingHorizontal: 10,
         }}
       >
-        <Text style={[specialTextStyle, { color: primaryColor, fontSize: 22 }]}>
+        <Text style={[appFontStyles.welcomeText, { color: primaryColor, fontSize: 22 }]}>
           Undo add
         </Text>
         <View
@@ -155,7 +153,7 @@ const PreAddedList = ({
       </View>
       <EscortBar
         manualGradientColors={manualGradientColors}
-        subWelcomeTextStyle={subWelcomeTextStyle}
+        subWelcomeTextStyle={appFontStyles.welcomeText}
         primaryColor={primaryColor}
         primaryBackground={primaryBackground}
         forwardFlowOn={false}

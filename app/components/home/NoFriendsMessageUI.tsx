@@ -2,9 +2,9 @@ import { View, Text } from "react-native";
 import React from "react";
 import SmallAddButton from "./SmallAddButton"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 const NoFriendsMessageUI = ({
-  manualGradientColors,
+ 
   primaryColor,
   backgroundColor, 
   welcomeTextStyle,
@@ -15,7 +15,7 @@ const NoFriendsMessageUI = ({
   const { navigateToAddFriend } = useAppNavigations();
 
   const ICON_SIZE = 64;
-  const BUTTON_SIZE = ICON_SIZE + ICON_SIZE * 0.5;
+ 
   const EYEBALL_BOTTOM_PADDING = 60;
 
   return (

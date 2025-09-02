@@ -6,10 +6,11 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import PlainSafeView from "../appwide/format/PlainSafeView";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import PlainSafeView from "../appwide/format/PlainSafeView"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 
 const FlashMessage = ({
 
@@ -28,8 +29,7 @@ const FlashMessage = ({
 }) => {
   const scale = useSharedValue(0);
   const fade = useSharedValue(1);
-  const {lightDarkTheme } = useLDTheme();
-  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
+  const {lightDarkTheme } = useLDTheme(); 
 
   useEffect(() => {
     fade.value = 1;

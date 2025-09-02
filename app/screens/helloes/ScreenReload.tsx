@@ -5,10 +5,11 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useUser } from "@/src/context/UserContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import ReloadList from "@/app/components/helloes/ReloadList";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { useRoute } from "@react-navigation/native";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenReload = () => {
   const route = useRoute();
@@ -19,14 +20,11 @@ const ScreenReload = () => {
   const { selectedFriend } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
   const { friendDash, loadingDash } = useFriendDash();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   console.log("reload screen");
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -49,8 +47,7 @@ const ScreenReload = () => {
           </Text>
 
           {savedMoments && selectedFriend && friendDash && (
-            <ReloadList
-              manualGradientColors={manualGradientColors}
+            <ReloadList 
               subWelcomeTextStyle={appFontStyles.subWelcomeText}
               primaryColor={lightDarkTheme.primaryText}
               primaryBackground={lightDarkTheme.primaryBackground}

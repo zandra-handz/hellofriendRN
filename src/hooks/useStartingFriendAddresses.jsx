@@ -6,38 +6,37 @@ import {
   updateFriendAddress,
   fetchFriendAddresses,
   deleteFriendAddress,
-} from "@/src/calls/api"; 
+} from "@/src/calls/api";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useStartingFriendAddresses = () => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
   const [defaultAddress, setDefaultAddress] = useState(null);
+
+  console.warn('STARTING ADDRESSES');
 
   const {
     data: friendAddresses = [],
-    isLoading,
-    isFetching,
-    isSuccess,
-    isError,
+    // isLoading,
+    // isFetching,
+    // isSuccess,
+    // isError,
   } = useQuery({
     queryKey: ["friendAddresses", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendAddresses(selectedFriend.id),
-    enabled: !!selectedFriend,
+    enabled: !!(user?.id && selectedFriend?.id), //adding isInitializing will cause an infinite regression prop bc of something else in the code here
     staleTime: 1000 * 60 * 20, // 20 minutes
- 
   });
 
   useEffect(() => {
     if (friendAddresses && friendAddresses.length > 0) {
- 
       setDefaultAddress(
         friendAddresses.find((address) => address.is_default === true) ||
           (friendAddresses.length > 0 ? friendAddresses[0] : null)
       );
- 
     }
   }, [friendAddresses]);
 
@@ -46,14 +45,13 @@ const useStartingFriendAddresses = () => {
   const createFriendAddressMutation = useMutation({
     mutationFn: (data) => addFriendAddress(selectedFriend.id, data),
     onSuccess: (newAddress) => {
- 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
-        (oldData) => { 
+        (oldData) => {
           if (!oldData || !Array.isArray(oldData)) return [newAddress];
- 
+
           const combinedData = [...oldData, newAddress];
- 
+
           return combinedData.map((address) => {
             if (address.is_default && address.id !== newAddress.id) {
               console.log("Turning off default for", address.title);
@@ -76,7 +74,7 @@ const useStartingFriendAddresses = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
- 
+
       console.error("Error adding address:", error);
       timeoutRef.current = setTimeout(() => {
         createFriendAddressMutation.reset();
@@ -87,7 +85,6 @@ const useStartingFriendAddresses = () => {
   const deleteFriendAddressMutation = useMutation({
     mutationFn: (data) => deleteFriendAddress(selectedFriend.id, data),
     onSuccess: (data) => {
- 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
         (oldData) => {
@@ -109,7 +106,6 @@ const useStartingFriendAddresses = () => {
         clearTimeout(timeoutRef.current);
       }
 
- 
       console.error("Error deleting address:", error);
       timeoutRef.current = setTimeout(() => {
         deleteFriendAddressMutation.reset();
@@ -121,7 +117,6 @@ const useStartingFriendAddresses = () => {
       updateFriendAddress(friend, id, fieldUpdates),
 
     onSuccess: (updatedAddress) => {
- 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
         (oldData) => {
@@ -157,7 +152,7 @@ const useStartingFriendAddresses = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
- 
+
       console.error("Error updating address:", error);
 
       timeoutRef.current = setTimeout(() => {
@@ -192,7 +187,7 @@ const useStartingFriendAddresses = () => {
     }
   };
 
-  const updateFriendDefaultAddress = async (addressId) => { 
+  const updateFriendDefaultAddress = async (addressId) => {
     const newData = {
       is_default: true, //backend will turn the previous one to false
     };
@@ -211,7 +206,7 @@ const useStartingFriendAddresses = () => {
 
   return {
     friendAddresses,
-  //  addressMenu,
+    //  addressMenu,
     defaultAddress,
     createFriendAddress,
     updateFriendDefaultAddress,

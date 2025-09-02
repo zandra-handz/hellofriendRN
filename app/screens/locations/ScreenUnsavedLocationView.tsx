@@ -6,10 +6,9 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import CarouselSlider from "@/app/components/appwide/CarouselSlider";
-
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
+import CarouselSlider from "@/app/components/appwide/CarouselSlider"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 const ScreenUnsavedLocationView = () => {
@@ -18,8 +17,7 @@ const ScreenUnsavedLocationView = () => {
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
 const { user } = useUser();
   // Don't think we need this here
   // const {
@@ -51,19 +49,13 @@ const { user } = useUser();
 
   return (
     <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      // includeBackgroundOverlay={true}
-      // backgroundOverlayHeight={"120%"}
+      friendId={selectedFriend?.id} 
       style={{ flex: 1 }}
     >
-      <CarouselSlider
-        // stickToLocation={stickToLocation}
-        // setStickToLocation={setStickToLocation}
+      <CarouselSlider 
         initialIndex={0}
         data={[unsavedLocation]}
         children={(props) => (
@@ -74,11 +66,8 @@ const { user } = useUser();
             friendName={selectedFriend?.name}
             currentDay={currentDay}
             selectedDay={selectedDay}
-            handleSelectedDay={handleSelectedDay}
-            // onAddPress={handleAddToFavesAndStick}
-            // onRemovePress={handleRemoveFromFavesAndStick}
-            themeAheadOfLoading={themeAheadOfLoading}
-            manualGradientColors={manualGradientColors}
+            handleSelectedDay={handleSelectedDay} 
+            themeAheadOfLoading={themeAheadOfLoading} 
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
             welcomeTextStyle={appFontStyles.welcomeText}
@@ -93,8 +82,7 @@ const { user } = useUser();
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={appFontStyles.welcomeText}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading} 
       />
     </SafeViewAndGradientBackground>
   );

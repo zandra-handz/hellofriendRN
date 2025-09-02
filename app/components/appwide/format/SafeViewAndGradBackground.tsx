@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
 import { DimensionValue, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 
@@ -19,12 +19,13 @@ type Props = {
 const SafeViewAndGradientBackground = ({
   children,
   style,
-  startColor,
-  endColor,
+
   friendColorLight='white',
   friendColorDark='red',
   backgroundOverlayColor,
   friendId,
+  startColor,
+  endColor,
   backgroundTransparentOverlayColor,
   addColorChangeDelay = false,
   includeBackgroundOverlay = false,
@@ -100,8 +101,10 @@ const SafeViewAndGradientBackground = ({
     <GradientBackground
       useFriendColors={useFriendColors || undefined}
       additionalStyles={[paddingStyle, style]}
-      startColor={startColor}
-      endColor={endColor}
+      // startColor={startColor}
+      // endColor={endColor}
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
       friendColorDark={friendColorDark}
       friendColorLight={friendColorLight}
     >

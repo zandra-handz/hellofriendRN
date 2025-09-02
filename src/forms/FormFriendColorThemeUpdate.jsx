@@ -9,8 +9,7 @@ import { updateFriendFavesColorTheme } from "@/src/calls/api"; // Import the upd
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateFriendListColors from "../hooks/useUpdateFriendListColors";
-import { useFriendStyle } from "../context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useFriendStyle } from "../context/FriendStyleContext"; 
 import tinycolor from "tinycolor2";
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
@@ -24,9 +23,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   ); 
   const [lightColor, setLightColor] = useState(
     themeAheadOfLoading.lightColor || "#FFFFFF"
-  ); 
-
-  const { themeStyles } = useGlobalStyle();
+  );  
 
   const showInHouseSaveButton = false;
 
@@ -145,7 +142,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
     <View style={styles.container}>
       <View style={{ width: "100%" }}>
         <View style={styles.inputContainer}>
-          <Text style={[styles.colorValue, themeStyles.subHeaderText]}>
+          <Text style={[styles.colorValue, { color: 'orange'}]}>
             Dark Color:{" "}
           </Text> 
             <View
@@ -153,8 +150,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
                 styles.colorBlock,
                 {
                   backgroundColor: darkColor,
-                  borderColor:
-                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+          
                 },
               ]}
             /> 
@@ -169,8 +165,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
               style={{
                 borderRadius: 20,
                 borderWidth: 1,
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+       
               }}
             />
             <HueSlider
@@ -178,8 +173,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
                 borderRadius: 20,
                 paddingTop: 6,
                 borderWidth: 1,
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+             
               }}
             />
           </ColorPicker>
@@ -194,7 +188,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
 
       <View style={{ width: "100%" }}>
         <View style={styles.inputContainer}>
-          <Text style={[styles.colorValue, themeStyles.subHeaderText]}>
+          <Text style={[styles.colorValue, {color: 'orange'}]}>
             Light Color:{" "}
           </Text> 
             <View
@@ -202,8 +196,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
                 styles.colorBlock,
                 {
                   backgroundColor: lightColor,
-                  borderColor:
-                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+           
                 },
               ]}
             /> 
@@ -218,8 +211,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
               style={{
                 borderRadius: 20,
                 borderWidth: 1,
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+      
               }}
             />
             <HueSlider
@@ -227,8 +219,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
                 borderRadius: 20,
                 paddingTop: 6,
                 borderWidth: 1,
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+              
               }}
             />
           </ColorPicker>

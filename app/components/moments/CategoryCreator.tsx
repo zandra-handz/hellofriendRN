@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated"; 
 import { MaterialIcons } from "@expo/vector-icons";
 import AddNewCategory from "../headers/AddNewCategory";
- 
+ import { useCategories } from "@/src/context/CategoriesContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 
@@ -35,8 +35,7 @@ const CategoryCreator = ({
   manualGradientColors,
   freezeCategory,
   friendDefaultCategory,
-  capsuleList,
-  userCategories,
+  capsuleList, 
 
   isVisible,
   onPress,
@@ -53,6 +52,7 @@ const CategoryCreator = ({
     listData: capsuleList,
   });
 
+  const { userCategories} = useCategories();
   const [selectedId, setSelectedId] = useState(null);
   const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>(
     []

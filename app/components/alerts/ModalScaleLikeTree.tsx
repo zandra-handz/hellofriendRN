@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { StyleSheet, View, Modal } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { StyleSheet, View, Modal } from "react-native"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   FadeInUp,
   FadeOutUp,
@@ -53,8 +54,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   quickView,
   nullQuickView,
   onClose,
-}) => {
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+}) => { 
   const welcomeTextStyle = appFontStyles.welcomeText;
   const subWelcomeTextStyle = appFontStyles.subWelcomeText;
 

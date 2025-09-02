@@ -3,22 +3,20 @@ import ContentAddHello from "@/app/components/helloes/ContentAddHello";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useUser } from "@/src/context/UserContext";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+ 
 const ScreenAddHello = () => {
   const { user } = useUser();
-  const { lightDarkTheme } = useLDTheme();
-  const { manualGradientColors, appFontStyles } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
   return (
     <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+ 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -33,8 +31,7 @@ const ScreenAddHello = () => {
         userId={user?.id}
         primaryColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.overlayBackground}
-        fontStyle={appFontStyles.welcomeText}
-        manualGradientColors={manualGradientColors}
+        fontStyle={appFontStyles.welcomeText} 
       />
     </SafeViewAndGradientBackground>
   );

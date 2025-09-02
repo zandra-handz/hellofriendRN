@@ -1,15 +1,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 const ScreenAddFriend = () => {
-  const { lightDarkTheme } = useLDTheme();
-  const { manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { friendList } = useFriendList();

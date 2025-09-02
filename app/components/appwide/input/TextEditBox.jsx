@@ -5,8 +5,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native"; 
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+import { View, Text, TextInput, StyleSheet } from "react-native";  
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextEditBox = forwardRef(
@@ -53,7 +52,7 @@ const TextEditBox = forwardRef(
       },
       getText: () => editedMessage,
     }));
-
+ 
     useEffect(() => {
       setEditedMessage(mountingText); // Reset to starting text if it changes
     }, [mountingText]);
@@ -75,7 +74,7 @@ const TextEditBox = forwardRef(
             alignItems: "center",
           }}
         >
-          <EditPencilOutlineSvg height={20} width={20} color={iconColor} />
+          {/* <EditPencilOutlineSvg height={20} width={20} color={iconColor} /> */}
           <View
             style={{
               flexDirection: "row",

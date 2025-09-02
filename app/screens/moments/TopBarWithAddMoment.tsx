@@ -1,21 +1,16 @@
-import { View, Pressable, Text } from "react-native";
+import { View, Pressable  } from "react-native";
 import React from "react";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 // no props rn
 // type Props = {
 //   onPress: () => void;
 // };
 
 //TopBar is based on this
-const TopBarWithAddMoment = ({
-  navigateToMomentFocus,
-  textColor,
-  backgroundColor,
-  manualGradientColors,
-}) => {
+const TopBarWithAddMoment = ({ textColor, backgroundColor }) => {
+  const { navigateToMomentFocus } = useAppNavigations();
   const handleNavigateToCreateNew = () => {
     navigateToMomentFocus({ screenCameFrom: 0 }); //meaning, moment save will trigger nav back
   };

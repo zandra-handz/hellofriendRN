@@ -1,20 +1,17 @@
 // MEMOIZED VERSION
 // performs better than non-memoized, per DevTools profiling
-import React, { useMemo, useState  } from "react";
-import { View,   ScrollView, StyleSheet, Pressable } from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
- 
   SlideInDown,
   SlideOutDown,
-} from "react-native-reanimated"; 
+} from "react-native-reanimated";
 import CategoryButton from "./CategoryButton";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import SearchModal from "../headers/SearchModal";
- 
-  
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { SharedValue } from "react-native-reanimated";
- 
 
 type Props = {
   visibilityValue: SharedValue;
@@ -26,12 +23,10 @@ type Props = {
   onClose: () => void;
 };
 const CategoryNavigator = ({
- primaryColor, // because cat button needs the full style
+  primaryColor, // because cat button needs the full style
   backgroundColor,
-  homeDarkColor,
-  arrowBackgroundColor,
   visibilityValue,
-  capsuleList,
+
   viewableItemsArray,
   categoryNames,
   onPress,
@@ -39,17 +34,13 @@ const CategoryNavigator = ({
   categoryColorsMap,
   onClose,
 }: Props) => {
- 
-  
-
   const [searchModalVisible, setSearchModalVisible] = useState(false);
 
   const visibilityStyle = useAnimatedStyle(() => ({
     opacity: visibilityValue.value,
   }));
 
-  // const iconSize = 26; HARD CODED 
-  
+  // const iconSize = 26; HARD CODED
 
   const memoizedSearchIcon = useMemo(
     () => (
@@ -57,9 +48,9 @@ const CategoryNavigator = ({
         onPress={() => setSearchModalVisible(true)}
         style={({ pressed }) => ({
           flexDirection: "row",
-          alignItems: "center", 
+          alignItems: "center",
           justifyContent: "center",
-          borderRadius: 999, 
+          borderRadius: 999,
           paddingVertical: 5,
 
           textAlign: "center",
@@ -71,7 +62,7 @@ const CategoryNavigator = ({
           size={26}
           color={primaryColor}
           style={{}}
-        /> 
+        />
       </Pressable>
     ),
     [primaryColor]
@@ -89,8 +80,8 @@ const CategoryNavigator = ({
               style={styles.buttonWrapper}
             >
               <CategoryButton
-              homeDarkColor={homeDarkColor}
-                 primaryColor={primaryColor}
+                homeDarkColor={manualGradientColors.homeDarkColor}
+                primaryColor={primaryColor}
                 height={"auto"}
                 viewableItemsArray={viewableItemsArray}
                 label={category}
@@ -105,8 +96,6 @@ const CategoryNavigator = ({
     [categoryNames, categoryColorsMap, onPress, viewableItemsArray]
   );
 
- 
-
   return (
     <>
       {categoryColorsMap && (
@@ -117,8 +106,7 @@ const CategoryNavigator = ({
             styles.categoryNavigatorContainer,
             styles.momentsScreenPrimarySpacing,
             {
-              backgroundColor: 
-                backgroundColor,
+              backgroundColor: backgroundColor,
             },
             visibilityStyle,
           ]}
@@ -136,21 +124,19 @@ const CategoryNavigator = ({
               paddingTop: 5,
               // backgroundColor: "red",
               // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          
             }}
           >
             <MaterialIcons
               name={"keyboard-arrow-down"}
               color={primaryColor}
-              color={homeDarkColor}
+              color={manualGradientColors.homeDarkColor}
               size={16}
-                            style={{
-                backgroundColor: arrowBackgroundColor,
+              style={{
+                backgroundColor: manualGradientColors.lightColor,
                 borderRadius: 999,
               }}
             />
           </Pressable>
-
 
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -164,9 +150,8 @@ const CategoryNavigator = ({
       {searchModalVisible && (
         <View>
           <SearchModal
-          textColor={primaryColor}
-          primaryBackgroundColor={backgroundColor}
-          capsuleList={capsuleList}
+            textColor={primaryColor}
+            primaryBackgroundColor={backgroundColor}
             isVisible={searchModalVisible}
             closeModal={() => setSearchModalVisible(false)}
             onSearchPress={onSearchPress}
@@ -186,8 +171,8 @@ const styles = StyleSheet.create({
   },
   //brought down from global context
   momentsScreenPrimarySpacing: {
-   // borderRadius: 10,
-    
+    // borderRadius: 10,
+
     padding: 0,
   },
   categoryNavigatorContainer: {
@@ -200,7 +185,6 @@ const styles = StyleSheet.create({
     // width: "74%",
     width: "100%",
     selfAlign: "center",
-  
   },
   scrollContainer: {
     maxHeight: 130,
@@ -208,7 +192,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     paddingTop: 10,
- 
   },
   buttonRow: {
     flexWrap: "wrap",

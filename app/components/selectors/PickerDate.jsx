@@ -19,34 +19,8 @@ const PickerDate = ({
    
   
   return (
-    <View style={[styles.container ]}>
-      {/* <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "100%",
-          //height: "auto",
-        }}
-      >
-        <Text style={[styles.title, themeStyles.genericText]}>
-          {title}
-          </Text> 
-          </View> */}
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          style={[
-            styles.button, 
-          ]}
-          >
-            <View style={{paddingRight: 8}}>
-            <CalendarAddOutlineSvg height={20} width={20} color={primaryColor} />
-            </View>
-
-          <Text style={[styles.dateText, {color: primaryColor}]}>
+    <>
  
-            {moment(value).format('MMM D YYYY')}
-          </Text>
-        </TouchableOpacity> 
       {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -57,7 +31,7 @@ const PickerDate = ({
           onChange={onChange}
         />
       )}
-    </View>
+    </>
   );
 };
 

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { useUser } from "@/src/context/UserContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useUser } from "@/src/context/UserContext"; 
  
 import SignInButton from "@/app/components/user/SignInButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, {
   useSharedValue,
@@ -20,8 +20,7 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
 const ScreenWelcome = () => {
-  const { lightDarkTheme} = useLDTheme();
-  const {   manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme(); 
 
   const { user, isInitializing } = useUser();
   const { selectedFriend } = useSelectedFriend();
@@ -60,8 +59,7 @@ const ScreenWelcome = () => {
 
   return (
     <PreAuthSafeViewAndGradientBackground
-      startColor={manualGradientColors.darkColor}
-      endColor={manualGradientColors.lightColor}
+
       friendColorLight={null}
       friendColorDark={null}
       friendId={selectedFriend?.id}

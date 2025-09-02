@@ -4,8 +4,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts"; 
 import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
@@ -28,8 +28,7 @@ const ScreenFinalize = () => {
     categoryNames.map((c) => c.category)
   );
   const { themeAheadOfLoading } = useFriendStyle();
-
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+ 
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
   useFocusEffect(
@@ -47,9 +46,7 @@ const ScreenFinalize = () => {
   );
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -60,7 +57,7 @@ const ScreenFinalize = () => {
       useOverlay={true}
       style={{ flex: 1 }}
     >
-      {selectedFriend && (
+      {selectedFriend?.id && (
         <View
           style={[ 
             {

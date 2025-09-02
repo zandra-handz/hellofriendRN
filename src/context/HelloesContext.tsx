@@ -43,7 +43,7 @@ export const HelloesProvider = ({ children }) => {
     queryFn: () => {
       return fetchPastHelloes(selectedFriend.id);
     },
-    enabled: !!(user?.id && selectedFriend), // testing removing !isInitializing
+    enabled: !!(user?.id && selectedFriend?.id), // testing removing !isInitializing
     staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
   });
 

@@ -1,9 +1,8 @@
 import { View, Text, OpaqueColorValue } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
+import React from "react"; 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 // ((
 //   FOR REFERENCE interface ThemeAheadOfLoading {
 //   darkColor: Friend["theme_color_dark"];
@@ -33,8 +32,7 @@ const ListViewModalBigButton = ({
   // height,
   label,
   labelColor,
-}: Props) => {
-  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
+}: Props) => { 
 
   return (
     <GlobalPressable

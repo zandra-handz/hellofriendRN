@@ -3,6 +3,8 @@ import React from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { useHelloes } from "@/src/context/HelloesContext";
+import LoadingBlock from "../appwide/spinner/LoadingBlock";
 
 type Props = {
 
@@ -10,11 +12,13 @@ type Props = {
 };
 
 const Helloes = ({
-  helloesList,
+ isLoading, // loadingDash, NOT helloes
   primaryColor,
   primaryOverlayColor,
  friendId, 
 }: Props) => {
+
+  const { helloesList } = useHelloes();
   const { navigateToHelloes } = useAppNavigations();
   const PADDING = 20;
 
@@ -32,11 +36,20 @@ const Helloes = ({
               flexDirection: "row",
               alignItems: "center",
               //   paddingBottom: 10,
-              backgroundColor: primaryOverlayColor,
+              backgroundColor: isLoading ? 'transparent' : primaryOverlayColor,
               borderRadius: 16, // the others are at 20 as of 7/7/25, this one is too short to look like it matches when it is also at 20
             },
           ]}
         >
+
+          {isLoading && (
+            <LoadingBlock
+            loading={true}
+            />
+          )}
+          {!isLoading && ( 
+
+         
           <View
             style={{
               borderRadius: 20,
@@ -96,6 +109,7 @@ const Helloes = ({
               </Pressable>
             </View>
           </View>
+           )}
         </View>
       )}
     </>

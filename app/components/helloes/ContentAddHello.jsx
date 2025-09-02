@@ -11,45 +11,42 @@ import React, {
 import {
   View,
   Text,
-  StyleSheet,
-  TouchableOpacity,
-  Pressable,
-  Keyboard,
-  Dimensions,
+  StyleSheet, 
+  Keyboard, 
   Alert,
 } from "react-native";
 
-import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
-import TitleContainerUI from "./TitleContainerUI";
+import DeleteUnused from "./DeleteUnused";
+import LocationModal from "../selectors/LocationModal";
+import EscortBar from "../moments/EscortBar";
+import IdeasAdded from "./IdeasAdded";
+import HelloNotes from "./HelloNotes";
+import PickHelloDate from "./PickHelloDate";
+import PickHelloLoc from "./PickHelloLoc";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-
-import { useUserStats } from "@/src/context/UserStatsContext"; 
+import PickHelloType from "./PickHelloType";
+import { useUserStats } from "@/src/context/UserStatsContext";
 import { useNavigation } from "@react-navigation/native";
-import { useLocations } from "@/src/context/LocationsContext";
-import Icon from "react-native-vector-icons/FontAwesome";
-import PickerDate from "../selectors/PickerDate";
-import PickerHelloType from "../selectors/PickerHelloType";
-import PickerHelloLocation from "../selectors/PickerHelloLocation";
+import { useLocations } from "@/src/context/LocationsContext"; 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import HelloNotesModal from "../headers/HelloNotesModal";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({
   userId,
- 
+
   fontStyle,
   primaryColor,
   backgroundColor,
-  manualGradientColors,
 }) => {
   const navigation = useNavigation();
 
@@ -69,10 +66,10 @@ const ContentAddHello = ({
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [notesModalVisible, setNotesModalVisible] = useState(false);
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
-
+const { navigateBack} = useAppNavigations();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
 
-  const { friendDash, loadingDash } = useFriendDash();
+  const { friendDash } = useFriendDash();
 
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -96,11 +93,6 @@ const ContentAddHello = ({
   const [notePreviewText, setNotePreviewText] = useState("No notes");
 
   const editedTextRef = useRef(null);
-
-  const { height } = Dimensions.get("window");
-
-  const oneSeventhHeight = height / 7;
-  const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const { locationList, locationListIsSuccess } = useLocations();
 
@@ -130,6 +122,9 @@ const ContentAddHello = ({
     };
   }, []);
 
+const [ autoTrigger, setAutoTrigger ] = useState(false);
+ 
+
   const faveLocations = useMemo(() => {
     if (!locationList || !friendDash?.friend_faves?.locations) {
       return [];
@@ -139,6 +134,20 @@ const ContentAddHello = ({
       friendDash.friend_faves.locations.includes(location.id)
     );
   }, [locationList, friendDash]);
+
+
+    const goBack = () => {
+    Alert.alert(`Leave`, `Go back to ideas screen? (Inputs here will be lost.)`, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: `Yes`, onPress: () => navigateBack()},
+    ]);
+
+    // setIsDoubleCheckerVisible(true);
+  };
 
   const openDoubleChecker = () => {
     Alert.alert(`Save`, `Save hello?`, [
@@ -156,8 +165,6 @@ const ContentAddHello = ({
   const toggleDoubleChecker = () => {
     setIsDoubleCheckerVisible((prev) => !prev);
   };
-
-  const timeoutRef = useRef(null);
 
   const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
 
@@ -181,14 +188,6 @@ const ContentAddHello = ({
       setJustDeselectedFriend(false); // reset the flag
     }
   }, [justDeselectedFriend, selectedFriend]);
-
-  // useLayoutEffect(() => {
-  //   showMessage(
-  //     true,
-  //     null,
-  //     "Changes made on this page will not be saved if you exit."
-  //   );
-  // }, []);
 
   const toggleDeleteMoments = () => {
     setDeleteMoments(!deleteMoments);
@@ -296,205 +295,122 @@ const ContentAddHello = ({
       style={[
         // containerStyle,
         {
-          backgroundColor: backgroundColor,
           flex: 1,
         },
       ]}
     >
+      <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
+      
       <Text style={[fontStyle, { color: primaryColor }]}>
         New hello details
       </Text>
+        
+      </View>
       <>
-        <BelowHeaderContainer
-          height={10}
-          minHeight={10}
-          maxHeight={10}
-          alignItems="center"
-          marginBottom="2%"
-          justifyContent="center"
-        />
+        <View style={{flex: 1, paddingHorizontal: 4, paddingVertical: 10}}>
+          <View style={{ flex: 1 }}>
+            {!isKeyboardVisible && (
+              <View
+                style={{
+                  width: "100%",
+                  height: 100,
+                }}
+              >
+                <PickHelloType
+                  primaryColor={primaryColor}
+                  selected={selectedTypeChoice}
+                  onChange={handleTypeChoiceChange}
+                />
+              </View>
+            )}
 
-        <>
-          <View style={styles.paddingForElements}>
-            <>
-              {!isKeyboardVisible && (
+            {selectedTypeChoiceText && 
+              locationListIsSuccess && (
                 <View
                   style={{
                     width: "100%",
-                    padding: 10,
-                    backgroundColor: backgroundColor,
-                    borderRadius: 30,
-                    marginBottom: 10,
+                    height: 100,
+                    marginTop: 10,
+                    zIndex: 5000,
+                    // padding: 10, 
                   }}
                 >
-                  <PickerHelloType
-                     primaryColor={primaryColor}
-                     manualGradientColors={manualGradientColors}
-                    selectedTypeChoice={selectedTypeChoice}
-                    onTypeChoiceChange={handleTypeChoiceChange}
+                  <PickHelloLoc
+                    primaryColor={primaryColor}
+                    selected={selectedHelloLocation}
+                    onChange={handleLocationChange}
+                    faveLocations={faveLocations}
+                    savedLocations={locationList}
+                    setModalVisible={setLocationModalVisible}
+                    selectedLocation={selectedHelloLocation}
                   />
+                  <PickHelloDate
+                    primaryColor={primaryColor}
+                    selected={helloDate}
+                    onChange={onChangeDate}
+                    modalVisible={showDatePicker}
+                    setModalVisible={setShowDatePicker}
+                  />
+
+                  <HelloNotes
+                    primaryColor={primaryColor}
+                    selected={notePreviewText}
+                    setModalVisible={setNotesModalVisible}
+                  />
+
+                  <IdeasAdded
+                    primaryColor={primaryColor}
+                    selected={momentsAdded.length}
+                    onPress={goBack}
+                  />
+                 <DeleteUnused
+                 primaryColor={primaryColor}
+                 checkboxState={deleteMoments}
+                 toggleCheckbox={toggleDeleteMoments}
+                 
+                 />
+                  {notesModalVisible && (
+                    <HelloNotesModal
+                      primaryColor={primaryColor}
+                      isVisible={notesModalVisible}
+                      closeModal={handleCloseModal}
+                      textRef={editedTextRef}
+                      mountingText={notePreviewText}
+                      onTextChange={updateNoteEditString}
+              
+                    />
+                  )}
                 </View>
               )}
 
-              {selectedTypeChoiceText && (
-                <>
-                  <>
-                    {!isKeyboardVisible && (
-                      <>
-                        {locationListIsSuccess && (
-                          <View
-                            style={{
-                              width: "100%",
-                              padding: 10,
-                              backgroundColor: backgroundColor,
-                              borderRadius: 20,
-                              marginBottom: 10,
-                            }}
-                          >
-                            <PickerHelloLocation
-                            primaryColor={primaryColor}
-                              faveLocations={faveLocations}
-                              savedLocations={locationList}
-                              onLocationChange={handleLocationChange}
-                              modalVisible={locationModalVisible}
-                              setModalVisible={setLocationModalVisible}
-                              selectedLocation={selectedHelloLocation}
-                            />
-                          </View>
-                        )}
-                      </>
-                    )}
-
-                    {!isKeyboardVisible && (
-                      <View
-                        style={{
-                          width: "100%",
-                          padding: 10,
-                          backgroundColor: backgroundColor,
-                          borderRadius: 20,
-                          marginBottom: 10,
-                        }}
-                      >
-                        <PickerDate
-                        primaryColor={primaryColor}
-                          buttonHeight={36}
-                          value={helloDate}
-                          mode="date"
-                          display="default"
-                          onChange={onChangeDate}
-                          showDatePicker={showDatePicker}
-                          setShowDatePicker={setShowDatePicker}
-                        />
-                      </View>
-                    )}
-
-                    <View
-                      style={{
-                        width: "100%",
-                        padding: 10,
-                        backgroundColor: backgroundColor,
-                        borderRadius: 20,
-                        marginBottom: 10,
-                        height: !isKeyboardVisible
-                          ? oneSeventhHeight
-                          : oneHalfHeight,
-                      }}
-                    >
-                      <Pressable
-                        onPress={() => setNotesModalVisible(true)}
-                        style={{
-                          width: "100%",
-                          height: 30,
-                          backgroundColor: "red",
-                        }}
-                      />
-                      <View>
-                        {notePreviewText && (
-                          <Text style={{ color: primaryColor }}>
-                            {notePreviewText}
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                    {momentsAdded && momentsAdded.length > 0 && (
-                      <TitleContainerUI
-                      primaryColor={primaryColor}
-                        height={180}
-                        title={`Talked: ${momentsAdded.length}`}
-                        children={
-                          <TotalMomentsAddedUI momentsAdded={momentsAdded} primaryColor={primaryColor} backgroundColor={backgroundColor} />
-                        }
-                      />
-                    )}
-
-                    <TouchableOpacity
-                      onPress={toggleDeleteMoments}
-                      style={[
-                        styles.controlButton,
-
-                        { color: primaryColor, height: 40 },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.controlButtonText,
-                          { color: primaryColor },
-                        ]}
-                      >
-                        {"Delete unused?"}
-                      </Text>
-                      <Icon
-                        name={deleteMoments ? "check-square-o" : "square-o"}
-                        size={20}
-                        style={[styles.checkbox, { color: primaryColor }]}
-                      />
-                    </TouchableOpacity>
-                  </>
-                </>
+            {!isKeyboardVisible &&
+              selectedTypeChoiceText &&
+              locationListIsSuccess && (
+                <LocationModal
+                  primaryColor={primaryColor}
+                  faveLocations={faveLocations}
+                  savedLocations={locationList}
+                  onLocationChange={handleLocationChange}
+                  modalVisible={locationModalVisible}
+                  setModalVisible={setLocationModalVisible}
+                  selectedLocation={selectedHelloLocation}
+                />
               )}
-            </>
           </View>
 
-          <>
-            {/* {isKeyboardVisible && (  would need to also check for same things as button above
-                        <View
-                          style={{
-                            position: "absolute",
-                            bottom: 40,
-                            left: 0,
-                            right: 0,
-                            width: "100%",
-                            flex: 1,
-                          }}
-                        >
-                          <KeyboardSaveButton
-                            label="SAVE HELLO! "
-                            onPress={openDoubleChecker}
-                            isDisabled={
-                              selectedFriend && !loadingNewFriend ? false : true
-                            }
-                            image={false}
-                          />
-                        </View>
-                      )} */}
-          </>
-          {!isKeyboardVisible && (
-            <ButtonBaseSpecialSave
-              label="SAVE HELLO! "
-              maxHeight={80}
+          <></>
+          {!isKeyboardVisible && selectedTypeChoiceText && (
+            <EscortBar
+              manualGradientColors={manualGradientColors}
+              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              primaryColor={primaryColor}
+              primaryBackground={backgroundColor}
+              forwardFlowOn={false}
+              label={"Save hello"}
               onPress={openDoubleChecker}
-              isDisabled={
-                selectedFriend &&
-                !loadingDash &&
-                selectedTypeChoice !== null &&
-                helloDate
-                  ? false
-                  : true
-              }
-              image={require("@/app/assets/shapes/redheadcoffee.png")}
             />
           )}
-        </>
+        </View>
 
         {isDoubleCheckerVisible && (
           <DoubleChecker
@@ -504,17 +420,6 @@ const ContentAddHello = ({
             onPress={() => handleSave()}
             manualGradientColors={manualGradientColors}
             primaryColor={primaryColor}
-          />
-        )}
-
-        {notesModalVisible && (
-          <HelloNotesModal
-          primaryColor={primaryColor}
-            isVisible={notesModalVisible}
-            closeModal={handleCloseModal}
-            textRef={editedTextRef}
-            mountingText={notePreviewText}
-            onTextChange={updateNoteEditString}
           />
         )}
       </>
@@ -528,48 +433,7 @@ const styles = StyleSheet.create({
     width: "100%",
 
     zIndex: 1,
-  },
-  loadingWrapper: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  locationContainer: {
-    width: "50%",
-  },
-  dateContainer: {
-    width: "50%",
-  },
-  momentsContainer: {
-    flex: 1,
-    width: "100%",
-    minHeight: 100,
-  },
-
-  locationTitle: {
-    fontSize: 17,
-    fontFamily: "Poppins-Regular",
-  },
-  inputContainer: {
-    justifyContent: "center",
-    width: "100%",
-    marginVertical: 10,
-  },
-  deleteRemainingContainer: {
-    // position: "absolute",
-    // bottom: 0,
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "100%",
-  },
-  paddingForElements: {
-    paddingHorizontal: 0,
-    flex: 1,
-    paddingBottom: 0,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-  },
+  },    
   checkbox: {
     paddingLeft: 10,
     paddingBottom: 2,

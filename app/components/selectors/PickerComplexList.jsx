@@ -11,27 +11,20 @@ import {
 import AlertSingleInput from "../alerts/AlertSingleInput"; 
 
 const PickerComplexList = ({
-  primaryColor,
-  label = "Select Label",
-  title = "title here",
+  primaryColor, 
   onLabelChange,
   modalHeader,
   primaryOptions = [],
   primaryOptionsHeader,
   secondaryOptions = [],
   secondaryOptionsHeader,
-  objects = false,
-  containerText = "Select an option",
-  buttonRadius = 20,
+  objects = false, 
   modalVisible = false,
-  setModalVisible,
-  inline = false,
-  noBackground = false,
+  setModalVisible, 
   primaryIcon: PrimaryIcon,
   secondaryIcon: SecondaryIcon,
   iconSize = 34,
-  allowCustomEntry = false,
-  buttonHeight = "auto",
+  allowCustomEntry = false, 
 }) => { 
   const [isCustomModalVisible, setCustomModalVisible] = useState(false);
   const [customValue, setCustomValue] = useState("");
@@ -71,9 +64,7 @@ const PickerComplexList = ({
     const Icon =
       combinedOptions.find((section) => section.data.includes(item))?.icon ||
       null;
-    const iconColor =
-      combinedOptions.find((section) => section.data.includes(item))?.color ||
-      "black";
+ 
 
     return (
       <TouchableOpacity
@@ -122,33 +113,8 @@ const PickerComplexList = ({
 
   return (
     <View style={[styles.container ]}>
-      {/* <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "100%",
-          height: "auto",
-        }}
-      >
-        <Text style={[styles.title, themeStyles.genericText]}>{title}</Text>
-      </View> */}
-      <TouchableOpacity
-        style={[styles.button ]}
-        onPress={() => setModalVisible(true)}
-      >
-        <>
-          <View style={{ alignContent: "center", paddingRight: 10 }}>
-            {containerText}
-          </View>
-          <Text
-            style={[styles.buttonText, {color: primaryColor}]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {label}
-          </Text>
-        </>
-      </TouchableOpacity>
+ 
+ 
 
       {modalVisible && (
         <Modal

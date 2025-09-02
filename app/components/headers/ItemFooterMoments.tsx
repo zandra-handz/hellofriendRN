@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet, Text  } from "react-native";
- 
-
+import { View, StyleSheet, Text  } from "react-native"; 
 import EscortBarMoments from "../moments/EscortBarMoments";
  
 import Animated, {

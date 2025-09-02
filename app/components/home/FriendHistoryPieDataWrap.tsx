@@ -1,11 +1,12 @@
 import { View } from "react-native";
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-
+import { useHelloes } from "@/src/context/HelloesContext";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
 import FriendHistoryModal from "../headers/FriendHistoryModal";
+import { useFriendList } from "@/src/context/FriendListContext";
 type Props = {
   chartRadius: number;
   chartBorder: number;
@@ -16,8 +17,8 @@ type Props = {
 const FriendHistoryPieDataWrap = React.memo(
   ({
     friendId,
-    friendList,
-    helloesList,
+ 
+  
     chartRadius = 90,
     chartBorder = 6,
     chartBorderColor = "hotpink",
@@ -33,6 +34,8 @@ const FriendHistoryPieDataWrap = React.memo(
     darkerOverlayBackgroundColor,
     themeAheadOfLoading,
   }: Props) => {
+    const { helloesList} = useHelloes();
+    const { friendList } = useFriendList();
     const { selectedFriendStats } = useSelectedFriendStats();
 
     const [largeFriendChartVisible, setLargeFriendChartVisible] =
@@ -156,8 +159,7 @@ const FriendHistoryPieDataWrap = React.memo(
         {largeFriendChartVisible && (
           <View>
             <FriendHistoryModal
-            friendId={friendId}
-            friendList={friendList}
+            friendId={friendId} 
             helloesList={helloesList}
             themeAheadOfLoading={themeAheadOfLoading}
               darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}

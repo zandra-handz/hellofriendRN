@@ -13,8 +13,9 @@ import Animated, {
   withDelay,
   
 } from "react-native-reanimated";
-import PlainSafeView from "../appwide/format/PlainSafeView";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import PlainSafeView from "../appwide/format/PlainSafeView"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -37,8 +38,7 @@ const HelperMessage = ({
   const scale = useSharedValue(0);
   const translateX = useSharedValue(-600);
 const { lightDarkTheme} = useLDTheme();
-  const fade = useSharedValue(1);
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const fade = useSharedValue(1); 
   
   useEffect(() => {
     fade.value = 1;

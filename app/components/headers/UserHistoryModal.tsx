@@ -5,8 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import UserHistoryBigPie from "../home/UserHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import UserCategoryHistoryList from "./UserCategoryHistoryList";
-
+import UserCategoryHistoryList from "./UserCategoryHistoryList"; 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -19,7 +18,6 @@ interface Props {
 }
 
 const UserHistoryModal: React.FC<Props> = ({
-  friendList,
   isVisible,
   closeModal,
 
@@ -33,7 +31,6 @@ const UserHistoryModal: React.FC<Props> = ({
   primaryOverlayColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
- 
 }) => {
   const [viewCategoryId, setViewCategoryId] = useState(undefined);
 
@@ -92,7 +89,11 @@ const UserHistoryModal: React.FC<Props> = ({
                   width: "100%",
                 }}
               >
-                <UserCategoryHistoryList friendList={friendList} categoryId={viewCategoryId} primaryColor={primaryColor}/>
+                <UserCategoryHistoryList
+           
+                  categoryId={viewCategoryId}
+                  primaryColor={primaryColor}
+                />
               </Animated.View>
             )}
           </View>

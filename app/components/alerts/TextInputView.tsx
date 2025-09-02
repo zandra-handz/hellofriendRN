@@ -12,8 +12,7 @@ import Animated, {
   FadeOut,
   withDelay,
 } from "react-native-reanimated";
-import PlainSafeView from "../appwide/format/PlainSafeView";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import PlainSafeView from "../appwide/format/PlainSafeView"; 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

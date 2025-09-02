@@ -16,7 +16,7 @@ import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import MomentFocusTray from "./MomentFocusTray";
 type Props = {
   screenCameFromToParent: number;
@@ -38,16 +38,12 @@ const MomentWriteEditView = ({
   defaultCategory,
   manualGradientColors,
   themeAheadOfLoading,
-  capsuleList,
-  friendList,
-  helloesList,
-  userCategories,
+  capsuleList, 
+  
   userId,
   screenCameFromToParent,
   momentText,
-  catCreatorVisible,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
+  catCreatorVisible, 
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
@@ -75,6 +71,9 @@ const MomentWriteEditView = ({
   const { navigateBack, navigateToMoments, navigateToMomentView } =
     useAppNavigations();
 
+
+    const welcomeTextStyle = appFontStyles.welcomeText;
+    const subWelcomeTextStyle = appFontStyles.subWelcomeText;
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -164,18 +163,11 @@ const MomentWriteEditView = ({
     }
   }, [updateExistingMoment, existingMomentObject]);
 
-  // const handleCategorySelect = (category) => {
-  //   if (!category) {
-  //     return;
-  //   }
-  //   setSelectedCategory(category);
-  // };
+ 
 
   const handleUserCategorySelect = ({ name: name, id: id }) => {
     setSelectedUserCategory(id);
-    setSelectedCategory(name);
-    // handleUserChangedCategory(); moved into category creator
-    //   closeCatCreator();
+    setSelectedCategory(name); 
   };
 
   const handleSave = async () => {
@@ -357,9 +349,7 @@ const MomentWriteEditView = ({
                 manualGradientColors={manualGradientColors}
                 subWelcomeTextStyle={subWelcomeTextStyle}
                 capsuleList={capsuleList}
-                friendList={friendList}
-                helloesList={helloesList}
-                userCategories={userCategories}
+                
                 welcomeTextStyle={welcomeTextStyle}
                 paddingTop={TOPPER_PADDING_TOP}
                 friendDefaultCategory={
@@ -406,8 +396,7 @@ const MomentWriteEditView = ({
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
           manualGradientColors={manualGradientColors}
-          capsuleList={capsuleList}
-          userCategories={userCategories}
+          capsuleList={capsuleList} 
           freezeCategory={userChangedCategory}
           friendDefaultCategory={friendFaves?.friend_default_category || null}
           isVisible={catCreatorVisible}

@@ -31,8 +31,7 @@ import { UserProvider, useUser } from "./src/context/UserContext";
 import {
   UserSettingsProvider,
   useUserSettings,
-} from "./src/context/UserSettingsContext";
-import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
+} from "./src/context/UserSettingsContext"; 
 
 import { UserStatsProvider } from "./src/context/UserStatsContext";
 
@@ -246,8 +245,7 @@ export default Sentry.wrap(function App() {
                                     {/* <MessageContextProvider> */}
                                     <SafeAreaProvider>
                                       <LDThemeProvider>
-                                        
-                                      <GlobalStyleProvider>
+                                         
                                         <RootSiblingParent>
                                           <DeviceLocationProvider>
                                             <FriendStyleProvider>
@@ -255,7 +253,7 @@ export default Sentry.wrap(function App() {
                                             </FriendStyleProvider>
                                           </DeviceLocationProvider>
                                         </RootSiblingParent>
-                                      </GlobalStyleProvider>
+                                   
                                       
                                       </LDThemeProvider>
                                     </SafeAreaProvider>

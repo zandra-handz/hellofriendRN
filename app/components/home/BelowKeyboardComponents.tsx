@@ -2,6 +2,10 @@ import React from "react";
 import { View } from "react-native";
 import HomeButtonUpNext from "./HomeButtonUpNext";
 import SelectedFriendHome from "./SelectedFriendHome";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import Animated, {
   SharedValue,
   FadeInUp,
@@ -11,36 +15,33 @@ import Animated, {
 interface BelowKeyboardComponentsProps {
   userId: number;
   slideAnim: SharedValue<number>;
-  friendListLength: number;
-  isFriendSelected: boolean;
+  friendListLength: number; 
   onPress: () => void;
 }
 
 const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   userId,
-  userCategories,
-  upcomingHelloes,
+
   isLoading,
-  themeAheadOfLoading,
-  getThemeAheadOfLoading,
-  friendList,
+ 
   friendStyle,
   primaryColor,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
-  manualGradientColors,
+
   spinnerStyle,
-  loadingDash,
-  friendDash,
+  // loadingDash,
+  // friendDash,
   selectedFriendId,
   selectedFriendName,
-  friendListLength,
-  isFriendSelected,
+  friendListLength, 
   onPress,
 }) => {
+  const { friendDash, loadingDash } = useFriendDash();
+  const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
+  const welcomeTextStyle = appFontStyles.welcomeText;
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
   return (
     <Animated.View
       entering={FadeInUp}
@@ -53,12 +54,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
         },
       ]}
     >
-      {!isFriendSelected && friendListLength > 0 && (
+      {!selectedFriendId && friendListLength > 0 && (
         <HomeButtonUpNext
-          upcomingHelloes={upcomingHelloes}
           isLoading={isLoading}
           getThemeAheadOfLoading={getThemeAheadOfLoading}
-          friendList={friendList}
           onPress={onPress}
           borderRadius={10}
           height={"100%"}
@@ -71,12 +70,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           // borderColor="black"
         />
       )}
-      {isFriendSelected && (
+      {selectedFriendId && (
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
             userId={userId}
-            friendList={friendList}
-            userCategories={userCategories}
             manualGradientColors={manualGradientColors}
             appColorsStyle={manualGradientColors}
             friendStyle={friendStyle}
@@ -96,7 +93,6 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             borderRadius={10}
             borderColor="black"
             height={"100%"}
-
           />
         </View>
       )}

@@ -20,6 +20,10 @@ const HelloQuickView = ({
   primaryColor,
   themeAheadOfLoading,
 }: Props) => {  
+
+ if (!data || !data?.id) {
+  return;
+ }
   const [highlightedMoment, setHighlightedMoment] = useState(undefined);
 
   const SPINNER_SIZE = 30;
@@ -34,9 +38,7 @@ const HelloQuickView = ({
           paddingHorizontal: 8,
         }}
       >
-        <Text style={{ color: "black" }}>{item[1]?.capsule}</Text>
-        {/* <Text style={{ color: "black" }}>{item[0]}</Text>
-        <Text style={{ color: "black" }}>{highlightedMoment}</Text> */}
+        <Text style={{ color: "black" }}>{item[1]?.capsule}</Text> 
       </View>
     ),
     [highlightedMoment]

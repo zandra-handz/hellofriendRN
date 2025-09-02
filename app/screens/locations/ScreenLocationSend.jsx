@@ -1,18 +1,19 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { StyleSheet, Linking, Text, Alert } from "react-native";
+import React, {   useState, useMemo, useCallback } from "react";
+import {  Linking, Text, Alert } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
  
 import { useUser } from "@/src/context/UserContext";
-import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
+ 
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenLocationSend = () => {
   const route = useRoute();
   const { user } = useUser();
@@ -26,8 +27,7 @@ const ScreenLocationSend = () => {
   const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash();
   //weekdayTextData is coming from LocationHoursOfOperation component
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
 
   const { themeAheadOfLoading } = useFriendStyle();
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
@@ -192,9 +192,7 @@ const ScreenLocationSend = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -230,12 +228,6 @@ const ScreenLocationSend = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
-  },
-});
+ 
 
 export default ScreenLocationSend;

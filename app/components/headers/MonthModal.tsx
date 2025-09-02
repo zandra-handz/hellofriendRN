@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import HelloDayWrapper from "../helloes/HelloDayWrapper";
-
-import { Text, View, StyleSheet,   Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -28,31 +27,25 @@ interface Props {
 }
 
 const MonthModal: React.FC<Props> = ({
-  friendId,
+  primaryColor,
   helloesList,
   manualGradientColors,
   themeAheadOfLoading,
- primaryColor,
+  friendId,
+
   isVisible,
   closeModal,
   monthData,
 }) => {
-
-
-
-
   const pieScale = useSharedValue(1);
   const pieY = useSharedValue(1);
   const pieX = useSharedValue(1);
 
-
-const radius = 100;
-const daySquareWidth = 50;
-const daySquareHeight = daySquareWidth * .8;
+  const radius = 100;
+  const daySquareWidth = 50;
+  const daySquareHeight = daySquareWidth * 0.8;
 
   const [viewHelloId, setViewHelloId] = useState(undefined);
-
-
 
   useEffect(() => {
     if (viewHelloId) {
@@ -69,7 +62,6 @@ const daySquareHeight = daySquareWidth * .8;
     }
   }, [viewHelloId]);
 
-
   const pieScaleStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -79,7 +71,6 @@ const daySquareHeight = daySquareWidth * .8;
       ],
     };
   });
-
 
   const opacityMinusAnimation = 1;
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -122,27 +113,11 @@ const daySquareHeight = daySquareWidth * .8;
       const daysSince = daysSincedDateField(helloObject.date);
 
       const word = Number(daysSince) != 1 ? `days` : `day`;
-     setViewHelloId(id);
-      // setQuickView({
-      //   topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-      //   view: (
-      //     <HelloQuickView
-      //       friendId={friendId}
-      //       data={helloObject}
-      //       index={helloIndex}
-      //       primaryColor={primaryColor}
-      //       themeAheadOfLoading={themeAheadOfLoading}
-      //     />
-      //   ),
-      //   message: `hi hi hi`,
-      //   update: false,
-      // });
+      setViewHelloId(id);
     }
   };
 
   const renderDay = ({ item, lightUp, voidedDay, id, isManualReset, key }) => {
-    //console.log(item);
-
     if (!item) {
       return (
         <View
@@ -150,9 +125,9 @@ const daySquareHeight = daySquareWidth * .8;
           style={[
             styles.daySquare,
             {
-                                width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
-                  height:  viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
-            
+              width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
+              height: viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
+
               opacity: opacityMinusAnimation,
               borderRadius: daySquareBorderRadius,
               borderColor: daySquareBorderColor,
@@ -160,7 +135,6 @@ const daySquareHeight = daySquareWidth * .8;
               opacity: 0,
             },
           ]}
-          // key={`day-${rowStart }`}
         ></View>
       );
     }
@@ -172,26 +146,24 @@ const daySquareHeight = daySquareWidth * .8;
           style={[
             styles.daySquare,
             {
-                                width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
-                  height:  viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
+              width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
+              height: viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
               opacity: opacityMinusAnimation,
               borderRadius: daySquareBorderRadius,
               borderColor: daySquareBorderColor,
               backgroundColor: "transparent",
             },
           ]}
-          // key={`day-${rowStart + index}`}
         ></View>
       );
     }
     if (lightUp) {
-      //console.log("yes", item);
       return (
         <AnimatedPressable
           hitSlop={20}
           onPress={() => handleViewHello(id)}
           key={key}
-          style={{  overflow: "hidden" }}
+          style={{ overflow: "hidden" }}
         >
           <HelloDayWrapper isVisible={lightUp}>
             <Animated.View
@@ -199,7 +171,7 @@ const daySquareHeight = daySquareWidth * .8;
                 styles.daySquare,
                 {
                   width: viewHelloId ? daySquareWidth / 1.5 : daySquareWidth,
-                  height:  viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
+                  height: viewHelloId ? daySquareHeight / 1.5 : daySquareHeight,
                   borderRadius: daySquareBorderRadius,
                   backgroundColor:
                     voidedDay && !isManualReset
@@ -209,7 +181,6 @@ const daySquareHeight = daySquareWidth * .8;
                         : animationColor,
                 },
               ]}
-              // key={`day-${rowStart + index}`}
             ></Animated.View>
           </HelloDayWrapper>
         </AnimatedPressable>
@@ -218,17 +189,12 @@ const daySquareHeight = daySquareWidth * .8;
   };
 
   const renderWeeks = (totalDays, startingIndex, highlightDays = []) => {
- 
     const allDays = [];
 
-    // console.error(highlightDays);
-
-    // Previous month's filler days
     for (let i = 0; i < startingIndex; i++) {
       allDays.push(null);
     }
 
-    // Current month's days
     for (let day = 1; day <= totalDays; day++) {
       allDays.push(day);
     }
@@ -249,9 +215,17 @@ const daySquareHeight = daySquareWidth * .8;
           const weekData = allDays.slice(rowStart, rowEnd);
 
           return (
-            <View style={[styles.weekRow, 
-              {height: viewHelloId ? daySquareHeight / 1.5 + 8 : daySquareHeight + 10}
-            ]} key={`week-${rowIndex}`}>
+            <View
+              style={[
+                styles.weekRow,
+                {
+                  height: viewHelloId
+                    ? daySquareHeight / 1.5 + 8
+                    : daySquareHeight + 10,
+                },
+              ]}
+              key={`week-${rowIndex}`}
+            >
               {weekData.map((day, index) => {
                 if (day === null) {
                   // filler day - no highlight or void
@@ -265,13 +239,10 @@ const daySquareHeight = daySquareWidth * .8;
                   });
                 }
 
-                // Find day object in highlightDays
                 const dayObj = highlightDays.find((d) => d.hasOwnProperty(day));
 
-                // If dayObj exists, lightUp = true, else false
                 const lightUp = !!dayObj;
 
-                // Extract voided and manual flags if dayObj exists
                 const voidedDay = dayObj ? dayObj[day].voided : false;
                 const isManualReset = dayObj ? dayObj[day].manual : false;
                 const id = dayObj ? dayObj[day].id : false;
@@ -294,9 +265,7 @@ const daySquareHeight = daySquareWidth * .8;
 
   const renderCalendarMonth = useCallback(
     ({ item }) => {
-      // console.log(item.helloData);
       const indexRangeStart = indexDays[item.monthData.startsOn];
-      // const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
 
       const highlightDays = item.helloData?.days || [];
 
@@ -304,16 +273,20 @@ const daySquareHeight = daySquareWidth * .8;
       const year = item.monthData.year.slice(0, 4);
 
       return (
-   
- 
-          <Animated.View style={[ pieScaleStyle, styles.innerCalendarContainer]}>
-            {renderWeeks(
-              item.monthData.daysInMonth,
-              indexRangeStart,
-              highlightDays
-            )}
-          </Animated.View>
-     
+        <Animated.View
+          style={[
+            pieScaleStyle,
+
+            styles.innerCalendarContainer,
+            { height: !viewHelloId ? radius * 2 : radius },
+          ]}
+        >
+          {renderWeeks(
+            item.monthData.daysInMonth,
+            indexRangeStart,
+            highlightDays
+          )}
+        </Animated.View>
       );
     },
     [
@@ -349,22 +322,33 @@ const daySquareHeight = daySquareWidth * .8;
           buttonTitle={`${month} ${year}`}
           children={
             <View style={styles.bodyContainer}>
-          
-                {monthData && renderCalendarMonth({ item: monthData })}
-                      {viewHelloId && (
-              <Animated.View
-                entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
-                exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
-                style={{
-                  //  backgroundColor: "red",
-                  height: viewHelloId ? "75%" : "0%",
-                  flexGrow: 1,
-                  width: "100%",
-                }}
-              >
-              
-              </Animated.View>
-            )}
+              {monthData && renderCalendarMonth({ item: monthData })}
+              {viewHelloId && (
+                <Animated.View
+                  entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
+                  exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
+                  style={{
+                    backgroundColor: "red",
+                    height: viewHelloId ? "75%" : "0%",
+                    flexGrow: 1,
+                    width: "100%",
+                  
+                  }}
+                >
+                  <View>
+                    <HelloQuickView
+                      data={helloesList.find(
+                        (hello) => hello.id === viewHelloId
+                      )}
+                      friendId={friendId}
+                      momentOriginalId={null}
+                      index={null}
+                      primaryColor={primaryColor}
+                      themeAheadOfLoading={themeAheadOfLoading}
+                    />
+                  </View>
+                </Animated.View>
+              )}
             </View>
           }
           onClose={closeModal}
@@ -415,13 +399,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   calendarContainer: {
-   backgroundColor: 'pink',
-   
+    backgroundColor: "pink",
 
     borderRadius: 10,
   },
   innerCalendarContainer: {
- 
     flex: 1,
   },
   weekRow: {

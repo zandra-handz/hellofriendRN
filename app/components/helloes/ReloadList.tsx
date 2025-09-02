@@ -2,7 +2,7 @@ import { View, Alert } from "react-native";
 import React, { useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 
@@ -10,8 +10,7 @@ import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
-const ReloadList = ({
-  manualGradientColors,
+const ReloadList = ({ 
   subWelcomeTextStyle,
   primaryColor,
   primaryBackground,

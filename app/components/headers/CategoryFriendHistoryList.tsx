@@ -10,11 +10,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
  
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
- 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ import { appFontStyles } from "@/src/hooks/StaticFonts"; 
   
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
- 
+ import { useFriendList } from "@/src/context/FriendListContext";
 
 type Props = {
   categoryId: number;
@@ -25,14 +24,13 @@ type Props = {
 const CategoryFriendHistoryList = ({
   friendId,
   categoryId,
-  friendList,
+ 
   helloesList,
   primaryColor,
   closeModal,
   onViewHelloPress,
-}: Props) => {  
-  const { appFontStyles } = useGlobalStyle();
- 
+}: Props) => {   
+ const { friendList } = useFriendList();
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
   
  

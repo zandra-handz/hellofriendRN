@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, DimensionValue } from "react-native";
 import CustomStatusBar from "../statusbar/CustomStatusBar"; 
- 
+ import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,9 +19,7 @@ type Props = {
 export const PreAuthSafeViewAndGradientBackground = ({
   children,
   style,
-  settings,
-  startColor,
-  endColor,
+  settings, 
   friendColorLight,
   friendColorDark,
   backgroundOverlayColor,
@@ -66,8 +64,8 @@ export const PreAuthSafeViewAndGradientBackground = ({
   return (
     <GradientBackground
       useFriendColors={useFriendColors}
-      startColor={startColor}
-      endColor={endColor}
+      startColor={manualGradientColors.darkColor}
+      endColor={manualGradientColors.lightColor}
       friendColorDark={friendColorDark}
       friendColorLight={friendColorLight}
       additionalStyles={[paddingStyle, style]}

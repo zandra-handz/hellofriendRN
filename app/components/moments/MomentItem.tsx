@@ -15,9 +15,9 @@ import Animated, {
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-  
+  import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { Moment } from "@/src/types/MomentContextTypes";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
  
 interface MomentItemsProps {
   index: number;
@@ -46,9 +46,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   pulseValue,
   onSend,
   categoryColorsMap,
-  subWelcomeTextStyle,
-  homeDarkColor,
-  appLightColor,
+   
   primaryColor,
   primaryBackgroundColor,
   darkerOverlayColor,
@@ -58,9 +56,9 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const startingPosition = index * combinedHeight;
   const { height } = useWindowDimensions();
   const containerHeight = height - 410; 
-  const textContainerWidth = "100%";
-  const talkingPointNumberOfLines = 3;
-  const cardBorderRadius = 999;
+  // const textContainerWidth = "100%";
+  // const talkingPointNumberOfLines = 3;
+  // const cardBorderRadius = 999;
   // const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
   const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
   // const momentColor = categoryColorMap[momentData.user_category];
@@ -107,12 +105,12 @@ const MomentItem: React.FC<MomentItemsProps> = ({
       ? interpolateColor(
           pulseValue.value,
           [0, 1],
-          [appLightColor, friendColor]
+          [manualGradientColors.lightColor, friendColor]
         )
       : "transparent"; // manualGradientColors.homeDarkColor;
 
     const iconColor = isPressed
-      ? homeDarkColor
+      ? manualGradientColors.homeDarkColor
       : // interpolateColor(
         //     pulseValue.value,
         //     [0, 1],
@@ -276,7 +274,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             numberOfLines={1}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
             style={[ 
-              subWelcomeTextStyle,
+              appFontStyles.subWelcomeText,
               { color: primaryColor, fontSize: 13, lineHeight: 28, fontFamily: "Poppins-Regular" },
             ]}
           >
@@ -284,27 +282,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             {momentData?.capsule?.replace(/\s*\n\s*/g, " ")}
           </Text>
         </View>
-        {/* <View
-          style={{
-            flexWrap: "flex",
-            width: textContainerWidth,
-            overflow: "hidden",
-            height: "100%",
-          }}
-        >
-          <Text
-            numberOfLines={talkingPointNumberOfLines}
-            // style={[themeStyles.genericText, appFontStyles.momentText]}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.subWelcomeText,
-              { fontSize: 12, fontFamily: 'Poppins-Regular', lineHeight: 20, },
-            ]}
-          >
-            {momentData && momentData?.capsule}
-          </Text>
-
-        </View> */}
+ 
       </View>
 
       <AnimatedPressable

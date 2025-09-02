@@ -1,13 +1,13 @@
-import { View, Text  } from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import GlobalPressable from "../appwide/button/GlobalPressable"; 
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
- 
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
- 
+import { useCategories } from "@/src/context/CategoriesContext";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 type Props = {
   userChangedCategory: boolean;
   zIndex?: number;
@@ -25,20 +25,17 @@ type Props = {
 const SelectedCategoryButton = ({
   userId,
   userDefaultCategory,
-  manualGradientColors,
   themeAheadOfLoading,
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
-  subWelcomeTextStyle,
-  userCategories,
-  capsuleList,
-  friendList,
-  helloesList,
+
+ 
+
   friendId,
   friendName,
   friendDefaultCategory,
-  welcomeTextStyle,
+
   zIndex = 3,
   categoryId,
   freezeCategory,
@@ -50,8 +47,11 @@ const SelectedCategoryButton = ({
   editMode,
   maxWidth = 100,
   iconSize = 20,
-}: Props) => { 
+}: Props) => {
+  const { userCategories } = useCategories();
 
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const welcomeTextStyle = appFontStyles.welcomeText;
   const { handleUpdateDefaultCategory, updateFriendDefaultCategoryMutation } =
     useUpdateDefaultCategory({ userId: userId, friendId: friendId });
 
@@ -187,24 +187,21 @@ const SelectedCategoryButton = ({
       {detailsModalVisible && (
         <View>
           <CategoryFriendHistoryCombinedModal
-          userId={userId}
-          userDefaultCategory={userDefaultCategory}
-          friendId={friendId}
-          friendName={friendName}
-          primaryColor={primaryColor}
-          lighterOverlayColor={lighterOverlayColor}
-          primaryBackground={primaryBackground}
-          subWelcomeTextStyle={subWelcomeTextStyle}
-          friendDefaultCategory={friendDefaultCategory}
-          themeAheadOfLoading={themeAheadOfLoading}
+            userId={userId}
+            userDefaultCategory={userDefaultCategory}
+            friendId={friendId}
+            friendName={friendName}
+            primaryColor={primaryColor}
+            lighterOverlayColor={lighterOverlayColor}
+            primaryBackground={primaryBackground}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+            friendDefaultCategory={friendDefaultCategory}
+            themeAheadOfLoading={themeAheadOfLoading}
             isVisible={detailsModalVisible}
             closeModal={() => setDetailsModalVisible(false)}
             categoryId={categoryId}
-            manualGradientColors={manualGradientColors}
             userCategories={userCategories}
-            capsuleList={capsuleList}
-            friendList={friendList}
-            helloesList={helloesList}
+      
           />
         </View>
       )}

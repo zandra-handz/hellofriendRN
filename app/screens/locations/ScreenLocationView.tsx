@@ -5,8 +5,7 @@ import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
-import { useUser } from "@/src/context/UserContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useUser } from "@/src/context/UserContext"; 
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -20,7 +19,8 @@ import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocatio
 import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
 import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenLocationView = () => {
   const route = useRoute();
   const { user } = useUser();
@@ -28,8 +28,7 @@ const ScreenLocationView = () => {
   const currentIndex = route.params?.index ?? null;
   const userAddress = route?.params?.userAddress ?? null;
   const friendAddress = route?.params?.friendAddress ?? null;
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
@@ -140,9 +139,7 @@ const ScreenLocationView = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}

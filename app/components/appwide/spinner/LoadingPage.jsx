@@ -77,9 +77,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "transparent",
   },
-  textContainer: {
-    // position: "absolute",
-    // top: "36%",
+  textContainer: { 
     marginBottom: 30,
     justifyContent: "center",
     alignItems: "center",

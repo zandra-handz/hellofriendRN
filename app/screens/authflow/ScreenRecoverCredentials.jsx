@@ -8,7 +8,7 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
  
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation } from "@react-navigation/native";
@@ -22,14 +22,13 @@ import {
 } from "@/src/calls/api";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+// import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 
 const ScreenRecoverCredentials = () => {
  const { themeAheadOfLoading } = useFriendStyle();
- const { lightDarkTheme} = useLDTheme();
-  const {  manualGradientColors,theme, nonCustomHeaderPage  } = useGlobalStyle();
+ const { lightDarkTheme} = useLDTheme(); 
  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -119,13 +118,13 @@ const ScreenRecoverCredentials = () => {
 
   return (
     <>
-      <PhoneStatusBar
+      {/* <PhoneStatusBar
       friendId={false}
       themeAheadOfLoading={themeAheadOfLoading}
       theme={theme}
       nonCustomHeaderPage={nonCustomHeaderPage}
       
-      />
+      /> */}
       <LinearGradient
         colors={[
           manualGradientColors.darkColor,

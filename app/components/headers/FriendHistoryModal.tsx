@@ -1,18 +1,13 @@
-import React, { useState  } from "react";
-import Animated, {
-  SlideInDown,
- 
-  SlideOutDown,
-} from "react-native-reanimated";
-import { View, StyleSheet } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState } from "react";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import { View, StyleSheet } from "react-native"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendHistoryBigPie from "../home/FriendHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
-import { daysSincedDateField } from "@/src/utils/DaysSince"; 
+import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
-
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -27,7 +22,7 @@ interface Props {
 
 const FriendHistoryModal: React.FC<Props> = ({
   friendId,
-  friendList,
+
   helloesList,
   darkerOverlayBackgroundColor,
   primaryColor,
@@ -43,13 +38,13 @@ const FriendHistoryModal: React.FC<Props> = ({
   labelsSize,
   seriesData,
   // onLongPress,
-}) => {
-  const { manualGradientColors } = useGlobalStyle();
+}) => { 
+
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
   const nullQuickView = () => {
     setQuickView(null);
   };
- 
+
   const [viewCategoryId, setViewCategoryId] = useState(undefined);
 
   const handleViewHello = (id, momentOriginalId) => {
@@ -65,7 +60,7 @@ const FriendHistoryModal: React.FC<Props> = ({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
         view: (
           <HelloQuickView
-          friendId={friendId}
+            friendId={friendId}
             data={helloObject}
             momentOriginalId={momentOriginalId}
             index={helloIndex}
@@ -145,9 +140,8 @@ const FriendHistoryModal: React.FC<Props> = ({
                   }}
                 >
                   <CategoryFriendHistoryList
-                  friendId={friendId}
-                  friendList={friendList}
-                  helloesList={helloesList}
+                    friendId={friendId}
+                    helloesList={helloesList}
                     categoryId={viewCategoryId}
                     closeModal={handleFakeClose}
                     onViewHelloPress={handleViewHello}

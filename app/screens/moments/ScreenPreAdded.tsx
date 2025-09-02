@@ -3,7 +3,7 @@ import { View } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import PreAddedList from "@/app/components/moments/PreAddedList";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -12,12 +12,11 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useUser } from "@/src/context/UserContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 const ScreenPreAdded = () => {
   const { selectedFriend } = useSelectedFriend();
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
   const { loadingDash } = useFriendDash();
   const { preAdded, allCapsulesList } = useCapsuleList();
@@ -46,13 +45,11 @@ const ScreenPreAdded = () => {
           {preAdded && (
             <PreAddedList
               manualGradientColors={manualGradientColors}
-              subWelcomeTextStyle={appFontStyles.subWelcomeText}
               primaryColor={lightDarkTheme.primaryText}
               primaryBackground={lightDarkTheme.primaryBackground}
               updateCapsule={handlePreAddMoment}
               preAdded={preAdded}
-              allCapsulesList={allCapsulesList} 
-              specialTextStyle={appFontStyles.welcomeText}
+              allCapsulesList={allCapsulesList}
               friendId={selectedFriend?.id}
             />
           )}

@@ -16,7 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 Geocoder.init(GOOGLE_API_KEY);
 
 const useStartingUserAddresses = () => {
-  const { user,   isInitializing } = useUser();
+  const { user  } = useUser();
   const queryClient = useQueryClient(); 
   const [defaultUserAddress, setDefaultUserAddress] = useState(null);
   const [usingCurrent, setUsingCurrent] = useState(false);
@@ -29,34 +29,14 @@ const useStartingUserAddresses = () => {
   } = useQuery({
     queryKey: ["userAddresses", user?.id],
     queryFn: () => fetchUserAddresses(),
-    enabled: !!(user?.id), // testing removing this && !isInitializing),
+    enabled: !!(user?.id), // testing removing this && !isInitializing),  isInitializing may cause infinite regression ?
     staleTime: 1000 * 60 * 20, // 20 minutes
  
   });
 
   useEffect(() => {
     if (userAddresses && userAddresses.length > 0) {
-    //  console.log('ogic running after prefetch', userAddresses);
-      // const menuItems = userAddresses.map((address) => {
-      //   const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(",") : `${address.latitude},${address.longitude}`}`;
-
-      //   return {
-      //     key: uniqueKey,
-      //     id: address.id,
-      //     address: address.address,
-      //     title: address.title,
-      //     label: address.title,
-      //     isDefault: address.is_default,
-      //     latitude: address.coordinates
-      //       ? address.coordinates[0]
-      //       : address.latitude,
-      //     longitude: address.coordinates
-      //       ? address.coordinates[1]
-      //       : address.longitude,
-      //   };
-      // });
-
-      // setUserAddressMenu(menuItems);
+ 
 
       if (currentLocationDetails) {
         setDefaultUserAddress(currentLocationDetails);

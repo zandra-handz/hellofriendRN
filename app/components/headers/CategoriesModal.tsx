@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionUserCategories from "../friends/SectionUserCategories";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import HelperMessage from "../alerts/HelperMessage";
 import InfoItem from "./InfoItem";
-
+import { useCategories } from "@/src/context/CategoriesContext";
 interface Props {
   userId: number;
   isVisible: boolean;
@@ -16,7 +16,7 @@ interface Props {
 
 const CategoriesModal: React.FC<Props> = ({
   userId,
-  userCategories,
+ 
   manualGradientColors,
   primaryColor,
   primaryBackground,
@@ -27,6 +27,8 @@ const CategoriesModal: React.FC<Props> = ({
   closeModal,
   bottomSpacer = 60,
 }) => {
+
+  const { userCategories} = useCategories();
   const [helperMessage, setHelperMessage] = useState<null | {
     text: string;
     error: boolean;

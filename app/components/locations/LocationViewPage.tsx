@@ -14,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import LocationCustomerReviews from "./LocationCustomerReviews";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import Hours from "./Hours";
 
 interface LocationPageViewProps {
@@ -45,8 +45,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   handleSelectedDay,
   openModal,
   closeModal,
-  themeAheadOfLoading,
-  manualGradientColors,
+  themeAheadOfLoading, 
   primaryColor,
   primaryBackground,
   welcomeTextStyle,

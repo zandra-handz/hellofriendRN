@@ -11,7 +11,9 @@ import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocatio
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
@@ -22,8 +24,7 @@ import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHell
 
 const ScreenLocationSearch = () => {
   const { themeAheadOfLoading } = useFriendStyle();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { getDefaultAddress, getDefaultUserAddress } = useMenues();
 
   const { friendDash } = useFriendDash();
@@ -126,9 +127,7 @@ const ScreenLocationSearch = () => {
 
   return (
     // <GestureHandlerRootView style={{flex: 1}}>
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}

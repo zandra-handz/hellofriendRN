@@ -6,20 +6,19 @@ import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesListNew from "@/app/components/helloes/HelloesListNew";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
   const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -106,15 +105,13 @@ const ScreenHelloes = () => {
         onFilterPress={toggleHelloesFiltering}
         addToModalOpenPress={handleOpenSearch}
         onSearchPress={handleSearchPress}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading} 
       />
     );
   }, [
     helloesData,
     flattenHelloes,
-    themeAheadOfLoading,
-    manualGradientColors,
+    themeAheadOfLoading, 
     lightDarkTheme,
     toggleHelloesFiltering,
     handleSearchPress,
@@ -122,9 +119,7 @@ const ScreenHelloes = () => {
   ]);
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}

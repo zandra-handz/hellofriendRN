@@ -24,10 +24,9 @@ const MomentFocusTray = ({
   lighterOverlayColor,
   manualGradientColors,
   subWelcomeTextStyle,
-  userCategories,
+ 
   capsuleList,
-  friendList,
-  helloesList,
+  
   updateExistingMoment,
   freezeCategory,
   onPress,
@@ -84,12 +83,10 @@ const MomentFocusTray = ({
             primaryColor={primaryColor}
             lighterOverlayColor={lighterOverlayColor}
             primaryBackground={primaryBackground}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-            manualGradientColors={manualGradientColors}
-            userCategories={userCategories}
+            subWelcomeTextStyle={subWelcomeTextStyle} 
+         
             capsuleList={capsuleList}
-            friendList={friendList}
-            helloesList={helloesList}
+           
             welcomeTextStyle={welcomeTextStyle}
             friendDefaultCategory={friendDefaultCategory}
             maxWidth={"100%"}

@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app components
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
-import FriendSettingsModal from "./FriendSettingsModal";
+// import FriendSettingsModal from "./FriendSettingsModal";
 import CategoriesModal from "./CategoriesModal";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 
@@ -18,34 +17,33 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
- 
+ import { manualGradientColors } from "@/src/hooks/StaticColors";
+ import { appFontStyles } from "@/src/hooks/StaticFonts";
+//  import { useFriendDash } from "@/src/context/FriendDashContext";
 const HelloFriendFooter = ({
   userId,
   username,
-  settings,
+ 
   friendId,
-  friendName,
-  friendList,
-  friendDash,
-  userCategories,
-  lightDarkTheme,
-  manualGradientColors,
-  subWelcomeTextStyle,
-  themeAheadOfLoading,
+  friendName, 
+ 
+  lightDarkTheme,  
   overlayColor,
-  dividerStyle,
-  deselectFriend,
-  resetTheme,
+  dividerStyle,  
 }) => {
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
+// const { friendDash } = useFriendDash();
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const { themeAheadOfLoading,  resetTheme } =
+    useFriendStyle();
+const { deselectFriend} = useSelectedFriend();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
-    useState(false);
+  // const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
+  //   useState(false);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -162,11 +160,11 @@ const HelloFriendFooter = ({
 
   const handleCenterButtonToggle = () => {
     // console.log("center button toggled!");
-    if (friendId) {
-      setFriendSettingsModalVisible(true);
-    } else {
+    // if (friendId) {
+    //   setFriendSettingsModalVisible(true);
+    // } else {
       setCategoriesModalVisible((prev) => !prev);
-    }
+    // }
   };
 
   const RenderFriendProfileButton = useCallback(
@@ -271,7 +269,7 @@ const HelloFriendFooter = ({
         <View>
           <UserSettingsModal
             userId={userId}
-            settings={settings}
+        
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
@@ -281,7 +279,7 @@ const HelloFriendFooter = ({
         </View>
       )}
 
-      {friendSettingsModalVisible && !!friendId && (
+      {/* {friendSettingsModalVisible && !!friendId && (
         <View>
           <FriendSettingsModal
             manualGradientColors={manualGradientColors}
@@ -291,19 +289,17 @@ const HelloFriendFooter = ({
             themeAheadOfLoading={themeAheadOfLoading}
             friendId={friendId}
             friendName={friendName}
-            friendDash={friendDash}
-            friendList={friendList}
+            friendDash={friendDash} 
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}
           />
         </View>
-      )}
+      )} */}
 
       {categoriesModalVisible && (
         <View>
           <CategoriesModal
             userId={userId}
-            userCategories={userCategories}
             manualGradientColors={manualGradientColors}
             subWelcomeTextStyle={subWelcomeTextStyle}
             primaryColor={primaryColor}

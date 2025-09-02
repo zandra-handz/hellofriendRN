@@ -5,9 +5,10 @@ import { useLinkBuilder, useRoute } from "@react-navigation/native";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ContentFindMidpoint from "@/app/components/locations/ContentFindMidpoint";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenMidpointLocationSearch = () => {
   const route = useRoute();
   const userAddress = route?.params?.userAddress ?? null;
@@ -16,16 +17,13 @@ const ScreenMidpointLocationSearch = () => {
   const { user } = useUser(); 
 
   const { selectedFriend } = useSelectedFriend();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { themeAheadOfLoading } = useFriendStyle();
 
   // console.log(userAddress);
   // console.log(friendAddress);
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}

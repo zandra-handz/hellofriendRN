@@ -1,16 +1,16 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import CoffeeMugSolidHeart from "@/app/assets/svgs/coffee-mug-solid-heart";
 import PhoneChatMessageHeartSvg from "@/app/assets/svgs/phone-chat-message-heart";
 import CoffeeMugFancySteamSvg from "@/app/assets/svgs/coffee-mug-fancy-steam";
 import CelebrationSparkOutlineSvg from "@/app/assets/svgs/celebration-spark-outline";
- 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 const PickerHelloType = ({
   primaryColor,
   manualGradientColors,
   title = "",
   selectedTypeChoice,
-  onTypeChoiceChange, 
+  onTypeChoiceChange,
   labels = ["digital", "in person", "surprise", "N/A"],
 }) => {
   const options = [
@@ -29,7 +29,6 @@ const PickerHelloType = ({
 
   const HEIGHT = 120;
   const oneFifthWidth = "23%";
- 
 
   return (
     <View
@@ -46,13 +45,16 @@ const PickerHelloType = ({
           width: "100%",
         }}
       >
-        <Text style={[styles.title,{color: primaryColor}]}>{title}</Text>
+        <Text style={[styles.title, { color: primaryColor }]}>{title}</Text>
       </View>
 
       <View style={[styles.optionsContainer, { width: "100%" }]}>
         {options.map((option, index) => (
-          <View key={option || index} style={[styles.optionsContainer, { width: oneFifthWidth }]}>
-            <TouchableOpacity
+          <View
+            key={option || index}
+            style={[styles.optionsContainer, { width: oneFifthWidth }]}
+          >
+            <Pressable
               key={index}
               style={[
                 styles.optionButton,
@@ -63,10 +65,10 @@ const PickerHelloType = ({
                   borderColor: primaryColor,
                 },
                 selectedTypeChoice === index && [
-                  styles.selectedOptionButton,
+               
                   {
-                    borderWidth: 1,
-                    borderColor: manualGradientColors.lightColor,
+                    // borderWidth: 2,
+                    // borderColor: manualGradientColors.lightColor,
                     backgroundColor: manualGradientColors.homeDarkColor,
                   },
                 ],
@@ -74,35 +76,34 @@ const PickerHelloType = ({
               onPress={() => onTypeChoiceChange(index)}
             >
               <View style={[styles.optionContent, styles.labelBelow]}>
-           
-                  <>
-                    {React.createElement(svgIcons[index], {
-                      width: 24,
-                      height: 24,
-                      color:
-                        selectedTypeChoice === index
-                          ? manualGradientColors.lightColor
-                          : primaryColor,
-                    })}
+                <>
+                  {React.createElement(svgIcons[index], {
+                    width: 24,
+                    height: 24,
+                    color:
+                      selectedTypeChoice === index
+                        ? manualGradientColors.lightColor
+                        : primaryColor,
+                  })}
 
-                    {labels[index] && (
-                      <Text
-                        style={[
-                          styles.optionLabel,
-                          {
-                            color:
-                              selectedTypeChoice === index
-                                ? manualGradientColors.lightColor
-                                : primaryColor,
-                          }, 
-                        ]}
-                      >
-                        {labels[index]}
-                      </Text>
-                    )}
-                  </> 
+                  {labels[index] && (
+                    <Text
+                      style={[
+                        styles.optionLabel,
+                        {
+                          color:
+                            selectedTypeChoice === index
+                              ? manualGradientColors.lightColor
+                              : primaryColor,
+                        },
+                      ]}
+                    >
+                      {labels[index]}
+                    </Text>
+                  )}
+                </>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         ))}
       </View>
@@ -142,9 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  selectedOptionButton: {
-    borderWidth: 2,
-  }, 
+ 
   optionContent: {
     flexDirection: "row",
     width: "100%",

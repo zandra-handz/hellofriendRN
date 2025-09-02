@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React, { useMemo } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useNavigation } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useNavigation } from "@react-navigation/native"; 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useFriendList } from "@/src/context/FriendListContext";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
@@ -14,8 +14,7 @@ type Props = {
 };
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
-  const { lightDarkTheme} = useLDTheme();
-  const {   manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme(); 
   const { friendList } = useFriendList();
   const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =
     useFriendStyle();

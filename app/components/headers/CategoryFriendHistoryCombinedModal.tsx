@@ -8,12 +8,15 @@ import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { useFriendList } from "@/src/context/FriendListContext";
+import { useHelloes } from "@/src/context/HelloesContext";
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ModalListWithView from "../alerts/ModalListWithView";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
@@ -28,8 +31,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   userDefaultCategory,
   friendId,
   friendName,
-  friendList,
-  helloesList,
+
   themeAheadOfLoading,
   isVisible,
   closeModal,
@@ -37,18 +39,20 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   primaryColor = "orange",
   lighterOverlayColor = "yellow",
   primaryBackground = "red",
-  subWelcomeTextStyle,
-  manualGradientColors,
+
   friendDefaultCategory,
   userCategories,
-  capsuleList,
 }) => {
+  const { capsuleList } = useCapsuleList();
+
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
 
   const startingText = category?.description || null;
-
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const { helloesList } = useHelloes();
+  const { friendList } = useFriendList();
   const { selectedFriendStats } = useSelectedFriendStats();
 
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);

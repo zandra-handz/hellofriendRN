@@ -1,9 +1,10 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
- 
+import { appFontStyles } from "@/src/hooks/StaticFonts";
+
 import { MaterialIcons } from "@expo/vector-icons";
-import GlobalPressable from "../appwide/button/GlobalPressable"; 
+import GlobalPressable from "../appwide/button/GlobalPressable";
 
 type Props = {
   onPress: () => void;
@@ -13,13 +14,11 @@ type Props = {
 const EscortBarMinusWidth = ({
   backgroundColor,
   overlayColor,
- primaryColor,
-  homeDarkColor,
-  specialTextStyle,
+  primaryColor,
   navigateBack,
   onPress,
   label = "categories",
-}: Props) => { 
+}: Props) => {
   return (
     <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
       <GlobalPressable
@@ -104,7 +103,7 @@ const EscortBarMinusWidth = ({
             <MaterialIcons
               name={"keyboard-arrow-up"}
               size={16}
-            //  color={homeDarkColor}
+              //  color={homeDarkColor}
               color={primaryColor}
               style={{
                 position: "absolute",
@@ -112,9 +111,9 @@ const EscortBarMinusWidth = ({
               }}
             />
             <Text
-              style={[ 
-                specialTextStyle,
-                {color: primaryColor, fontSize: 13 },
+              style={[
+                appFontStyles.subWelcomeText,
+                { color: primaryColor, fontSize: 13 },
               ]}
             >
               {label}

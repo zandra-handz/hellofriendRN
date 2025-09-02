@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React, { useState,   useEffect } from "react";
+import { View,  ScrollView, StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
  
@@ -21,9 +21,8 @@ const HelloNotesModal: React.FC<Props> = ({
   onEnter,
   onTextChange,
   textRef,
-  mountingText,
-}) => {
- 
+  mountingText, 
+}) => { 
  
   const [triggerAutoFocus, setTriggerAutoFocus ] = useState();
 useEffect(() => {
@@ -32,36 +31,37 @@ useEffect(() => {
   return () => {
     setTriggerAutoFocus(false); // cleanup runs before next effect or on unmount
   };
-}, [mountingText]);
+}, [mountingText ]);
 
 
 
-  const headerIconSize = 26;
-  const searchInputIconSize = 14;
-  const autoFocus = true;
+ 
+useEffect(() => {
+  if (isVisible) {
 
-  const handleSearchPress = (moment) => {
-    onEnter(moment);
-    closeModal();
-  };
+      setTriggerAutoFocus(false);
+        setTriggerAutoFocus(true);
+  
+  
 
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+  }
+
+}, [isVisible ]);
+
+ 
 
   return (
     <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
-          name={"comment-search-outline"}
+          name={"pencil"}
           size={30}
           color={primaryColor}
         />
       }
-      questionText="Search talking points"
+      useModalBar={true}
+      questionText="Add notes"
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
@@ -70,8 +70,8 @@ useEffect(() => {
               height={'100%'}
               ref={textRef}
               autoFocus={triggerAutoFocus}
-              title={""}
-              helperText={"add additional notes here"}
+              primaryColor={primaryColor}
+              title={""} 
               iconColor={ primaryColor}
               mountingText={mountingText}
               onTextChange={onTextChange}

@@ -14,13 +14,14 @@ import Animated, {
   FadeOut,
   SlideOutRight,
 } from "react-native-reanimated";
+import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import { useFriendList } from "@/src/context/FriendListContext";
 
 // Press function is internal
 const HomeButtonUpNext = ({
-  upcomingHelloes,
+ 
   isLoading,
   getThemeAheadOfLoading,
-  friendList,
   header = "Up next",
   height = "100%",
   borderRadius = 20,
@@ -33,13 +34,14 @@ const HomeButtonUpNext = ({
   subWelcomeTextStyle,
 }) => {
   // const { getThemeAheadOfLoading } = useFriendStyle();
-
-  const { setFriend, selectFriend } = useSelectedFriend();
+const { friendList } = useFriendList();
+const { upcomingHelloes} = useUpcomingHelloes();
+  const {   selectFriend } = useSelectedFriend();
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;
     const selectedFriend = id === null ? null : { id: id, name: name };
-    setFriend(selectedFriend);
+    selectFriend(selectedFriend);
     const friend = friendList.find((friend) => friend.id === id);
     getThemeAheadOfLoading(friend);
   };
@@ -133,7 +135,7 @@ const HomeButtonUpNext = ({
               upcomingHelloes={upcomingHelloes}
               isLoading={isLoading}
               getThemeAheadOfLoading={getThemeAheadOfLoading}
-              setFriend={setFriend}
+            
               selectFriend={selectFriend}
               friendList={friendList}
               primaryColor={primaryColor}

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useUserStats } from "@/src/context/UserStatsContext";
 import UserHistoryModal from "../headers/UserHistoryModal";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
-
+ 
 import UserHistoryMiniPie from "./UserHistoryMiniPie";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const UserHistoryPieDataWrap = ({
-  friendList,
+ 
   friendStyle,
   chartRadius = 90,
   chartBorder = 6,
@@ -31,6 +31,7 @@ const UserHistoryPieDataWrap = ({
   subWelcomeTextStyle,
 }: Props) => {
   const { stats } = useUserStats();
+ 
   const [largeUserChartVisible, setLargeUserChartVisible] = useState(false);
 
   const [userHistorySortedList, setUserHistorySortedList] = useState([]);
@@ -134,7 +135,7 @@ const UserHistoryPieDataWrap = ({
       {largeUserChartVisible && (
         <View>
           <UserHistoryModal
-          friendList={friendList}
+      
             seriesData={seriesData}
             isVisible={largeUserChartVisible}
             closeModal={handleCloseLargeUserChart}

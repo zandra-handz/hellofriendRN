@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import { useUser } from "@/src/context/UserContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -31,8 +31,7 @@ const ScreenAuth = () => {
   const createNewAccount = route.params?.createNewAccount ?? false;
 
   const { showSigninErrorMessage } = useMessageCentralizer();
-  const { lightDarkTheme } = useLDTheme();
-  const {  manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");

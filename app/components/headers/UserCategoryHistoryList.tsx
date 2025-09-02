@@ -2,7 +2,7 @@ import { FlatList, StyleSheet } from "react-native";
 import React, { useCallback, useMemo } from "react";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-
+import { useFriendList } from "@/src/context/FriendListContext";
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const UserCategoryHistoryList = ({
-  friendList,
+ 
   categoryId,
   primaryColor = "orange",
 }: Props) => {
@@ -24,6 +24,7 @@ const UserCategoryHistoryList = ({
     hasNextPage,
   } = useCategoryHistoryLookup({ categoryId: categoryId });  
 
+  const { friendList } = useFriendList();
   const formatCapsuleCreationDate = (createdOn) => {
     if (!createdOn) return "";
 

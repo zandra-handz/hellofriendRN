@@ -5,9 +5,9 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
-import HelloViewPage from "@/app/components/helloes/HelloViewPage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import HelloViewPage from "@/app/components/helloes/HelloViewPage"; 
+import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenHelloView = () => {
   const route = useRoute();
@@ -15,8 +15,7 @@ const ScreenHelloView = () => {
   const inPersonFilter = route.params?.inPersonFilter ?? false;
   const { selectedFriend } = useSelectedFriend();
   const { helloesList } = useHelloes();
-  const { lightDarkTheme } = useLDTheme();
-  const { appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
 
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -61,9 +60,7 @@ const ScreenHelloView = () => {
   }, [inPersonFilter, helloesDataFiltered, helloesList]);
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -94,8 +91,7 @@ const ScreenHelloView = () => {
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={lightDarkTheme.welcomeText}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading} 
       />
     </SafeViewAndGradientBackground>
   );

@@ -2,16 +2,15 @@ import { View, Text } from "react-native";
 import React from "react";
 import Demo from "@/app/components/headers/SkiaDemo";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 type Props = {};
 
 const ScreenFidget = (props: Props) => {
   const { themeAheadOfLoading } = useFriendStyle();
-  const { lightDarkTheme} = useLDTheme();
-  const { manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
   return (
     <SafeViewAndGradientBackground

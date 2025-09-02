@@ -5,15 +5,14 @@ import useCreateLocation from "@/src/hooks/LocationCalls/useCreateLocation";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import ContentAddLocation from "@/app/components/locations/ContentAddLocation";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenLocationCreate = () => {
   const route = useRoute();
   const location = route.params?.location ?? null;
   const { user } = useUser();
-  const { lightDarkTheme } = useLDTheme();
-  const { manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -28,9 +27,7 @@ const ScreenLocationCreate = () => {
   }, [createLocationMutation]);
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewAndGradientBackground 
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
