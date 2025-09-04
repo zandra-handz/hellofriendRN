@@ -8,22 +8,12 @@ type Props = {
 };
 
 const useFriendLocations = ({
-  helloesList,
+ 
   inPersonHelloes,
   locationList,
   friendFaveIds,
 }: Props) => {
-
-
-//   const inPersonHelloes = useCallback(() => {
-//     if (helloesList) {
-//       return helloesList?.filter((hello) => hello.type === "in person");
-//     }
-
-//     return [];
-//   }, [helloesList]);
-
-
+ 
 
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
@@ -51,7 +41,7 @@ const useFriendLocations = ({
 
 
     const [faveLocations, nonFaveLocations] = useMemo(() => {
-      if (locationList && inPersonHelloes) {
+      if (locationList && inPersonHelloes && locationList) {
         return makeSplitLists(
           locationList,
           friendFaveIds?.length
@@ -71,32 +61,12 @@ const useFriendLocations = ({
     }, [locationList, friendFaveIds, inPersonHelloes]);
 
 
-
-    //   const pastHelloLocations = useMemo(() => {
-    //     if (locationList && inPersonHelloes && faveLocations && nonFaveLocations) {
-    //       return createLocationListWithHelloes(inPersonHelloes, [
-    //         ...faveLocations,
-    //         ...nonFaveLocations,
-    //       ]);
-    //     }
-    //     console.log(
-    //       "something missing, cannnot get past helloes",
-    //       locationList?.length,
-    //       inPersonHelloes?.length,
-    //       faveLocations?.length,
-    //       nonFaveLocations?.length
-    //     );
-    //     return [];
-    //   }, [locationList, inPersonHelloes, faveLocations]);
-    
-
-
+ 
 
 
   return {
     faveLocations,
-    nonFaveLocations,
-    // pastHelloLocations,
+    nonFaveLocations, 
   };
 };
 

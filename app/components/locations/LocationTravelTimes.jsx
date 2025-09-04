@@ -18,6 +18,8 @@ import useTravelTimes from "@/src/hooks/useTravelTimes";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
 const LocationTravelTimes = ({
+  userId,
+  friendId,
   location,
   userAddress,
   friendAddress, 
@@ -25,8 +27,8 @@ const LocationTravelTimes = ({
   themeAheadOfLoading,
   primaryColor = 'orange',
 }) => {   
-  const { defaultUserAddress } = useStartingUserAddresses();
-  const { defaultAddress } = useStartingFriendAddresses();
+  const { defaultUserAddress } = useStartingUserAddresses({userId: userId});
+  const { defaultAddress } = useStartingFriendAddresses({userId: userId, friendId: friendId});
 
   const {
     travelTimeResults,

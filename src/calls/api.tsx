@@ -487,6 +487,7 @@ export const fetchFriendList = async () => {
 
 export const fetchFriendAddresses = async (friendId: number) => {
   try {
+    console.log('fetching friend addresses');
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/addresses/all/`
     );
@@ -534,7 +535,7 @@ export const updateFriendAddress = async (
   }
 };
 
-export const deleteFriendAddress = async (
+export const removeFriendAddress = async (
   friendId: number,
   addressId: number
 ) => {
@@ -563,6 +564,7 @@ export const deleteFriendAddress = async (
 
 export const fetchUserAddresses = async () => {
   try {
+    console.log('fetching user addresses');
     const response = await helloFriendApiClient.get(`/users/addresses/all/`);
     return response.data;
   } catch (e: unknown) {
@@ -601,7 +603,7 @@ export const updateUserAddress = async (
   }
 };
 
-export const deleteUserAddress = async (addressId: number) => {
+export const removeUserAddress = async (addressId: number) => {
   try {
     const response = await helloFriendApiClient.delete(
       `/users/address/${addressId}/`

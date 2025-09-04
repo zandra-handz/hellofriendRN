@@ -42,6 +42,7 @@ const LocationsMapView = ({
   welcomeTextStyle,
   subWelcomeTextStyle,
   manualGradientColors,
+ 
 }) => {
   const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
   console.log(`past helloes`, pastHelloLocations);

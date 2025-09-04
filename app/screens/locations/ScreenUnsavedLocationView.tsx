@@ -6,8 +6,8 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import CarouselSlider from "@/app/components/appwide/CarouselSlider"; 
+import { appFontStyles } from "@/src/hooks/StaticFonts"; 
+import LocationCarouselSlider from "@/app/components/appwide/LocationCarouselSlider";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
@@ -55,7 +55,9 @@ const { user } = useUser();
       friendId={selectedFriend?.id} 
       style={{ flex: 1 }}
     >
-      <CarouselSlider 
+      <LocationCarouselSlider 
+      userId={user?.id}
+      friendId={selectedFriend?.id}
         initialIndex={0}
         data={[unsavedLocation]}
         children={(props) => (

@@ -6,6 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 // endpoint data: additionalDetails.data.open_now
 
 const useLocationDetailFunctions = () => {
+
+  console.log('location details');
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const checkIfOpen = (data) => {

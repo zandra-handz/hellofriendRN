@@ -1,6 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useMemo } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useMemo } from "react"; 
 import useLocationHelloFunctions from "../useLocationHelloFunctions";
 type Props = {
   friendId: number;

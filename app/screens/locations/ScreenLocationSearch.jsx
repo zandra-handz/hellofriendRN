@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-
+import { useUser } from "@/src/context/UserContext";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
 import MapScreenFooter from "@/app/components/headers/MapScreenFooter";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
@@ -11,34 +11,86 @@ import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocatio
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
- 
+import AddressesModal from "@/app/components/headers/AddressesModal";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-import useMenues from "@/src/hooks/useMenues";
+ 
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
-
+import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
 const ScreenLocationSearch = () => {
+  const { currentLocationDetails, currentRegion } = useCurrentLocation();
+  const { user } = useUser();
   const { themeAheadOfLoading } = useFriendStyle();
   const { lightDarkTheme } = useLDTheme(); 
-  const { getDefaultAddress, getDefaultUserAddress } = useMenues();
 
   const { friendDash } = useFriendDash();
-  const friendFaveIds = friendDash?.friend_faves?.locations;
+  // const friendFaveIds = friendDash?.friend_faves?.locations;
+
+
+  const friendFaveIds = useMemo(
+  () => friendDash?.friend_faves?.locations,
+  [friendDash]
+);
+ 
   const { locationList } = useLocations();
 
   const { helloesList } = useHelloes();
-  const inPersonHelloes = helloesList?.filter(
-    (hello) => hello.type === "in person"
-  );
 
-  // console.log(`inhperson helloes`, inPersonHelloes);
+  
+  const inPersonHelloes = useMemo(() => {
+  return helloesList?.filter((hello) => hello.type === "in person") || [];
+}, [helloesList]);
 
-  // console.log(`fave data`, friendFaveIds);
+    const { selectedFriend } = useSelectedFriend();
+
+  // console.log(`inhperson helloes`, inPersonHelloes); 
+
+  const [selectCurrentLocation, setSelectCurrentLocation] = useState(true);
+
+
+    const { userAddresses } = useStartingUserAddresses({ userId: user?.id });
+  const { friendAddresses } = useStartingFriendAddresses({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
+ 
+const userDefault = useMemo(
+  () => findDefaultAddress(userAddresses),
+  [userAddresses]
+);
+
+const friendDefault = useMemo(
+  () => findDefaultAddress(friendAddresses),
+  [friendAddresses]
+);
+
+
+
+  //   const [userAddress, setUserAddress] = useState({
+  //   address: 'loading',
+  //   id:  "",
+  // });
+
+  const [friendAddress, setFriendAddress] = useState({
+    address: "Loading",
+    id: "",
+  });
+
+
+  const handleDeselectCurrent = () => {
+    setSelectCurrentLocation(false);
+
+  };
+
+    const handleselectCurrent = () => {
+    setSelectCurrentLocation(true);
+
+  };
 
   const { faveLocations, nonFaveLocations } = useFriendLocations({
     inPersonHelloes: inPersonHelloes,
@@ -55,79 +107,103 @@ const ScreenLocationSearch = () => {
   });
 
   const { bermudaCoords } = useLocationHelloFunctions();
-  const { selectedFriend } = useSelectedFriend();
-  const { userAddresses } = useStartingUserAddresses();
-  const { friendAddresses } = useStartingFriendAddresses();
 
-  const [userAddress, setUserAddress] = useState({
-    address: "Loading",
-    id: "",
-  });
 
-  const [friendAddress, setFriendAddress] = useState({
-    address: "Loading",
-    id: "",
-  });
-  useEffect(() => {
-    if (userAddresses && userAddresses.length > 0) {
-      const defaultUserAddress = getDefaultUserAddress(userAddresses);
-      setUserAddress({
-        address: defaultUserAddress?.address ?? "No address selected",
-        id: defaultUserAddress?.id ?? "",
-      });
-    } else {
-      setUserAddress({
-        address: "No address selected",
-        id: "",
-      });
-    }
-  }, [userAddresses]);
+  const [addressesModalVisible, setAddressesModalVisible] = useState(false);
+
+  const openModal = () => {
+    setAddressesModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setAddressesModalVisible(false);
+  };
+
+
+  const [userAddress, setUserAddress] = useState(() =>
+  findDefaultAddress(userAddresses) || { address: "No address selected", id: "" }
+);
+
+ 
+
+useEffect(() => {
+  console.log('rerendered address', userAddress)
+
+}, [userAddress]);
+
+  // useEffect(() => {
+  //   if (userAddresses && userAddresses.length > 0) {
+  //     const defaultUserAddress = findDefaultAddress(userAddresses);
+  //     setUserAddress({
+  //       address: defaultUserAddress?.address ?? "No address selected",
+  //       id: defaultUserAddress?.id ?? "",
+  //     });
+  //   }
+  //    else {
+  //     setUserAddress({
+  //       address: "No address selected",
+  //       id: "",
+  //     });
+  //   }
+  // }, [userAddresses]);
 
   // Update when defaultAddress becomes available
-  useEffect(() => {
-    if (friendAddresses && friendAddresses.length > 0) {
-      const defaultFriendAddress = getDefaultAddress(friendAddresses);
-      // console.log(`default friend`, defaultFriendAddress);
-      setFriendAddress({
-        address: defaultFriendAddress?.address ?? "No address selected",
-        id: defaultFriendAddress?.id ?? "",
-      });
-    } else {
-      setFriendAddress({
-        address: "No address selected",
-        id: "",
-      });
-    }
-  }, [friendAddresses]);
+useEffect(() => {
+  let nextFriendAddress;
+
+  if (friendAddresses && friendAddresses.length > 0) {
+    const defaultFriendAddress = findDefaultAddress(friendAddresses);
+    nextFriendAddress = {
+      address: defaultFriendAddress?.address ?? "No address selected",
+      id: defaultFriendAddress?.id ?? "",
+    };
+  } else {
+    nextFriendAddress = {
+      address: "No address selected",
+      id: "",
+    };
+  }
+
+  // Only update state if something actually changed
+  if (
+    nextFriendAddress.address !== friendAddress.address ||
+    nextFriendAddress.id !== friendAddress.id
+  ) {
+    setFriendAddress(nextFriendAddress);
+  }
+}, [friendAddresses, friendAddress]);
+
 
   const renderMapScreenFooter = useCallback(() => {
     return (
       <MapScreenFooter
+        userId={user?.id}
         friendId={selectedFriend?.id}
+        friendName={selectedFriend?.name}
         userAddress={userAddress}
         setUserAddress={setUserAddress}
         friendAddress={friendAddress}
         setFriendAddress={setFriendAddress}
         themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
         overlayColor={lightDarkTheme.overlayBackground}
         primaryBackground={lightDarkTheme.primaryBackground}
         primaryColor={lightDarkTheme.primaryText}
         welcomeTextStyle={appFontStyles.welcomeText}
         dividerStyle={lightDarkTheme.divider}
+        openAddresses={openModal}
+        closeAddresses={closeModal}
       />
     );
   }, [
     selectedFriend,
-    userAddress,
-    setUserAddress,
+    userAddress, 
     friendAddress,
-    setFriendAddress,
+  
   ]);
 
   return (
     // <GestureHandlerRootView style={{flex: 1}}>
-    <SafeViewAndGradientBackground 
+    <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -140,6 +216,9 @@ const ScreenLocationSearch = () => {
         <>
           <View style={styles.mapContainer}>
             <LocationsMapView
+            currentLocationDetails={currentLocationDetails}
+            currentRegion={currentRegion}
+            useCurrentLocation={selectCurrentLocation}
               userAddress={userAddress}
               friendAddress={friendAddress}
               pastHelloLocations={pastHelloLocations}
@@ -156,6 +235,30 @@ const ScreenLocationSearch = () => {
               manualGradientColors={manualGradientColors}
             />
           </View>
+
+          {addressesModalVisible && (
+            <View>
+              <AddressesModal
+                currentLocationSelected={selectCurrentLocation}
+                handleDeselectCurrent={handleDeselectCurrent}
+                handleselectCurrent={handleDeselectCurrent}
+                // handleSelectUserAddress={}
+                // handleSelectFriendAddress={}
+                userId={user?.id}
+                friendId={selectedFriend?.id}
+                friendName={selectedFriend?.name}
+                primaryColor={lightDarkTheme.primaryText}
+                primaryBackground={lightDarkTheme.primaryBackground}
+                overlayColor={lightDarkTheme.overlayBackground}
+                userAddress={userAddress}
+                setUserAddress={setUserAddress}
+                friendAddress={friendAddress}
+                setFriendAddress={setFriendAddress}
+                isVisible={addressesModalVisible}
+                closeModal={closeModal}
+              />
+            </View>
+          )}
         </>
       )}
       {renderMapScreenFooter()}

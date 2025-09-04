@@ -2,16 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useRoute } from "@react-navigation/native";
 
-import { useNavigation } from "@react-navigation/native";
-import CarouselSlider from "@/app/components/appwide/CarouselSlider";
+import { useNavigation } from "@react-navigation/native"; 
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
-import { useUser } from "@/src/context/UserContext"; 
+import { useUser } from "@/src/context/UserContext";
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import LocationCarouselSlider from "@/app/components/appwide/LocationCarouselSlider";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { useLocations } from "@/src/context/LocationsContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -28,7 +27,7 @@ const ScreenLocationView = () => {
   const currentIndex = route.params?.index ?? null;
   const userAddress = route?.params?.userAddress ?? null;
   const friendAddress = route?.params?.friendAddress ?? null;
-  const { lightDarkTheme } = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
@@ -139,14 +138,16 @@ const ScreenLocationView = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
     >
-      <CarouselSlider
+      <LocationCarouselSlider
+        userId={user?.id}
+        friendId={selectedFriend?.id}
         stickToLocation={stickToLocation}
         setStickToLocation={setStickToLocation}
         initialIndex={currentIndex}

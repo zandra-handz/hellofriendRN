@@ -6,17 +6,19 @@ import { useFocusEffect } from "@react-navigation/native";
  
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import SetAddressesModal from "./SetAddressesModal";
+import AddressesModal from "./AddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 
-const MapScreenFooter = ({
+const 
+MapScreenFooter = ({
+  userId,
   userAddress,
   setUserAddress,
   friendAddress,
   setFriendAddress,
-  themeAheadOfLoading,
-  manualGradientColors,
+  themeAheadOfLoading, 
     overlayColor,
     primaryColor,
     primaryBackground,
@@ -24,10 +26,12 @@ const MapScreenFooter = ({
   dividerStyle,
  
   friendId,
-  welcomeTextStyle,
+  friendName, 
+  openAddresses,
+  closeAddresses,
+  
 }) => {  
- 
-  const [addressesModalVisible, setAddressesModalVisible] = useState(false);
+  
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -36,8 +40,8 @@ const MapScreenFooter = ({
 
   useFocusEffect(
     useCallback(() => {
-      console.log(userAddress?.address);
-      console.log(friendAddress?.address);
+      // console.log(userAddress?.address);
+      // console.log(friendAddress?.address);
       if (
         userAddress?.address === "No address selected" ||
         friendAddress?.address === "No address selected"
@@ -53,12 +57,12 @@ const MapScreenFooter = ({
             },
             {
               text: "Open address settings",
-              onPress: () => setAddressesModalVisible(true),
+              onPress: () => openAddresses(),
             },
           ]
         );
       }
-    }, [userAddress.address, friendAddress.address])
+    }, [userAddress?.address, friendAddress?.address])
   );
 
   const handleTestAlert = () => {
@@ -79,7 +83,7 @@ const MapScreenFooter = ({
             color={primaryColor}
           />
         }
-        onPress={() => setAddressesModalVisible(true)}
+        onPress={() => openAddresses()}
       />
     ),
     [primaryColor]
@@ -147,13 +151,15 @@ const MapScreenFooter = ({
       </View>
  
 
-      {addressesModalVisible && (
+      {/* {addressesModalVisible && (
         <View>
           <SetAddressesModal
+          userId={userId}
+          friendId={friendId}
+          friendName={friendName}
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
-          overlayColor={overlayColor}
-          manualGradientColors={manualGradientColors}
+          overlayColor={overlayColor} 
           welcomeTextStyle={welcomeTextStyle}
             userAddress={userAddress}
             setUserAddress={setUserAddress}
@@ -163,7 +169,7 @@ const MapScreenFooter = ({
             closeModal={() => setAddressesModalVisible(false)}
           />
         </View>
-      )}
+      )} */}
 
  
     </GradientBackground>

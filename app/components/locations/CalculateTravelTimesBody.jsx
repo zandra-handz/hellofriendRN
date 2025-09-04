@@ -1,8 +1,7 @@
 //change height percentage of container inside the main container to adjust screen
 
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native"; 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import React, { useState  } from "react";
+import { View, Text, StyleSheet } from "react-native";  
 
 //DELETED. use the new components or just the default settings from the address hooks
 // import AddressSelectorFriend from '../selectors/AddressSelectorFriend';
@@ -15,11 +14,10 @@ import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 
 // THREW IN DEFAULTS JUST TO REMOVE OTHER STUFF, THIS COMPONENT MIGHT NOT WORK IN CURRENT FORM
-const CalculateTravelTimesBody = ({ lightDarkTheme, location }) => {
+const CalculateTravelTimesBody = ({ userId, friendId, friendName, lightDarkTheme, location }) => {
   const { defaultUserAddress } = useStartingUserAddresses();
-  const { defaultAddress } = useStartingFriendAddresses();
- 
-  const { selectedFriend } = useSelectedFriend();
+  const { defaultAddress } = useStartingFriendAddresses({userId: userId, friendId: friendId});
+  
   const [triggerFetch, setTriggerFetch] = useState(false); 
 
   const handleCalculate = () => {
@@ -104,7 +102,7 @@ const CalculateTravelTimesBody = ({ lightDarkTheme, location }) => {
           friendAddress={
             defaultAddress || { address: "Friend Address", lat: "0", lng: "0" }
           }
-          friendName={selectedFriend?.name || null}
+          friendName={friendName || null}
           destinationLocation={location}
           triggerFetch={triggerFetch}
         />

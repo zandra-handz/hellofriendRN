@@ -14,6 +14,7 @@ interface SelectAddressModalProps {
 }
 
 const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
+  userId,
   isVisible,
   closeModal,
   addressSetter,
@@ -23,15 +24,11 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
   manualGradientColors,
 }) => {
   const {
-    usingCurrent,
-    userAddresses,
-    defaultUserAddress,
-    updateUserDefaultAddress,
-    createUserAddress,
-    removeUserAddress,
-  } = useStartingUserAddresses();
+  
+    userAddresses, 
+  } = useStartingUserAddresses({userId: userId});
 
-  const [selectedAddress, setSelectedAddress] = useState(defaultUserAddress);
+ 
   const [isExistingAddress, setIsExistingAddress] = useState(false);
 
   const handleCheckIfExistingAndSelect = (address) => {

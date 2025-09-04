@@ -1,6 +1,7 @@
 import { View } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -8,39 +9,32 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import ItemFooter from "../headers/ItemFooter";
+
 import CarouselItemModal from "./carouselItemModal";
 
 type Props = {
   initialIndex: number;
   data: object[];
-  useButtons: boolean;
-  isFetchingNextPage: boolean;
-  isFiltered: boolean;
-  applyInPersonFilter: boolean;
-  fetchNextPage: () => void;
-  totalItemCount: number;
+  // useButtons: boolean;
 };
 
-const CarouselSliderInfinite = ({ 
+const ImageCarouselSlider = ({
+ 
   initialIndex,
   data,
-  useButtons = true,
+  // useButtons = true,
   children: Children,
   onRightPress,
   onRightPressSecondAction,
-  isFetchingNextPage,
-  isFiltered,
-  fetchNextPage,
-  totalItemCount,
-  hasNextPage,
+  stickToLocation,
+  setStickToLocation,
 
-  footerData,
+  // footerData,
   primaryColor,
   overlayColor,
   dividerStyle,
   welcomeTextStyle,
   themeAheadOfLoading,
-  manualGradientColors,
 }: Props) => {
   const { height, width } = useWindowDimensions();
 
@@ -68,16 +62,30 @@ const CarouselSliderInfinite = ({
     };
   };
 
-  // const scrollToStart = () => {
-  //   flatListRef.current?.scrollToIndex({
-  //     index: 0,
-  //     animated: true,
-  //   });
-  // };
+  useEffect(() => {
+    if (stickToLocation) {
+      console.log("scrolling to index for location id", stickToLocation);
 
-  // const scrollToEnd = () => {
-  //   flatListRef.current?.scrollToEnd({ animated: true });
-  // };
+      const newIndex = data.findIndex((item) => item.id === stickToLocation);
+      console.log("scrolling to index", newIndex);
+
+      if (newIndex >= 0 && newIndex < data.length) {
+        scrollToIndexAfterEdit(newIndex);
+      }
+      //scrollToEditCompleted();
+    }
+  }, [stickToLocation]);
+
+  const scrollToIndexAfterEdit = (index) => {
+    if (!setStickToLocation) {
+      return;
+    }
+    flatListRef.current?.scrollToIndex({
+      index: index,
+      animated: false,
+    });
+    setStickToLocation(null);
+  };
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 
@@ -86,21 +94,6 @@ const CarouselSliderInfinite = ({
     setItemModalVisible(true);
   };
 
-  // const handleScroll = useCallback(
-  //   (event) => {
-  //     const offsetX = event.nativeEvent.contentOffset.x;
-  //     const currentIndex = Math.round(offsetX / COMBINED);
-  //     onIndexChange?.(currentIndex);
-  //     setCurrentIndex(currentIndex + 1);
-  //     setCurrentCategory(
-  //       data[currentIndex]?.typedCategory ||
-  //         data[currentIndex]?.category ||
-  //         data[currentIndex]?.date
-  //     );
-  //   },
-  //   [COMBINED, onIndexChange]
-  // );
-
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       const y = event.contentOffset.y;
@@ -108,7 +101,6 @@ const CarouselSliderInfinite = ({
 
       scrollY.value = y;
       scrollX.value = x;
-
       currentIndex.value = Math.round(x / COMBINED);
     },
 
@@ -165,12 +157,6 @@ const CarouselSliderInfinite = ({
           //  onScroll={handleScroll}
           keyExtractor={extractItemKey}
           getItemLayout={getItemLayout}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
-            }
-          }}
-          onEndReachedThreshold={0.5}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
           windowSize={5}
@@ -184,15 +170,12 @@ const CarouselSliderInfinite = ({
         />
         {/* {type === 'location' && ( */}
 
-        <ItemFooter
-    
+        <ItemFooter 
           data={data}
-          totalItemCount={totalItemCount}
-          isPartialData={isFiltered}
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
-          extraData={footerData}
-          useButtons={useButtons}
+          // extraData={footerData}
+          // useButtons={useButtons}
           onRightPress={() => onRightPress(currentIndex.value)}
           onRightPressSecondAction={() =>
             onRightPressSecondAction(data[currentIndex.value])
@@ -200,8 +183,7 @@ const CarouselSliderInfinite = ({
           primaryColor={primaryColor}
           overlayColor={overlayColor}
           dividerStyle={dividerStyle}
-          welcomeTextStyle={welcomeTextStyle}
-          themeAheadOfLoading={themeAheadOfLoading}
+          welcomeTextStyle={welcomeTextStyle} 
         />
 
         {/* )} */}
@@ -225,4 +207,4 @@ const CarouselSliderInfinite = ({
   );
 };
 
-export default CarouselSliderInfinite;
+export default ImageCarouselSlider;

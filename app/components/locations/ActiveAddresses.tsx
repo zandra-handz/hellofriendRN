@@ -1,9 +1,8 @@
 import { View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import OverlayLargeButton from "../appwide/button/OverlayLargeButton";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import IsCurrentLocation from "./IsCurrentLocation";
@@ -13,7 +12,16 @@ import SelectAddressModal from "./SelectAddressModal";
 import SelectFriendAddressModal from "./SelectFriendAddressModal";
 
 import MakeAddressDefault from "./MakeAddressDefault";
+import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
+import useCreateFriendAddress from "@/src/hooks/useCreateFriendAddress";
+import useDeleteFriendAddress from "@/src/hooks/useDeleteFriendAddress";
+import useUpdateFriendDefaultAddress from "@/src/hooks/useUpdateFriendDefaultAddress";
 
+import useCreateUserAddress from "@/src/hooks/useCreateUserAddress";
+import useDeleteUserAddress from "@/src/hooks/useDeleteUserAddress";
+import useUpdateUserDefaultAddress from "@/src/hooks/useUpdatreUserAddress";
+
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 interface ActiveAddressesProps {
   userAddress: object;
   friendAddress: object;
@@ -22,6 +30,10 @@ interface ActiveAddressesProps {
 }
 
 const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
+  currentLocationSelected,
+  userId,
+  friendId,
+  friendName,
   userAddress,
   setUserAddress,
   friendAddress,
@@ -29,28 +41,46 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   primaryColor,
   overlayColor,
   primaryBackground,
-  welcomeTextStyle,
-  manualGradientColors,
 }) => {
-  const { selectedFriend } = useSelectedFriend();
-
+  const welcomeTextStyle = appFontStyles.welcomeText;
   const [isUserAddressCurrent, setIsUserAddressCurrent] = useState(false);
 
-  const {
-    defaultUserAddress,
+  const { 
+    userAddresses, 
+  } = useStartingUserAddresses({ userId: userId });
 
-    userAddresses,
-    updateUserDefaultAddress,
-    createUserAddress,
-    removeUserAddress,
-  } = useStartingUserAddresses();
-  const { currentLocationDetails } = useCurrentLocation();
-  const {
-    defaultAddress,
-    updateFriendDefaultAddress,
-    createFriendAddress,
-    removeFriendAddress,
-  } = useStartingFriendAddresses();
+  const { createFriendAddress } = useCreateFriendAddress({
+    userId: userId,
+    friendId: friendId,
+  });
+
+  const { deleteFriendAddress } = useDeleteFriendAddress({
+    userId: userId,
+    friendId: friendId,
+  });
+
+  const { updateFriendDefaultAddress } = useUpdateFriendDefaultAddress({
+    userId: userId,
+    friendId: friendId,
+  });
+
+  const { createUserAddress } = useCreateUserAddress({ userId: userId });
+  const { deleteUserAddress } = useDeleteUserAddress({ userId: userId });
+  const { updateUserDefaultAddress } = useUpdateUserDefaultAddress({
+    userId: userId,
+  });
+
+  // const { currentLocationDetails } = useCurrentLocation();
+  const { friendAddresses } = useStartingFriendAddresses({userId: userId, friendId: friendId});
+
+  const defaultAddress = useCallback(() => {
+    return findDefaultAddress(friendAddresses);
+  }, [friendAddresses ]);
+
+
+    const defaultUserAddress = useCallback(() => {
+    return findDefaultAddress(userAddresses);
+  }, [userAddresses ]);
 
   const handleFriendAddressDefault = () => {
     if (!friendAddress.is_default) {
@@ -67,7 +97,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
     if (friendAddress?.id?.slice?.(0, 4) === "temp") {
       createFriendAddress(friendAddress.title, friendAddress.address);
     } else {
-      removeFriendAddress(friendAddress.id);
+      deleteFriendAddress(friendAddress.id);
     }
   };
 
@@ -79,7 +109,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
       createUserAddress(userAddress.title, userAddress.address);
     } else {
       if (existingAddress) {
-        removeUserAddress(existingAddress.id);
+        deleteUserAddress(existingAddress.id);
       }
     }
   };
@@ -100,19 +130,21 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   const [friendAddressModalVisible, setFriendAddressModalVisible] =
     useState(false);
 
-  useEffect(() => {
-    if (userAddress && currentLocationDetails) {
-      setIsUserAddressCurrent(
-        currentLocationDetails?.address === userAddress.address
-      );
-    }
-  }, [userAddress, currentLocationDetails]);
+ const handleUserAddressPress = useCallback(
+  () => handleUserAddressDefault(userAddress.id),
+  [userAddress.id, handleUserAddressDefault]
+);
 
-  // const closeModal = () => {};
+const handleBookmarkPress = useCallback(
+  () => handleBookmarkUserAddress(userAddress),
+  [userAddress, handleBookmarkUserAddress]
+);
+
 
   return (
     <>
-      {userAddress && friendAddress && (
+      {userAddress && (
+        //friendAddress &&
         <View>
           <OverlayLargeButton
             primaryColor={primaryColor}
@@ -125,7 +157,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
               <>
                 {isUserAddressCurrent && (
                   <IsCurrentLocation
-                  primaryColor={primaryColor}
+                    primaryColor={primaryColor}
                     onPress={() => console.log("hiiii")}
                     isCurrent={true}
                   />
@@ -137,13 +169,16 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
               <>
                 {userAddress?.id?.slice?.(0, 4) !== "temp" && (
                   <MakeAddressDefault
-                    onPress={() => handleUserAddressDefault(userAddress.id)}
+                    onPress={handleUserAddressPress} 
+                    // onPress={() => handleUserAddressDefault(userAddress.id)}
                     isDefault={userAddress?.is_default}
                     primaryColor={primaryColor}
                   />
                 )}
                 <BookmarkAddress
-                  onPress={() => handleBookmarkUserAddress(userAddress)}
+
+                 onPress={handleBookmarkPress}
+                  // onPress={() => handleBookmarkUserAddress(userAddress)}
                   isSaved={userAddresses.find(
                     (address) => address.address === userAddress.address
                   )}
@@ -151,12 +186,12 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
               </>
             }
           />
-          {selectedFriend && (
+          {friendId && friendName && (
             <OverlayLargeButton
               primaryColor={primaryColor}
               overlayColor={overlayColor}
               welcomeTextStyle={welcomeTextStyle}
-              label={`${selectedFriend.name}'s Address: ${friendAddress && friendAddress.address}`}
+              label={`${friendName}'s Address: ${friendAddress && friendAddress.address}`}
               onPress={() => setFriendAddressModalVisible(true)}
               buttonOnBottom={true}
               customButton={
@@ -175,8 +210,8 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
                   <BookmarkAddress
                     onPress={() => handleBookmarkFriendAddress(friendAddress)}
                     isSaved={friendAddress?.id?.slice?.(0, 4) !== "temp"}
-                 primaryColor={primaryColor}
-                 />
+                    primaryColor={primaryColor}
+                  />
                 </View>
               }
             />
@@ -187,6 +222,8 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
       {userAddressModalVisible && (
         <View>
           <SelectAddressModal
+            userId={userId}
+            friendId={friendId}
             isVisible={userAddressModalVisible}
             closeModal={() => setUserAddressModalVisible(false)}
             addressSetter={setUserAddress}
@@ -201,6 +238,8 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
       {friendAddressModalVisible && (
         <View>
           <SelectFriendAddressModal
+          userId={userId}
+          friendId={friendId}
             isVisible={friendAddressModalVisible}
             closeModal={() => setFriendAddressModalVisible(false)}
             addressSetter={setFriendAddress}

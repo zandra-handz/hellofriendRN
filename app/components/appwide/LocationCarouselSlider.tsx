@@ -8,10 +8,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import ItemFooter from "../headers/ItemFooter";
-
+import LocationItemFooter from "../headers/LocationItemFooter";
 import CarouselItemModal from "./carouselItemModal";
-import { manualInitialDisplaySpans } from "@sentry/react-native/dist/js/tracing";
 
 type Props = {
   initialIndex: number;
@@ -19,7 +17,9 @@ type Props = {
   useButtons: boolean;
 };
 
-const CarouselSlider = ({
+const LocationCarouselSlider = ({
+  userId,
+  friendId,
   initialIndex,
   data,
   useButtons = true,
@@ -34,7 +34,7 @@ const CarouselSlider = ({
   overlayColor,
   dividerStyle,
   welcomeTextStyle,
-  themeAheadOfLoading, 
+  themeAheadOfLoading,
 }: Props) => {
   const { height, width } = useWindowDimensions();
 
@@ -87,16 +87,7 @@ const CarouselSlider = ({
     setStickToLocation(null);
   };
 
-  // const scrollToStart = () => {
-  //   flatListRef.current?.scrollToIndex({
-  //     index: 0,
-  //     animated: true,
-  //   });
-  // };
-
-  // const scrollToEnd = () => {
-  //   flatListRef.current?.scrollToEnd({ animated: true });
-  // };
+ 
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 
@@ -104,21 +95,6 @@ const CarouselSlider = ({
     setModalData(data);
     setItemModalVisible(true);
   };
-
-  // const handleScroll = useCallback(
-  //   (event) => {
-  //     const offsetX = event.nativeEvent.contentOffset.x;
-  //     const currentIndex = Math.round(offsetX / COMBINED);
-  //     onIndexChange?.(currentIndex);
-  //     setCurrentIndex(currentIndex + 1);
-  //     setCurrentCategory(
-  //       data[currentIndex]?.typedCategory ||
-  //         data[currentIndex]?.category ||
-  //         data[currentIndex]?.date
-  //     );
-  //   },
-  //   [COMBINED, onIndexChange]
-  // );
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -128,12 +104,6 @@ const CarouselSlider = ({
       scrollY.value = y;
       scrollX.value = x;
 
-      // if (y < 10) {
-      //   floaterItemsVisibility.value = withTiming(1);
-      // } else {
-      //   floaterItemsVisibility.value = withTiming(1, { duration: 1000 });
-      // }
-      //floaterItemsVisibility.value = withTiming(0, { duration: 1000 });
       // Update sharedValue for horizontal index
       currentIndex.value = Math.round(x / COMBINED);
     },
@@ -204,7 +174,9 @@ const CarouselSlider = ({
         />
         {/* {type === 'location' && ( */}
 
-        <ItemFooter
+        <LocationItemFooter
+          userId={userId}
+          friendId={friendId}
           data={data}
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
@@ -242,4 +214,4 @@ const CarouselSlider = ({
   );
 };
 
-export default CarouselSlider;
+export default LocationCarouselSlider;

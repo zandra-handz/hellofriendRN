@@ -10,47 +10,46 @@ import Animated, {
   useAnimatedStyle,
   runOnJS,
 } from "react-native-reanimated";
- 
+import LocationTravelTimes from "../locations/LocationTravelTimes";
+
 interface Props {
   data: object;
- 
+  isPartialData?: boolean;
   visibilityValue: SharedValue;
   currentIndexValue: SharedValue;
- 
+
+  extraData: object;
   totalItemCount?: number;
   useButtons: boolean;
   onRightPress: () => void;
   onRightPressSecondAction: () => void;
 }
 
-const ItemFooter: React.FC<Props> = ({
- 
-  data, 
+const LocationItemFooter: React.FC<Props> = ({
+  userId,
+  friendId,
+  data,
+  isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
   visibilityValue,
 
   totalItemCount,
-  // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
+  extraData, // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
   useButtons = true,
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
   primaryColor,
   overlayColor,
   dividerStyle,
-  welcomeTextStyle, 
+  welcomeTextStyle,
+  themeAheadOfLoading,
 }) => { 
   const [currentIndex, setCurrentIndex] = useState(false);
-  //   useEffect(() => {
-  //     if (location) {
-  //       console.log(`location in footer`, location.title);
-  //     }
-  //   }, [location]);
-
-  // these are the only dimensions I foresee potentially changing, hence why they are at top here
+ 
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
-
+console.log(`extra data`, extraData);
   const totalCount = totalItemCount
     ? totalItemCount
     : data?.length
@@ -110,8 +109,34 @@ const ItemFooter: React.FC<Props> = ({
         {/* {useButtons && 
         <View style={[styles.divider, themeStyles.divider]} />} */}
         <>
-
-     
+          {extraData && extraData?.userAddress && extraData?.friendAddress && (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={[
+                  welcomeTextStyle,
+                  { color: primaryColor, fontSize: 44 },
+                ]}
+              >
+                {currentIndex + 1}
+                <Text
+                  style={[
+                    welcomeTextStyle,
+                    { color: primaryColor, fontSize: 22 },
+                  ]}
+                >
+                  /{data.length}{" "}
+                  {/* /{totalCount}{" "}{isPartialData && "loaded"} */}
+                </Text>
+              </Text>
+            </View>
+          )}
+          {!extraData && (
             <View
               style={{
                 flex: 1,
@@ -132,11 +157,12 @@ const ItemFooter: React.FC<Props> = ({
                     { color: primaryColor, fontSize: 22 },
                   ]}
                 >
-                  {/* /{data.length}{" "} */}/{totalCount}{" "} 
+                  {/* /{data.length}{" "} */}/{totalCount}{" "}
+                  {isPartialData ? "loaded" : "total"}
                 </Text>
               </Text>
             </View>
-     
+          )}
         </>
 
         {useButtons && (
@@ -144,10 +170,20 @@ const ItemFooter: React.FC<Props> = ({
             <View style={[styles.divider, dividerStyle]} />
             <View style={{ flex: 1 }}>
               <>
-               
-                {
-              
-                useButtons && (
+                {extraData &&
+                  extraData?.userAddress &&
+                  extraData?.friendAddress && (
+                    <LocationTravelTimes
+                    userId={userId}
+                    friendId={friendId}
+                      location={item}
+                      userAddress={extraData.userAddress}
+                      friendAddress={extraData.friendAddress}
+                      themeAheadOfLoading={themeAheadOfLoading}
+                      primaryColor={primaryColor}
+                    />
+                  )}
+                {!extraData && useButtons && (
                   <Pressable
                     onPress={handleRightPress}
                     style={({ pressed }) => ({
@@ -169,7 +205,29 @@ const ItemFooter: React.FC<Props> = ({
             </View>
           </>
         )}
+        {extraData && (
+          <>
+            <View style={[styles.divider, dividerStyle]} />
+            <View style={{ flex: 1 }}>
+              <Pressable
+                onPress={onRightPressSecondAction}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? 0.6 : 1, 
+                })}
+              >
+                <MaterialCommunityIcons
+                  name="send"
+                  size={50}
+                  color={primaryColor}
+                />
  
+              </Pressable>
+            </View>
+          </>
+        )}
       </Animated.View>
     </>
   );
@@ -188,4 +246,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemFooter;
+export default LocationItemFooter;

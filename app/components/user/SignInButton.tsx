@@ -8,6 +8,8 @@ import {
   ImageSourcePropType,
 } from "react-native"; 
 
+import GlobalPressable from "../appwide/button/GlobalPressable";
+
 type SignInButtonProps = {
   onPress: (event: GestureResponderEvent) => void;
   title?: string;
@@ -29,7 +31,7 @@ const SignInButton: React.FC<SignInButtonProps> = ({
 
   // need to make sure that pressable also works with accessibility stuff
   return (
-    <Pressable
+    <GlobalPressable
       accessible={true}
       accessibilityLabel="Sign in button"
       accessibilityHint="Press to sign in or create an account"
@@ -55,7 +57,7 @@ const SignInButton: React.FC<SignInButtonProps> = ({
       <Text style={style.label}>
         {title}
       </Text>
-    </Pressable>
+    </GlobalPressable>
   );
 };
 

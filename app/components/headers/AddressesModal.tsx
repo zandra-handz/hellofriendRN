@@ -3,9 +3,9 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import ActiveAddresses from "../locations/ActiveAddresses";
+import ActiveAddresses from "../locations/ActiveAddresses"; 
 
-interface Props {
+ interface Props {
   userAddress: object;
   friendAddress: object;
   setUserAddress: React.Dispatch<React.SetStateAction<string | null>>;
@@ -14,28 +14,30 @@ interface Props {
   closeModal: () => void;
 }
 
-const SetAddressesModal: React.FC<Props> = ({
+const AddressesModal: React.FC<Props> = ({
+  userId,
+  friendId,
+  friendName,
   isVisible,
   closeModal,
   primaryColor,
   primaryBackground,
-  overlayColor,
-  manualGradientColors,
-  welcomeTextStyle,
+  overlayColor,  
   userAddress,
   setUserAddress,
   friendAddress,
   setFriendAddress,
 }) => {
   const renderActiveAddresses = useCallback(() => {
-    if (userAddress && friendAddress) {
+    if (userAddress ) {
       return (
         <ActiveAddresses
+        userId={userId}
+        friendId={friendId}
+        friendName={friendName}
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
-          overlayColor={overlayColor}
-          manualGradientColors={manualGradientColors}
-          welcomeTextStyle={welcomeTextStyle}
+          overlayColor={overlayColor}  
           userAddress={userAddress}
           setUserAddress={setUserAddress}
           friendAddress={friendAddress}
@@ -87,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SetAddressesModal;
+export default AddressesModal;

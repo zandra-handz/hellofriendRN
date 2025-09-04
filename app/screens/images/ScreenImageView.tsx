@@ -3,7 +3,7 @@ import { View, Alert } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
-import CarouselSlider from "@/app/components/appwide/CarouselSlider";
+import ImageCarouselSlider from "@/app/components/appwide/ImageCarouselSlider";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -54,23 +54,7 @@ const ScreenImageView = () => {
         fileUri
       );
       await Sharing.shareAsync(uri);
-
-      // MOVED TO ITEM FOOTER TO HAVE EASIER ACCESS TO ITEM ID
-      // setTimeout(async () => {
-      //   try {
-      //         Alert.alert('!', 'Did you send this image?', [
-      //   {
-      //     text: "No, please keep",
-      //     onPress: () => console.log("Cancel Pressed"),
-      //     style: "cancel",
-      //   },
-      //         {text: 'Yes, delete', onPress: () => {}},
-
-      // ]);
-      //   } catch (error) {
-      //     console.error('Error deleting shared image:', error);
-      //   }
-      // }, 500);
+ 
     } catch (error) {
       console.error("Error sharing image:", error);
     }
@@ -93,7 +77,7 @@ const ScreenImageView = () => {
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
     >
-      <CarouselSlider
+      <ImageCarouselSlider
         initialIndex={startingIndex}
         data={imageList}
         children={(props) => (
@@ -110,10 +94,7 @@ const ScreenImageView = () => {
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={appFontStyles.welcomeText}
         themeAheadOfLoading={themeAheadOfLoading} 
-      />
-      {/* <View style={{ bottom: 62 }}>
-        <ImageMenuButton />
-      </View> */}
+      /> 
     </SafeViewAndGradientBackground>
   );
 };

@@ -13,6 +13,8 @@ interface Props {
 }
 
 const SelectFriendAddressModal: React.FC<Props> = ({
+  userId,
+  friendId,
   isVisible,
   closeModal,
   addressSetter,
@@ -21,7 +23,7 @@ const SelectFriendAddressModal: React.FC<Props> = ({
   welcomeTextStyle,
   manualGradientColors,
 }) => {
-  const { friendAddresses } = useStartingFriendAddresses();
+  const { friendAddresses } = useStartingFriendAddresses({userId: userId, friendId: friendId});
 
   const [isExistingAddress, setIsExistingAddress] = useState(false);
 
