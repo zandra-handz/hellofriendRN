@@ -194,6 +194,8 @@ const ModalWithGoBack: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   modalContainer: {
+    zIndex: 70000,
+    elevation: 70000,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

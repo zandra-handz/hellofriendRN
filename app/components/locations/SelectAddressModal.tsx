@@ -33,7 +33,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
 
   const handleCheckIfExistingAndSelect = (address) => {
     setIsExistingAddress(false); //to clear
-    const isExisting = userAddresses.find(
+    const isExisting = userAddresses.saved.find(
       (menuAddress) =>
         menuAddress.address === address.address || menuAddress.id === address.id
     );

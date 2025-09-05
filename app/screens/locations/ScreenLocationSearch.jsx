@@ -59,15 +59,15 @@ const ScreenLocationSearch = () => {
     friendId: selectedFriend?.id,
   });
  
-const userDefault = useMemo(
-  () => findDefaultAddress(userAddresses),
-  [userAddresses]
-);
+// const userDefault = useMemo(
+//   () => findDefaultAddress(userAddresses),
+//   [userAddresses]
+// );
 
-const friendDefault = useMemo(
-  () => findDefaultAddress(friendAddresses),
-  [friendAddresses]
-);
+// const friendDefault = useMemo(
+//   () => findDefaultAddress(friendAddresses),
+//   [friendAddresses]
+// );
 
 
 
@@ -120,58 +120,9 @@ const friendDefault = useMemo(
   };
 
 
-  const [userAddress, setUserAddress] = useState(() =>
-  findDefaultAddress(userAddresses) || { address: "No address selected", id: "" }
-);
-
+  const [userAddress, setUserAddress] = useState(null);
  
-
-useEffect(() => {
-  console.log('rerendered address', userAddress)
-
-}, [userAddress]);
-
-  // useEffect(() => {
-  //   if (userAddresses && userAddresses.length > 0) {
-  //     const defaultUserAddress = findDefaultAddress(userAddresses);
-  //     setUserAddress({
-  //       address: defaultUserAddress?.address ?? "No address selected",
-  //       id: defaultUserAddress?.id ?? "",
-  //     });
-  //   }
-  //    else {
-  //     setUserAddress({
-  //       address: "No address selected",
-  //       id: "",
-  //     });
-  //   }
-  // }, [userAddresses]);
-
-  // Update when defaultAddress becomes available
-useEffect(() => {
-  let nextFriendAddress;
-
-  if (friendAddresses && friendAddresses.length > 0) {
-    const defaultFriendAddress = findDefaultAddress(friendAddresses);
-    nextFriendAddress = {
-      address: defaultFriendAddress?.address ?? "No address selected",
-      id: defaultFriendAddress?.id ?? "",
-    };
-  } else {
-    nextFriendAddress = {
-      address: "No address selected",
-      id: "",
-    };
-  }
-
-  // Only update state if something actually changed
-  if (
-    nextFriendAddress.address !== friendAddress.address ||
-    nextFriendAddress.id !== friendAddress.id
-  ) {
-    setFriendAddress(nextFriendAddress);
-  }
-}, [friendAddresses, friendAddress]);
+ 
 
 
   const renderMapScreenFooter = useCallback(() => {
@@ -179,19 +130,17 @@ useEffect(() => {
       <MapScreenFooter
         userId={user?.id}
         friendId={selectedFriend?.id}
-        friendName={selectedFriend?.name}
-        userAddress={userAddress}
-        setUserAddress={setUserAddress}
+        // friendName={selectedFriend?.name}
+        userAddress={userAddress} 
         friendAddress={friendAddress}
-        setFriendAddress={setFriendAddress}
+ 
         themeAheadOfLoading={themeAheadOfLoading}
         overlayColor={lightDarkTheme.overlayBackground}
         primaryBackground={lightDarkTheme.primaryBackground}
         primaryColor={lightDarkTheme.primaryText}
         welcomeTextStyle={appFontStyles.welcomeText}
         dividerStyle={lightDarkTheme.divider}
-        openAddresses={openModal}
-        closeAddresses={closeModal}
+        openAddresses={openModal} 
       />
     );
   }, [

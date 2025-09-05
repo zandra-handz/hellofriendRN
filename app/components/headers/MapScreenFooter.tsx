@@ -13,22 +13,18 @@ import { manualGradientColors } from "@/src/hooks/StaticColors";
 
 const 
 MapScreenFooter = ({
-  userId,
-  userAddress,
-  setUserAddress,
-  friendAddress,
-  setFriendAddress,
+ 
+  userAddress, 
+  friendAddress, 
   themeAheadOfLoading, 
     overlayColor,
-    primaryColor,
-    primaryBackground,
+    primaryColor, 
  
   dividerStyle,
  
   friendId,
   friendName, 
-  openAddresses,
-  closeAddresses,
+  openAddresses, 
   
 }) => {  
   
@@ -150,26 +146,7 @@ MapScreenFooter = ({
   
       </View>
  
-
-      {/* {addressesModalVisible && (
-        <View>
-          <SetAddressesModal
-          userId={userId}
-          friendId={friendId}
-          friendName={friendName}
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-          overlayColor={overlayColor} 
-          welcomeTextStyle={welcomeTextStyle}
-            userAddress={userAddress}
-            setUserAddress={setUserAddress}
-            friendAddress={friendAddress}
-            setFriendAddress={setFriendAddress}
-            isVisible={addressesModalVisible}
-            closeModal={() => setAddressesModalVisible(false)}
-          />
-        </View>
-      )} */}
+ 
 
  
     </GradientBackground>
