@@ -22,14 +22,17 @@ import { useNavigation } from "@react-navigation/native";
 
 import FocusedLocationCardUI from "./FocusedLocationCardUI";
 import { useLocations } from "@/src/context/LocationsContext";
-
+import useUpdateUserAddressCache from "@/src/hooks/useUpdateUserAddressCache";
+import useUpdateFriendAddressCache from "@/src/hooks/useUpdateFriendAddressCache";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 
 import DualLocationSearcher from "./DualLocationSearcher";
 
 const LocationsMapView = ({
-  userAddress,
-  friendAddress,
+  // userAddress,
+  // friendAddress,
+  userId,
+  friendId,
   pastHelloLocations,
   faveLocations,
   nonFaveLocations,
@@ -47,6 +50,12 @@ const LocationsMapView = ({
   const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
   console.log(`past helloes`, pastHelloLocations);
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
+const { getChosenUserAddress } = useUpdateUserAddressCache({userId: userId});
+const { getChosenFriendAddress } = useUpdateFriendAddressCache({userId: userId, friendId: friendId});
+
+const userAddress = getChosenUserAddress();
+const friendAddress = getChosenFriendAddress();
+
 
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();

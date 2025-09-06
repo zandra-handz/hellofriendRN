@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
@@ -9,8 +9,8 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useLocations } from "@/src/context/LocationsContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
-import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
+// import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
+// import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import AddressesModal from "@/app/components/headers/AddressesModal";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { appFontStyles } from "@/src/hooks/StaticFonts";
@@ -53,23 +53,13 @@ const ScreenLocationSearch = () => {
   const [selectCurrentLocation, setSelectCurrentLocation] = useState(true);
 
 
-    const { userAddresses } = useStartingUserAddresses({ userId: user?.id });
-  const { friendAddresses } = useStartingFriendAddresses({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
+  //   const { userAddresses } = useStartingUserAddresses({ userId: user?.id });
+  // const { friendAddresses } = useStartingFriendAddresses({
+  //   userId: user?.id,
+  //   friendId: selectedFriend?.id,
+  // });
  
-// const userDefault = useMemo(
-//   () => findDefaultAddress(userAddresses),
-//   [userAddresses]
-// );
-
-// const friendDefault = useMemo(
-//   () => findDefaultAddress(friendAddresses),
-//   [friendAddresses]
-// );
-
-
+ 
 
   //   const [userAddress, setUserAddress] = useState({
   //   address: 'loading',
@@ -131,8 +121,7 @@ const ScreenLocationSearch = () => {
         userId={user?.id}
         friendId={selectedFriend?.id}
         // friendName={selectedFriend?.name}
-        userAddress={userAddress} 
-        friendAddress={friendAddress}
+  
  
         themeAheadOfLoading={themeAheadOfLoading}
         overlayColor={lightDarkTheme.overlayBackground}
@@ -168,8 +157,10 @@ const ScreenLocationSearch = () => {
             currentLocationDetails={currentLocationDetails}
             currentRegion={currentRegion}
             useCurrentLocation={selectCurrentLocation}
-              userAddress={userAddress}
-              friendAddress={friendAddress}
+            userId={user?.id}
+            friendId={selectedFriend?.id}
+              // userAddress={userAddress}
+              // friendAddress={friendAddress}
               pastHelloLocations={pastHelloLocations}
               faveLocations={faveLocations}
               nonFaveLocations={nonFaveLocations}

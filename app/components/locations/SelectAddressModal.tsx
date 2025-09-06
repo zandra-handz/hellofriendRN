@@ -6,7 +6,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import DualLocationSearcher from "./DualLocationSearcher";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 interface SelectAddressModalProps {
   isVisible: boolean; // = is editing address
   closeModal: () => void;
@@ -19,9 +20,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
   closeModal,
   addressSetter,
   primaryColor,
-  primaryBackground,
-  welcomeTextStyle,
-  manualGradientColors,
+  primaryBackground, 
 }) => {
   const {
   
@@ -77,7 +76,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
             locationListDrilledOnce={userAddresses}
             primaryColor={primaryColor}
             primaryBackground={primaryBackground}
-            welcomeTextStyle={welcomeTextStyle}
+            welcomeTextStyle={appFontStyles.welcomeText}
             manualGradientColors={manualGradientColors}
           />
         </View>

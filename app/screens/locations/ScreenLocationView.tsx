@@ -31,6 +31,10 @@ const ScreenLocationView = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
+
+
+  console.log(userAddress);
+  console.log(friendAddress);
   // const now = new Date();
   // const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
   const navigation = useNavigation();

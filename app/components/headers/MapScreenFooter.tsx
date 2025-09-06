@@ -1,46 +1,46 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
- 
- 
- 
+import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
+import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import AddressesModal from "./AddressesModal";
+// import AddressesModal from "./AddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 
-const 
-MapScreenFooter = ({
- 
-  userAddress, 
-  friendAddress, 
-  themeAheadOfLoading, 
-    overlayColor,
-    primaryColor, 
- 
-  dividerStyle,
- 
-  friendId,
-  friendName, 
-  openAddresses, 
-  
-}) => {  
-  
+const MapScreenFooter = ({
+  userAddress,
+  friendAddress,
+  themeAheadOfLoading,
+  overlayColor,
+  primaryColor,
 
+  dividerStyle,
+  userId,
+  friendId,
+  friendName,
+  openAddresses,
+}) => {
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
+
+  const { userAddresses } = useStartingUserAddresses({ userId: userId });
+  const { friendAddresses } = useStartingFriendAddresses({
+    userId: userId,
+    friendId: friendId,
+  });
 
   useFocusEffect(
     useCallback(() => {
       // console.log(userAddress?.address);
       // console.log(friendAddress?.address);
       if (
-        userAddress?.address === "No address selected" ||
-        friendAddress?.address === "No address selected"
+        userAddresses?.chosen?.address === "No address selected" ||
+        friendAddresses?.chosen?.address === "No address selected"
       ) {
         Alert.alert(
           "Warning!",
@@ -64,12 +64,11 @@ MapScreenFooter = ({
   const handleTestAlert = () => {
     console.log("removed");
   };
- 
 
   const RenderAddressesButton = useCallback(
     () => (
       <FooterButtonIconVersion
-            primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label="Addresses"
         icon={
           <MaterialIcons
@@ -88,7 +87,7 @@ MapScreenFooter = ({
   const RenderFilterButton = useCallback(
     () => (
       <FooterButtonIconVersion
-      primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label="Filter"
         icon={
           <MaterialCommunityIcons
@@ -129,7 +128,6 @@ MapScreenFooter = ({
           },
         ]}
       >
-  
         <>
           <View style={styles.section}>
             <RenderAddressesButton />
@@ -142,13 +140,7 @@ MapScreenFooter = ({
             <RenderFilterButton />
           </View>
         </>
-
-  
       </View>
- 
- 
-
- 
     </GradientBackground>
   );
 };

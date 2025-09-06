@@ -15,8 +15,8 @@ import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"
 
 // THREW IN DEFAULTS JUST TO REMOVE OTHER STUFF, THIS COMPONENT MIGHT NOT WORK IN CURRENT FORM
 const CalculateTravelTimesBody = ({ userId, friendId, friendName, lightDarkTheme, location }) => {
-  const { defaultUserAddress } = useStartingUserAddresses();
-  const { defaultAddress } = useStartingFriendAddresses({userId: userId, friendId: friendId});
+  const {   userAddresses } = useStartingUserAddresses();
+  const { friendAddresses } = useStartingFriendAddresses({userId: userId, friendId: friendId});
   
   const [triggerFetch, setTriggerFetch] = useState(false); 
 
@@ -93,14 +93,14 @@ const CalculateTravelTimesBody = ({ userId, friendId, friendName, lightDarkTheme
         <TravelTimesResults
         lightDarkTheme={lightDarkTheme}
           userAddress={
-            defaultUserAddress || {
+            userAddresses?.chosen || {
               address: "User Address",
               lat: "0",
               lng: "0",
             }
           }
           friendAddress={
-            defaultAddress || { address: "Friend Address", lat: "0", lng: "0" }
+            friendAddresses?.chosen || { address: "Friend Address", lat: "0", lng: "0" }
           }
           friendName={friendName || null}
           destinationLocation={location}
@@ -112,7 +112,7 @@ const CalculateTravelTimesBody = ({ userId, friendId, friendName, lightDarkTheme
         label="CALCULATE "
         maxHeight={80}
         onPress={handleCalculate}
-        isDisabled={!defaultUserAddress || !defaultAddress}
+        isDisabled={!userAddresses?.chosen || !friendAddresses?.chosen}
         fontFamily={"Poppins-Bold"}
         image={require("@/app/assets/shapes/redheadcoffee.png")}
       />

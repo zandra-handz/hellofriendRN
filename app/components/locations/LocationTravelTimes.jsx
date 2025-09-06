@@ -27,8 +27,8 @@ const LocationTravelTimes = ({
   themeAheadOfLoading,
   primaryColor = 'orange',
 }) => {   
-  const { defaultUserAddress } = useStartingUserAddresses({userId: userId});
-  const { defaultAddress } = useStartingFriendAddresses({userId: userId, friendId: friendId});
+  const {   userAddresses } = useStartingUserAddresses({userId: userId});
+  const { friendAddresses } = useStartingFriendAddresses({userId: userId, friendId: friendId});
 
   const {
     travelTimeResults,
@@ -208,14 +208,14 @@ const LocationTravelTimes = ({
 
           {!isTravelTimesLoading && (
             <>
-              {((!travelTimeResults && !cachedData && defaultUserAddress?.id && defaultAddress?.id)) && (
+              {((!travelTimeResults && !cachedData && userAddresses?.chosen?.id && friendAddresses?.chosen?.id)) && (
                 <>
                   <RenderFetchTimesButton />
                 </>
               )}
               {(travelTimeResults || cachedData) &&
-                defaultUserAddress &&
-                defaultAddress && (
+                userAddresses?.chosen &&
+               friendAddresses?.chosen && (
                   <View
                     style={{
                       flexDirection: "row",

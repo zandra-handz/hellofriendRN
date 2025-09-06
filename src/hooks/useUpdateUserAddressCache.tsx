@@ -13,12 +13,12 @@ const useUpdateUserAddressCache = ({ userId  }: Props) => {
 
   const queryClient = useQueryClient();
 
-const getChosenAddress = () => {
+const getChosenUserAddress = () => {
   const data = queryClient.getQueryData(["userAddresses", userId]);
   return data?.chosen || null;
 };
  
-const updateChosenAddress = (address) => {
+const updateChosenUserAddress = (address) => {
   queryClient.setQueryData(
     ["userAddresses", userId],
     (old) => ({
@@ -29,7 +29,7 @@ const updateChosenAddress = (address) => {
 };
 
  
-const addAddressToTemporaryCache = (address) => {
+const addUserAddressToTemporaryCache = (address) => {
   queryClient.setQueryData(
     ["userAddresses", userId],
     (old) => ({
@@ -40,7 +40,7 @@ const addAddressToTemporaryCache = (address) => {
 };
 
 // remove an address from temp by id
-const removeAddressFromTemporaryCache = (address) => {
+const removeUserAddressFromTemporaryCache = (address) => {
   queryClient.setQueryData(
     ["userAddresses", userId],
     (old) => ({
@@ -52,10 +52,10 @@ const removeAddressFromTemporaryCache = (address) => {
 
 
   return {
-    updateChosenAddress,
-    getChosenAddress,
-    removeAddressFromTemporaryCache,
-    addAddressToTemporaryCache,
+    updateChosenUserAddress,
+    getChosenUserAddress,
+    removeUserAddressFromTemporaryCache,
+    addUserAddressToTemporaryCache,
 };
 }
 

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
-import React, { useRef } from "react";
-import {  useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import {  useQueryClient } from "@tanstack/react-query";
  
 
 type Props = {
@@ -9,16 +9,16 @@ type Props = {
 };
 
 const useUpdateFriendAddressCache = ({ userId, friendId }: Props) => {
-  const timeoutRef = useRef(null);
+ 
 
   const queryClient = useQueryClient();
 
-const getChosenAddress = () => {
+const getChosenFriendAddress = () => {
   const data = queryClient.getQueryData(["friendAddresses", userId, friendId]);
   return data?.chosen || null;
 };
  
-const updateChosenAddress = (address) => {
+const updateChosenFriendAddress = (address) => {
   queryClient.setQueryData(
     ["friendAddresses", userId, friendId],
     (old) => ({
@@ -29,7 +29,7 @@ const updateChosenAddress = (address) => {
 };
 
  
-const addAddressToTemporaryCache = (address) => {
+const addFriendAddressToTemporaryCache = (address) => {
   queryClient.setQueryData(
     ["friendAddresses", userId, friendId],
     (old) => ({
@@ -40,7 +40,7 @@ const addAddressToTemporaryCache = (address) => {
 };
 
 // remove an address from temp by id
-const removeAddressFromTemporaryCache = (address) => {
+const removeFriendAddressFromTemporaryCache = (address) => {
   queryClient.setQueryData(
     ["friendAddresses", userId, friendId],
     (old) => ({
@@ -52,10 +52,10 @@ const removeAddressFromTemporaryCache = (address) => {
 
 
   return {
-    updateChosenAddress,
-    getChosenAddress,
-    removeAddressFromTemporaryCache,
-    addAddressToTemporaryCache,
+    updateChosenFriendAddress,
+    getChosenFriendAddress,
+    removeFriendAddressFromTemporaryCache,
+    addFriendAddressToTemporaryCache,
 };
 }
 
