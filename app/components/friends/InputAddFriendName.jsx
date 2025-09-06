@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { View, TextInput, Text, StyleSheet } from "react-native"; 
-
+import { View, TextInput, Text, StyleSheet } from "react-native";
+import Animated, { SlideInUp, SlideOutUp, FadeInUp } from "react-native-reanimated";
 const InputAddFriendName = ({
   friendName,
   setFriendName,
@@ -8,8 +8,9 @@ const InputAddFriendName = ({
   setIsFriendNameUnique,
   setRevealRest,
   friendList,
-  primaryColor='orange',
-}) => { 
+  autoFocus,
+  primaryColor = "orange",
+}) => {
   const friendNameRef = useRef(null);
 
   const handleFriendNameChange = (text) => {
@@ -34,30 +35,28 @@ const InputAddFriendName = ({
   };
 
   return (
-    <View style={styles.sectionContainer}>
-      <Text style={[styles.sectionTitle,{color: primaryColor}]}>
-        Enter friend's name
-      </Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          ref={friendNameRef}
-          style={[
-            styles.textInput,
-            styles.input,
-            !isFriendNameUnique && friendName.length > 0 && styles.errorInput,
-          ]}
-          value={friendName}
-          placeholder="Name"
-          onChangeText={handleFriendNameChange}
-          onSubmitEditing={setVisibility}
-        />
-        {!isFriendNameUnique && friendName.length > 0 && (
+    <View style={styles.inputContainer}>
+      <TextInput
+        ref={friendNameRef}
+        autoFocus={autoFocus}
+        style={[
+          styles.textInput,
+          styles.input,
+          !isFriendNameUnique && friendName.length > 0 && styles.errorInput,
+        ]}
+        value={friendName}
+        placeholder="Name"
+        onChangeText={handleFriendNameChange}
+        onSubmitEditing={setVisibility}
+      />
+      {!isFriendNameUnique && friendName.length > 0 && (
+        <Animated.View entering={SlideInUp} exiting={SlideOutUp} style={{overflow: 'hidden'}}>
           <Text style={styles.errorText}>
             This name is already in your friend list. Please choose another
             name.
           </Text>
-        )}
-      </View>
+        </Animated.View>
+      )}
     </View>
   );
 };
@@ -76,26 +75,19 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   input: {
-    color: "#d3d3d3",
-    borderWidth: 1,
-    borderColor: "#d3d3d3",
-    backgroundColor: "#121212",
-    placeholderTextColor: "darkgray",
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 10,
-    width: "100%",
     fontFamily: "Poppins-Regular",
-    textAlign: "left",
-    fontSize: 16,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderRadius: 20,
-    fontSize: 18,
+
+    height: "auto",
+    borderWidth: 2.6,
     padding: 10,
-    fontFamily: "Poppins-Regular",
+    paddingTop: 10,
+    borderRadius: 10,
+    alignContent: "center",
+    justifyContent: "center",
+    borderColor: "black",
+    fontSize: 15,
   },
+
   errorInput: {
     borderColor: "red",
   },

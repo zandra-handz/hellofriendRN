@@ -1,5 +1,5 @@
 import { View, Text, Pressable, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Animated, {
   SlideInLeft,
   SlideOutLeft,
@@ -8,21 +8,51 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import useFriendFunctions from "@/src/hooks/useFriendFunctions";
+import useRemoveFromFriendList from "@/src/hooks/FriendListCalls/useRemoveFromFriendList";
+import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
+ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import useDeleteFriend from "@/src/hooks/useDeleteFriend";
 type Props = {
+  userId: number;
   friendId: number;
   friendName: string;
 };
 
-const DeleteFriend = ({ friendId, friendName = "" }: Props) => {
+const DeleteFriend = ({ userId, friendId, friendName = "" , deselectFriend}: Props) => {
   const [showDeleteOption, setShowDeleteOption] = useState<boolean>(false);
+  const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({userId: userId});
+const { removeFromFriendList} = useRemoveFromFriendList({userId: userId});
+
+const { handleDeleteFriend, deleteFriendMutation } = useDeleteFriend({removeFromFriendList: removeFromFriendList, refetchUpcoming: refetchUpcomingHelloes})
 
   const handleToggle = () => {
     setShowDeleteOption((prev) => !prev);
   };
 
-  const { handleDeleteFriend } = useFriendFunctions();
+
+  useEffect(() => {
+    if (deleteFriendMutation.isPending) {
+      showFlashMessage(`Deleting friend...`, false, 1000);
+    }
+
+  }, [deleteFriendMutation.isPending]);
+
+  
+  useEffect(() => {
+    if (deleteFriendMutation.isSuccess) {
+      showFlashMessage(`${friendName} deleted`, false, 1000);
+      deselectFriend();
+    }
+
+  }, [deleteFriendMutation.isSuccess]);
+    useEffect(() => {
+    if (deleteFriendMutation.isError) {
+      showFlashMessage(`${friendName} not deleted`, true, 1000);
+    }
+
+  }, [deleteFriendMutation.isError]);
+ 
+ 
 
   const handleDelete = () => {
     handleDeleteFriend(friendId);

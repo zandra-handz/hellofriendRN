@@ -292,8 +292,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
 
   return (
     <View
-      style={[
-        // containerStyle,
+      style={[ 
         {
           flex: 1,
         },
@@ -398,7 +397,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
               )}
           </View>
 
-          <></>
+         
           {!isKeyboardVisible && selectedTypeChoiceText && (
             <EscortBar
               manualGradientColors={manualGradientColors}
@@ -412,7 +411,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
           )}
         </View>
 
-        {isDoubleCheckerVisible && (
+        {/* {isDoubleCheckerVisible && (
           <DoubleChecker
             isVisible={isDoubleCheckerVisible}
             toggleVisible={toggleDoubleChecker}
@@ -421,7 +420,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
             manualGradientColors={manualGradientColors}
             primaryColor={primaryColor}
           />
-        )}
+        )} */}
       </>
     </View>
   );

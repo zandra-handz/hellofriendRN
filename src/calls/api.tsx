@@ -167,6 +167,9 @@ export const signup = async ({
   email: string;
   password: string;
 }) => {
+  console.log(`username: `, username);
+  console.log(`email`, email);
+  console.log(`password`, password);
   try {
     return await helloFriendApiClient.post("/users/sign-up/", {
       username,

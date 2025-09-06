@@ -29,7 +29,16 @@ type NavToMomentFocusWithTextProp = {
   momentText?: string | null;
 };
 
+type NavToAuthProp = {
+  usernameEntered: string | null;
+};
+
+type NavToNewAccountProp = {
+  usernameEntered: string | null;
+};
+
 interface hookReturns {
+  navigateToHome: () => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: () => void;
   navigateToFinalize: () => void;
@@ -48,12 +57,20 @@ interface hookReturns {
   navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
 
   navigateToFidget: () => void;
-
+  navigateToAuth: ({ usernameEntered }: NavToAuthProp) => void;
+  navigateToNewAccount: ({ usernameEntered }: NavToNewAccountProp) => void;
+  navigateToRecoverCredentials: () => void;
   navigateBack: () => void;
 }
 
 const useAppNavigations = (): hookReturns => {
   const navigation = useNavigation<NavigationProp>();
+
+
+  const navigateToHome = () => {
+    navigation.navigate("hellofriend")
+
+  };
 
   const navigateToAddFriend = () => {
     navigation.navigate("AddFriend");
@@ -110,11 +127,25 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Fidget");
   };
 
+  const navigateToAuth = ({ usernameEntered }: NavToAuthProp) => {
+    navigation.navigate("Auth", { usernameEntered });
+  };
+
+  const navigateToNewAccount = ({ usernameEntered }: NavToNewAccountProp) => {
+    navigation.navigate("NewAccount", { usernameEntered });
+  };
+
+  const navigateToRecoverCredentials = () => {
+    navigation.navigate("RecoverCredentials");
+
+  };
+
   const navigateBack = () => {
     navigation.goBack();
   };
 
   return {
+    navigateToHome,
     navigateToAddFriend,
     navigateToSelectFriend,
     navigateToFinalize,
@@ -125,7 +156,9 @@ const useAppNavigations = (): hookReturns => {
     navigateToMomentFocusWithText,
     navigateToMoments,
     navigateToMomentView,
-
+    navigateToAuth,
+    navigateToNewAccount,
+    navigateToRecoverCredentials,
     navigateToFidget,
 
     navigateBack,

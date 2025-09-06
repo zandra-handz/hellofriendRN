@@ -312,8 +312,9 @@ const ScreenHome = () => {
                 <>
                   {friendList?.length < 1 && (
                     <NoFriendsMessageUI
-                      backgroundColor={lightDarkTheme.primaryBackgroundColor}
-                      backgroundColor={lightDarkTheme.primaryOverlayColor}
+                      backgroundColor={lightDarkTheme.overlayBackground}
+                    //  backgroundColor={'transparent'}
+                    //  backgroundColor={lightDarkTheme.darkerOverlayBackground}
                       primaryColor={lightDarkTheme.primaryText}
                       welcomeTextStyle={welcomeTextStyle}
                       username={user?.username || ""}

@@ -3,10 +3,11 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import React from "react";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 
-const SmallAddButton = ({
-  manualGradientColors,
+const SmallAddButton = ({ 
   primaryBackground,
+  primaryColor,
 size=64,
   onPress,
 }) => {
@@ -16,9 +17,9 @@ size=64,
         style={[
           styles.smallAddButton,
           {
-            borderColor: primaryBackground,
-            backgroundColor: manualGradientColors.lightColor,
-            padding: size / 2,
+            borderColor: 'transparent',
+          //  backgroundColor: manualGradientColors.lightColor,
+            padding: size / 7,
           },
         ]}
         onPress={onPress}
@@ -32,9 +33,9 @@ size=64,
           }}
         >
           <MaterialCommunityIcons
-            name="account-plus"
+            name="account-multiple-plus"
             size={size}
-            color={manualGradientColors.homeDarkColor}
+            color={primaryColor}
           />
         </View>
       </GlobalPressable>

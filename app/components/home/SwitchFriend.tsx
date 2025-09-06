@@ -4,7 +4,7 @@ import React  from "react";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 type Props = {
   fontSize: number;
@@ -29,6 +29,7 @@ const SwitchFriend = ({
   const { selectedFriend  } = useSelectedFriend();
   const navigation = useNavigation();
   // const friendModalButtonHeight = 16;
+  
 
   const handleNavigateToFriendSelect = () => {
     if (editMode) {

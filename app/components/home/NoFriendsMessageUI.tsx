@@ -14,7 +14,7 @@ const NoFriendsMessageUI = ({
 
   const { navigateToAddFriend } = useAppNavigations();
 
-  const ICON_SIZE = 64;
+  const ICON_SIZE = 100;
  
   const EYEBALL_BOTTOM_PADDING = 60;
 
@@ -44,12 +44,11 @@ const NoFriendsMessageUI = ({
          welcomeTextStyle, { color: primaryColor, fontSize: 20}
         ]}
       >
-        Add a friend to get started
+        Add some friends to get started
       </Text>
       <View style={{ marginVertical: 20 }}>
         <SmallAddButton
-          size={ICON_SIZE}
-          manualGradientColors={manualGradientColors}
+          size={ICON_SIZE} 
           primaryColor={primaryColor}
           primaryBackground={backgroundColor}
           label={"Add friend"}

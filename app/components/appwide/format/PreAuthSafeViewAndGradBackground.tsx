@@ -50,7 +50,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
 
   const paddingStyle = useMemo(
     () => ({
-      paddingTop: 0,
+      paddingTop:0,
       paddingBottom: 0,
       paddingLeft: 0,
       paddingRight: 0,

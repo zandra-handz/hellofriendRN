@@ -1,14 +1,13 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import { View, Text, Pressable, DimensionValue } from "react-native";
 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
  
-
+import { useFriendDash } from "@/src/context/FriendDashContext";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
+ 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useNavigation } from "@react-navigation/native";
-
+import useDoublePress from "../buttons/useDoublePress";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 interface FriendModalIntegratorProps {
@@ -25,13 +24,15 @@ interface FriendModalIntegratorProps {
   customFontStyle: object | null;
 }
 
+
+
 const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
-  addToPress,
+  
   color,
   height = "auto",
   customLabel = "",
   customFontStyle,
-  addToOpenModal,
+ 
   useGenericTextColor = false,
   includeLabel = false,
   iconSize = 22,
@@ -45,6 +46,26 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
  
   const navigation = useNavigation(); 
   const { loadingDash } = useFriendDash(); 
+
+  const { navigateToAddFriend, navigateToSelectFriend} = useAppNavigations();
+const { handleDoublePress} = useDoublePress({onSinglePress: navigateToSelectFriend, onDoublePress: navigateToAddFriend})
+  
+  const [lastPress, setLastPress] = useState<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const DOUBLE_PRESS_DELAY = 300;
+
+
+  const handlePress = () => {
+    const now = Date.now();
+
+
+
+
+
+
+  };
+  
 
   const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
 
@@ -105,7 +126,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     <>
       <Pressable
         // onPress={openModal}
-        onPress={() => navigation.navigate("SelectFriend")}
+        onPress={handleDoublePress}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel="Friend selector button"

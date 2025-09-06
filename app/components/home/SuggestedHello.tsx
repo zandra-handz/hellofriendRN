@@ -1,11 +1,11 @@
 import { View, Pressable, Text, StyleSheet } from "react-native";
-import React, { useRef, useMemo, useState } from "react";
-import { FontAwesome6 } from "@expo/vector-icons";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+import React, {  useMemo, useState } from "react";
+import { FontAwesome6 } from "@expo/vector-icons"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import LoadingBlock from "../appwide/spinner/LoadingBlock";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import GoOptionsModal from "../headers/GoOptionsModal";
+import useDoublePress from "../buttons/useDoublePress";
 
 type Props = {
   friendId: number;
@@ -32,35 +32,14 @@ const SuggestedHello = ({
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
-  const [lastPress, setLastPress] = useState<number | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+ 
 
-  const DOUBLE_PRESS_DELAY = 300;
-
-  const handleGoPress = () => {
-    const now = Date.now();
-
-    if (lastPress && now - lastPress < DOUBLE_PRESS_DELAY) {
-      // Double press detected
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      console.log("double press here!");
-      navigateToFinalize();
-
-      setLastPress(null);
-    } else {
-      // First press
-      setLastPress(now);
-
-      timeoutRef.current = setTimeout(() => {
-        setOptionsModalVisible(true);
-        setLastPress(null);
-        timeoutRef.current = null;
-      }, DOUBLE_PRESS_DELAY);
-    }
+  const openModal = () => {
+  setOptionsModalVisible(true);
   };
+
+
+  const { handleDoublePress} = useDoublePress({onSinglePress: openModal, onDoublePress: navigateToFinalize})
   const renderSuggestedHello = useMemo(() => {
     return (
       <View>
@@ -134,7 +113,7 @@ const SuggestedHello = ({
           {renderSuggestedHello}
           <Pressable
             // onPress={navigateToMoments}
-            onPress={handleGoPress}
+            onPress={handleDoublePress}
             style={{
               position: "absolute",
               right: 0,

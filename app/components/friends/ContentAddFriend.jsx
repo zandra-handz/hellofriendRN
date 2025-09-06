@@ -2,10 +2,8 @@
 //need to RQ
 
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-
-import useFriendFunctions from "@/src/hooks/useFriendFunctions";
+import { View, Text, StyleSheet, Alert } from "react-native";
+import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import InputAddFriendName from "./InputAddFriendName";
 
 import SliderAddFriendEffort from "@/app/components/foranimations/SliderAddFriendEffort";
@@ -14,18 +12,34 @@ import PickerAddFriendLastDate from "@/app/components/selectors/PickerAddFriendL
 import ButtonMediumAddFriend from "@/app/components/buttons/friends/ButtonMediumAddFriend";
 import MessagePage from "../alerts/MessagePage";
 import AlertList from "../alerts/AlertList";
-import AlertSuccessFail from "../alerts/AlertSuccessFail";
-
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import useCreateFriend from "@/src/hooks/useCreateFriend";
+import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
+import useAddToFriendList from "@/src/hooks/FriendListCalls/useAddToFriendList";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import AuthInputWrapper from "../user/AuthInputWrapper";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import EscortBar from "../moments/EscortBar";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 // import { useUser } from "@/src/context/UserContext";
-import { useFriendList } from "@/src/context/FriendListContext";
 
-const ContentAddFriend = ({ friendList, lightDarkTheme }) => {
-  const primaryColor = lightDarkTheme.primaryText;
-
-  const navigation = useNavigation();
-
-  const { handleCreateFriend } = useFriendFunctions();
-
+const ContentAddFriend = ({
+  userId,
+  friendList,
+  fontStyle,
+  primaryColor,
+  backgroundColor,
+}) => {
+  const { navigateToHome } = useAppNavigations();
+  const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
+    userId: userId,
+  });
+  const { handleUpdateFriendSettings } = useUpdateFriend({
+    userId: userId,
+    refetchUpcoming: refetchUpcomingHelloes,
+  });
+  const { selectFriend } = useSelectedFriend();
   const [friendName, setFriendName] = useState("");
   const [friendEffort, setFriendEffort] = useState(3);
   const [friendPriority, setFriendPriority] = useState(2);
@@ -36,24 +50,49 @@ const ContentAddFriend = ({ friendList, lightDarkTheme }) => {
   const [revealRest, setRevealRest] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
-  const [isFailModalVisible, setFailModalVisible] = useState(false);
+
   const [saveInProgress, setSaveInProgress] = useState(false);
 
-  const [newFriendData] = useState({
-    friendName: "",
-    friendEffort: 3,
-    friendPriority: 2,
-    friendDate: new Date(),
+  const { addToFriendList } = useAddToFriendList({ userId: userId });
+
+  const { handleCreateFriend, createFriendMutation } = useCreateFriend({
+    userId: userId,
+    saveSettings: handleUpdateFriendSettings,
+    addToFriendList: addToFriendList,
+    refetchUpcoming: refetchUpcomingHelloes,
+    selectFriend: selectFriend,
   });
 
-  const navigateToMainScreen = () => {
-    navigation.navigate("hellofriend");
+  const clearInputs = () => {
+    setFriendName("");
+    setFriendEffort(3);
+    setFriendPriority(2);
+    setRevealRest(false); //this turns true after checking the inputted name against the friendList names
   };
 
   const toggleReviewModal = () => {
     setIsReviewModalVisible(!isReviewModalVisible);
   };
+
+  useEffect(() => {
+    if (createFriendMutation.isPending) {
+      showFlashMessage(`Saving friend!`, false, 1000);
+    }
+  }, [createFriendMutation.isPending]);
+
+  useEffect(() => {
+    if (createFriendMutation.isSuccess) {
+      showFlashMessage(`${friendName} added!`, false, 1000);
+      clearInputs();
+      navigateToHome();
+    }
+  }, [createFriendMutation.isSuccess]);
+
+  useEffect(() => {
+    if (createFriendMutation.isError) {
+      showFlashMessage(`${friendName} not added`, true, 1000);
+    }
+  }, [createFriendMutation.isError]);
 
   useEffect(() => {
     if (friendList && friendList.length < 20) {
@@ -65,7 +104,6 @@ const ContentAddFriend = ({ friendList, lightDarkTheme }) => {
 
   const handleSave = async () => {
     try {
-      setSaveInProgress(true);
       const formattedDate = new Date(friendDate).toISOString().split("T")[0];
       const postData = {
         name: friendName,
@@ -81,118 +119,106 @@ const ContentAddFriend = ({ friendList, lightDarkTheme }) => {
       //   //move this into RQ onSuccess when refactoring?
       //   await updateAppSetup();
       // }
-      setSuccessModalVisible(true);
     } catch (error) {
       console.error("Failed to save data:", error);
-      setFailModalVisible(true);
-    } finally {
-      setSaveInProgress(false);
-      setIsReviewModalVisible(false);
     }
   };
 
-  const successOk = () => {
-    navigateToMainScreen();
-    setSuccessModalVisible(false);
-  };
+  const openDoubleChecker = () => {
+    Alert.alert(`Save`, `Save ${friendName}`, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: `Yes`, onPress: () => handleSave() },
+    ]);
 
-  const failOk = () => {
-    setFailModalVisible(false);
+    // setIsDoubleCheckerVisible(true);
   };
 
   return (
-    <View style={styles.container}>
-      {isFriendLimitReached && (
-        <View style={{ flex: 1, marginHorizontal: 0 }}>
-          <MessagePage
-            message="Sorry! You have already added the max amount of friends."
-            fontSize={20}
-            primaryColor={primaryColor}
-          />
-        </View>
-      )}
+    <View
+      style={[
+        {
+          flex: 1,
+        },
+      ]}
+    >
+      <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
+        <Text style={[fontStyle, { color: primaryColor }]}>New friend</Text>
+      </View>
 
-      {!isFriendLimitReached && (
-        <>
-          <InputAddFriendName
-            friendName={friendName}
-            setFriendName={setFriendName}
-            isFriendNameUnique={isFriendNameUnique}
-            setIsFriendNameUnique={setIsFriendNameUnique}
-            setRevealRest={setRevealRest}
-            friendList={friendList}
-          />
+      <View style={{ flex: 1, paddingHorizontal: 4, paddingVertical: 10 }}>
+        <View style={{ flex: 1 }}>
+          {isFriendLimitReached && (
+            <View style={{ flex: 1, marginHorizontal: 0 }}>
+              <MessagePage
+                message="Sorry! You have already added the max amount of friends."
+                fontSize={20}
+                primaryColor={primaryColor}
+              />
+            </View>
+          )}
 
-          {revealRest && (
+          {!isFriendLimitReached && (
             <>
-              <SliderAddFriendEffort
-                friendEffort={friendEffort}
-                setFriendEffort={setFriendEffort}
-                primaryColor={primaryColor}
+              <AuthInputWrapper
+                condition={friendName}
+                label={"Name"}
+                children={
+                  <InputAddFriendName
+                    friendName={friendName}
+                    autoFocus={true}
+                    setFriendName={setFriendName}
+                    isFriendNameUnique={isFriendNameUnique}
+                    setIsFriendNameUnique={setIsFriendNameUnique}
+                    setRevealRest={setRevealRest}
+                    friendList={friendList}
+                  />
+                }
               />
 
-              <SliderAddFriendPriority
-                friendPriority={friendPriority}
-                setFriendPriority={setFriendPriority}
-                primaryColor={primaryColor}
-              />
+              {revealRest && (
+                <>
+                  <SliderAddFriendEffort
+                    friendEffort={friendEffort}
+                    setFriendEffort={setFriendEffort}
+                    primaryColor={primaryColor}
+                  />
 
-              <View style={{ width: "100%", height: 50 }}>
-                <PickerAddFriendLastDate
-                  friendDate={friendDate}
-                  setFriendDate={setFriendDate}
-                  showDatePicker={showDatePicker}
-                  setShowDatePicker={setShowDatePicker}
-                />
-              </View>
+                  <SliderAddFriendPriority
+                    friendPriority={friendPriority}
+                    setFriendPriority={setFriendPriority}
+                    primaryColor={primaryColor}
+                  />
 
-              <ButtonMediumAddFriend
-                friendName={friendName}
-                onPress={handleSave}
-              />
+                  <View style={{ width: "100%", height: 50 }}>
+                    <PickerAddFriendLastDate
+                      friendDate={friendDate}
+                      setFriendDate={setFriendDate}
+                      showDatePicker={showDatePicker}
+                      setShowDatePicker={setShowDatePicker}
+                    />
+                  </View>
+                </>
+              )}
             </>
           )}
-        </>
-      )}
-      <AlertList
-        fixedHeight={true}
-        height={700}
-        isModalVisible={isReviewModalVisible}
-        isFetching={saveInProgress}
-        useSpinner={true}
-        toggleModal={toggleReviewModal}
-        headerContent={
-          <Text style={{ fontFamily: "Poppins-Bold", fontSize: 18 }}>
-            Review
-          </Text>
-        }
-        content={
-          <View>
-            <Text>Friend data will go here</Text>
-          </View>
-        }
-        onConfirm={handleSave}
-        onCancel={toggleReviewModal}
-        bothButtons={true}
-        confirmText="Looks good!"
-        cancelText="Go back"
-      />
-      <AlertSuccessFail
-        isVisible={isSuccessModalVisible}
-        message={`${friendName} has been added to friends!`}
-        onClose={successOk}
-        type="success"
-      />
+        </View>
 
-      <AlertSuccessFail
-        isVisible={isFailModalVisible}
-        message={`Could not add ${friendName} to friends.`}
-        onClose={failOk}
-        tryAgain={false}
-        onRetry={handleSave}
-        isFetching={saveInProgress}
-        type="failure"
-      />
+        {friendName && (
+          <EscortBar
+            manualGradientColors={manualGradientColors}
+            subWelcomeTextStyle={appFontStyles.subWelcomeText}
+            primaryColor={primaryColor}
+            primaryBackground={backgroundColor}
+            forwardFlowOn={false}
+            label={`Save ${friendName}`}
+            onPress={openDoubleChecker}
+          />
+        )}
+      </View>
     </View>
   );
 };

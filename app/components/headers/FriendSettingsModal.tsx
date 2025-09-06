@@ -29,14 +29,14 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendId,
   friendName = "",
   friendDash,
- 
+  deselectFriend,
+
   bottomSpacer,
   closeModal,
   lightDarkTheme,
   themeAheadOfLoading,
   manualGradientColors,
 }) => {
-
   const { friendList } = useFriendList();
   //  console.log(friendDash?.friend_faves?.use_friend_color_theme);
   //  console.log(friendDash);
@@ -73,6 +73,7 @@ const FriendSettingsModal: React.FC<Props> = ({
             </View>
             <View style={styles.sectionContainer}>
               <SectionFriendSettings
+                userId={userId}
                 themeAheadOfLoading={themeAheadOfLoading}
                 friendId={friendId}
                 friendPhone={friendDash?.suggestion_settings?.phone_number}
@@ -104,12 +105,15 @@ const FriendSettingsModal: React.FC<Props> = ({
               right: 0,
               zIndex: 60000,
               elevation: 60000,
-              alignItems: 'center', 
-            
-              
+              alignItems: "center",
             }}
           >
-            <DeleteFriend friendId={friendId} friendName={friendName} />
+            <DeleteFriend
+              userId={userId}
+              friendId={friendId}
+              friendName={friendName}
+              deselectFriend={deselectFriend}
+            />
           </View>
         </View>
       }

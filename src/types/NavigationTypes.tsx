@@ -1,30 +1,27 @@
-
-
 export type RootStackParamList = {
   hellofriend: undefined;
   UserDetails: undefined;
   MomentFocus: {
     screenCameFrom: number;
     momentText?: string | null;
-  }
+  };
   Moments: {
     scrollTo: number | null;
-  }
+  };
   MomentView: {
     moment: object;
     index: number;
-  }
+  };
   PreAdded: undefined;
   Finalize: undefined;
-  Reload: undefined; 
+  Reload: undefined;
   Images: undefined;
   ImageView: undefined;
   Helloes: undefined;
   HelloView: {
     startingIndex: number | null;
     inPersonFilter: boolean;
-    
-  },
+  };
   Locations: undefined;
   LocationView: undefined;
   UnsavedLocationView: undefined;
@@ -46,6 +43,11 @@ export type RootStackParamList = {
   Fidget: undefined;
 
   Welcome: undefined;
-  Auth: undefined;
+  Auth: {
+    usernameEntered: string | null;
+  };
+  NewAccount: {
+    usernameEntered: string | null;
+  };
   RecoverCredentials: undefined;
 };

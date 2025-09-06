@@ -5,14 +5,21 @@ import EditPhone from "../buttons/friends/EditPhone";
 import EditEffort from "../buttons/friends/EditEffort";
 import EditPriority from "../buttons/friends/EditPriority";
 
+// import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
+
 const SectionFriendSettings = ({
- themeAheadOfLoading,
+  userId,
+  themeAheadOfLoading,
   friendId,
   friendPhone,
   friendEffort,
   friendPriority,
   primaryColor,
 }) => {
+  // const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
+  //   userId: userId,
+  // });
+
   // .days_since_words && .time_Score
   return (
     <View
@@ -24,22 +31,27 @@ const SectionFriendSettings = ({
         alignSelf: "flex-start",
       }}
     >
-      <EditPhone  
+      <EditPhone
+        userId={userId}
         friendId={friendId}
         friendPhone={friendPhone}
-            primaryColor={primaryColor}
+        primaryColor={primaryColor}
       />
       <EditEffort
-       themeAheadOfLoading={themeAheadOfLoading}
+        userId={userId}
+        themeAheadOfLoading={themeAheadOfLoading}
         friendId={friendId}
         friendEffort={friendEffort}
-            primaryColor={primaryColor}
+        primaryColor={primaryColor}
+        // refetchUpcoming={refetchUpcomingHelloes}
       />
       <EditPriority
-         themeAheadOfLoading={themeAheadOfLoading}
+        userId={userId}
+        themeAheadOfLoading={themeAheadOfLoading}
         friendId={friendId}
         friendPriority={friendPriority}
         primaryColor={primaryColor}
+        // refetchUpcoming={refetchUpcomingHelloes}
       />
     </View>
   );

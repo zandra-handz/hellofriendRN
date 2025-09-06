@@ -1,13 +1,22 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";   
- 
-import useFriendFunctions from "@/src/hooks/useFriendFunctions"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import EffortSettingSlider from "../../friends/EffortSettingSlider";
-const EditEffort = ({ themeAheadOfLoading, friendId, friendEffort, primaryColor }) => {
- 
- 
+const EditEffort = ({
+  userId,
+  themeAheadOfLoading,
+  friendId,
+  friendEffort,
+  primaryColor,
+  // refetchUpcoming,
+}) => {
+  const { handleUpdateFriendSettings } = useUpdateFriend({
+    userId: userId,
+    // refetchUpcoming: refetchUpcoming,  // don't need to refetch, date won't change until next hello
+  });
 
   const [effort, setEffort] = useState<Number>(friendEffort);
 
@@ -15,19 +24,13 @@ const EditEffort = ({ themeAheadOfLoading, friendId, friendEffort, primaryColor 
 
   const handleSave = () => {
     try {
-      handleUpdateFriendSettings(
-     
-        friendId,
-        effortRef.current.getValue()
-      );
+      handleUpdateFriendSettings(friendId, effortRef.current.getValue());
       setEffort(effortRef.current.getValue());
       setShowEdit(false);
     } catch (error) {
       console.error(error);
     }
   };
- 
-  const { handleUpdateFriendSettings } = useFriendFunctions();
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -40,13 +43,13 @@ const EditEffort = ({ themeAheadOfLoading, friendId, friendEffort, primaryColor 
       style={{
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-     
+
         width: "100%",
         alignSelf: "flex-start",
-        backgroundColor: showEdit ? 'red' : 'transparent',
+        backgroundColor: showEdit ? "red" : "transparent",
         padding: showEdit ? 10 : 0,
         borderRadius: showEdit ? 10 : 0,
-       }}
+      }}
     >
       <View
         style={{
@@ -71,7 +74,7 @@ const EditEffort = ({ themeAheadOfLoading, friendId, friendEffort, primaryColor 
               color={primaryColor}
             />
           </View>
-          <Text style={[styles.label, {color: primaryColor}]}>
+          <Text style={[styles.label, { color: primaryColor }]}>
             Effort: {effort}
           </Text>
         </View>
@@ -112,8 +115,8 @@ const EditEffort = ({ themeAheadOfLoading, friendId, friendEffort, primaryColor 
         <View
           style={{
             backgroundColor: "red",
-         borderRadius: 20,
-         padding: 10, 
+            borderRadius: 20,
+            padding: 10,
             flexDirection: "row",
             justifyContent: "space-between",
             marginVertical: 6,

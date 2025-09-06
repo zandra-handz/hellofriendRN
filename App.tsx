@@ -22,6 +22,7 @@ import {
   getStateFromPath,
 } from "@react-navigation/native";
 
+import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, useColorScheme, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
@@ -31,7 +32,7 @@ import { UserProvider, useUser } from "./src/context/UserContext";
 import {
   UserSettingsProvider,
   useUserSettings,
-} from "./src/context/UserSettingsContext"; 
+} from "./src/context/UserSettingsContext";
 
 import { UserStatsProvider } from "./src/context/UserStatsContext";
 
@@ -76,7 +77,6 @@ import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
 import ScreenAuth from "./app/screens/authflow/ScreenAuth";
 import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
 import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
- 
 
 // Don't think I am using
 // import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
@@ -102,8 +102,6 @@ import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
 import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
 
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
- 
-
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -240,26 +238,22 @@ export default Sentry.wrap(function App() {
                         <FriendDashProvider>
                           <CapsuleListProvider>
                             <LocationsProvider>
-                              <HelloesProvider> 
-                                  <SelectedFriendStatsProvider>
-                                    {/* <MessageContextProvider> */}
-                                    <SafeAreaProvider>
-                                      <LDThemeProvider>
-                                         
-                                        <RootSiblingParent>
-                                          <DeviceLocationProvider>
-                                            <FriendStyleProvider>
-                                              <Layout />
-                                            </FriendStyleProvider>
-                                          </DeviceLocationProvider>
-                                        </RootSiblingParent>
-                                   
-                                      
-                                      </LDThemeProvider>
-                                    </SafeAreaProvider>
-                                    {/* </MessageContextProvider> */}
-                                  </SelectedFriendStatsProvider>
-                           
+                              <HelloesProvider>
+                                <SelectedFriendStatsProvider>
+                                  {/* <MessageContextProvider> */}
+                                  <SafeAreaProvider>
+                                    <LDThemeProvider>
+                                      <RootSiblingParent>
+                                        <DeviceLocationProvider>
+                                          <FriendStyleProvider>
+                                            <Layout />
+                                          </FriendStyleProvider>
+                                        </DeviceLocationProvider>
+                                      </RootSiblingParent>
+                                    </LDThemeProvider>
+                                  </SafeAreaProvider>
+                                  {/* </MessageContextProvider> */}
+                                </SelectedFriendStatsProvider>
                               </HelloesProvider>
                             </LocationsProvider>
                           </CapsuleListProvider>
@@ -395,7 +389,6 @@ const linking = {
 };
 
 export const Layout = () => {
- 
   // const { lightDarkTheme} = useLDTheme();
   const { user, isInitializing } = useUser();
 
@@ -563,7 +556,7 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 /> */}
- 
+
               <Stack.Screen
                 name="LocationSend"
                 component={ScreenLocationSend}
@@ -670,6 +663,13 @@ export const Layout = () => {
               <Stack.Screen
                 name="Auth"
                 component={ScreenAuth}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="NewAccount"
+                component={ScreenNewAccount}
                 options={{
                   headerShown: false,
                 }}

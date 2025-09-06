@@ -74,10 +74,10 @@ const ScreenFinalize = () => {
           >
             Finalize ideas shared
           </Text>
-          {preAdded &&
+          {/* {preAdded &&
             uniqueCategories?.length > 0 &&
             categoryNamesOnly &&
-            categoryNamesOnly !== undefined && (
+            categoryNamesOnly !== undefined && ( */}
               <FinalizeList
                 manualGradientColors={manualGradientColors}
                 subWelcomeTextStyle={appFontStyles.subWelcomeText}
@@ -89,7 +89,7 @@ const ScreenFinalize = () => {
                 preSelected={preAdded}
                 categories={categoryNamesOnly}
               />
-            )}
+            {/* )} */}
         </View>
       )}
     </SafeViewAndGradientBackground>

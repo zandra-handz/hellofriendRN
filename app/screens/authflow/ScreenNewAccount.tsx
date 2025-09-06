@@ -1,20 +1,18 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
   StyleSheet,
-  Text,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
 } from "react-native";
-
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
@@ -22,30 +20,34 @@ import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 
-import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
+import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-const ScreenAuth = () => {
+
+const ScreenNewAccount = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const usernameEntered = route.params?.usernameEntered ?? false;
-  const { navigateToNewAccount, navigateBack, navigateToRecoverCredentials } =
-    useAppNavigations();
-  const { showSigninErrorMessage } = useMessageCentralizer();
+  const { navigateToAuth, navigateBack } = useAppNavigations();
   const { lightDarkTheme } = useLDTheme();
   const [username, setUsername] = useState(usernameEntered);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [verifyPassword, setVerifyPassword] = useState("");
   const { refetch } = useUser();
   const { onSignIn, signinMutation } = useSignIn({ refetchUser: refetch });
 
+  const { onSignUp, signupMutation } = useSignUp({ signInNewUser: onSignIn });
+
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
+  const verifyPasswordInputRef = useRef(null);
+  const emailInputRef = useRef(null);
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
 
-  // const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const placeholderTextColor = manualGradientColors.homeDarkColor;
 
@@ -53,51 +55,72 @@ const ScreenAuth = () => {
   const DELAY_BEFORE_FOCUS = 300;
 
   useEffect(() => {
-    if (signinMutation.isSuccess) {
-      showFlashMessage(`Success!`, false, 3000);
-    }
-  }, [signinMutation.isSuccess]);
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
 
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     "keyboardDidShow",
-  //     () => setIsKeyboardVisible(true)
-  //   );
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     "keyboardDidHide",
-  //     () => setIsKeyboardVisible(false)
-  //   );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //     keyboardDidHideListener.remove();
-  //   };
-  // }, []);
+  const handleBackToSignIn = () => {
+    navigateToAuth({ usernameEntered: username });
 
-  const handleCreateNew = () => {
-    navigateToNewAccount({ usernameEntered: username });
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setVerifyPassword("");
   };
 
-  useEffect(() => {
-    if (signinMutation.isError) {
-      showSigninErrorMessage();
-      setPassword(null);
-    }
-  }, [signinMutation]);
+  const handleCreateAccount = async () => {
+    let result;
 
-  const handleAuthentication = async () => {
-    console.log("signing user in");
-    try {
-      onSignIn(username, password);
-    } catch (error) {
-      console.error(error);
+    if (password !== verifyPassword) {
+      return;
+    }
+    console.log("signing up new user");
+    result = await onSignUp(username, email, password);
+    if (result && result.status === 201) {
+      alert("Sign up was successful!");
+
+      navigateToAuth({ usernameEntered: username });
+    } else if (result && result.error) {
+      alert("Error: " + result.error);
     }
   };
 
   const [usernameSubmitted, setUsernameSubmitted] = useState(false);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [passwordSubmitted, setPasswordSubmitted] = useState(false);
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
 
   const handleUsernameSubmit = () => {
     setUsernameSubmitted(true);
+    setTimeout(() => {
+      if (emailInputRef.current && username) {
+        emailInputRef.current.focus();
+      }
+    }, DELAY_BEFORE_FOCUS);
+  };
+
+  const handleUsernameChange = (text) => {
+ 
+    setUsername(text);
+    if (!text || text.length < 1) {
+      setUsernameSubmitted(false);
+    }
+  };
+
+  const handleEmailSubmit = () => {
+    setEmailSubmitted(true);
+
     setTimeout(() => {
       if (passwordInputRef.current && username) {
         passwordInputRef.current.focus();
@@ -105,19 +128,42 @@ const ScreenAuth = () => {
     }, DELAY_BEFORE_FOCUS);
   };
 
-  const handleUsernameChange = (text) => {
-    setUsername(text);
+  const handleEmailChange = (text) => {
+    setEmail(text);
     if (!text || text.length < 1) {
-      setUsernameSubmitted(false);
+      setEmailSubmitted(false);
     }
   };
 
-  const handlePasswordChange = (text) => {
+  const handleFirstPasswordSubmit = () => {
+    setPasswordSubmitted(true);
+    setTimeout(() => {
+      if (verifyPasswordInputRef.current) {
+        verifyPasswordInputRef.current.focus();
+      }
+    }, DELAY_BEFORE_FOCUS);
+  };
+
+  const handleFirstPasswordChange = (text) => {
     setPassword(text);
+    if (!text || text.length < 1) {
+      setPasswordSubmitted(false);
+    }
+  };
+
+  const handleVerifyPasswordChange = (text) => {
+    setVerifyPassword(text);
+    setPasswordsMatch(text === password);
+    // if (!text || text.length < 1) {
+    //   setPasswordSubmitted(false);
+    // }
   };
 
   const handleUsernameFocus = () => setIsUsernameFocused(true);
   const handleUsernameBlur = () => setIsUsernameFocused(false);
+
+  const handleEmailFocus = () => setIsEmailFocused(true);
+  const handleEmailBlur = () => setIsEmailFocused(false);
 
   const handlePasswordFocus = () => setIsPasswordFocused(true);
   const handlePasswordBlur = () => setIsPasswordFocused(false);
@@ -133,10 +179,10 @@ const ScreenAuth = () => {
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       style={{
         flex: 1,
-        // paddingTop: 40, // TEMPORARY
+        //paddingTop: 40, // TEMPORARY
       }}
     >
-      {signinMutation.isPending && (
+      {/* {signupMutation.isPending && (
         <View
           style={{
             zIndex: 100000,
@@ -158,21 +204,20 @@ const ScreenAuth = () => {
             color={"yellow"}
           />
         </View>
-      )}
-      {!signinMutation.isPending && (
+      )} */}
+
+      {!signupMutation.isPending && (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={[{ flex: 1, padding: 10, width: "100%" }]}
         >
           <AuthScreenTopTray
             onBackPress={navigateBack}
-            rightLabel={"Create new account?"}
-            onRightPress={handleCreateNew}
+            onRightPress={handleBackToSignIn}
+            rightLabel="Go to sign in"
           />
 
-          <AuthScreenHeader label={"Sign in"} />
-
-          {/* {  !signinMutation.isSuccess && ( */}
+          <AuthScreenHeader label={"Create new account"} />
 
           <View
             style={[styles.inputsContainer, { gap: INPUTS_GAP }]}
@@ -193,7 +238,7 @@ const ScreenAuth = () => {
                   autoFocus={true}
                   onChangeText={handleUsernameChange}
                   value={username}
-                  onSubmitEditing={handleUsernameSubmit}
+                  onSubmitEditing={() => handleUsernameSubmit()}
                   ref={usernameInputRef}
                   onFocus={handleUsernameFocus}
                   onBlur={handleUsernameBlur}
@@ -207,6 +252,33 @@ const ScreenAuth = () => {
 
             {username && usernameSubmitted && (
               <AuthInputWrapper
+                condition={email}
+                label={"Email"}
+                children={
+                  <TextInput
+                    style={[
+                      styles.input,
+                      isEmailFocused && styles.inputFocused,
+                    ]}
+                    placeholder="Email"
+                    placeholderTextColor={placeholderTextColor}
+                    onChangeText={handleEmailChange}
+                    value={email}
+                    onSubmitEditing={handleEmailSubmit}
+                    ref={emailInputRef}
+                    onFocus={handleEmailFocus}
+                    onBlur={handleEmailBlur}
+                    accessible={true}
+                    accessibilityLabel="Email input"
+                    accessibilityHint="Enter your email address"
+                    importantForAccessibility="yes"
+                  />
+                }
+              />
+            )}
+
+            {email && emailSubmitted && (
+              <AuthInputWrapper
                 condition={password}
                 label={"Password"}
                 children={
@@ -219,8 +291,8 @@ const ScreenAuth = () => {
                     placeholderTextColor={placeholderTextColor}
                     autoFocus={false} //true
                     secureTextEntry={true}
-                    onChangeText={handlePasswordChange}
-                    onSubmitEditing={handleAuthentication}
+                    onChangeText={handleFirstPasswordChange}
+                    onSubmitEditing={handleFirstPasswordSubmit}
                     value={password}
                     ref={passwordInputRef}
                     onFocus={handlePasswordFocus}
@@ -234,45 +306,53 @@ const ScreenAuth = () => {
               />
             )}
 
-            <View style={{ flexDirection: "row", width: "100%" }}>
-              <Text
-                style={styles.toggleButton}
-                onPress={navigateToRecoverCredentials}
-                accessible={true}
-                accessibilityLabel="Toggle button"
-                accessibilityHint="Press to toggle between sign in and create account"
-              >
-                {"Forgot username or password"}
-              </Text>
-            </View>
+            {password && passwordSubmitted && (
+              <AuthInputWrapper
+                condition={verifyPassword}
+                label={"Verify password"}
+                children={
+                  <TextInput
+                    style={[
+                      styles.input,
+                      isPasswordFocused && styles.inputFocused,
+                      !passwordsMatch && {borderColor: 'red'}
+                    ]}
+                    ref={verifyPasswordInputRef}
+                    placeholder="Verify Password"
+                    placeholderTextColor={placeholderTextColor}
+                    secureTextEntry={true}
+                    onChangeText={handleVerifyPasswordChange}
+                    value={verifyPassword}
+                    onFocus={() => setIsPasswordFocused(true)}
+                    onBlur={() => setIsPasswordFocused(false)}
+                    accessible={true}
+                    accessibilityLabel="Verify Password input"
+                    accessibilityHint="Re-enter your password for verification"
+                    importantForAccessibility="yes"
+                  />
+                }
+              />
+            )}
           </View>
 
-
-        </KeyboardAvoidingView>
-        
-      )}
-                <View
-            style={{
-              width: "100%",
-              bottom: 0,
-              paddingHorizontal: 4,
-              backgroundColor: "pink",
-              //  backgroundColor: 'teal',
-              // paddingBottom: 20,
-              // paddingBottom: 60,
-              // right: 0,
-            }}
-          >
-            {username && password && !signinMutation.isPending && (
+          {username && password && email && passwordsMatch && !isKeyboardVisible && (
+            <View
+              style={{
+                width: "100%",
+                paddingBottom: 20,
+              }}
+            >
               <SimpleBottomButton
-                onPress={handleAuthentication}
-                title={"Sign in"}
+                onPress={handleCreateAccount}
+                title={"Create account"}
                 borderRadius={10}
                 backgroundColor={manualGradientColors.homeDarkColor}
                 labelColor={manualGradientColors.lightColor}
               />
-            )}
-          </View>
+            </View>
+          )}
+        </KeyboardAvoidingView>
+      )}
     </PreAuthSafeViewAndGradientBackground>
   );
 };
@@ -288,7 +368,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontFamily: "Poppins-Regular",
-
+    // backgroundColor: "orange",
     height: "auto",
     borderWidth: 2.6,
     padding: 10,
@@ -299,15 +379,14 @@ const styles = StyleSheet.create({
     borderColor: "black",
     fontSize: 15,
   },
+  smallInputHeader: {
+    paddingLeft: 10,
+    flexDirection: "row",
+    height: "100%",
+  },
   inputFocused: {
     fontFamily: "Poppins-Regular",
     borderWidth: 3,
-  },
-  title: {
-    fontSize: 62,
-    marginBottom: 10,
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
   },
   toggleButton: {
     color: "black",
@@ -315,12 +394,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     selfAlign: "center",
   },
-  spinnerContainer: {
-    ...StyleSheet.absoluteFillObject, // Cover the entire screen
-    backgroundColor: "transparent", // Semi-transparent background
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
-export default ScreenAuth;
+export default ScreenNewAccount;

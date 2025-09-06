@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, Pressable, View, Text, TextInput } from "react-native";
-
+import useUpdateFriend from "@/src/hooks/useUpdateFriend"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-
-import useFriendFunctions from "@/src/hooks/useFriendFunctions";
-const EditPhone = ({  friendId, friendPhone, primaryColor }) => {
+ 
+const EditPhone = ({ userId,  friendId, friendPhone, primaryColor, refetchUpcoming }) => {
   const [phoneNumber, setPhoneNumber] = useState(friendPhone);
  
-  const { handleUpdateFriendSettings } = useFriendFunctions();
+  const { handleUpdateFriendSettings } = useUpdateFriend({userId: userId, refetchUpcoming: refetchUpcoming});
+
 
   const [showEdit, setShowEdit] = useState(false);
 

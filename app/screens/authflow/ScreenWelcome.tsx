@@ -18,12 +18,14 @@ import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 const ScreenWelcome = () => {
   const { lightDarkTheme} = useLDTheme(); 
 
   const { user, isInitializing } = useUser();
   const { selectedFriend } = useSelectedFriend();
+
+  const { navigateToNewAccount} = useAppNavigations();
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
@@ -31,6 +33,11 @@ const ScreenWelcome = () => {
 
   const handleNavigateToAuthScreen = (userHitCreateAccount: boolean) => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
+  };
+
+
+  const handleNavigateToNewAccoint = () => {
+
   };
 
   useEffect(() => {
@@ -138,7 +145,7 @@ const ScreenWelcome = () => {
                         fontSize: 14,
                         lineHeight: 21,
                       }}
-                      onPress={() => handleNavigateToAuthScreen(true)}
+                      onPress={navigateToNewAccount}
                       accessible={true}
                       accessibilityLabel="Toggle button"
                       accessibilityHint="Press to toggle between sign in and create account"

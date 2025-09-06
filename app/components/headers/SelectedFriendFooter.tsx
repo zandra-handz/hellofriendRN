@@ -235,6 +235,8 @@ const { deselectFriend} = useSelectedFriend();
       {friendSettingsModalVisible && !!friendId && (
         <View>
           <FriendSettingsModal
+          userId={userId}
+          deselectFriend={deselectFriend}
             manualGradientColors={manualGradientColors}
             lightDarkTheme={lightDarkTheme}
             userId={userId}

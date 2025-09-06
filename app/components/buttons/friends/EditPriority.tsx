@@ -1,13 +1,22 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";   
- 
-import useFriendFunctions from "@/src/hooks/useFriendFunctions"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import PrioritySettingSlider from "../../friends/PrioritySettingSlider";
-const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority, primaryColor}) => {
-  
- 
+const EditPriority = ({
+  userId,
+  themeAheadOfLoading,
+  friendId,
+  friendPriority,
+  primaryColor,
+  // refetchUpcoming,
+}) => {
+  const { handleUpdateFriendSettings } = useUpdateFriend({
+    userId: userId,
+    // refetchUpcoming: refetchUpcoming,  // don't need to refetch, date won't change until next hello
+  });
 
   const [priority, setPriority] = useState<number>(friendPriority);
 
@@ -15,19 +24,13 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority, primaryC
 
   const handleSave = () => {
     try {
-      handleUpdateFriendSettings(
-     
-        friendId,
-        priorityRef.current.getValue()
-      );
+      handleUpdateFriendSettings(friendId, priorityRef.current.getValue());
       setPriority(priorityRef.current.getValue());
       setShowEdit(false);
     } catch (error) {
       console.error(error);
     }
   };
- 
-  const { handleUpdateFriendSettings } = useFriendFunctions();
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -40,13 +43,13 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority, primaryC
       style={{
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-     
+
         width: "100%",
         alignSelf: "flex-start",
-        backgroundColor: showEdit ? 'red' : 'transparent',
+        backgroundColor: showEdit ? "red" : "transparent",
         padding: showEdit ? 10 : 0,
         borderRadius: showEdit ? 10 : 0,
-       }}
+      }}
     >
       <View
         style={{
@@ -71,7 +74,7 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority, primaryC
               color={primaryColor}
             />
           </View>
-          <Text style={[styles.label, {color: primaryColor}]}>
+          <Text style={[styles.label, { color: primaryColor }]}>
             Priority: {priority}
           </Text>
         </View>
@@ -112,22 +115,22 @@ const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority, primaryC
         <View
           style={{
             backgroundColor: "red",
-         borderRadius: 20,
-         padding: 10, 
+            borderRadius: 20,
+            padding: 10,
             flexDirection: "row",
             justifyContent: "space-between",
             marginVertical: 6,
             alignItems: "center",
           }}
         >
-                <PrioritySettingSlider
-                  //height={"40%"}
-                  ref={priorityRef}
-                  friendPriority={priority} // Passing friendEffort state as value
-                  sliderColor={themeAheadOfLoading.lightColor}
-                  trackColor={themeAheadOfLoading.darkColor}
-                  primaryColor={primaryColor}
-                />
+          <PrioritySettingSlider
+            //height={"40%"}
+            ref={priorityRef}
+            friendPriority={priority} // Passing friendEffort state as value
+            sliderColor={themeAheadOfLoading.lightColor}
+            trackColor={themeAheadOfLoading.darkColor}
+            primaryColor={primaryColor}
+          />
         </View>
       )}
     </View>

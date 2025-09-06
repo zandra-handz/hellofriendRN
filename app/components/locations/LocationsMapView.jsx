@@ -265,35 +265,7 @@ const handleGoToMidpointLocationSearchScreen = () => {
 };
 
 
-  //i had taken this out but brought it back in because if i use sorted
-  //list for the bottom scroll, it doesn't update when a new favorite is added;
-  //i don't like having both sortedLocations passed in AND using the locationFuctions
-  //for this
-
-  // Moved to parent
-  //   const makeSplitLists = (list, condition) => {
-  //   return list.reduce(
-  //     ([fave, notFave], item) => {
-  //       const isFave = condition(item);
-  //       const newItem = { ...item, isFave };
-
-  //       return isFave
-  //         ? [[...fave, newItem], notFave]
-  //         : [fave, [...notFave, newItem]];
-  //     },
-  //     [[], []]
-  //   );
-  // };
-
-  // Moved to parent to calculate while calculating the helloes
-  // const [faveLocations, nonFaveLocations] = useMemo(() => {
-  //   if (locationList) {
-  //     return makeSplitLists(locationList, (location) =>
-  // friendDashboardData[0].friend_faves.locations.includes(location.id)
-  //   );
-
-  //   }
-  // }, [locationList, friendDashboardData]);
+ 
 
   // Function to fit all markers
   const fitToMarkers = () => {
@@ -700,27 +672,7 @@ const handleGoToMidpointLocationSearchScreen = () => {
             </View>
           )}
         </>
-      )}
-
-      {/* 
-      <ExpandableUpCard
-        onPress={() => {
-          //handleGoToLocationViewScreen(focusedLocation) //scaffolding during transition to keep build functional
-        }}
-        useParentButton={true}
-        parentTriggerToExpand={expandStateFromParent}
-        parentFunctionToTrackOpenClose={toggleLocationDetailsState} //use locationDetailsAreOpen to act on
-        content={
-          focusedLocation ? (
-            <LocationDetailsBody
-              locationObject={focusedLocation}
-              appOnlyLocationObject={appOnlyLocationData}
-              currentDayDrilledTwice={currentDayDrilledOnce}
-            />
-          ) : null //I'm not sure if this would return error, the LocationDetailsBody has checks in place already
-          //and will return an empty container if no focusedLocation
-        }
-      /> */}
+      )} 
     </View>
   );
 };
