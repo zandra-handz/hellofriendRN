@@ -87,6 +87,7 @@ const ScreenAuth = () => {
 
   const handleAuthentication = async () => {
     console.log("signing user in");
+    handlePasswordBlur();
     try {
       onSignIn(username, password);
     } catch (error) {
