@@ -125,7 +125,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       style={[
         styles.container,
         {
-          backgroundColor: 'red',
+         // backgroundColor: 'red',
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height,

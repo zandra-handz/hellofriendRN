@@ -7,6 +7,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import Animated, {
   SlideInDown,
   SlideOutDown,
@@ -19,24 +20,21 @@ import { useFriendList } from "@/src/context/FriendListContext";
 
 // Press function is internal
 const HomeButtonUpNext = ({
- 
   isLoading,
   getThemeAheadOfLoading,
   header = "Up next",
   height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
-  manualGradientColors,
-  primaryColor,
-  primaryBackground,
+ 
+  primaryColor, 
   overlayColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
-}) => {
-  // const { getThemeAheadOfLoading } = useFriendStyle();
-const { friendList } = useFriendList();
-const { upcomingHelloes} = useUpcomingHelloes();
-  const {   selectFriend } = useSelectedFriend();
+}) => { 
+  const { friendList } = useFriendList();
+  const { upcomingHelloes } = useUpcomingHelloes();
+  const { selectFriend } = useSelectedFriend();
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;
@@ -45,6 +43,8 @@ const { upcomingHelloes} = useUpcomingHelloes();
     const friend = friendList.find((friend) => friend.id === id);
     getThemeAheadOfLoading(friend);
   };
+
+  console.log('hombutton rerendered');
 
   return (
     <View
@@ -128,15 +128,15 @@ const { upcomingHelloes} = useUpcomingHelloes();
             style={{
               zIndex: 30000,
               height: "100%",
+              height: 400,
               width: "100%",
-              backgroundColor: 'pink',
+              backgroundColor: "pink",
             }}
           >
-            <HomeScrollSoon
+            {/* <HomeScrollSoon
               upcomingHelloes={upcomingHelloes}
               isLoading={isLoading}
               getThemeAheadOfLoading={getThemeAheadOfLoading}
-            
               selectFriend={selectFriend}
               friendList={friendList}
               primaryColor={primaryColor}
@@ -146,7 +146,7 @@ const { upcomingHelloes} = useUpcomingHelloes();
               maxHeight={700}
               borderRadius={10}
               borderColor="black"
-            />
+            /> */}
           </Animated.View>
           <Animated.View
             entering={FadeIn}

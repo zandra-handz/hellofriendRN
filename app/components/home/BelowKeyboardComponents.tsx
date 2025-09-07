@@ -13,8 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface BelowKeyboardComponentsProps {
-  userId: number;
-  slideAnim: SharedValue<number>;
+  userId: number; 
   friendListLength: number; 
   onPress: () => void;
 }

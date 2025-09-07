@@ -187,7 +187,7 @@ const ScreenHome = () => {
       return () => {};
     }, [])
   );
-  const slideAnim = useSharedValue(1);
+ 
 
   const clearNewMomentText = () => {
     if (newMomentTextRef && newMomentTextRef.current) {
@@ -388,7 +388,7 @@ const ScreenHome = () => {
                       lightDarkTheme.darkerOverlayBackground
                     }
                     spinnerStyle={spinnerStyle}
-                    slideAnim={slideAnim}
+               
                     friendListLength={friendList?.length || 0}
                     onPress={navigateToAddMomentScreen}
                   />
