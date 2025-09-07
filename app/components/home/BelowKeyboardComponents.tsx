@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import HomeButtonUpNext from "./HomeButtonUpNext";
+import AllHome from "./AllHome";
 import SelectedFriendHome from "./SelectedFriendHome";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { appFontStyles } from "@/src/hooks/StaticFonts";
@@ -13,8 +13,8 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface BelowKeyboardComponentsProps {
-  userId: number; 
-  friendListLength: number; 
+  userId: number;
+  friendListLength: number;
   onPress: () => void;
 }
 
@@ -22,7 +22,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   userId,
 
   isLoading,
- 
+
   friendStyle,
   primaryColor,
   primaryBackgroundColor,
@@ -34,7 +34,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   // friendDash,
   selectedFriendId,
   selectedFriendName,
-  friendListLength, 
+  friendListLength,
   onPress,
 }) => {
   const { friendDash, loadingDash } = useFriendDash();
@@ -54,20 +54,21 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       ]}
     >
       {!selectedFriendId && friendListLength > 0 && (
-        <HomeButtonUpNext
-          isLoading={isLoading}
-          getThemeAheadOfLoading={getThemeAheadOfLoading}
-          onPress={onPress}
-          borderRadius={10}
-          height={"100%"}
-          manualGradientColors={manualGradientColors}
-          welcomeTextStyle={welcomeTextStyle}
-          subWelcomeTextStyle={subWelcomeTextStyle}
-          primaryColor={primaryColor}
-          overlayColor={primaryOverlayColor}
-          primaryBackground={primaryBackgroundColor}
-          // borderColor="black"
-        />
+        <View style={{ height: "100%" }}>
+          <AllHome
+            isLoading={isLoading}
+            getThemeAheadOfLoading={getThemeAheadOfLoading}
+            onPress={onPress}
+            borderRadius={10}
+            height={"100%"} 
+            welcomeTextStyle={welcomeTextStyle}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+            primaryColor={primaryColor}
+            overlayColor={primaryOverlayColor}
+            primaryBackground={primaryBackgroundColor}
+            // borderColor="black"
+          />
+        </View>
       )}
       {selectedFriendId && (
         <View style={{ height: "100%" }}>
@@ -89,8 +90,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             selectedFriendId={selectedFriendId}
             selectedFriendName={selectedFriendName}
             onPress={onPress}
-            borderRadius={10}
-            borderColor="black"
+     
             height={"100%"}
           />
         </View>

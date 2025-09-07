@@ -26,7 +26,7 @@ const SuggestedHello = ({
   friendFutureDate,
   padding,
   height,
-  borderRadius = 10,
+  borderRadius = 14,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
 

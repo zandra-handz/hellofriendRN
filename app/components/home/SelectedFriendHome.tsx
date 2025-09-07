@@ -20,7 +20,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
@@ -32,19 +33,14 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
-
-  manualGradientColors,
-  friendStyle,
-
-  borderRadius = 20,
+ 
+  friendStyle, 
   borderColor = "transparent",
-  primaryColor,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
+  primaryColor, 
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
-  spinnerStyle,
+ 
   loadingDash,
   friendDash,
   selectedFriendId,
@@ -53,6 +49,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 }) => {
   const headerRef = useRef(null);
   const { capsuleList } = useCapsuleList();
+
+
+  
+   const welcomeTextStyle = appFontStyles.welcomeText;
+   const subWelcomeTextStyle = appFontStyles.subWelcomeText;
 
   const { categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
@@ -195,7 +196,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   }
                   padding={SELECTED_FRIEND_CARD_PADDING}
                   height={SELECTED_FRIEND_CARD_HEIGHT}
-                  borderRadius={borderRadius}
+                  // borderRadius={borderRadius}
                 />
 
                 <View style={{ width: "100%", marginVertical: 3 }}>

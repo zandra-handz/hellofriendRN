@@ -373,7 +373,7 @@ const ScreenHome = () => {
               )}
               {!isKeyboardVisible &&
                 // && !loadingDash
-                friendList.length > 0 && (  // loadingDash internally spins the components between friend selects
+                friendList?.length > 0 && (  // loadingDash internally spins the components between friend selects
                   <BelowKeyboardComponents
                     userId={user?.id}
                

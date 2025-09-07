@@ -38,31 +38,31 @@ const CalendarLights = ({
     }
   }, []);
 
-  const handleViewHello = (id) => {
-    const helloIndex = helloesList.findIndex((hello) => hello.id === id);
-    const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
+  // const handleViewHello = (id) => {
+  //   const helloIndex = helloesList.findIndex((hello) => hello.id === id);
+  //   const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
 
-    if (helloObject != undefined) {
-      const daysSince = daysSincedDateField(helloObject.date);
+  //   if (helloObject != undefined) {
+  //     const daysSince = daysSincedDateField(helloObject.date);
 
-      const word = Number(daysSince) != 1 ? `days` : `day`;
+  //     const word = Number(daysSince) != 1 ? `days` : `day`;
 
-      ShowQuickView({
-        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-        view: (
-          <HelloQuickView
-            friendId={friendId}
-            primaryColor={primaryColor}
-            themeAheadOfLoading={themeAheadOfLoading}
-            data={helloObject}
-            index={helloIndex}
-          />
-        ),
-        message: `hi hi hi`,
-        update: false,
-      });
-    }
-  };
+  //     ShowQuickView({
+  //       topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+  //       view: (
+  //         <HelloQuickView
+  //           friendId={friendId}
+  //           primaryColor={primaryColor}
+  //           themeAheadOfLoading={themeAheadOfLoading}
+  //           data={helloObject}
+  //           index={helloIndex}
+  //         />
+  //       ),
+  //       message: `hi hi hi`,
+  //       update: false,
+  //     });
+  //   }
+  // };
 
   const indexDays = {
     Sunday: 0,
@@ -117,7 +117,8 @@ const CalendarLights = ({
       return (
         <AnimatedPressable
           hitSlop={20}
-          onPress={() => handleViewHello(id)}
+          // onPress={() => handleViewHello(id)}
+          onPress={() => console.log('removed for now')}
           key={key}
           style={{ height: 10, width: 10, overflow: "hidden" }}
         >

@@ -3,8 +3,7 @@ import { Pressable, Text, StyleSheet, View } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
-// import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
@@ -19,22 +18,22 @@ import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 // Press function is internal
-const HomeButtonUpNext = ({
+const AllHome = ({
   isLoading,
   getThemeAheadOfLoading,
   header = "Up next",
   height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
- 
-  primaryColor, 
+  primaryColor,
   overlayColor,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
-}) => { 
+}) => {
   const { friendList } = useFriendList();
   const { upcomingHelloes } = useUpcomingHelloes();
   const { selectFriend } = useSelectedFriend();
+
+  const welcomeTextStyle = appFontStyles.welcomeText;
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;
@@ -44,7 +43,7 @@ const HomeButtonUpNext = ({
     getThemeAheadOfLoading(friend);
   };
 
-  console.log('hombutton rerendered');
+  console.log("hombutton rerendered");
 
   return (
     <View
@@ -122,32 +121,35 @@ const HomeButtonUpNext = ({
             </Pressable>
           </Animated.View>
 
-          <Animated.View
-            entering={SlideInDown.delay(100)}
-            exiting={SlideOutDown}
-            style={{
-              zIndex: 30000,
-              height: "100%",
-              height: 400,
-              width: "100%",
-              backgroundColor: "pink",
-            }}
-          >
-            {/* <HomeScrollSoon
-              upcomingHelloes={upcomingHelloes}
-              isLoading={isLoading}
-              getThemeAheadOfLoading={getThemeAheadOfLoading}
-              selectFriend={selectFriend}
-              friendList={friendList}
-              primaryColor={primaryColor}
-              overlayColor={overlayColor}
-              manualGradientColors={manualGradientColors}
-              height={"100%"}
-              maxHeight={700}
-              borderRadius={10}
-              borderColor="black"
-            /> */}
-          </Animated.View>
+          <View style={{width: '100%', height: 400}}>
+            <Animated.View
+              entering={SlideInDown.delay(100)}
+              exiting={SlideOutDown}
+              style={{
+                zIndex: 3,
+                flex: 1,
+                // height: "100%",
+                // height: 400,
+                width: "100%",
+               // backgroundColor: "pink",
+              }}
+            >
+              <HomeScrollSoon
+                upcomingHelloes={upcomingHelloes}
+                isLoading={isLoading}
+                getThemeAheadOfLoading={getThemeAheadOfLoading}
+                selectFriend={selectFriend}
+                friendList={friendList}
+                primaryColor={primaryColor}
+                overlayColor={overlayColor}
+                manualGradientColors={manualGradientColors}
+                height={"100%"}
+                maxHeight={700}
+                borderRadius={10}
+                borderColor="black"
+              />
+            </Animated.View>
+          </View>
           <Animated.View
             entering={FadeIn}
             exiting={SlideOutRight}
@@ -210,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeButtonUpNext;
+export default AllHome;
