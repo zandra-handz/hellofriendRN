@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import {
   View,
   TextInput,
@@ -17,7 +24,7 @@ import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/forma
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
-
+import { useFocusEffect } from "@react-navigation/native";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
@@ -51,6 +58,29 @@ const ScreenAuth = () => {
 
   const INPUTS_GAP = 4;
   const DELAY_BEFORE_FOCUS = 300;
+
+  const handleUsernameFocus = () => setIsUsernameFocused(true);
+  const handleUsernameBlur = () => setIsUsernameFocused(false);
+
+  const handlePasswordFocus = () => setIsPasswordFocused(true);
+  const handlePasswordBlur = () => setIsPasswordFocused(false);
+
+  const handleFocusUsername = () => {
+    setTimeout(() => {
+      if (usernameInputRef.current) {
+        usernameInputRef.current.focus();
+      }
+    }, DELAY_BEFORE_FOCUS);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (usernameEntered) {
+        setUsername(usernameEntered);
+        handleFocusUsername();
+      }
+    }, [usernameEntered])
+  );
 
   useEffect(() => {
     if (signinMutation.isSuccess) {
@@ -117,12 +147,6 @@ const ScreenAuth = () => {
     setPassword(text);
   };
 
-  const handleUsernameFocus = () => setIsUsernameFocused(true);
-  const handleUsernameBlur = () => setIsUsernameFocused(false);
-
-  const handlePasswordFocus = () => setIsPasswordFocused(true);
-  const handlePasswordBlur = () => setIsPasswordFocused(false);
-
   return (
     <PreAuthSafeViewAndGradientBackground
       settings={null}
@@ -131,6 +155,7 @@ const ScreenAuth = () => {
       friendColorLight={null}
       friendColorDark={null}
       friendId={null}
+      includeCustomStatusBar={false}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       style={{
         flex: 1,
@@ -140,6 +165,7 @@ const ScreenAuth = () => {
       {signinMutation.isPending && (
         <View
           style={{
+            backgroundColor: "orange",
             zIndex: 100000,
             elevation: 100000,
             position: "absolute",
@@ -161,19 +187,22 @@ const ScreenAuth = () => {
         </View>
       )}
       {!signinMutation.isPending && (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={[{ flex: 1, padding: 10, width: "100%" }]}
+        // <KeyboardAvoidingView
+        //   behavior={Platform.OS === "ios" ? "padding" : "height"}
+        //   style={[{ flex: 1, padding: 10, width: "100%" }]}
+        // >
+        <View
+          style={{ paddingHorizontal: 10, flex: 1, 
+            // backgroundColor: "pink" 
+          }}
         >
           <AuthScreenTopTray
-            onBackPress={navigateBack}
-            rightLabel={"Create new account?"}
-            onRightPress={handleCreateNew}
+            onBackPress={handleCreateNew}
+            rightLabel={"Forgot password"}
+            onRightPress={navigateToRecoverCredentials}
           />
 
           <AuthScreenHeader label={"Sign in"} />
-
-          {/* {  !signinMutation.isSuccess && ( */}
 
           <View
             style={[styles.inputsContainer, { gap: INPUTS_GAP }]}
@@ -188,6 +217,7 @@ const ScreenAuth = () => {
                   style={[
                     styles.input,
                     isUsernameFocused && styles.inputFocused,
+                    { color: manualGradientColors.homeDarkColor },
                   ]}
                   placeholder="Username"
                   placeholderTextColor={placeholderTextColor}
@@ -196,12 +226,15 @@ const ScreenAuth = () => {
                   value={username}
                   onSubmitEditing={handleUsernameSubmit}
                   ref={usernameInputRef}
+                  onPress={handleUsernameFocus}
                   onFocus={handleUsernameFocus}
                   onBlur={handleUsernameBlur}
                   accessible={true}
+                  autoComplete={"username"}
                   accessibilityLabel="Username input"
                   accessibilityHint="Enter your username"
                   importantForAccessibility="yes"
+                  enterKeyHint={"next"}
                 />
               }
             />
@@ -215,13 +248,16 @@ const ScreenAuth = () => {
                     style={[
                       styles.input,
                       isPasswordFocused && styles.inputFocused,
+                      { color: manualGradientColors.homeDarkColor },
                     ]}
                     placeholder="Password"
                     placeholderTextColor={placeholderTextColor}
+                    // color={lightDarkTheme.primaryText}
                     autoFocus={false} //true
                     secureTextEntry={true}
                     onChangeText={handlePasswordChange}
                     onSubmitEditing={handleAuthentication}
+                    autoComplete={"current-password"}
                     value={password}
                     ref={passwordInputRef}
                     onFocus={handlePasswordFocus}
@@ -230,50 +266,37 @@ const ScreenAuth = () => {
                     accessibilityLabel="Password input"
                     accessibilityHint="Enter your password"
                     importantForAccessibility="yes"
+                    enterKeyHint={"enter"}
                   />
                 }
               />
             )}
-
-            <View style={{ flexDirection: "row", width: "100%" }}>
-              <Text
-                style={styles.toggleButton}
-                onPress={navigateToRecoverCredentials}
-                accessible={true}
-                accessibilityLabel="Toggle button"
-                accessibilityHint="Press to toggle between sign in and create account"
-              >
-                {"Forgot username or password"}
-              </Text>
-            </View>
           </View>
-
-
-        </KeyboardAvoidingView>
-        
+        </View>
+        // </KeyboardAvoidingView>
       )}
-                <View
-            style={{
-              width: "100%",
-              bottom: 0,
-              paddingHorizontal: 4,
-              backgroundColor: "pink",
-              //  backgroundColor: 'teal',
-              // paddingBottom: 20,
-              // paddingBottom: 60,
-              // right: 0,
-            }}
-          >
-            {username && password && !signinMutation.isPending && (
-              <SimpleBottomButton
-                onPress={handleAuthentication}
-                title={"Sign in"}
-                borderRadius={10}
-                backgroundColor={manualGradientColors.homeDarkColor}
-                labelColor={manualGradientColors.lightColor}
-              />
-            )}
-          </View>
+      <View
+        style={{
+          width: "100%",
+          bottom: 0,
+          paddingHorizontal: 4,
+          backgroundColor: "pink",
+          //  backgroundColor: 'teal',
+          // paddingBottom: 20,
+          // paddingBottom: 60,
+          // right: 0,
+        }}
+      >
+        {username && password && !signinMutation.isPending && (
+          <SimpleBottomButton
+            onPress={handleAuthentication}
+            title={"Sign in"}
+            borderRadius={10}
+            backgroundColor={manualGradientColors.homeDarkColor}
+            labelColor={manualGradientColors.lightColor}
+          />
+        )}
+      </View>
     </PreAuthSafeViewAndGradientBackground>
   );
 };
@@ -283,7 +306,7 @@ const styles = StyleSheet.create({
     height: 200,
     width: "100%",
     fontFamily: "Poppins-Regular",
-
+ //   backgroundColor: "hotpink",
     justifyContent: "flex-start",
     flex: 1,
   },

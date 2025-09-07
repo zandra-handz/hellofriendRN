@@ -57,12 +57,15 @@ export const PreAuthSafeViewAndGradientBackground = ({
   const paddingStyle = useMemo(
     () => ({
       paddingTop: top,
-      paddingBottom: 0,
-      paddingLeft: 0,
-      paddingRight: 0,
+      // paddingBottom: 0,
+      // paddingLeft: 0,
+      // paddingRight: 0,
+            paddingBottom: bottom,
+      paddingLeft: left,
+      paddingRight: right,
       backgroundColor: primaryBackground
         ? backgroundOverlayColor
-        : "transparent",
+        : "red",
     }),
     [primaryBackground, backgroundOverlayColor]
   );
@@ -76,7 +79,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
       friendColorLight={friendColorLight}
       additionalStyles={[paddingStyle, style]}
     >
-      <SafeAreaView style={{ flex: 1 }}>
+      {/* <SafeAreaView style={{ flex: 1, backgroundColor: 'yellow' }}> */}
         {includeBackgroundOverlay && (
           <View
             style={{
@@ -96,10 +99,11 @@ export const PreAuthSafeViewAndGradientBackground = ({
           ></View>
         )}
 
-        {includeCustomStatusBar && <CustomStatusBar manualDarkMode={ settings?.manual_dark_mode} />}
+        {/* {includeCustomStatusBar && <CustomStatusBar manualDarkMode={ settings?.manual_dark_mode} />} */}
+            {includeCustomStatusBar && <CustomStatusBar manualDarkMode={ false} />}
 
         {children}
-      </SafeAreaView>
+      {/* </SafeAreaView> */}
     </GradientBackground>
   );
 };

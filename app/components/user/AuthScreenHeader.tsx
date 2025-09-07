@@ -10,11 +10,14 @@ type Props = {
 
 const AuthScreenHeader = ({ label }: Props) => {
   return (
+  
     <Text
       style={{
         color: manualGradientColors.darkHomeColor,
+       // backgroundColor: 'orange',
         fontFamily: "Poppins-Bold",
-        fontSize: 16,
+        fontSize: 26,
+        lineHeight: 50,
         selfAlign: "center",
       }}
       accessible={true}

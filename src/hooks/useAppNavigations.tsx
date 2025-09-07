@@ -127,6 +127,11 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Fidget");
   };
 
+  const navigateToWelcome = () => {
+    navigation.navigate("Welcome");
+
+  };
+
   const navigateToAuth = ({ usernameEntered }: NavToAuthProp) => {
     navigation.navigate("Auth", { usernameEntered });
   };
@@ -156,6 +161,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToMomentFocusWithText,
     navigateToMoments,
     navigateToMomentView,
+    navigateToWelcome,
     navigateToAuth,
     navigateToNewAccount,
     navigateToRecoverCredentials,

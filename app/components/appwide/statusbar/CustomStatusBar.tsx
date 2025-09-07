@@ -18,6 +18,7 @@ const color = useMemo(() => {
     return (
         <>
             <StatusBar
+           
                 style={color} 
                 translucent={true} 
             /> 

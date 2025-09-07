@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   TextInput,
@@ -6,7 +13,10 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  FlatList,
+  ScrollView,
 } from "react-native";
+import { findNodeHandle } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
@@ -52,7 +62,43 @@ const ScreenNewAccount = () => {
   const placeholderTextColor = manualGradientColors.homeDarkColor;
 
   const INPUTS_GAP = 4;
-  const DELAY_BEFORE_FOCUS = 300;
+  const DELAY_BEFORE_FOCUS = 200;
+
+  const BORDER_COLOR = manualGradientColors.homeDarkColor;
+  const FONT_COLOR = manualGradientColors.homeDarkColor;
+  const scrollRef = useRef(null);
+
+  const scrollToStart = () => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+
+  const handleFocusUsername = () => {
+    setTimeout(() => {
+      if (usernameInputRef.current) {
+        usernameInputRef.current.focus();
+        //   handleUsernameFocus();
+        // scrollToStart();
+      }
+      scrollToStart();
+    }, DELAY_BEFORE_FOCUS);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (usernameEntered) {
+        setUsername(usernameEntered);
+        handleFocusUsername();
+      } 
+    }, [usernameEntered])
+  );
+
+    useFocusEffect(
+    useCallback(() => {
+      handleFocusUsername();
+      // console.log('scrolling to start ');
+      // scrollToStart();
+    }, [ ])
+  );
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -79,6 +125,10 @@ const ScreenNewAccount = () => {
     setVerifyPassword("");
   };
 
+  const clearVerifyPassword = () => {
+    setVerifyPassword("");
+  };
+
   const handleCreateAccount = async () => {
     let result;
 
@@ -101,31 +151,45 @@ const ScreenNewAccount = () => {
   const [passwordSubmitted, setPasswordSubmitted] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(false);
 
+  const usernameWrapperRef = useRef<View>(null);
+  const emailWrapperRef = useRef(null);
+  const passwordWrapperRef = useRef<View>(null);
+
   const handleUsernameSubmit = () => {
     setUsernameSubmitted(true);
     setTimeout(() => {
       if (emailInputRef.current && username) {
-        emailInputRef.current.focus();
+        // emailInputRef.current.focus();
+        focusNextInput(1, emailInputRef);
+      }
+    }, DELAY_BEFORE_FOCUS);
+  };
+
+  const handleEmailSubmit = () => {
+    setEmailSubmitted(true);
+    setTimeout(() => {
+      if (passwordInputRef.current && username) {
+        //   passwordInputRef.current.focus();
+        focusNextInput(2, passwordInputRef);
+      }
+    }, DELAY_BEFORE_FOCUS);
+  };
+
+  const handleFirstPasswordSubmit = () => {
+    setPasswordSubmitted(true);
+    setTimeout(() => {
+      if (verifyPasswordInputRef.current) {
+        //  verifyPasswordInputRef.current.focus();
+        focusNextInput(3, verifyPasswordInputRef);
       }
     }, DELAY_BEFORE_FOCUS);
   };
 
   const handleUsernameChange = (text) => {
- 
     setUsername(text);
     if (!text || text.length < 1) {
       setUsernameSubmitted(false);
     }
-  };
-
-  const handleEmailSubmit = () => {
-    setEmailSubmitted(true);
-
-    setTimeout(() => {
-      if (passwordInputRef.current && username) {
-        passwordInputRef.current.focus();
-      }
-    }, DELAY_BEFORE_FOCUS);
   };
 
   const handleEmailChange = (text) => {
@@ -133,15 +197,6 @@ const ScreenNewAccount = () => {
     if (!text || text.length < 1) {
       setEmailSubmitted(false);
     }
-  };
-
-  const handleFirstPasswordSubmit = () => {
-    setPasswordSubmitted(true);
-    setTimeout(() => {
-      if (verifyPasswordInputRef.current) {
-        verifyPasswordInputRef.current.focus();
-      }
-    }, DELAY_BEFORE_FOCUS);
   };
 
   const handleFirstPasswordChange = (text) => {
@@ -157,6 +212,21 @@ const ScreenNewAccount = () => {
     // if (!text || text.length < 1) {
     //   setPasswordSubmitted(false);
     // }
+  };
+
+  const INPUT_HEIGHT = 70;
+  const INPUT_GAP = 4;
+
+  const focusNextInput = (
+    index: number,
+    inputRef: React.RefObject<TextInput>
+  ) => {
+    if (!scrollRef.current || !inputRef.current) return;
+
+    inputRef.current.focus();
+
+    const yOffset = index * (INPUT_HEIGHT + INPUT_GAP);
+    scrollRef.current.scrollTo({ y: yOffset, animated: true });
   };
 
   const handleUsernameFocus = () => setIsUsernameFocused(true);
@@ -182,7 +252,7 @@ const ScreenNewAccount = () => {
         //paddingTop: 40, // TEMPORARY
       }}
     >
-      {/* {signupMutation.isPending && (
+      {signupMutation.isPending && (
         <View
           style={{
             zIndex: 100000,
@@ -204,17 +274,19 @@ const ScreenNewAccount = () => {
             color={"yellow"}
           />
         </View>
-      )} */}
+      )}
 
       {!signupMutation.isPending && (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={[{ flex: 1, padding: 10, width: "100%" }]}
-        >
+        <View style={{ paddingHorizontal: 10 }}>
+          {/* <KeyboardAvoidingView 
+        //   behavior={Platform.OS === "ios" ? "padding" : "height"}
+        //   style={[{ flex: 1, padding: 10, width: "100%" }]}
+        // >
+        */}
           <AuthScreenTopTray
-            onBackPress={navigateBack}
-            onRightPress={handleBackToSignIn}
-            rightLabel="Go to sign in"
+            onBackPress={handleBackToSignIn}
+            // onRightPress={handleBackToSignIn}
+            // rightLabel="Go to sign in"
           />
 
           <AuthScreenHeader label={"Create new account"} />
@@ -224,134 +296,170 @@ const ScreenNewAccount = () => {
             accessible={true}
             accessibilityLabel="Form container"
           >
-            <AuthInputWrapper
-              condition={username}
-              label={"Username"}
-              children={
-                <TextInput
-                  style={[
-                    styles.input,
-                    isUsernameFocused && styles.inputFocused,
-                  ]}
-                  placeholder="Username"
-                  placeholderTextColor={placeholderTextColor}
-                  autoFocus={true}
-                  onChangeText={handleUsernameChange}
-                  value={username}
-                  onSubmitEditing={() => handleUsernameSubmit()}
-                  ref={usernameInputRef}
-                  onFocus={handleUsernameFocus}
-                  onBlur={handleUsernameBlur}
-                  accessible={true}
-                  accessibilityLabel="Username input"
-                  accessibilityHint="Enter your username"
-                  importantForAccessibility="yes"
+            <ScrollView
+              ref={scrollRef}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{ paddingBottom: 280 }}
+              showsVerticalScrollIndicator={false}
+              // inverted={true}
+            >
+              <AuthInputWrapper
+                condition={username}
+                label={"Username"}
+                height={INPUT_HEIGHT}
+                marginBottom={INPUT_GAP}
+                children={
+                  <TextInput
+                    style={[
+                      styles.input,
+                      isUsernameFocused && styles.inputFocused,
+                      { borderColor: BORDER_COLOR, color: FONT_COLOR },
+                    ]}
+                    placeholder="Username"
+                    placeholderTextColor={placeholderTextColor}
+                    autoFocus={true}
+                    onChangeText={handleUsernameChange}
+                    value={username}
+                    onSubmitEditing={handleUsernameSubmit}
+                    ref={usernameInputRef}
+                    onFocus={handleUsernameFocus}
+                    onBlur={handleUsernameBlur}
+                    accessible={true}
+                    accessibilityLabel="Username input"
+                    accessibilityHint="Enter your username"
+                    importantForAccessibility="yes"
+                  />
+                }
+              />
+
+              {username && usernameSubmitted && (
+                <View ref={emailWrapperRef}>
+                  <AuthInputWrapper
+                    height={INPUT_HEIGHT}
+                    marginBottom={INPUT_GAP}
+                    condition={email}
+                    label={"Email"}
+                    children={
+                      <TextInput
+                        style={[
+                          styles.input,
+                          isEmailFocused && styles.inputFocused,
+                          { borderColor: BORDER_COLOR, color: FONT_COLOR },
+                        ]}
+                        placeholder="Email"
+                        inputMode={"email"}
+                        keyboardType={"email-address"}
+                        placeholderTextColor={placeholderTextColor}
+                        onChangeText={handleEmailChange}
+                        value={email}
+                        onSubmitEditing={handleEmailSubmit}
+                        ref={emailInputRef}
+                        onFocus={handleEmailFocus}
+                        onBlur={handleEmailBlur}
+                        accessible={true}
+                        accessibilityLabel="Email input"
+                        accessibilityHint="Enter your email address"
+                        importantForAccessibility="yes"
+                      />
+                    }
+                  />
+                </View>
+              )}
+
+              {email && emailSubmitted && (
+                <AuthInputWrapper
+                  condition={password}
+                  label={"Password"}
+                  height={INPUT_HEIGHT}
+                  marginBottom={INPUT_GAP}
+                  children={
+                    <TextInput
+                      style={[
+                        styles.input,
+                        isPasswordFocused && styles.inputFocused,
+                        { borderColor: BORDER_COLOR, color: FONT_COLOR },
+                      ]}
+                      placeholder="Password"
+                      placeholderTextColor={placeholderTextColor}
+                      // autoFocus={false} //true
+                      secureTextEntry={true}
+                      onChangeText={handleFirstPasswordChange}
+                      onSubmitEditing={handleFirstPasswordSubmit}
+                      value={password}
+                      ref={passwordInputRef}
+                      onFocus={handlePasswordFocus}
+                      onBlur={handlePasswordBlur}
+                      accessible={true}
+                      accessibilityLabel="Password input"
+                      accessibilityHint="Enter your password"
+                      importantForAccessibility="yes"
+                    />
+                  }
                 />
-              }
-            />
+              )}
 
-            {username && usernameSubmitted && (
-              <AuthInputWrapper
-                condition={email}
-                label={"Email"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isEmailFocused && styles.inputFocused,
-                    ]}
-                    placeholder="Email"
-                    placeholderTextColor={placeholderTextColor}
-                    onChangeText={handleEmailChange}
-                    value={email}
-                    onSubmitEditing={handleEmailSubmit}
-                    ref={emailInputRef}
-                    onFocus={handleEmailFocus}
-                    onBlur={handleEmailBlur}
-                    accessible={true}
-                    accessibilityLabel="Email input"
-                    accessibilityHint="Enter your email address"
-                    importantForAccessibility="yes"
-                  />
-                }
-              />
-            )}
-
-            {email && emailSubmitted && (
-              <AuthInputWrapper
-                condition={password}
-                label={"Password"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isPasswordFocused && styles.inputFocused,
-                    ]}
-                    placeholder="Password"
-                    placeholderTextColor={placeholderTextColor}
-                    autoFocus={false} //true
-                    secureTextEntry={true}
-                    onChangeText={handleFirstPasswordChange}
-                    onSubmitEditing={handleFirstPasswordSubmit}
-                    value={password}
-                    ref={passwordInputRef}
-                    onFocus={handlePasswordFocus}
-                    onBlur={handlePasswordBlur}
-                    accessible={true}
-                    accessibilityLabel="Password input"
-                    accessibilityHint="Enter your password"
-                    importantForAccessibility="yes"
-                  />
-                }
-              />
-            )}
-
-            {password && passwordSubmitted && (
-              <AuthInputWrapper
-                condition={verifyPassword}
-                label={"Verify password"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isPasswordFocused && styles.inputFocused,
-                      !passwordsMatch && {borderColor: 'red'}
-                    ]}
-                    ref={verifyPasswordInputRef}
-                    placeholder="Verify Password"
-                    placeholderTextColor={placeholderTextColor}
-                    secureTextEntry={true}
-                    onChangeText={handleVerifyPasswordChange}
-                    value={verifyPassword}
-                    onFocus={() => setIsPasswordFocused(true)}
-                    onBlur={() => setIsPasswordFocused(false)}
-                    accessible={true}
-                    accessibilityLabel="Verify Password input"
-                    accessibilityHint="Re-enter your password for verification"
-                    importantForAccessibility="yes"
-                  />
-                }
-              />
-            )}
+              {password && passwordSubmitted && (
+                <AuthInputWrapper
+                  condition={verifyPassword}
+                  label={
+                    passwordsMatch
+                      ? `Passwords match`
+                      : `Passwords do not match`
+                  }
+                  labelColor={
+                    passwordsMatch ? manualGradientColors.homeDarkColor : "red"
+                  }
+                  height={INPUT_HEIGHT}
+                  marginBottom={INPUT_GAP}
+                  children={
+                    <TextInput
+                      style={[
+                        styles.input,
+                        isPasswordFocused && styles.inputFocused,
+                        { borderColor: BORDER_COLOR, color: FONT_COLOR },
+                        !passwordsMatch && { borderColor: "red" },
+                      ]}
+                      ref={verifyPasswordInputRef}
+                      placeholder="Verify Password"
+                      placeholderTextColor={placeholderTextColor}
+                      secureTextEntry={true}
+                      onChangeText={handleVerifyPasswordChange}
+                      value={verifyPassword}
+                      onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={clearVerifyPassword}
+                      accessible={true}
+                      accessibilityLabel="Verify Password input"
+                      accessibilityHint="Re-enter your password for verification"
+                      importantForAccessibility="yes"
+                    />
+                  }
+                />
+              )}
+            </ScrollView>
           </View>
 
-          {username && password && email && passwordsMatch && !isKeyboardVisible && (
-            <View
-              style={{
-                width: "100%",
-                paddingBottom: 20,
-              }}
-            >
-              <SimpleBottomButton
-                onPress={handleCreateAccount}
-                title={"Create account"}
-                borderRadius={10}
-                backgroundColor={manualGradientColors.homeDarkColor}
-                labelColor={manualGradientColors.lightColor}
-              />
-            </View>
-          )}
-        </KeyboardAvoidingView>
+          {username &&
+            password &&
+            email &&
+            passwordsMatch &&
+            !isKeyboardVisible && (
+              <View
+                style={{
+                  width: "100%",
+                  paddingBottom: 20,
+                }}
+              >
+                <SimpleBottomButton
+                  onPress={handleCreateAccount}
+                  title={"Create account"}
+                  borderRadius={10}
+                  backgroundColor={manualGradientColors.homeDarkColor}
+                  labelColor={manualGradientColors.lightColor}
+                />
+              </View>
+            )}
+        </View>
+        // </KeyboardAvoidingView>
       )}
     </PreAuthSafeViewAndGradientBackground>
   );
@@ -359,18 +467,19 @@ const ScreenNewAccount = () => {
 
 const styles = StyleSheet.create({
   inputsContainer: {
-    height: 200,
+    height: 300,
     width: "100%",
     fontFamily: "Poppins-Regular",
 
     justifyContent: "flex-start",
-    flex: 1,
+    //flex: 1,
   },
   input: {
     fontFamily: "Poppins-Regular",
     // backgroundColor: "orange",
     height: "auto",
     borderWidth: 2.6,
+    //  borderWidth: 0,
     padding: 10,
     paddingTop: 10,
     borderRadius: 10,
