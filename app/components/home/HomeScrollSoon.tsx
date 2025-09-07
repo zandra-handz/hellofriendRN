@@ -103,7 +103,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   const renderUpcomingHelloes = () => {
     return (
       <>
-        {upcomingHelloes && upcomingHelloes.length > 0 && (
+        {upcomingHelloes?.length > 0 && (
           <Animated.FlatList
             data={upcomingHelloes.slice(0).slice(startAtIndex, 8)}
             renderItem={renderListItem}
@@ -125,6 +125,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       style={[
         styles.container,
         {
+          backgroundColor: 'red',
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height,

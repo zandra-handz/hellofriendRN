@@ -5,6 +5,7 @@ import CustomStatusBar from "../statusbar/CustomStatusBar";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   children: React.ReactNode;
@@ -32,7 +33,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
 }: Props) => { 
 
   const route = useRoute();
- 
+ const insets = useSafeAreaInsets();
 
   const isSettingsScreen = useMemo(
     () => route.name === "UserDetails" || route.name === "FriendFocus",
@@ -48,9 +49,14 @@ export const PreAuthSafeViewAndGradientBackground = ({
     [friendId, isSettingsScreen, isHomeScreen]
   );
 
+    const top = typeof insets.top === "number" ? insets.top : 0;
+  const bottom = typeof insets.bottom === "number" ? insets.bottom : 0;
+  const left = typeof insets.left === "number" ? insets.left : 0;
+  const right = typeof insets.right === "number" ? insets.right : 0;
+
   const paddingStyle = useMemo(
     () => ({
-      paddingTop:0,
+      paddingTop: top,
       paddingBottom: 0,
       paddingLeft: 0,
       paddingRight: 0,
