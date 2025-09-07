@@ -2,7 +2,7 @@
 //need to RQ
 
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import InputAddFriendName from "./InputAddFriendName";
 
@@ -166,6 +166,8 @@ const ContentAddFriend = ({
               <AuthInputWrapper
                 condition={friendName}
                 label={"Name"}
+                labelColor={primaryColor}
+                labelSize={16}
                 children={
                   <InputAddFriendName
                     friendName={friendName}
@@ -175,25 +177,64 @@ const ContentAddFriend = ({
                     setIsFriendNameUnique={setIsFriendNameUnique}
                     setRevealRest={setRevealRest}
                     friendList={friendList}
+                    primaryColor={primaryColor}
                   />
                 }
               />
 
               {revealRest && (
                 <>
-                  <SliderAddFriendEffort
-                    friendEffort={friendEffort}
-                    setFriendEffort={setFriendEffort}
-                    primaryColor={primaryColor}
+                  <AuthInputWrapper
+                    condition={friendEffort}
+                    label={"Effort needed to maintain relationship"}
+                    labelSize={16}
+                    labelColor={primaryColor}
+                    children={
+                      <SliderAddFriendEffort
+                        friendEffort={friendEffort}
+                        setFriendEffort={setFriendEffort}
+                        primaryColor={primaryColor}
+                      />
+                    }
                   />
 
-                  <SliderAddFriendPriority
-                    friendPriority={friendPriority}
-                    setFriendPriority={setFriendPriority}
-                    primaryColor={primaryColor}
+                  <AuthInputWrapper
+                    condition={friendEffort}
+                    label={"Effort needed to maintain relationship"}
+                    labelColor={primaryColor}
+                    labelSize={16}
+                    children={
+                      <SliderAddFriendPriority
+                        friendPriority={friendPriority}
+                        setFriendPriority={setFriendPriority}
+                        primaryColor={primaryColor}
+                      />
+                    }
                   />
-
-                  <View style={{ width: "100%", height: 50 }}>
+                  <View
+                    style={{
+                      width: "100%",
+                      height: 100,
+                      backgroundColor: "pink",
+                    }}
+                  >
+                    <Pressable
+                      style={{
+                        width: "100%",
+                        height: 30,
+                        backgroundColor: "teal",
+                      }}
+                      onPress={() => setShowDatePicker((prev) => !prev)}
+                    >
+                      <Text style={{ color: primaryColor }}>
+                        {friendDate.toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </Text>
+                    </Pressable>
                     <PickerAddFriendLastDate
                       friendDate={friendDate}
                       setFriendDate={setFriendDate}

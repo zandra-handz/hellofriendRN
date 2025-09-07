@@ -9,19 +9,33 @@ type Props = {
   label: string;
 };
 
-const AuthInputWrapper = ({ children, condition, label, labelColor, height='auto', marginBottom=0 }: Props) => {
+const AuthInputWrapper = ({
+  children,
+  condition,
+  label,
+  labelColor,
+  labelSize,
+  height = "auto",
+  marginBottom = 0,
+}: Props) => {
   return (
     <Animated.View
       entering={SlideInRight.duration(100)}
       style={{
-
         flexDirection: "column",
-        width: "100%", 
- 
+        width: "100%",
       }}
     >
-      <Animated.View entering={SlideInDown} style={{height: height, marginBottom: marginBottom}}>
-        <AuthInputHeader condition={condition} label={label} labelColor={labelColor} />
+      <Animated.View
+        entering={SlideInDown}
+        style={{ height: height, marginBottom: marginBottom }}
+      >
+        <AuthInputHeader
+          condition={condition}
+          label={label}
+          labelColor={labelColor}
+          overrideFontSize={labelSize}
+        />
         {children}
       </Animated.View>
     </Animated.View>

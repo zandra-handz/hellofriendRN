@@ -23,6 +23,7 @@ const AuthInputHeader = ({
   condition,
   label,
   labelColor,
+  overrideFontSize,
 }: Props) => {
   const ENTERING_ANIMATION = FadeIn.delay(200);
   const EXITING_ANIMATION = FadeOut;
@@ -31,7 +32,7 @@ const AuthInputHeader = ({
   const FONT_STYLE = [
     appFontStyles.subWelcomeText,
     {
-      fontSize: 10,
+      fontSize: overrideFontSize || 10,
       fontWeight: "bold",
     },
   ];

@@ -22,7 +22,7 @@ import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
+import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 import { useFocusEffect } from "@react-navigation/native";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
@@ -165,7 +165,7 @@ const ScreenAuth = () => {
       {signinMutation.isPending && (
         <View
           style={{
-            backgroundColor: "orange",
+            // backgroundColor: "orange",
             zIndex: 100000,
             elevation: 100000,
             position: "absolute",
@@ -280,15 +280,11 @@ const ScreenAuth = () => {
           width: "100%",
           bottom: 0,
           paddingHorizontal: 4,
-          backgroundColor: "pink",
-          //  backgroundColor: 'teal',
-          // paddingBottom: 20,
-          // paddingBottom: 60,
-          // right: 0,
+ 
         }}
       >
         {username && password && !signinMutation.isPending && (
-          <SimpleBottomButton
+          <AuthBottomButton
             onPress={handleAuthentication}
             title={"Sign in"}
             borderRadius={10}

@@ -25,6 +25,7 @@ const LoadingBlock = ({
   includeLabel = false,
   label = "",
   labelColor = "white",
+  borderRadius = 0,
 }: Props) => {
   const { lightDarkTheme } = useLDTheme();
 
@@ -58,7 +59,7 @@ const LoadingBlock = ({
   if (!loading) return null;
 
   return (
-    <Animated.View style={[styles.overlay, animatedStyle]}>
+    <Animated.View style={[styles.overlay, animatedStyle, { borderRadius: borderRadius}]}>
       {includeLabel && (
         <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
       )}

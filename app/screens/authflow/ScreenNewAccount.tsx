@@ -23,7 +23,7 @@ import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
-import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
+import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
@@ -88,16 +88,16 @@ const ScreenNewAccount = () => {
       if (usernameEntered) {
         setUsername(usernameEntered);
         handleFocusUsername();
-      } 
+      }
     }, [usernameEntered])
   );
 
-    useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       handleFocusUsername();
       // console.log('scrolling to start ');
       // scrollToStart();
-    }, [ ])
+    }, [])
   );
 
   useEffect(() => {
@@ -278,16 +278,7 @@ const ScreenNewAccount = () => {
 
       {!signupMutation.isPending && (
         <View style={{ paddingHorizontal: 10 }}>
-          {/* <KeyboardAvoidingView 
-        //   behavior={Platform.OS === "ios" ? "padding" : "height"}
-        //   style={[{ flex: 1, padding: 10, width: "100%" }]}
-        // >
-        */}
-          <AuthScreenTopTray
-            onBackPress={handleBackToSignIn}
-            // onRightPress={handleBackToSignIn}
-            // rightLabel="Go to sign in"
-          />
+          <AuthScreenTopTray onBackPress={handleBackToSignIn} />
 
           <AuthScreenHeader label={"Create new account"} />
 
@@ -449,7 +440,7 @@ const ScreenNewAccount = () => {
                   paddingBottom: 20,
                 }}
               >
-                <SimpleBottomButton
+                <AuthBottomButton
                   onPress={handleCreateAccount}
                   title={"Create account"}
                   borderRadius={10}
@@ -458,8 +449,7 @@ const ScreenNewAccount = () => {
                 />
               </View>
             )}
-        </View>
-        // </KeyboardAvoidingView>
+        </View> 
       )}
     </PreAuthSafeViewAndGradientBackground>
   );
@@ -487,12 +477,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderColor: "black",
     fontSize: 15,
-  },
-  smallInputHeader: {
-    paddingLeft: 10,
-    flexDirection: "row",
-    height: "100%",
-  },
+  }, 
   inputFocused: {
     fontFamily: "Poppins-Regular",
     borderWidth: 3,

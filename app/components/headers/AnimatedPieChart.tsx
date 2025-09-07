@@ -7,10 +7,9 @@ import Animated, {
   useAnimatedProps,
   withTiming,
   interpolate,
-} from "react-native-reanimated"; 
- 
+} from "react-native-reanimated";
+
 const AnimatedPath = Animated.createAnimatedComponent(Path);
- 
 
 const getArcPath = (cx, cy, r, startAngle, endAngle) => {
   "worklet";
@@ -23,7 +22,7 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
       y: cy + r * Math.sin(a),
     };
   };
- 
+
   const safeEndAngle = Math.min(endAngle, startAngle + 359.99);
 
   const start = polarToCartesian(cx, cy, r, safeEndAngle);
@@ -39,7 +38,6 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
 };
 
 const AnimatedPieSlice = ({
-
   startAngle,
   endAngle,
   radius,
@@ -63,7 +61,7 @@ const AnimatedPieSlice = ({
 };
 
 export default function AnimatedPieChart({
-    darkerOverlayBackgroundColor,
+  darkerOverlayBackgroundColor,
   primaryColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
@@ -74,11 +72,14 @@ export default function AnimatedPieChart({
   duration = 500,
   showPercentages = false,
   showLabels = true,
-  onSectionPress = null, 
+  onSectionPress = null,
   labelsSize = 9,
 }) {
+
+  const MAX_FONT_SIZE = 44;
+
   const progress = useSharedValue(0);
-  
+
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
   useEffect(() => {
@@ -130,8 +131,7 @@ export default function AnimatedPieChart({
                     onSectionPress?.(slice.user_category, slice.name)
                   }
                   // onLongPress={() => onLongSectionPress?.(slice.user_category)}
-                 
-                 
+
                   style={({ pressed }) => [
                     {
                       position: "absolute",
@@ -139,7 +139,7 @@ export default function AnimatedPieChart({
                       left: x - 45, //15
                       padding: 0,
                       height: "auto",
-                      flex: 1, 
+                      flex: 1,
                       borderRadius: 15,
                       justifyContent: "center",
                       alignItems: "center",
@@ -152,16 +152,21 @@ export default function AnimatedPieChart({
                   {showPercentages && (
                     <Text
                       style={[
-                       welcomeTextStyle,
+                        welcomeTextStyle,
                         {
-                          backgroundColor:
-                            darkerOverlayBackgroundColor,
+                          backgroundColor: darkerOverlayBackgroundColor,
                           padding: 2,
                           paddingHorizontal: 10,
                           paddingVertical: 10,
                           borderRadius: 20,
-                          fontSize:
-                            labelsSize * (1.2 + (slice.value / total) * 5.3), // scale from 1.2x upward
+
+                          fontSize: Math.min(
+                            labelsSize * (1.2 + (slice.value / total) * 5.3), // current formula
+                            MAX_FONT_SIZE
+                          ),
+                          // fontSize:
+                          //   labelsSize * (1.2 + (slice.value / total) * 5.3), // scale from 1.2x upward
+
                           color: primaryColor,
                         },
                       ]}
@@ -176,8 +181,7 @@ export default function AnimatedPieChart({
                     style={[
                       subWelcomeTextStyle,
                       {
-                        backgroundColor:
-                          primaryOverlayColor,
+                        backgroundColor: primaryOverlayColor,
                         padding: 2,
                         paddingHorizontal: 6,
                         borderRadius: 6,

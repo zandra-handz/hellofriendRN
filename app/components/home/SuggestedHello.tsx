@@ -93,7 +93,7 @@ const SuggestedHello = ({
         flexShrink: 1,
         alignItems: "center",
         flexDirection: "row",
-
+overflow: 'hidden',
         justifyContent: "space-between",
         borderRadius: borderRadius,
         // backgroundColor: 'orange',
@@ -101,11 +101,13 @@ const SuggestedHello = ({
         paddingRight: 10,
         width: "100%",
         backgroundColor: isLoading? 'transparent' : primaryOverlayColor,
+        borderRadius: 14,
       }}
     >
       {isLoading && (
         <LoadingBlock
         loading={true}
+        borderRadius={borderRadius}
         />
       )}
       {!isLoading && (
@@ -120,7 +122,7 @@ const SuggestedHello = ({
               top: 0,
               backgroundColor: manualGradientColors.lightColor,
               justifyContent: "center",
-              borderRadius: 10,
+              borderRadius: borderRadius,
               padding: 4,
               width: "auto",
               minWidth: 50,

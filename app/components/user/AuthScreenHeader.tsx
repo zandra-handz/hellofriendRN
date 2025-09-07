@@ -1,14 +1,14 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Text } from "react-native";
+ 
+import React from "react"; 
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 
 type Props = {
   label: string;
+  overrideFontSize: number;
 };
 
-const AuthScreenHeader = ({ label }: Props) => {
+const AuthScreenHeader = ({ label , overrideFontSize}: Props) => {
   return (
   
     <Text
@@ -16,8 +16,8 @@ const AuthScreenHeader = ({ label }: Props) => {
         color: manualGradientColors.darkHomeColor,
        // backgroundColor: 'orange',
         fontFamily: "Poppins-Bold",
-        fontSize: 26,
-        lineHeight: 50,
+        fontSize: overrideFontSize || 26,
+        lineHeight: overrideFontSize ? overrideFontSize + 6 : 50,
         selfAlign: "center",
       }}
       accessible={true}

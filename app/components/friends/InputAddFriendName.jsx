@@ -35,17 +35,18 @@ const InputAddFriendName = ({
   };
 
   return (
-    <View style={styles.inputContainer}>
+    <View style={[styles.inputContainer]}>
       <TextInput
         ref={friendNameRef}
         autoFocus={autoFocus}
-        style={[
-          styles.textInput,
+        style={[ 
           styles.input,
           !isFriendNameUnique && friendName.length > 0 && styles.errorInput,
+          {color: primaryColor, borderColor: primaryColor}
         ]}
         value={friendName}
         placeholder="Name"
+        placeholderTextColor={primaryColor}
         onChangeText={handleFriendNameChange}
         onSubmitEditing={setVisibility}
       />
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignContent: "center",
     justifyContent: "center",
-    borderColor: "black",
+
     fontSize: 15,
   },
 
