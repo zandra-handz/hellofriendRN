@@ -11,8 +11,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import ButtonBaseSpecialSave from "@/app/components/buttons/scaffolding/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";
-import BodyStyling from "@/app/components/scaffolding/BodyStyling";
-import BelowHeaderContainer from "@/app/components/scaffolding/BelowHeaderContainer";
+import BodyStyling from "@/app/components/scaffolding/BodyStyling"; 
 import useUpdateLocation from "@/src/hooks/LocationCalls/useUpdateLocation";
 import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
 
@@ -152,14 +151,7 @@ const { lightDarkTheme } = useLDTheme();
                   justifyContent: "space-between",
                 }}
               > */}
-      <BelowHeaderContainer
-        height={30}
-        minHeight={30}
-        maxHeight={30}
-        alignItems="center"
-        marginBottom="2%"
-        justifyContent="center"
-        children={
+    
           <View style={styles.sliderContainer}>
             <SlideToDeleteHeader
               itemToDelete={location}
@@ -168,8 +160,7 @@ const { lightDarkTheme } = useLDTheme();
               targetIcon={TrashOutlineSvg}
             />
           </View>
-        }
-      />
+    
 
       <BodyStyling
         backgroundColor={lightDarkTheme.primaryBackground}
