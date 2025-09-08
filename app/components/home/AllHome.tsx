@@ -8,6 +8,7 @@ import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import Animated, {
+  LinearTransition,
   SlideInDown,
   SlideOutDown,
   FadeIn,
@@ -121,17 +122,16 @@ const AllHome = ({
             </Pressable>
           </Animated.View>
 
-          <View style={{width: '100%', height: 400}}>
+          
             <Animated.View
+        
               entering={SlideInDown}
               exiting={SlideOutDown}
               style={{
                 zIndex: 3,
-                flex: 1,
-                // height: "100%",
-                // height: 400,
-                width: "100%",
-               // backgroundColor: "pink",
+                flex: 1, 
+                width: "100%", 
+                height: 400,
               }}
             >
               <HomeScrollSoon
@@ -149,7 +149,7 @@ const AllHome = ({
                 borderColor="black"
               />
             </Animated.View>
-          </View>
+      
           <Animated.View
             entering={FadeIn}
             exiting={SlideOutRight}

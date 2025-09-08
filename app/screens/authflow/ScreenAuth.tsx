@@ -75,12 +75,17 @@ const ScreenAuth = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (usernameEntered) {
+      // if (usernameEntered && !signinMutation.isSuccess) {
+          if (!signinMutation.isSuccess) {
+        console.log("KEYBOARD GETTING OPENED BY SCREEN AUTH");
         setUsername(usernameEntered);
         handleFocusUsername();
       }
-    }, [usernameEntered])
+ 
+    }, [usernameEntered, signinMutation.isSuccess])
   );
+
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useEffect(() => {
     if (signinMutation.isSuccess) {
@@ -88,21 +93,28 @@ const ScreenAuth = () => {
     }
   }, [signinMutation.isSuccess]);
 
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     "keyboardDidShow",
-  //     () => setIsKeyboardVisible(true)
-  //   );
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     "keyboardDidHide",
-  //     () => setIsKeyboardVisible(false)
-  //   );
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        console.log("Keyboard is now visible ✅");
+        setIsKeyboardVisible(true);
+      }
+    );
 
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //     keyboardDidHideListener.remove();
-  //   };
-  // }, []);
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        console.log("Keyboard is now hidden ❌");
+        setIsKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleCreateNew = () => {
     navigateToNewAccount({ usernameEntered: username });
@@ -117,7 +129,7 @@ const ScreenAuth = () => {
 
   const handleAuthentication = async () => {
     console.log("signing user in");
-    handlePasswordBlur();
+    // handlePasswordBlur();
     try {
       onSignIn(username, password);
     } catch (error) {
@@ -192,8 +204,10 @@ const ScreenAuth = () => {
         //   style={[{ flex: 1, padding: 10, width: "100%" }]}
         // >
         <View
-          style={{ paddingHorizontal: 10, flex: 1, 
-            // backgroundColor: "pink" 
+          style={{
+            paddingHorizontal: 10,
+            flex: 1,
+            // backgroundColor: "pink"
           }}
         >
           <AuthScreenTopTray
@@ -221,7 +235,8 @@ const ScreenAuth = () => {
                   ]}
                   placeholder="Username"
                   placeholderTextColor={placeholderTextColor}
-                  autoFocus={true}
+                  // autoFocus={true}
+                  autoFocus={false}
                   onChangeText={handleUsernameChange}
                   value={username}
                   onSubmitEditing={handleUsernameSubmit}
@@ -280,7 +295,6 @@ const ScreenAuth = () => {
           width: "100%",
           bottom: 0,
           paddingHorizontal: 4,
- 
         }}
       >
         {username && password && !signinMutation.isPending && (
@@ -302,7 +316,7 @@ const styles = StyleSheet.create({
     height: 200,
     width: "100%",
     fontFamily: "Poppins-Regular",
- //   backgroundColor: "hotpink",
+    //   backgroundColor: "hotpink",
     justifyContent: "flex-start",
     flex: 1,
   },
