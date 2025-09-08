@@ -123,10 +123,10 @@ const AllHome = ({
           </Animated.View>
 
           
-            <Animated.View
-        
-              entering={SlideInDown}
-              exiting={SlideOutDown}
+            {/* <Animated.View */}
+        <View
+              {/* entering={SlideInDown}
+              exiting={SlideOutDown} */}
               style={{
                 zIndex: 3,
                 flex: 1, 
@@ -148,7 +148,8 @@ const AllHome = ({
                 borderRadius={10}
                 borderColor="black"
               />
-            </Animated.View>
+              </View>
+            {/* </Animated.View> */}
       
           <Animated.View
             entering={FadeIn}
