@@ -1,22 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Text } from "react-native"; 
+import { StyleSheet, View, Modal, Text } from "react-native";
 import Animated, {
-  SharedValue,
-  SlideInLeft,
-  SlideOutRight,
-  FadeInUp,
-  SlideInUp,
-  SlideOutDown,
-  FadeOutDown,
   withSpring,
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedReaction,
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import { BouncyEntrance } from "../headers/BouncyEntrance";
 
 interface Props {
   isVisible: boolean;
@@ -31,8 +21,8 @@ interface Props {
 
 const HalfScreenModal: React.FC<Props> = ({
   isVisible,
-primaryColor,
-backgroundColor,
+  primaryColor,
+  backgroundColor,
   headerIcon,
   questionText,
   children,
@@ -40,13 +30,12 @@ backgroundColor,
   contentPadding = 10,
 
   onClose,
-}) => { 
-
+}) => {
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
   const opacityAnim = useSharedValue(0);
 
-  const timeoutRef = useRef(null);
+  // const timeoutRef = useRef(null);
 
   const [internalIsVisible, setInternalIsVisible] = useState(isVisible);
 
@@ -74,15 +63,15 @@ backgroundColor,
     });
   }, []);
 
-  const springAnimationStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
+  // const springAnimationStyle = useAnimatedStyle(() => ({
+  //   transform: [{ translateY: translateY.value }],
+  // }));
 
   useEffect(() => {
     if (internalIsVisible) {
       xAnim.value = withTiming(0, { duration: 300 });
       scaleAnim.value = withTiming(1, { duration: 300 });
-      opacityAnim.value = withDelay(300, withTiming(1, { duration: 300 })); //withDelay value works with durations of two lines above
+      opacityAnim.value = withDelay(300, withTiming(1, { duration: 300 }));  
     }
 
     if (!internalIsVisible) {
@@ -96,13 +85,13 @@ backgroundColor,
     <Modal
       transparent={true}
       visible={isVisible}
-      style={modalAnimationStyle}
+     // style={modalAnimationStyle}
       animationType="slide"
     >
       <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
         <Animated.View
           style={[
-            styles.modalContent, 
+            styles.modalContent,
             {
               backgroundColor: backgroundColor,
               // borderColor:
@@ -126,55 +115,18 @@ backgroundColor,
           >
             {headerIcon && headerIcon}
             {questionText && (
-              <Text style={[styles.questionText, {color: primaryColor}]}>
+              <Text style={[styles.questionText, { color: primaryColor }]}>
                 {questionText}
               </Text>
             )}
           </View>
-          <View style={{flex: 1}}>
- {children}
+          <View style={{ flex: 1 }}>{children}</View>
  
-            
-          </View>
- 
-            {/* <BouncyEntrance delay={30}>
-              
-            <GlobalPressable
-              //  onPress={handleNavToLocationSearch}
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "center",
-                height: "auto",
-                padding: 60,
-                borderRadius: 10,
-                backgroundColor: "red",
-              }}
-            ></GlobalPressable>
-            
-            </BouncyEntrance>  
-                     <BouncyEntrance delay={60}>
-              
-            <GlobalPressable
-              //  onPress={handleNavToLocationSearch}
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "center",
-                height: "auto",
-                padding: 60,
-                borderRadius: 10,
-                backgroundColor: "red",
-              }}
-            ></GlobalPressable>
-            
-            </BouncyEntrance> */}
         </Animated.View>
       </Animated.View>
     </Modal>
 
-    // )}
-    // </>
+  
   );
 };
 
@@ -183,19 +135,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.84)", // Slightly transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.84)",  
   },
   modalContent: {
-    width: "94%", // Fixed width of 80% of the screen
-    minHeight: 200, // Minimum height to prevent collapse
+    width: "94%",  
+    minHeight: 200, 
     height: "50%",
 
     borderWidth: 2,
     alignItems: "center",
-    backgroundColor: "white", // Ensure it's visible
+    backgroundColor: "white",  
     flexDirection: "column",
     justifyContent: "space-between",
-    // overflow: 'hidden',
   },
   questionText: {
     fontSize: 20,

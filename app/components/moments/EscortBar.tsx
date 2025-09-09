@@ -35,17 +35,22 @@ const EscortBar = ({
         style={[
           {
             height: 50,
-            paddingHorizontal: 10,
+            paddingHorizontal: 5,
             flexDirection: "row",
+            backgroundColor: 'orange',
+            
             width: "100%", 
             alignItems: "center",
             justifyContent: "space-between",
             borderRadius: 10, 
             backgroundColor: primaryBackground,
-            // backgroundColor: "pink",
+      
+        
           },
         ]}
       >
+        <View style={{width: '100%', flexDirection: 'row' , alignItems: 'center', height: '100%', justifyContent: "space-between",  }}>
+
         <Pressable
           hitSlop={10}
           style={{
@@ -71,8 +76,11 @@ const EscortBar = ({
           >
             {label}
           </Text>
+
+
           {forwardFlowOn && <ToNextButton manualGradientColors={manualGradientColors} onPress={onPress} />}
           {!forwardFlowOn && <ActionAndBack manualGradientColors={manualGradientColors} onPress={onPress} />}
+        </View>
         </View>
       </GlobalPressable>
     </Animated.View>

@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, View, Pressable, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import HalfScreenModal from "../alerts/HalfScreenModal"; 
+import HalfScreenModal from "../alerts/HalfScreenModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
- 
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import BouncyEntrance from "./BouncyEntrance";
 type Props = {
@@ -15,9 +16,7 @@ const GoOptionsModal = ({
   isVisible,
   primaryColor,
   backgroundColor,
-  modalBackgroundColor,
-  manualGradientColors,
-  subWelcomeTextStyle,
+  modalBackgroundColor,  
   closeModal,
 }: Props) => {
   const {
@@ -26,7 +25,9 @@ const GoOptionsModal = ({
     navigateToFinalize,
     navigateToFidget,
   } = useAppNavigations();
- 
+
+
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
 
   const handleNavToMoments = () => {
     closeModal();
@@ -48,8 +49,8 @@ const GoOptionsModal = ({
     navigateToFidget();
   };
 
-  const count = 6; // or however many animated items you have
-  const speed = 100; // milliseconds between each item
+  const count = 5; // number of items
+  const speed = 30; // milliseconds between each item
 
   const staggeredDelays = useMemo(() => {
     const getStaggeredDelays = (count: number, speed: number): number[] => {
@@ -60,8 +61,8 @@ const GoOptionsModal = ({
   }, [count, speed]);
   return (
     <HalfScreenModal
-    primaryColor={primaryColor}
-    backgroundColor={modalBackgroundColor}
+      primaryColor={primaryColor}
+      backgroundColor={modalBackgroundColor}
       isFullscreen={false}
       isVisible={isVisible}
       headerIcon={

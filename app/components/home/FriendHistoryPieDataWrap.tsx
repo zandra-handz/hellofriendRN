@@ -123,7 +123,10 @@ const FriendHistoryPieDataWrap = React.memo(
                 height: "100%",
               }}
             >
-              <GlobalPressable onPress={handleOpenLargeChart}>
+              <GlobalPressable style={{      flex: 1
+
+
+              }}  onPress={handleOpenLargeChart}>
                 <View
                   style={{
                     borderRadius: 999,

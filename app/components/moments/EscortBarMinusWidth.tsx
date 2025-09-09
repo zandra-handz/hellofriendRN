@@ -25,15 +25,15 @@ const EscortBarMinusWidth = ({
         onPress={onPress}
         style={[
           {
-            paddingHorizontal: 20,
+            paddingHorizontal: 0,
             flexDirection: "row",
             width: "100%",
-            paddingVertical: 12,
-            paddingTop: 17,
+            height: 50,
+
             alignItems: "center",
             justifyContent: "center",
             borderRadius: 10,
-            // backgroundColor: "orange",
+           // backgroundColor: "orange",
 
             marginVertical: 10,
           },

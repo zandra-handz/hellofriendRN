@@ -1,10 +1,14 @@
-import React, { ReactNode } from "react";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import React, { ReactNode, useState } from "react";
+import { Pressable, StyleProp, ViewStyle, LayoutChangeEvent } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
+
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+
 type Props = {
   onPress?: () => void;
   onLongPress?: () => void;
@@ -14,7 +18,6 @@ type Props = {
   children?: ReactNode;
 };
 
-//Global just means it is the default that is used everywhere in the app
 const GlobalPressable = ({
   onPress,
   onLongPress,
@@ -23,27 +26,75 @@ const GlobalPressable = ({
   style,
   children,
 }: Props) => {
+  const [buttonSize, setButtonSize] = useState({ width: 0, height: 0 });
+
   const scale = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-    };
-  });
+  const burstScale = useSharedValue(0);
+  const burstOpacity = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const burstStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: burstScale.value }],
+    opacity: burstOpacity.value,
+  }));
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    setButtonSize({ width, height });
+  };
 
   return (
     <Pressable
       hitSlop={hitSlop}
-      style={{ zIndex: zIndex }}
-      onPress={onPress ? onPress : null}
-      onLongPress={onLongPress ? onLongPress : null}
+      style={[ style, { zIndex }]}
+      onPress={onPress ?? null}
+      onLongPress={onLongPress ?? null}
       onPressIn={() => {
-        scale.value = withSpring(0.95);
+        scale.value = withSpring(0.65);
       }}
       onPressOut={() => {
         scale.value = withSpring(1);
+
+        // trigger the light burst
+        burstScale.value = 0.5;
+        burstOpacity.value = 0.4;
+        burstScale.value = withTiming(2, { duration: 300 });
+        burstOpacity.value = withTiming(0, { duration: 300 });
       }}
     >
-      <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>
+      <Animated.View
+        onLayout={onLayout}
+        style={[
+          style,
+          animatedStyle,
+          {
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
+        {children}
+
+        {buttonSize.width > 0 && buttonSize.height > 0 && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              {
+                position: "absolute",
+                width: buttonSize.width,
+                height: buttonSize.height,
+                borderRadius: Math.max(buttonSize.width, buttonSize.height) / 2,
+               // backgroundColor: "rgba(255,255,255,0.5)",
+                backgroundColor: manualGradientColors.lightColor,
+              },
+              burstStyle,
+            ]}
+          />
+        )}
+      </Animated.View>
     </Pressable>
   );
 };

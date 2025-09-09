@@ -122,35 +122,34 @@ const AllHome = ({
             </Pressable>
           </Animated.View>
 
-          
-            {/* <Animated.View */}
-        <View
-              {/* entering={SlideInDown}
-              exiting={SlideOutDown} */}
-              style={{
-                zIndex: 3,
-                flex: 1, 
-                width: "100%", 
-                height: 400,
-              }}
-            >
-              <HomeScrollSoon
-                upcomingHelloes={upcomingHelloes}
-                isLoading={isLoading}
-                getThemeAheadOfLoading={getThemeAheadOfLoading}
-                selectFriend={selectFriend}
-                friendList={friendList}
-                primaryColor={primaryColor}
-                overlayColor={overlayColor}
-                manualGradientColors={manualGradientColors}
-                height={"100%"}
-                maxHeight={700}
-                borderRadius={10}
-                borderColor="black"
-              />
-              </View>
-            {/* </Animated.View> */}
-      
+          {/* <Animated.View */}
+          <View
+            //  entering={SlideInDown}
+            // exiting={SlideOutDown}
+            style={{
+              zIndex: 3,
+              flex: 1,
+              width: "100%",
+              height: 400,
+            }}
+          >
+            <HomeScrollSoon
+              upcomingHelloes={upcomingHelloes}
+              isLoading={isLoading}
+              getThemeAheadOfLoading={getThemeAheadOfLoading}
+              selectFriend={selectFriend}
+              friendList={friendList}
+              primaryColor={primaryColor}
+              overlayColor={overlayColor}
+              manualGradientColors={manualGradientColors}
+              height={"100%"}
+              maxHeight={700}
+              borderRadius={10}
+              borderColor="black"
+            />
+          </View>
+          {/* </Animated.View> */}
+
           <Animated.View
             entering={FadeIn}
             exiting={SlideOutRight}
