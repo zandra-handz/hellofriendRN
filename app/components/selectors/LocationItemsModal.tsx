@@ -12,7 +12,7 @@ import { manualGradientColors } from "@/src/hooks/StaticColors";
 
 import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
 
-const CarouselItemModal = ({
+const LocationItemsModal = ({
  
   primaryColor,
   isVisible,
@@ -22,34 +22,24 @@ const CarouselItemModal = ({
   title,
   type,
   onPress,
+  children,
 }) => { 
  
  
   return (
     <ModalWithGoBack
       isVisible={isVisible}
+      useModalBar={true}
       headerIcon={icon}
       questionText={title}
       children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
+        <View style={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
-              {display}
-            </Text>
-            <Text
-              onPress={() => onPress()}
-              style={[
-                styles.linkText,
-              
-                { color: manualGradientColors.lightColor },
-              ]}
-            >
-              {` edit `}
-            </Text>
+           {children}
           </View>
-        </ScrollView>
+        </View>
       }
-      formHeight={610}
+     
       onClose={closeModal}
       cancelText="Back"
     />
@@ -85,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CarouselItemModal;
+export default LocationItemsModal;

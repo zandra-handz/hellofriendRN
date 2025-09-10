@@ -3,29 +3,34 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   Modal,
   FlatList,
 } from "react-native";
-
-import AlertSingleInput from "../alerts/AlertSingleInput"; 
-
+import HalfScreenModal from "../alerts/HalfScreenModal";
+import AlertSingleInput from "../alerts/AlertSingleInput";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AddCustomLocation from "./AddCustomLocation";
+import CarouselItemModal from "../appwide/carouselItemModal";
+import LocationItemsModal from "./LocationItemsModal";
 const PickerComplexList = ({
-  primaryColor, 
+  primaryColor,
+  backgroundColor = "red",
   onLabelChange,
   modalHeader,
   primaryOptions = [],
   primaryOptionsHeader,
   secondaryOptions = [],
   secondaryOptionsHeader,
-  objects = false, 
+  objects = false,
   modalVisible = false,
-  setModalVisible, 
+  setModalVisible,
   primaryIcon: PrimaryIcon,
   secondaryIcon: SecondaryIcon,
-  iconSize = 34,
-  allowCustomEntry = false, 
-}) => { 
+  iconSize = 22,
+  allowCustomEntry = false,
+}) => {
   const [isCustomModalVisible, setCustomModalVisible] = useState(false);
   const [customValue, setCustomValue] = useState("");
 
@@ -50,7 +55,7 @@ const PickerComplexList = ({
   const handleCustomEntry = (value) => {
     setCustomValue(value);
     onLabelChange(value);
-    setCustomModalVisible(false);
+    // setCustomModalVisible(false);
     setModalVisible(false);
   };
 
@@ -64,35 +69,37 @@ const PickerComplexList = ({
     const Icon =
       combinedOptions.find((section) => section.data.includes(item))?.icon ||
       null;
- 
 
     return (
       <TouchableOpacity
         style={styles.optionButton}
         onPress={() => handleSelectLabel(item)}
       >
+        <View style={{flexDirection: 'row'}}>
+
+
         {Icon && (
           <View style={styles.iconContainer}>
-            <Icon
-              width={iconSize}
-              height={iconSize}
-              color={primaryColor}
-            />
+            <Icon width={iconSize} height={iconSize} color={primaryColor} />
           </View>
         )}
         <View style={styles.textContainer}>
           {objects ? (
             <>
-              <Text style={[styles.optionTitleText, {color: primaryColor}]}>
+              <Text style={[styles.optionTitleText, { color: primaryColor }]}>
                 {item.title}
               </Text>
-              <Text style={[styles.optionText, {color: primaryColor}]}>
+              <Text style={[styles.optionText, { color: primaryColor }]}>
                 {item.address}
               </Text>
             </>
           ) : (
             <Text style={styles.optionText}>{item}</Text>
           )}
+          </View>
+        </View>
+        <View style={[styles.divider, {backgroundColor: primaryColor}]}>
+
         </View>
       </TouchableOpacity>
     );
@@ -100,7 +107,7 @@ const PickerComplexList = ({
 
   const renderSection = ({ item }) => (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, {color: primaryColor}]}>
+      <Text style={[styles.sectionTitle, { color: primaryColor }]}>
         {item.type}
       </Text>
       <FlatList
@@ -112,89 +119,90 @@ const PickerComplexList = ({
   );
 
   return (
-    <View style={[styles.container ]}>
- 
- 
-
-      {modalVisible && (
-        <Modal
-          transparent={true}
-          animationType="slide"
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={[styles.modalContainer]}>
-            <View
-              style={[
-                styles.modalContent,
-            
-              ]}
-            >
-              <Text style={[styles.modalTitle, {color: primaryColor}]}>
-                {modalHeader}
-              </Text>
-              {allowCustomEntry && (
-                <TouchableOpacity
-                  style={styles.customEntryButton}
-                  onPress={() => setCustomModalVisible(true)}
-                >
-                  <Text style={styles.customEntryText}>Manual entry?</Text>
-                </TouchableOpacity>
-              )}
-
-              <FlatList
-                style={styles.scrollView}
-                data={combinedOptions}
-                keyExtractor={(item) => item.type}
-                renderItem={renderSection}
-              />
-
-              {allowCustomEntry && customValue && (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Custom Entry</Text>
-                  <TouchableOpacity
-                    style={styles.optionButton}
-                    onPress={() => handleSelectLabel(customValue)}
-                  >
-                    <Text style={styles.optionText}>{customValue}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-
-              <View style={styles.modalFooter}>
-                <TouchableOpacity
-                  style={[styles.closeButton, styles.footerButton]}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.clearButton, styles.footerButton]}
-                  onPress={handleClear}
-                >
-                  <Text style={styles.clearButtonText}>Clear</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      )}
-
-      {allowCustomEntry && (
-        <AlertSingleInput
-          isModalVisible={isCustomModalVisible}
-          toggleModal={() => setCustomModalVisible(false)}
-          headerContent={<Text>Add Custom Entry</Text>}
-          questionText="Enter your custom value:"
-          onConfirm={handleCustomEntry}
-          onCancel={() => setCustomModalVisible(false)}
-          confirmText="Add"
-          cancelText="Cancel"
+    // <Modal
+    <LocationItemsModal
+      isVisible={modalVisible}
+      primaryColor={primaryColor}
+      questionText="Select location"
+      backgroundColor={backgroundColor}
+      headerIcon={
+        <MaterialCommunityIcons
+          name={"storefront-outline"}
+          size={30}
+          color={primaryColor}
         />
-      )}
-    </View>
+      }
+      questionText={"Pick location"}
+      // transparent={true}
+      // animationType="slide"
+      // visible={modalVisible}
+      closeModal={() => setModalVisible(false)}
+      children={
+        <View style={[styles.modalContent]}>
+          <AddCustomLocation primaryColor={primaryColor} primaryBackground={backgroundColor} onSubmit={handleCustomEntry} />
+ 
+          {/* {allowCustomEntry && (
+            <TouchableOpacity
+              style={styles.customEntryButton}
+              onPress={() => setCustomModalVisible(true)}
+            >
+              <Text style={styles.customEntryText}>Manual entry?</Text>
+            </TouchableOpacity>
+          )} */}
+
+          <FlatList
+            style={styles.scrollView}
+            data={combinedOptions}
+            keyExtractor={(item) => item.type}
+            renderItem={renderSection}
+          />
+
+          {/* {allowCustomEntry && customValue && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Custom Entry</Text>
+              <TouchableOpacity
+                style={styles.optionButton}
+                onPress={() => handleSelectLabel(customValue)}
+              >
+                <Text style={styles.optionText}>{customValue}</Text>
+              </TouchableOpacity>
+            </View>
+          )} */}
+
+          {/* <View style={styles.modalFooter}>
+            <TouchableOpacity
+              style={[styles.closeButton, styles.footerButton]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.clearButton, styles.footerButton]}
+              onPress={handleClear}
+            >
+              <Text style={styles.clearButtonText}>Clear</Text>
+            </TouchableOpacity>
+          </View> */}
+        </View>
+      }
+    ></LocationItemsModal>
   );
 };
+
+{
+  // allowCustomEntry && (
+  //   <AlertSingleInput
+  //     isModalVisible={isCustomModalVisible}
+  //     toggleModal={() => setCustomModalVisible(false)}
+  //     headerContent={<Text>Add Custom Entry</Text>}
+  //     questionText="Enter your custom value:"
+  //     onConfirm={handleCustomEntry}
+  //     onCancel={() => setCustomModalVisible(false)}
+  //     confirmText="Add"
+  //     cancelText="Cancel"
+  //   />
+  // );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -204,20 +212,13 @@ const styles = StyleSheet.create({
     //margin: "4%",
     alignSelf: "center",
     //padding: 20,
-    height: 'auto',
-  },
-  inlineContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    height: "auto",
   },
   content: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-  },
-  inlineContent: {
-    flex: 1,
   },
   containerText: {
     fontSize: 17,
@@ -251,20 +252,28 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "orange",
   },
   modalContent: {
-    width: "80%",
-    maxHeight: "80%",
-    backgroundColor: "#fff",
+    width: "100%",
+    height: "100%",
+    minHeight: 400,
+    // flex: 1,
+    // maxHeight: "80%",
     borderRadius: 8,
-    padding: 20,
+    // padding: 20,
     alignItems: "center",
   },
   scrollView: {
     width: "100%",
+    // flex: 1,
+    minWidth: 350,
+    // flexDirection: 'row',
+    //flexGrow: 1,
+    // backgroundColor: 'pink',
   },
   section: {
     marginBottom: 20,
@@ -283,13 +292,20 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     marginBottom: 10,
   },
+  divider: {
+    width: '100%',
+    height: .4,
+    opacity: .5,
+   // borderBottomWidth: StyleSheet.hairlineWidth,
+
+  },
   optionButton: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+ 
+    
     width: "100%",
     alignItems: "flex-start",
-    flexDirection: "row",
+    flexDirection: "column",
   },
   iconContainer: {
     marginRight: 10,

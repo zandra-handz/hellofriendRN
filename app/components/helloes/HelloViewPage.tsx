@@ -43,6 +43,8 @@ const HelloViewPage: React.FC<Props> = ({
   height,
   listLength,
   currentIndexValue,
+  marginBottom,
+  darkerOverlayColor,
   cardScaleValue,
   welcomeTextStyle,
   primaryColor = "orange",
@@ -132,14 +134,40 @@ const HelloViewPage: React.FC<Props> = ({
         },
       ]}
     >
-      <View
+      {/* <View
         style={[
           styles.talkingPointCard,
           {
             backgroundColor: primaryBackground,
           },
         ]}
-      >
+      > */}
+
+            <View
+              style={[
+                {
+                  width: "100%",
+                  height: "100%",
+                },
+              ]}
+            >
+              <View
+                style={[
+                  {
+                    padding: 20,
+                    borderRadius: 40,
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                    flex: 1,
+                    marginBottom: marginBottom,
+                    zIndex: 1,
+                    overflow: "hidden",
+                    backgroundColor:
+                      darkerOverlayColor,
+                  },
+                ]}
+              >
+
         <View style={{ height: "90%", width: "100%" }}>
           <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
             <Text style={[  welcomeTextStyle, {color: primaryColor}]}>
@@ -361,6 +389,7 @@ const HelloViewPage: React.FC<Props> = ({
             </View>
           </ScrollView>
         </View>
+      </View>
       </View>
     </Animated.View>
   );

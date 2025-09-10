@@ -215,6 +215,11 @@ const MomentViewPage: React.FC<Props> = ({
               color={categoryColor}
             />
           </View>
+
+
+
+
+          
           <View style={{ height: "90%", width: "100%" }}>
             <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
               <Text

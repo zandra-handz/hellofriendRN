@@ -14,10 +14,12 @@ import {
   StyleSheet, 
   Keyboard, 
   Alert,
+  Pressable,
 } from "react-native";
 
 import DeleteUnused from "./DeleteUnused";
 import LocationModal from "../selectors/LocationModal";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import EscortBar from "../moments/EscortBar";
 import IdeasAdded from "./IdeasAdded";
 import HelloNotes from "./HelloNotes";
@@ -84,7 +86,7 @@ const { navigateBack} = useAppNavigations();
   const [selectedTypeChoiceText, setSelectedTypeChoiceText] = useState(null);
 
   const [selectedHelloLocation, setSelectedHelloLocation] =
-    useState("Select location");
+    useState(null);
   const [existingLocationId, setExistingLocationId] = useState("");
   const [customLocation, setCustomLocation] = useState("");
   const [locationModalVisible, setLocationModalVisible] = useState(false);
@@ -227,6 +229,12 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
     setShowDatePicker(false);
   };
 
+  const clearLocation = () => {
+       setSelectedHelloLocation(null);
+        setCustomLocation(null);
+
+  };
+
   const handleLocationChange = (item) => {
     if (item && item.id) {
       setSelectedHelloLocation(item.title);
@@ -308,7 +316,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
       <>
         <View style={{flex: 1, paddingHorizontal: 4, paddingVertical: 10}}>
           <View style={{ flex: 1 }}>
-            {!isKeyboardVisible && (
+            {/* {!isKeyboardVisible && ( */}
               <View
                 style={{
                   width: "100%",
@@ -321,7 +329,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
                   onChange={handleTypeChoiceChange}
                 />
               </View>
-            )}
+            {/* )} */}
 
             {selectedTypeChoiceText && 
               locationListIsSuccess && (
@@ -342,7 +350,8 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
                     savedLocations={locationList}
                     setModalVisible={setLocationModalVisible}
                     selectedLocation={selectedHelloLocation}
-                  />
+                    clearLocation={clearLocation}
+                  /> 
                   <PickHelloDate
                     primaryColor={primaryColor}
                     selected={helloDate}
@@ -382,7 +391,8 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
                 </View>
               )}
 
-            {!isKeyboardVisible &&
+            {
+            // !isKeyboardVisible &&
               selectedTypeChoiceText &&
               locationListIsSuccess && (
                 <LocationModal

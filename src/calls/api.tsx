@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 
 //export const API_URL = 'http://167.99.233.148:8000/';
 //export const API_URL = 'https://badrainbowz.com/';
-
+import { helloFriendApiClientPublic } from "./helloFriendApiClientPublic";
 import { helloFriendApiClient, setAuthHeader } from "./helloFriendApiClient";
 import axios from "axios";
 import { MomentFromBackendType } from "../types/MomentContextTypes";

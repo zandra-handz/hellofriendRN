@@ -36,15 +36,16 @@ const EscortBarMoments = ({
             justifyContent: "space-between",
             borderRadius: 10,
             backgroundColor: primaryBackground,
+
           },
         ]}
       >
         <Pressable
           hitSlop={10}
           style={{
-            height: "100%",
+            height: "100%", 
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "center", 
           }}
           //   onPress={navigateBack}
           onPress={navigateBack}
@@ -105,22 +106,7 @@ const EscortBarMoments = ({
           </Pressable>
         </View>
         <View style={{ width: 40 }}></View>
-        {/* <Pressable
-          hitSlop={10}
-          style={{
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={onRightPress}
 
-        >
-          <MaterialIcons
-            name={"keyboard-arrow-right"}
-            size={20}
-            color={themeStyles.primaryText.color}
-          />
-        </Pressable> */}
       </GlobalPressable>
     </Animated.View>
   );

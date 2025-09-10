@@ -61,10 +61,19 @@ const ScreenHelloView = () => {
 
   return (
     <SafeViewAndGradientBackground 
-      friendColorLight={themeAheadOfLoading.lightColor}
+      // friendColorLight={themeAheadOfLoading.lightColor}
+      // friendColorDark={themeAheadOfLoading.darkColor}
+      // backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      // friendId={selectedFriend?.id}
+      // style={{ flex: 1 }}
+            friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
+      backgroundOverlayHeight=""
+      includeBackgroundOverlay={true}
+      useOverlay={true}
       style={{ flex: 1 }}
     >
       <CarouselSliderInfinite
@@ -80,6 +89,10 @@ const ScreenHelloView = () => {
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             primaryBackground={lightDarkTheme.primaryBackground}
             overlayColor={lightDarkTheme.overlayBackground}
+            marginBottom={2}
+                    darkerOverlayColor={
+          lightDarkTheme.darkerOverlayBackground}
+       
             {...props}
           />
         )}

@@ -17,6 +17,7 @@ import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import {
+  sendEmail,
   sendResetCodeEmail,
   verifyResetCodeEmail,
   resetPassword,
@@ -90,8 +91,8 @@ const ScreenRecoverCredentials = () => {
     if (isRequestCodeScreen) {
       try {
         // showMessage(true, null, "Sending email...");
-
-        sendResetCodeEmail(email);
+//sendEmail(email);
+       sendResetCodeEmail(email);
         setIsRequestCodeScreen(false);
         setIsValidateCodeScreen(true);
       } catch (error) {

@@ -17,6 +17,9 @@ const LocationModal = ({
 }) => {
   return (
     <>
+    {modalVisible && (
+
+
       <PickerComplexList
         primaryColor={primaryColor}
         title={"PICK LOCATION"}
@@ -39,6 +42,7 @@ const LocationModal = ({
         setModalVisible={setModalVisible}
         buttonHeight={buttonHeight}
       />
+          )}
     </>
   );
 };

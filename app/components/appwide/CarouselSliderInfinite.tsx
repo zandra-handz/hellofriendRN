@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import ItemFooterHelloes from "./statusbar/ItemFooterHelloes";
 import ItemFooter from "../headers/ItemFooter";
 import CarouselItemModal from "./carouselItemModal";
 
@@ -36,7 +37,7 @@ const CarouselSliderInfinite = ({
 
   footerData,
   primaryColor,
-  overlayColor,
+  overlayColor, 
   dividerStyle,
   welcomeTextStyle,
   themeAheadOfLoading,
@@ -140,6 +141,8 @@ const CarouselSliderInfinite = ({
           cardScaleValue={cardScale}
           openModal={handleSetModalData}
           closeModal={() => setItemModalVisible(false)}
+ 
+       
         />
       </View>
     ),
@@ -184,7 +187,7 @@ const CarouselSliderInfinite = ({
         />
         {/* {type === 'location' && ( */}
 
-        <ItemFooter
+        <ItemFooterHelloes
     
           data={data}
           totalItemCount={totalItemCount}

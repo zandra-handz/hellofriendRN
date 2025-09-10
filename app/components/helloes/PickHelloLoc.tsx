@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import React, { useEffect, useCallback } from "react";
- 
+
 import HalfScreenModal from "../alerts/HalfScreenModal";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 type Props = {
   primaryColor: string;
   selected: any;
   onChange: (index: number) => void;
 };
- 
 
 const PickHelloLoc = ({
   primaryColor,
@@ -18,10 +17,11 @@ const PickHelloLoc = ({
   savedLocations,
   modalVisible,
   setModalVisible,
+  clearLocation,
 }: Props) => {
-  useEffect(() => {
-    console.log(`modalvisivle:`, modalVisible);
-  }, [modalVisible]);
+
+ 
+  const PADDING_HORIZONTAL = 20;
   const renderButtonStyle = useCallback(
     () => {
       return (
@@ -34,8 +34,8 @@ const PickHelloLoc = ({
             justifyContent: "start",
             height: "100%",
             flexDirection: "row",
-
-            width: "100%",
+backgroundColor: 'orange',
+            width: "80%",
           }}
         >
           <MaterialCommunityIcons
@@ -58,12 +58,17 @@ const PickHelloLoc = ({
   );
   return (
     <>
-      <Pressable
-        onPress={() => setModalVisible(true)}
-        style={[styles.container ]}
-      >
-        {renderButtonStyle()}
-      </Pressable>
+      <View style={{ flexDirection: "row", backgroundColor: 'teal', width: '100%', justifyContent: 'space-between', paddingRight: PADDING_HORIZONTAL, alignItems: 'center'}}>
+        <Pressable
+          onPress={() => setModalVisible(true)}
+          style={[styles.container, {paddingHorizontal: PADDING_HORIZONTAL}]}
+        >
+          {renderButtonStyle()}
+        </Pressable>
+        <Pressable onPress={clearLocation} style={{ width: 'auto', height: '100%', flexDirection: 'column', justifyContent: 'center'}}>
+          <MaterialIcons name={"location-off"} color={primaryColor} size={20} />
+        </Pressable>
+      </View>
 
       {modalVisible && (
         <HalfScreenModal
@@ -82,10 +87,9 @@ const PickHelloLoc = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: 50, 
-    zIndex: 60000,
-    paddingHorizontal: 20,
+ 
+    height: 50,
+    zIndex: 60000, 
     flexDirection: "row",
   },
   section: {
