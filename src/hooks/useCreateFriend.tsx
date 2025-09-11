@@ -56,7 +56,7 @@ const useCreateFriend = ({
       const friendId = data?.id;
 
       if (friendId) {
-        saveSettings(friendId, effort_required, priority_level);
+        saveSettings({friendId: friendId, effort: effort_required, priority: priority_level});
         addToFriendList(data);
         refetchUpcoming();
         selectFriend(data);

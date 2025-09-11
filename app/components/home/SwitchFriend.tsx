@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 
 type Props = {
   fontSize: number;
@@ -138,7 +139,7 @@ const SwitchFriend = ({
   numberOfLines={1}
   ellipsizeMode="tail"
   style={[
-    welcomeTextStyle,
+    appFontStyles.subWelcomeText,
     {
       zIndex: 2,
       color: primaryColor,

@@ -15,6 +15,7 @@ const EditEffort = ({
 }) => {
   const { handleUpdateFriendSettings } = useUpdateFriend({
     userId: userId,
+    friendId: friendId,
     // refetchUpcoming: refetchUpcoming,  // don't need to refetch, date won't change until next hello
   });
 
@@ -24,7 +25,7 @@ const EditEffort = ({
 
   const handleSave = () => {
     try {
-      handleUpdateFriendSettings(friendId, effortRef.current.getValue());
+      handleUpdateFriendSettings({ effort: effortRef.current.getValue()});
       setEffort(effortRef.current.getValue());
       setShowEdit(false);
     } catch (error) {

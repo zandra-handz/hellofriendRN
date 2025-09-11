@@ -106,15 +106,16 @@ const UserHistoryPieDataWrap = ({
           style={{ width: chartRadius * 2 + chartBorder * 2, height: "100%" }}
         >
           <GlobalPressable onPress={handleOpenLargeUserChart}>
-            <View
-              style={{
-                borderRadius: 999,
-                borderWidth: chartBorder,
-
-                alignItems: "center",
-                borderColor: chartBorderColor,
-              }}
-            >
+                <View
+                  style={{
+                    borderRadius: 999,
+                    borderWidth: chartBorder,
+                    width: chartRadius * 2 + chartBorder * 2,
+                    height: chartRadius * 2 + chartBorder * 2,
+                    alignItems: "center",
+                    borderColor: chartBorderColor,
+                  }}
+                >
               <UserHistoryMiniPie
                 seriesData={seriesData}
                 showLabels={showLabels}

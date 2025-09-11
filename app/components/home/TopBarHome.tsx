@@ -44,7 +44,7 @@ const TopBarHome = ({
         onPress={handleNavigateToFriendSelect}
         style={{ flexDirection: "row" }}
       >
-        <Text style={[fontStyle, { color: textColor }]}>Switch</Text>
+        <Text style={[fontStyle, { color: textColor , fontSize: 20}]}>Switch</Text>
         <MaterialCommunityIcons
           name="account-switch-outline"
           size={20}

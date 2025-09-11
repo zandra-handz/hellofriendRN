@@ -1,18 +1,18 @@
-import React, {   useState, useMemo, useCallback } from "react";
-import {  Linking, Text, Alert } from "react-native";
+import React, { useState, useMemo, useCallback } from "react";
+import { Linking, Text, View, Alert } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
- 
+import Dialog from "react-native-dialog";
 import { useUser } from "@/src/context/UserContext";
-import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle"; 
+import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
- 
+import AddPhoneNumber from "@/app/components/alerts/AddPhoneNumber";
 import { appFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenLocationSend = () => {
   const route = useRoute();
@@ -22,12 +22,16 @@ const ScreenLocationSend = () => {
   const selectedDay = route.params?.selectedDay ?? null;
   const { getCurrentDay } = useLocationDetailFunctions();
   const currentDay = getCurrentDay();
-  // console.log(`screen location send`, selectedDay); 
-  const { additionalDetails } = useFetchAdditionalDetails({userId: user?.id, locationObject: location, enabled: true})
+  // console.log(`screen location send`, selectedDay);
+  const { additionalDetails } = useFetchAdditionalDetails({
+    userId: user?.id,
+    locationObject: location,
+    enabled: true,
+  });
   const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash();
   //weekdayTextData is coming from LocationHoursOfOperation component
-  const { lightDarkTheme } = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
 
   const { themeAheadOfLoading } = useFriendStyle();
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
@@ -53,6 +57,11 @@ const ScreenLocationSend = () => {
     }
     return null;
   }, [location]);
+
+  const [inputNumberVisible, setInputNumberVisible] = useState(false);
+  const handleCloseDialog = () => {
+    setInputNumberVisible(false);
+  };
 
   //  change to this if want to always fetch automatically regardless if already cached or not:
 
@@ -148,30 +157,32 @@ const ScreenLocationSend = () => {
     }
 
     if (directionLink && !phoneNumber) {
-      Alert.alert(
-        `You haven't set a phone number for ${selectedFriend.name}`,
-        `You can set this in ${selectedFriend.name}'s settings to make this faster in the future!`,
-        [
-          {
-            text: "Go back",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
+      setInputNumberVisible(true);
 
-          // screen doesn't exist anymore, settings are now in a modal on home screen, should program to open after navigating or provide a new input field here
-          //  {
-          //   text: "Settings",
-          //   onPress: () => navigation.navigate('FriendFocus'),
-          // },
-          {
-            text: "Send",
-            onPress: () =>
-              Linking.openURL(
-                `sms:$?body=${encodeURIComponent(finalMessageString)}`
-              ),
-          },
-        ]
-      );
+      // Alert.alert(
+      //   `You haven't set a phone number for ${selectedFriend.name}`,
+      //   `You can set this in ${selectedFriend.name}'s settings to make this faster in the future!`,
+      //   [
+      //     {
+      //       text: "Go back",
+      //       onPress: () => console.log("Cancel Pressed"),
+      //       style: "cancel",
+      //     },
+
+      //     // screen doesn't exist anymore, settings are now in a modal on home screen, should program to open after navigating or provide a new input field here
+      //     //  {
+      //     //   text: "Settings",
+      //     //   onPress: () => navigation.navigate('FriendFocus'),
+      //     // },
+      //     {
+      //       text: "Send",
+      //       onPress: () =>
+      //         Linking.openURL(
+      //           `sms:$?body=${encodeURIComponent(finalMessageString)}`
+      //         ),
+      //     },
+      //   ]
+      // );
     }
   };
 
@@ -192,13 +203,22 @@ const ScreenLocationSend = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
     >
+      {inputNumberVisible && (
+        <AddPhoneNumber
+        userId={user?.id}
+        friendId={selectedFriend?.id}
+        isVisible={inputNumberVisible}
+        onClose={handleCloseDialog}
+        />
+
+      )}
       <LocationInviteBody
         currentDay={currentDay}
         messageData={messageData}
@@ -227,7 +247,5 @@ const ScreenLocationSend = () => {
     </SafeViewAndGradientBackground>
   );
 };
-
- 
 
 export default ScreenLocationSend;

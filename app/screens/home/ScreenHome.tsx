@@ -300,7 +300,7 @@ const ScreenHome = () => {
                   <TopBarHome
                     loading={loadingDash}
                     style={themeAheadOfLoading}
-                    fontStyle={welcomeTextStyle}
+                    fontStyle={subWelcomeTextStyle}
                     textColor={lightDarkTheme.primaryText}
                     backgroundColor={lightDarkTheme.primaryBackground}
                     onPress={navigateToSelectFriend}

@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const EditPhone = ({ userId,  friendId, friendPhone, primaryColor, refetchUpcoming }) => {
   const [phoneNumber, setPhoneNumber] = useState(friendPhone);
  
-  const { handleUpdateFriendSettings } = useUpdateFriend({userId: userId, refetchUpcoming: refetchUpcoming});
+  const { handleUpdateFriendSettings } = useUpdateFriend({userId: userId, friendId: friendId, refetchUpcoming: refetchUpcoming});
 
 
   const [showEdit, setShowEdit] = useState(false);
@@ -21,11 +21,9 @@ const EditPhone = ({ userId,  friendId, friendPhone, primaryColor, refetchUpcomi
 
   const handleUpdatePhoneNumber = () => {
     if (phoneNumber) {
-      handleUpdateFriendSettings(
-        friendId,
-        // friendDashboardData.suggestion_settings.effort_required,
-        // friendDashboardData.suggestion_settings.priority_level,
+      handleUpdateFriendSettings({ 
         phoneNumber
+      }
       );
     }
     setShowEdit(false);

@@ -48,7 +48,7 @@ const Pics = ({
             },
           ]}
         >
-          {isLoading && <LoadingBlock loading={true} />}
+          {/* {isLoading && <LoadingBlock loading={true} />} */}
           {!isLoading && (
             <View
               style={{

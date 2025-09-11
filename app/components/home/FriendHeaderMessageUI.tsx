@@ -31,16 +31,15 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
  
-  const message = `${selectedFriendName}`;
-  const compositionMessage = `Talking point for ${selectedFriendName}`;
+  const message = `${selectedFriendName}`; 
 
   return (
     <AnimatedPressable
       onPress={onPress}
       hitSlop={10}
       pressRetentionOffset={10}
-      entering={FadeIn}
-      exiting={FadeOut}
+      // entering={FadeIn}
+      // exiting={FadeOut}
       style={[
         {
           backgroundColor: backgroundColor, 
@@ -65,10 +64,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
         ]}
       >
         {selectedFriendName && !loadingNewFriend  
-          ? message
-          : selectedFriendName && !loadingNewFriend 
-            ? compositionMessage
-            : ""}{" "}
+          && message }
   
       </Animated.Text>
     </AnimatedPressable>

@@ -27,13 +27,18 @@ const ScreenMomentView = () => {
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
 
+
+  
+
   const { preAddMomentMutation  } = usePreAddMoment({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
  
 
-  const { loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash();
+
+    const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
@@ -96,6 +101,7 @@ const ScreenMomentView = () => {
             categoryColorsMap={categoryColorsMap}
             data={capsuleList}
             children={MomentViewPage}
+            friendNumber={phoneNumber}
           />
         )}
     </SafeViewAndGradientBackground>

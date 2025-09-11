@@ -67,7 +67,7 @@ const SuggestedHello = ({
               },
             ]}
           >
-            {friendFutureDate} dfg rege le lkergk rel rekg erkg rekerk 
+            {friendFutureDate}
           </Text>
         </>
       </View>
@@ -103,9 +103,9 @@ const SuggestedHello = ({
           borderRadius: 14,
         }}
       >
-        {isLoading && (
+        {/* {isLoading && (
           <LoadingBlock loading={true} borderRadius={borderRadius} />
-        )}
+        )} */}
         {!isLoading && (
           <View style={{ flexDirection: "row" }}>
             <View style={styles.textContainer}>{renderSuggestedHello}</View>

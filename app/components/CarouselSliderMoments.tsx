@@ -14,6 +14,7 @@ type Props = {
   data: object[];
   categoryColorsMap: object;
   useButtons: boolean;
+  friendNumber: string;
 };
 
 const CarouselSliderMoments = ({
@@ -27,6 +28,7 @@ const CarouselSliderMoments = ({
   children: Children,
   onRightPress,
   onRightPressSecondAction,
+  friendNumber,
   // footerData,
 
 }: Props) => {
@@ -169,6 +171,8 @@ const CarouselSliderMoments = ({
         {/* {type === 'location' && ( */}
 
         <ItemFooterMoments //this component is now NOT absolutely positioned, so that it can get calculated with the card above and they won't overlap on different screens
+          userId={userId}
+          friendId={friendId}
           data={data}
           scrollTo={scrollTo}
           primaryColor={lightDarkTheme.primaryText}
@@ -179,6 +183,7 @@ const CarouselSliderMoments = ({
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
           categoryColorsMap={categoryColorsMap}
+          friendNumber={friendNumber}
       
           useButtons={useButtons}
           onRightPress={() => onRightPress(currentIndex.value)}

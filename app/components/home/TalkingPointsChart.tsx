@@ -245,11 +245,11 @@ const TalkingPointsChart = ({
             },
           ]}
         >
-          {isLoading && (
+          {/* {isLoading && (
             <LoadingBlock
             loading={true}
             />
-          )}
+          )} */}
 
           {!isLoading && (
             

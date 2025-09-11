@@ -15,6 +15,7 @@ const EditPriority = ({
 }) => {
   const { handleUpdateFriendSettings } = useUpdateFriend({
     userId: userId,
+    friendId: friendId
     // refetchUpcoming: refetchUpcoming,  // don't need to refetch, date won't change until next hello
   });
 
@@ -24,7 +25,7 @@ const EditPriority = ({
 
   const handleSave = () => {
     try {
-      handleUpdateFriendSettings(friendId, priorityRef.current.getValue());
+      handleUpdateFriendSettings({priority: priorityRef.current.getValue()});
       setPriority(priorityRef.current.getValue());
       setShowEdit(false);
     } catch (error) {

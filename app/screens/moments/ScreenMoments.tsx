@@ -14,7 +14,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
+// import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useUser } from "@/src/context/UserContext";

@@ -35,7 +35,7 @@ const ContentAddFriend = ({
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
   });
-  const { handleUpdateFriendSettings } = useUpdateFriend({
+  const { handleNewFriendSettings } = useUpdateFriend({
     userId: userId,
     refetchUpcoming: refetchUpcomingHelloes,
   });
@@ -57,7 +57,7 @@ const ContentAddFriend = ({
 
   const { handleCreateFriend, createFriendMutation } = useCreateFriend({
     userId: userId,
-    saveSettings: handleUpdateFriendSettings,
+    saveSettings: handleNewFriendSettings,
     addToFriendList: addToFriendList,
     refetchUpcoming: refetchUpcomingHelloes,
     selectFriend: selectFriend,
