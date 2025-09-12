@@ -25,8 +25,8 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
-// third party
-import { useShareIntentContext } from "expo-share-intent";
+// third party  RESTORE SHARE INTENT WHEN PACKAGE IS UPDATED
+// import { useShareIntentContext } from "expo-share-intent";
 import * as FileSystem from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 
@@ -49,7 +49,7 @@ const ScreenHome = () => {
   const { user } = useUser();
   const { settings } = useUserSettings();
 
-  const { hasShareIntent, shareIntent } = useShareIntentContext();
+  // const { hasShareIntent, shareIntent } = useShareIntentContext();
 
   const { lightDarkTheme } = useLDTheme();
   const { isLoading } = useUpcomingHelloes();
@@ -81,65 +81,65 @@ const ScreenHome = () => {
   const isNewUser =
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
 
-  useEffect(() => {
-    if (!hasShareIntent || !shareIntent) return;
+  // useEffect(() => {
+  //   if (!hasShareIntent || !shareIntent) return;
 
-    if (hasShareIntent && shareIntent?.files?.length > 0) {
-      const file = shareIntent.files[0];
-      const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
+  //   if (hasShareIntent && shareIntent?.files?.length > 0) {
+  //     const file = shareIntent.files[0];
+  //     const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
 
-      if (uri) {
-        processSharedFile(uri);
-      } else {
-        console.warn("No valid URI found for the shared file.");
-      }
-    }
+  //     if (uri) {
+  //       processSharedFile(uri);
+  //     } else {
+  //       console.warn("No valid URI found for the shared file.");
+  //     }
+  //   }
 
-    if (hasShareIntent && shareIntent?.text?.length > 0) {
-      const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
-      if (sharedText) {
-        navigateToMomentFocusWithText({
-          screenCameFrom: 0, //goes back to home screen that is now selected friend screen
-          momentText: sharedText,
-        });
-      } else {
-        showFlashMessage(
-          `length in shared text but data structure passed here is not valid`,
-          true,
-          2000
-        );
-      }
-    }
-  }, [shareIntent, hasShareIntent]);
+  //   if (hasShareIntent && shareIntent?.text?.length > 0) {
+  //     const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
+  //     if (sharedText) {
+  //       navigateToMomentFocusWithText({
+  //         screenCameFrom: 0, //goes back to home screen that is now selected friend screen
+  //         momentText: sharedText,
+  //       });
+  //     } else {
+  //       showFlashMessage(
+  //         `length in shared text but data structure passed here is not valid`,
+  //         true,
+  //         2000
+  //       );
+  //     }
+  //   }
+  // }, [shareIntent, hasShareIntent]);
 
-  const processSharedFile = async (url) => {
-    if (url.startsWith("content://") || url.startsWith("file://")) {
-      try {
-        const fileInfo = await FileSystem.getInfoAsync(url);
+  // const processSharedFile = async (url) => {
+  //   if (url.startsWith("content://") || url.startsWith("file://")) {
+  //     try {
+  //       const fileInfo = await FileSystem.getInfoAsync(url);
 
-        if (fileInfo && fileInfo.exists) {
-          // Validate that it's an image
-          if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-            const resizedImage = await resizeImage(fileInfo.uri);
-            navigation.navigate("AddImage", { imageUri: resizedImage.uri }); // Navigate with resized image URI
-          } else {
-            Alert.alert(
-              "Unsupported File",
-              "The shared file is not a valid image."
-            );
-          }
-        } else {
-          Alert.alert("Error", "Could not process the shared file.");
-        }
-      } catch (error) {
-        console.error("Error processing shared file:", error);
-        Alert.alert(
-          "Error",
-          "An error occurred while processing the shared file."
-        );
-      }
-    }
-  };
+  //       if (fileInfo && fileInfo.exists) {
+  //         // Validate that it's an image
+  //         if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
+  //           const resizedImage = await resizeImage(fileInfo.uri);
+  //           navigation.navigate("AddImage", { imageUri: resizedImage.uri }); // Navigate with resized image URI
+  //         } else {
+  //           Alert.alert(
+  //             "Unsupported File",
+  //             "The shared file is not a valid image."
+  //           );
+  //         }
+  //       } else {
+  //         Alert.alert("Error", "Could not process the shared file.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error processing shared file:", error);
+  //       Alert.alert(
+  //         "Error",
+  //         "An error occurred while processing the shared file."
+  //       );
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
