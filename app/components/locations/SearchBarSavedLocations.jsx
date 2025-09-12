@@ -14,8 +14,9 @@ import {
   Text,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native"; 
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 
 const SearchBarSavedLocations = forwardRef(
   (
@@ -23,21 +24,21 @@ const SearchBarSavedLocations = forwardRef(
       locationListDrilledTwice,
       onPress,
       mountingText = "default",
-      triggerAnimation,
-      onTextChange,
-      searchStringRef,
-      manualGradientColors,
+      showFullList,
+      setShowFullList,
+    
+      onTextChange, 
       primaryColor,
       primaryBackground,
     },
     ref
-  ) => { 
+  ) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const textInputRef = useRef();
-    const [showFullList, setShowFullList] = useState(true);
+    // const [showFullList, setShowFullList] = useState(true);
 
-    const INPUT_CONTAINER_BORDER_RADIUS = 10;
+    // const INPUT_CONTAINER_BORDER_RADIUS = 10;
 
     useEffect(() => {
       if (textInputRef.current) {
@@ -124,10 +125,10 @@ const SearchBarSavedLocations = forwardRef(
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
           <View
             style={[
-              styles.inputContainer, 
+              styles.inputContainer,
               {
                 backgroundColor: primaryBackground,
-                borderRadius: INPUT_CONTAINER_BORDER_RADIUS,
+                borderRadius: 999, // INPUT_CONTAINER_BORDER_RADIUS,
                 borderColor: primaryColor,
               },
             ]}
@@ -135,15 +136,15 @@ const SearchBarSavedLocations = forwardRef(
             <TextInput
               ref={textInputRef}
               autoFocus={mountingText.length > 0 ? true : false}
-              style={[styles.searchInput, {color: primaryColor}]}
+              style={[styles.searchInput, { color: primaryColor }]}
               placeholder={"Search"}
               placeholderTextColor={primaryColor}
               value={searchQuery}
               onChangeText={handleSearch}
             />
             <MaterialCommunityIcons
-            name={'playlist-star'}
-              size={28}
+              name={"bookmark"}
+              size={16}
               color={manualGradientColors.lightColor}
               style={styles.icon}
             />
@@ -155,8 +156,9 @@ const SearchBarSavedLocations = forwardRef(
           <View
             style={[
               styles.dropdownContainer,
-             {backgroundColor: primaryBackground}
+              { backgroundColor: primaryBackground },
             ]}
+            pointerEvents="auto"
           >
             <FlatList
               data={filteredData}
@@ -166,10 +168,10 @@ const SearchBarSavedLocations = forwardRef(
                   onPress={() => handleItemPress(item)}
                   style={[
                     styles.itemContainer,
-                    {backgroundColor: primaryBackground}
+                    { backgroundColor: primaryBackground },
                   ]}
                 >
-                  <Text style={[styles.itemText, {color: primaryColor}]}>
+                  <Text style={[styles.itemText, { color: primaryColor }]}>
                     {["address", "title"].map((key) => item[key]).join(" - ")}
                   </Text>
                 </TouchableOpacity>
@@ -193,9 +195,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 48,
     backgroundColor: "transparent",
-    paddingLeft: "4%",
-    paddingVertical: "3%",
-    borderWidth: StyleSheet.hairlineWidth,
+    paddingLeft: 10,
+    paddingVertical: 1,
+    // borderWidth: 1,
   },
   searchInput: {
     flex: 1,
@@ -205,19 +207,19 @@ const styles = StyleSheet.create({
     height: 48,
   },
   icon: {
-    marginRight: "3%",
+    marginRight: 4,
   },
   dropdownContainer: {
     position: "absolute",
     top: 54,
     left: 0,
-    maxHeight: 300,
+    height: 240,
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    width: "114%",
+    // shadowColor: "#000",
+    // shadowOpacity: 0.2,
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowRadius: 5,
+    width: "100%",
     zIndex: 2100,
     elevation: 2100,
   },

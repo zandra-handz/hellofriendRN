@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text  } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import GlobalPressable from "../appwide/button/GlobalPressable";
 interface FocusedLocation {
   title: string;
   address: string;
@@ -28,7 +28,7 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
       style={{
         backgroundColor: primaryBackground,
         padding: 10,
-        height: 110,
+        height: 80,
         width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
@@ -47,11 +47,15 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
           >
             <Text
               numberOfLines={2}
-              style={[welcomeTextStyle, { color: primaryColor }]}
+              style={[
+                // welcomeTextStyle, 
+                { color: primaryColor, fontSize: 20, lineHeight: 24 }]}
             >
               {focusedLocation && focusedLocation.title}
             </Text>
-            <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+            <Text style={[
+              // subWelcomeTextStyle, 
+              { color: primaryColor }]}>
               {focusedLocation && focusedLocation.address}
             </Text>
           </View>
@@ -62,12 +66,12 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
               height: "100%",
             }}
           >
-            <TouchableOpacity
+            <GlobalPressable
               onPress={onViewPress}
               style={{
                 marginBottom: 8,
-                height: 30,
-                width: 30,
+                height: 22,
+                width: 22,
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 15,
@@ -78,16 +82,16 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
             >
               <MaterialCommunityIcons
                 name={"information"}
-                size={30}
+                size={22}
                 color={manualGradientColors.lightColor}
               />
-            </TouchableOpacity>
+            </GlobalPressable>
 
-            <TouchableOpacity
+            <GlobalPressable
               onPress={onSendPress}
               style={{
-                height: 30,
-                width: 30,
+                height: 22,
+                width: 22,
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 15,
@@ -98,10 +102,10 @@ const FocusedLocationCardUI: React.FC<FocusedLocationCardProps> = ({
             >
               <MaterialCommunityIcons
                 name={"send-circle-outline"}
-                size={30}
+                size={22}
                 color={manualGradientColors.lightColor}
               />
-            </TouchableOpacity>
+            </GlobalPressable>
           </View>
         </>
       )}

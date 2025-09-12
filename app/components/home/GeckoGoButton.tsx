@@ -1,10 +1,11 @@
 import { View, Text } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import useDoublePress from "../buttons/useDoublePress";
+// import useDoublePress from "../buttons/useDoublePress";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { FontAwesome6 } from "@expo/vector-icons";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
+import { Vibration } from "react-native";
 
 type Props = {
   onSinglePress: () => void;
@@ -21,16 +22,24 @@ const GeckoGoButton = ({
 
   borderRadius=10,
 }: Props) => {
-  const { handleDoublePress } = useDoublePress({
-    onSinglePress: onSinglePress,
-    onDoublePress: onDoublePress,
+  // const { handleDoublePress } = useDoublePress({
+  //   onSinglePress: onSinglePress,
+  //   onDoublePress: onDoublePress,
 
-  });
+  // });
+
+  const onLongPressVibrate = () => {
+    Vibration.vibrate(100); 
+    onDoublePress();
+
+  };
 
   return (
     <GlobalPressable
       // onPress={navigateToMoments}
-      onPress={handleDoublePress}
+      // onPress={handleDoublePress}
+      onLongPress={onLongPressVibrate}
+      onPress={onSinglePress}
       style={{ 
         padding: 10,
 

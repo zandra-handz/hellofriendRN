@@ -1,10 +1,16 @@
 import React, { ReactNode, useState } from "react";
-import { Pressable, StyleProp, ViewStyle, LayoutChangeEvent } from "react-native";
+import {
+  Pressable,
+  StyleProp,
+  ViewStyle,
+  LayoutChangeEvent,
+} from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
+  withDelay,
 } from "react-native-reanimated";
 
 import { manualGradientColors } from "@/src/hooks/StaticColors";
@@ -49,19 +55,29 @@ const GlobalPressable = ({
   return (
     <Pressable
       hitSlop={hitSlop}
-      style={[ style, { zIndex }]}
+      style={[style, { zIndex }]}
       onPress={onPress ?? null}
       onLongPress={onLongPress ?? null}
       onPressIn={() => {
-        scale.value = withSpring(0.65);
+        scale.value = withSpring(0.65, {
+          stiffness: 500, // higher = faster response
+          damping: 30, // higher = less bounce
+          mass: .5, // lower mass = quicker
+        });
       }}
       onPressOut={() => {
-        scale.value = withSpring(1);
+        scale.value = withSpring(1, {
+          stiffness: 600, // higher = faster response
+          damping: 30, // higher = less bounce
+          mass: .5, // lower mass = quicker
+
+
+        });
 
         // trigger the light burst
         burstScale.value = 0.5;
         burstOpacity.value = 0.4;
-        burstScale.value = withTiming(2, { duration: 300 });
+        burstScale.value = withDelay(100, withTiming(2, { duration: 300 }));
         burstOpacity.value = withTiming(0, { duration: 300 });
       }}
     >
@@ -87,7 +103,7 @@ const GlobalPressable = ({
                 width: buttonSize.width,
                 height: buttonSize.height,
                 borderRadius: Math.max(buttonSize.width, buttonSize.height) / 2,
-               // backgroundColor: "rgba(255,255,255,0.5)",
+                // backgroundColor: "rgba(255,255,255,0.5)",
                 backgroundColor: manualGradientColors.lightColor,
               },
               burstStyle,

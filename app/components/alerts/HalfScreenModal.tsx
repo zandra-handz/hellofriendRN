@@ -8,6 +8,8 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 
+import PlainSafeView from "../appwide/format/PlainSafeView";
+
 interface Props {
   isVisible: boolean;
   isFullscreen: boolean;
@@ -71,7 +73,7 @@ const HalfScreenModal: React.FC<Props> = ({
     if (internalIsVisible) {
       xAnim.value = withTiming(0, { duration: 300 });
       scaleAnim.value = withTiming(1, { duration: 300 });
-      opacityAnim.value = withDelay(300, withTiming(1, { duration: 300 }));  
+      opacityAnim.value = withDelay(300, withTiming(1, { duration: 300 }));
     }
 
     if (!internalIsVisible) {
@@ -85,66 +87,72 @@ const HalfScreenModal: React.FC<Props> = ({
     <Modal
       transparent={true}
       visible={isVisible}
-     // style={modalAnimationStyle}
+      // style={modalAnimationStyle}
       animationType="slide"
     >
-      <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
-        <Animated.View
-          style={[
-            styles.modalContent,
-            {
-              backgroundColor: backgroundColor,
-              // borderColor:
-              //   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-              borderRadius: borderRadius,
-            },
-          ]}
-        >
+      <Animated.View style={[
+        // modalAnimationStyle, 
+        
+        styles.modalContainer]}>
+        <PlainSafeView style={{ flex: 1 }}>
           <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              height: headerHeight,
-              paddingTop: contentPadding,
-              paddingHorizontal: contentPadding,
-              maxHeight: 50,
-              marginVertical: headerSpacing,
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: backgroundColor,
+                // borderColor:
+                //   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                borderRadius: borderRadius,
+              },
+            ]}
           >
-            {headerIcon && headerIcon}
-            {questionText && (
-              <Text style={[styles.questionText, { color: primaryColor }]}>
-                {questionText}
-              </Text>
-            )}
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                height: headerHeight,
+                paddingTop: contentPadding,
+                paddingHorizontal: contentPadding,
+                maxHeight: 50,
+                marginVertical: headerSpacing,
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
+              {headerIcon && headerIcon}
+              {questionText && (
+                <Text style={[styles.questionText, { color: primaryColor }]}>
+                  {questionText}
+                </Text>
+              )}
+            </View>
+            <View style={{ flex: 1 }}>{children}</View>
           </View>
-          <View style={{ flex: 1 }}>{children}</View>
- 
-        </Animated.View>
+        </PlainSafeView>
       </Animated.View>
     </Modal>
-
-  
   );
 };
 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
+
+    flexDirection: "column",
+
+    justifyContent: "flex-start",
+    paddingBottom: 80, // EYEBALL
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.84)",  
+    backgroundColor: "rgba(0, 0, 0, 0.84)",
   },
   modalContent: {
-    width: "94%",  
-    minHeight: 200, 
+    width: "94%",
+    minHeight: 200,
     height: "50%",
 
     borderWidth: 2,
     alignItems: "center",
-    backgroundColor: "white",  
+    backgroundColor: "white",
     flexDirection: "column",
     justifyContent: "space-between",
   },

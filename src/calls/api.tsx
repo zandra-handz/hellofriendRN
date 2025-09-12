@@ -1103,6 +1103,7 @@ export const fetchPastHelloes = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/combinedhelloes/summary/`
     );
+    // console.log(response.data);
     if (response && response.data) {
       //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
 

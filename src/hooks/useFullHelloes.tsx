@@ -75,7 +75,17 @@ useEffect(() => {
   }, [fetchAll, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // flatten the paginated results for easier consumption
+
+  
+  
   const flatResults = helloesListTemp?.pages.flatMap((page) => page.results) ?? [];
+  // console.log(`flatresult`, flatResults)
+
+
+
+  // Added this quickly without much testing/consideration
+  const trueHelloes = flatResults.filter((hello) => hello.manual_reset === undefined);
+  // console.log(trueHelloes.length);
 
   const fetchUntilIndex = async (newIndex) => {
   const newPagesNeeded = Math.floor(newIndex / itemsPerPageOnBackend) + 1;
@@ -90,6 +100,7 @@ useEffect(() => {
 
 
   return {
+    trueHelloes,
     helloesListFull: flatResults,
     helloesListFullIsLoading,
     helloesListFullIsFetching,

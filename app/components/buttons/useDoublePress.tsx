@@ -7,7 +7,7 @@ const useDoublePress = ({ onSinglePress, onDoublePress }: Props) => {
   const [lastPress, setLastPress] = useState<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const DOUBLE_PRESS_DELAY = 300;
+  const DOUBLE_PRESS_DELAY = 120;
 
   const handleDoublePress = () => {
     const now = Date.now();

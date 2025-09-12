@@ -75,6 +75,10 @@ const friendAddress = getChosenFriendAddress();
   const listItemIconTwoPadding = 6;
   const listItemIconTwoDiameter = listItemIconSize + listItemIconPadding * 2;
 
+
+  const [savedLocationsDDVisible, setSavedLocationsDDVisibility] =
+    useState(false);
+
   // use item.isFave (property added when sorting in parent screen) to differentiate UI for saved locations
   const renderLocationItem = useCallback(
     ({ item, index }) => (
@@ -508,11 +512,14 @@ const handleGoToMidpointLocationSearchScreen = () => {
         liteMode={isKeyboardVisible ? true : false}
         style={[{ width: "100%", height: isKeyboardVisible ? "100%" : "100%" }]}
         initialRegion={currentRegion || null}
-        scrollEnabled={isKeyboardVisible ? false : true}
+        
+ //
+        scrollEnabled={(isKeyboardVisible || savedLocationsDDVisible) ? false : true}
+     
         enableZoomControl={true}
         showsUserLocation={true}
         showsMyLocationButton={true}
-        zoomEnabled={true}
+        zoomEnabled={savedLocationsDDVisible ? false : true}
         //customMapStyle={colorScheme === 'dark' ? darkMapStyle : null}
       >
         {locations?.map((location) => (
@@ -574,12 +581,13 @@ const handleGoToMidpointLocationSearchScreen = () => {
         <>
           <View style={styles.dualLocationSearcherContainer}>
             <DualLocationSearcher
+            savedLocationsDDVisible={savedLocationsDDVisible}
+            setSavedLocationsDDVisibility={setSavedLocationsDDVisibility}
+          
               onPress={handlePress}
               locationListDrilledOnce={locationList}
               primaryColor={primaryColor}
-              primaryBackground={primaryBackground}
-              welcomeTextStyle={welcomeTextStyle}
-              manualGradientColors={manualGradientColors}
+              primaryBackground={primaryBackground} 
             />
           </View>
           {!isKeyboardVisible && (

@@ -85,21 +85,15 @@ const ItemFooterMoments: React.FC<Props> = ({
     }
   }, []);
 
-
   useFocusEffect(
     useCallback(() => {
       if (ideaSent && data[currentIndex]) {
         saveToHello(data[currentIndex]);
 
         setIdeaSent(false);
-
       }
-
-
-  }, [
-
-    ideaSent, currentIndex
-  ]));
+    }, [ideaSent, currentIndex])
+  );
 
   const handleInputNumberClose = (success) => {
     console.log("handleinputnumberclose");
@@ -154,19 +148,14 @@ const ItemFooterMoments: React.FC<Props> = ({
     }
   }, [currentIndex]);
 
-  const handleScrollToNext = () => {
-    console.log(`handle next pressed, currentIndex: `, currentIndex);
-    console.log(currentIndex);
+  const handleScrollToNext = () => { 
     if (currentIndex === undefined) {
       return;
     }
 
     const next = currentIndex + 1;
-
     const nextExists = next < totalCount;
-
     const scrollToIndex = nextExists ? next : 0;
-
     scrollTo(scrollToIndex);
   };
 
@@ -176,12 +165,10 @@ const ItemFooterMoments: React.FC<Props> = ({
     }
 
     const prev = currentIndex - 1;
-    console.log(totalCount - 1);
-
+    // console.log(totalCount - 1);
     const scrollToIndex = currentIndex <= 0 ? totalCount - 1 : prev;
-
     scrollTo(scrollToIndex);
-    console.log(currentIndex);
+    // console.log(currentIndex);
   };
 
   const visibilityStyle = useAnimatedStyle(() => {
@@ -238,9 +225,6 @@ const ItemFooterMoments: React.FC<Props> = ({
             </View>
           }
         />
-        {/* {useButtons && 
-        <View style={[styles.divider, themeStyles.divider]} />} */}
-        <></>
       </Animated.View>
     </>
   );

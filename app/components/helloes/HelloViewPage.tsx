@@ -45,6 +45,7 @@ const HelloViewPage: React.FC<Props> = ({
   currentIndexValue,
   marginBottom,
   darkerOverlayColor,
+overlayColor,
   cardScaleValue,
   welcomeTextStyle,
   primaryColor = "orange",
@@ -163,7 +164,7 @@ const HelloViewPage: React.FC<Props> = ({
                     zIndex: 1,
                     overflow: "hidden",
                     backgroundColor:
-                      darkerOverlayColor,
+                      lighterOverlayColor,
                   },
                 ]}
               >

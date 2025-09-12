@@ -19,13 +19,15 @@ const ScreenHelloView = () => {
 
   const { themeAheadOfLoading } = useFriendStyle();
 
-  const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
+  const { trueHelloes, helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({
       friendId: selectedFriend?.id,
       indexNeeded: startingIndex,
     });
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
+
+  const trueHelloesInList = helloesList.filter((hello) => hello.manual_reset === undefined);
 
   // useEffect(() => {
   //   console.log(helloesListData.length);
@@ -45,19 +47,19 @@ const ScreenHelloView = () => {
 
   const helloesDataFiltered = useMemo(() => {
     return inPersonFilter
-      ? helloesListFull.filter((hello) => hello.type === "in person")
-      : helloesListFull;
-  }, [helloesListFull, inPersonFilter]);
+      ? trueHelloes.filter((hello) => hello.type === "in person")
+      : trueHelloes;
+  }, [trueHelloes, inPersonFilter]);
 
   const totalHelloesCount = useMemo(() => {
     return inPersonFilter &&
       helloesDataFiltered &&
-      helloesDataFiltered.length > 0
+      (helloesDataFiltered.length > 0)
       ? helloesDataFiltered.length
-      : helloesList && helloesList.length > 0
-        ? helloesList.length
+      : trueHelloesInList && trueHelloesInList.length > 0
+        ? trueHelloesInList.length
         : 0;
-  }, [inPersonFilter, helloesDataFiltered, helloesList]);
+  }, [inPersonFilter, helloesDataFiltered, trueHelloesInList]);
 
   return (
     <SafeViewAndGradientBackground 
@@ -86,6 +88,7 @@ const ScreenHelloView = () => {
           <HelloViewPage
             welcomeTextStyle={appFontStyles.welcomeText}
             primaryColor={lightDarkTheme.primaryText}
+         
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             primaryBackground={lightDarkTheme.primaryBackground}
             overlayColor={lightDarkTheme.overlayBackground}
@@ -101,6 +104,7 @@ const ScreenHelloView = () => {
         hasNextPage={hasNextPage}
         useButtons={false}
         primaryColor={lightDarkTheme.primaryText}
+        primaryBackground={lightDarkTheme.primaryBackground}
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={lightDarkTheme.welcomeText}

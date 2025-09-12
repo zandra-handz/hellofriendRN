@@ -13,8 +13,9 @@
 //});
 import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
- 
-import {  Octicons } from "@expo/vector-icons";
+import { manualGradientColors } from "@/src/hooks/StaticColors";
+
+import { Octicons } from "@expo/vector-icons";
 import SearchBarGoogleAddress from "./SearchBarGoogleAddress";
 import SearchBarSavedLocations from "./SearchBarSavedLocations";
 import SearchBarAnimationWrapper from "../foranimations/SearchBarAnimationWrapper";
@@ -24,9 +25,9 @@ const DualLocationSearcher = ({
   isFavoritesList = false,
   locationListDrilledOnce,
   primaryColor,
-  primaryBackground,
-  welcomeTextStyle,
-  manualGradientColors,
+  primaryBackground,  
+  savedLocationsDDVisible,
+  setSavedLocationsDDVisibility,
 }) => {
   const HEADER_HEIGHT = 60;
 
@@ -52,45 +53,6 @@ const DualLocationSearcher = ({
   return (
     <View style={[styles.container, {}]}>
       <>
-        <View
-          style={{
-            width: "100%",
-            padding: 10,
-            paddingBottom: 0,
-            position: "absolute",
-            top: 0,
-            flex: 1,
-            backgroundColor: primaryBackground,
-            height: HEADER_HEIGHT,
-          }}
-        >
-          {savedLocationsSearchIsVisible && (
-            <Text
-              style={[
-                welcomeTextStyle,
-                {
-                  color: primaryColor,
-                  fontSize: welcomeTextStyle.fontSize - 6,
-                },
-              ]}
-            >
-              Saved locations{" "}
-            </Text>
-          )}
-          {!savedLocationsSearchIsVisible && (
-            <Text
-              style={[
-                welcomeTextStyle,
-                {
-                  color: primaryColor,
-                  fontSize: welcomeTextStyle.fontSize - 6,
-                },
-              ]}
-            >
-              Google maps{" "}
-            </Text>
-          )}
-        </View>
         {!savedLocationsSearchIsVisible && (
           <View
             style={{
@@ -100,7 +62,7 @@ const DualLocationSearcher = ({
               justifyContent: "flex-end",
               right: 0,
               left: 0,
-              top: HEADER_HEIGHT,
+              //  top: HEADER_HEIGHT,
             }}
           >
             <View
@@ -133,7 +95,7 @@ const DualLocationSearcher = ({
               position: "absolute",
               justifyContent: "flex-end",
               width: "100%",
-              top: HEADER_HEIGHT,
+              // top: HEADER_HEIGHT,
             }}
           >
             <View
@@ -147,6 +109,8 @@ const DualLocationSearcher = ({
             >
               <SearchBarAnimationWrapper>
                 <SearchBarSavedLocations
+                showFullList={savedLocationsDDVisible}
+                setShowFullList={setSavedLocationsDDVisibility}
                   locationListDrilledTwice={locationListDrilledOnce}
                   ref={searchStringRef}
                   mountingText={mountingText}
@@ -166,35 +130,37 @@ const DualLocationSearcher = ({
         <View
           style={[
             styles.buttonContainer,
-            { backgroundColor: primaryBackground },
+            // { backgroundColor: primaryBackground },
           ]}
         >
           <Pressable
             onPress={switchViews}
             style={[
               styles.circleButton,
-              { backgroundColor: manualGradientColors.homeDarkColor },
+              // { backgroundColor: manualGradientColors.homeDarkColor },
             ]}
           >
             {!savedLocationsSearchIsVisible && !isFavoritesList && (
               <Octicons
                 name={"arrow-switch"}
                 size={24}
-                color={manualGradientColors.lightColor}
+                color={primaryColor}
+                style={{ opacity: 0.6 }}
               />
             )}
             {!savedLocationsSearchIsVisible && isFavoritesList && (
-               <Octicons
+              <Octicons
                 name={"arrow-switch"}
-                size={24}
-                color={manualGradientColors.lightColor}
+                color={primaryColor}
+                style={{ opacity: 0.6 }}
               />
             )}
-            {savedLocationsSearchIsVisible && ( 
+            {savedLocationsSearchIsVisible && (
               <Octicons
                 name={"arrow-switch"}
                 size={24}
-                color={manualGradientColors.lightColor}
+                color={primaryColor}
+                style={{ opacity: 0.6 }}
               />
             )}
           </Pressable>

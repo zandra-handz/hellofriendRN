@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 import EscortBarMoments from "../../moments/EscortBarMoments";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
   SharedValue,
@@ -26,18 +26,22 @@ const ItemFooterHelloes: React.FC<Props> = ({
   data,
   currentIndexValue,
   visibilityValue,
-
+  height,
   totalItemCount,
+  scrollTo,
   // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
   useButtons = true,
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
   primaryColor,
+  backgroundColor,
   overlayColor,
   dividerStyle,
   welcomeTextStyle,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(false);
+
+  const fontStyle = appFontStyles.welcomeText;
   //   useEffect(() => {
   //     if (location) {
   //       console.log(`location in footer`, location.title);
@@ -48,7 +52,8 @@ const ItemFooterHelloes: React.FC<Props> = ({
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
-
+//   console.log(`totalitemcount`, totalItemCount);
+// console.log(`data length`, data.length)
   const totalCount = totalItemCount
     ? totalItemCount
     : data?.length
@@ -65,24 +70,38 @@ const ItemFooterHelloes: React.FC<Props> = ({
     []
   );
 
-  const handleRightPress = () => {
-    onRightPress();
+ 
 
-    setTimeout(async () => {
-      try {
-        Alert.alert("!", "Did you send this image?", [
-          {
-            text: "No, please keep",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-          { text: "Yes, delete", onPress: () => onRightPressSecondAction() },
-        ]);
-      } catch (error) {
-        console.error("Error deleting shared image:", error);
-      }
-    }, 2000);
+    const handleScrollToNext = () => { 
+    if (currentIndex === undefined) {
+      return;
+    }
+ 
+    const next = currentIndex + 1;
+    const nextExists = next < totalCount;
+    const scrollToIndex = nextExists ? next : 0;
+    if (scrollToIndex > 0) { // DISALLOW SCROLLING BACK TO ONE GIVEN THAT THIS LIST COULD BE VERY LONG
+        scrollTo(scrollToIndex);
+
+    } 
+  
   };
+
+  const handleScrollToPrev = () => {
+    if (currentIndex === undefined) {
+      return;
+    }
+
+    if (currentIndex === 0) {
+      return;
+    }
+    const prev = currentIndex - 1;
+    console.log(totalCount - 1);
+    const scrollToIndex = currentIndex <= 0 ? totalCount - 1 : prev;
+    scrollTo(scrollToIndex);
+    console.log(currentIndex);
+  };
+
 
   const visibilityStyle = useAnimatedStyle(() => {
     return { opacity: visibilityValue.value };
@@ -98,72 +117,36 @@ const ItemFooterHelloes: React.FC<Props> = ({
         style={[
           styles.container,
           {
-            height: footerHeight,
+            height: height,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: overlayColor,
+            // backgroundColor: overlayColor,
           },
           visibilityStyle,
         ]}
       >
         <EscortBarMoments
+      
           primaryColor={primaryColor}
-          primaryBackground={"orange"}
-          onLeftPress={handleRightPress}
-          onRightPress={handleRightPress}
+          primaryBackground={backgroundColor}
+          onLeftPress={handleScrollToPrev}
+          onRightPress={handleScrollToNext}
+          includeSendButton={false}
           children={
-            <>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={[fontStyle, { color: primaryColor, fontSize: 44 }]}>
+                {currentIndex + 1}
                 <Text
-                  style={[
-                    welcomeTextStyle,
-                    { color: primaryColor, fontSize: 44 },
-                  ]}
+                  style={[fontStyle, { color: primaryColor, fontSize: 22 }]}
                 >
-                  {currentIndex + 1}
-                  <Text
-                    style={[
-                      welcomeTextStyle,
-                      { color: primaryColor, fontSize: 22 },
-                    ]}
-                  >
-                    {/* /{data.length}{" "} */}/{totalCount}{" "}
-                  </Text>
+                  {/* /{data.length}{" "} */}/{totalCount}{" "}
                 </Text>
-              </View>
-
-              {useButtons && (
-                <>
-                  <View style={[styles.divider, dividerStyle]} />
-                  <View style={{ flex: 1 }}>
-                    <>
-                      {useButtons && (
-                        <Pressable
-                          onPress={handleRightPress}
-                          style={({ pressed }) => ({
-                            flex: 1,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            opacity: pressed ? 0.6 : 1,
-                          })}
-                        >
-                          <MaterialCommunityIcons
-                            name="send"
-                            size={50}
-                            color={primaryColor}
-                          />
-                        </Pressable>
-                      )}
-                    </>
-                  </View>
-                </>
-              )}
-            </>
+              </Text>
+            </View>
           }
         />
       </Animated.View>
@@ -175,9 +158,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    position: "absolute",
-    bottom: 0,
     zIndex: 1,
+    // backgroundColor: "pink",
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   divider: {
     marginVertical: 10,

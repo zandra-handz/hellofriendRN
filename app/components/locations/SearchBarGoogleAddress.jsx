@@ -103,7 +103,7 @@ const SearchBarGoogleAddress = forwardRef(
            
             {
               backgroundColor: primaryBackground,
-              borderRadius: INPUT_CONTAINER_BORDER_RADIUS,
+              borderRadius: 999,//INPUT_CONTAINER_BORDER_RADIUS,
               borderColor: primaryColor,
             },
           ],
@@ -111,15 +111,15 @@ const SearchBarGoogleAddress = forwardRef(
             [ 
               {
                 color: primaryColor,
-                paddingHorizontal: 5,
-                height: 24,
+                // paddingLeft: 10,
+                // height: 24,
                 backgroundColor: "transparent",
               },
             ],
           ],
         }}
         renderLeftButton={() => (
-          <GoogleLogoSvg width={26} height={26} style={styles.iconStyle} />
+          <GoogleLogoSvg width={16} height={16} style={styles.iconStyle} />
         )}
       />
     );
@@ -133,14 +133,21 @@ const styles = StyleSheet.create({
     paddingRight: 2,
   },
   inputContainer: {
-    //flexDirection: "row-reverse",
+      
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: 48,
+    backgroundColor: "transparent",
+    paddingLeft: 10,
+    paddingVertical: 1,
+ 
     alignItems: "center",
     // width: "80%", // Make input field take up full width
-    borderWidth: StyleSheet.hairlineWidth,
-
-    backgroundColor: "transparent", // NEED THIS TO OVERRIDE
-    paddingLeft: "4%",
-    paddingVertical: "3%",
+    //borderWidth:1,
+ 
+    paddingLeft: 10,
+    paddingVertical: 0,
   },
   listView: {
     marginTop: -4,
@@ -153,7 +160,10 @@ const styles = StyleSheet.create({
   predefinedPlacesDescription: {
     color: "#1faadb",
   },
-  iconStyle: {},
+  iconStyle: {
+
+    marginRight: 2,
+  },
 });
 
 export default SearchBarGoogleAddress;

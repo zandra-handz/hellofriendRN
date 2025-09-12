@@ -37,6 +37,7 @@ const CarouselSliderInfinite = ({
 
   footerData,
   primaryColor,
+  primaryBackground,
   overlayColor, 
   dividerStyle,
   welcomeTextStyle,
@@ -68,6 +69,26 @@ const CarouselSliderInfinite = ({
       index,
     };
   };
+
+
+  
+    const scrollTo = (index: number) => {
+      floaterItemsVisibility.value = withTiming(0, { duration: 10 });
+      cardScale.value = withTiming(0.94, { duration: 10 });
+  
+   
+      flatListRef.current?.scrollToIndex({
+        index,
+        animated: true,
+      });
+  
+   
+      setTimeout(() => {
+        floaterItemsVisibility.value = withTiming(1, { duration: 400 });
+        cardScale.value = withTiming(1, { duration: 400 });
+      }, 300); 
+    };
+  
 
   // const scrollToStart = () => {
   //   flatListRef.current?.scrollToIndex({
@@ -119,7 +140,7 @@ const CarouselSliderInfinite = ({
     },
     onEndDrag: (event) => {
       if (event.contentOffset.y <= 0) {
-        // Optional
+    
       }
       floaterItemsVisibility.value = withTiming(1, { duration: 400 });
       cardScale.value = withTiming(1, { duration: 400 });
@@ -169,6 +190,7 @@ const CarouselSliderInfinite = ({
           keyExtractor={extractItemKey}
           getItemLayout={getItemLayout}
           onEndReached={() => {
+            console.log('end reached!', hasNextPage)
             if (hasNextPage && !isFetchingNextPage) {
               fetchNextPage();
             }
@@ -190,17 +212,20 @@ const CarouselSliderInfinite = ({
         <ItemFooterHelloes
     
           data={data}
+          height={50}
           totalItemCount={totalItemCount}
           isPartialData={isFiltered}
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
           extraData={footerData}
+          scrollTo={scrollTo}
           useButtons={useButtons}
           onRightPress={() => onRightPress(currentIndex.value)}
           onRightPressSecondAction={() =>
             onRightPressSecondAction(data[currentIndex.value])
           }
           primaryColor={primaryColor}
+          backgroundColor={primaryBackground}
           overlayColor={overlayColor}
           dividerStyle={dividerStyle}
           welcomeTextStyle={welcomeTextStyle}

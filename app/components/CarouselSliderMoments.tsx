@@ -82,15 +82,7 @@ const CarouselSliderMoments = ({
       const x = event.contentOffset.x;
 
       scrollY.value = y;
-      scrollX.value = x;
-
-      // if (y < 10) {
-      //   floaterItemsVisibility.value = withTiming(1);
-      // } else {
-      //   floaterItemsVisibility.value = withTiming(1, { duration: 1000 });
-      // }
-      //floaterItemsVisibility.value = withTiming(0, { duration: 1000 });
-      // Update sharedValue for horizontal index
+      scrollX.value = x; 
       currentIndex.value = Math.round(x / COMBINED);
     },
 
@@ -100,7 +92,7 @@ const CarouselSliderMoments = ({
     },
     onEndDrag: (event) => {
       if (event.contentOffset.y <= 0) {
-        // Optional
+    
       }
       floaterItemsVisibility.value = withTiming(1, { duration: 400 });
       cardScale.value = withTiming(1, { duration: 400 });
