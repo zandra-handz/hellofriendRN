@@ -125,7 +125,7 @@ const LocationCarouselSlider = ({
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
 
-      <View style={{ flex: 1, height: "100%" }}>
+ 
         <Children
           item={item}
           listLength={data?.length || 0}
@@ -137,7 +137,7 @@ const LocationCarouselSlider = ({
           openModal={handleSetModalData}
           closeModal={() => setItemModalVisible(false)}
         />
-      </View>
+    
     ),
     [width, height, currentIndex]
   );

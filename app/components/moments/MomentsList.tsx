@@ -329,7 +329,7 @@ const MomentsList = ({
       >
         <Animated.View
           style={{ flex: 1, alignItems: "center" }}
-          entering={SlideInRight.duration(260).springify(2000)}
+          entering={SlideInRight.duration(200).springify(1000)}
         >
           <Animated.FlatList
             fadingEdgeLength={0}

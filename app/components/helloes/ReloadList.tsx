@@ -1,4 +1,4 @@
-import { View, Alert } from "react-native";
+import { View, Alert, FlatList } from "react-native";
 import React, { useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
@@ -120,7 +120,8 @@ const ReloadList = ({
   return (
     <>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <FlashList
+        <FlatList  //revert to Flashlist when possible, changed just because of issues with expo SDK 54
+      
           data={items}
           // data={hello.pastCapsules}
           extraData={selectedMoments} //NEED THIS FOR SOME REASON

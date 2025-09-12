@@ -245,7 +245,8 @@ overlayColor,
                     }}
                   >
                     <View style={{ height: 40, width: "100%" }}>
-                      <FlashList
+                      <FlatList    //revert to Flashlist when possible, changed just because of issues with expo SDK 54
+      
                         ListHeaderComponent={
                           <TouchableOpacity
                             style={{ marginRight: categoryButtonSpacer }}

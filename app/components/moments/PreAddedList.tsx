@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, FlatList } from "react-native";
 import React, { useState } from "react";
 
 import { FlashList } from "@shopify/flash-list";
@@ -141,7 +141,8 @@ const PreAddedList = ({
         </View>
       </View>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <FlashList
+        <FlatList  //revert to Flashlist when possible, changed just because of issues with expo SDK 54
+      
           data={filterOutNonAdded}
           estimatedItemSize={90}
           renderItem={renderListItem}

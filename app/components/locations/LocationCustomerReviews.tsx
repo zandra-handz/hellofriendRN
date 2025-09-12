@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { View, StyleSheet} from "react-native";
+import { View, StyleSheet, FlatList} from "react-native";
 import LocationReviewUI from "./LocationReviewUI"; 
 import { FlashList } from "@shopify/flash-list";
 
@@ -48,8 +48,9 @@ const LocationCustomerReviews: React.FC<Props> = ({
 
   return (
     <View style={[styles.container]}>
-      <FlashList
-        data={reviews}
+      <FlatList   //revert to Flashlist when possible, changed just because of issues with expo SDK 54
+      
+      data={reviews}
         renderItem={renderListItem}
         fadingEdgeLength={20}
         estimatedItemSize={150}

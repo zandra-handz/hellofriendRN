@@ -6,6 +6,7 @@ import {
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
+
 import { CheckBox } from "react-native-elements"; 
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -215,6 +216,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     <>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
         <View style={{ width: "100%", height: 40 }}>
+        
           <FlatList
             horizontal
             data={categories}
@@ -242,10 +244,10 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           />
         </View>
 
-        <FlashList
+        <FlatList   //change back to FlashList when possible, SDK expo update issue
           data={visibleCategories}
           extraData={selectedMoments}
-          estimatedItemSize={90}
+         // estimatedItemSize={90}
           renderItem={renderListItem}
           keyExtractor={extractItemKey}
  

@@ -78,8 +78,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
       friendColorDark={friendColorDark}
       friendColorLight={friendColorLight}
       additionalStyles={[paddingStyle, style]}
-    >
-      {/* <SafeAreaView style={{ flex: 1, backgroundColor: 'yellow' }}> */}
+    > 
         {includeBackgroundOverlay && (
           <View
             style={{
@@ -99,11 +98,9 @@ export const PreAuthSafeViewAndGradientBackground = ({
           ></View>
         )}
 
-        {/* {includeCustomStatusBar && <CustomStatusBar manualDarkMode={ settings?.manual_dark_mode} />} */}
             {includeCustomStatusBar && <CustomStatusBar manualDarkMode={ false} />}
 
-        {children}
-      {/* </SafeAreaView> */}
+        {children} 
     </GradientBackground>
   );
 };
