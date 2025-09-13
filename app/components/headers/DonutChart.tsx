@@ -7,8 +7,9 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   useAnimatedStyle,
-  runOnJS, 
+  runOnJS,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import {
   Canvas,
   Path,

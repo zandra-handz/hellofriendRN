@@ -8,8 +8,9 @@ import Animated, {
   SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
-  runOnJS,
+ 
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import LocationTravelTimes from "../locations/LocationTravelTimes";
 
 interface Props {
@@ -49,7 +50,7 @@ const LocationItemFooter: React.FC<Props> = ({
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
-console.log(`extra data`, extraData);
+// console.log(`extra data`, extraData);
   const totalCount = totalItemCount
     ? totalItemCount
     : data?.length
@@ -60,7 +61,7 @@ console.log(`extra data`, extraData);
     () => currentIndexValue.value,
     (newIndex, prevIndex) => {
       if (newIndex !== prevIndex) {
-        runOnJS(setCurrentIndex)(newIndex);
+        scheduleOnRN(setCurrentIndex)(newIndex);
       }
     },
     []

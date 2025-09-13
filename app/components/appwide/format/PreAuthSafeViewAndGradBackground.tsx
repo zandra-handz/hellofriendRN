@@ -3,8 +3,7 @@ import { View, DimensionValue } from "react-native";
 import CustomStatusBar from "../statusbar/CustomStatusBar"; 
  import { manualGradientColors } from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
-import GradientBackground from "../display/GradientBackground";
-import { SafeAreaView } from "react-native-safe-area-context";
+import GradientBackground from "../display/GradientBackground"; 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {

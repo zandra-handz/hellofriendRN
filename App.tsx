@@ -106,6 +106,9 @@ import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLoca
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+4;
+
+import { NativeEventEmitter, NativeModules } from "react-native";
 
 const queryClient = new QueryClient();
 
@@ -392,123 +395,109 @@ const PACKAGE_NAME =
 //     return url;
 //   },
 // };
-const linking = {
+
+const { ShareIntentModule } = NativeModules;
+const emitter = new NativeEventEmitter(ShareIntentModule);
+
+export const linking = {
   prefixes: [
     `${Constants.expoConfig?.scheme}://`,
     `${PACKAGE_NAME}://`,
     PREFIX,
   ],
-  screens: {
-    Welcome: "first-screen",
-    hellofriend: "home",
-    UserDetails: "user-details",
-    FriendFocus: "friend-settings",
-    Moments: "moments",
-    Images: "images",
-    Locations: "locations",
-    // Add other screens as needed
-  },
   config: {
-    initialRouteName: "Home",
     screens: {
-      Home: "home",
-      ShareIntent: "shareintent",
+      Welcome: "first-screen",
+      hellofriend: "home",
+      UserDetails: "user-details",
+      FriendFocus: "friend-settings",
+      Moments: "moments",
+      Images: "images",
+      Locations: "locations",
+      ShareIntent: {
+        path: "share", // myapp://share?sharedUrl=...
+        parse: {
+          sharedUrl: (sharedUrl: string) => decodeURIComponent(sharedUrl),
+        },
+      },
     },
   },
-  getStateFromPath(path: string, config: any) {
-    // Optional customization
-    return getStateFromPath(path, config);
+
+  async getInitialURL() {
+    // 1️⃣ Check if app launched from a native share intent
+    const initialShare = await ShareIntentModule?.getInitialShare();
+    if (initialShare) {
+      return `${Constants.expoConfig?.scheme}://share?sharedUrl=${encodeURIComponent(
+        initialShare
+      )}`;
+    }
+
+    // 2️⃣ Fallback to normal Linking
+    return Linking.getInitialURL();
   },
+
   subscribe(listener: (url: string) => void) {
-    // Called when the app receives a URL while running
-    const onReceiveURL = ({ url }: { url: string }) => {
+    const onReceiveURL = ({ url }: { url: string }) => listener(url);
+    const urlSub = Linking.addEventListener("url", onReceiveURL);
+
+    // 3️⃣ Listen for share events while app is running
+    const shareSub = emitter.addListener("onShareReceived", (sharedData) => {
+      const url = `${Constants.expoConfig?.scheme}://share?sharedUrl=${encodeURIComponent(
+        sharedData
+      )}`;
       listener(url);
+    });
 
-      // Navigate to ShareIntent if appropriate
-      if (url.includes("share") && navigationRef.current?.isReady()) {
-        navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
-      } else {
-        // If not ready yet, poll until ready
-        const tryNavigate = () => {
-          if (navigationRef.current?.isReady()) {
-            navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
-          } else {
-            setTimeout(tryNavigate, 50);
-          }
-        };
-        tryNavigate();
-      }
-    };
-
-    const urlEventSubscription = Linking.addEventListener("url", onReceiveURL);
-
-    // ===== TEST NAVIGATION AFTER 5 SECONDS =====
+    // 4️⃣ Optional test deep link
     const testTimeout = setTimeout(() => {
-      const testUrl = "myapp://share/test";
-      if (navigationRef.current?.isReady()) {
-        navigationRef.current.navigate("ShareIntent", { sharedUrl: testUrl });
-      } else {
-        const tryNavigate = () => {
-          if (navigationRef.current?.isReady()) {
-            navigationRef.current.navigate("ShareIntent", { sharedUrl: testUrl });
-          } else {
-            setTimeout(tryNavigate, 50);
-          }
-        };
-        tryNavigate();
-      }
+      const testUrl = `${Constants.expoConfig?.scheme}://share?sharedUrl=test`;
+      console.log("Test deep link fired:", testUrl);
+      listener(testUrl);
     }, 5000);
 
     return () => {
-      urlEventSubscription.remove();
+      urlSub.remove();
+      shareSub.remove();
       clearTimeout(testTimeout);
     };
-  },
-  async getInitialURL() {
-    // Called on cold start
-    const url = await Linking.getInitialURL();
-
-    if (url && url.includes("share")) {
-      // Poll until navigation is ready
-      const tryNavigate = () => {
-        if (navigationRef.current?.isReady()) {
-          navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
-        } else {
-          setTimeout(tryNavigate, 50);
-        }
-      };
-      tryNavigate();
-    }
-
-    return url;
   },
 };
 
 export const Layout = () => {
- 
-useEffect(() => {
-    const handleUrl = ({ url }: { url: string }) => {
-      console.log("App opened via intent:", url);
-      if (url.includes("share") && navigationRef.current?.isReady()) {
-        navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
-      }
-    };
+  const { ShareIntentModule } = NativeModules;
+  // const emitter = new NativeEventEmitter(ShareIntentModule);
 
-    const subscription = Linking.addEventListener("url", handleUrl);
+  // useEffect(() => {
+  //   const sub = emitter.addListener("onShareReceived", (data) => {
+  //     console.log("Shared data:", data);
+  //     // Navigate into your ShareIntent screen here
+  //   });
+  //   return () => sub.remove();
+  // }, []);
 
-    Linking.getInitialURL().then((url) => {
-      const tryNavigate = () => {
-        if (url && navigationRef.current?.isReady()) {
-          handleUrl({ url });
-        } else {
-          setTimeout(tryNavigate, 50);
-        }
-      };
-      tryNavigate();
-    });
+  // useEffect(() => {
+  //     const handleUrl = ({ url }: { url: string }) => {
+  //       console.log("App opened via intent:", url);
+  //       if (url.includes("share") && navigationRef.current?.isReady()) {
+  //         navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
+  //       }
+  //     };
 
-    return () => subscription.remove();
-  }, []);
+  //     const subscription = Linking.addEventListener("url", handleUrl);
+
+  //     Linking.getInitialURL().then((url) => {
+  //       const tryNavigate = () => {
+  //         if (url && navigationRef.current?.isReady()) {
+  //           handleUrl({ url });
+  //         } else {
+  //           setTimeout(tryNavigate, 50);
+  //         }
+  //       };
+  //       tryNavigate();
+  //     });
+
+  //     return () => subscription.remove();
+  //   }, []);
 
   // ===== TEST NAVIGATION AFTER 5 SECONDS =====
   // const testTimeout = setTimeout(() => {
@@ -517,13 +506,12 @@ useEffect(() => {
   //   handleUrl({ url: testUrl });
   // }, 5000);
 
-//   return () => {
-//     subscription.remove();
-//     clearTimeout(testTimeout);
-//   };
-// }, []);
+  //   return () => {
+  //     subscription.remove();
+  //     clearTimeout(testTimeout);
+  //   };
+  // }, []);
 
- 
   // const { lightDarkTheme} = useLDTheme();
   const { user, isInitializing } = useUser();
 
@@ -531,7 +519,6 @@ useEffect(() => {
   const { settings } = useUserSettings();
   // const manualDarkMode = settings?.manual_dark_mode;
 
- 
   const receiveNotifications =
     settings?.receive_notifications === true
       ? true
@@ -546,15 +533,10 @@ useEffect(() => {
         ? "not ready"
         : settings.expo_push_token;
 
-  
-
   useNotificationsRegistration({ receiveNotifications, expoPushToken });
 
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      linking={linking}
-    >
+    <NavigationContainer ref={navigationRef} linking={linking}>
       <FSMainSpinner isInitializing={isInitializing} />
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
       <QuickActionsHandler navigationRef={navigationRef} />

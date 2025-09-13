@@ -189,10 +189,10 @@ const MomentsList = ({
     useCallback(() => {
       console.log("running useFocusEffect");
       if (capsuleList.length > 0) {
-        listVisibility.value = withSpring(1, { duration: 100 }); //800
+        listVisibility.value = withSpring(1, { duration: 200 }); //800
 
         return () => {
-          listVisibility.value = withTiming(0, { duration: 2000 }); //NEEDED OR ELSE LISTVISIBILITY BEING ZERO WILL TRIGGER PREADDED BUTTON TO APPEAR just looks bad :)
+          listVisibility.value = withTiming(0, { duration: 200 }); //NEEDED OR ELSE LISTVISIBILITY BEING ZERO WILL TRIGGER PREADDED BUTTON TO APPEAR just looks bad :)
         };
       }
     }, [])
