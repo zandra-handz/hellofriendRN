@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 
- 
+import EscortBarMoments from "../moments/EscortBarMoments";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {

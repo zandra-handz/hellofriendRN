@@ -33,8 +33,8 @@ const ScreenLocationView = () => {
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
 
 
-  console.log(userAddress);
-  console.log(friendAddress);
+  // console.log(userAddress);
+  // console.log(friendAddress);
   // const now = new Date();
   // const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
   const navigation = useNavigation();

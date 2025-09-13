@@ -1,12 +1,11 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
- 
+ import { appFontStyles } from "@/src/hooks/StaticFonts";
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import ToNextButton from "./ToNextButton";
-import ActionAndBack from "./ActionAndBack";
-
+import ActionAndBack from "./ActionAndBack"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { MaterialIcons  } from "@expo/vector-icons";
 
@@ -21,13 +20,13 @@ const EscortBar = ({
   onPress,
   label = "Save and Continue",
   iconName = "keyboard-arrow-left",
-  forwardFlowOn = true,
-  manualGradientColors,
-  subWelcomeTextStyle,
+  forwardFlowOn = true, 
+ 
   primaryColor,
   primaryBackground,
 }: Props) => { 
-  const { navigateBack } = useAppNavigations();
+  const { navigateBack } = useAppNavigations(); 
+
   return (
     <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
       <GlobalPressable
@@ -70,7 +69,7 @@ const EscortBar = ({
         <View style={{ alignItems: "center", flexDirection: "row"  }}>
           <Text
             style={[ 
-              subWelcomeTextStyle,
+              appFontStyles?.subWelcomeText,
               { color: primaryColor, fontSize: 13, marginRight: 12 },
             ]}
           >
@@ -78,8 +77,8 @@ const EscortBar = ({
           </Text>
 
 
-          {forwardFlowOn && <ToNextButton manualGradientColors={manualGradientColors} onPress={onPress} />}
-          {!forwardFlowOn && <ActionAndBack manualGradientColors={manualGradientColors} onPress={onPress} />}
+          {forwardFlowOn && <ToNextButton  onPress={onPress} />}
+          {!forwardFlowOn && <ActionAndBack  onPress={onPress} />}
         </View>
         </View>
       </GlobalPressable>

@@ -34,10 +34,7 @@ const ItemFooterHelloes: React.FC<Props> = ({
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
   primaryColor,
-  backgroundColor,
-  overlayColor,
-  dividerStyle,
-  welcomeTextStyle,
+  backgroundColor, 
 }) => {
   const [currentIndex, setCurrentIndex] = useState(false);
 
@@ -48,8 +45,7 @@ const ItemFooterHelloes: React.FC<Props> = ({
   //     }
   //   }, [location]);
 
-  // these are the only dimensions I foresee potentially changing, hence why they are at top here
-  const footerHeight = 90;
+ 
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
 //   console.log(`totalitemcount`, totalItemCount);

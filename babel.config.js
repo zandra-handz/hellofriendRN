@@ -14,8 +14,6 @@ module.exports = function (api) {
       },
     },
     plugins: [
-      // "react-native-reanimated/plugin",
-       "react-native-worklets/plugin",
       [
         "module:react-native-dotenv",
         {
@@ -23,9 +21,7 @@ module.exports = function (api) {
           path: ".env",
         },
       ],
+      "react-native-worklets/plugin", // must be last
     ],
   };
 };
-
-
- 

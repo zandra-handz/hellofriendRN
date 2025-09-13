@@ -110,22 +110,23 @@ const ScreenWelcome = () => {
             )}
             {confirmedUserNotSignedIn && !user?.id && (
               <>
-                <Animated.View
+                {/* <Animated.View */}
+                <View
                   style={[
-                    logoRiseStyle,
+                    // logoRiseStyle,
                     {
                       width: "100%",
-                      paddingBottom: "20%",
-                      paddingHorizontal: "3%",
+                      paddingBottom: 30,
+                      paddingHorizontal: 10,
                     },
                   ]}
                 >
                   <LogoSmaller />
-                </Animated.View>
+                </View>
                 <View
                   style={{
                     bottom: "3%",
-                    paddingHorizontal: "3%",
+                    paddingHorizontal: 10,
                     width: "100%",
                     right: 0,
                     position: "absolute",

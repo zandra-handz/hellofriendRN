@@ -20,8 +20,10 @@ import Constants from "expo-constants";
 import {
   NavigationContainer,
   getStateFromPath,
+  useNavigation,
 } from "@react-navigation/native";
 
+import ScreenShareIntent from "./app/screens/authflow/ScreenShareIntent";
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, useColorScheme, Platform } from "react-native";
@@ -132,6 +134,7 @@ const Stack = createNativeStackNavigator();
 const navigationRef = createRef();
 
 export default Sentry.wrap(function App() {
+  // export default function App() {
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./app/assets/fonts/Poppins-Regular.ttf"),
     "Poppins-Bold": require("./app/assets/fonts/Poppins-Bold.ttf"),
@@ -226,49 +229,50 @@ export default Sentry.wrap(function App() {
 
   return (
     // <ShareIntentProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <QueryClientProvider client={queryClient}>
-          <UserProvider>
-            <UserSettingsProvider>
-              <FriendListProvider>
-                <UpcomingHelloesProvider>
-                  <CategoriesProvider>
-                    <UserStatsProvider>
-                      <SelectedFriendProvider>
-                        <FriendDashProvider>
-                          <CapsuleListProvider>
-                            <LocationsProvider>
-                              <HelloesProvider>
-                                <SelectedFriendStatsProvider>
-                                  {/* <MessageContextProvider> */}
-                                  <SafeAreaProvider>
-                                    <LDThemeProvider>
-                                      <RootSiblingParent>
-                                        <DeviceLocationProvider>
-                                          <FriendStyleProvider>
-                                            <Layout />
-                                          </FriendStyleProvider>
-                                        </DeviceLocationProvider>
-                                      </RootSiblingParent>
-                                    </LDThemeProvider>
-                                  </SafeAreaProvider>
-                                  {/* </MessageContextProvider> */}
-                                </SelectedFriendStatsProvider>
-                              </HelloesProvider>
-                            </LocationsProvider>
-                          </CapsuleListProvider>
-                        </FriendDashProvider>
-                      </SelectedFriendProvider>
-                    </UserStatsProvider>
-                  </CategoriesProvider>
-                </UpcomingHelloesProvider>
-              </FriendListProvider>
-            </UserSettingsProvider>
-          </UserProvider>
-        </QueryClientProvider>
-      </GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <UserSettingsProvider>
+            <FriendListProvider>
+              <UpcomingHelloesProvider>
+                <CategoriesProvider>
+                  <UserStatsProvider>
+                    <SelectedFriendProvider>
+                      <FriendDashProvider>
+                        <CapsuleListProvider>
+                          <LocationsProvider>
+                            <HelloesProvider>
+                              <SelectedFriendStatsProvider>
+                                {/* <MessageContextProvider> */}
+                                <SafeAreaProvider>
+                                  <LDThemeProvider>
+                                    <RootSiblingParent>
+                                      <DeviceLocationProvider>
+                                        <FriendStyleProvider>
+                                          <Layout />
+                                        </FriendStyleProvider>
+                                      </DeviceLocationProvider>
+                                    </RootSiblingParent>
+                                  </LDThemeProvider>
+                                </SafeAreaProvider>
+                                {/* </MessageContextProvider> */}
+                              </SelectedFriendStatsProvider>
+                            </HelloesProvider>
+                          </LocationsProvider>
+                        </CapsuleListProvider>
+                      </FriendDashProvider>
+                    </SelectedFriendProvider>
+                  </UserStatsProvider>
+                </CategoriesProvider>
+              </UpcomingHelloesProvider>
+            </FriendListProvider>
+          </UserSettingsProvider>
+        </UserProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
     // </ShareIntentProvider>
   );
+  // };
 });
 
 // Linking setup for deep linking and share intents
@@ -361,9 +365,6 @@ const PACKAGE_NAME =
 //       }
 //     );
 
-
-
-
 //     const urlEventSubscription = Linking.addEventListener("url", onReceiveURL);
 //     return () => {
 //       // Clean up the event listeners
@@ -400,6 +401,27 @@ export const Layout = () => {
   const { settings } = useUserSettings();
   // const manualDarkMode = settings?.manual_dark_mode;
 
+  //NEW
+  useEffect(() => {
+    const handleUrl = ({ url }: { url: string }) => {
+      console.log("App opened via intent:", url);
+      // parse the URL to see if it's an image/video/text share
+      // navigate to the appropriate screen
+      if (url.includes("share")) {
+        navigationRef.current?.navigate("ShareIntent", { sharedUrl: url });
+      }
+    };
+
+    const subscription = Linking.addEventListener("url", handleUrl);
+
+    // Handle the case where the app was launched from a share
+    Linking.getInitialURL().then((url) => {
+      if (url) handleUrl({ url });
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   const receiveNotifications =
     settings?.receive_notifications === true
       ? true
@@ -414,15 +436,20 @@ export const Layout = () => {
         ? "not ready"
         : settings.expo_push_token;
 
+  const linking = {};
+
   useNotificationsRegistration({ receiveNotifications, expoPushToken });
+
   return (
-    <NavigationContainer ref={navigationRef}
-    //  linking={linking}
-     
-     >
+    <NavigationContainer
+      ref={navigationRef}
+      linking={{
+        prefixes: [],
+        config: { screens: {} },
+      }}
+    >
       <FSMainSpinner isInitializing={isInitializing} />
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
-
       <QuickActionsHandler navigationRef={navigationRef} />
       <TopLevelNavigationHandler
         userId={user?.id}
@@ -555,15 +582,6 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              {/* <Stack.Screen
-                  name="LocationNav"
-                  component={ScreenLocationNav}
-                  options={{
-                    headerMode: "screen",
-                    headerShown: false,
-                  }}
-                /> */}
-
               <Stack.Screen
                 name="LocationSend"
                 component={ScreenLocationSend}
@@ -652,6 +670,13 @@ export const Layout = () => {
               <Stack.Screen
                 name="Fidget"
                 component={ScreenFidget}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="ShareIntent"
+                component={ScreenShareIntent}
                 options={{
                   headerShown: false,
                 }}

@@ -12,6 +12,10 @@ type Props = {
   useBackgroundOverlay: boolean;
 };
 
+    // "@expo/config-plugins": "~54.0.1",
+    // "@expo/metro-config": "~54.0.2",
+    // "@expo/prebuild-config": "~54.0.0",
+
 const CalendarChart = ({
   helloesList,
   navigateToHelloes,
@@ -38,12 +42,12 @@ const primaryColor = lightDarkTheme.primaryText;
 
 
   const CALENDAR_HEIGHT = 100;
-  const MONTH_BUTTON_BOTTOM_MARGIN = 20;
+  const MONTH_BUTTON_BOTTOM_MARGIN = 0;
   const COMBINED_HEIGHT = CALENDAR_HEIGHT + MONTH_BUTTON_BOTTOM_MARGIN;
   
-  const PADDING = 20;
+  const PADDING = 4;
 
-    const HEIGHT = COMBINED_HEIGHT + (PADDING*3); 
+    const HEIGHT = COMBINED_HEIGHT + (PADDING*2); 
 
 
   const handleMonthPress = (data) => {
@@ -63,6 +67,7 @@ const primaryColor = lightDarkTheme.primaryText;
             backgroundColor: useBackgroundOverlay
               ? lightDarkTheme.overlayBackground
               : "transparent",
+              backgroundColor: 'hotpink',
             borderRadius: 20,
           },
         ]}

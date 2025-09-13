@@ -5,13 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { manualGradientColors } from "@/src/hooks/StaticColors";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
-
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
-const ReloadList = ({ 
-  subWelcomeTextStyle,
+const ReloadList = ({  
   primaryColor,
   primaryBackground,
   capsuleList,
@@ -21,11 +20,13 @@ const ReloadList = ({
   items,
 }) => {
   const ITEM_HEIGHT = 70;
-  const BOTTOM_MARGIN = 4;
-  const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
+  // const BOTTOM_MARGIN = 4;
+  // const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
-  const navigation = useNavigation();
+  const navigation = useNavigation(); 
 
+
+  
   const { handleCreateMoment } = useCreateMoment({
     userId: userId,
     friendId: friendId,
@@ -120,7 +121,7 @@ const ReloadList = ({
   return (
     <>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <FlatList  //revert to Flashlist when possible, changed just because of issues with expo SDK 54
+        <FlashList  
       
           data={items}
           // data={hello.pastCapsules}
@@ -138,8 +139,7 @@ const ReloadList = ({
         />
       </View>
       <EscortBar
-        manualGradientColors={manualGradientColors}
-        subWelcomeTextStyle={subWelcomeTextStyle}
+        manualGradientColors={manualGradientColors} 
         primaryColor={primaryColor}
         primaryBackground={primaryBackground}
         forwardFlowOn={false}

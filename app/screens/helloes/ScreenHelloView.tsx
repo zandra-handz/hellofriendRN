@@ -63,12 +63,8 @@ const ScreenHelloView = () => {
 
   return (
     <SafeViewAndGradientBackground 
-      // friendColorLight={themeAheadOfLoading.lightColor}
-      // friendColorDark={themeAheadOfLoading.darkColor}
-      // backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      // friendId={selectedFriend?.id}
-      // style={{ flex: 1 }}
-            friendColorLight={themeAheadOfLoading.lightColor}
+ 
+      friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
@@ -82,7 +78,7 @@ const ScreenHelloView = () => {
         totalItemCount={totalHelloesCount}
         isFiltered={inPersonFilter}
         initialIndex={currentIndex} // should this be startingIndex?
-        // data={helloesListData}
+ 
         data={helloesDataFiltered}
         children={(props) => (
           <HelloViewPage

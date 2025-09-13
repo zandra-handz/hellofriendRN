@@ -135,14 +135,16 @@ const ScreenHelloes = () => {
         navigateToHelloes={navigateToHelloes}
         friendId={selectedFriend?.id}
         themeAheadOfLoading={themeAheadOfLoading}
-        lightDarkTheme={lightDarkTheme}
-        manualGradientColors={manualGradientColors}
+        lightDarkTheme={lightDarkTheme} 
         showTopBar={false}
         useBackgroundOverlay={false}
       />
       <View
-        style={{
-          padding: 20,
+        style={{ 
+          paddingHorizontal: 20,
+          paddingVertical: 10,
+          flexDirection: 'row',
+          justifyContent: 'center',
           alignItems: "center",
           borderRadius: 30,
           height: "auto",
@@ -153,7 +155,7 @@ const ScreenHelloes = () => {
           numberOfLines={2}
           style={[
             appFontStyles.welcomeText,
-            { color: lightDarkTheme.primaryText },
+            { color: lightDarkTheme.primaryText, fontSize: 26 },
           ]}
         >
           Hello history for {selectedFriend?.name}
@@ -168,16 +170,14 @@ const ScreenHelloes = () => {
               helloesDataFiltered &&
               helloesDataFiltered.length > 0 && (
                 <HelloesListNew
-                  friendName={selectedFriend.name}
+                  // friendName={selectedFriend.name}
                   triggerScroll={triggerScroll}
                   helloesListFull={helloesDataFiltered}
                   isFetchingNextPage={isFetchingNextPage}
                   fetchNextPage={fetchNextPage}
                   hasNextPage={hasNextPage}
                   onPress={navigateToSingleView}
-                  primaryColor={lightDarkTheme.primaryText}
-                  welcomeTextStyle={appFontStyles.welcomeText}
-                  subWelcomeTextStyle={appFontStyles.subWelcomeText}
+                  primaryColor={lightDarkTheme.primaryText} 
                 />
               )}
           </View>

@@ -87,7 +87,8 @@
       "expo-secure-store",
       "expo-font",
       "@react-native-firebase/app",  
-     "@react-native-firebase/messaging", 
+     "@react-native-firebase/messaging",
+    //  "expo-share-intent", // added 1/19/2025
       [
         "expo-build-properties",
         {

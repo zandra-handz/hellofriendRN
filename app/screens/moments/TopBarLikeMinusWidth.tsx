@@ -1,12 +1,10 @@
 import { View, Pressable, Text } from "react-native";
 import React from "react";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import Animated from "react-native-reanimated";
+import { MaterialIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import ToNextButton from "@/app/components/moments/ToNextButton";
 import ActionAndBack from "@/app/components/moments/ActionAndBack";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { appFontStyles } from "@/src/hooks/StaticFonts"; 
 type Props = {
   onPress: () => void;
   onPressLabel: string;
@@ -123,14 +121,12 @@ const TopBarLikeMinusWidth = ({
               {onPressLabel}
             </Text>
             {forwardFlowOn && (
-              <ToNextButton
-                manualGradientColors={manualGradientColors}
+              <ToNextButton 
                 onPress={onPress}
               />
             )}
             {!forwardFlowOn && (
-              <ActionAndBack
-                manualGradientColors={manualGradientColors}
+              <ActionAndBack 
                 onPress={onPress}
               />
             )}

@@ -1,7 +1,8 @@
-import { View, Pressable} from "react-native";
-import React, { useEffect, useCallback, useRef } from "react"; 
+import { View, Pressable } from "react-native";
+import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   LinearTransition,
   // JumpingTransition,
@@ -9,7 +10,13 @@ import Animated, {
   // EntryExitTransition,
   // SequencedTransition,
   // FadingTransition,
-} from "react-native-reanimated"; 
+} from "react-native-reanimated";
+
+type FontStyles = {
+  welcomeText: string;
+  subWelcomeText: string;
+};
+
 type Props = {
   friendName: string;
   helloesListFull: object[];
@@ -28,18 +35,27 @@ const HelloesListNew = ({
   fetchNextPage,
   hasNextPage,
   triggerScroll,
-  primaryColor='orange',
-  welcomeTextStyle,
-  subWelcomeTextStyle,
+  primaryColor = "orange",
   onPress,
 }: Props) => {
   const ITEM_HEIGHT = 90;
   const ITEM_BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
- 
-  const flatListRef = useRef(null);
- 
 
+  const flatListRef = useRef(null);
+
+  const fontStyles: FontStyles = useMemo(() => {
+    return {
+      welcomeText: appFontStyles?.welcomeText ?? {
+        fontSize: 18,
+        fontWeight: "600",
+      },
+      subWelcomeText: appFontStyles?.subWelcomeText ?? {
+        fontSize: 14,
+        color: "orange",
+      },
+    };
+  }, [appFontStyles]);
   useEffect(() => {
     if (triggerScroll) {
       scrollToHello(triggerScroll - 1); // PARENT ADDS ONE, THIS COMPONENT REMOVES IT BEFORE SCROLLING; index 0 won't trigger a scroll
@@ -81,17 +97,16 @@ const HelloesListNew = ({
           helloData={item}
           index={index}
           primaryColor={primaryColor}
-          welcomeTextStyle={welcomeTextStyle}
-          subWelcomeTextStyle={subWelcomeTextStyle}
+          welcomeTextStyle={fontStyles.welcomeText}
+          subWelcomeTextStyle={fontStyles.subWelcomeText}
         />
       </Pressable>
     ),
-    [handleNavigateToSingleView, primaryColor]
+    [handleNavigateToSingleView, primaryColor, fontStyles]
   );
 
   return (
     <View style={{ paddingTop: 0, flex: 1, paddingHorizontal: 4 }}>
-
       <Animated.FlatList
         fadingEdgeLength={20}
         ref={flatListRef}

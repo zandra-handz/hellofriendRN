@@ -48,8 +48,7 @@ const LocationCustomerReviews: React.FC<Props> = ({
 
   return (
     <View style={[styles.container]}>
-      <FlatList   //revert to Flashlist when possible, changed just because of issues with expo SDK 54
-      
+      <FlashList   
       data={reviews}
         renderItem={renderListItem}
         fadingEdgeLength={20}

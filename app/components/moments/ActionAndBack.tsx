@@ -1,20 +1,19 @@
 import { Pressable } from "react-native";
 import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { manualGradientColors } from "@/src/hooks/StaticColors";
 interface Colors {
   lightColor: string;
   homeDarkColor: string;
 }
 
-type Props = {
-  manualGradientColors: Colors;
+type Props = { 
   onPress: () => void;
   iconName?: string;
 };
 
 const ActionAndBack = ({
-  manualGradientColors,
+ 
   onPress,
   iconName = "check",
 }: Props) => {

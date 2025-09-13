@@ -244,10 +244,10 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           />
         </View>
 
-        <FlashList   //change back to FlashList when possible, SDK expo update issue
+        <FlashList   
           data={visibleCategories}
           extraData={selectedMoments}
-         // estimatedItemSize={90}
+          estimatedItemSize={90}
           renderItem={renderListItem}
           keyExtractor={extractItemKey}
  
