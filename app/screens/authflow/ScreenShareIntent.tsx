@@ -34,6 +34,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+import { appFontStyles } from "@/src/hooks/StaticFonts";
 
 type ShareIntentParams = {
   ShareIntent: {
@@ -41,20 +42,13 @@ type ShareIntentParams = {
   };
 };
 
-
-
-
-const ScreenShareIntent = () => { 
-
-    const route = useRoute<RouteProp<ShareIntentParams, 'ShareIntent'>>();
+const ScreenShareIntent = () => {
+  const route = useRoute<RouteProp<ShareIntentParams, "ShareIntent">>();
   const sharedUrl = route.params?.sharedUrl;
- 
-  const { navigateToNewAccount, navigateBack, navigateToRecoverCredentials } =
-    useAppNavigations(); 
-  const { lightDarkTheme } = useLDTheme(); 
 
- 
- 
+  const { navigateToNewAccount, navigateBack, navigateToRecoverCredentials } =
+    useAppNavigations();
+  const { lightDarkTheme } = useLDTheme();
 
   return (
     <PreAuthSafeViewAndGradientBackground
@@ -70,12 +64,44 @@ const ScreenShareIntent = () => {
         flex: 1,
         // paddingTop: 40, // TEMPORARY
       }}
-    > <View>
+    >
+      {" "}
+      <View
+        style={{
+          flexDirection: "column",
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
         <Text style={{}}>
-            SHARE INTENT SCREEN!
-                 <Text style={{ fontSize: 16, color: '#555' }}>{sharedUrl || 'No URL received'}</Text>
-
+          SHARE INTENT SCREEN!
+          <Text style={{ fontSize: 16, color: "#555" }}>
+            {sharedUrl || "No URL received"}
+          </Text>
         </Text>
+        <Pressable
+          onPress={navigateBack}
+          style={{
+            width: "90%",
+            padding: 10,
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "center",
+            backgroundColor: manualGradientColors.homeDarkColor,
+            borderRadius: 999,
+          }}
+        >
+          <Text
+            style={[
+              appFontStyles.subWelcomeText,
+              { color: manualGradientColors.lightColor },
+            ]}
+          >
+            Back
+          </Text>
+        </Pressable>
       </View>
     </PreAuthSafeViewAndGradientBackground>
   );

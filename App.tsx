@@ -394,6 +394,44 @@ const PACKAGE_NAME =
 // };
 
 export const Layout = () => {
+ 
+
+  useEffect(() => {
+  const handleUrl = ({ url }: { url: string }) => {
+    console.log("App opened via intent:", url);
+    if (url.includes("share") && navigationRef.current?.isReady()) {
+      navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
+    }
+  };
+
+  const subscription = Linking.addEventListener("url", handleUrl);
+
+  // Handle initial URL from app launch
+  Linking.getInitialURL().then((url) => {
+    const tryNavigate = () => {
+      if (url && navigationRef.current?.isReady()) {
+        handleUrl({ url });
+      } else {
+        setTimeout(tryNavigate, 50);
+      }
+    };
+    tryNavigate();
+  });
+
+  // ===== TEST NAVIGATION AFTER 5 SECONDS =====
+  const testTimeout = setTimeout(() => {
+    const testUrl = "myapp://share/test"; // fake share URL
+    console.log("Test: firing handleUrl with", testUrl);
+    handleUrl({ url: testUrl });
+  }, 5000);
+
+  return () => {
+    subscription.remove();
+    clearTimeout(testTimeout);
+  };
+}, []);
+
+ 
   // const { lightDarkTheme} = useLDTheme();
   const { user, isInitializing } = useUser();
 
