@@ -244,7 +244,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           />
         </View>
 
-        <FlatList   //change back to FlashList when possible, SDK expo update issue
+        <FlashList   //change back to FlashList when possible, SDK expo update issue
           data={visibleCategories}
           extraData={selectedMoments}
          // estimatedItemSize={90}
