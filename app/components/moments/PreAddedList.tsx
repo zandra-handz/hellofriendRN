@@ -1,4 +1,4 @@
-import { View, Text, Pressable, FlatList } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
 
 import { FlashList } from "@shopify/flash-list";
@@ -16,9 +16,7 @@ const PreAddedList = ({
   primaryColor,
   primaryBackground,
 }) => {
-  const ITEM_HEIGHT = 70;
-  const BOTTOM_MARGIN = 4;
-  const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
+  const ITEM_HEIGHT = 70; 
   const [selectedMoments, setSelectedMoments] = useState([]);
 
   const { navigateToMoments } = useAppNavigations();
@@ -141,8 +139,7 @@ const PreAddedList = ({
         </View>
       </View>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <FlatList  //revert to Flashlist when possible, changed just because of issues with expo SDK 54
-      
+        <FlashList   
           data={filterOutNonAdded}
           estimatedItemSize={90}
           renderItem={renderListItem}
