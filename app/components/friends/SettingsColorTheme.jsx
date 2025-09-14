@@ -1,8 +1,8 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+ 
+import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext';
 import { useAuthUser } from '@/src/context/AuthUserContext';
 import { useFriendList } from '@/src/context/FriendListContext';

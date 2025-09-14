@@ -8,9 +8,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";  
-
+} from "react-native"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 const SearchBar = ({
   data,
   height = 48,
@@ -93,7 +92,7 @@ const SearchBar = ({
           />
           <View>
             {!useCustomIcon && (
-              <Icon
+              <MaterialCommunityIcons
                 name="search"
                 size={26}
                 color={textAndIconColor}

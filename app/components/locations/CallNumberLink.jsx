@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Linking,
 } from "react-native";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5"; 
+import { FontAwesome5 } from "@expo/vector-icons"; 
 
 const CallNumberLink = ({
   primaryColor = "orange",

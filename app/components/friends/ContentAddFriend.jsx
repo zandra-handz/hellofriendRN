@@ -9,9 +9,9 @@ import InputAddFriendName from "./InputAddFriendName";
 import SliderAddFriendEffort from "@/app/components/foranimations/SliderAddFriendEffort";
 import SliderAddFriendPriority from "@/app/components/foranimations/SliderAddFriendPriority";
 import PickerAddFriendLastDate from "@/app/components/selectors/PickerAddFriendLastDate";
-import ButtonMediumAddFriend from "@/app/components/buttons/friends/ButtonMediumAddFriend";
+ 
 import MessagePage from "../alerts/MessagePage";
-import AlertList from "../alerts/AlertList";
+ 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateFriend from "@/src/hooks/useCreateFriend";

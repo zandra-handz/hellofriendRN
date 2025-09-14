@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+ 
+import { FontAwesome5 } from '@expo/vector-icons';
  
 const DirectionsLink = ({ address, size = 15, iconSize=14, fontColor, backgroundColor }) => {
    

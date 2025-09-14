@@ -1,9 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import React, { useEffect, useCallback } from "react";
- import Icon from "react-native-vector-icons/FontAwesome";
-import HalfScreenModal from "../alerts/HalfScreenModal";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, {  useCallback } from "react";
+ import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 type Props = {
   primaryColor: string;
   selected: any;
@@ -33,8 +30,8 @@ const DeleteUnused = ({
             width: "100%",
           }}
         >
-                    <Icon
-                      name={checkboxState ? "check-square-o" : "square-o"}
+                    <MaterialCommunityIcons
+                      name={checkboxState ? "checkbox-outline" : "checkbox-blank-outlne"}
                       size={20}
                       style={[  { color: primaryColor, marginRight: 10 }]}
                 

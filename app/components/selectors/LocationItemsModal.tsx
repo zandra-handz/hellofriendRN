@@ -1,30 +1,17 @@
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import React from "react";
-import {
-  ScrollView,
-  StyleSheet, 
-  View,
-  Text,
-  AccessibilityInfo,
-} from "react-native";
- 
+import { StyleSheet, View } from "react-native";
 
-import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 
 const LocationItemsModal = ({
- 
-  primaryColor,
   isVisible,
   closeModal,
-  display,
+
   icon,
   title,
-  type,
-  onPress,
   children,
-}) => { 
- 
- 
+}) => {
   return (
     <ModalWithGoBack
       isVisible={isVisible}
@@ -33,12 +20,9 @@ const LocationItemsModal = ({
       questionText={title}
       children={
         <View style={styles.bodyContainer}>
-          <View style={styles.sectionContainer}>
-           {children}
-          </View>
+          <View style={styles.sectionContainer}>{children}</View>
         </View>
       }
-     
       onClose={closeModal}
       cancelText="Back"
     />

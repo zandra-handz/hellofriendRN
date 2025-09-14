@@ -1,7 +1,6 @@
 import { ExpoConfig, ConfigContext } from '@expo/config';
-import * as dotenv from 'dotenv';
-import withIntentFilters from './withIntentFilters';
-import withShareIntent from "./withShareIntent";
+import * as dotenv from 'dotenv'; 
+// import withShareIntent from "./withShareIntent";
 
 const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
   return {
@@ -91,8 +90,8 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
             ios: { useFrameworks: 'static' },
           },
         ],
-        withIntentFilters, // ← use the imported function
-        withShareIntent,
+ 
+        // withShareIntent,
       ],
 
       scheme: 'hellofriend',

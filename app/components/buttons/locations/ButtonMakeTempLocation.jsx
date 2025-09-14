@@ -1,10 +1,9 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
  
-// import { useLocations } from "@/src/context/LocationsContext";
+ import { FontAwesome5 } from "@expo/vector-icons"; 
 import useAddTempLocation from "@/src/hooks/LocationCalls/useAddTempLocation"; 
-// import useLocationFunctions from '../hooks/useLocationFunctions';
+ 
 
 const ButtonMakeTempLocation = ({
     userId,

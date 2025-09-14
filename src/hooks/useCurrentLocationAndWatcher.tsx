@@ -1,5 +1,5 @@
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import * as Location from 'expo-location';  

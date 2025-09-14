@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, Text } from 'react-native'; 
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const getZodiacSign = (month, day) => {
     // Determine the zodiac sign based on the month and day
