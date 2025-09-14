@@ -98,8 +98,7 @@
     "tinycolor2": "^1.6.0",
     "uuid": "^13.0.0",
     "@expo/config": "~12.0.7",
-    "@expo/metro-config": "~54.0.2",
-    "undefined": "expo-file-system/legacy"
+    "@expo/metro-config": "~54.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
