@@ -1,22 +1,21 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
+import { View, StyleSheet, Text,  Alert } from "react-native";
 
- 
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import EscortBarMoments from "../moments/EscortBarMoments";
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
 import Animated, {
   SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   runOnJS,
 } from "react-native-reanimated";
- 
+
 interface Props {
   data: object;
- 
+
   visibilityValue: SharedValue;
   currentIndexValue: SharedValue;
- 
+
   totalItemCount?: number;
   useButtons: boolean;
   onRightPress: () => void;
@@ -24,32 +23,23 @@ interface Props {
 }
 
 const ItemFooter: React.FC<Props> = ({
- 
-  data, 
+  height,
+  data,
   currentIndexValue,
   visibilityValue,
 
   totalItemCount,
-  // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
-  useButtons = true,
+  scrollTo,
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
   primaryColor,
-  overlayColor,
-  dividerStyle,
-  welcomeTextStyle, 
-}) => { 
+  backgroundColor,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(false);
-  //   useEffect(() => {
-  //     if (location) {
-  //       console.log(`location in footer`, location.title);
-  //     }
-  //   }, [location]);
 
-  // these are the only dimensions I foresee potentially changing, hence why they are at top here
-  const footerHeight = 90;
   const footerPaddingBottom = 20;
-  // const footerIconSize = 28;
+
+  const fontStyle = AppFontStyles.welcomeText;
 
   const totalCount = totalItemCount
     ? totalItemCount
@@ -86,6 +76,35 @@ const ItemFooter: React.FC<Props> = ({
     }, 2000);
   };
 
+  const handleScrollToNext = () => {
+    if (currentIndex === undefined) {
+      return;
+    }
+
+    const next = currentIndex + 1;
+    const nextExists = next < totalCount;
+    const scrollToIndex = nextExists ? next : 0;
+    if (scrollToIndex > 0) {
+      // DISALLOW SCROLLING BACK TO ONE GIVEN THAT THIS LIST COULD BE VERY LONG
+      scrollTo(scrollToIndex);
+    }
+  };
+
+  const handleScrollToPrev = () => {
+    if (currentIndex === undefined) {
+      return;
+    }
+
+    if (currentIndex === 0) {
+      return;
+    }
+    const prev = currentIndex - 1;
+    console.log(totalCount - 1);
+    const scrollToIndex = currentIndex <= 0 ? totalCount - 1 : prev;
+    scrollTo(scrollToIndex);
+    console.log(currentIndex);
+  };
+
   const visibilityStyle = useAnimatedStyle(() => {
     return { opacity: visibilityValue.value };
   });
@@ -100,76 +119,37 @@ const ItemFooter: React.FC<Props> = ({
         style={[
           styles.container,
           {
-            height: footerHeight,
+            height: height,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: overlayColor,
           },
           visibilityStyle,
         ]}
       >
-        {/* {useButtons && 
-        <View style={[styles.divider, themeStyles.divider]} />} */}
-        <>
-
-     
+        <EscortBarMoments
+          primaryColor={primaryColor}
+          primaryBackground={backgroundColor}
+          onLeftPress={handleScrollToPrev}
+          onRightPress={handleScrollToNext}
+          includeSendButton={true}
+          onSendPress={handleRightPress}
+          children={
             <View
               style={{
-                flex: 1,
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <Text
-                style={[ 
-                  welcomeTextStyle,
-                  { color: primaryColor, fontSize: 44 },
-                ]}
-              >
+              <Text style={[fontStyle, { color: primaryColor, fontSize: 44 }]}>
                 {currentIndex + 1}
                 <Text
-                  style={[ 
-                   welcomeTextStyle,
-                    { color: primaryColor, fontSize: 22 },
-                  ]}
+                  style={[fontStyle, { color: primaryColor, fontSize: 22 }]}
                 >
-                  {/* /{data.length}{" "} */}/{totalCount}{" "} 
+                  {/* /{data.length}{" "} */}/{totalCount}{" "}
                 </Text>
               </Text>
             </View>
-     
-        </>
-
-        {useButtons && (
-          <>
-            <View style={[styles.divider, dividerStyle]} />
-            <View style={{ flex: 1 }}>
-              <>
-               
-                {
-              
-                useButtons && (
-                  <Pressable
-                    onPress={handleRightPress}
-                    style={({ pressed }) => ({
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      opacity: pressed ? 0.6 : 1, 
-                    })}
-                  >
-                    <MaterialCommunityIcons
-                      name="send"
-                      size={50}
-                      color={primaryColor}
-                    />
- 
-                  </Pressable>
-                )}
-              </>
-            </View>
-          </>
-        )}
- 
+          }
+        />
       </Animated.View>
     </>
   );
@@ -179,9 +159,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    position: "absolute",
-    bottom: 0,
     zIndex: 1,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   divider: {
     marginVertical: 10,

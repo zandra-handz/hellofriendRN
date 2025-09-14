@@ -253,7 +253,7 @@ const ScreenHome = () => {
             zIndex: 100000,
             elevation: 100000,
             position: "absolute",
-            backgroundColor: "pink",
+            backgroundColor: manualGradientColors.lightColor,
             width: "100%",
             height: "100%",
             flex: 1,
@@ -387,6 +387,7 @@ const ScreenHome = () => {
                     darkerOverlayBackgroundColor={
                       lightDarkTheme.darkerOverlayBackground
                     }
+                    lighterOverlayBackgroundColor={lightDarkTheme.lighterOverlayBackground}
                     spinnerStyle={spinnerStyle}
                
                     friendListLength={friendList?.length || 0}

@@ -1,9 +1,14 @@
-import   { StyleSheet, Text, View, DimensionValue } from "react-native";
+import { StyleSheet, Text, View, DimensionValue } from "react-native";
 import React, { useCallback } from "react";
-import Animated, {SlideInDown, SlideOutDown, FadeIn, FadeOut } from 'react-native-reanimated';
-  
-import SoonItemButton from "./SoonItemButton"; 
-import { useNavigation } from "@react-navigation/native"; 
+import Animated, {
+  SlideInDown,
+  SlideOutDown,
+  FadeIn,
+  FadeOut,
+} from "react-native-reanimated";
+
+import SoonItemButton from "./SoonItemButton";
+import { useNavigation } from "@react-navigation/native";
 
 interface HomeScrollSoonProps {
   startAtIndex: number;
@@ -18,20 +23,22 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   upcomingHelloes,
   isLoading,
   getThemeAheadOfLoading,
- 
+
   selectFriend,
-  friendList, 
-  primaryColor = 'orange',
-  overlayColor, 
+  friendList,
+  primaryColor = "orange",
+  overlayColor,
+  darkerOverlayColor,
+  lighterOverlayColor,
   manualGradientColors,
   startAtIndex = 1,
   height,
   maxHeight = 130,
   borderRadius = 20,
   borderColor = "transparent",
-}) => { 
-  const navigation = useNavigation();  
- 
+}) => {
+  const navigation = useNavigation();
+
   const itemColor = primaryColor;
   const elementBackgroundColor = overlayColor;
 
@@ -70,7 +77,6 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       // entering={FadeIn}
       // exiting={FadeOut}
       <View
-
         style={{
           marginBottom: 2,
           height: 50,
@@ -81,20 +87,29 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         <SoonItemButton
           textColor={itemColor}
           backgroundColor={elementBackgroundColor}
-    
+          darkerOverlayColor={darkerOverlayColor}
+          lighterOverlayColor={lighterOverlayColor}
+          friendList={friendList}
           overlayColor={overlayColor}
           manualGradientColors={manualGradientColors}
           height={"100%"}
           friendName={item.friend.name}
+          friendId={item.friend.id}
           date={item.future_date_in_words}
           width={"100%"}
           onPress={() => handlePress(item)}
           onDoublePress={() => handleDoublePress(item)}
         />
-      {/* </Animated.View> */}
-            </View>
+        {/* </Animated.View> */}
+      </View>
     ),
-    [handlePress, itemColor, elementBackgroundColor]
+    [
+      handlePress,
+      lighterOverlayColor,
+      darkerOverlayColor,
+      itemColor,
+      elementBackgroundColor,
+    ]
   );
 
   const extractItemKey = (item, index) =>
@@ -103,9 +118,21 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   const renderUpcomingHelloes = () => {
     return (
       <>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            width: "100%",
+            marginBottom: 10,
+          }}
+        >
+          <Text style={{ fontWeight: "bold", fontSize: 20, lineHeight: 24 }}>
+            Soon
+          </Text>
+        </View>
         {upcomingHelloes?.length > 0 && (
           <Animated.FlatList
-            data={upcomingHelloes.slice(0).slice(startAtIndex, 8)}
+            data={upcomingHelloes.slice(0).slice(startAtIndex, 7)}
             renderItem={renderListItem}
             keyExtractor={extractItemKey}
             initialNumToRender={10}
@@ -125,7 +152,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       style={[
         styles.container,
         {
-         // backgroundColor: 'red',
+          // backgroundColor: 'red',
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height,
@@ -151,7 +178,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           )}
 
           {friendList.length > 0 && (
-           <View style={[styles.buttonContainer]}>
+            <View style={[styles.buttonContainer]}>
               <>{renderUpcomingHelloes()}</>
             </View>
           )}

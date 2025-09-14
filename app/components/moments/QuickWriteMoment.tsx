@@ -54,7 +54,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
     const textInputRef = useRef();
-
+const buttonColor = primaryBackgroundColor;
     //This is what turns moment text input autofocus on/off depending on user's settings
     useFocusEffect(
       useCallback(() => {
@@ -127,12 +127,13 @@ const handleManualFocus = useCallback(() => {
               width: "100%",
               height: multiline ? "100%" : 30,
               paddingLeft: 18,
-              marginTop: 0,
+              
               paddingTop: multiline ? 0 : 0,
+             
               borderRadius: 0,
               backgroundColor: multiline
                 ? primaryBackgroundColor
-                :   primaryOverlayColor
+                :   'transparent'
             },
           
           ]}
@@ -161,12 +162,12 @@ const handleManualFocus = useCallback(() => {
                         justifyContent: "center",
                         borderRadius: addIconSize / 2,
                         borderWidth: 1,
-                        borderColor: primaryColor,
+                        borderColor: buttonColor,
                       }}
                     >
                       <MaterialCommunityIcons
                         name="plus"
-                        color={primaryColor}
+                        color={buttonColor}
                         size={20}
                       />
                     </View>
@@ -174,10 +175,10 @@ const handleManualFocus = useCallback(() => {
                       style={[
                         styles.helperText,
                       
-                        { color: primaryColor, fontFamily: "Poppins-Regular" },
+                        { color: buttonColor, fontFamily: "Poppins-Regular" },
                       ]}
                     >
-                      {"  "}Add talking point
+                      {"  "}Idea
                     </Text>
 
                     {!multiline && (
@@ -203,12 +204,12 @@ const handleManualFocus = useCallback(() => {
                             justifyContent: "center",
                             borderRadius: addIconSize / 2,
                             borderWidth: 1,
-                            borderColor: primaryColor,
+                            borderColor: buttonColor,
                           }}
                         >
                           <MaterialCommunityIcons
                             name="plus"
-                            color={primaryColor}
+                            color={buttonColor}
                             size={20}
                           />
                         </View>
@@ -216,7 +217,7 @@ const handleManualFocus = useCallback(() => {
                           style={[
                             styles.helperText,
                        
-                            { color: primaryColor, fontFamily: "Poppins-Regular" },
+                            { color: buttonColor, fontFamily: "Poppins-Regular" },
                           ]}
                         >
                           {"  "}Pic
@@ -246,19 +247,19 @@ const handleManualFocus = useCallback(() => {
                             justifyContent: "center",
                             borderRadius: addIconSize / 2,
                             borderWidth: 1,
-                            borderColor: primaryColor,
+                            borderColor: buttonColor,
                           }}
                         >
                           <MaterialCommunityIcons
                             name="plus"
-                            color={primaryColor}
+                            color={buttonColor}
                             size={20}
                           />
                         </View>
                         <Text 
                           style={[
                             styles.helperText, 
-                            { color: primaryColor, fontFamily: "Poppins-Regular" },
+                            { color: buttonColor, fontFamily: "Poppins-Regular" },
                           ]}
                         >
                           {"  "}Upload
@@ -282,7 +283,7 @@ const handleManualFocus = useCallback(() => {
                     <TextInput
                       ref={textInputRef}
                       autoFocus={focusMode}
-                      style={[styles.textInput, {color: primaryColor}]}
+                      style={[styles.textInput, {color: buttonColor}]}
                       value={editedMessage}
                       placeholder={""}
                       onBlur={() => console.log('lost focus')}

@@ -248,7 +248,7 @@ export default Sentry.wrap(function App() {
                             <SelectedFriendStatsProvider>
                               {/* <MessageContextProvider> */}
                               <GestureHandlerRootView style={{ flex: 1 }}>
-                                {/* <SafeAreaProvider> */}
+                                <SafeAreaProvider>
                                   <LDThemeProvider>
                                     <RootSiblingParent>
                                       <DeviceLocationProvider>
@@ -258,7 +258,7 @@ export default Sentry.wrap(function App() {
                                       </DeviceLocationProvider>
                                     </RootSiblingParent>
                                   </LDThemeProvider>
-                                {/* </SafeAreaProvider> */}
+                                </SafeAreaProvider>
                               </GestureHandlerRootView>
                               {/* </MessageContextProvider> */}
                             </SelectedFriendStatsProvider>

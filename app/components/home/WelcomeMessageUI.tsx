@@ -1,11 +1,14 @@
 import { View,  Pressable } from "react-native";
-import React  from "react"; 
+import React, { useMemo }  from "react"; 
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import Animated, {
  
   SlideInLeft, 
 } from "react-native-reanimated"; 
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import manualGradientColors from "@/src/hooks/StaticColors";
+ 
 interface WelcomeMessageUIProps {
   username: string;
   isNewUser: boolean; // in parent: {new Date(user?.user?.created_on).toDateString() === new Date().toDateString()
@@ -39,9 +42,19 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
-    : `Hi ${username}! What would you like to do?`;
+    : `Welcome back ${username}!`;
 
- 
+ const conditionalMessage = useMemo(
+  () => {
+    if (isKeyboardVisible) {
+      return `Write an idea:`
+    } else {
+      return message;
+    }
+  },[
+    message, isKeyboardVisible
+  ]
+ )
 
   return (
     <AnimatedPressable
@@ -62,21 +75,37 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           paddingBottom: 10, // same as friend message
           flexDirection: "row",
           justifyContent: "flex-start",
+          backgroundColor: 'transparent',
+          height: 200,
         },
       ]}
     >
+      <MaterialCommunityIcons
+      name={'leaf'}
+      size={1200}
+      color={manualGradientColors.homeDarkColor}
+      style={{position: 'absolute',  top: -740, left: -470, opacity: .2, transform: [
+        {'rotate': '200deg'}, 
+          { scaleX: -1 },   
+      ]}}
+      />
       <>
         <Animated.Text
           style={[
             welcomeTextStyle,
-            {
-              color: primaryColor,
-              fontSize: 46,
-              lineHeight: 48,
-            },
+      {
+      paddingTop: 40,
+      color: primaryColor,
+    //  color: backgroundColor,
+      fontSize: 38,
+      lineHeight: 48,
+      backgroundColor: 'rgba(0,0,0,0.4)', // semi-transparent background
+      borderRadius: 8,
+      paddingHorizontal: 8,
+    },
           ]}
         >
-          {message}{' '}
+          {conditionalMessage}{' '}
           
           <View
             style={{

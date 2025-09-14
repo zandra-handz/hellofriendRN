@@ -195,7 +195,7 @@ lighterOverlayColor,
         {/* {type === 'location' && ( */}
 
         <LocationItemFooter
-        height={90}
+        height={50}
           userId={userId}
           friendId={friendId}
           data={data}

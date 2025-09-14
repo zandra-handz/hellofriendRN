@@ -28,6 +28,8 @@ type Props = {
 const FriendTintPressable = ({
   friendList,
   onPress,
+  onPressIn=() => console.log('on press in'),
+  onPressOut=() => console.log('on press out'),
   style,
   friendId,
   startingColor,
@@ -43,6 +45,26 @@ const FriendTintPressable = ({
   const friendColors = friendList.find(
     (friend) => Number(friendId) === Number(friend.id)
   );
+
+  const handleOnPressIn = () => {
+            scale.value = withSpring(0.95, {duration: 100});
+        gradientScale.value = withTiming(1.4,  { duration: 50 });
+        transition.value = withTiming(1, {duration: 100});
+       onPressIn();
+  }
+
+
+    const handleOnPressOut = () => {
+
+        //           scale.value = withSpring(0.95, {duration: 100});
+        // gradientScale.value = withTiming(1.4,  { duration: 50 });
+        // transition.value = withTiming(1, {duration: 100});
+        scale.value = withSpring(1);
+        transition.value = withTiming(0);
+         gradientScale.value = withTiming(0);
+        onPressOut();
+        // onPressIn();
+  }
 
   const direction = useMemo(() => {
     if (useFriendColors) return [0, 0, 1, 0];
@@ -78,16 +100,8 @@ const FriendTintPressable = ({
     <Pressable
       onPress={onPress}
       style={[style, { backgroundColor: 'transparent'}]}
-      onPressIn={() => {
-        scale.value = withSpring(0.95, {duration: 100});
-        gradientScale.value = withTiming(1.4,  { duration: 50 });
-        transition.value = withTiming(1, {duration: 100});
-      }}
-      onPressOut={() => {
-        scale.value = withSpring(1);
-        transition.value = withTiming(0);
-         gradientScale.value = withTiming(0);
-      }}
+      onPressIn={handleOnPressIn}
+      onPressOut={handleOnPressOut}
     >
       <AnimatedLinearGradient
         colors={highlightColors}

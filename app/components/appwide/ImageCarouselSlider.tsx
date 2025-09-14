@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -19,7 +19,6 @@ type Props = {
 };
 
 const ImageCarouselSlider = ({
- 
   initialIndex,
   data,
   // useButtons = true,
@@ -32,9 +31,8 @@ const ImageCarouselSlider = ({
   // footerData,
   primaryColor,
   overlayColor,
-  dividerStyle,
-  welcomeTextStyle,
-  themeAheadOfLoading,
+  dividerStyle, 
+  primaryBackground,
 }: Props) => {
   const { height, width } = useWindowDimensions();
 
@@ -62,30 +60,26 @@ const ImageCarouselSlider = ({
     };
   };
 
-  useEffect(() => {
-    if (stickToLocation) {
-      console.log("scrolling to index for location id", stickToLocation);
+      const scrollTo = (index: number) => {
+        floaterItemsVisibility.value = withTiming(0, { duration: 10 });
+        cardScale.value = withTiming(0.94, { duration: 10 });
+    
+     
+        flatListRef.current?.scrollToIndex({
+          index,
+          animated: true,
+        });
+    
+     
+        setTimeout(() => {
+          floaterItemsVisibility.value = withTiming(1, { duration: 400 });
+          cardScale.value = withTiming(1, { duration: 400 });
+        }, 300); 
+      };
+    
 
-      const newIndex = data.findIndex((item) => item.id === stickToLocation);
-      console.log("scrolling to index", newIndex);
-
-      if (newIndex >= 0 && newIndex < data.length) {
-        scrollToIndexAfterEdit(newIndex);
-      }
-      //scrollToEditCompleted();
-    }
-  }, [stickToLocation]);
-
-  const scrollToIndexAfterEdit = (index) => {
-    if (!setStickToLocation) {
-      return;
-    }
-    flatListRef.current?.scrollToIndex({
-      index: index,
-      animated: false,
-    });
-    setStickToLocation(null);
-  };
+ 
+ 
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 
@@ -170,20 +164,20 @@ const ImageCarouselSlider = ({
         />
         {/* {type === 'location' && ( */}
 
-        <ItemFooter 
+        <ItemFooter
           data={data}
+          height={50}
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
-          // extraData={footerData}
-          // useButtons={useButtons}
+          scrollTo={scrollTo}
           onRightPress={() => onRightPress(currentIndex.value)}
           onRightPressSecondAction={() =>
             onRightPressSecondAction(data[currentIndex.value])
           }
           primaryColor={primaryColor}
+          backgroundColor={primaryBackground}
           overlayColor={overlayColor}
-          dividerStyle={dividerStyle}
-          welcomeTextStyle={welcomeTextStyle} 
+          dividerStyle={dividerStyle} 
         />
 
         {/* )} */}

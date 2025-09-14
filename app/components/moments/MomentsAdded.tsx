@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   SlideInDown,
+  FadeIn,
   SharedValue,
   useAnimatedReaction,
   runOnJS,
@@ -60,7 +61,7 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({
       >
         {!hide && (
           <Animated.View
-            entering={SlideInDown.duration(0)}
+            entering={FadeIn}
             style={[
               {
                 backgroundColor: overlayBackgroundColor,

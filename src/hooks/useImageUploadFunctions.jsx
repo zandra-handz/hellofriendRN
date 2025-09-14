@@ -3,6 +3,8 @@ import React, {  useState } from 'react';
  
 import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
+
+import { File, Directory, Paths } from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
  
 
@@ -45,7 +47,7 @@ const useImageUploadFunctions = () => {
             allowsEditing: true,
             quality: 1,
           });
-      
+  
           if (!result.cancelled) {
            // setImageUri(result.assets[0].uri);
             navigation.navigate('AddImage', {imageUri: result.assets[0].uri });
@@ -54,7 +56,8 @@ const useImageUploadFunctions = () => {
 
 
         const resizeImage = async (imageUri) => { 
-          const imageInfo = await FileSystem.getInfoAsync(imageUri);
+          // const imageInfo = await FileSystem.getInfoAsync(imageUri);
+          // const imageInfo = await File.getInfoAsync(imageUri);
           const { width: originalWidth, height: originalHeight } = await ImageManipulator.manipulateAsync(
             imageUri,
             []

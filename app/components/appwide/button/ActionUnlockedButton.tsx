@@ -1,8 +1,7 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react"; 
-import Animated from "react-native-reanimated";
-import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
- 
+import Animated from "react-native-reanimated"; 
+ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -107,11 +106,12 @@ const ActionUnlockedButton = ({
                // alignItems: "center",
               }}
             >
-              <BackArrowLongerStemSvg
-                height={20}
-                width={20}
-                color={"#121212"}
-              />
+                            <MaterialCommunityIcons
+                            size={20}
+                          color={"#121212"}
+                            name={'arrow-left'}
+                            />
+       
             </View>
          )}
     </AnimatedTouchableOpacity>

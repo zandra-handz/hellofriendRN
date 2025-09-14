@@ -1,6 +1,5 @@
 import { Pressable, Text, StyleSheet, View } from "react-native";
- 
-import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
+  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 const KeyboardCoasterNotNow = ({
   primaryColor,
@@ -51,11 +50,12 @@ const KeyboardCoasterNotNow = ({
                 transform: [{ rotate: "270deg" }],
               }}
             >
-              <BackArrowLongerStemSvg
-                height={20}
-                width={20}
-                color={primaryColor}
+              <MaterialCommunityIcons
+              size={20}
+              color={primaryColor}
+              name={'arrow-left'}
               />
+    
             </View>
           </View>
           <Text

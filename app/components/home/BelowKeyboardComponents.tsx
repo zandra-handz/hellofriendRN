@@ -28,7 +28,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
-
+lighterOverlayBackgroundColor,
   spinnerStyle,
   // loadingDash,
   // friendDash,
@@ -56,6 +56,8 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       {!selectedFriendId && friendListLength > 0 && (
         <View style={{ height: "100%" }}>
           <AllHome
+          lighterOverlayColor={lighterOverlayBackgroundColor}
+          darkerOverlayColor={darkerOverlayBackgroundColor}
             isLoading={isLoading}
             getThemeAheadOfLoading={getThemeAheadOfLoading}
             onPress={onPress}

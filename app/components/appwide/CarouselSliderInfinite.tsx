@@ -97,9 +97,7 @@ const CarouselSliderInfinite = ({
   //   });
   // };
 
-  // const scrollToEnd = () => {
-  //   flatListRef.current?.scrollToEnd({ animated: true });
-  // };
+ 
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 
@@ -108,20 +106,7 @@ const CarouselSliderInfinite = ({
     setItemModalVisible(true);
   };
 
-  // const handleScroll = useCallback(
-  //   (event) => {
-  //     const offsetX = event.nativeEvent.contentOffset.x;
-  //     const currentIndex = Math.round(offsetX / COMBINED);
-  //     onIndexChange?.(currentIndex);
-  //     setCurrentIndex(currentIndex + 1);
-  //     setCurrentCategory(
-  //       data[currentIndex]?.typedCategory ||
-  //         data[currentIndex]?.category ||
-  //         data[currentIndex]?.date
-  //     );
-  //   },
-  //   [COMBINED, onIndexChange]
-  // );
+ 
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {

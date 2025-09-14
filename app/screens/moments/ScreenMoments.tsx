@@ -156,7 +156,7 @@ const ScreenMoments = () => {
                 primaryColor={lightDarkTheme.primaryText}
                 primaryOverlayColor={lightDarkTheme.overlayBackground}
                 friendId={selectedFriend?.id}
-                scrollTo={scrollTo}
+                scrollToIndex={scrollTo}
                 categoryColorsMap={categoryColorsMap}
               />
             )}

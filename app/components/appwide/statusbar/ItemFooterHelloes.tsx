@@ -38,17 +38,10 @@ const ItemFooterHelloes: React.FC<Props> = ({
   const [currentIndex, setCurrentIndex] = useState(false);
 
   const fontStyle = AppFontStyles.welcomeText;
-  //   useEffect(() => {
-  //     if (location) {
-  //       console.log(`location in footer`, location.title);
-  //     }
-  //   }, [location]);
-
+ 
  
   const footerPaddingBottom = 20;
-  // const footerIconSize = 28;
-//   console.log(`totalitemcount`, totalItemCount);
-// console.log(`data length`, data.length)
+ 
   const totalCount = totalItemCount
     ? totalItemCount
     : data?.length
@@ -153,8 +146,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    zIndex: 1,
-    // backgroundColor: "pink",
+    zIndex: 1, 
     paddingHorizontal: 10,
     marginBottom: 10,
   },

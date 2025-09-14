@@ -1,7 +1,8 @@
+
+import React, { useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+import manualGradientColors from "@/src/hooks/StaticColors";
+
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -19,9 +20,6 @@ const PickHelloDate = ({
   modalVisible,
   setModalVisible,
 }: Props) => {
-  useEffect(() => {
-    console.log(`modalvisivle:`, modalVisible);
-  }, [modalVisible]);
   const renderButtonStyle = useCallback(
     () => {
       return (
@@ -58,7 +56,7 @@ const PickHelloDate = ({
     <>
       <Pressable
         onPress={() => setModalVisible(true)}
-        style={[styles.container ]}
+        style={[styles.container]}
       >
         {renderButtonStyle()}
       </Pressable>
@@ -88,7 +86,7 @@ const PickHelloDate = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 50, 
+    height: 50,
     zIndex: 60000,
     paddingHorizontal: 20,
     flexDirection: "row",

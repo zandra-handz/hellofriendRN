@@ -1,7 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import LoadingBlock from "../appwide/spinner/LoadingBlock";
+import { useNavigation } from "@react-navigation/native"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";

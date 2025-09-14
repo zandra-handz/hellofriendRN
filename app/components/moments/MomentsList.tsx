@@ -12,24 +12,15 @@ import EscortBarMinusWidth from "./EscortBarMinusWidth";
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
-import LargeCornerLizard from "./LargeCornerLizard"; 
+import LargeCornerLizard from "./LargeCornerLizard";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SwipeDown from "./SwipeDown";
 import Animated, {
-  // LinearTransition,
   JumpingTransition,
-  // CurvedTransition,
-  // EntryExitTransition,
-  // SequencedTransition,
-  // FadingTransition,
   useSharedValue,
   useAnimatedRef,
   useAnimatedScrollHandler,
   withTiming,
-  // runOnJS,
-  // runOnUI,
-  // scrollTo,
-  // Easing,
   FadeOut,
   FadeIn,
   withSpring,
@@ -39,35 +30,28 @@ import Animated, {
 
 const MomentsList = ({
   friendColor,
-
   primaryBackgroundColor,
- 
   primaryColor,
   primaryOverlayColor,
   darkerOverlayColor,
-  lighterOverlayColor, 
-  navigateBack, // escort bar
-
+  lighterOverlayColor,
+  navigateBack,
   categoryNames,
   categoryStartIndices,
   capsuleList,
   preAdded,
   updateCapsule,
   navigateToMomentView,
-
   friendId,
-  scrollTo,
+  scrollToIndex,
   categoryColorsMap,
 }) => {
   useEffect(() => {
-    if (scrollTo) {
-      scrollToCategoryStart(scrollTo);
+    if (scrollToIndex) {
+      scrollToCategoryStart(scrollToIndex);
     }
-  }, [scrollTo]);
+  }, [scrollToIndex]);
 
-  // const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
-  //   listData: capsuleList,
-  // });
   const ITEM_HEIGHT = 80;
   const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
@@ -168,7 +152,7 @@ const MomentsList = ({
 
   useEffect(() => {
     if (capsuleList.length < 1) {
-      console.log("capsule list is empty");
+      // console.log("capsule list is empty");
       listVisibility.value = withTiming(0);
     } else if (capsuleList.length === 1) {
       listVisibility.value = withTiming(1);
@@ -177,7 +161,7 @@ const MomentsList = ({
 
   useEffect(() => {
     if (!memoizedMomentData || memoizedMomentData.length < 1) {
-      console.log("memoized data triggerd this!", memoizedMomentData);
+      // console.log("memoized data triggerd this!", memoizedMomentData);
       listVisibility.value = withTiming(0);
     }
   }, [memoizedMomentData]);
@@ -187,7 +171,6 @@ const MomentsList = ({
 
   useFocusEffect(
     useCallback(() => {
-      console.log("running useFocusEffect");
       if (capsuleList.length > 0) {
         listVisibility.value = withSpring(1, { duration: 200 }); //800
 
@@ -199,39 +182,46 @@ const MomentsList = ({
   );
 
   const scrollY = useSharedValue(0);
+const pullCount = useSharedValue(0); // track number of pulls
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      const y = event.contentOffset.y;
-      scrollY.value = event.contentOffset.y;
-      if (y < 10) {
-        // if less than ten pixels (on the top of the screen)
-        // listVisibility.value = withTiming(1);
+const scrollHandler = useAnimatedScrollHandler({
+  onScroll: (event) => {
+    const y = event.contentOffset.y;
+    scrollY.value = y;
+
+    if (y < 10) {
+      // only trigger categoryNavVisibility if user has pulled twice
+      if (pullCount.value >= 2) {
         categoryNavVisibility.value = withTiming(1);
-      } else {
-        categoryNavVisibility.value = withTiming(1, { duration: 1000 });
       }
-    },
-    onBeginDrag: (event) => {
-      if (listVisibility.value < 1) {
-        listVisibility.value = withSpring(1);
-      }
-    },
-    onEndDrag: (event) => {
-      if (event.contentOffset.y <= 0) {
+    } else {
+      categoryNavVisibility.value = withTiming(1, { duration: 1000 });
+    }
+  },
+  onBeginDrag: (event) => {
+    if (listVisibility.value < 1) {
+      listVisibility.value = withSpring(1);
+    }
+  },
+  onEndDrag: (event) => {
+    if (event.contentOffset.y <= 0) {
+      pullCount.value += 1; // increment pull count when pulled to top
+
+      if (pullCount.value >= 2) {
         listVisibility.value = withSpring(0);
+        // reset counter so it doesn’t keep firing
+        pullCount.value = 0;
       }
-      categoryNavVisibility.value = withTiming(1, { duration: 3000 });
-    },
-  });
+    }
+
+    categoryNavVisibility.value = withTiming(1, { duration: 3000 });
+  },
+});
 
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <Pressable
         onPress={() => navigateToMomentView({ moment: item, index: index })}
-        // onPress={() =>
-        //   navigation.navigate("MomentView", { moment: item, index: index })
-        // }
         style={({ pressed }) => ({
           flex: 1,
           flexDirection: "row",
@@ -244,8 +234,7 @@ const MomentsList = ({
           opacity: pressed ? 0.6 : 1,
         })}
       >
-        <MomentItem 
- 
+        <MomentItem
           primaryColor={primaryColor}
           primaryBackgroundColor={primaryBackgroundColor}
           darkerOverlayColor={darkerOverlayColor}
@@ -309,8 +298,8 @@ const MomentsList = ({
         </Animated.View>
       )}
 
-      <MomentsAdded 
-        overlayBackgroundColor={primaryOverlayColor} 
+      <MomentsAdded
+        overlayBackgroundColor={primaryOverlayColor}
         primaryColor={primaryColor}
         darkerOverlayColor={darkerOverlayColor}
         capsuleList={capsuleList}
@@ -329,22 +318,14 @@ const MomentsList = ({
       >
         <Animated.View
           style={{ flex: 1, alignItems: "center" }}
-          entering={SlideInRight.duration(200).springify(1000)}
+          entering={SlideInRight.duration(300).springify(300)}
         >
           <Animated.FlatList
             fadingEdgeLength={0}
             itemLayoutAnimation={JumpingTransition}
-            // itemLayoutAnimation={CurvedTransition}
-            // itemLayoutAnimation={EntryExitTransition}
-            //  itemLayoutAnimation={SequencedTransition}
-            // itemLayoutAnimation={FadingTransition}
             ref={flatListRef}
             data={memoizedMomentData}
             estimatedItemSize={83}
-            // data={capsuleList}
-            // fadingEdgeLength={20}
-            // viewabilityConfig={viewabilityConfig}
-            //  onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfigCallbackPairs={
               viewabilityConfigCallbackPairs.current
             }
@@ -378,13 +359,11 @@ const MomentsList = ({
         </Animated.View>
       </View>
 
-      {/* {!isKeyboardVisible && ( */}
       <>
         {categoryNavigatorVisible &&
           categoryColorsMap &&
           Object.keys(categoryColorsMap).length > 0 && (
             <CategoryNavigator
-          
               primaryColor={primaryColor}
               backgroundColor={primaryBackgroundColor}
               onClose={() => setCategoryNavigatorVisible(false)}
@@ -428,7 +407,7 @@ const MomentsList = ({
               <EscortBarMinusWidth
                 backgroundColor={primaryBackgroundColor}
                 overlayColor={primaryOverlayColor}
-                primaryColor={primaryColor}  
+                primaryColor={primaryColor}
                 navigateBack={navigateBack}
                 onPress={() => setCategoryNavigatorVisible(true)}
               />
@@ -436,7 +415,6 @@ const MomentsList = ({
           )}
         </View>
       </>
-      {/* )} */}
     </View>
   );
 };

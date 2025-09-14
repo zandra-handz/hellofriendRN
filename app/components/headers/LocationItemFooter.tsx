@@ -33,6 +33,7 @@ const LocationItemFooter: React.FC<Props> = ({
   currentIndexValue,
   visibilityValue,
   height,
+  scrollTo,
   totalItemCount,
   extraData, // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
  
@@ -46,7 +47,7 @@ const LocationItemFooter: React.FC<Props> = ({
   themeAheadOfLoading,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(false);
-
+ 
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
   // console.log(`extra data`, extraData);
@@ -136,79 +137,27 @@ const LocationItemFooter: React.FC<Props> = ({
         ]}
       >
         <EscortBarMoments
+    
           primaryColor={primaryColor}
           primaryBackground={backgroundColor}
           onLeftPress={handleScrollToPrev}
           onRightPress={handleScrollToNext}
           includeSendButton={true}
+          onSendPress={onRightPressSecondAction}
           children={
-            <>
-              <>
-                {extraData &&
-                  extraData?.userAddress &&
-                  extraData?.friendAddress && (
                     <View
-                      style={{
-                        flex: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text
-                        style={[
-                          welcomeTextStyle,
-                          { color: primaryColor, fontSize: 44 },
-                        ]}
-                      >
-                        {currentIndex + 1}
-                        <Text
-                          style={[
-                            welcomeTextStyle,
-                            { color: primaryColor, fontSize: 22 },
-                          ]}
-                        >
-                          /{data.length}{" "}
-                          {/* /{totalCount}{" "}{isPartialData && "loaded"} */}
-                        </Text>
-                      </Text>
-                    </View>
-                  )}
-                {!extraData && (
-                  <View
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text
-                      style={[
-                        welcomeTextStyle,
-                        { color: primaryColor, fontSize: 44 },
-                      ]}
-                    >
-                      {currentIndex + 1}
-                      <Text
-                        style={[
-                          welcomeTextStyle,
-                          { color: primaryColor, fontSize: 22 },
-                        ]}
-                      >
-                        {/* /{data.length}{" "} */}/{totalCount}{" "}
-                        {isPartialData ? "loaded" : "total"}
-                      </Text>
-                    </Text>
-                  </View>
-                )}
-              </>
-
-              <>
-                <View style={[styles.divider, dividerStyle]} />
-                <View style={{ flex: 1 }}>
-                  <>
+                       style={{
+                         alignItems: "center",
+                         justifyContent: "center",
+                       }}
+                     >
+                   
                     {extraData &&
                       extraData?.userAddress &&
-                      extraData?.friendAddress && (
+                      extraData?.friendAddress &&
+                       (
+                        <View style={{flex: 1, backgroundColor: 'orange', width: 60}}>
+
                         <LocationTravelTimes
                           userId={userId}
                           friendId={friendId}
@@ -218,51 +167,11 @@ const LocationItemFooter: React.FC<Props> = ({
                           themeAheadOfLoading={themeAheadOfLoading}
                           primaryColor={primaryColor}
                         />
+                        </View>
                       )}
-                    {/* {!extraData && (
-                      <Pressable
-                        onPress={handleRightPress}
-                        style={({ pressed }) => ({
-                          flex: 1,
-                          alignItems: "center",
-                          justifyContent: "center",
-                          opacity: pressed ? 0.6 : 1,
-                        })}
-                      >
-                        <MaterialCommunityIcons
-                          name="send"
-                          size={50}
-                          color={primaryColor}
-                        />
-                      </Pressable>
-                    )} */}
-                  </>
+               
                 </View>
-              </>
-
-              {extraData && (
-                <>
-                  <View style={[styles.divider, dividerStyle]} />
-                  <View style={{ flex: 1 }}>
-                    <Pressable
-                      onPress={onRightPressSecondAction}
-                      style={({ pressed }) => ({
-                        flex: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        opacity: pressed ? 0.6 : 1,
-                      })}
-                    >
-                      <MaterialCommunityIcons
-                        name="send"
-                        size={50}
-                        color={primaryColor}
-                      />
-                    </Pressable>
-                  </View>
-                </>
-              )}
-            </>
+             
           }
         />
       </Animated.View>
@@ -274,9 +183,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    position: "absolute",
-    bottom: 0,
-    zIndex: 1,
+    zIndex: 1, 
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   divider: {
     marginVertical: 10,

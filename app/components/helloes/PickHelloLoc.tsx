@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import React, { useEffect, useCallback } from "react";
+import React, {  useCallback } from "react";
 
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -13,14 +13,10 @@ const PickHelloLoc = ({
   primaryColor,
   selected,
   onChange,
-  faveLocations,
-  savedLocations,
   modalVisible,
   setModalVisible,
   clearLocation,
 }: Props) => {
-
- 
   const PADDING_HORIZONTAL = 20;
   const renderButtonStyle = useCallback(
     () => {
@@ -34,12 +30,12 @@ const PickHelloLoc = ({
             justifyContent: "start",
             height: "100%",
             flexDirection: "row",
-backgroundColor: 'orange',
+            backgroundColor: "orange",
             width: "80%",
           }}
         >
           <MaterialCommunityIcons
-            name={"map-marker"}
+            name={"store-marker"}
             size={20}
             color={primaryColor}
             style={{ marginRight: 10 }}
@@ -58,14 +54,31 @@ backgroundColor: 'orange',
   );
   return (
     <>
-      <View style={{ flexDirection: "row", backgroundColor: 'teal', width: '100%', justifyContent: 'space-between', paddingRight: PADDING_HORIZONTAL, alignItems: 'center'}}>
+      <View
+        style={{
+          flexDirection: "row",
+          backgroundColor: "teal",
+          width: "100%",
+          justifyContent: "space-between",
+          paddingRight: PADDING_HORIZONTAL,
+          alignItems: "center",
+        }}
+      >
         <Pressable
           onPress={() => setModalVisible(true)}
-          style={[styles.container, {paddingHorizontal: PADDING_HORIZONTAL}]}
+          style={[styles.container, { paddingHorizontal: PADDING_HORIZONTAL }]}
         >
           {renderButtonStyle()}
         </Pressable>
-        <Pressable onPress={clearLocation} style={{ width: 'auto', height: '100%', flexDirection: 'column', justifyContent: 'center'}}>
+        <Pressable
+          onPress={clearLocation}
+          style={{
+            width: "auto",
+            height: "100%",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           <MaterialIcons name={"location-off"} color={primaryColor} size={20} />
         </Pressable>
       </View>
@@ -87,9 +100,8 @@ backgroundColor: 'orange',
 
 const styles = StyleSheet.create({
   container: {
- 
     height: 50,
-    zIndex: 60000, 
+    zIndex: 60000,
     flexDirection: "row",
   },
   section: {

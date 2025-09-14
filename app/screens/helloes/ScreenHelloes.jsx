@@ -7,8 +7,8 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
  
-import CalendarChart from "@/app/components/home/CalendarChart";
-import HelloesListNew from "@/app/components/helloes/HelloesListNew";
+import CalendarChart from "@/app/components/home/CalendarChart"; 
+import HelloesList from "@/app/components/helloes/HelloesList";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -169,8 +169,7 @@ const ScreenHelloes = () => {
             {selectedFriend &&
               helloesDataFiltered &&
               helloesDataFiltered.length > 0 && (
-                <HelloesListNew
-                  // friendName={selectedFriend.name}
+                <HelloesList 
                   triggerScroll={triggerScroll}
                   helloesListFull={helloesDataFiltered}
                   isFetchingNextPage={isFetchingNextPage}

@@ -147,7 +147,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             <ScrollView
               onScroll={handleScroll}
               scrollEventThrottle={16}
-              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
               style={{ width: "100%" }}
               contentContainerStyle={{
                 paddingHorizontal: 0,

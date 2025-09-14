@@ -4,12 +4,7 @@ import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
-  LinearTransition,
-  // JumpingTransition,
-  // CurvedTransition,
-  // EntryExitTransition,
-  // SequencedTransition,
-  // FadingTransition,
+  LinearTransition, 
 } from "react-native-reanimated";
 
 type FontStyles = {
@@ -17,8 +12,7 @@ type FontStyles = {
   subWelcomeText: string;
 };
 
-type Props = {
-  friendName: string;
+type Props = { 
   helloesListFull: object[];
   isFetchingNextPage: boolean;
   applyInPersonFilter: boolean;
@@ -28,8 +22,8 @@ type Props = {
   triggerScroll: number;
 };
 
-const HelloesListNew = ({
-  friendName,
+const HelloesList = ({
+ 
   helloesListFull,
   isFetchingNextPage,
   fetchNextPage,
@@ -141,4 +135,4 @@ const HelloesListNew = ({
   );
 };
 
-export default HelloesListNew;
+export default HelloesList;

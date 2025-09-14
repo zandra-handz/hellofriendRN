@@ -1,14 +1,14 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
-  Text, 
+  Text,
   Pressable,
   StyleSheet,
   DimensionValue,
 } from "react-native";
-
+import manualGradientColors from "@/src/hooks/StaticColors";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-  
+import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import { LinearGradient } from "expo-linear-gradient";
 interface SoonItemButtonProps {
   width: DimensionValue;
@@ -25,20 +25,22 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   width = "100%",
   date = "Tuesday, January 10",
   friendName = "N/A",
+  friendId,
   onPress = () => console.log("Soon Item button single press"),
   onDoublePress = () => console.log("Soon Item button dounle press"),
   disabled = false,
-  textColor = "white", 
-  
-  overlayColor = 'hotpink',
-  manualGradientColors,
+  textColor = "white",
+  friendList,
+  primaryBackground,
+  lighterOverlayColor,
+  darkerOverlayColor,
+  primaryColor,
+  overlayColor = "hotpink",
 }) => {
   const lastPress = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
- 
 
   const DOUBLE_PRESS_DELAY = 300;
- 
 
   const handlePress = () => {
     const now = Date.now();
@@ -62,9 +64,27 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
     lastPress.current = now;
   };
 
+  const [fontColor, setFontColor] = useState(
+    textColor
+  );
+
+  const handleChangeTextColor = () => {
+    if (textColor) {
+      setFontColor(textColor);
+    }
+  };
+
+  const handleRestoreTextColor = () => {
+    setFontColor(textColor);
+  };
   return (
-    <Pressable
+    <FriendTintPressable
+      friendList={friendList}
+      friendId={friendId}
+      startingColor={overlayColor}
       onPress={handlePress}
+      onPressIn={handleChangeTextColor}
+      onPressOut={handleRestoreTextColor}
       style={[
         styles.container,
         {
@@ -75,53 +95,49 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
       ]}
       disabled={disabled}
     >
-      <LinearGradient
-        colors={[
-        overlayColor,
-          manualGradientColors.homeDarkColor,
-        ]}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 0 }}
+      <View
         style={[
           styles.container,
-          { flex: 1, width: width, alignItems: "center", borderRadius: 20 },
+          {
+            flex: 1,
+            width: width,
+            alignItems: "center",
+            borderWidth: 2,
+            borderColor: 'transparent',
+            backgroundColor: darkerOverlayColor,
+       
+          },
         ]}
       >
- 
         <View
           style={{
             flexDirection: "row",
             width: "100%",
             height: "100%",
-            alignItems: 'center',
- 
-            padding: 10,
-            borderRadius: 10, 
+            alignItems: "center",
+          
+            padding: 10, 
           }}
         >
           <View style={[styles.calendarContainer]}>
-              <Text style={[styles.text, { color: textColor }]}> {date}
-        
-            </Text>
-
-       
+            <Text style={[styles.text, { color: fontColor }]}> {date}</Text>
           </View>
-          <Text style={[styles.text, { color: textColor }]}>
-            {friendName}</Text>
+          <Text style={[styles.text, { color: fontColor }]}>{friendName}</Text>
         </View>
-      </LinearGradient>
-    </Pressable>
+      </View>
+    </FriendTintPressable>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     alignItems: "center",
     flexDirection: "row",
     height: 50,
+    
     width: "100%",
     // padding: 10,
-    borderRadius: 14,
+borderRadius: 4,
     overflow: "hidden",
   },
   blurOverlay: {
@@ -140,7 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     // backgroundColor: "red",
     borderRadius: 20,
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
     width: "auto",
     flex: 1,
     width: "100%",

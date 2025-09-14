@@ -1,8 +1,6 @@
-import React from "react";
-
-import LocationHeartSolidSvg from "@/app/assets/svgs/location-heart-solid.svg";
-import LocationSolidSvg from "@/app/assets/svgs/location-solid.svg";
-
+import React, { useMemo } from "react";
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { MaterialIcons } from "@expo/vector-icons";
 import PickerComplexList from "./PickerComplexList";
 
 const LocationModal = ({
@@ -15,34 +13,45 @@ const LocationModal = ({
   onLocationChange,
   buttonHeight = "auto",
 }) => {
+  const locationPin = useMemo(() => {
+    return <MaterialIcons name={"bookmark"} size={20}  color={manualGradientColors.lightColor} />;
+  }, [primaryColor]);
+
+  const bookmarkedPin = useMemo(() => {
+    return (
+      <MaterialIcons
+        name={"location-pin"}
+        size={20}
+       
+        color={primaryColor}
+      />
+    );
+  }, [primaryColor]);
+
   return (
     <>
-    {modalVisible && (
-
-
-      <PickerComplexList
-        primaryColor={primaryColor}
-        title={"PICK LOCATION"}
-        containerText={
-          <LocationSolidSvg width={20} height={20} color={primaryColor} />
-        }
-        inline={true}
-        modalHeader="Select Location"
-        allowCustomEntry={true}
-        primaryOptions={faveLocations}
-        primaryOptionsHeader="Pinned"
-        primaryIcon={LocationHeartSolidSvg}
-        secondaryOptions={savedLocations}
-        secondaryOptionsHeader="All Saved"
-        secondaryIcon={LocationSolidSvg}
-        objects={true}
-        onLabelChange={onLocationChange}
-        label={selectedLocation}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        buttonHeight={buttonHeight}
-      />
-          )}
+      {modalVisible && (
+        <PickerComplexList
+          primaryColor={primaryColor}
+          title={"PICK LOCATION"}
+          containerText={locationPin}
+          inline={true}
+          modalHeader="Select Location"
+          allowCustomEntry={true}
+          primaryOptions={faveLocations}
+          primaryOptionsHeader="Pinned"
+          primaryIcon={locationPin}
+          secondaryOptions={savedLocations}
+          secondaryOptionsHeader="All Saved"
+          secondaryIcon={bookmarkedPin}
+          objects={true}
+          onLabelChange={onLocationChange}
+          label={selectedLocation}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          buttonHeight={buttonHeight}
+        />
+      )}
     </>
   );
 };
