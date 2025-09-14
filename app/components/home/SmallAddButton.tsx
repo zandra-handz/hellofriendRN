@@ -2,8 +2,7 @@ import { View,   StyleSheet } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import React from "react";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 const SmallAddButton = ({ 
   primaryBackground,

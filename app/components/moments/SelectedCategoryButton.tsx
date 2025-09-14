@@ -7,7 +7,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 type Props = {
   userChangedCategory: boolean;
   zIndex?: number;
@@ -50,8 +50,8 @@ const SelectedCategoryButton = ({
 }: Props) => {
   const { userCategories } = useCategories();
 
-  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
-  const welcomeTextStyle = appFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText;
   const { handleUpdateDefaultCategory, updateFriendDefaultCategoryMutation } =
     useUpdateDefaultCategory({ userId: userId, friendId: friendId });
 

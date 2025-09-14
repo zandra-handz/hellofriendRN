@@ -1,10 +1,10 @@
-import { View, Text, DimensionValue } from "react-native";
+import { View, Text, ScrollView, DimensionValue } from "react-native";
 import React, { useCallback, useState } from "react";
 
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 
 import LocationNumber from "./LocationNumber";
-import LocationAddress from "./LocationAddress"; 
+import LocationAddress from "./LocationAddress";
 import LocationUtilityTray from "./LocationUtilityTray";
 import Animated, {
   SharedValue,
@@ -14,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import LocationCustomerReviews from "./LocationCustomerReviews";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import Hours from "./Hours";
 
 interface LocationPageViewProps {
@@ -43,17 +43,18 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   currentDay, // object with .index and .day
   selectedDay,
   handleSelectedDay,
+  marginBottom,
+  lighterOverlayColor = "orange",
+  darkerOverlayColor,
   openModal,
   closeModal,
-  themeAheadOfLoading, 
+  themeAheadOfLoading,
   primaryColor,
   primaryBackground,
   welcomeTextStyle,
   subWelcomeTextStyle,
 }) => {
- 
-
-    const [currentIndex, setCurrentIndex] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
 
   useAnimatedReaction(
     () => currentIndexValue.value,
@@ -65,11 +66,14 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
     []
   );
 
-console.log(index);
-  const { additionalDetails } = useFetchAdditionalDetails({userId: userId, locationObject: item, enabled:Math.abs(index - currentIndex) <= 1 })
+  console.log(index);
+  const { additionalDetails } = useFetchAdditionalDetails({
+    userId: userId,
+    locationObject: item,
+    enabled: Math.abs(index - currentIndex) <= 1,
+  });
 
   const { checkIfOpen } = useLocationDetailFunctions();
-
 
   const cardScaleAnimation = useAnimatedStyle(() => ({
     transform: [{ scale: cardScaleValue.value }],
@@ -140,11 +144,9 @@ console.log(index);
 
   const [rerenderCards, setRerenderCards] = useState(null);
 
-  const handleViewDayHrs = (sD) => { 
-
+  const handleViewDayHrs = (sD) => {
     handleSelectedDay(sD);
     setRerenderCards(sD);
- 
   };
 
   const handleDelete = (item) => {
@@ -196,7 +198,7 @@ console.log(index);
           alignItems: "center",
           backgroundColor: "transparent",
           padding: 4,
-          paddingBottom: 0,
+
           borderWidth: 0,
           //   height: ITEM_HEIGHT,
           width: width,
@@ -204,144 +206,126 @@ console.log(index);
       ]}
     >
       <View
-        style={{
-          backgroundColor: primaryBackground,
-          padding: 10,
-          borderRadius: 10,
-          borderRadius: 40,
-          width: "100%",
-          height: "100%",
-          zandleviewday: 1,
-          overflow: "hidden",
-        }}
+        style={[
+          {
+            width: "100%",
+            height: "100%",
+          },
+        ]}
       >
         <View
-          style={{
-            flexDirection: "column",
-            flexWrap: "wrap",
-            width: "100%",
-            paddingHorizontal: 0,
-            paddingTop: 20,
-          }}
+          style={[
+            {
+              padding: 20,
+              borderRadius: 40,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              flex: 1,
+              marginBottom: marginBottom,
+              zIndex: 1,
+              overflow: "hidden",
+              backgroundColor: lighterOverlayColor,
+            },
+          ]}
         >
-          <Text
-            numberOfLines={2}
-            style={[
-              welcomeTextStyle,
-              {
-                color: primaryColor,
-                flexDirection: "row",
-                width: "90%",
-                flexWrap: "wrap",
-              },
-            ]}
-          >
-            {item.title}
-          </Text>
+          <View style={{ height: "90%", width: "100%" }}>
+               <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
+                <View>
+            <Text
+              numberOfLines={2}
+              style={[
+                welcomeTextStyle,
+                {
+                  color: primaryColor,
+                  flexDirection: "row",
+                  width: "90%",
+                  flexWrap: "wrap",
+                },
+              ]}
+            >
+              {item.title}
+            </Text>
 
-          <LocationAddress
-            address={item?.address}
+            <LocationAddress
+              address={item?.address}
+              primaryColor={primaryColor}
+              subWelcomeTextStyle={subWelcomeTextStyle}
+            />
+          </View>
+          <LocationNumber
+            phoneNumber={additionalDetails?.phone}
             primaryColor={primaryColor}
             subWelcomeTextStyle={subWelcomeTextStyle}
           />
-        </View>
-        <LocationNumber
-          phoneNumber={additionalDetails?.phone}
-          primaryColor={primaryColor}
-          subWelcomeTextStyle={subWelcomeTextStyle}
-        />
 
-        <View style={{}}>
-          <RenderOpenStatus />
-        </View>
-        <LocationUtilityTray
-          themeAheadOfLoading={themeAheadOfLoading}
-          primaryColor={primaryColor}
-          onAddPress={onAddPress}
-          onRemovePress={onRemovePress}
-          userId={userId}
-          friendId={friendId}
-          friendName={friendName}
-          location={item}
-          openEditModal={openModal}
-          closeEditModal={closeModal}
-        />
-        {additionalDetails && (
-          <>
-            <Text
-              numberOfLines={2}
-              style={[
-                welcomeTextStyle,
-                {
-                  color: primaryColor,
-                  flexDirection: "row",
-                  width: "90%",
-                  flexWrap: "wrap",
-                },
-              ]}
-            >
-              Reviews
-            </Text>
-            <View style={{ marginVertical: 10 }}>
-              <LocationCustomerReviews
-                formatDate={formatDate}
-                reviews={additionalDetails.reviews}
-                primaryColor={primaryColor}
-                primaryBackground={primaryBackground}
-              />
-            </View>
-
-            <Text
-              numberOfLines={2}
-              style={[
-                welcomeTextStyle,
-                {
-                  color: primaryColor,
-                  flexDirection: "row",
-                  width: "90%",
-                  flexWrap: "wrap",
-                },
-              ]}
-            >
-              Hours
-            </Text>
-            <View style={{ marginVertical: 10 }}>
-              {renderHoursComponent()}
-
-              {!additionalDetails?.hours?.weekday_text && (
-                <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
-                  No hours available
-                </Text>
-              )}
-            </View>
-
-            {/* 
-            {additionalDetails && additionalDetails?.hours && (
-              <View style={{marginTop: 70}}>
-              <LocationHoursOfOperation
-                location={item}
-                data={additionalDetails?.hours}
-                currentDayDrilledThrice={dayOfWeek}
-              />
-              
-                
+          <View style={{}}>
+            <RenderOpenStatus />
+          </View>
+          <LocationUtilityTray
+            themeAheadOfLoading={themeAheadOfLoading}
+            primaryColor={primaryColor}
+            onAddPress={onAddPress}
+            onRemovePress={onRemovePress}
+            userId={userId}
+            friendId={friendId}
+            friendName={friendName}
+            location={item}
+            openEditModal={openModal}
+            closeEditModal={closeModal}
+          />
+          {additionalDetails && (
+            <>
+              <Text
+                numberOfLines={2}
+                style={[
+                  welcomeTextStyle,
+                  {
+                    color: primaryColor,
+                    flexDirection: "row",
+                    width: "90%",
+                    flexWrap: "wrap",
+                  },
+                ]}
+              >
+                Reviews
+              </Text>
+              <View style={{ marginVertical: 10 }}>
+                <LocationCustomerReviews
+                  formatDate={formatDate}
+                  reviews={additionalDetails.reviews}
+                  primaryColor={primaryColor}
+                  primaryBackground={primaryBackground}
+                />
               </View>
-            )} */}
-          </>
-        )}
-        {/* <EditPencilOutlineSvg
-          height={20}
-          width={20}
-          onPress={handleEditLocation}
-          color={themeStyles.genericText.color}
-        /> */}
-        {/* <SlideToDeleteHeader
-          itemToDelete={item}
-          onPress={handleDelete}
-          sliderWidth={"100%"}
-          targetIcon={TrashOutlineSvg}
-          sliderTextColor={themeStyles.primaryText.color}
-        /> */}
+
+              <Text
+                numberOfLines={2}
+                style={[
+                  welcomeTextStyle,
+                  {
+                    color: primaryColor,
+                    flexDirection: "row",
+                    width: "90%",
+                    flexWrap: "wrap",
+                  },
+                ]}
+              >
+                Hours
+              </Text>
+              <View style={{ marginVertical: 10 }}>
+                {renderHoursComponent()}
+
+                {!additionalDetails?.hours?.weekday_text && (
+                  <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+                    No hours available
+                  </Text>
+                )}
+              </View>
+            </>
+          )}
+          </ScrollView>
+          </View>
+        </View>
       </View>
     </Animated.View>
     // </SafeViewAndGradientBackground>

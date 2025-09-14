@@ -1,8 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import SmallAddButton from "./SmallAddButton"; 
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 const NoFriendsMessageUI = ({
  
   primaryColor,

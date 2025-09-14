@@ -6,7 +6,7 @@ import { useHelloes } from "@/src/context/HelloesContext";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage"; 
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenHelloView = () => {
@@ -82,7 +82,7 @@ const ScreenHelloView = () => {
         data={helloesDataFiltered}
         children={(props) => (
           <HelloViewPage
-            welcomeTextStyle={appFontStyles.welcomeText}
+            welcomeTextStyle={AppFontStyles.welcomeText}
             primaryColor={lightDarkTheme.primaryText}
          
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}

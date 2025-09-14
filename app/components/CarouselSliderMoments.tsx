@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, {   useCallback } from "react";
 import { useWindowDimensions } from "react-native"; 
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   useAnimatedRef, 
   useAnimatedScrollHandler,
@@ -111,7 +111,7 @@ const CarouselSliderMoments = ({
         lighterOverlayColor={
           lightDarkTheme.lighterOverlayBackground 
         }
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
         userId={userId}
         friendId={friendId}
         categoryColorsMap={categoryColorsMap}
@@ -169,7 +169,7 @@ const CarouselSliderMoments = ({
           scrollTo={scrollTo}
           primaryColor={lightDarkTheme.primaryText}
           primaryBackground={lightDarkTheme.primaryBackground}
-          fontStyle={appFontStyles.welcomeText}
+          fontStyle={AppFontStyles.welcomeText}
           height={50} // matches escort read only bar inside
           marginBottom={10} // eyeballed to match finalize styling honestly
           visibilityValue={floaterItemsVisibility}

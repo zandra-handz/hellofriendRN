@@ -16,7 +16,7 @@ import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import MomentFocusTray from "./MomentFocusTray";
 type Props = {
   screenCameFromToParent: number;
@@ -72,8 +72,8 @@ const MomentWriteEditView = ({
     useAppNavigations();
 
 
-    const welcomeTextStyle = appFontStyles.welcomeText;
-    const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+    const welcomeTextStyle = AppFontStyles.welcomeText;
+    const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");

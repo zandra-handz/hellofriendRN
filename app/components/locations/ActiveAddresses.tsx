@@ -2,7 +2,7 @@ import { View } from "react-native";
 import React, { useCallback, useState, useEffect } from "react";
 import OverlayLargeButton from "../appwide/button/OverlayLargeButton";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import IsCurrentLocation from "./IsCurrentLocation";
@@ -21,7 +21,7 @@ import useCreateUserAddress from "@/src/hooks/useCreateUserAddress";
 import useDeleteUserAddress from "@/src/hooks/useDeleteUserAddress";
 import useUpdateUserDefaultAddress from "@/src/hooks/useUpdatreUserAddress";
 
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 import UserAddressChanger from "./UserAddressChanger";
 import FriendAddressChanger from "./FriendAddressChanger";
@@ -43,7 +43,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   overlayColor,
   primaryBackground,
 }) => {
-  const welcomeTextStyle = appFontStyles.welcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText;
   const [isUserAddressCurrent, setIsUserAddressCurrent] = useState(false);
 
   const { userAddresses } = useStartingUserAddresses({ userId: userId });

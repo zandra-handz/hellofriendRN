@@ -8,7 +8,7 @@ import FooterButtonIconVersion from "./FooterButtonIconVersion";
 // import AddressesModal from "./AddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 const MapScreenFooter = ({
   userAddress,

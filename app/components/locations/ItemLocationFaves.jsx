@@ -20,9 +20,9 @@ const ItemLocationFaves = ({ horizontal = true, singleLineScroll = true, contain
         }
     }, [locationList, friendDashboardData]);
 
-    useEffect(() => {
-        console.log('Favorite Locations:', faveLocationList); // Logging faveLocationList
-    }, [faveLocationList]);
+    // useEffect(() => {
+    //     console.log('Favorite Locations:', faveLocationList); // Logging faveLocationList
+    // }, [faveLocationList]);
 
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);

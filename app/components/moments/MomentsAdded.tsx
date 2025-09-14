@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react"; 
 import { useNavigation } from "@react-navigation/native";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   SlideInDown,
   SharedValue,
@@ -78,7 +78,7 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({
           >
             <Text
               style={[ 
-                appFontStyles.subWelcomeText,
+                AppFontStyles.subWelcomeText,
                 { color: primaryColor, fontSize: 14 },
               ]}
             >
@@ -94,7 +94,7 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({
             >
               <Text
                 style={[ 
-                    appFontStyles.subWelcomeText,
+                    AppFontStyles.subWelcomeText,
                   { color: primaryColor, fontSize: 14 },
                 ]}
               >
@@ -108,7 +108,7 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({
                 >
                   <Text
                     style={[ 
-                        appFontStyles.subWelcomeText,
+                        AppFontStyles.subWelcomeText,
                       {
                         color: primaryColor,
                         marginLeft: 10,

@@ -7,7 +7,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, {
   useSharedValue,

@@ -17,8 +17,8 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
- import { manualGradientColors } from "@/src/hooks/StaticColors";
- import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+ import { AppFontStyles } from "@/src/hooks/StaticFonts";
  import { useFriendDash } from "@/src/context/FriendDashContext";
 const SelectedFriendFooter = ({
   userId,
@@ -33,7 +33,7 @@ const SelectedFriendFooter = ({
 }) => {
  
 const { friendDash } = useFriendDash();
-  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { themeAheadOfLoading,  resetTheme } =
     useFriendStyle();
 const { deselectFriend} = useSelectedFriend();

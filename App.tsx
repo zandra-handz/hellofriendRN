@@ -232,22 +232,23 @@ export default Sentry.wrap(function App() {
 
   return (
     // <ShareIntentProvider>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <UserProvider>
-          <UserSettingsProvider>
-            <FriendListProvider>
-              <UpcomingHelloesProvider>
-                <CategoriesProvider>
-                  <UserStatsProvider>
-                    <SelectedFriendProvider>
-                      <FriendDashProvider>
-                        <CapsuleListProvider>
-                          <LocationsProvider>
-                            <HelloesProvider>
-                              <SelectedFriendStatsProvider>
-                                {/* <MessageContextProvider> */}
-                                <SafeAreaProvider>
+
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+        <UserSettingsProvider>
+          <FriendListProvider>
+            <UpcomingHelloesProvider>
+              <CategoriesProvider>
+                <UserStatsProvider>
+                  <SelectedFriendProvider>
+                    <FriendDashProvider>
+                      <CapsuleListProvider>
+                        <LocationsProvider>
+                          <HelloesProvider>
+                            <SelectedFriendStatsProvider>
+                              {/* <MessageContextProvider> */}
+                              <GestureHandlerRootView style={{ flex: 1 }}>
+                                {/* <SafeAreaProvider> */}
                                   <LDThemeProvider>
                                     <RootSiblingParent>
                                       <DeviceLocationProvider>
@@ -257,22 +258,22 @@ export default Sentry.wrap(function App() {
                                       </DeviceLocationProvider>
                                     </RootSiblingParent>
                                   </LDThemeProvider>
-                                </SafeAreaProvider>
-                                {/* </MessageContextProvider> */}
-                              </SelectedFriendStatsProvider>
-                            </HelloesProvider>
-                          </LocationsProvider>
-                        </CapsuleListProvider>
-                      </FriendDashProvider>
-                    </SelectedFriendProvider>
-                  </UserStatsProvider>
-                </CategoriesProvider>
-              </UpcomingHelloesProvider>
-            </FriendListProvider>
-          </UserSettingsProvider>
-        </UserProvider>
-      </QueryClientProvider>
-    </GestureHandlerRootView>
+                                {/* </SafeAreaProvider> */}
+                              </GestureHandlerRootView>
+                              {/* </MessageContextProvider> */}
+                            </SelectedFriendStatsProvider>
+                          </HelloesProvider>
+                        </LocationsProvider>
+                      </CapsuleListProvider>
+                    </FriendDashProvider>
+                  </SelectedFriendProvider>
+                </UserStatsProvider>
+              </CategoriesProvider>
+            </UpcomingHelloesProvider>
+          </FriendListProvider>
+        </UserSettingsProvider>
+      </UserProvider>
+    </QueryClientProvider>
     // </ShareIntentProvider>
   );
   // };
@@ -449,17 +450,17 @@ export const linking = {
     });
 
     // 4️⃣ Optional test deep link
-    const testTimeout = setTimeout(() => {
-      const testUrl = `${Constants.expoConfig?.scheme}://share?sharedUrl=test`;
-      console.log("Test deep link fired:", testUrl);
-      listener(testUrl);
-    }, 5000);
+    // const testTimeout = setTimeout(() => {
+    //   const testUrl = `${Constants.expoConfig?.scheme}://share?sharedUrl=test`;
+    //   console.log("Test deep link fired:", testUrl);
+    //   listener(testUrl);
+    // }, 5000);
 
-    return () => {
-      urlSub.remove();
-      shareSub.remove();
-      clearTimeout(testTimeout);
-    };
+    // return () => {
+    //   urlSub.remove();
+    //   shareSub.remove();
+    //   clearTimeout(testTimeout);
+    // };
   },
 };
 

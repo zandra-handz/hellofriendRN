@@ -9,7 +9,7 @@ import React, {
 import LoadingBlock from "../appwide/spinner/LoadingBlock";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
 // import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; // moved to parent

@@ -1,4 +1,4 @@
-export const manualGradientColors = {
+const manualGradientColors = {
   darkColor: "#4caf50",
   lightColor: "#a0f143",
   lighterLightColor: "#b2f45c",
@@ -6,3 +6,6 @@ export const manualGradientColors = {
   homeDarkColor: "#000002",
   homeLightColor: "#163805",
 };
+
+
+export default manualGradientColors;

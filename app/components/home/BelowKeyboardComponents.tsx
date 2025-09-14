@@ -2,8 +2,8 @@ import React from "react";
 import { View } from "react-native";
 import AllHome from "./AllHome";
 import SelectedFriendHome from "./SelectedFriendHome";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import Animated, {
@@ -39,8 +39,8 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
 }) => {
   const { friendDash, loadingDash } = useFriendDash();
   const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
-  const welcomeTextStyle = appFontStyles.welcomeText;
-  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   return (
     <Animated.View
       entering={FadeInUp}

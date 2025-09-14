@@ -14,7 +14,7 @@ import * as Sharing from "expo-sharing";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useDeleteImage from "@/src/hooks/ImageCalls/useDeleteImage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenImageView = () => {
   const route = useRoute();
   const startingIndex = route.params?.index ?? null;
@@ -82,7 +82,7 @@ const ScreenImageView = () => {
         data={imageList}
         children={(props) => (
           <ImageViewPage
-            welcomeTextStyle={appFontStyles.welcomeText}
+            welcomeTextStyle={AppFontStyles.welcomeText}
             primaryColor={lightDarkTheme.primaryText}
             {...props}
           />
@@ -92,7 +92,7 @@ const ScreenImageView = () => {
         primaryColor={lightDarkTheme.primaryText}
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
         themeAheadOfLoading={themeAheadOfLoading} 
       /> 
     </SafeViewAndGradientBackground>

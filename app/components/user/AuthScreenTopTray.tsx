@@ -3,7 +3,7 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import Animated, { SlideInUp, SlideOutUp } from "react-native-reanimated";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 type Props = {

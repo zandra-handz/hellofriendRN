@@ -13,7 +13,7 @@
 //});
 import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 import { Octicons } from "@expo/vector-icons";
 import SearchBarGoogleAddress from "./SearchBarGoogleAddress";

@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import React, { useEffect, useCallback } from "react";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

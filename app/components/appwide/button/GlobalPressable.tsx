@@ -13,7 +13,7 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 type Props = {
   onPress?: () => void;

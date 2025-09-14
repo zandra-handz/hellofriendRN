@@ -3,10 +3,10 @@ import { Pressable, Text, StyleSheet, View } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import Animated, {
   LinearTransition,
   SlideInDown,
@@ -33,8 +33,8 @@ const AllHome = ({
   const { upcomingHelloes } = useUpcomingHelloes();
   const { selectFriend } = useSelectedFriend();
 
-  const welcomeTextStyle = appFontStyles.welcomeText;
-  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;

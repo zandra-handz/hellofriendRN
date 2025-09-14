@@ -10,7 +10,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
  
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
- import { appFontStyles } from "@/src/hooks/StaticFonts"; 
+ import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
   
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
  import { useFriendList } from "@/src/context/FriendListContext";
@@ -132,7 +132,7 @@ const CategoryFriendHistoryList = ({
               }}
             >
               <Text
-                style={[ appFontStyles.subWelcomeText, { color: primaryColor}]}
+                style={[ AppFontStyles.subWelcomeText, { color: primaryColor}]}
               >
                 History {getCapsuleCount(completedCapsuleCount)}
               </Text>

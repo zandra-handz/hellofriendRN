@@ -4,7 +4,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext"; 
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
@@ -31,7 +31,7 @@ const ScreenAddHello = () => {
         userId={user?.id}
         primaryColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.overlayBackground}
-        fontStyle={appFontStyles.welcomeText} 
+        fontStyle={AppFontStyles.welcomeText} 
       />
     </SafeViewAndGradientBackground>
   );

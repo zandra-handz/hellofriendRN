@@ -19,7 +19,7 @@ import {
 import { findNodeHandle } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 

@@ -2,7 +2,7 @@ import { View, Pressable } from "react-native";
 import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   LinearTransition,
   // JumpingTransition,
@@ -46,16 +46,16 @@ const HelloesListNew = ({
 
   const fontStyles: FontStyles = useMemo(() => {
     return {
-      welcomeText: appFontStyles?.welcomeText ?? {
+      welcomeText: AppFontStyles?.welcomeText ?? {
         fontSize: 18,
         fontWeight: "600",
       },
-      subWelcomeText: appFontStyles?.subWelcomeText ?? {
+      subWelcomeText: AppFontStyles?.subWelcomeText ?? {
         fontSize: 14,
         color: "orange",
       },
     };
-  }, [appFontStyles]);
+  }, [AppFontStyles]);
   useEffect(() => {
     if (triggerScroll) {
       scrollToHello(triggerScroll - 1); // PARENT ADDS ONE, THIS COMPONENT REMOVES IT BEFORE SCROLLING; index 0 won't trigger a scroll

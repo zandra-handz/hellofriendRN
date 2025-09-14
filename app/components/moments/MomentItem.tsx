@@ -15,9 +15,9 @@ import Animated, {
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-  import { appFontStyles } from "@/src/hooks/StaticFonts";
+  import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { Moment } from "@/src/types/MomentContextTypes";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
  
 interface MomentItemsProps {
   index: number;
@@ -274,7 +274,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             numberOfLines={1}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
             style={[ 
-              appFontStyles.subWelcomeText,
+              AppFontStyles.subWelcomeText,
               { color: primaryColor, fontSize: 13, lineHeight: 28, fontFamily: "Poppins-Regular" },
             ]}
           >

@@ -4,8 +4,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts"; 
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
 import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
@@ -68,7 +68,7 @@ const ScreenFinalize = () => {
         >
           <Text
             style={[
-              appFontStyles.welcomeText,
+              AppFontStyles.welcomeText,
               { color: lightDarkTheme.primaryText, fontSize: 22 },
             ]}
           >
@@ -80,7 +80,7 @@ const ScreenFinalize = () => {
             categoryNamesOnly !== undefined && ( */}
               <FinalizeList
                 manualGradientColors={manualGradientColors}
-                subWelcomeTextStyle={appFontStyles.subWelcomeText}
+                subWelcomeTextStyle={AppFontStyles.subWelcomeText}
                 primaryColor={lightDarkTheme.primaryText}
                 primaryBackground={lightDarkTheme.primaryBackground}
                 userId={user?.id}

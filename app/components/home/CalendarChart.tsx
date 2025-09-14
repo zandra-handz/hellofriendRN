@@ -4,7 +4,7 @@ import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MonthModal from "../headers/MonthModal";
 import useHelloesManips from "@/src/hooks/useHelloesManips";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 type Props = {
   outerPadding: DimensionValue;
   combinedData: any;

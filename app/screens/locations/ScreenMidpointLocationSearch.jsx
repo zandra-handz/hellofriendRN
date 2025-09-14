@@ -6,9 +6,9 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ContentFindMidpoint from "@/app/components/locations/ContentFindMidpoint";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenMidpointLocationSearch = () => {
   const route = useRoute();
   const userAddress = route?.params?.userAddress ?? null;
@@ -37,7 +37,7 @@ const ScreenMidpointLocationSearch = () => {
       <View style={{ flex: 1, padding: 10 }}>
         <Text
           style={[
-            appFontStyles.welcomeText,
+            AppFontStyles.welcomeText,
             { color: lightDarkTheme.primaryText, fontSize: 22 },
           ]}
         >
@@ -52,7 +52,7 @@ const ScreenMidpointLocationSearch = () => {
             userId={user?.id}
               manualGradientColors={manualGradientColors}
               themeAheadOfLoading={themeAheadOfLoading}
-              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              subWelcomeTextStyle={AppFontStyles.subWelcomeText}
               lightDarkTheme={lightDarkTheme}
               userAddress={userAddress}
               friendAddress={friendAddress}

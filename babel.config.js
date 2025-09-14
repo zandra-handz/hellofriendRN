@@ -14,6 +14,15 @@ module.exports = function (api) {
       },
     },
     plugins: [
+       [
+        "module-resolver",
+        {
+          root: ["./"],
+          alias: {
+            "@": "./", // now "@/src/..." works
+          },
+        },
+      ],
       [
         "module:react-native-dotenv",
         {

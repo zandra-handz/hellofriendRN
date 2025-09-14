@@ -20,8 +20,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
@@ -52,8 +52,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
 
   
-   const welcomeTextStyle = appFontStyles.welcomeText;
-   const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+   const welcomeTextStyle = AppFontStyles.welcomeText;
+   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const { categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,

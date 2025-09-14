@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -28,9 +28,10 @@ const LocationCarouselSlider = ({
   onRightPressSecondAction,
   stickToLocation,
   setStickToLocation,
-
+lighterOverlayColor,
   footerData,
   primaryColor,
+  primaryBackground,
   overlayColor,
   dividerStyle,
   welcomeTextStyle,
@@ -62,6 +63,24 @@ const LocationCarouselSlider = ({
     };
   };
 
+
+      const scrollTo = (index: number) => {
+        floaterItemsVisibility.value = withTiming(0, { duration: 10 });
+        cardScale.value = withTiming(0.94, { duration: 10 });
+    
+     
+        flatListRef.current?.scrollToIndex({
+          index,
+          animated: true,
+        });
+    
+     
+        setTimeout(() => {
+          floaterItemsVisibility.value = withTiming(1, { duration: 400 });
+          cardScale.value = withTiming(1, { duration: 400 });
+        }, 300); 
+      };
+    
   useEffect(() => {
     if (stickToLocation) {
       console.log("scrolling to index for location id", stickToLocation);
@@ -132,6 +151,7 @@ const LocationCarouselSlider = ({
           index={index}
           width={width}
           height={height}
+        
           currentIndexValue={currentIndex}
           cardScaleValue={cardScale}
           openModal={handleSetModalData}
@@ -175,6 +195,7 @@ const LocationCarouselSlider = ({
         {/* {type === 'location' && ( */}
 
         <LocationItemFooter
+        height={90}
           userId={userId}
           friendId={friendId}
           data={data}
@@ -182,11 +203,14 @@ const LocationCarouselSlider = ({
           currentIndexValue={currentIndex}
           extraData={footerData}
           useButtons={useButtons}
+      
+          scrollTo={scrollTo}
           onRightPress={() => onRightPress(currentIndex.value)}
           onRightPressSecondAction={() =>
             onRightPressSecondAction(data[currentIndex.value])
           }
           primaryColor={primaryColor}
+          backgroundColor={primaryBackground}
           overlayColor={overlayColor}
           dividerStyle={dividerStyle}
           welcomeTextStyle={welcomeTextStyle}

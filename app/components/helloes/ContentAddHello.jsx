@@ -33,14 +33,14 @@ import { useNavigation } from "@react-navigation/native";
 import { useLocations } from "@/src/context/LocationsContext"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import HelloNotesModal from "../headers/HelloNotesModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({
@@ -411,7 +411,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
           {!isKeyboardVisible && selectedTypeChoiceText && (
             <EscortBar
               manualGradientColors={manualGradientColors}
-              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              subWelcomeTextStyle={AppFontStyles.subWelcomeText}
               primaryColor={primaryColor}
               primaryBackground={backgroundColor}
               forwardFlowOn={false}

@@ -18,8 +18,8 @@ import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocatio
 import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
 import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenLocationView = () => {
   const route = useRoute();
   const { user } = useUser();
@@ -147,6 +147,9 @@ const ScreenLocationView = () => {
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
+      backgroundOverlayHeight=""
+      includeBackgroundOverlay={true}
+      useOverlay={true}
       style={{ flex: 1 }}
     >
       <LocationCarouselSlider
@@ -173,17 +176,26 @@ const ScreenLocationView = () => {
             manualGradientColors={manualGradientColors}
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
-            welcomeTextStyle={appFontStyles.welcomeText}
-            subWelcomeTextStyle={appFontStyles.subWelcomeText}
+     
+            welcomeTextStyle={AppFontStyles.welcomeText}
+            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
+                marginBottom={2}
+                lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+                                    darkerOverlayColor={
+          lightDarkTheme.darkerOverlayBackground}
           />
         )}
         type={"location"}
         footerData={{ userAddress, friendAddress }}
         onRightPressSecondAction={handleNavToSendText}
         primaryColor={lightDarkTheme.primaryText}
+              
+        primaryBackground={lightDarkTheme.primaryBackground}
         overlayColor={lightDarkTheme.overlayBackground}
+        lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+        darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
         dividerStyle={lightDarkTheme.divider}
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
       />

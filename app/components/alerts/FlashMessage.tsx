@@ -9,8 +9,8 @@ import Animated, {
 import PlainSafeView from "../appwide/format/PlainSafeView"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 const FlashMessage = ({
 
@@ -71,7 +71,7 @@ const FlashMessage = ({
 
         {!error && (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={[ appFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
+          <Text style={[ AppFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
             {" "}
             {message}
           </Text>
@@ -85,7 +85,7 @@ const FlashMessage = ({
             </View>
         )}
         {error && (
-          <Text style={[ appFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
+          <Text style={[ AppFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
             Error
           </Text>
         )}

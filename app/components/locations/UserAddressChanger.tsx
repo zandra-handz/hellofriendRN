@@ -11,8 +11,8 @@ import useUpdateUserDefaultAddress from "@/src/hooks/useUpdatreUserAddress";
 import useUpdateUserAddressCache from "@/src/hooks/useUpdateUserAddressCache";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 type Props = {
   currentLocationSelected: boolean; // ?
@@ -84,13 +84,13 @@ const UserAddressChanger = ({
             addressSetter={chooseAndAddToCache}
             primaryColor={primaryColor}
             primaryBackground={backgroundColor}
-            welcomeTextStyle={appFontStyles.welcomeText}
+            welcomeTextStyle={AppFontStyles.welcomeText}
             manualGradientColors={manualGradientColors}
           />
         </View>
       )}
       <View style={styles.container}>
-        <Text style={[appFontStyles.subWelcomeText, { color: primaryColor }]}>
+        <Text style={[AppFontStyles.subWelcomeText, { color: primaryColor }]}>
           {userAddresses?.chosen?.address || "No address selected"}
         </Text>
 

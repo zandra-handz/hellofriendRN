@@ -7,7 +7,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
  
 import ReloadList from "@/app/components/helloes/ReloadList";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useRoute } from "@react-navigation/native";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -39,7 +39,7 @@ const ScreenReload = () => {
         <View style={{ flex: 1, padding: 10 }}>
           <Text
             style={[
-              appFontStyles.welcomeText,
+              AppFontStyles.welcomeText,
               { color: lightDarkTheme.primaryText, fontSize: 22 },
             ]}
           >
@@ -48,7 +48,7 @@ const ScreenReload = () => {
 
           {savedMoments && selectedFriend && friendDash && (
             <ReloadList 
-              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              subWelcomeTextStyle={AppFontStyles.subWelcomeText}
               primaryColor={lightDarkTheme.primaryText}
               primaryBackground={lightDarkTheme.primaryBackground}
               capsuleList={capsuleList}

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { StyleSheet, View, Modal } from "react-native"; 
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
  
   FadeInUp,
@@ -168,7 +168,7 @@ const ModalListWithView: React.FC<Props> = ({
           primaryColor={lightDarkTheme.primaryText}
           primaryBackground={lightDarkTheme.primaryBackground}
           overlayColor={lightDarkTheme.overlayBackground}
-          subWelcomeTextStyle={appFontStyles.subWelcomeText}
+          subWelcomeTextStyle={AppFontStyles.subWelcomeText}
             topBarText={textInputView.topBarText}
             isInsideModal={true}
             message={textInputView.message}

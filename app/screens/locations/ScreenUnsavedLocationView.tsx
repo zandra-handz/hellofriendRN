@@ -6,7 +6,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { appFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
 import LocationCarouselSlider from "@/app/components/appwide/LocationCarouselSlider";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
@@ -72,8 +72,8 @@ const { user } = useUser();
             themeAheadOfLoading={themeAheadOfLoading} 
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
-            welcomeTextStyle={appFontStyles.welcomeText}
-            subWelcomeTextStyle={appFontStyles.subWelcomeText}
+            welcomeTextStyle={AppFontStyles.welcomeText}
+            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
           />  )}
         type={"location"}
 
@@ -83,7 +83,7 @@ const { user } = useUser();
         primaryColor={lightDarkTheme.primaryText}
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
         themeAheadOfLoading={themeAheadOfLoading} 
       />
     </SafeViewAndGradientBackground>

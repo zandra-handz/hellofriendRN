@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
 import { DimensionValue, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 

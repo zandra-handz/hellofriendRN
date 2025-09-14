@@ -2,10 +2,10 @@ import { View, Alert, FlatList } from "react-native";
 import React, { useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
@@ -26,7 +26,7 @@ const ReloadList = ({
   const navigation = useNavigation(); 
 
 
-  
+
   const { handleCreateMoment } = useCreateMoment({
     userId: userId,
     friendId: friendId,

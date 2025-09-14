@@ -17,7 +17,7 @@ type Props = {
 };
 
 const EscortBarMoments = ({
-  primaryBackground,
+  primaryBackground='orange',
   primaryColor,
   onLeftPress,
   onRightPress,

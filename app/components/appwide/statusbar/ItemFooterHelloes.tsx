@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 import EscortBarMoments from "../../moments/EscortBarMoments";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
 import Animated, {
   SharedValue,
   useAnimatedReaction,
@@ -38,7 +37,7 @@ const ItemFooterHelloes: React.FC<Props> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(false);
 
-  const fontStyle = appFontStyles.welcomeText;
+  const fontStyle = AppFontStyles.welcomeText;
   //   useEffect(() => {
   //     if (location) {
   //       console.log(`location in footer`, location.title);

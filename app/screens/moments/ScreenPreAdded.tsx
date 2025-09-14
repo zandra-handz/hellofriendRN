@@ -12,7 +12,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useUser } from "@/src/context/UserContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 const ScreenPreAdded = () => {
   const { selectedFriend } = useSelectedFriend();
   const { user } = useUser();

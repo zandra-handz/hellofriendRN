@@ -13,7 +13,7 @@ import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 import AddPhoneNumber from "@/app/components/alerts/AddPhoneNumber";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenLocationSend = () => {
   const route = useRoute();
   const { user } = useUser();
@@ -95,7 +95,7 @@ const ScreenLocationSend = () => {
         return (
           <Text
             style={[
-              appFontStyles.subWelcomeText,
+              AppFontStyles.subWelcomeText,
               { color: lightDarkTheme.primaryText },
             ]}
           >
@@ -111,7 +111,7 @@ const ScreenLocationSend = () => {
       return (
         <Text
           style={[
-            appFontStyles.subWelcomeText,
+            AppFontStyles.subWelcomeText,
             { color: lightDarkTheme.primaryText },
           ]}
         >
@@ -231,8 +231,8 @@ const ScreenLocationSend = () => {
         handleSendText={handleSendText}
         initiallySelectedDay={selectedDay}
         themeAheadOfLoading={themeAheadOfLoading}
-        welcomeTextStyle={appFontStyles.welcomeText}
-        subWelcomeTextStyle={appFontStyles.subWelcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
+        subWelcomeTextStyle={AppFontStyles.subWelcomeText}
         primaryColor={lightDarkTheme.primaryText}
         primaryBackground={lightDarkTheme.primaryBackground}
       />
@@ -242,7 +242,7 @@ const ScreenLocationSend = () => {
         previewData={FinalMessage}
         primaryColor={lightDarkTheme.primaryText}
         primaryBackground={lightDarkTheme.primaryBackground}
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
       />
     </SafeViewAndGradientBackground>
   );

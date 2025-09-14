@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
-import { appFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
 
 const ButtonBaseSpecialSave = ({
   manualGradientColors,
@@ -81,7 +81,7 @@ const ButtonBaseSpecialSave = ({
       >
         <Text
           style={[
-            appFontStyles.welcomeText,
+            AppFontStyles.welcomeText,
             {
               color: primaryColor || "hotpink",
               fontSize: 20,
@@ -95,7 +95,7 @@ const ButtonBaseSpecialSave = ({
         </Text>
         <Text
           style={[
-            appFontStyles.subWelcomeText,
+            AppFontStyles.subWelcomeText,
             {
               color: primaryColor || "hotpink",
               fontSize: 14,

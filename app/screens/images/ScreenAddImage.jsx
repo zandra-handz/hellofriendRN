@@ -7,7 +7,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import ContentAddImage from "@/app/components/images/ContentAddImage";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 // nav
 import { useRoute } from "@react-navigation/native";
 

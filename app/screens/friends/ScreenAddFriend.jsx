@@ -3,8 +3,8 @@ import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -36,7 +36,7 @@ const ScreenAddFriend = () => {
             friendList={friendList}
             primaryColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.overlayBackground}
-            fontStyle={appFontStyles.welcomeText}
+            fontStyle={AppFontStyles.welcomeText}
           />
         </View>
       </View>

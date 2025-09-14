@@ -1,10 +1,10 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 // import { BaseAnimationBuilder } from "react-native-reanimated";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import React from "react";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 type Props = {
   //   enteringStyle?: BaseAnimationBuilder | typeof BaseAnimationBuilder;
   //   exitingStyle?: BaseAnimationBuilder | typeof BaseAnimationBuilder;
@@ -28,9 +28,9 @@ const AuthInputHeader = ({
   const ENTERING_ANIMATION = FadeIn.delay(200);
   const EXITING_ANIMATION = FadeOut;
 
-  const HEIGHT = appFontStyles.subWelcomeText.lineHeight;
+  const HEIGHT = AppFontStyles.subWelcomeText.lineHeight;
   const FONT_STYLE = [
-    appFontStyles.subWelcomeText,
+    AppFontStyles.subWelcomeText,
     {
       fontSize: overrideFontSize || 10,
       fontWeight: "bold",

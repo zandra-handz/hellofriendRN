@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import ToNextButton from "@/app/components/moments/ToNextButton";
 import ActionAndBack from "@/app/components/moments/ActionAndBack";
-import { appFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
 type Props = {
   onPress: () => void;
   onPressLabel: string;
@@ -78,7 +78,7 @@ const TopBarLikeMinusWidth = ({
                 bottom: 17,
               }}
             />
-            <Text style={[appFontStyles.subWelcomeText, { color: primaryColor, fontSize: 13 }]}>
+            <Text style={[AppFontStyles.subWelcomeText, { color: primaryColor, fontSize: 13 }]}>
               {label}
             </Text>
           </Pressable>
@@ -114,7 +114,7 @@ const TopBarLikeMinusWidth = ({
           <View style={{ alignItems: "center", flexDirection: "row" }}>
             <Text
               style={[
-                appFontStyles.subWelcomeText,
+                AppFontStyles.subWelcomeText,
                 { color: primaryColor, fontSize: 13, marginRight: 12 },
               ]}
             >

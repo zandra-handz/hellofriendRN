@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { View, StyleSheet } from "react-native"; 
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendHistoryBigPie from "../home/FriendHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";

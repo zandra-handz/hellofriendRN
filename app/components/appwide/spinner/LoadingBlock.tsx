@@ -28,8 +28,7 @@ const LoadingBlock = ({
   borderRadius = 0,
 }: Props) => {
   const { lightDarkTheme } = useLDTheme();
-
-  // Shared value for animation
+ 
   const progress = useSharedValue(0.3);
 
   useEffect(() => {

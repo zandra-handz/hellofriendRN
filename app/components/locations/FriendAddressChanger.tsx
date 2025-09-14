@@ -10,8 +10,8 @@ import useCreateFriendAddress from "@/src/hooks/useCreateFriendAddress";
 import useDeleteFriendAddress from "@/src/hooks/useDeleteFriendAddress";
 import useUpdateFriendDefaultAddress from "@/src/hooks/useUpdateFriendDefaultAddress";
 import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import useUpdateFriendAddressCache from "@/src/hooks/useUpdateFriendAddressCache";
 type Props = {
   userId: number;
@@ -104,7 +104,7 @@ const FriendAddressChanger = ({
             addressSetter={chooseAndAddToCache}
             primaryColor={primaryColor}
             primaryBackground={backgroundColor}
-            welcomeTextStyle={appFontStyles.welcomeText}
+            welcomeTextStyle={AppFontStyles.welcomeText}
             manualGradientColors={manualGradientColors}
           />
         </View>
@@ -116,7 +116,7 @@ const FriendAddressChanger = ({
           //  {backgroundColor: overlayColor}
         ]}
       >
-        <Text style={[appFontStyles.subWelcomeText, { color: primaryColor }]}>
+        <Text style={[AppFontStyles.subWelcomeText, { color: primaryColor }]}>
           {friendAddresses?.chosen?.address ||
             defaultFriendAddress?.address ||
             "No address selected"}

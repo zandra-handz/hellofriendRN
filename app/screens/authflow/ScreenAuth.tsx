@@ -12,13 +12,11 @@ import {
   StyleSheet,
   Text,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
+ 
 } from "react-native";
 
 import { useUser } from "@/src/context/UserContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import useAppNavigations from "@/src/hooks/useAppNavigations";

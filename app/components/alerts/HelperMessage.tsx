@@ -14,8 +14,8 @@ import Animated, {
   
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView"; 
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -135,7 +135,7 @@ const { lightDarkTheme} = useLDTheme();
           >
             <Text
               style={[ 
-                appFontStyles.subWelcomeText,
+                AppFontStyles.subWelcomeText,
                 { color: lightDarkTheme.primaryText, lineHeight: 24 },
               ]}
             >
@@ -146,7 +146,7 @@ const { lightDarkTheme} = useLDTheme();
           </ScrollView>
         )}
         {update && (
-          <Text style={[ appFontStyles.subWelcomeText, { color: lightDarkTheme.primaryText}]}>
+          <Text style={[ AppFontStyles.subWelcomeText, { color: lightDarkTheme.primaryText}]}>
             update
           </Text>
         )}

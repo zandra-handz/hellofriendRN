@@ -1,8 +1,8 @@
 import { View, Text, OpaqueColorValue } from "react-native";
 import React from "react"; 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 // ((
 //   FOR REFERENCE interface ThemeAheadOfLoading {
 //   darkColor: Friend["theme_color_dark"];
@@ -89,7 +89,7 @@ const ListViewModalBigButton = ({
         >
           {label}
         </Text> */}
-        <Text style={[ appFontStyles.subWelcomeText, {lineHeight: 12, fontFamily: 'Poppins-Bold', color: manualGradientColors.darkHomeColor, fontSize: 11}]}>Close</Text>
+        <Text style={[ AppFontStyles.subWelcomeText, {lineHeight: 12, fontFamily: 'Poppins-Bold', color: manualGradientColors.darkHomeColor, fontSize: 11}]}>Close</Text>
         <MaterialIcons
           name={`keyboard-arrow-down`}
           size={17}

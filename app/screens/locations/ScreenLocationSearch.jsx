@@ -12,8 +12,8 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 // import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 // import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import AddressesModal from "@/app/components/headers/AddressesModal";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
@@ -127,7 +127,7 @@ const ScreenLocationSearch = () => {
         overlayColor={lightDarkTheme.overlayBackground}
         primaryBackground={lightDarkTheme.primaryBackground}
         primaryColor={lightDarkTheme.primaryText}
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={AppFontStyles.welcomeText}
         dividerStyle={lightDarkTheme.divider}
         openAddresses={openModal} 
       />
@@ -170,8 +170,8 @@ const ScreenLocationSearch = () => {
               primaryColor={lightDarkTheme.primaryText}
               overlayColor={lightDarkTheme.overlayBackground}
               primaryBackground={lightDarkTheme.primaryBackground}
-              welcomeTextStyle={appFontStyles.welcomeText}
-              subWelcomeTextStyle={appFontStyles.subWelcomeText}
+              welcomeTextStyle={AppFontStyles.welcomeText}
+              subWelcomeTextStyle={AppFontStyles.subWelcomeText}
               manualGradientColors={manualGradientColors}
             />
           </View>
@@ -203,7 +203,7 @@ const ScreenLocationSearch = () => {
       )}
       {renderMapScreenFooter()}
     </SafeViewAndGradientBackground>
-    // </GestureHandlerRootView>
+ 
   );
 };
 

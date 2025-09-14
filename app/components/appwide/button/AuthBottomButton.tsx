@@ -1,6 +1,6 @@
 import { Text, StyleSheet } from "react-native";
 import GlobalPressable from "./GlobalPressable";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 
 type Props = {
   onPress: () => void;

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, DimensionValue } from "react-native";
 import CustomStatusBar from "../statusbar/CustomStatusBar"; 
- import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground"; 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -56,9 +56,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
   const paddingStyle = useMemo(
     () => ({
       paddingTop: top,
-      // paddingBottom: 0,
-      // paddingLeft: 0,
-      // paddingRight: 0,
+    
             paddingBottom: bottom,
       paddingLeft: left,
       paddingRight: right,

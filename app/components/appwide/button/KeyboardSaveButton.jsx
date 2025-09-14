@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 //to use friend colors:
 //darkColor={friendColorTheme.useFriendColorTheme != false  ? themeAheadOfLoading.darkColor : undefined}
 //lightColor={friendColorTheme.useFriendColorTheme != false ? themeAheadOfLoading.lightColor : undefined}
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 const KeyboardSaveButton = ({
   onPress,
   label = "ADD NEW IMAGE",

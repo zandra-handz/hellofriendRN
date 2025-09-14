@@ -5,7 +5,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 type Props = {};
 
 const ScreenFidget = (props: Props) => {

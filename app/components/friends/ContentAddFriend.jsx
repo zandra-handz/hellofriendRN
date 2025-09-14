@@ -19,9 +19,9 @@ import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefet
 import useAddToFriendList from "@/src/hooks/FriendListCalls/useAddToFriendList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import AuthInputWrapper from "../user/AuthInputWrapper";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import EscortBar from "../moments/EscortBar";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 // import { useUser } from "@/src/context/UserContext";
 
 const ContentAddFriend = ({
@@ -251,7 +251,7 @@ const ContentAddFriend = ({
         {friendName && (
           <EscortBar
             manualGradientColors={manualGradientColors}
-            subWelcomeTextStyle={appFontStyles.subWelcomeText}
+            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
             primaryColor={primaryColor}
             primaryBackground={backgroundColor}
             forwardFlowOn={false}

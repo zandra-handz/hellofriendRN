@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 
-export const appFontStyles = StyleSheet.create({
+export const AppFontStyles = StyleSheet.create({
  
   signInButtonLabel: {
     fontFamily: "Poppins-Bold",
@@ -72,3 +72,6 @@ export const appFontStyles = StyleSheet.create({
     fontSize: 15,
   }, 
 });
+
+
+// export default AppFontStyles;

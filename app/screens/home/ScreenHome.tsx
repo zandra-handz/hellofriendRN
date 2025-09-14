@@ -43,8 +43,8 @@ import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponen
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenHome = () => {
   const { user } = useUser();
   const { settings } = useUserSettings();
@@ -55,8 +55,8 @@ const ScreenHome = () => {
   const { isLoading } = useUpcomingHelloes();
   const navigation = useNavigation();
 
-  const welcomeTextStyle = appFontStyles.welcomeText;
-  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const spinnerStyle = "flow";
 
@@ -423,7 +423,7 @@ const ScreenHome = () => {
           settings={settings}
           friendId={selectedFriend?.id}
           friendName={selectedFriend?.name}
-          // friendDash={friendDash}
+        
           lightDarkTheme={lightDarkTheme}
           overlayColor={lightDarkTheme.overlayBackground}
           dividerStyle={lightDarkTheme.divider}

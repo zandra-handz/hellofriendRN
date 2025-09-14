@@ -18,23 +18,17 @@ import {
 } from "react-native";
 
 import { useUser } from "@/src/context/UserContext";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
-import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
-import { useFocusEffect } from "@react-navigation/native";
-import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
-import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
-import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
-
+ 
 import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 
 type ShareIntentParams = {
   ShareIntent: {
@@ -95,7 +89,7 @@ const ScreenShareIntent = () => {
         >
           <Text
             style={[
-              appFontStyles.subWelcomeText,
+              AppFontStyles.subWelcomeText,
               { color: manualGradientColors.lightColor },
             ]}
           >

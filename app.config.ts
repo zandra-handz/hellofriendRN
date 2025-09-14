@@ -1,5 +1,5 @@
 import { ExpoConfig, ConfigContext } from '@expo/config';
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
 import withIntentFilters from './withIntentFilters';
 import withShareIntent from "./withShareIntent";
 

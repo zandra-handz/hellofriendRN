@@ -8,13 +8,13 @@ import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
-import { manualGradientColors } from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/src/hooks/StaticColors";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ModalListWithView from "../alerts/ModalListWithView";
-import { appFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
@@ -50,7 +50,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     : null;
 
   const startingText = category?.description || null;
-  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { helloesList } = useHelloes();
   const { friendList } = useFriendList();
   const { selectedFriendStats } = useSelectedFriendStats();
