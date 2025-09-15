@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import LocationItemFooter from "../headers/LocationItemFooter";
 import CarouselItemModal from "./carouselItemModal";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 
 type Props = {
   initialIndex: number;
@@ -28,13 +29,12 @@ const LocationCarouselSlider = ({
   onRightPressSecondAction,
   stickToLocation,
   setStickToLocation,
-lighterOverlayColor,
+  lighterOverlayColor,
   footerData,
   primaryColor,
   primaryBackground,
   overlayColor,
-  dividerStyle,
-  welcomeTextStyle,
+  dividerStyle, 
   themeAheadOfLoading,
 }: Props) => {
   const { height, width } = useWindowDimensions();
@@ -45,7 +45,7 @@ lighterOverlayColor,
   const flatListRef = useAnimatedRef(null);
 
   const [itemModalVisible, setItemModalVisible] = useState(false);
-
+  const welcomeTextStyle = AppFontStyles.welcomeText;
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
   const currentIndex = useSharedValue(0);
@@ -63,24 +63,21 @@ lighterOverlayColor,
     };
   };
 
+  const scrollTo = (index: number) => {
+    floaterItemsVisibility.value = withTiming(0, { duration: 10 });
+    cardScale.value = withTiming(0.94, { duration: 10 });
 
-      const scrollTo = (index: number) => {
-        floaterItemsVisibility.value = withTiming(0, { duration: 10 });
-        cardScale.value = withTiming(0.94, { duration: 10 });
-    
-     
-        flatListRef.current?.scrollToIndex({
-          index,
-          animated: true,
-        });
-    
-     
-        setTimeout(() => {
-          floaterItemsVisibility.value = withTiming(1, { duration: 400 });
-          cardScale.value = withTiming(1, { duration: 400 });
-        }, 300); 
-      };
-    
+    flatListRef.current?.scrollToIndex({
+      index,
+      animated: true,
+    });
+
+    setTimeout(() => {
+      floaterItemsVisibility.value = withTiming(1, { duration: 400 });
+      cardScale.value = withTiming(1, { duration: 400 });
+    }, 300);
+  };
+
   useEffect(() => {
     if (stickToLocation) {
       console.log("scrolling to index for location id", stickToLocation);
@@ -105,8 +102,6 @@ lighterOverlayColor,
     });
     setStickToLocation(null);
   };
-
- 
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 
@@ -144,20 +139,17 @@ lighterOverlayColor,
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
 
- 
-        <Children
-          item={item}
-          listLength={data?.length || 0}
-          index={index}
-          width={width}
-          height={height}
-        
-          currentIndexValue={currentIndex}
-          cardScaleValue={cardScale}
-          openModal={handleSetModalData}
-          closeModal={() => setItemModalVisible(false)}
-        />
-    
+      <Children
+        item={item}
+        listLength={data?.length || 0}
+        index={index}
+        width={width}
+        height={height}
+        currentIndexValue={currentIndex}
+        cardScaleValue={cardScale}
+        openModal={handleSetModalData}
+        closeModal={() => setItemModalVisible(false)}
+      />
     ),
     [width, height, currentIndex]
   );
@@ -195,7 +187,7 @@ lighterOverlayColor,
         {/* {type === 'location' && ( */}
 
         <LocationItemFooter
-        height={50}
+          height={50}
           userId={userId}
           friendId={friendId}
           data={data}
@@ -203,7 +195,6 @@ lighterOverlayColor,
           currentIndexValue={currentIndex}
           extraData={footerData}
           useButtons={useButtons}
-      
           scrollTo={scrollTo}
           onRightPress={() => onRightPress(currentIndex.value)}
           onRightPressSecondAction={() =>

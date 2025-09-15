@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useRoute } from "@react-navigation/native";
 
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useUser } from "@/src/context/UserContext";
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
@@ -17,9 +17,7 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
 import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
 import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
 const ScreenLocationView = () => {
   const route = useRoute();
   const { user } = useUser();
@@ -31,21 +29,7 @@ const ScreenLocationView = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
-
-
-  // console.log(userAddress);
-  // console.log(friendAddress);
-  // const now = new Date();
-  // const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
   const navigation = useNavigation();
-  // const [currentIndex, setCurrentIndex] = useState(0);
-
-  // const {
-  //   faveLocations,
-  //   nonFaveLocations,
-  //   stickToLocation,
-  //   setStickToLocation,
-  // } = useFriendLocationsContext();
 
   const { friendDash } = useFriendDash();
   const friendFaveIds = friendDash?.friend_faves?.locations;
@@ -79,16 +63,9 @@ const ScreenLocationView = () => {
   const { handleRemoveFromFaves } = useRemoveFromFaves({
     userId: user?.id,
     friendId: selectedFriend?.id,
-  });
-  // console.log(`current day: `, currentDay.day);
-  // const numberOfDays = 14;
-  // console.log(
-  //   `${numberOfDays} days from now: `,
-  //   getNumOfDaysFrom(numberOfDays).day
-  // );
-
+  }); 
+  
   const [stickToLocation, setStickToLocation] = useState(null);
-
   const [locationId, setLocationId] = useState(null);
 
   const handleAddToFavesAndStick = ({ locationId }) => {
@@ -103,7 +80,7 @@ const ScreenLocationView = () => {
   };
 
   const handleRemoveFromFavesAndStick = ({ locationId }) => {
-    console.log("removin functino in parent");
+ 
     if (!locationId) {
       return;
     }
@@ -173,31 +150,23 @@ const ScreenLocationView = () => {
             onAddPress={handleAddToFavesAndStick}
             onRemovePress={handleRemoveFromFavesAndStick}
             themeAheadOfLoading={themeAheadOfLoading}
-            manualGradientColors={manualGradientColors}
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
-     
-            welcomeTextStyle={AppFontStyles.welcomeText}
-            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-                marginBottom={2}
-                lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
-                                    darkerOverlayColor={
-          lightDarkTheme.darkerOverlayBackground}
+            marginBottom={2}
+            lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+            darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
           />
         )}
         type={"location"}
         footerData={{ userAddress, friendAddress }}
         onRightPressSecondAction={handleNavToSendText}
         primaryColor={lightDarkTheme.primaryText}
-              
         primaryBackground={lightDarkTheme.primaryBackground}
         overlayColor={lightDarkTheme.overlayBackground}
         lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
         darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
-        dividerStyle={lightDarkTheme.divider}
-        welcomeTextStyle={AppFontStyles.welcomeText}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        dividerStyle={lightDarkTheme.divider} 
+        themeAheadOfLoading={themeAheadOfLoading} 
       />
     </SafeViewAndGradientBackground>
   );

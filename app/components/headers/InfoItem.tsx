@@ -20,6 +20,7 @@ const InfoItem = ({
       style={{
         flex: 1,
         flexDirection: "row",
+  
       }}
     >
       <ModalInfoText

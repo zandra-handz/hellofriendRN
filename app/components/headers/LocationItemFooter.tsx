@@ -2,8 +2,7 @@ import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 
 import EscortBarMoments from "../moments/EscortBarMoments";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 import Animated, {
   SharedValue,
   useAnimatedReaction,
@@ -50,7 +49,7 @@ const LocationItemFooter: React.FC<Props> = ({
  
   const footerPaddingBottom = 20;
   // const footerIconSize = 28;
-  // console.log(`extra data`, extraData);
+  console.log(`extra data`, extraData);
   const totalCount = totalItemCount
     ? totalItemCount
     : data?.length

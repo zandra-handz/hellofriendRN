@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal } from "react-native"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { StyleSheet, View, Modal } from "react-native";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
- 
   FadeInUp,
   FadeOutUp,
   SlideInUp,
@@ -67,7 +67,7 @@ const ModalListWithView: React.FC<Props> = ({
   onClose,
   secondInfoItem,
 }) => {
-  const { lightDarkTheme} = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
@@ -158,17 +158,16 @@ const ModalListWithView: React.FC<Props> = ({
     );
   }, [helperMessage, setHelperMessage]);
 
-
-    const handleRenderTextInputView = useCallback(() => {
+  const handleRenderTextInputView = useCallback(() => {
     return (
       <>
         {textInputView && (
           <TextInputView
-          manualGradientColors={manualGradientColors}
-          primaryColor={lightDarkTheme.primaryText}
-          primaryBackground={lightDarkTheme.primaryBackground}
-          overlayColor={lightDarkTheme.overlayBackground}
-          subWelcomeTextStyle={AppFontStyles.subWelcomeText}
+            manualGradientColors={manualGradientColors}
+            primaryColor={lightDarkTheme.primaryText}
+            primaryBackground={lightDarkTheme.primaryBackground}
+            overlayColor={lightDarkTheme.overlayBackground}
+            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
             topBarText={textInputView.topBarText}
             isInsideModal={true}
             message={textInputView.message}
@@ -196,139 +195,138 @@ const ModalListWithView: React.FC<Props> = ({
 
         {handleRenderTextInputView()}
 
-
-
-        <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
-          <Animated.View //if you put padding here it will affect the info item
-            style={[
-              styles.modalContent,
-          
-              {
-                backgroundColor: lightDarkTheme.primaryBackground,
- 
-                  borderRadius: borderRadius,
-              },
-            ]}
-          >
-            <Animated.View
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
+            <Animated.View //if you put padding here it will affect the info item
               style={[
-                contentAnimationStyle,
+                styles.modalContent,
+
                 {
-                  width: "100%",
-                  flex: 1,
-                  flexDirection: "column",
-                  justifyContent: "space-between",
+                  backgroundColor: lightDarkTheme.primaryBackground,
+
+                  borderRadius: borderRadius,
                 },
               ]}
             >
-              <View style={styles.bodyContainer}>
-                <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>
-                  {children}
+              <Animated.View
+                style={[
+                  contentAnimationStyle,
+                  {
+                    width: "100%",
+                    flex: 1,
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  },
+                ]}
+              >
+                <View style={styles.bodyContainer}>
+                  <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>
+                    {children}
+                  </View>
+                  {secondInfoItem != undefined && (
+                    <Animated.View
+                      entering={FadeInUp.delay(500)}
+                      style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                       // borderRadius: 30,
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        padding: 30,
+                        paddingTop: 18,
+                        paddingBottom: 26,
+                        borderTopWidth: StyleSheet.hairlineWidth,
+                        borderColor: lightDarkTheme.lighterOverlayBackground,
+
+                        
+                        // marginBottom: 0,
+                        backgroundColor: lightDarkTheme.primaryBackground,
+                        backgroundColor: 'orange',
+
+                        alignItems: "center",
+                        height: "auto",
+                        //  height: 100,
+                      }}
+                    >
+                      {secondInfoItem}
+                    </Animated.View>
+                  )}
+
+                  {infoItem != undefined && !isKeyboardVisible && (
+                    <Animated.View
+                      entering={FadeInUp.delay(500)}
+                      style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        borderRadius: 30,
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        //borderWidth: StyleSheet.hairlineWidth,
+                        //  backgroundColor: "red",
+                        //  borderColor: manualGradientColors.lightColor,
+                        padding: 30,
+                        paddingTop: 18,
+                        paddingBottom: 26,
+                        borderTopWidth: StyleSheet.hairlineWidth,
+                        borderColor: lightDarkTheme.lighterOverlayBackground,
+                        // marginBottom: 0,
+                        backgroundColor: lightDarkTheme.primaryBackground,
+
+                        alignItems: "center",
+                        height: "auto",
+                        //  height: 100,
+                      }}
+                    >
+                      {infoItem}
+                      <HelpButton
+                        onPress={() =>
+                          setHelperMessage({
+                            text: `${helperMessageText}`,
+                            error: false,
+                          })
+                        }
+                      />
+                    </Animated.View>
+                  )}
                 </View>
-                {secondInfoItem != undefined && (
-                  <Animated.View
-                    entering={FadeInUp.delay(500)}
-                    style={{
-                      width: "100%",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      borderRadius: 30,
-                      borderTopLeftRadius: 0,
-                      borderTopRightRadius: 0,
-                      padding: 30,
-                      paddingTop: 18,
-                      paddingBottom: 26,
-                      borderTopWidth: StyleSheet.hairlineWidth,
-                      borderColor:
-                        lightDarkTheme.lighterOverlayBackground,
-
-                      // marginBottom: 0,
-                      backgroundColor:
-                        lightDarkTheme.primaryBackground,
-
-                      alignItems: "center",
-                      height: "auto",
-                      //  height: 100,
-                    }}
-                  >
-                    {secondInfoItem}
-                  </Animated.View>
-                )}
-
-                {infoItem != undefined && !isKeyboardVisible && (
-                  <Animated.View
-                    entering={FadeInUp.delay(500)}
-                    style={{
-                      width: "100%",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      borderRadius: 30,
-                      borderTopLeftRadius: 0,
-                      borderTopRightRadius: 0,
-                      //borderWidth: StyleSheet.hairlineWidth,
-                      //  backgroundColor: "red",
-                      //  borderColor: manualGradientColors.lightColor,
-                      padding: 30,
-                      paddingTop: 18,
-                      paddingBottom: 26,
-                      borderTopWidth: StyleSheet.hairlineWidth,
-                      borderColor:
-                        lightDarkTheme.lighterOverlayBackground,
-                      // marginBottom: 0,
-                      backgroundColor: lightDarkTheme.primaryBackground,
-
-                      alignItems: "center",
-                      height: "auto",
-                      //  height: 100,
-                    }}
-                  >
-                    {infoItem}
-                    <HelpButton
-                      onPress={() =>
-                        setHelperMessage({
-                          text: `${helperMessageText}`,
-                          error: false,
-                        })
-                      }
-                    />
-                  </Animated.View>
-                )}
-              </View>
+              </Animated.View>
             </Animated.View>
+            {!isKeyboardVisible && (
+              <Animated.View
+                entering={FadeInUp.duration(800)}
+                exiting={FadeOutUp.duration(0)}
+                style={{
+                  height: bottomSpacer,
+                  zIndex: 1,
+                  //   position: 'absolute',
+                  bottom: 0,
+
+                  width: "100%",
+                  backgroundColor:
+                    friendTheme === undefined
+                      ? manualGradientColors.lightColor
+                      : friendTheme.lightColor, //to match friend profile button circle color
+                  borderRadius: 10,
+                }}
+              >
+                <ListViewModalBigButton
+                  onClose={handleCustomClose}
+                  // height={bottomSpacer}
+                  friendTheme={friendTheme}
+                  label={buttonTitle}
+                  labelColor={
+                    friendTheme === undefined
+                      ? manualGradientColors.homeDarkColor
+                      : friendTheme.fontColorSecondary
+                  }
+                  rightSideElement={rightSideButtonItem}
+                />
+              </Animated.View>
+            )}
           </Animated.View>
-          {!isKeyboardVisible && (
-            <Animated.View
-              entering={FadeInUp.duration(800)}
-              exiting={FadeOutUp.duration(0)}
-              style={{
-                height: bottomSpacer,
-                zIndex: 1,
-                //   position: 'absolute',
-                bottom: 0,
-
-                width: "100%",
-                backgroundColor:
-                  friendTheme === undefined
-                    ? manualGradientColors.lightColor
-                    : friendTheme.lightColor, //to match friend profile button circle color
-                borderRadius: 10,
-              }}
-            >
-              <ListViewModalBigButton
-                onClose={handleCustomClose}
-                // height={bottomSpacer}
-                friendTheme={friendTheme}
-                label={buttonTitle}
-                labelColor={
-                  friendTheme === undefined
-                    ? manualGradientColors.homeDarkColor
-                    : friendTheme.fontColorSecondary
-                }
-                rightSideElement={rightSideButtonItem}
-              />
-            </Animated.View>
-          )}
-        </Animated.View>
+        </SafeAreaView>
       </Modal>
     </>
   );
@@ -347,28 +345,19 @@ const styles = StyleSheet.create({
     width: "100%", // Fixed width of 80% of the screen
     minHeight: 200, // Minimum height to prevent collapse
     height: "auto",
-    flex: 1,
-    //flexGrow: 1,
-
+    flex: 1, 
     borderWidth: 2,
     alignItems: "center",
     backgroundColor: "white", // Ensure it's visible
     flexDirection: "column",
     justifyContent: "space-between",
-
-    // overflow: 'hidden',
+ 
   },
   bodyContainer: {
     flex: 1,
 
     textAlign: "left",
-  },
-  questionText: {
-    fontSize: 20,
-    textAlign: "center",
-    fontFamily: "Poppins-Regular",
-    marginLeft: 10,
-  },
+  }, 
   buttonContainer: {
     justifyContent: "center",
     width: "100%",

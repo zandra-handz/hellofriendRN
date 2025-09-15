@@ -15,8 +15,8 @@ import Animated, {
 import LocationCustomerReviews from "./LocationCustomerReviews";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import Hours from "./Hours";
-
+import Hours from "./Hours"; 
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 interface LocationPageViewProps {
   item: object;
   index: number;
@@ -51,8 +51,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   themeAheadOfLoading,
   primaryColor,
   primaryBackground,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
+
 }) => {
   const [currentIndex, setCurrentIndex] = useState();
 
@@ -65,6 +64,9 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
     },
     []
   );
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   console.log(index);
   const { additionalDetails } = useFetchAdditionalDetails({

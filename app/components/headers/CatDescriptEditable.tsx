@@ -107,7 +107,7 @@ const CatDescriptEditable = ({
   return (
     <>
       <GlobalPressable
-        style={{ position: "absolute", top: -10, right: -20 }}
+        style={{ position: "absolute", top: -6, right: -10 }}
         onPress={toggleEdit}
       >
         <MaterialCommunityIcons

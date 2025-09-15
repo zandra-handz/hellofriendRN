@@ -13,7 +13,7 @@ import Animated, {
 import TreeModalBigButton from "./TreeModalBigButton";
 import HelpButton from "./HelpButton";
 import QuickView from "./QuickView";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { ItemViewProps } from "@/src/types/MiscTypes";
@@ -169,6 +169,8 @@ const ModalScaleLikeTree: React.FC<Props> = ({
         //   style={modalAnimationStyle}
         animationType="slide"
       >
+      <SafeAreaView style={{flex: 1}}>
+        
         {handleRenderHelperMessage()}
 
         {handleRenderQuickView()}
@@ -266,6 +268,8 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             </Animated.View>
           )}
         </Animated.View>
+        
+      </SafeAreaView>
       </Modal>
     </>
   );
