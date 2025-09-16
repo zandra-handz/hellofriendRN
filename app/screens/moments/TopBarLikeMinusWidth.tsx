@@ -43,7 +43,7 @@ const TopBarLikeMinusWidth = ({
             // justifyContent: "space-between",
             borderRadius: 10,
             // marginVertical: 10,
-            marginTop: marginTop,
+           // marginTop: marginTop,
           },
         ]}
       >

@@ -1,8 +1,9 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
 import { DimensionValue, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import GradientBackground from "../display/GradientBackground";
 
 type Props = {
@@ -20,8 +21,8 @@ const SafeViewAndGradientBackground = ({
   children,
   style,
 
-  friendColorLight='white',
-  friendColorDark='red',
+  friendColorLight = "white",
+  friendColorDark = "red",
   backgroundOverlayColor,
   friendId,
   startColor,
@@ -100,7 +101,10 @@ const SafeViewAndGradientBackground = ({
   return (
     <GradientBackground
       useFriendColors={useFriendColors || undefined}
-      additionalStyles={[paddingStyle, style]}
+      additionalStyles={[
+        // paddingStyle,
+        style,
+      ]}
       // startColor={startColor}
       // endColor={endColor}
       startColor={manualGradientColors.lightColor}
@@ -108,35 +112,40 @@ const SafeViewAndGradientBackground = ({
       friendColorDark={friendColorDark}
       friendColorLight={friendColorLight}
     >
-      {showColorOverlay && (
-        <View
-          style={{
-            position: "absolute",
-            zIndex: 0,
-            height: backgroundOverlayHeight,
-            width: "100%",
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-            opacity: 1,
-            // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-            backgroundColor: !useOverlay
-              ? backgroundOverlayColor
-              : backgroundTransparentOverlayColor,
-            borderBottomLeftRadius: backgroundOverlayBottomRadius,
-            borderBottomRightRadius: backgroundOverlayBottomRadius,
-          }}
-        ></View>
-      )}
+      <SafeAreaView style={{ flex: 1 }}>
+        <>
+        {showColorOverlay && (
+          <View
+            style={{
+              position: "absolute",
+              zIndex: 0,
+              height: backgroundOverlayHeight,
+              width: "100%",
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: 0,
+              opacity: 1,
+              // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+              backgroundColor: !useOverlay
+                ? backgroundOverlayColor
+                : backgroundTransparentOverlayColor,
+              borderBottomLeftRadius: backgroundOverlayBottomRadius,
+              borderBottomRightRadius: backgroundOverlayBottomRadius,
+            }}
+          ></View>
+        )}
 
-      {Header && (
-        <View style={{ height: standardizedHeaderHeight }}>
-          <Header />
-        </View>
-      )}
+        {Header && (
+          <View style={{ height: standardizedHeaderHeight }}>
+            <Header />
+          </View>
+        )}
 
-      {children}
+        {children}
+        
+        </>
+      </SafeAreaView>
     </GradientBackground>
   );
 };

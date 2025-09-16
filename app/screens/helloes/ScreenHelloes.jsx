@@ -130,21 +130,13 @@ const ScreenHelloes = () => {
       useOverlay={true}
       style={{ flex: 1 }}
     >
-      <CalendarChart
-        helloesList={helloesList}
-        navigateToHelloes={navigateToHelloes}
-        friendId={selectedFriend?.id}
-        themeAheadOfLoading={themeAheadOfLoading}
-        lightDarkTheme={lightDarkTheme} 
-        showTopBar={false}
-        useBackgroundOverlay={false}
-      />
+
       <View
         style={{ 
-          paddingHorizontal: 20,
+          paddingHorizontal: 12,
           paddingVertical: 10,
           flexDirection: 'row',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
           alignItems: "center",
           borderRadius: 30,
           height: "auto",
@@ -155,12 +147,22 @@ const ScreenHelloes = () => {
           numberOfLines={2}
           style={[
             AppFontStyles.welcomeText,
-            { color: lightDarkTheme.primaryText, fontSize: 26 },
+            { color: lightDarkTheme.primaryText, fontSize: 22 },
           ]}
         >
           Hello history for {selectedFriend?.name}
         </Text>
+        
       </View>
+            <CalendarChart
+        helloesList={helloesList}
+        navigateToHelloes={navigateToHelloes}
+        friendId={selectedFriend?.id}
+        themeAheadOfLoading={themeAheadOfLoading}
+        lightDarkTheme={lightDarkTheme} 
+        showTopBar={false}
+        useBackgroundOverlay={false}
+      />
       {/* <Loading isLoading={!helloesListFull} /> */}
 
       {helloesListFull && (

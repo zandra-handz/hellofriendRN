@@ -5,7 +5,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
-import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useCategories } from "@/src/context/CategoriesContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -13,10 +13,10 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
- 
+
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, {
   SlideInDown,
   SlideInUp,
@@ -28,7 +28,7 @@ const ScreenMomentFocus = () => {
   const route = useRoute();
   const { user } = useUser();
   const { settings } = useUserSettings();
-  const { lightDarkTheme } = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
   const momentText = route.params?.momentText ?? null;
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
@@ -47,14 +47,12 @@ const ScreenMomentFocus = () => {
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
   const [triggerMessage, setTriggerMessage] = useState<number>(0);
 
- 
   //using this arrangement below to keep top and bottom bar spacing the same :)
   const CARD_PADDING = 4;
   const SPACER_BETWEEN_BAR_AND_CARD = 2; // low bc there is already parent padding
-  const topBarHeight = 50;
-  const topBarMarginTop = 10;
+  const topBarHeight = 50; 
 
-  const topBarTotalHeight = topBarHeight + topBarMarginTop;
+  const topBarTotalHeight = topBarHeight;
 
   const handleOpenCatCreator = () => {
     console.log("cat creator now visible!");
@@ -97,25 +95,23 @@ const ScreenMomentFocus = () => {
   //   }
   // }, [userCategories, themeAheadOfLoading]);
 
-
   const categoryColorsMap = useMemo(() => {
-  if (
-    userCategories?.length &&
-    themeAheadOfLoading?.lightColor &&
-    themeAheadOfLoading?.darkColor
-  ) {
-    return generateGradientColorsMap(
-      userCategories,
-      themeAheadOfLoading.lightColor,
-      themeAheadOfLoading.darkColor
-    );
-  }
-  return null;
-}, [userCategories, themeAheadOfLoading]);
-
+    if (
+      userCategories?.length &&
+      themeAheadOfLoading?.lightColor &&
+      themeAheadOfLoading?.darkColor
+    ) {
+      return generateGradientColorsMap(
+        userCategories,
+        themeAheadOfLoading.lightColor,
+        themeAheadOfLoading.darkColor
+      );
+    }
+    return null;
+  }, [userCategories, themeAheadOfLoading]);
 
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -127,16 +123,18 @@ const ScreenMomentFocus = () => {
     >
       {!catCreatorVisible && (
         <Animated.View
-          entering={SlideInUp}
-          exiting={SlideOutUp}
-          style={{ height: topBarTotalHeight, zIndex: 60000 }}
+          // entering={SlideInUp}
+          // exiting={SlideOutUp}
+          style={{
+            height: topBarTotalHeight, 
+            zIndex: 60000,
+          }}
         >
-          <TopBarLikeMinusWidth 
+          <TopBarLikeMinusWidth
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
-        
             forwardFlowOn={false}
-            marginTop={topBarMarginTop}
+            // marginTop={topBarMarginTop}
             onExpandPress={handleOpenCatCreator}
             onPress={handleTriggerSaveFromLateral}
             label={""}
@@ -149,7 +147,7 @@ const ScreenMomentFocus = () => {
 
       {categoryColorsMap && (
         <Animated.View
-          entering={SlideInDown}
+          // entering={SlideInDown}
           style={{
             width: "100%",
             flex: 1,
@@ -160,7 +158,6 @@ const ScreenMomentFocus = () => {
             defaultCategory={settings?.user_default_category}
             manualGradientColors={manualGradientColors}
             capsuleList={capsuleList}
-     
             friendId={selectedFriend?.id}
             friendName={selectedFriend?.name}
             userId={user?.id}
@@ -168,7 +165,6 @@ const ScreenMomentFocus = () => {
             primaryBackground={lightDarkTheme.primaryBackground}
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
- 
             themeAheadOfLoading={themeAheadOfLoading}
             friendFaves={friendDash?.friend_faves}
             screenCameFromToParent={screenCameFrom}

@@ -20,7 +20,11 @@ const EscortBarMinusWidth = ({
   label = "categories",
 }: Props) => {
   return (
-    <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
+    <Animated.View
+      style={{   height: 50  }}
+      // entering={SlideInDown}
+      // exiting={SlideOutDown}
+    >
       <GlobalPressable
         onPress={onPress}
         style={[
@@ -33,9 +37,9 @@ const EscortBarMinusWidth = ({
             alignItems: "center",
             justifyContent: "center",
             borderRadius: 10,
-           // backgroundColor: "orange",
+            // backgroundColor: "orange",
 
-            marginVertical: 10,
+          //  marginVertical: 10,
           },
         ]}
       >
@@ -43,12 +47,13 @@ const EscortBarMinusWidth = ({
           style={{
             width: "auto",
             left: 0, // should match padding on right
+            position: "absolute",
+            //    bottom: 0,
+            //  top: 0,
             flex: 1,
             height: "100%",
             // backgroundColor: "red",
-            position: "absolute",
-            bottom: 0,
-            top: 0,
+
             height: 50,
             alignItems: "center",
             flexDirection: "column",

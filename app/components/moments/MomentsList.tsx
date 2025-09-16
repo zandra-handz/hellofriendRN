@@ -360,7 +360,8 @@ const scrollHandler = useAnimatedScrollHandler({
       </View>
 
       <>
-        {categoryNavigatorVisible &&
+        {
+        categoryNavigatorVisible &&
           categoryColorsMap &&
           Object.keys(categoryColorsMap).length > 0 && (
             <CategoryNavigator
@@ -378,23 +379,25 @@ const scrollHandler = useAnimatedScrollHandler({
         <View
           style={{
             position: "absolute",
-            bottom: 0,
+            bottom: 10,
             width: "100%",
+            // backgroundColor: 'orange',
             paddingHorizontal: 10,
           }}
         >
           {!categoryNavigatorVisible && (
             <Animated.View
               exiting={SlideOutRight}
-              entering={SlideInRight}
+              // entering={SlideInRight}
               style={{
                 flexDirection: "row",
                 position: "absolute",
-                bottom: 16,
+                bottom: 6,
+                     right: 18,
                 zIndex: 50000,
                 height: 38,
                 width: 60,
-                right: 18,
+           
                 justifyContent: "flex-end",
               }}
             >
@@ -403,7 +406,7 @@ const scrollHandler = useAnimatedScrollHandler({
           )}
 
           {!categoryNavigatorVisible && (
-            <>
+           
               <EscortBarMinusWidth
                 backgroundColor={primaryBackgroundColor}
                 overlayColor={primaryOverlayColor}
@@ -411,7 +414,7 @@ const scrollHandler = useAnimatedScrollHandler({
                 navigateBack={navigateBack}
                 onPress={() => setCategoryNavigatorVisible(true)}
               />
-            </>
+         
           )}
         </View>
       </>

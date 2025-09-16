@@ -67,7 +67,7 @@ const primaryColor = lightDarkTheme.primaryText;
             backgroundColor: useBackgroundOverlay
               ? lightDarkTheme.overlayBackground
               : "transparent",
-              backgroundColor: 'hotpink',
+            
             borderRadius: 20,
           },
         ]}

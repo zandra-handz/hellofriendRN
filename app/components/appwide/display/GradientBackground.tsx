@@ -73,7 +73,7 @@ const [previousColors, setPreviousColors] = useState<readonly [ColorValue, Color
     setCurrentColors(nextColors);
     transition.value = 0;
 
-    transition.value = withTiming(1, { duration: 200 }); // You can customize timing
+    transition.value = withTiming(1, { duration: 400 }); // You can customize timing
   }, [nextColors]);
 
   const animatedStyle = useAnimatedStyle(() => ({
