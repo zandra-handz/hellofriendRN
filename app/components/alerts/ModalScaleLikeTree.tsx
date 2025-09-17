@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { StyleSheet, View, Modal } from "react-native"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { StyleSheet, View, Modal } from "react-native";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   FadeInUp,
@@ -54,7 +54,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   quickView,
   nullQuickView,
   onClose,
-}) => { 
+}) => {
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
@@ -169,8 +169,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
         //   style={modalAnimationStyle}
         animationType="slide"
       >
-      <SafeAreaView style={{flex: 1}}>
-        
         {handleRenderHelperMessage()}
 
         {handleRenderQuickView()}
@@ -198,39 +196,41 @@ const ModalScaleLikeTree: React.FC<Props> = ({
               ]}
             >
               <View style={styles.bodyContainer}>
-                <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>
-                  {children}
-                </View>
+                <SafeAreaView style={{ flex: 1 }}>
+                  <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>
+                    {children}
+                  </View>
 
-                {infoItem != undefined && !isKeyboardVisible && (
-                  <Animated.View
-                    entering={FadeInUp.delay(500)}
-                    style={{
-                      width: "100%",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      borderRadius: 30,
-                      borderTopLeftRadius: 0,
-                      borderTopRightRadius: 0,
-                      padding: 30,
-                      paddingTop: 18,
-                      paddingBottom: 26,
-                      borderTopWidth: StyleSheet.hairlineWidth,
-                      borderColor: lighterOverlayColor,
+                  {infoItem != undefined && !isKeyboardVisible && (
+                    <Animated.View
+                      entering={FadeInUp.delay(500)}
+                      style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        borderRadius: 30,
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        padding: 30,
+                        paddingTop: 18,
+                        paddingBottom: 26,
+                        borderTopWidth: StyleSheet.hairlineWidth,
+                        borderColor: lighterOverlayColor,
 
-                      alignItems: "center",
-                      height: "auto",
-                    }}
-                  >
-                    {infoItem}
+                        alignItems: "center",
+                        height: "auto",
+                      }}
+                    >
+                      {infoItem}
 
-                    <HelpButton
-                      iconColor={primaryColor}
-                      fontColor={primaryColor}
-                      onPress={handleHelpButtonPress}
-                    />
-                  </Animated.View>
-                )}
+                      <HelpButton
+                        iconColor={primaryColor}
+                        fontColor={primaryColor}
+                        onPress={handleHelpButtonPress}
+                      />
+                    </Animated.View>
+                  )}
+                </SafeAreaView>
               </View>
             </Animated.View>
           </Animated.View>
@@ -268,8 +268,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             </Animated.View>
           )}
         </Animated.View>
-        
-      </SafeAreaView>
       </Modal>
     </>
   );

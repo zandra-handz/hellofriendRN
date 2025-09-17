@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React, { useMemo, useState } from "react";
 
-import tinycolor from "tinycolor2";
+// import tinycolor from "tinycolor2";
 
 
 //friendList object
@@ -45,41 +45,44 @@ const useReadableColors = (friendList: Friend[], selectedFriendId) => {
 
   const getFontColor = (baseColor, targetColor, isInverted) => {
     let fontColor = targetColor;
+    return targetColor;
 
-    if (
-      !tinycolor.isReadable(baseColor, targetColor, {
-        level: "AA",
-        size: "small",
-      })
-    ) {
-      fontColor = isInverted ? "white" : "black";
+    // if (
+    //   !tinycolor.isReadable(baseColor, targetColor, {
+    //     level: "AA",
+    //     size: "small",
+    //   })
+    // ) {
+    //   fontColor = isInverted ? "white" : "black";
 
-      if (
-        !tinycolor.isReadable(baseColor, fontColor, {
-          level: "AA",
-          size: "small",
-        })
-      ) {
-        fontColor = fontColor === "white" ? "black" : "white";
-      }
-    }
+    //   if (
+    //     !tinycolor.isReadable(baseColor, fontColor, {
+    //       level: "AA",
+    //       size: "small",
+    //     })
+    //   ) {
+    //     fontColor = fontColor === "white" ? "black" : "white";
+    //   }
+    // }
 
-    return fontColor;
+    // return fontColor;
   };
 
     const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
     let fontColorSecondary = baseColor;
+
+    return fontColorSecondary;
   
-    if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
-      fontColorSecondary = isInverted ? 'black' : 'white';
+    // if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
+    //   fontColorSecondary = isInverted ? 'black' : 'white';
   
-      if (!tinycolor.isReadable(targetColor, fontColorSecondary, { level: 'AA', size: 'small' })) {
+    //   if (!tinycolor.isReadable(targetColor, fontColorSecondary, { level: 'AA', size: 'small' })) {
        
-        fontColorSecondary = fontColorSecondary === 'black' ? 'white' : 'black';
-      }
-    }
+    //     fontColorSecondary = fontColorSecondary === 'black' ? 'white' : 'black';
+    //   }
+    // }
   
-    return fontColorSecondary; 
+    // return fontColorSecondary; 
   };
   
 

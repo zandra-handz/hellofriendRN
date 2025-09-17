@@ -10,7 +10,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateFriendListColors from "../hooks/useUpdateFriendListColors";
 import { useFriendStyle } from "../context/FriendStyleContext"; 
-import tinycolor from "tinycolor2";
+// import tinycolor from "tinycolor2";
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const { user } = useUser();
@@ -30,24 +30,24 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const getFontColor = (baseColor, targetColor, isInverted) => {
     let fontColor = targetColor;
 
-    if (
-      !tinycolor.isReadable(baseColor, targetColor, {
-        level: "AA",
-        size: "small",
-      })
-    ) {
-      fontColor = isInverted ? "#ffffff" : "#000000";
+    // if (
+    //   !tinycolor.isReadable(baseColor, targetColor, {
+    //     level: "AA",
+    //     size: "small",
+    //   })
+    // ) {
+    //   fontColor = isInverted ? "#ffffff" : "#000000";
 
-      if (
-        !tinycolor.isReadable(baseColor, fontColor, {
-          level: "AA",
-          size: "small",
-        })
-      ) {
-        // If not readable, switch to the opposite color
-        fontColor = fontColor === "#ffffff" ? "#000000" : "#ffffff";
-      }
-    }
+    //   if (
+    //     !tinycolor.isReadable(baseColor, fontColor, {
+    //       level: "AA",
+    //       size: "small",
+    //     })
+    //   ) {
+    //     // If not readable, switch to the opposite color
+    //     fontColor = fontColor === "#ffffff" ? "#000000" : "#ffffff";
+    //   }
+    // }
 
     return fontColor; 
   };
@@ -55,26 +55,26 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
     let fontColorSecondary = baseColor;
  
-    if (
-      !tinycolor.isReadable(targetColor, baseColor, {
-        level: "AA",
-        size: "small",
-      })
-    ) {
-      // If not readable, switch to black or white based on isInverted
-      fontColorSecondary = isInverted ? "#000000" : "#ffffff";
+    // if (
+    //   !tinycolor.isReadable(targetColor, baseColor, {
+    //     level: "AA",
+    //     size: "small",
+    //   })
+    // ) {
+    //   // If not readable, switch to black or white based on isInverted
+    //   fontColorSecondary = isInverted ? "#000000" : "#ffffff";
 
-      if (
-        !tinycolor.isReadable(targetColor, fontColorSecondary, {
-          level: "AA",
-          size: "small",
-        })
-      ) {
-        // If not readable, switch to the opposite color
-        fontColorSecondary =
-          fontColorSecondary === "#000000" ? "#ffffff" : "#000000";
-      }
-    }
+    //   if (
+    //     !tinycolor.isReadable(targetColor, fontColorSecondary, {
+    //       level: "AA",
+    //       size: "small",
+    //     })
+    //   ) {
+    //     // If not readable, switch to the opposite color
+    //     fontColorSecondary =
+    //       fontColorSecondary === "#000000" ? "#ffffff" : "#000000";
+    //   }
+    // }
 
     return fontColorSecondary;
   };
@@ -159,7 +159,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
           <ColorPicker
             style={{ width: "100%" }}
             value={darkColor}
-            onComplete={onSelectDarkColor}
+            onCompleteJS={onSelectDarkColor}
           >
             <Panel1
               style={{
@@ -205,7 +205,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
           <ColorPicker
             style={{ width: "100%" }}
             value={lightColor}
-            onComplete={onSelectLightColor}
+            onCompleteJS={onSelectLightColor}
           >
             <Panel1
               style={{
