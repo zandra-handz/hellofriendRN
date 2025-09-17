@@ -136,11 +136,11 @@ const SafeViewAndGradientBackground = ({
           ></View>
         )}
 
-        {Header && (
+        {/* {Header && (
           <View style={{ height: standardizedHeaderHeight }}>
             <Header />
           </View>
-        )}
+        )} */}
 
         {children}
         

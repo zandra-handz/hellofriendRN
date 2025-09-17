@@ -14,9 +14,9 @@ const useFullHelloes = ({ friendId, fetchAll = false, indexNeeded = 0 }: Props) 
 
   const itemsPerPageOnBackend = 30;
 
-  console.log('starting index in useFullHelloes', indexNeeded);
+  // console.log('starting index in useFullHelloes', indexNeeded);
   const pagesNeeded = Math.floor(indexNeeded / itemsPerPageOnBackend) + 1;
-  console.log(`pages needed`, pagesNeeded);
+  // console.log(`pages needed`, pagesNeeded);
 
 const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched initially
 

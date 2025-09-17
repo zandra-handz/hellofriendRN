@@ -190,10 +190,8 @@ const ScreenLocationSearch = () => {
                 primaryColor={lightDarkTheme.primaryText}
                 primaryBackground={lightDarkTheme.primaryBackground}
                 overlayColor={lightDarkTheme.overlayBackground}
-                userAddress={userAddress}
-                setUserAddress={setUserAddress}
-                friendAddress={friendAddress}
-                setFriendAddress={setFriendAddress}
+                userAddress={userAddress} 
+                friendAddress={friendAddress} 
                 isVisible={addressesModalVisible}
                 closeModal={closeModal}
               />

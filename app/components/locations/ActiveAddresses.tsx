@@ -28,17 +28,14 @@ import FriendAddressChanger from "./FriendAddressChanger";
 
 interface ActiveAddressesProps {
   userAddress: object;
-  friendAddress: object;
-  setUserAddress: React.Dispatch<React.SetStateAction<string | null>>;
-  setFriendAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  friendAddress: object; 
 }
 
 const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
-  currentLocationSelected,
+ 
   userId,
   friendId,
   friendName,
- 
   primaryColor,
   overlayColor,
   primaryBackground,
@@ -164,7 +161,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
             friendId={friendId}
             isVisible={userAddressModalVisible}
             closeModal={() => setUserAddressModalVisible(false)}
-            addressSetter={setUserAddress}
+         v
             primaryColor={primaryColor}
             primaryBackground={primaryBackground}
             welcomeTextStyle={welcomeTextStyle}

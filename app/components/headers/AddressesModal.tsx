@@ -23,10 +23,8 @@ const AddressesModal: React.FC<Props> = ({
   primaryColor,
   primaryBackground,
   overlayColor,
-  userAddress,
-  setUserAddress,
-  friendAddress,
-  setFriendAddress,
+  userAddress, 
+  friendAddress, 
 }) => {
   const renderActiveAddresses = useCallback(() => {
     return (
@@ -37,10 +35,8 @@ const AddressesModal: React.FC<Props> = ({
         primaryColor={primaryColor}
         primaryBackground={primaryBackground}
         overlayColor={overlayColor}
-        userAddress={userAddress}
-        // setUserAddress={setUserAddress}
-        friendAddress={friendAddress}
-        // setFriendAddress={setFriendAddress}
+        userAddress={userAddress} 
+        friendAddress={friendAddress} 
       />
     );
   }, [userAddress, friendAddress]);

@@ -22,7 +22,7 @@ const trueHelloesInList = useMemo(() => {
   return helloesList?.filter((hello) => hello.manual_reset === undefined) ?? [];
 }, [helloesList]);
 
-  console.log(trueHelloesInList);
+  // console.log(trueHelloesInList);
 
   const { navigateToHelloes } = useAppNavigations();
   const PADDING = 20;

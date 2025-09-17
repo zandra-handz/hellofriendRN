@@ -6,30 +6,34 @@
 //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, {  useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import {
-  SimpleLineIcons, 
-  FontAwesome5,
-} from "@expo/vector-icons";   
-import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
-import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
+import { SimpleLineIcons, FontAwesome5 } from "@expo/vector-icons";
+// import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
+// import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useTravelTimes from "@/src/hooks/useTravelTimes";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
 const LocationTravelTimes = ({
-  userId,
-  friendId,
+  // userId,
+  // friendId,
   location,
   userAddress,
-  friendAddress, 
+  friendAddress,
   iconSize = 34,
   themeAheadOfLoading,
-  primaryColor = 'orange',
-}) => {   
-  const {   userAddresses } = useStartingUserAddresses({userId: userId});
-  const { friendAddresses } = useStartingFriendAddresses({userId: userId, friendId: friendId});
+  primaryColor = "orange",
+}) => {
+ 
+  // const userAddress =
+  //   userAddresses?.chosen || userAddresses?.saved?.[0] || null;
+  console.log(`in travel componentent`, userAddress);
 
+  // const friendAddress =
+  //   friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
+
+  console.log(`in travel componentent`, friendAddress);
+  console.log(`DESTINATION in travel component`, location);
   const {
     travelTimeResults,
     isTravelTimesPending,
@@ -38,16 +42,12 @@ const LocationTravelTimes = ({
     toggleFetch,
   } = useTravelTimes(userAddress, friendAddress, location, false); // true to enable fetching automatically
 
- 
-
   const DOUBLE_PRESS_DELAY = 300;
 
   const SPACER_MARGIN_AFTER_CLOCK_ICON = 7;
 
   const lastPress = useRef(0);
   const pressTimeout = useRef(null);
-
- 
 
   const handleSinglePress = () => {
     handleGoToCalculateTravelTimesScreen();
@@ -116,7 +116,7 @@ const LocationTravelTimes = ({
     // navigation.navigate("CalculateTravelTimes", {
     //   location: location,
     //   currentLocation: currentLocationDetails || null,
-    // }); 
+    // });
   };
 
   // useFocusEffect(
@@ -145,11 +145,7 @@ const LocationTravelTimes = ({
         onPress={handlePress}
       >
         <View style={{ position: "absolute", left: 0 }}>
-          <FontAwesome5
-            name="user-clock"
-            size={20}
-            color={primaryColor}
-          />
+          <FontAwesome5 name="user-clock" size={20} color={primaryColor} />
         </View>
         <View style={{ position: "absolute", right: 0, top: 10 }}>
           <FontAwesome5
@@ -208,14 +204,17 @@ const LocationTravelTimes = ({
 
           {!isTravelTimesLoading && (
             <>
-              {((!travelTimeResults && !cachedData && userAddresses?.chosen?.id && friendAddresses?.chosen?.id)) && (
-                <>
-                  <RenderFetchTimesButton />
-                </>
-              )}
+              {!travelTimeResults &&
+                !cachedData &&
+                userAddress?.id &&
+                friendAddress?.id && (
+                  <>
+                    <RenderFetchTimesButton />
+                  </>
+                )}
               {(travelTimeResults || cachedData) &&
-                userAddresses?.chosen &&
-               friendAddresses?.chosen && (
+                userAddress?.id &&
+                friendAddress?.id && (
                   <View
                     style={{
                       flexDirection: "row",
@@ -229,7 +228,7 @@ const LocationTravelTimes = ({
 
                     <View style={styles.travelTimesTextContainer}>
                       <Text
-                        style={[styles.travelTimeText, {color: primaryColor}]}
+                        style={[styles.travelTimeText, { color: primaryColor }]}
                       >
                         {travelTimeResults?.compare_directions?.Me?.duration ||
                           cachedData?.compare_directions?.Me?.duration ||
@@ -260,13 +259,14 @@ const LocationTravelTimes = ({
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
+    backgroundColor: "gray",
     flexSrink: 1,
     width: "auto",
     alignItems: "center",
     height: "100%",
     overflow: "hidden",
   },
-    loadingFriendProfileButtonWrapper: {
+  loadingFriendProfileButtonWrapper: {
     flex: 0.4,
     paddingRight: 0,
     justifyContent: "flex-start",

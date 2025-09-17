@@ -237,14 +237,17 @@ const ScreenHome = () => {
           : lightDarkTheme.overlayBackground
       }
       friendId={selectedFriend?.id}
-      includeBackgroundOverlay={true}
-      backgroundOverlayHeight={
-        isKeyboardVisible ? "100%" : friendList?.length > 0 ? 90 : 66
-      }
+      // includeBackgroundOverlay={true}
+      // backgroundOverlayHeight={
+      //   isKeyboardVisible ? "100%" : friendList?.length > 0 ? 90 : 66
+      // }
+          backgroundOverlayHeight=""
+           useOverlay={true}
+       includeBackgroundOverlay={true}  
+       backgroundTransparentOverlayColor={selectedFriend?.id ? lightDarkTheme.overlayBackground : 'transparent'}
       backgroundOverlayBottomRadius={0}
       useFriendColors={!!selectedFriend?.id}
-      style={{ flex: 1 }}
-      // header={HellofriendHeader}
+      style={{ flex: 1 }} 
     >
  
       {!friendListFetched && ( // isLoading is in FS Spinner
@@ -289,14 +292,14 @@ const ScreenHome = () => {
               <View
                 style={{
                   width: "100%",
-                  backgroundColor: lightDarkTheme.primaryBackground, // keeps this from collapsing in between friend selects
-                  height: selectedFriend?.id ? 44 : 'auto',
+                //  backgroundColor: lightDarkTheme.primaryBackground, // keeps this from collapsing in between friend selects
+                  height: 'auto',
                   paddingHorizontal: 0,
                   marginTop: 0,
                 }}
               >
                 
-                {selectedFriend?.id && (
+                {/* {selectedFriend?.id && (
                   <TopBarHome
                     loading={loadingDash}
                     style={themeAheadOfLoading}
@@ -305,7 +308,7 @@ const ScreenHome = () => {
                     backgroundColor={lightDarkTheme.primaryBackground}
                     onPress={navigateToSelectFriend}
                   />
-                )}
+                )} */}
               </View>
 
               {!selectedFriend?.id && (

@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, {
   useCallback,
   useState,
@@ -9,7 +9,8 @@ import React, {
 import LoadingBlock from "../appwide/spinner/LoadingBlock";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
 // import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; // moved to parent
@@ -20,6 +21,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
 // import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting"; // moved to parent
 import { useCategories } from "@/src/context/CategoriesContext";
+ 
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -37,12 +39,12 @@ const TalkingPointsChart = ({
   selectedFriendName,
   primaryColor,
   primaryBackgroundColor,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
   themeAheadOfLoading,
 }: Props) => {
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
   const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } =
@@ -81,7 +83,7 @@ const TalkingPointsChart = ({
           console.log("App has come to the foreground!");
           if (!capsuleListCount || capsuleListCount < 1) {
             return;
-          } 
+          }
           setTempCategoriesSortedList(categories.sortedList);
         }
 
@@ -187,47 +189,49 @@ const TalkingPointsChart = ({
 
   return (
     <>
-  
-      
       <>
-      {!isLoading && (
-      
-        <Pressable
-          onPress={toggleShowHistory}
-          style={{
-            height: 30,
-            paddingHorizontal: PADDING,
-            position: "absolute",
-            zIndex: 20000,
-            elevation: 20000,
-            top: 370,
-            right: 0,
-            alignItems: "center",
-            width: "100%",
-            flexDirection: "row",
-          }}
-        >
-          <Ionicons
-            name={!showHistory ? "pie-chart" : "close"}
-            size={30}
-            color={primaryColor}
-          />
-          {!showHistory && (
-            <Text
-              style={[
-                {
-                  color: primaryColor,
-                  fontFamily: "Poppins-Regular",
-                  fontSize: 13,
-                },
-              ]}
-            >
-              {"   "}category history
-            </Text>
-          )}
-        </Pressable>
-          
-      )}
+
+
+
+        {!isLoading && (
+          <Pressable
+            onPress={toggleShowHistory}
+            style={{
+              height: 30,
+              paddingHorizontal: PADDING,
+              position: "absolute",
+              zIndex: 20000,
+              elevation: 20000,
+              top: 370,
+              right: 0,
+              alignItems: "center",
+              width: "100%",
+              flexDirection: "row",
+            }}
+          >
+
+
+            <Ionicons
+              name={!showHistory ? "pie-chart" : "close"}
+              size={30}
+              color={primaryColor}
+            />
+            {!showHistory && (
+              <Text
+                style={[
+                  {
+                    color: primaryColor,
+                    fontFamily: "Poppins-Regular",
+                    fontSize: 13,
+                  },
+                ]}
+              >
+                {"   "}category history
+              </Text>
+            )}
+             
+          </Pressable>
+        )}
         <View
           style={[
             {
@@ -239,7 +243,7 @@ const TalkingPointsChart = ({
               flex: 1,
               padding: PADDING,
               paddingBottom: !showHistory ? PADDING : 0,
-              backgroundColor: isLoading ? 'transparent' : primaryOverlayColor,
+              backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
               borderRadius: 20,
               minHeight: HEIGHT,
             },
@@ -252,149 +256,162 @@ const TalkingPointsChart = ({
           )} */}
 
           {!isLoading && (
-            
-          <> 
-            
-          <View
-            style={{
-              borderRadius: 20,
-              flexDirection: "row",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <View style={{ flexDirection: "row" }}>
-              <Text
-                style={[
-                  {
-                    fontFamily: "Poppins-Bold",
-                    fontSize: subWelcomeTextStyle.fontSize + 3,
-
-                    color: primaryColor,
-                    opacity: 0.9,
-                    // color: manualGradientColors.homeDarkColor,
-                  },
-                ]}
-              >
-                Ideas
-              </Text>
-            </View>
-          </View>
-           
-
-          {isFocused && (
-            <View
-              style={{
-                marginHorizontal: 0,
-                alignItems: "center",
-                flexDirection: "column",
-                height: "74%",
-              }}
-            >
-              <Donut
-                friendStyle={friendStyle}
-                primaryColor={primaryColor}
-                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                onCategoryPress={handleMomentViewScrollTo}
-                onCenterPress={handleMomentScreenNoScroll}
-                onPlusPress={handleNavigateToCreateNew}
-                totalJS={capsuleListCount}
-                radius={CHART_RADIUS}
-                strokeWidth={CHART_STROKE_WIDTH}
-                outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-                gap={GAP}
-                labelsSize={LABELS_SIZE}
-                labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-                labelsSliceEnd={LABELS_SLICE_END}
-                data={categories?.sortedList || []}
-                colors={colors}
-                centerTextSize={CENTER_TEXT_SIZE}
-              />
-            </View>
-          )}
-
-          {showHistory && selectedFriendId && !isLoading && (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                // backgroundColor: themeStyles.primaryBackground.backgroundColor,
-                width: "100%",
-                bottom: 0,
-                // backgroundColor: 'teal',
-                height: SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2,
-              }}
-            >
+            <>
               <View
                 style={{
+                  borderRadius: 20,
                   flexDirection: "row",
-                  flex: 1,
-
-                  justifyContent: "flex-start",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
-                <Text
-                  style={[
-                    subWelcomeTextStyle,
-                    { color: primaryColor, alignSelf: "center" },
-                  ]}
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      {
+                        fontFamily: "Poppins-Bold",
+                        fontSize: subWelcomeTextStyle.fontSize + 3,
+
+                        color: primaryColor,
+                        opacity: 0.9,
+                        // color: manualGradientColors.homeDarkColor,
+                      },
+                    ]}
+                  >
+                    Ideas
+                  </Text>
+                </View>
+              </View>
+
+              {isFocused && (
+                <View
+                  style={{
+                    marginHorizontal: 0,
+                    alignItems: "center",
+                    flexDirection: "column",
+                    height: "74%",
+                  }}
                 >
-                  History{"  "}
-                </Text>
-                <FriendHistoryPieDataWrap
-                  friendId={selectedFriendId}
-                  friendStyle={friendStyle}
-                  selectedFriendName={selectedFriendName}
-                  primaryColor={primaryColor}
-                  primaryOverlayColor={primaryOverlayColor}
-                  darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                  welcomeTextStyle={welcomeTextStyle}
-                  subWelcomeTextStyle={subWelcomeTextStyle}
-                  manualGradientColors={manualGradientColors}
-                  themeAheadOfLoading={themeAheadOfLoading}
-                  chartBorder={SMALL_CHART_BORDER}
-                  chartBorderColor={primaryBackgroundColor}
-                  showLabels={false}
-                  chartRadius={SMALL_CHART_RADIUS}
-                />
-              </View>
-              <Text
-                style={[
-                  subWelcomeTextStyle,
-                  { color: primaryColor, alignSelf: "center" },
-                ]}
-              >
-                All time{"  "}
-              </Text>
-              <View
-                style={{ flexDirection: "row", justifyContent: "flex-end" }}
-              >
-                <UserHistoryPieDataWrap
-                  friendStyle={friendStyle}
-                  primaryColor={primaryColor}
-                  primaryOverlayColor={primaryOverlayColor}
-                  darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                  welcomeTextStyle={welcomeTextStyle}
-                  subWelcomeTextStyle={subWelcomeTextStyle}
-                  manualGradientColors={manualGradientColors}
-                  chartBorder={SMALL_CHART_BORDER}
-                  chartBorderColor={primaryBackgroundColor}
-                  showLabels={false}
-                  chartRadius={SMALL_CHART_RADIUS}
-                />
-              </View>
-            </View>
-          )}
-         
-          </>
-          
+                  <Donut
+                    friendStyle={friendStyle}
+                    primaryColor={primaryColor}
+                    darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                    onCategoryPress={handleMomentViewScrollTo}
+                    onCenterPress={handleMomentScreenNoScroll}
+                    onPlusPress={handleNavigateToCreateNew}
+                    totalJS={capsuleListCount}
+                    radius={CHART_RADIUS}
+                    strokeWidth={CHART_STROKE_WIDTH}
+                    outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+                    gap={GAP}
+                    labelsSize={LABELS_SIZE}
+                    labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+                    labelsSliceEnd={LABELS_SLICE_END}
+                    data={categories?.sortedList || []}
+                    colors={colors}
+                    centerTextSize={CENTER_TEXT_SIZE}
+                  />
+                </View>
+              )}
+
+              {showHistory && selectedFriendId && !isLoading && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    // backgroundColor: themeStyles.primaryBackground.backgroundColor,
+                    width: "100%",
+                    bottom: 0,
+                    // backgroundColor: 'teal',
+                    height: SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2,
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flex: 1,
+
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    <Text
+                      style={[
+                        subWelcomeTextStyle,
+                        { color: primaryColor, alignSelf: "center" },
+                      ]}
+                    >
+                      History{"  "}
+                    </Text>
+                    <FriendHistoryPieDataWrap
+                      friendId={selectedFriendId}
+                      friendStyle={friendStyle}
+                      selectedFriendName={selectedFriendName}
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={primaryOverlayColor}
+                      darkerOverlayBackgroundColor={
+                        darkerOverlayBackgroundColor
+                      }
+                      welcomeTextStyle={welcomeTextStyle}
+                      subWelcomeTextStyle={subWelcomeTextStyle}
+                      manualGradientColors={manualGradientColors}
+                      themeAheadOfLoading={themeAheadOfLoading}
+                      chartBorder={SMALL_CHART_BORDER}
+                      chartBorderColor={primaryBackgroundColor}
+                      showLabels={false}
+                      chartRadius={SMALL_CHART_RADIUS}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      subWelcomeTextStyle,
+                      { color: primaryColor, alignSelf: "center" },
+                    ]}
+                  >
+                    All time{"  "}
+                  </Text>
+                  <View
+                    style={{ flexDirection: "row", justifyContent: "flex-end" }}
+                  >
+                    <UserHistoryPieDataWrap
+                      friendStyle={friendStyle}
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={primaryOverlayColor}
+                      darkerOverlayBackgroundColor={
+                        darkerOverlayBackgroundColor
+                      }
+                      welcomeTextStyle={welcomeTextStyle}
+                      subWelcomeTextStyle={subWelcomeTextStyle}
+                      manualGradientColors={manualGradientColors}
+                      chartBorder={SMALL_CHART_BORDER}
+                      chartBorderColor={primaryBackgroundColor}
+                      showLabels={false}
+                      chartRadius={SMALL_CHART_RADIUS}
+                    />
+                  </View>
+                </View>
+              )}
+            </>
           )}
         </View>
+    
       </>
-       
     </>
   );
 };
+
+
+const styles = StyleSheet.create({
+   blurContainer: {
+ flex: 1,
+ padding: 20,
+ margin: 16,
+ textAlign: 'center',
+ justifyContent: 'center',
+ overflow: 'hidden',
+ borderRadius: 20,
+ },
+
+});
 
 export default TalkingPointsChart;

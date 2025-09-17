@@ -4,7 +4,13 @@
 //<Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
 //midpoints screen is crashing right now so commented out
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -25,7 +31,8 @@ import { useLocations } from "@/src/context/LocationsContext";
 import useUpdateUserAddressCache from "@/src/hooks/useUpdateUserAddressCache";
 import useUpdateFriendAddressCache from "@/src/hooks/useUpdateFriendAddressCache";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
-
+import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
+import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import DualLocationSearcher from "./DualLocationSearcher";
 
 const LocationsMapView = ({
@@ -45,17 +52,33 @@ const LocationsMapView = ({
   welcomeTextStyle,
   subWelcomeTextStyle,
   manualGradientColors,
- 
 }) => {
-  const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
+  // const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
   console.log(`past helloes`, pastHelloLocations);
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
-const { getChosenUserAddress } = useUpdateUserAddressCache({userId: userId});
-const { getChosenFriendAddress } = useUpdateFriendAddressCache({userId: userId, friendId: friendId});
+  const { getChosenUserAddress } = useUpdateUserAddressCache({
+    userId: userId,
+  });
+  const { getChosenFriendAddress } = useUpdateFriendAddressCache({
+    userId: userId,
+    friendId: friendId,
+  });
+  4;
 
-const userAddress = getChosenUserAddress();
-const friendAddress = getChosenFriendAddress();
+  const { userAddresses } = useStartingUserAddresses({ userId: userId });
+  const { friendAddresses } = useStartingFriendAddresses({
+    userId: userId,
+    friendId: friendId,
+  });
 
+ 
+
+  const userAddress = userAddresses?.chosen || userAddresses?.saved?.[0] || null;
+
+  console.log(userAddress);
+
+  const friendAddress = friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
+ 
 
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
@@ -74,7 +97,6 @@ const friendAddress = getChosenFriendAddress();
   const listItemIconTwoSize = 15;
   const listItemIconTwoPadding = 6;
   const listItemIconTwoDiameter = listItemIconSize + listItemIconPadding * 2;
-
 
   const [savedLocationsDDVisible, setSavedLocationsDDVisibility] =
     useState(false);
@@ -253,23 +275,20 @@ const friendAddress = getChosenFriendAddress();
       });
     }
   };
-const handleGoToMidpointLocationSearchScreen = () => {
-  if (!userAddress?.id || !friendAddress?.id) {
-    Alert.alert(
-      "Missing address",
-      "Both you and your friend need to have an address set before searching."
-    );
-    return; // stop here
-  }
+  const handleGoToMidpointLocationSearchScreen = () => {
+    if (!userAddress?.id || !friendAddress?.id) {
+      Alert.alert(
+        "Missing address",
+        "Both you and your friend need to have an address set before searching."
+      );
+      return; // stop here
+    }
 
-  navigation.navigate("MidpointLocationSearch", {
-    userAddress,
-    friendAddress,
-  });
-};
-
-
- 
+    navigation.navigate("MidpointLocationSearch", {
+      userAddress,
+      friendAddress,
+    });
+  };
 
   // Function to fit all markers
   const fitToMarkers = () => {
@@ -512,10 +531,10 @@ const handleGoToMidpointLocationSearchScreen = () => {
         liteMode={isKeyboardVisible ? true : false}
         style={[{ width: "100%", height: isKeyboardVisible ? "100%" : "100%" }]}
         initialRegion={currentRegion || null}
-        
- //
-        scrollEnabled={(isKeyboardVisible || savedLocationsDDVisible) ? false : true}
-     
+        //
+        scrollEnabled={
+          isKeyboardVisible || savedLocationsDDVisible ? false : true
+        }
         enableZoomControl={true}
         showsUserLocation={true}
         showsMyLocationButton={true}
@@ -581,13 +600,12 @@ const handleGoToMidpointLocationSearchScreen = () => {
         <>
           <View style={styles.dualLocationSearcherContainer}>
             <DualLocationSearcher
-            savedLocationsDDVisible={savedLocationsDDVisible}
-            setSavedLocationsDDVisibility={setSavedLocationsDDVisibility}
-          
+              savedLocationsDDVisible={savedLocationsDDVisible}
+              setSavedLocationsDDVisibility={setSavedLocationsDDVisibility}
               onPress={handlePress}
               locationListDrilledOnce={locationList}
               primaryColor={primaryColor}
-              primaryBackground={primaryBackground} 
+              primaryBackground={primaryBackground}
             />
           </View>
           {!isKeyboardVisible && (
@@ -680,7 +698,7 @@ const handleGoToMidpointLocationSearchScreen = () => {
             </View>
           )}
         </>
-      )} 
+      )}
     </View>
   );
 };

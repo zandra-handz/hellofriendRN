@@ -6,19 +6,19 @@ import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
- 
-import CalendarChart from "@/app/components/home/CalendarChart"; 
+
+import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesList from "@/app/components/helloes/HelloesList";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useLDTheme } from "@/src/context/LDThemeContext"; 
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
-  const { lightDarkTheme } = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
   const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -105,13 +105,13 @@ const ScreenHelloes = () => {
         onFilterPress={toggleHelloesFiltering}
         addToModalOpenPress={handleOpenSearch}
         onSearchPress={handleSearchPress}
-        themeAheadOfLoading={themeAheadOfLoading} 
+        themeAheadOfLoading={themeAheadOfLoading}
       />
     );
   }, [
     helloesData,
     flattenHelloes,
-    themeAheadOfLoading, 
+    themeAheadOfLoading,
     lightDarkTheme,
     toggleHelloesFiltering,
     handleSearchPress,
@@ -119,7 +119,7 @@ const ScreenHelloes = () => {
   ]);
 
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
@@ -130,13 +130,12 @@ const ScreenHelloes = () => {
       useOverlay={true}
       style={{ flex: 1 }}
     >
-
       <View
-        style={{ 
+        style={{
           paddingHorizontal: 12,
           paddingVertical: 10,
-          flexDirection: 'row',
-          justifyContent: 'flex-start',
+          flexDirection: "row",
+          justifyContent: "flex-start",
           alignItems: "center",
           borderRadius: 30,
           height: "auto",
@@ -152,15 +151,12 @@ const ScreenHelloes = () => {
         >
           Hello history for {selectedFriend?.name}
         </Text>
-        
       </View>
-            <CalendarChart
-        helloesList={helloesList}
-        navigateToHelloes={navigateToHelloes}
+      <CalendarChart
+        helloesList={helloesList} 
         friendId={selectedFriend?.id}
         themeAheadOfLoading={themeAheadOfLoading}
-        lightDarkTheme={lightDarkTheme} 
-        showTopBar={false}
+        lightDarkTheme={lightDarkTheme}
         useBackgroundOverlay={false}
       />
       {/* <Loading isLoading={!helloesListFull} /> */}
@@ -171,14 +167,14 @@ const ScreenHelloes = () => {
             {selectedFriend &&
               helloesDataFiltered &&
               helloesDataFiltered.length > 0 && (
-                <HelloesList 
+                <HelloesList
                   triggerScroll={triggerScroll}
                   helloesListFull={helloesDataFiltered}
                   isFetchingNextPage={isFetchingNextPage}
                   fetchNextPage={fetchNextPage}
                   hasNextPage={hasNextPage}
                   onPress={navigateToSingleView}
-                  primaryColor={lightDarkTheme.primaryText} 
+                  primaryColor={lightDarkTheme.primaryText}
                 />
               )}
           </View>

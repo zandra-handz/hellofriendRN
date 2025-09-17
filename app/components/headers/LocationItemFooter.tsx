@@ -155,7 +155,7 @@ const LocationItemFooter: React.FC<Props> = ({
                       extraData?.userAddress &&
                       extraData?.friendAddress &&
                        (
-                        <View style={{flex: 1, backgroundColor: 'orange', width: 60}}>
+                        <View style={{flex: 1,   width: 60, flexGrow: 1}}>
 
                         <LocationTravelTimes
                           userId={userId}

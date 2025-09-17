@@ -39,8 +39,7 @@ lighterOverlayBackgroundColor,
 }) => {
   const { friendDash, loadingDash } = useFriendDash();
   const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+ 
   return (
     <Animated.View
       entering={FadeInUp}
@@ -73,13 +72,9 @@ lighterOverlayBackgroundColor,
       {selectedFriendId && (
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
-            userId={userId}
-            manualGradientColors={manualGradientColors}
-            appColorsStyle={manualGradientColors}
+            userId={userId} 
             friendStyle={friendStyle}
-            primaryColor={primaryColor}
-            welcomeTextStyle={welcomeTextStyle}
-            subWelcomeTextStyle={subWelcomeTextStyle}
+            primaryColor={primaryColor} 
             primaryOverlayColor={primaryOverlayColor}
             primaryBackgroundColor={primaryBackgroundColor}
             darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}

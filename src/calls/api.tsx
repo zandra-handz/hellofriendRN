@@ -644,6 +644,7 @@ export const GetTravelComparisons = async (
   friendAddress: addressType,
   location: addressTypeVariant
 ) => {
+  console.log('getting travel comparison');
   try {
     const locationData = {
       address_a_address: userAddress.address,

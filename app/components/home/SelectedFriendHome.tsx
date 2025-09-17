@@ -17,15 +17,16 @@ import Animated, {
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
+import { BlurView } from "expo-blur";
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -33,14 +34,14 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
- 
-  friendStyle, 
+
+  friendStyle,
   borderColor = "transparent",
-  primaryColor, 
+  primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
- 
+
   loadingDash,
   friendDash,
   selectedFriendId,
@@ -50,10 +51,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const headerRef = useRef(null);
   const { capsuleList } = useCapsuleList();
 
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
-  
-   const welcomeTextStyle = AppFontStyles.welcomeText;
-   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
 
   const { categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
@@ -96,17 +97,36 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
 
+  //const ELEMENTS_BACKGROUND = CARD_BACKGROUND;
+  const ELEMENTS_BACKGROUND = "transparent";
+
   return (
     <View
       style={[
         styles.container,
         {
-          marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
-          borderColor: borderColor,
+          //marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
+
           paddingHorizontal: 0,
+          // backgroundColor: primaryOverlayColor,
         },
       ]}
     >
+      <MaterialCommunityIcons
+        name={"leaf"}
+        size={1200}
+        color={"#8bc34a"}
+   //  color={friendStyle.lightColor}
+
+        style={{
+          position: "absolute",
+          top: -740,
+          left: -470,
+          //  opacity: 0.3,
+          opacity: 0.8,
+          transform: [{ rotate: "200deg" }, { scaleX: -1 }],
+        }}
+      />
       <View
         style={{
           zIndex: 30000,
@@ -133,7 +153,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   top: 0,
                   height: "auto",
                   padding: 6,
-                  backgroundColor: primaryBackgroundColor,
+                  backgroundColor: primaryOverlayColor,
                   zIndex: 5000,
                   elevation: 5000,
                 },
@@ -156,11 +176,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             >
               <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
                 <FriendHeaderMessageUI
+                  cardBackgroundColor={CARD_BACKGROUND}
                   selectedFriendName={`${selectedFriendName}`}
                   loadingNewFriend={loadingDash}
                   primaryColor={primaryColor}
                   welcomeTextStyle={welcomeTextStyle}
-                  backgroundColor={primaryBackgroundColor}
+                  backgroundColor={primaryOverlayColor}
                   onPress={() => console.log("nada!")}
                 />
               </View>
@@ -185,8 +206,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 <SuggestedHello
                   isLoading={loading}
                   friendId={selectedFriendId}
-                  manualGradientColors={manualGradientColors}
-                  primaryOverlayColor={primaryOverlayColor}
+                  primaryOverlayColor={CARD_BACKGROUND}
                   primaryColor={primaryColor}
                   primaryBackground={primaryBackgroundColor}
                   welcomeTextStyle={welcomeTextStyle}
@@ -206,14 +226,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     categoryStartIndices={categoryStartIndices}
                     categorySizes={categorySizes}
                     generateGradientColors={generateGradientColors}
-                    manualGradientColors={manualGradientColors}
                     friendStyle={friendStyle}
                     primaryColor={primaryColor}
-                    primaryBackgroundColor={primaryBackgroundColor}
+                    primaryBackgroundColor={ELEMENTS_BACKGROUND}
                     darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                    primaryOverlayColor={primaryOverlayColor}
-                    welcomeTextStyle={welcomeTextStyle}
-                    subWelcomeTextStyle={subWelcomeTextStyle}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
                     loadingNewFriend={loadingDash}
                     selectedFriendId={selectedFriendId}
                     selectedFriendName={selectedFriendName}
@@ -225,7 +242,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   <Pics
                     isLoading={loading}
                     primaryColor={primaryColor}
-                    primaryOverlayColor={primaryOverlayColor}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
                     userId={userId}
                     friendId={selectedFriendId}
                   />
@@ -235,7 +252,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   <Helloes
                     isLoading={loading}
                     primaryColor={primaryColor}
-                    primaryOverlayColor={primaryOverlayColor}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
                     friendId={selectedFriendId}
                   />
                 </View>
@@ -261,7 +278,6 @@ const styles = StyleSheet.create({
 
     alignItems: "center",
     justifyContent: "space-between",
-    overflow: "hidden",
   },
   containerOverScrollView: {
     width: "100%",

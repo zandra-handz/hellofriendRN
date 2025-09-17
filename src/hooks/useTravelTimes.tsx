@@ -23,8 +23,11 @@ const useTravelTimes = (
     }
   };
 
-  const isInputValid =
-    userAddress?.address && friendAddress?.address && location?.address;
+  // const isInputValid =
+  //   userAddress?.address && friendAddress?.address && location?.address;
+
+
+ 
 
   const {
     data: travelTimeResults,
@@ -39,7 +42,7 @@ const useTravelTimes = (
       friendAddress?.address,
       location?.address,
     ],
-    enabled: !!(isInputValid && enableFetch),
+    enabled: !!(userAddress?.address && friendAddress?.address && location?.address && enableFetch),
     staleTime: 1000 * 60 * 60, // one hour
   });
 

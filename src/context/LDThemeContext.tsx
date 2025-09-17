@@ -125,7 +125,8 @@ export const lightTheme = {
 
 export const darkTheme = {
   // colors: {
-  overlayBackground: "rgba(0, 0, 0, 0.6)",
+  // overlayBackground: "rgba(0, 0, 0, 0.6)",
+    overlayBackground: "rgba(0, 0, 0, 0.46)",
   darkerOverlayBackground: "rgba(0, 0, 0, 0.75)",
   lighterOverlayBackground: "rgba(255, 255, 255, 0.3)",
   primaryText: "#d3d3d3",

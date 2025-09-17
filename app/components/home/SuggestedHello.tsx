@@ -3,7 +3,9 @@ import React, { useMemo, useState } from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
-
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+ 
 type Props = {
   friendId: number;
   padding: number;
@@ -13,19 +15,20 @@ type Props = {
 
 const SuggestedHello = ({
   isLoading, // ( = loadingDash )
-  friendId,
-  manualGradientColors,
+  friendId, 
   primaryColor,
   primaryOverlayColor,
   primaryBackground,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
+
   friendFutureDate,
   padding,
   height,
   borderRadius = 14,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
@@ -45,7 +48,9 @@ const SuggestedHello = ({
             style={[
               {
                 fontFamily: "Poppins-Regular",
-                fontSize: subWelcomeTextStyle.fontSize + 3,
+                fontSize: subWelcomeTextStyle.fontSize,
+                fontWeight: 'bold',
+                lineHeight: 20,
 
                 color: primaryColor,
                 opacity: 0.9,
@@ -59,8 +64,9 @@ const SuggestedHello = ({
               {
                 // alignSelf: 'center',
                 color: primaryColor,
-                lineHeight: 28,
-                fontSize: welcomeTextStyle.fontSize - 5,
+                lineHeight: 32,
+                fontSize: welcomeTextStyle.fontSize - 12,
+            
                 opacity: 0.9,
                 paddingRight: 8, // EYEBALL
               },
@@ -99,9 +105,12 @@ const SuggestedHello = ({
          // paddingRight: 10,
           width: "100%",
           backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
-          borderRadius: 14,
+          borderRadius: 10,
         }}
-      >
+      > 
+
+
+     
         {/* {isLoading && (
           <LoadingBlock loading={true} borderRadius={borderRadius} />
         )} */}
@@ -136,6 +145,7 @@ const SuggestedHello = ({
             justifyContent: "center",
           }}
         ></View>
+                 
       </View>
       {optionsModalVisible && (
         <View>

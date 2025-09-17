@@ -5,7 +5,7 @@ import { fetchFriendAddresses } from "@/src/calls/api";
 import { useQuery } from "@tanstack/react-query";
 
 const useStartingFriendAddresses = ({ userId, friendId }) => {
-  console.warn("STARTING ADDRESSES");
+  // console.warn("STARTING ADDRESSES");
 
   const {
     data: friendAddresses = [],

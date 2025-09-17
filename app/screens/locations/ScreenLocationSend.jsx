@@ -14,6 +14,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 import AddPhoneNumber from "@/app/components/alerts/AddPhoneNumber";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
+
 const ScreenLocationSend = () => {
   const route = useRoute();
   const { user } = useUser();

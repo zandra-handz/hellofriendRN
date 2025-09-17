@@ -18,7 +18,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
   userId,
   isVisible,
   closeModal,
-  addressSetter,
+
   primaryColor,
   primaryBackground, 
 }) => {
@@ -38,13 +38,13 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
     );
 
     if (isExisting) {
-      addressSetter(isExisting);
+      // addressSetter(isExisting);
       console.log(
         `isExisting set friend address in selector via parent function`,
         address
       );
     } else {
-      addressSetter(address);
+      // addressSetter(address);
       console.log(`set friend address in selector via parent function`);
     }
     setIsExistingAddress(!!isExisting);
