@@ -35,7 +35,7 @@ interface QuickWriteMomentProps {
 }
 
 // Forwarding ref to the parent to expose the TextInput value
-const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
+const QuickWriteMoment = 
   (
     { 
       focusMode,
@@ -45,9 +45,10 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       primaryColor,
   
         primaryBackgroundColor,
-        primaryOverlayColor, 
-    },
-    ref
+        primaryOverlayColor,
+        ref, 
+        value,
+    }, 
   ) => {  
     const [editedMessage, setEditedMessage] = useState(mountingText); 
 
@@ -60,10 +61,10 @@ const buttonColor = primaryBackgroundColor;
       useCallback(() => {
         const timeout = setTimeout(() => {
           if (
-            textInputRef.current &&
+            ref.current &&
             focusMode === true // not sure if there was a specific reason I added === true, so leaving as is 
           ) {
-            textInputRef.current.focus();
+            ref.current.focus();
           } 
         }, 50); // Small delay for rendering
         return () => clearTimeout(timeout); 
@@ -72,8 +73,8 @@ const buttonColor = primaryBackgroundColor;
 
 const handleManualFocus = useCallback(() => {
   const timeout = setTimeout(() => {
-    if (textInputRef.current) {
-      textInputRef.current.focus();
+    if (ref.current) {
+      ref.current.focus();
     }
   }, 50);
   return () => clearTimeout(timeout);
@@ -81,40 +82,20 @@ const handleManualFocus = useCallback(() => {
 
     const addIconSize = 22;
 
-    useEffect(() => {
-      if (textInputRef.current) {
-        textInputRef.current.setNativeProps({ text: mountingText });
-        setEditedMessage(mountingText);
-      }
-    }, []);
+    // useEffect(() => {
+    
+    //     setEditedMessage(mountingText);
+    
+    // }, []);
  
-    useImperativeHandle(ref, () => ({
-      setText: (text) => {
-        if (textInputRef.current) {
-          textInputRef.current.setNativeProps({ text });
-          setEditedMessage(text);
-        }
-      },
-      clearText: () => {
-        if (textInputRef.current) {
-          textInputRef.current.clear();
-          setEditedMessage("");
-        }
-      },
-      getText: () => editedMessage,
-      focus: () => {
-         
-       textInputRef.current.blur(); // YA THIS WORKS. Gotta blur manually for some reason to get it to work more than one time in a row
-        handleManualFocus();
-      },
-    }));
+    
 
-    useEffect(() => {
-      setEditedMessage(mountingText); // Reset to starting text if it changes
-    }, [mountingText]);
+    // useEffect(() => {
+    //   setEditedMessage(mountingText); // Reset to starting text if it changes
+    // }, [mountingText]);
 
     const handleTextInputChange = (text) => {
-      setEditedMessage(text);
+    
       onTextChange(text);
     };
 
@@ -281,10 +262,11 @@ const handleManualFocus = useCallback(() => {
                   }}
                 > 
                     <TextInput
-                      ref={textInputRef}
+                      ref={ref}
                       autoFocus={focusMode}
                       style={[styles.textInput, {color: buttonColor}]}
-                      value={editedMessage}
+                      color={primaryColor}
+                      value={value}
                       placeholder={""}
                       onBlur={() => console.log('lost focus')}
                       placeholderTextColor={"white"}
@@ -298,8 +280,7 @@ const handleManualFocus = useCallback(() => {
         </View>
       </TouchableWithoutFeedback>
     );
-  }
-);
+  } 
 
 const styles = StyleSheet.create({
   selectFriendContainer: {

@@ -27,7 +27,9 @@ const TopBarLikeMinusWidth = ({
 }: Props) => {
   const { navigateBack } = useAppNavigations();
   return (
-    <View style={{ paddingHorizontal: 10 }}>
+    <View style={{
+     //  paddingHorizontal: 10
+        }}>
       <View //could make whole bar a pressable instead
         style={[
           {

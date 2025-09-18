@@ -87,6 +87,7 @@ const MomentViewPage: React.FC<Props> = ({
   }
 
   const handleEditMoment = () => {
+    console.log('navving to edit screen', item?.capsule);
     navigation.navigate("MomentFocus", {
       momentText: item?.capsule || null,
       updateExistingMoment: true,

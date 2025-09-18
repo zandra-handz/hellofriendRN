@@ -18,6 +18,7 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import MomentFocusTray from "./MomentFocusTray";
+import { close } from "@sentry/react-native";
 type Props = {
   screenCameFromToParent: number;
   momentText: string;
@@ -29,7 +30,7 @@ type Props = {
   existingMomentObject?: Moment;
   triggerSaveFromLateral: boolean;
   escortBarSpacer: number;
-  cardPadding: number;
+  cardPaddingVertical: number;
   friendId: number;
   friendDash: FriendDashboardData;
 };
@@ -38,12 +39,12 @@ const MomentWriteEditView = ({
   defaultCategory,
   manualGradientColors,
   themeAheadOfLoading,
-  capsuleList, 
-  
+  capsuleList,
+
   userId,
   screenCameFromToParent,
   momentText,
-  catCreatorVisible, 
+  catCreatorVisible,
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
@@ -55,7 +56,7 @@ const MomentWriteEditView = ({
   existingMomentObject,
   triggerSaveFromLateral,
   escortBarSpacer,
-  cardPadding = 4, // controls padding around the shaded card
+  cardPaddingVertical = 10, // controls padding around the shaded card
   friendId,
   friendName,
   friendFaves,
@@ -71,15 +72,16 @@ const MomentWriteEditView = ({
   const { navigateBack, navigateToMoments, navigateToMomentView } =
     useAppNavigations();
 
+  const CARD_BACKGROUND = "rgba(0,0,0,0.8)"; // same as in selected friend home
 
-    const welcomeTextStyle = AppFontStyles.welcomeText;
-    const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedUserCategory, setSelectedUserCategory] = useState<number>(0);
+  // const [selectedCategory, setSelectedCategory] = useState("");
+  // const [selectedUserCategory, setSelectedUserCategory] = useState<number>(0);
   const [triggerReFocus, setTriggerReFocus] = useState<number>(0); //can set 0 to deFocus if needed
-
+  const [momentTextToSave, setMomentTestToSave] = useState(momentText);
   const [userChangedCategory, setUserChangedCategory] =
     useState<boolean>(false);
 
@@ -90,16 +92,23 @@ const MomentWriteEditView = ({
   };
 
   const TOPPER_PADDING_TOP = 0;
+console.log('existing moment in write view: ', existingMomentObject?.capsule);
+useEffect(() => {
+  console.log(`momen text to save`, momentTextToSave)
+
+}, [momentTextToSave]);
 
   useFocusEffect(
     useCallback(() => {
+
       if (
         momentText &&
-        !userChangedCategory &&
-        momentTextRef &&
-        momentTextRef.current
+        !userChangedCategory
+        // && momentTextRef &&
+        // momentTextRef.current
       ) {
-        momentTextRef.current.setText(momentText);
+        setMomentTestToSave(momentText);
+        // momentTextRef.current.setText(momentText);
       }
       // else {
       //   console.error("NOT RESETTING", momentText, userChangedCategory);
@@ -107,28 +116,62 @@ const MomentWriteEditView = ({
     }, [momentText])
   );
 
-  useEffect(() => {
-    if (!catCreatorVisible) {
-      setTriggerReFocus(Date.now());
-    }
-  }, [catCreatorVisible]);
+
+  const INNER_PADDING_HORIZONTAL = 20;
+
+  // console.log('MOMENT WRITE VIEW SCREEN RENDERED');
+  //   useFocusEffect(
+  //   useCallback(() => {
+
+  //     if ( friendId
+  //     )  {
+  //       console.log('callback triggering refocus');
+  //       handleTriggerRefocus();
+  //     }
+  //   }, [friendId])
+  // );
 
   useEffect(() => {
-    if (!catCreatorVisible && friendId) {
-      setTriggerReFocus(Date.now());
-    }
-  }, [friendId]);
+  if (friendId) {
+    console.log("callback triggering refocus");
+    handleTriggerRefocus();
+  }
+}, [friendId]);
+  // useEffect(() => {
+  //   if (!catCreatorVisible) {
+  //     setTriggerReFocus(Date.now());
+  //   }
+  // }, [catCreatorVisible]);
 
-  useEffect(() => {
-    if (momentText) {
-      updateMomentText(momentText);
-    }
-  }, [momentText]);
+  // useEffect(() => {
+  //   if (!catCreatorVisible && friendId) {
+  //     setTriggerReFocus(Date.now());
+  //   }
+  // }, [friendId]);
+
+  const handleTriggerRefocus = () => {
+    console.log('handletrifgger refocus');
+    setTriggerReFocus(Date.now());
+  };
+
+
+  const handleCloseCatCreator = () => {
+    closeCatCreator();
+    handleTriggerRefocus();
+
+  };
+
+  // useEffect(() => {
+  //   if (momentText) {
+  //     updateMomentText(momentText);
+  //   }
+  // }, [momentText]);
 
   const updateMomentText = (text) => {
-    if (momentTextRef && momentTextRef.current) {
-      momentTextRef.current.setText(text);
-    }
+    setMomentTestToSave(text);
+    // if (momentTextRef && momentTextRef.current) {
+    //   momentTextRef.current.setText(text);
+    // }
   };
 
   useEffect(() => {
@@ -156,18 +199,23 @@ const MomentWriteEditView = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (updateExistingMoment && existingMomentObject) {
-      setSelectedCategory(existingMomentObject.user_category_name);
-      setSelectedUserCategory(Number(existingMomentObject.user_category));
-    }
-  }, [updateExistingMoment, existingMomentObject]);
+  // useEffect(() => {
+  //   if (updateExistingMoment && existingMomentObject) {
+  //     setSelectedCategory(existingMomentObject.user_category_name);
+  //     setSelectedUserCategory(Number(existingMomentObject.user_category));
+  //   }
+  // }, [updateExistingMoment, existingMomentObject]);
 
- 
+  const [selectedCategory, setSelectedCategory] = useState(
+    existingMomentObject?.user_category_name ?? ""
+  );
+  const [selectedUserCategory, setSelectedUserCategory] = useState(
+    Number(existingMomentObject?.user_category ?? 0)
+  );
 
   const handleUserCategorySelect = ({ name: name, id: id }) => {
     setSelectedUserCategory(id);
-    setSelectedCategory(name); 
+    setSelectedCategory(name);
   };
 
   const handleSave = async () => {
@@ -181,65 +229,63 @@ const MomentWriteEditView = ({
       ]);
       return;
     }
-    if (momentTextRef && momentTextRef.current) {
-      const textLength = momentTextRef.current.getText().length;
+    // if (momentTextRef && momentTextRef.current) {
+    // const textLength = momentTextRef.current.getText().length;
+    const textLength = momentTextToSave.length;
 
-      if (!textLength) {
-        Alert.alert(
-          `Oops!`,
-          `Please enter your talking point first before saving it.`,
-          [
-            {
-              text: "Back",
-              onPress: () => {},
-              style: "cancel",
-            },
-          ]
-        );
-        return;
-      }
-
-      if (!selectedUserCategory) {
-        Alert.alert(
-          `Oops!`,
-          `Please select a category before trying to save.`,
-          [
-            {
-              text: "Back",
-              onPress: () => {},
-              style: "cancel",
-            },
-          ]
-        );
-        return;
-      }
-
-      try {
-        if (friendId) {
-          if (!updateExistingMoment) {
-            const requestData = {
-              friend: friendId,
-              // selectedCategory: selectedCategory, // just need ID below
-              selectedUserCategory: selectedUserCategory,
-              moment: momentTextRef.current.getText(),
-            };
-            showFlashMessage("Idea saved!", false, 2000);
-            await handleCreateMoment(requestData);
-          } else {
-            const editData = {
-              //these are the actual backend fields
-              typed_category: selectedCategory,
-              user_category: selectedUserCategory,
-              capsule: momentTextRef.current.getText(),
-            };
-
-            await handleEditMoment(existingMomentObject?.id, editData);
-          }
-        }
-      } catch (error) {
-        console.log("catching errors elsewhere, not sure i need this", error);
-      }
+    if (!textLength) {
+      Alert.alert(
+        `Oops!`,
+        `Please enter your talking point first before saving it.`,
+        [
+          {
+            text: "Back",
+            onPress: () => {},
+            style: "cancel",
+          },
+        ]
+      );
+      return;
     }
+
+    if (!selectedUserCategory) {
+      Alert.alert(`Oops!`, `Please select a category before trying to save.`, [
+        {
+          text: "Back",
+          onPress: () => {},
+          style: "cancel",
+        },
+      ]);
+      return;
+    }
+
+    try {
+      if (friendId) {
+        if (!updateExistingMoment) {
+          const requestData = {
+            friend: friendId,
+            // selectedCategory: selectedCategory, // just need ID below
+            selectedUserCategory: selectedUserCategory,
+            moment: momentTextToSave,
+          };
+          showFlashMessage("Idea saved!", false, 2000);
+          await handleCreateMoment(requestData);
+        } else {
+          const editData = {
+            //these are the actual backend fields
+            typed_category: selectedCategory,
+            user_category: selectedUserCategory,
+            // capsule: momentTextRef.current.getText(),
+            capsule: momentTextToSave,
+          };
+
+          await handleEditMoment(existingMomentObject?.id, editData);
+        }
+      }
+    } catch (error) {
+      console.log("catching errors elsewhere, not sure i need this", error);
+    }
+    // }
   };
   useEffect(() => {
     if (catCreatorVisible) {
@@ -249,9 +295,11 @@ const MomentWriteEditView = ({
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
-      if (screenCameFromToParent === 1) {
+      if ((screenCameFromToParent === 1) && momentTextToSave) {
         updateMomentText(""); //clear saved text, ONLY after save is confirmed
+       console.log('triggering refocus because mutation');
         setTriggerReFocus(Date.now());
+          setTriggerReFocus(null);
         return;
       } else {
         navigateBack();
@@ -299,7 +347,7 @@ const MomentWriteEditView = ({
         alignItems: "center",
         flex: 1,
         width: "100%",
-        // padding: 4,
+        //padding: 4,
       }}
       onPress={() => {}}
     >
@@ -307,7 +355,7 @@ const MomentWriteEditView = ({
         <View
           style={[
             {
-              padding: cardPadding, // Padding needs to be on this view for some reason
+              paddingVertical: cardPaddingVertical, // Padding needs to be on this view for some reason
               width: "100%",
               flex: 1,
             },
@@ -328,29 +376,28 @@ const MomentWriteEditView = ({
             <View
               style={{
                 padding: 10,
-              borderRadius: 40,
+                paddingHorizontal: INNER_PADDING_HORIZONTAL,
+                borderRadius: 10,
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 width: "100%",
                 flex: 1,
                 marginBottom: escortBarSpacer,
-              zIndex: 1,
+                zIndex: 1,
                 overflow: "hidden",
                 backgroundColor: darkerOverlayColor,
+                backgroundColor: CARD_BACKGROUND,
               }}
             >
-              <MomentFocusTray
+              <MomentFocusTray 
                 userId={userId}
                 userDefaultCategory={defaultCategory}
                 themeAheadOfLoading={themeAheadOfLoading}
                 primaryColor={primaryColor}
                 lighterOverlayColor={lighterOverlayColor}
-                primaryBackground={primaryBackground}
-                manualGradientColors={manualGradientColors}
-                subWelcomeTextStyle={subWelcomeTextStyle}
-                capsuleList={capsuleList}
-                
-                welcomeTextStyle={welcomeTextStyle}
+                primaryBackground={primaryBackground} 
+              
+                capsuleList={capsuleList} 
                 paddingTop={TOPPER_PADDING_TOP}
                 friendDefaultCategory={
                   friendFaves?.friend_default_category || null
@@ -380,6 +427,7 @@ const MomentWriteEditView = ({
               {!createMomentMutation.isPending && (
                 <TextMomentBox
                   ref={momentTextRef}
+                  value={momentTextToSave}
                   onTextChange={updateMomentText}
                   triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
                   isKeyboardVisible={isKeyboardVisible}
@@ -388,7 +436,6 @@ const MomentWriteEditView = ({
                 />
               )}
             </View>
- 
           </View>
         </View>
 
@@ -396,7 +443,7 @@ const MomentWriteEditView = ({
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
           manualGradientColors={manualGradientColors}
-          capsuleList={capsuleList} 
+          capsuleList={capsuleList}
           freezeCategory={userChangedCategory}
           friendDefaultCategory={friendFaves?.friend_default_category || null}
           isVisible={catCreatorVisible}
@@ -405,7 +452,7 @@ const MomentWriteEditView = ({
           onSave={handleSave}
           updatingExisting={updateExistingMoment}
           existingId={Number(existingMomentObject?.user_category) || null}
-          onClose={closeCatCreator}
+          onClose={handleCloseCatCreator}
           categoryColorsMap={categoryColorsMap}
         />
       </View>

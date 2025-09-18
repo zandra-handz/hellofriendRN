@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef  } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -10,7 +10,7 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 type Props = {
   userChangedCategory: boolean;
-  zIndex?: number;
+ 
   categoryId: number;
   freezeCategory: RefObject<boolean>;
   label: string;
@@ -18,25 +18,22 @@ type Props = {
   fontSizeEditMode: number;
   onPress: () => void;
   editMode: boolean;
-  maxWidth: number;
+ 
   iconSize: number;
 };
 
 const SelectedCategoryButton = ({
+ 
   userId,
   userDefaultCategory,
   themeAheadOfLoading,
   primaryColor,
   primaryBackground,
-  lighterOverlayColor,
-
- 
-
+  lighterOverlayColor, 
   friendId,
   friendName,
   friendDefaultCategory,
-
-  zIndex = 3,
+ 
   categoryId,
   freezeCategory,
 
@@ -44,8 +41,7 @@ const SelectedCategoryButton = ({
   fontSize = 24,
   fontSizeEditMode = 16,
   onPress,
-  editMode,
-  maxWidth = 100,
+  editMode=true, 
   iconSize = 20,
 }: Props) => {
   const { userCategories } = useCategories();
@@ -87,7 +83,7 @@ const SelectedCategoryButton = ({
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
-      console.log("double press here!");
+   
       handleMakeFriendDefault();
       showFlashMessage(`Category pinned!`, false, 1000);
       setLastPress(null);
@@ -107,13 +103,19 @@ const SelectedCategoryButton = ({
     setDetailsModalVisible(true);
   };
 
+
+    const handleCloseModal = () => {
+    setDetailsModalVisible(false);
+
+  };
+
   return (
     <>
       <GlobalPressable
-        zIndex={zIndex}
+        zIndex={3}
         style={{
           paddingHorizontal: 0,
-          maxWidth: editMode ? maxWidth : maxWidth,
+          width: '100%',
         }}
         onPress={handleOnPress}
         onLongPress={handleLongPress}
@@ -146,7 +148,7 @@ const SelectedCategoryButton = ({
                 zIndex: 2,
                 color: primaryColor,
                 fontSize: editMode ? fontSizeEditMode : fontSize,
-                maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
+                width: '100%'
               },
             ]}
           >
@@ -198,7 +200,7 @@ const SelectedCategoryButton = ({
             friendDefaultCategory={friendDefaultCategory}
             themeAheadOfLoading={themeAheadOfLoading}
             isVisible={detailsModalVisible}
-            closeModal={() => setDetailsModalVisible(false)}
+            closeModal={handleCloseModal}
             categoryId={categoryId}
             userCategories={userCategories}
       
@@ -209,4 +211,6 @@ const SelectedCategoryButton = ({
   );
 };
 
-export default SelectedCategoryButton;
+//export default SelectedCategoryButton;
+
+export default React.memo(SelectedCategoryButton);

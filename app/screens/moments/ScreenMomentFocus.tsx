@@ -47,13 +47,15 @@ const ScreenMomentFocus = () => {
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
   const [triggerMessage, setTriggerMessage] = useState<number>(0);
 
+  const PADDING_HORIZONTAL = 6; //same as homme/selected friend screens
+
   //using this arrangement below to keep top and bottom bar spacing the same :)
   const CARD_PADDING = 4;
   const SPACER_BETWEEN_BAR_AND_CARD = 2; // low bc there is already parent padding
   const topBarHeight = 50; 
 
   const topBarTotalHeight = topBarHeight;
-
+console.warn('existing moment in screen: ', momentText);
   const handleOpenCatCreator = () => {
     console.log("cat creator now visible!");
     setCatCreatorVisible(true);
@@ -126,8 +128,9 @@ const ScreenMomentFocus = () => {
           // entering={SlideInUp}
           // exiting={SlideOutUp}
           style={{
-            height: topBarTotalHeight, 
+            height: topBarTotalHeight,  
             zIndex: 60000,
+            paddingHorizontal: PADDING_HORIZONTAL,
           }}
         >
           <TopBarLikeMinusWidth
@@ -152,6 +155,8 @@ const ScreenMomentFocus = () => {
             width: "100%",
             flex: 1,
             marginTop: SPACER_BETWEEN_BAR_AND_CARD,
+               paddingHorizontal: PADDING_HORIZONTAL,
+        
           }}
         >
           <MomentWriteEditView
@@ -173,11 +178,11 @@ const ScreenMomentFocus = () => {
             openCatCreator={handleOpenCatCreator}
             closeCatCreator={handleCloseCatCreator}
             categoryColorsMap={categoryColorsMap}
-            momentText={momentText || null}
+            momentText={momentText}
             updateExistingMoment={updateExistingMoment}
             existingMomentObject={existingMomentObject}
             escortBarSpacer={SPACER_BETWEEN_BAR_AND_CARD + CARD_PADDING}
-            cardPadding={CARD_PADDING}
+            cardPaddingVertical={CARD_PADDING}
           />
         </Animated.View>
       )}

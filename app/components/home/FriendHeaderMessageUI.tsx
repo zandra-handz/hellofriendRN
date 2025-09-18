@@ -49,7 +49,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
-          padding: 2,
+        
           marginBottom: 2,
           borderRadius: 4,
           paddingTop: 0, // same as friend message

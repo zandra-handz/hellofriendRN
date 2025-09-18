@@ -1,9 +1,10 @@
 import { View } from "react-native";
 import React from "react";
 import SwitchFriend from "../home/SwitchFriend";
-
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import SelectedCategoryButton from "./SelectedCategoryButton";
-
+import { useFriendDash } from "@/src/context/FriendDashContext";
+import LoadingPage from "../appwide/spinner/LoadingPage";
 type Props = {
   updateExistingMoment: boolean;
   paddingTop: number;
@@ -18,15 +19,12 @@ const MomentFocusTray = ({
   userId,
   userDefaultCategory,
   themeAheadOfLoading,
-  welcomeTextStyle,
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
-  manualGradientColors,
-  subWelcomeTextStyle,
- 
+
   capsuleList,
-  
+
   updateExistingMoment,
   freezeCategory,
   onPress,
@@ -36,9 +34,13 @@ const MomentFocusTray = ({
   friendName,
   friendDefaultCategory,
 }: Props) => {
-  const ICON_SIZE = 20;
+  const ICON_SIZE = 16;
 
-  const FONT_SIZE = 13;
+  const FONT_SIZE = 12;
+  const { loadingDash } = useFriendDash();
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
   return (
     <View
       style={{
@@ -63,7 +65,26 @@ const MomentFocusTray = ({
           justifyContent: "flex-end",
         }}
       >
+                     {loadingDash && (
+                  <View style={{}}>
+                    <LoadingPage
+                      loading={true}
+                      color={themeAheadOfLoading.darkColor}
+                      spinnerType="flow"
+                      spinnerSize={30}
+                      includeLabel={false}
+                    />
+                  </View>
+                )}
+
+       {!loadingDash && (
+        <>
         <View style={{ paddingRight: 30 }}>
+
+   
+         
+
+  
           <SwitchFriend
             primaryColor={primaryColor}
             welcomeTextStyle={welcomeTextStyle}
@@ -82,27 +103,24 @@ const MomentFocusTray = ({
             themeAheadOfLoading={themeAheadOfLoading}
             primaryColor={primaryColor}
             lighterOverlayColor={lighterOverlayColor}
-            primaryBackground={primaryBackground}
-            subWelcomeTextStyle={subWelcomeTextStyle} 
-         
-            capsuleList={capsuleList}
-           
-            welcomeTextStyle={welcomeTextStyle}
+            primaryBackground={primaryBackground} 
+            capsuleList={capsuleList} 
             friendDefaultCategory={friendDefaultCategory}
-            maxWidth={"100%"}
-            zIndex={3}
             fontSize={FONT_SIZE}
             fontSizeEditMode={FONT_SIZE}
             freezeCategory={freezeCategory}
             onPress={onPress}
             label={label}
             categoryId={categoryId}
-            editMode={true}
             iconSize={ICON_SIZE}
           />
         </View>
+    </>
+       )}
       </View>
+       
     </View>
+      
   );
 };
 

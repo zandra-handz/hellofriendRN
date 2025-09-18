@@ -74,12 +74,15 @@ const ScreenHome = () => {
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
+const [ newMomentText, setNewMomentText ] = useState();
   const newMomentTextRef = useRef(null);
 
   const userCreatedOn = user?.created_on;
   const isNewUser =
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
+
+
+    const PADDING_HORIZONTAL = 6;
 
   // useEffect(() => {
   //   if (!hasShareIntent || !shareIntent) return;
@@ -158,31 +161,33 @@ const ScreenHome = () => {
   }, []);
 
   const updateNewMomentTextString = (text) => {
-    if (newMomentTextRef && newMomentTextRef.current) {
-      const textLengthPrev = newMomentTextRef.current.getText().length;
+    console.log(text);
+  
+      const textLengthPrev = newMomentText?.length;
+         setNewMomentText(text);
       if (textLengthPrev === 0) {
         if (text.length - textLengthPrev > 1) {
           setShowMomentScreenButton(true);
+        
+
         }
-      }
-      newMomentTextRef.current.setText(text);
-      if (text.length === 0) {
+      } 
+      if (text.length === 0) { 
         setShowMomentScreenButton(false);
       }
-      if (text.length === 1) {
+      if (text.length === 1) { 
         setShowMomentScreenButton(true);
       }
-    }
+  
   };
 
   useFocusEffect(
     useCallback(() => {
-      if (newMomentTextRef && newMomentTextRef.current) {
-        if (newMomentTextRef.current.getText().length > 0) {
+      if (newMomentText?.length > 0) { 
           setShowMomentScreenButton(true);
         } else {
           setShowMomentScreenButton(false);
-        }
+       
       }
       return () => {};
     }, [])
@@ -190,17 +195,16 @@ const ScreenHome = () => {
  
 
   const clearNewMomentText = () => {
-    if (newMomentTextRef && newMomentTextRef.current) {
-      newMomentTextRef.current.setText("");
+   setNewMomentText('');
       setShowMomentScreenButton(false);
-    }
+    
   };
 
   const navigateToAddMomentScreen = () => {
-    if (newMomentTextRef && newMomentTextRef.current) {
+    if (newMomentText.length > 0) {
       navigateToMomentFocusWithText({
         screenCameFrom: 0, //goes back to home screen that is now selected friend screen
-        momentText: newMomentTextRef.current.getText(),
+        momentText: newMomentText,
       });
       clearNewMomentText();
     }
@@ -286,30 +290,10 @@ const ScreenHome = () => {
                 flex: 1,
                 justifyContent: "space-between",
                 flexDirection: "column",
-                paddingHorizontal: 0,
+                paddingHorizontal: 0, 
+           
               }}
-            >
-              <View
-                style={{
-                  width: "100%",
-                //  backgroundColor: lightDarkTheme.primaryBackground, // keeps this from collapsing in between friend selects
-                  height: 'auto',
-                  paddingHorizontal: 0,
-                  marginTop: 0,
-                }}
-              >
-                
-                {/* {selectedFriend?.id && (
-                  <TopBarHome
-                    loading={loadingDash}
-                    style={themeAheadOfLoading}
-                    fontStyle={subWelcomeTextStyle}
-                    textColor={lightDarkTheme.primaryText}
-                    backgroundColor={lightDarkTheme.primaryBackground}
-                    onPress={navigateToSelectFriend}
-                  />
-                )} */}
-              </View>
+            > 
 
               {!selectedFriend?.id && (
                 <>
@@ -328,6 +312,7 @@ const ScreenHome = () => {
                   {friendList?.length > 0 && (
                     <>
                       <WelcomeMessageUI
+                      paddingHorizontal={PADDING_HORIZONTAL}
                         primaryColor={lightDarkTheme.primaryText}
                         welcomeTextStyle={welcomeTextStyle}
                         subWelcomeTextStyle={subWelcomeTextStyle}
@@ -357,6 +342,7 @@ const ScreenHome = () => {
                         width={"100%"}
                         height={"100%"}
                         ref={newMomentTextRef}
+                        value={newMomentText}
                         title={"Add a new moment?"}
                         iconColor={lightDarkTheme.primaryText}
                         mountingText={""}
@@ -379,7 +365,7 @@ const ScreenHome = () => {
                 friendList?.length > 0 && (  // loadingDash internally spins the components between friend selects
                   <BelowKeyboardComponents
                     userId={user?.id}
-               
+               paddingHorizontal={PADDING_HORIZONTAL}
                     isLoading={isLoading}
                     friendStyle={themeAheadOfLoading}
                     selectedFriendId={selectedFriend?.id}

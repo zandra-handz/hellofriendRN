@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import UpNext from "./UpNext";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 import manualGradientColors from "@/src/hooks/StaticColors";
@@ -13,6 +12,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 // Press function is internal
 const AllHome = ({
   isLoading,
+  paddingHorizontal,
   getThemeAheadOfLoading,
   header = "Up next",
   height = "100%",
@@ -26,9 +26,6 @@ const AllHome = ({
   const { friendList } = useFriendList();
   const { upcomingHelloes } = useUpcomingHelloes();
   const { selectFriend } = useSelectedFriend();
-
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;
@@ -59,7 +56,7 @@ const AllHome = ({
             flexDirection: "column",
             justifyContent: "space-between",
             overflow: "hidden",
-            padding: 10,
+            padding: paddingHorizontal,
           }}
         >
           <UpNext upcomingHelloes={upcomingHelloes} onPress={onPress} />
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     overflow: "hidden",
-  },  
+  },
 });
 
 export default AllHome;

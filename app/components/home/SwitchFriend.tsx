@@ -1,8 +1,8 @@
-import { View, Text  } from "react-native";
+import { View, Text } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React  from "react"; 
+import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
@@ -18,19 +18,18 @@ type Props = {
 
 //similar to topbar but has its own spinner instead of centering based on parent component
 const SwitchFriend = ({
+ 
   welcomeTextStyle,
   primaryColor,
-  fontSize = 13, 
+  fontSize = 13,
   editMode = false,
   iconSize = 20,
   maxWidth = 100,
   zIndex = 3,
-}: Props) => { 
- 
-  const { selectedFriend  } = useSelectedFriend();
+}: Props) => {
+  const { selectedFriend } = useSelectedFriend();
   const navigation = useNavigation();
   // const friendModalButtonHeight = 16;
-  
 
   const handleNavigateToFriendSelect = () => {
     if (editMode) {
@@ -116,7 +115,7 @@ const SwitchFriend = ({
         onPress={handleNavigateToFriendSelect}
         // style={{ flexDirection: "row" }}
       >
-        <View style={{ flexDirection: "row"  }}>
+        <View style={{ flexDirection: "row" }}>
           {editMode && (
             <View
               style={{
@@ -135,19 +134,19 @@ const SwitchFriend = ({
             </View>
           )}
 
-<Text
-  numberOfLines={1}
-  ellipsizeMode="tail"
-  style={[
-    AppFontStyles.subWelcomeText,
-    {
-      zIndex: 2,
-      color: primaryColor,
-      fontSize: fontSize,
-      maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
-    },
-  ]}
->
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[
+              AppFontStyles.welcomeText,
+              {
+                zIndex: 2,
+                color: primaryColor,
+                fontSize: fontSize,
+                maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
+              },
+            ]}
+          >
             {selectedFriend ? selectedFriend.name : `Pick friend`}
           </Text>
 

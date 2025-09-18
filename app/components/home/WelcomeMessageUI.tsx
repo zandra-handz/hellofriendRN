@@ -24,6 +24,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   friendId,
   friendName,
   themeAheadOfLoading,
+  paddingHorizontal=10,
   username = "",
   isNewUser = false,
   borderBottomRightRadius = 10,
@@ -60,7 +61,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
-          padding: 10,
+          paddingHorizontal: paddingHorizontal,
           paddingTop: 10, // same as friend message
           paddingBottom: 10, // same as friend message
           flexDirection: "row",

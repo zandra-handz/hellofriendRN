@@ -34,9 +34,8 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
-
-  friendStyle,
-  borderColor = "transparent",
+paddingHorizontal,
+  friendStyle, 
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
@@ -107,7 +106,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
         {
           //marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
 
-          paddingHorizontal: 0,
+          paddingHorizontal: paddingHorizontal,
           // backgroundColor: primaryOverlayColor,
         },
       ]}
@@ -187,8 +186,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               </View>
 
               <View
-                style={{
-                  paddingHorizontal: PADDING_HORIZONTAL,
+                style={{ 
                   flexDirection: "column",
                   flex: 1,
                   width: "100%",
