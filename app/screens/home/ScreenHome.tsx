@@ -340,6 +340,7 @@ const ScreenHome = () => {
                         iconColor={lightDarkTheme.primaryText}
                         mountingText={""}
                         onTextChange={updateNewMomentTextString}
+                         onPress={navigateToAddMomentScreen}
                         multiline={isKeyboardVisible}
                         isKeyboardVisible={isKeyboardVisible}
                       />

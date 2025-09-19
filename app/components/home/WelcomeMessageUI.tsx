@@ -71,7 +71,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           flexDirection: "row",
           justifyContent: "flex-start",
           backgroundColor: "transparent",
-          height: isKeyboardVisible ? 120 : 200,
+          height: isKeyboardVisible ? 80 : 200,
         },
       ]}
     >
@@ -94,7 +94,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
             {
               zindex: 400000,
               elevation: 400000,
-              paddingTop: 40,
+              paddingTop: isKeyboardVisible ? 0 : 40,
               color: primaryColor,
               //  color: backgroundColor,
               fontSize: 38,

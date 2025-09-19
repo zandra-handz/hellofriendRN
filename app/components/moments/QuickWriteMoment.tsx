@@ -15,6 +15,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+ 
   TouchableWithoutFeedback,
   Pressable,
   Keyboard,
@@ -54,7 +55,7 @@ const QuickWriteMoment = forwardRef(
       onTextChange,
       multiline = true,
       primaryColor,
-
+onPress,
       primaryBackgroundColor,
       primaryOverlayColor,
       isKeyboardVisible,
@@ -179,6 +180,13 @@ const QuickWriteMoment = forwardRef(
     // Split text into all but last char + last char
     const allButLast = value?.slice(0, -1) ?? "";
     const lastChar = value?.slice(-1) ?? "";
+
+    const scrollRef = useRef<ScrollView>(null);
+
+    useEffect(() => {
+      // scroll to bottom whenever content changes
+      scrollRef.current?.scrollToEnd({ animated: false });
+    }, [allButLast, lastChar]); // update dependencies whenever content changes
 
     const addIconSize = 22;
 
@@ -354,67 +362,83 @@ const QuickWriteMoment = forwardRef(
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={[{ flex: 1, paddingBottom: multiline ? 120 : 0 }]}
               >
-                <ScrollView
-              
-             
-                  style={[
-                    // animatedFontStyle,
-                    {
-                      flexDirection: "row",
-                      paddingTop: 0,
-                      paddingLeft: 0,
-                      flexWrap: "wrap",
-                      width: "100%",
-                     // backgroundColor: "pink",
-                      height: isKeyboardVisible ? 100 : 0,
-                      zIndex: 0,
-                    },
-                  ]}
+                <Pressable
+                onPress={onPress} // since we can't manually re-place the caret, just nav to edit screen
+                  style={{
+                    flex: 1, // 👈 parent must take available screen space
+                    backgroundColor: "teal",
+                  }}
                 >
-                  {/*                
-                  <Animated.Text style={[animatedFontStyle, {position: 'absolute', color: primaryColor, fontSize: 30, fontWeight: 'bold'}]}>
-                    {value}
-
-
-                  </Animated.Text> */}
-
                   {isKeyboardVisible && (
-                    <Text
-                      style={{
-                        // position: "absolute",
-                        flexWrap: "wrap",
-                        paddingHorizontal: 20,
-                        top: 0,
-                        left: 0,
-                        flexDirection: "row",
-                        fontSize: 17,
-                        lineHeight: 33,
-                        color: primaryColor,
-                      }}
+                    <ScrollView
+                      ref={scrollRef}
+                      style={{ flex: 1, backgroundColor: "red" }}
+                      contentContainerStyle={{ padding: 20 }}
+                      keyboardShouldPersistTaps="handled"
+                      inverted={true}
                     >
-                      {allButLast}
-                      <Animated.Text
-                        style={[
-                          lastCharStyle,
-                          styles.textInput,
-                          { color: primaryColor },
-                        ]}
+                      {/* <View
+                        style={{
+                          width: "100%",
+                          height: 100,
+                          backgroundColor: "pink",
+                          borderWidth: 1,
+                          borderColor: "black",
+                        }}
+                      ></View>
+                      <View
+                        style={{
+                          width: "100%",
+                          height: 100,
+                          backgroundColor: "pink",
+                          borderWidth: 1,
+                          borderColor: "black",
+                        }}
+                      ></View>
+                      <View
+                        style={{
+                          width: "100%",
+                          height: 100,
+                          backgroundColor: "pink",
+                          borderWidth: 1,
+                          borderColor: "black",
+                        }}
+                      ></View> */}
+                      <Text
+                        style={{
+                          fontSize: 17,
+                          lineHeight: 33,
+                          color: primaryColor,
+                        }}
                       >
-                        {lastChar}
-                      </Animated.Text>
-                    </Text>
+                        {allButLast}
+                        <Animated.Text
+                          style={[
+                            lastCharStyle,
+                            styles.textInput,
+                            { color: primaryColor },
+                          ]}
+                        >
+                          {lastChar}
+                        </Animated.Text>
+                      </Text>
+                    </ScrollView>
                   )}
-                </ScrollView>
-              
+                </Pressable>
+
                 <TextInput
                   ref={textInputRef}
                   textBreakStrategy={"highQuality"}
                   autoFocus={focusMode}
                   style={[
                     styles.textInput,
-                    { 
-                      // backgroundColor: 'orange', 
-                      marginLeft: 26, height: 30, fontSize: 0.01, color: "transparent" },
+                    {
+                      // backgroundColor: 'orange',
+                      marginLeft: 26,
+                      height: 30,
+                      fontSize: 0.01,
+                      color: "transparent",
+                    },
                   ]}
                   color={"transparent"}
                   caretHidden={true}
@@ -460,7 +484,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   textInput: {
-    textAlignVertical: "top",
     borderRadius: 20,
     paddingVertical: 0,
     marginLeft: 0,
