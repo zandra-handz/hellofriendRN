@@ -37,7 +37,7 @@ const ScreenPreAdded = () => {
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
-      useOverlay={true}
+      useSolidOverlay={true}
       style={{ flex: 1 }}
     >
       {selectedFriend && !loadingDash && (

@@ -17,7 +17,7 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
-import { useLDTheme } from "@/src/context/LDThemeContext"; 
+import { useLDTheme } from "@/src/context/LDThemeContext";
 // app utils
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
@@ -43,7 +43,7 @@ import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponen
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 const ScreenHome = () => {
   const { user } = useUser();
@@ -74,15 +74,14 @@ const ScreenHome = () => {
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-const [ newMomentText, setNewMomentText ] = useState();
+  const [newMomentText, setNewMomentText] = useState();
   const newMomentTextRef = useRef(null);
 
   const userCreatedOn = user?.created_on;
   const isNewUser =
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
 
-
-    const PADDING_HORIZONTAL = 6;
+  const PADDING_HORIZONTAL = 6;
 
   // useEffect(() => {
   //   if (!hasShareIntent || !shareIntent) return;
@@ -162,42 +161,36 @@ const [ newMomentText, setNewMomentText ] = useState();
 
   const updateNewMomentTextString = (text) => {
     console.log(text);
-  
-      const textLengthPrev = newMomentText?.length;
-         setNewMomentText(text);
-      if (textLengthPrev === 0) {
-        if (text.length - textLengthPrev > 1) {
-          setShowMomentScreenButton(true);
-        
 
-        }
-      } 
-      if (text.length === 0) { 
-        setShowMomentScreenButton(false);
-      }
-      if (text.length === 1) { 
+    const textLengthPrev = newMomentText?.length;
+    setNewMomentText(text);
+    if (textLengthPrev === 0) {
+      if (text.length - textLengthPrev > 1) {
         setShowMomentScreenButton(true);
       }
-  
+    }
+    if (text.length === 0) {
+      setShowMomentScreenButton(false);
+    }
+    if (text.length === 1) {
+      setShowMomentScreenButton(true);
+    }
   };
 
   useFocusEffect(
     useCallback(() => {
-      if (newMomentText?.length > 0) { 
-          setShowMomentScreenButton(true);
-        } else {
-          setShowMomentScreenButton(false);
-       
+      if (newMomentText?.length > 0) {
+        setShowMomentScreenButton(true);
+      } else {
+        setShowMomentScreenButton(false);
       }
       return () => {};
     }, [])
   );
- 
 
   const clearNewMomentText = () => {
-   setNewMomentText('');
-      setShowMomentScreenButton(false);
-    
+    setNewMomentText("");
+    setShowMomentScreenButton(false);
   };
 
   const navigateToAddMomentScreen = () => {
@@ -238,22 +231,24 @@ const [ newMomentText, setNewMomentText ] = useState();
       backgroundOverlayColor={
         friendList?.length > 0
           ? lightDarkTheme.primaryBackground
-          : lightDarkTheme.overlayBackground
+          : lightDarkTheme.primaryBackground
       }
       friendId={selectedFriend?.id}
       // includeBackgroundOverlay={true}
       // backgroundOverlayHeight={
       //   isKeyboardVisible ? "100%" : friendList?.length > 0 ? 90 : 66
       // }
-          backgroundOverlayHeight=""
-           useOverlay={true}
-       includeBackgroundOverlay={true}  
-       backgroundTransparentOverlayColor={selectedFriend?.id ? lightDarkTheme.overlayBackground : 'transparent'}
+      backgroundOverlayHeight={isKeyboardVisible && !selectedFriend?.id ? '100%': ''}
+      useSolidOverlay={isKeyboardVisible && !selectedFriend?.id ? false : selectedFriend?.id ? false :  true}
+      useOverlayFade={true}
+      includeBackgroundOverlay={true}
+      backgroundTransparentOverlayColor={
+        selectedFriend?.id ? lightDarkTheme.overlayBackground : "transparent"
+      }
       backgroundOverlayBottomRadius={0}
       useFriendColors={!!selectedFriend?.id}
-      style={{ flex: 1 }} 
+      style={{ flex: 1 }}
     >
- 
       {!friendListFetched && ( // isLoading is in FS Spinner
         <View
           style={{
@@ -290,18 +285,16 @@ const [ newMomentText, setNewMomentText ] = useState();
                 flex: 1,
                 justifyContent: "space-between",
                 flexDirection: "column",
-                paddingHorizontal: 0, 
-           
+                paddingHorizontal: 0,
               }}
-            > 
-
+            >
               {!selectedFriend?.id && (
                 <>
                   {friendList?.length < 1 && (
                     <NoFriendsMessageUI
                       backgroundColor={lightDarkTheme.overlayBackground}
-                    //  backgroundColor={'transparent'}
-                    //  backgroundColor={lightDarkTheme.darkerOverlayBackground}
+                      //  backgroundColor={'transparent'}
+                      //  backgroundColor={lightDarkTheme.darkerOverlayBackground}
                       primaryColor={lightDarkTheme.primaryText}
                       welcomeTextStyle={welcomeTextStyle}
                       username={user?.username || ""}
@@ -312,7 +305,7 @@ const [ newMomentText, setNewMomentText ] = useState();
                   {friendList?.length > 0 && (
                     <>
                       <WelcomeMessageUI
-                      paddingHorizontal={PADDING_HORIZONTAL}
+                        paddingHorizontal={PADDING_HORIZONTAL}
                         primaryColor={lightDarkTheme.primaryText}
                         welcomeTextStyle={welcomeTextStyle}
                         subWelcomeTextStyle={subWelcomeTextStyle}
@@ -348,6 +341,7 @@ const [ newMomentText, setNewMomentText ] = useState();
                         mountingText={""}
                         onTextChange={updateNewMomentTextString}
                         multiline={isKeyboardVisible}
+                        isKeyboardVisible={isKeyboardVisible}
                       />
                       <KeyboardCoasters
                         primaryColor={lightDarkTheme.primaryText}
@@ -362,10 +356,10 @@ const [ newMomentText, setNewMomentText ] = useState();
               )}
               {!isKeyboardVisible &&
                 // && !loadingDash
-                friendList?.length > 0 && (  // loadingDash internally spins the components between friend selects
+                friendList?.length > 0 && ( // loadingDash internally spins the components between friend selects
                   <BelowKeyboardComponents
                     userId={user?.id}
-               paddingHorizontal={PADDING_HORIZONTAL}
+                    paddingHorizontal={PADDING_HORIZONTAL}
                     isLoading={isLoading}
                     friendStyle={themeAheadOfLoading}
                     selectedFriendId={selectedFriend?.id}
@@ -376,9 +370,10 @@ const [ newMomentText, setNewMomentText ] = useState();
                     darkerOverlayBackgroundColor={
                       lightDarkTheme.darkerOverlayBackground
                     }
-                    lighterOverlayBackgroundColor={lightDarkTheme.lighterOverlayBackground}
+                    lighterOverlayBackgroundColor={
+                      lightDarkTheme.lighterOverlayBackground
+                    }
                     spinnerStyle={spinnerStyle}
-               
                     friendListLength={friendList?.length || 0}
                     onPress={navigateToAddMomentScreen}
                   />
@@ -413,7 +408,6 @@ const [ newMomentText, setNewMomentText ] = useState();
           settings={settings}
           friendId={selectedFriend?.id}
           friendName={selectedFriend?.name}
-        
           lightDarkTheme={lightDarkTheme}
           overlayColor={lightDarkTheme.overlayBackground}
           dividerStyle={lightDarkTheme.divider}

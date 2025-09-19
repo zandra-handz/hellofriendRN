@@ -12,17 +12,28 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  ScrollView,
   KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback, 
+  TouchableWithoutFeedback,
   Pressable,
   Keyboard,
 } from "react-native";
+import Animated, {
+  SlideInDown,
+  withTiming,
+  useSharedValue,
+  useAnimatedProps,
+  useAnimatedStyle,
+  withSequence,
+} from "react-native-reanimated";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+import keyframes from "react-native-reanimated/lib/typescript/css/stylesheet/keyframes";
+import { TextHeightBehavior } from "@shopify/react-native-skia";
 
 interface QuickWriteMomentProps {
   title?: string;
@@ -35,69 +46,141 @@ interface QuickWriteMomentProps {
 }
 
 // Forwarding ref to the parent to expose the TextInput value
-const QuickWriteMoment = 
+const QuickWriteMoment = forwardRef(
   (
-    { 
+    {
       focusMode,
       mountingText = "Start typing",
-      onTextChange, 
-      multiline = true,  
+      onTextChange,
+      multiline = true,
       primaryColor,
-  
-        primaryBackgroundColor,
-        primaryOverlayColor,
-        ref, 
-        value,
-    }, 
-  ) => {  
-    const [editedMessage, setEditedMessage] = useState(mountingText); 
 
+      primaryBackgroundColor,
+      primaryOverlayColor,
+      isKeyboardVisible,
+
+      value,
+    },
+    ref
+  ) => {
+    const opacityValue = useSharedValue(0);
+
+    const scaleValue = useSharedValue(1);
+
+    const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
+    useEffect(() => {
+      if (isKeyboardVisible) {
+        opacityValue.value = withTiming(1, { duration: 500 });
+        scaleValue.value = withTiming(2, { duration: 500 });
+        scaleValue.value = withTiming(1.4, { duration: 200 });
+      }
+      if (!isKeyboardVisible) {
+        opacityValue.value = withTiming(1, { duration: 500 });
+
+        scaleValue.value = withTiming(1.4, { duration: 200 });
+        scaleValue.value = withTiming(1, { duration: 200 });
+      }
+    }, [isKeyboardVisible]);
+
+    const animatedStyle = useAnimatedStyle(
+      () => ({
+        opacity: opacityValue.value,
+      }),
+      [opacityValue]
+    );
+
+    const textValue = useSharedValue("");
+    const [isFocused, setIsFocused] = useState(false);
+
+    const animatedProps = useAnimatedProps(() => {
+      return {
+        scale: scaleValue.value,
+      };
+    });
+
+    const animatedFontStyle = useAnimatedStyle(
+      () => ({
+        transform: [{ scale: scaleValue.value }],
+      }),
+      [scaleValue]
+    );
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
+    const animatedProps2 = useAnimatedProps(() => {
+      return {
+        text: `Box width: ${textValue.value}`,
+        defaultValue: `Box width: ${scaleValue.value}`,
+      };
+    }, [textValue]);
+
     const textInputRef = useRef();
-const buttonColor = primaryBackgroundColor;
+    useImperativeHandle(ref, () => ({
+      focus: () => textInputRef.current?.focus(),
+      blur: () => textInputRef.current?.blur(),
+      getValue: () => value,
+    }));
+
+    const buttonColor = primaryBackgroundColor;
     //This is what turns moment text input autofocus on/off depending on user's settings
     useFocusEffect(
       useCallback(() => {
+        console.log("usefocys triggered");
         const timeout = setTimeout(() => {
           if (
             ref.current &&
-            focusMode === true // not sure if there was a specific reason I added === true, so leaving as is 
+            focusMode === true // not sure if there was a specific reason I added === true, so leaving as is
           ) {
             ref.current.focus();
-          } 
+          }
         }, 50); // Small delay for rendering
-        return () => clearTimeout(timeout); 
+        return () => clearTimeout(timeout);
       }, [focusMode])
     );
 
-const handleManualFocus = useCallback(() => {
-  const timeout = setTimeout(() => {
-    if (ref.current) {
+    useEffect(() => {
+      console.log(`value`, value);
+      textValue.value = value;
+      scaleValue.value = withSequence(
+        withTiming(1.1, { duration: 50 }),
+        withTiming(1, { duration: 800 })
+      );
+    }, [value]);
+
+    const handleFocusText = () => {
       ref.current.focus();
-    }
-  }, 50);
-  return () => clearTimeout(timeout);
-}, []);
+    };
+
+    // const handleManualFocus = useCallback(() => {
+    //   const timeout = setTimeout(() => {
+    //     if (ref.current) {
+    //       ref.current.focus();
+    //     }
+    //   }, 50);
+    //   return () => clearTimeout(timeout);
+    // }, []);
+
+    const lastCharScale = useSharedValue(1);
+
+    useEffect(() => {
+      lastCharScale.value = withSequence(
+        withTiming(22, { duration: 70 }),
+        withTiming(17, { duration: 500 })
+      );
+    }, [value]);
+
+    const lastCharStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: lastCharScale.value }],
+      color: primaryColor,
+      fontSize: lastCharScale.value,
+      lineHeight: 28,
+    }));
+
+    // Split text into all but last char + last char
+    const allButLast = value?.slice(0, -1) ?? "";
+    const lastChar = value?.slice(-1) ?? "";
 
     const addIconSize = 22;
-
-    // useEffect(() => {
-    
-    //     setEditedMessage(mountingText);
-    
-    // }, []);
- 
-    
-
-    // useEffect(() => {
-    //   setEditedMessage(mountingText); // Reset to starting text if it changes
-    // }, [mountingText]);
-
-    const handleTextInputChange = (text) => {
-    
-      onTextChange(text);
-    };
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -108,25 +191,33 @@ const handleManualFocus = useCallback(() => {
               width: "100%",
               height: multiline ? "100%" : 30,
               paddingLeft: 18,
-              
+
               paddingTop: multiline ? 0 : 0,
-             
+
               borderRadius: 0,
-              backgroundColor: multiline
-                ? primaryBackgroundColor
-                :   'transparent'
+              // backgroundColor: multiline
+              //   ? primaryBackgroundColor
+              //   : "transparent",
             },
-          
           ]}
         >
           <>
+            <View
+              style={{
+                position: "absolute",
+                // top: 60,
+                // backgroundColor: "orange",
+                width: "100%",
+                height: 50,
+              }}
+            ></View>
             <View style={{ flex: 1 }}>
-              {!editedMessage && (
+              {!isKeyboardVisible && (
                 <>
                   <View
                     style={{
                       position: "absolute",
-                      flexDirection: "row", 
+                      flexDirection: "row",
                       top: 0,
                       left: 0,
                       right: 0,
@@ -135,7 +226,10 @@ const handleManualFocus = useCallback(() => {
                       opacity: multiline ? 0.5 : 1,
                     }}
                   >
-                    <View
+                    <Pressable
+                      hitSlop={30}
+                      zIndex={4000}
+                      onPress={handleFocusText}
                       style={{
                         height: addIconSize,
                         width: addIconSize,
@@ -151,11 +245,11 @@ const handleManualFocus = useCallback(() => {
                         color={buttonColor}
                         size={20}
                       />
-                    </View>
+                    </Pressable>
                     <Text
                       style={[
                         styles.helperText,
-                      
+
                         { color: buttonColor, fontFamily: "Poppins-Regular" },
                       ]}
                     >
@@ -168,9 +262,9 @@ const handleManualFocus = useCallback(() => {
                         style={{
                           flexDirection: "row",
                           marginLeft: 30,
-                          zIndex: 6000, 
+                          zIndex: 6000,
                           flexDirection: "row",
-                          zIndex: 4000, 
+                          zIndex: 4000,
                           height: 30,
                           width: "auto",
                           alignItems: "center",
@@ -197,8 +291,11 @@ const handleManualFocus = useCallback(() => {
                         <Text
                           style={[
                             styles.helperText,
-                       
-                            { color: buttonColor, fontFamily: "Poppins-Regular" },
+
+                            {
+                              color: buttonColor,
+                              fontFamily: "Poppins-Regular",
+                            },
                           ]}
                         >
                           {"  "}Pic
@@ -208,14 +305,14 @@ const handleManualFocus = useCallback(() => {
                     {!multiline && (
                       <Pressable
                         onPress={handleSelectImage}
-                        style={{ 
+                        style={{
                           flexDirection: "row",
                           marginLeft: 30,
                           zIndex: 5000,
                           zIndex: 5000,
-                          elevation: 5000, 
-                          width: "auto", 
-                          height: 30, 
+                          elevation: 5000,
+                          width: "auto",
+                          height: 30,
                           alignItems: "center",
                           opacity: multiline ? 0 : 0.9,
                         }}
@@ -237,10 +334,13 @@ const handleManualFocus = useCallback(() => {
                             size={20}
                           />
                         </View>
-                        <Text 
+                        <Text
                           style={[
-                            styles.helperText, 
-                            { color: buttonColor, fontFamily: "Poppins-Regular" },
+                            styles.helperText,
+                            {
+                              color: buttonColor,
+                              fontFamily: "Poppins-Regular",
+                            },
                           ]}
                         >
                           {"  "}Upload
@@ -250,37 +350,92 @@ const handleManualFocus = useCallback(() => {
                   </View>
                 </>
               )}
-              <KeyboardAvoidingView 
+              <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={[{ flex: 1, paddingBottom: multiline ? 120 : 0 }]}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    paddingTop: 3,
-                    paddingLeft: 4,
-                  }}
-                > 
-                    <TextInput
-                      ref={ref}
-                      autoFocus={focusMode}
-                      style={[styles.textInput, {color: buttonColor}]}
-                      color={primaryColor}
-                      value={value}
-                      placeholder={""}
-                      onBlur={() => console.log('lost focus')}
-                      placeholderTextColor={"white"}
-                      onChangeText={handleTextInputChange} 
-                      multiline={multiline}
-                    />
-                </View>
+                <ScrollView
+              
+             
+                  style={[
+                    // animatedFontStyle,
+                    {
+                      flexDirection: "row",
+                      paddingTop: 0,
+                      paddingLeft: 0,
+                      flexWrap: "wrap",
+                      width: "100%",
+                     // backgroundColor: "pink",
+                      height: isKeyboardVisible ? 100 : 0,
+                      zIndex: 0,
+                    },
+                  ]}
+                >
+                  {/*                
+                  <Animated.Text style={[animatedFontStyle, {position: 'absolute', color: primaryColor, fontSize: 30, fontWeight: 'bold'}]}>
+                    {value}
+
+
+                  </Animated.Text> */}
+
+                  {isKeyboardVisible && (
+                    <Text
+                      style={{
+                        // position: "absolute",
+                        flexWrap: "wrap",
+                        paddingHorizontal: 20,
+                        top: 0,
+                        left: 0,
+                        flexDirection: "row",
+                        fontSize: 17,
+                        lineHeight: 33,
+                        color: primaryColor,
+                      }}
+                    >
+                      {allButLast}
+                      <Animated.Text
+                        style={[
+                          lastCharStyle,
+                          styles.textInput,
+                          { color: primaryColor },
+                        ]}
+                      >
+                        {lastChar}
+                      </Animated.Text>
+                    </Text>
+                  )}
+                </ScrollView>
+              
+                <TextInput
+                  ref={textInputRef}
+                  textBreakStrategy={"highQuality"}
+                  autoFocus={focusMode}
+                  style={[
+                    styles.textInput,
+                    { 
+                      // backgroundColor: 'orange', 
+                      marginLeft: 26, height: 30, fontSize: 0.01, color: "transparent" },
+                  ]}
+                  color={"transparent"}
+                  caretHidden={true}
+                  value={isKeyboardVisible ? value : ""}
+                  // onFocus={(e) => {
+                  //   setIsFocused(true);
+                  // }}
+                  placeholder={""}
+                  // onBlur={() => console.log("lost focus")}
+                  placeholderTextColor={primaryColor}
+                  onChangeText={onTextChange}
+                  multiline={multiline}
+                />
               </KeyboardAvoidingView>
             </View>
           </>
         </View>
       </TouchableWithoutFeedback>
     );
-  } 
+  }
+);
 
 const styles = StyleSheet.create({
   selectFriendContainer: {
@@ -288,7 +443,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 30,
     maxHeight: 30,
-    height: 30, 
+    height: 30,
   },
   newMomentContainer: {
     borderRadius: 30,
@@ -311,8 +466,9 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     flex: 1,
     fontSize: 15,
-    lineHeight: 21,
+    lineHeight: 33,
     fontFamily: "Poppins-Regular",
+    color: "transparent",
   },
 });
 

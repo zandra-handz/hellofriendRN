@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput, ScrollView } from "react-native";
 import Animated, {
   runOnJS,
   useSharedValue,

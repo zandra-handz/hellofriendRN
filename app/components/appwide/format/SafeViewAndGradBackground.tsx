@@ -5,6 +5,7 @@ import manualGradientColors from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GradientBackground from "../display/GradientBackground";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 type Props = {
   children: ReactElement;
@@ -25,25 +26,53 @@ const SafeViewAndGradientBackground = ({
   friendColorDark = "red",
   backgroundOverlayColor,
   friendId,
-  startColor,
-  endColor,
+  // startColor,
+  // endColor,
   backgroundTransparentOverlayColor,
   addColorChangeDelay = false,
   includeBackgroundOverlay = false,
-  useOverlay = false,
-  primaryBackground = false,
+  useSolidOverlay = false,
+  useOverlayFade = false,
+  // primaryBackground = false,
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
   header: Header,
 }: Props) => {
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets();
 
   const route = useRoute();
 
-  const top = typeof insets.top === "number" ? insets.top : 0;
-  const bottom = typeof insets.bottom === "number" ? insets.bottom : 0;
-  const left = typeof insets.left === "number" ? insets.left : 0;
-  const right = typeof insets.right === "number" ? insets.right : 0;
+  const opacityValue = useSharedValue(useOverlayFade ? 0 : 1);
+
+  // const top = typeof insets.top === "number" ? insets.top : 0;
+  // const bottom = typeof insets.bottom === "number" ? insets.bottom : 0;
+  // const left = typeof insets.left === "number" ? insets.left : 0;
+  // const right = typeof insets.right === "number" ? insets.right : 0;
+
+  useEffect(() => {
+    if (!useSolidOverlay && useOverlayFade && !friendId) {
+      opacityValue.value = withTiming(1, {duration: 300});
+    }
+       if (!useSolidOverlay && useOverlayFade && friendId) {
+      opacityValue.value = withTiming(.46, {duration: 300});
+    }
+
+    if (useSolidOverlay && useOverlayFade) {
+           opacityValue.value = withTiming(0, {duration: 300});
+    }
+
+  }, [useSolidOverlay]);
+
+
+  const fadeStyle = useAnimatedStyle(() => ({
+  opacity: opacityValue.value,
+  
+  }));
+
+  
+    
+
+
 
   const [showColorOverlay, setShowColorOverlay] = useState(
     includeBackgroundOverlay
@@ -56,7 +85,9 @@ const SafeViewAndGradientBackground = ({
       timeoutId = setTimeout(() => {
         setShowColorOverlay(true);
       }, 100);
-    } else {
+    } 
+    
+    else {
       setShowColorOverlay(includeBackgroundOverlay);
     }
 
@@ -65,20 +96,20 @@ const SafeViewAndGradientBackground = ({
     };
   }, [includeBackgroundOverlay, addColorChangeDelay]);
 
-  const paddingStyle = useMemo(
-    () => ({
-      paddingTop: top,
-      paddingBottom: bottom,
-      paddingLeft: left,
-      paddingRight: right,
-      backgroundColor: primaryBackground
-        ? backgroundOverlayColor
-        : "transparent",
-    }),
-    [top, bottom, left, right, primaryBackground, backgroundOverlayColor]
-  );
+  // const paddingStyle = useMemo(
+  //   () => ({
+  //     paddingTop: top,
+  //     paddingBottom: bottom,
+  //     paddingLeft: left,
+  //     paddingRight: right,
+  //     backgroundColor: primaryBackground
+  //       ? backgroundOverlayColor
+  //       : "transparent",
+  //   }),
+  //   [top, bottom, left, right, primaryBackground, backgroundOverlayColor]
+  // );
 
-  const standardizedHeaderHeight = 44;
+  // const standardizedHeaderHeight = 44;
 
   const isSettingsScreen = useMemo(
     () =>
@@ -104,9 +135,7 @@ const SafeViewAndGradientBackground = ({
       additionalStyles={[
         // paddingStyle,
         style,
-      ]}
-      // startColor={startColor}
-      // endColor={endColor}
+      ]} 
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
       friendColorDark={friendColorDark}
@@ -115,8 +144,10 @@ const SafeViewAndGradientBackground = ({
       <SafeAreaView style={{ flex: 1 }}>
         <>
         {showColorOverlay && (
-          <View
-            style={{
+          <Animated.View
+            style={[
+              fadeStyle,
+              {
               position: "absolute",
               zIndex: 0,
               height: backgroundOverlayHeight,
@@ -125,15 +156,16 @@ const SafeViewAndGradientBackground = ({
               bottom: 0,
               right: 0,
               left: 0,
-              opacity: 1,
+              //opacity: 1,
               // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-              backgroundColor: !useOverlay
+              backgroundColor: !useSolidOverlay
                 ? backgroundOverlayColor
                 : backgroundTransparentOverlayColor,
+        
               borderBottomLeftRadius: backgroundOverlayBottomRadius,
               borderBottomRightRadius: backgroundOverlayBottomRadius,
-            }}
-          ></View>
+            }]}
+          ></Animated.View>
         )}
 
         {/* {Header && (

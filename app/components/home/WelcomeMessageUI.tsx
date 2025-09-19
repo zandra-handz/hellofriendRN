@@ -24,7 +24,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   friendId,
   friendName,
   themeAheadOfLoading,
-  paddingHorizontal=10,
+  paddingHorizontal = 10,
   username = "",
   isNewUser = false,
   borderBottomRightRadius = 10,
@@ -55,19 +55,23 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
       // exiting={FadeOut}
       style={[
         {
-          backgroundColor: backgroundColor,
+          backgroundColor: isKeyboardVisible ? 'transparent' : backgroundColor,
           borderBottomLeftRadius: borderBottomLeftRadius,
           borderBottomRightRadius: borderBottomRightRadius,
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
+       //  position: isKeyboardVisible ? "absolute" : "relative",
+
+          zindex: 400000,
+          elevation: 400000,
           paddingHorizontal: paddingHorizontal,
           paddingTop: 10, // same as friend message
           paddingBottom: 10, // same as friend message
           flexDirection: "row",
           justifyContent: "flex-start",
           backgroundColor: "transparent",
-          height: 200,
+          height: isKeyboardVisible ? 120 : 200,
         },
       ]}
     >
@@ -88,12 +92,14 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           style={[
             welcomeTextStyle,
             {
+              zindex: 400000,
+              elevation: 400000,
               paddingTop: 40,
               color: primaryColor,
               //  color: backgroundColor,
               fontSize: 38,
               lineHeight: 48,
-              backgroundColor: "rgba(0,0,0,0.8)", // semi-transparent background
+              backgroundColor: isKeyboardVisible ? "transparent" : "rgba(0,0,0,0.8)", // semi-transparent background
               borderRadius: 8,
               paddingHorizontal: 20,
             },
