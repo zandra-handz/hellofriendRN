@@ -79,9 +79,9 @@ const ScreenWelcome = () => {
         useFriendColors={false}
         friendColorLight={null}
         friendColorDark={null}
-        startColor={manualGradientColors.darkColor}
-        endColor={manualGradientColors.lightColor}
-        reverse={false}
+        // startColor={manualGradientColors.darkColor}
+        // endColor={manualGradientColors.lightColor}
+    
         additionalStyles={{
           ...StyleSheet.absoluteFillObject,
 

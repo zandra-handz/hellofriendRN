@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@expo/cli": "^0.18.13",
+    "@expo/config": "~12.0.7",
+    "@expo/metro-config": "~54.0.2",
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/blur": "^4.4.1",
@@ -41,6 +43,7 @@
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.2",
     "expo": "^54.0.7",
+    "expo-blur": "~15.0.7",
     "expo-build-properties": "^1.0.8",
     "expo-constants": "^18.0.8",
     "expo-device": "^8.0.7",
@@ -57,6 +60,7 @@
     "expo-notifications": "^0.32.11",
     "expo-quick-actions": "^5.0.0",
     "expo-secure-store": "~15.0.7",
+    "expo-share-intent": "^5.0.1",
     "expo-sharing": "^14.0.7",
     "expo-splash-screen": "^31.0.10",
     "expo-status-bar": "^3.0.8",
@@ -96,10 +100,7 @@
     "react-native-worklets": "^0.5.1",
     "reanimated-color-picker": "^4.1.1",
     "tinycolor2": "^1.6.0",
-    "uuid": "^13.0.0",
-    "@expo/config": "~12.0.7",
-    "@expo/metro-config": "~54.0.2",
-    "expo-blur": "~15.0.7"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

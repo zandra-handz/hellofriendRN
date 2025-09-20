@@ -118,6 +118,7 @@ console.warn('existing moment in screen: ', momentText);
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
+      // useFriendColors={true}
       addColorChangeDelay={true}
       backgroundOverlayHeight={"10%"}
       includeBackgroundOverlay={catCreatorVisible}

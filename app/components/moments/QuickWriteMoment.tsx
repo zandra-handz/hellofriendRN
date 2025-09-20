@@ -84,28 +84,28 @@ onPress,
       }
     }, [isKeyboardVisible]);
 
-    const animatedStyle = useAnimatedStyle(
-      () => ({
-        opacity: opacityValue.value,
-      }),
-      [opacityValue]
-    );
+    // const animatedStyle = useAnimatedStyle(
+    //   () => ({
+    //     opacity: opacityValue.value,
+    //   }),
+    //   [opacityValue]
+    // );
 
     const textValue = useSharedValue("");
-    const [isFocused, setIsFocused] = useState(false);
+    // const [isFocused, setIsFocused] = useState(false);
 
-    const animatedProps = useAnimatedProps(() => {
-      return {
-        scale: scaleValue.value,
-      };
-    });
+    // const animatedProps = useAnimatedProps(() => {
+    //   return {
+    //     scale: scaleValue.value,
+    //   };
+    // });
 
-    const animatedFontStyle = useAnimatedStyle(
-      () => ({
-        transform: [{ scale: scaleValue.value }],
-      }),
-      [scaleValue]
-    );
+    // const animatedFontStyle = useAnimatedStyle(
+    //   () => ({
+    //     transform: [{ scale: scaleValue.value }],
+    //   }),
+    //   [scaleValue]
+    // );
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
     const animatedProps2 = useAnimatedProps(() => {
@@ -140,7 +140,7 @@ onPress,
     );
 
     useEffect(() => {
-      console.log(`value`, value);
+    
       textValue.value = value;
       scaleValue.value = withSequence(
         withTiming(1.1, { duration: 50 }),

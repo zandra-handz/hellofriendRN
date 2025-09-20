@@ -1,12 +1,14 @@
 import React, { ReactNode, useMemo, useEffect, useState } from "react";
 import { ViewStyle, StyleProp, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";  
-import { ColorValue } from "react-native"; 
+import { LinearGradient } from "expo-linear-gradient";
+import { ColorValue } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+
+import manualGradientColors from "@/src/hooks/StaticColors";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -14,77 +16,58 @@ interface GradientBackgroundProps {
   useFriendColors?: boolean | null;
   friendColorLight?: string | null;
   friendColorDark?: string | null;
-  startColor: string;
-  endColor: string;
   reverse?: boolean;
   additionalStyles?: StyleProp<ViewStyle>;
   children: ReactNode;
 }
 
 const GradientBackground: React.FC<GradientBackgroundProps> = ({
-  useFriendColors = false,
-  startColor,
-  endColor,
-  reverse = false,
-  friendColorLight='white',
-  friendColorDark='red',
+  useFriendColors,
+  friendColorLight = "white",
+  friendColorDark = "red",
   additionalStyles,
   children,
 }) => {
-  // const { themeAheadOfLoading } = useFriendStyle();
-  // const { manualGradientColors } = useGlobalStyle();
+  const startColor = manualGradientColors.lightColor;
+  const endColor = manualGradientColors.darkColor;
 
   const direction = useMemo(() => {
     if (useFriendColors) return [0, 0, 1, 0];
-    if (reverse) return [0, 0, 1, 1];
     return [0, 1, 1, 0];
-  }, [useFriendColors, reverse]);
+  }, [useFriendColors]);
 
+  const initialColors: [ColorValue, ColorValue] =
+    useFriendColors && friendColorDark && friendColorLight
+      ? [friendColorDark, friendColorLight]
+      : [startColor, endColor];
 
-
-console.log('gradient background0000');
-const getInitialColors = (): [ColorValue, ColorValue] => [
-  useFriendColors && friendColorDark
-    ? friendColorDark
-    : startColor, // || manualGradientColors.lightColor,
-  useFriendColors && friendColorLight 
-    ? friendColorLight
-    : endColor, // || manualGradientColors.darkColor,
-];
-
-const [currentColors, setCurrentColors] = useState<readonly [ColorValue, ColorValue]>(getInitialColors);
-const [previousColors, setPreviousColors] = useState<readonly [ColorValue, ColorValue]>(getInitialColors);
+  const [currentColors, setCurrentColors] = useState(initialColors);
+  const [previousColors, setPreviousColors] = useState(initialColors);
 
   const transition = useSharedValue(1);
 
-  const nextColors = useMemo<[ColorValue, ColorValue]>(() => [
-  useFriendColors && friendColorDark 
-    ? friendColorDark
-    : startColor,
-  useFriendColors && friendColorLight
-    ? friendColorLight
-    : endColor // || manualGradientColors.darkColor,
-], [useFriendColors, friendColorLight, friendColorDark, startColor, endColor]);
-
-
-  // useEffect(() => {
-  //   // Fade from previous to next
-  //   console.log('fading friend');
-  //   setPreviousColors(currentColors);
-  //   setCurrentColors(nextColors);
-  //   transition.value = 0;
-
-  //   transition.value = withTiming(1, { duration: 400 }); // You can customize timing
-  // }, [nextColors]);
-
-
   useEffect(() => {
-  console.log("fading friend", currentColors, nextColors);
-  setPreviousColors(currentColors);
-  setCurrentColors(nextColors);
-  transition.value = 0;
-  transition.value = withTiming(1, { duration: 400 });
-}, [nextColors[0], nextColors[1]]);
+    const newColors: [ColorValue, ColorValue] = [
+      friendColorDark ?? startColor,
+      friendColorLight ?? endColor,
+    ];
+
+    if (!currentColors.every((c, i) => c === newColors[i])) {
+      // Update previous colors first
+      setPreviousColors(currentColors);
+
+      // Reset opacity immediately the moment previousColors is updated
+      transition.value = 0;
+
+      // Update current colors in the next frame
+      requestAnimationFrame(() => {
+        setCurrentColors(newColors);
+
+        // Animate opacity to fade in the new gradient
+        transition.value = withTiming(1, { duration: 400 });
+      });
+    }
+  }, [friendColorDark, friendColorLight]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: transition.value,
@@ -116,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GradientBackground;
+export default React.memo(GradientBackground);

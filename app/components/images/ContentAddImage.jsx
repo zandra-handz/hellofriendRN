@@ -99,7 +99,7 @@ const ContentAddImage = ({
   };
 
   const handleSave = async () => {
-    console.log(imageUri);
+    // console.log(imageUri);
 
     if (imageUri && imageTitle.trim() && friendId && userId) {
       try {

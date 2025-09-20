@@ -21,7 +21,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =
     useFriendStyle();
   const navigation = useNavigation();
-  const { selectedFriend, selectFriend } = useSelectedFriend();
+  const { selectedFriend, selectFriend, deselectFriend } = useSelectedFriend();
 
   const locale = "en-US";
   const { navigateBack } = useAppNavigations();
@@ -61,13 +61,11 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   };
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+    <SafeViewAndGradientBackground 
+      friendColorLight={manualGradientColors.lightColor}
+      friendColorDark={manualGradientColors.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
+      friendId={false}
       style={{ flex: 1 }}
     >
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
@@ -86,6 +84,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
         >
           <Pressable
             onPress={navigateBack}
+            onLongPress={deselectFriend}
             style={{
               position: "absolute",
               left: 0,

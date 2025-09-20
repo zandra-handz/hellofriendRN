@@ -160,8 +160,8 @@ const { deselectFriend} = useSelectedFriend();
   return (
     <GradientBackground
       useFriendColors={!!friendId}
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+      // startColor={manualGradientColors.lightColor}
+      // endColor={manualGradientColors.darkColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[

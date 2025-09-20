@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
  
-import manualGradientColors  from "@/src/hooks/StaticColors";
+ 
 
 import SearchHelloesModal from "./SearchHelloesModal";
 // app components
@@ -92,8 +92,8 @@ const HelloesScreenFooter = ({
   return (
     <GradientBackground
       useFriendColors={!!friendId}
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+      // startColor={manualGradientColors.lightColor}
+      // endColor={manualGradientColors.darkColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[

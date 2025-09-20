@@ -80,6 +80,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
             organization: 'badrainbowz',
           },
         ],
+        'expo-share-intent',
         'expo-secure-store',
         'expo-font',
         '@react-native-firebase/app',

@@ -8,7 +8,7 @@ import FooterButtonIconVersion from "./FooterButtonIconVersion";
 // import AddressesModal from "./AddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+// import manualGradientColors  from "@/src/hooks/StaticColors";
 
 const MapScreenFooter = ({
   userAddress,
@@ -106,7 +106,8 @@ const MapScreenFooter = ({
   return (
     <GradientBackground
       useFriendColors={!!friendId}
-      endColor={manualGradientColors.darkColor}
+      // startColor={manualGradientColors.lightColor}
+      // endColor={manualGradientColors.darkColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[

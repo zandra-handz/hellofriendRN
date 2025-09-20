@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, DimensionValue } from "react-native";
 import CustomStatusBar from "../statusbar/CustomStatusBar"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+ 
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground"; 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -70,8 +70,8 @@ export const PreAuthSafeViewAndGradientBackground = ({
   return (
     <GradientBackground
       useFriendColors={useFriendColors}
-      startColor={manualGradientColors.darkColor}
-      endColor={manualGradientColors.lightColor}
+      // startColor={manualGradientColors.darkColor}
+      // endColor={manualGradientColors.lightColor}
       friendColorDark={friendColorDark}
       friendColorLight={friendColorLight}
       additionalStyles={[paddingStyle, style]}

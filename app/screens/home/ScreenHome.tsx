@@ -26,8 +26,9 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
 // third party  RESTORE SHARE INTENT WHEN PACKAGE IS UPDATED
-// import { useShareIntentContext } from "expo-share-intent";
+import { useShareIntentContext } from "expo-share-intent";
 import * as FileSystem from "expo-file-system";
+import { File, Directory, Paths } from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 
 import { useFocusEffect } from "@react-navigation/native";
@@ -49,7 +50,7 @@ const ScreenHome = () => {
   const { user } = useUser();
   const { settings } = useUserSettings();
 
-  // const { hasShareIntent, shareIntent } = useShareIntentContext();
+  const { hasShareIntent, shareIntent } = useShareIntentContext();
 
   const { lightDarkTheme } = useLDTheme();
   const { isLoading } = useUpcomingHelloes();
@@ -60,7 +61,7 @@ const ScreenHome = () => {
 
   const spinnerStyle = "flow";
 
-  const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const { navigateToMomentFocusWithText, navigateToSelectFriend } =
     useAppNavigations();
@@ -69,7 +70,6 @@ const ScreenHome = () => {
 
   const { friendList, friendListFetched } = useFriendList();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
-  //const { friendDash, loadingDash } = useFriendDash();
 
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -83,65 +83,68 @@ const ScreenHome = () => {
 
   const PADDING_HORIZONTAL = 6;
 
-  // useEffect(() => {
-  //   if (!hasShareIntent || !shareIntent) return;
+  useEffect(() => {
+    if (!hasShareIntent || !shareIntent) return;
 
-  //   if (hasShareIntent && shareIntent?.files?.length > 0) {
-  //     const file = shareIntent.files[0];
-  //     const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
+    if (hasShareIntent && shareIntent?.files?.length > 0) {
+      const file = shareIntent.files[0];
+      const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
 
-  //     if (uri) {
-  //       processSharedFile(uri);
-  //     } else {
-  //       console.warn("No valid URI found for the shared file.");
-  //     }
-  //   }
+      if (uri) {
+        processSharedFile(uri);
+      } else {
+        console.warn("No valid URI found for the shared file.");
+      }
+    }
 
-  //   if (hasShareIntent && shareIntent?.text?.length > 0) {
-  //     const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
-  //     if (sharedText) {
-  //       navigateToMomentFocusWithText({
-  //         screenCameFrom: 0, //goes back to home screen that is now selected friend screen
-  //         momentText: sharedText,
-  //       });
-  //     } else {
-  //       showFlashMessage(
-  //         `length in shared text but data structure passed here is not valid`,
-  //         true,
-  //         2000
-  //       );
-  //     }
-  //   }
-  // }, [shareIntent, hasShareIntent]);
+    if (hasShareIntent && shareIntent?.text?.length > 0) {
+      const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
+      if (sharedText) {
+        navigateToMomentFocusWithText({
+          screenCameFrom: 0, //goes back to home screen that is now selected friend screen
+          momentText: sharedText,
+        });
+      } else {
+        showFlashMessage(
+          `length in shared text but data structure passed here is not valid`,
+          true,
+          2000
+        );
+      }
+    }
+  }, [shareIntent, hasShareIntent]);
 
-  // const processSharedFile = async (url) => {
-  //   if (url.startsWith("content://") || url.startsWith("file://")) {
-  //     try {
-  //       const fileInfo = await FileSystem.getInfoAsync(url);
+  const processSharedFile = async (url) => {
+    if (url.startsWith("content://") || url.startsWith("file://")) {
+      try {
+        const file = new File(url);
 
-  //       if (fileInfo && fileInfo.exists) {
-  //         // Validate that it's an image
-  //         if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-  //           const resizedImage = await resizeImage(fileInfo.uri);
-  //           navigation.navigate("AddImage", { imageUri: resizedImage.uri }); // Navigate with resized image URI
-  //         } else {
-  //           Alert.alert(
-  //             "Unsupported File",
-  //             "The shared file is not a valid image."
-  //           );
-  //         }
-  //       } else {
-  //         Alert.alert("Error", "Could not process the shared file.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error processing shared file:", error);
-  //       Alert.alert(
-  //         "Error",
-  //         "An error occurred while processing the shared file."
-  //       );
-  //     }
-  //   }
-  // };
+        const fileInfo = await file.info();
+        // const fileInfo = await FileSystem.getInfoAsync(url);
+
+        if (fileInfo && fileInfo.exists) {
+          // Validate that it's an image
+          if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
+            const resizedImage = await resizeImage(fileInfo.uri);
+            navigation.navigate("AddImage", { imageUri: resizedImage.uri }); // Navigate with resized image URI
+          } else {
+            Alert.alert(
+              "Unsupported File",
+              "The shared file is not a valid image."
+            );
+          }
+        } else {
+          Alert.alert("Error", "Could not process the shared file.");
+        }
+      } catch (error) {
+        console.error("Error processing shared file:", error);
+        Alert.alert(
+          "Error",
+          "An error occurred while processing the shared file."
+        );
+      }
+    }
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -223,30 +226,31 @@ const ScreenHome = () => {
       newMomentTextRef.current.focus();
     }
   };
-
+  useEffect(() => {
+    console.log("ScreenHome rendered", {
+      friendId: selectedFriend?.id,
+      isKeyboard: friendList.length,
+    });
+  }, [friendList]);
   return (
     <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
+      screenname={`home`}
       backgroundOverlayColor={
         friendList?.length > 0
           ? lightDarkTheme.primaryBackground
-          : lightDarkTheme.primaryBackground
+          : lightDarkTheme.overlayBackground
       }
       friendId={selectedFriend?.id}
-      // includeBackgroundOverlay={true}
-      // backgroundOverlayHeight={
-      //   isKeyboardVisible ? "100%" : friendList?.length > 0 ? 90 : 66
-      // }
-      backgroundOverlayHeight={isKeyboardVisible && !selectedFriend?.id ? '100%': ''}
-      useSolidOverlay={isKeyboardVisible && !selectedFriend?.id ? false : selectedFriend?.id ? false :  true}
+      backgroundOverlayHeight={
+        selectedFriend?.id ? "" : isKeyboardVisible ? "100%" : ""
+      }
+      useSolidOverlay={selectedFriend?.id ? false : !isKeyboardVisible}
       useOverlayFade={true}
       includeBackgroundOverlay={true}
-      backgroundTransparentOverlayColor={
-        selectedFriend?.id ? lightDarkTheme.overlayBackground : "transparent"
-      }
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       backgroundOverlayBottomRadius={0}
-      useFriendColors={!!selectedFriend?.id}
       style={{ flex: 1 }}
     >
       {!friendListFetched && ( // isLoading is in FS Spinner
@@ -340,7 +344,7 @@ const ScreenHome = () => {
                         iconColor={lightDarkTheme.primaryText}
                         mountingText={""}
                         onTextChange={updateNewMomentTextString}
-                         onPress={navigateToAddMomentScreen}
+                        onPress={navigateToAddMomentScreen}
                         multiline={isKeyboardVisible}
                         isKeyboardVisible={isKeyboardVisible}
                       />

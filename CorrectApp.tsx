@@ -227,7 +227,7 @@
 //   return (
 //     <ShareIntentProvider>
 //       <GestureHandlerRootView style={{ flex: 1 }}>
-//         <QueryClientProvider client={queryClient}>
+//         <QueryClientProvider client={queryClient}>screenh
 //           <UserProvider>
 //             <UserSettingsProvider>
 //               <FriendListProvider>

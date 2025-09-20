@@ -51,8 +51,8 @@ const FSMainSpinner = ({ isInitializing }: Props) => {
         >
           <GradientBackground
             useFriendColors={!!selectedFriend?.id}
-            startColor={"#a0f143"} // manualGradientColors.lightColor
-            endColor={"#4caf50"} // manualGradientColors.darkColor
+            // startColor={"#a0f143"} // manualGradientColors.lightColor
+            // endColor={"#4caf50"} // manualGradientColors.darkColor
             friendColorDark={themeAheadOfLoading.darkColor}
             friendColorLight={themeAheadOfLoading.lightColor}
           >
