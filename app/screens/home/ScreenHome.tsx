@@ -11,7 +11,7 @@ import {
 // app state
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+//import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
@@ -69,7 +69,7 @@ const ScreenHome = () => {
 
   const { friendList, friendListFetched } = useFriendList();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
-  const { friendDash, loadingDash } = useFriendDash();
+  //const { friendDash, loadingDash } = useFriendDash();
 
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -194,7 +194,7 @@ const ScreenHome = () => {
   };
 
   const navigateToAddMomentScreen = () => {
-    if (newMomentText.length > 0) {
+    if (newMomentText?.length > 0) {
       navigateToMomentFocusWithText({
         screenCameFrom: 0, //goes back to home screen that is now selected friend screen
         momentText: newMomentText,

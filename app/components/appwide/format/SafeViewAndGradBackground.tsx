@@ -50,14 +50,18 @@ const SafeViewAndGradientBackground = ({
   // const right = typeof insets.right === "number" ? insets.right : 0;
 
   useEffect(() => {
+    console.log('usesolidoverlay0');
     if (!useSolidOverlay && useOverlayFade && !friendId) {
+      console.log('background1');
       opacityValue.value = withTiming(1, {duration: 300});
     }
        if (!useSolidOverlay && useOverlayFade && friendId) {
+            console.log('background2');
       opacityValue.value = withTiming(.46, {duration: 300});
     }
 
     if (useSolidOverlay && useOverlayFade) {
+          console.log('background3');
            opacityValue.value = withTiming(0, {duration: 300});
     }
 

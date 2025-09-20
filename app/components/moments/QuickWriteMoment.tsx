@@ -365,15 +365,17 @@ onPress,
                 <Pressable
                 onPress={onPress} // since we can't manually re-place the caret, just nav to edit screen
                   style={{
-                    flex: 1, // 👈 parent must take available screen space
-                    backgroundColor: "teal",
+                    flex: 1, // NEED THIS
+                  //  backgroundColor: "teal",
                   }}
                 >
                   {isKeyboardVisible && (
                     <ScrollView
                       ref={scrollRef}
-                      style={{ flex: 1, backgroundColor: "red" }}
-                      contentContainerStyle={{ padding: 20 }}
+                      style={{ flex: 1,
+                        // backgroundColor: "red"
+                         }}
+                      contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 10 }}
                       keyboardShouldPersistTaps="handled"
                       inverted={true}
                     >

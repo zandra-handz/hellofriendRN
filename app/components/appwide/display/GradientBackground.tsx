@@ -42,7 +42,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
 
 
 
-
+console.log('gradient background0000');
 const getInitialColors = (): [ColorValue, ColorValue] => [
   useFriendColors && friendColorDark
     ? friendColorDark
@@ -67,14 +67,24 @@ const [previousColors, setPreviousColors] = useState<readonly [ColorValue, Color
 ], [useFriendColors, friendColorLight, friendColorDark, startColor, endColor]);
 
 
-  useEffect(() => {
-    // Fade from previous to next
-    setPreviousColors(currentColors);
-    setCurrentColors(nextColors);
-    transition.value = 0;
+  // useEffect(() => {
+  //   // Fade from previous to next
+  //   console.log('fading friend');
+  //   setPreviousColors(currentColors);
+  //   setCurrentColors(nextColors);
+  //   transition.value = 0;
 
-    transition.value = withTiming(1, { duration: 400 }); // You can customize timing
-  }, [nextColors]);
+  //   transition.value = withTiming(1, { duration: 400 }); // You can customize timing
+  // }, [nextColors]);
+
+
+  useEffect(() => {
+  console.log("fading friend", currentColors, nextColors);
+  setPreviousColors(currentColors);
+  setCurrentColors(nextColors);
+  transition.value = 0;
+  transition.value = withTiming(1, { duration: 400 });
+}, [nextColors[0], nextColors[1]]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: transition.value,
