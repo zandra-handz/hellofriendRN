@@ -73,13 +73,11 @@ const MomentWriteEditView = ({
     useAppNavigations();
 
   const CARD_BACKGROUND = "rgba(0,0,0,0.8)"; // same as in selected friend home
-
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const TOPPER_PADDING_TOP = 0;
+ 
+  const welcomeTextStyle = AppFontStyles.welcomeText; 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const momentTextRef = useRef(null);
-  // const [selectedCategory, setSelectedCategory] = useState("");
-  // const [selectedUserCategory, setSelectedUserCategory] = useState<number>(0);
+  const momentTextRef = useRef(null); 
   const [triggerReFocus, setTriggerReFocus] = useState<number>(0); //can set 0 to deFocus if needed
   const [momentTextToSave, setMomentTestToSave] = useState(momentText);
   const [userChangedCategory, setUserChangedCategory] =
@@ -91,12 +89,6 @@ const MomentWriteEditView = ({
     }
   };
 
-  const TOPPER_PADDING_TOP = 0;
-console.log('existing moment in write view: ', existingMomentObject?.capsule);
-useEffect(() => {
-  console.log(`momen text to save`, momentTextToSave)
-
-}, [momentTextToSave]);
 
   useFocusEffect(
     useCallback(() => {

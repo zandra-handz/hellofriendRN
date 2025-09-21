@@ -15,7 +15,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
- 
   TouchableWithoutFeedback,
   Pressable,
   Keyboard,
@@ -55,7 +54,7 @@ const QuickWriteMoment = forwardRef(
       onTextChange,
       multiline = true,
       primaryColor,
-onPress,
+      onPress,
       primaryBackgroundColor,
       primaryOverlayColor,
       isKeyboardVisible,
@@ -108,12 +107,12 @@ onPress,
     // );
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
-    const animatedProps2 = useAnimatedProps(() => {
-      return {
-        text: `Box width: ${textValue.value}`,
-        defaultValue: `Box width: ${scaleValue.value}`,
-      };
-    }, [textValue]);
+    // const animatedProps2 = useAnimatedProps(() => {
+    //   return {
+    //     text: `Box width: ${textValue.value}`,
+    //     defaultValue: `Box width: ${scaleValue.value}`,
+    //   };
+    // }, [textValue]);
 
     const textInputRef = useRef();
     useImperativeHandle(ref, () => ({
@@ -140,7 +139,6 @@ onPress,
     );
 
     useEffect(() => {
-    
       textValue.value = value;
       scaleValue.value = withSequence(
         withTiming(1.1, { duration: 50 }),
@@ -199,7 +197,7 @@ onPress,
               width: "100%",
               height: multiline ? "100%" : 30,
               paddingLeft: 18,
-
+              // backgroundColor: "orange",
               paddingTop: multiline ? 0 : 0,
 
               borderRadius: 0,
@@ -360,22 +358,31 @@ onPress,
               )}
               <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={[{ flex: 1, paddingBottom: multiline ? 120 : 0 }]}
+                style={[{ flex: 1, paddingBottom: multiline ? 0 : 0 }]}
               >
                 <Pressable
-                onPress={onPress} // since we can't manually re-place the caret, just nav to edit screen
+                  onPress={(e) => {
+                    e.stopPropagation(); // stops it from reaching TouchableWithoutFeedback
+                    onPress?.();
+                  }}
+                  //onPress={onPress} // since we can't manually re-place the caret, just nav to edit screen
                   style={{
                     flex: 1, // NEED THIS
-                  //  backgroundColor: "teal",
+                    // backgroundColor: "teal",
                   }}
                 >
                   {isKeyboardVisible && (
                     <ScrollView
                       ref={scrollRef}
-                      style={{ flex: 1,
+                      style={{
+                        flex: 1,
                         // backgroundColor: "red"
-                         }}
-                      contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 10 }}
+                      }}
+                      contentContainerStyle={{
+                        paddingHorizontal: 10,
+                        paddingVertical: 0, // change if adding color to parent
+                        paddingBottom: 10,
+                      }}
                       keyboardShouldPersistTaps="handled"
                       inverted={true}
                     >
@@ -432,12 +439,15 @@ onPress,
                   ref={textInputRef}
                   textBreakStrategy={"highQuality"}
                   autoFocus={focusMode}
+                  pointerEvents="none"
                   style={[
                     styles.textInput,
                     {
-                      // backgroundColor: 'orange',
-                      marginLeft: 26,
-                      height: 30,
+                      // backgroundColor: "hotpink",
+                      zIndex: 1,
+
+                      marginLeft: 0,
+                      height: 10,
                       fontSize: 0.01,
                       color: "transparent",
                     },

@@ -55,9 +55,9 @@ const ScreenMomentFocus = () => {
   const topBarHeight = 50; 
 
   const topBarTotalHeight = topBarHeight;
-console.warn('existing moment in screen: ', momentText);
+ 
   const handleOpenCatCreator = () => {
-    console.log("cat creator now visible!");
+ 
     setCatCreatorVisible(true);
   };
 
@@ -118,7 +118,6 @@ console.warn('existing moment in screen: ', momentText);
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
-      // useFriendColors={true}
       addColorChangeDelay={true}
       backgroundOverlayHeight={"10%"}
       includeBackgroundOverlay={catCreatorVisible}

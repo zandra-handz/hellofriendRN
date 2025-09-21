@@ -1,10 +1,11 @@
 import { View } from "react-native";
-import React from "react";
-import SwitchFriend from "../home/SwitchFriend";
+import React from "react"; 
+import SwitchFriend from "@/app/components/home/SwitchFriend";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import SelectedCategoryButton from "./SelectedCategoryButton";
+ 
 import { useFriendDash } from "@/src/context/FriendDashContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+ ;
+import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 type Props = {
   updateExistingMoment: boolean;
   paddingTop: number;
@@ -15,30 +16,16 @@ type Props = {
   friendId: number;
 };
 
-const MomentFocusTray = ({
+const ImageFocusTray = ({
   userId,
   userDefaultCategory,
   themeAheadOfLoading,
-  primaryColor,
-  primaryBackground,
-  lighterOverlayColor,
-
-  capsuleList,
-
-  updateExistingMoment,
-  freezeCategory,
-  onPress,
-  label,
-  categoryId,
-  friendId,
-  friendName,
-  friendDefaultCategory,
+  primaryColor, 
 }: Props) => {
   const ICON_SIZE = 16;
 
   const FONT_SIZE = 12;
-  const { loadingDash } = useFriendDash();
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const { loadingDash } = useFriendDash(); 
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   return (
@@ -85,31 +72,11 @@ const MomentFocusTray = ({
                 welcomeTextStyle={welcomeTextStyle}
                 maxWidth={"100%"}
                 fontSize={FONT_SIZE}
-                editMode={!updateExistingMoment}
+                editMode={true} //change this if using this image add screen as dual create/edit screen in future
                 iconSize={ICON_SIZE}
               />
             </View>
-            <View style={{ maxWidth: "50%" }}>
-              <SelectedCategoryButton
-                userId={userId}
-                friendId={friendId}
-                friendName={friendName}
-                userDefaultCategory={userDefaultCategory}
-                themeAheadOfLoading={themeAheadOfLoading}
-                primaryColor={primaryColor}
-                lighterOverlayColor={lighterOverlayColor}
-                primaryBackground={primaryBackground}
-                capsuleList={capsuleList}
-                friendDefaultCategory={friendDefaultCategory}
-                fontSize={FONT_SIZE}
-                fontSizeEditMode={FONT_SIZE}
-                freezeCategory={freezeCategory}
-                onPress={onPress}
-                label={label}
-                categoryId={categoryId}
-                iconSize={ICON_SIZE}
-              />
-            </View>
+ 
           </>
         )}
       </View>
@@ -117,4 +84,4 @@ const MomentFocusTray = ({
   );
 };
 
-export default MomentFocusTray;
+export default ImageFocusTray;

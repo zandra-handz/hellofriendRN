@@ -197,6 +197,7 @@ const ScreenHome = () => {
   };
 
   const navigateToAddMomentScreen = () => {
+    
     if (newMomentText?.length > 0) {
       navigateToMomentFocusWithText({
         screenCameFrom: 0, //goes back to home screen that is now selected friend screen
