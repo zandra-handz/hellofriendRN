@@ -110,8 +110,7 @@ const CarouselSliderMoments = ({
         }
         lighterOverlayColor={
           lightDarkTheme.lighterOverlayBackground 
-        }
-        welcomeTextStyle={AppFontStyles.welcomeText}
+        } 
         userId={userId}
         friendId={friendId}
         categoryColorsMap={categoryColorsMap}

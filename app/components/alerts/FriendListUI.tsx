@@ -1,23 +1,21 @@
 import {
-  View, 
+  View,
   StyleSheet,
-  Pressable, 
+  Pressable,
   FlatList,
   ListRenderItemInfo,
 } from "react-native";
 import Animated, {
-  SlideInRight, 
+  SlideInRight,
   SlideInDown,
   FadeOut,
 } from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
- 
-  
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
- 
 
 import { Friend } from "@/src/types/FriendTypes";
 
@@ -28,7 +26,6 @@ type FriendListUIProps = {
 };
 
 type FriendListItem = Friend | { message: string };
- 
 
 const FriendListUI = ({
   themeAheadOfLoading,
@@ -37,18 +34,19 @@ const FriendListUI = ({
   data,
   friendId,
   onPress,
-}: FriendListUIProps) => {  
+}: FriendListUIProps) => {
   const itemColor = lightDarkTheme.primaryText;
-  const elementBackgroundColor =
-    lightDarkTheme.overlayBackground;
+  const elementBackgroundColor = lightDarkTheme.overlayBackground;
 
-    const {navigateToAddFriend } = useAppNavigations();
+  const { navigateToAddFriend } = useAppNavigations();
 
   const ITEM_HEIGHT = 50;
 
-  const ITEM_BORDER_RADIUS = 10;
+  const ITEM_BORDER_RADIUS = 6;
 
   const selectedId = friendId; //can be null
+
+  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
 
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
@@ -60,19 +58,20 @@ const FriendListUI = ({
       >
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
-          friendList={friendList}
+            friendList={friendList}
             startingColor={lightDarkTheme.overlayBackground}
             style={styles.friendContainer}
             friendId={item.id}
             onPress={() => onPress(item.id)}
           >
             <ButtonSelectFriend
-            themeTextColor={lightDarkTheme.primaryText}
-            backgroundOverlayColor={lightDarkTheme.overlayBackground}
-            friendId={friendId}
-            themeAheadOfLoading={themeAheadOfLoading}
+              themeTextColor={lightDarkTheme.primaryText}
+              backgroundOverlayColor={lightDarkTheme.overlayBackground}
+             
+              friendId={friendId}
+              themeAheadOfLoading={themeAheadOfLoading}
               borderRadius={ITEM_BORDER_RADIUS}
-              backgroundColor={"transparent"}
+               backgroundColor={CARD_BACKGROUND}
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
@@ -80,7 +79,7 @@ const FriendListUI = ({
           </FriendTintPressable>
         )}
 
-        {item && ("id" in item) && (item.id === selectedId) && (
+        {item && "id" in item && item.id === selectedId && (
           <View
             style={[
               styles.friendContainer,
@@ -109,7 +108,7 @@ const FriendListUI = ({
               styles.friendContainer,
               {
                 backgroundColor: lightDarkTheme.primaryBackground,
-                borderRadius: 10,
+                borderRadius: ITEM_BORDER_RADIUS,
                 alignItems: "center",
                 justifyContent: "center",
                 overflow: "hidden",
@@ -147,7 +146,7 @@ const FriendListUI = ({
           data={[...data, { message: "add friend" }]}
           keyExtractor={extractItemKey}
           renderItem={renderFriendSelectItem}
-          numColumns={1} 
+          numColumns={1}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 2,
     overflow: "hidden",
-    borderRadius: 10,
+    // borderRadius: 2,
     justifyContent: "center",
     flexGrow: 1,
   },

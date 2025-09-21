@@ -121,7 +121,7 @@ const TalkingPointsChart = ({
   const LABELS_SIZE = 11;
   const LABELS_DISTANCE_FROM_CENTER = -10;
   const LABELS_SLICE_END = 10;
-  const CENTER_TEXT_SIZE = 40;
+  const CENTER_TEXT_SIZE = 34;
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 

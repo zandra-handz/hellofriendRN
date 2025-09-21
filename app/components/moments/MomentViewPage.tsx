@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
- 
+ import { AppFontStyles } from "@/src/hooks/StaticFonts";
  
 import { MaterialCommunityIcons} from "@expo/vector-icons";
 import Animated, {
@@ -32,8 +32,7 @@ const MomentViewPage: React.FC<Props> = ({
   friendId,
   textColor,
   darkerOverlayColor,
-  lighterOverlayColor,
-  welcomeTextStyle,
+  lighterOverlayColor, 
   item,
   index,
   width,
@@ -54,6 +53,7 @@ const MomentViewPage: React.FC<Props> = ({
     friendId: friendId,
   });
   const navigation = useNavigation();
+  const welcomeTextStyle = AppFontStyles.welcomeText;
 
   const [currentIndex, setCurrentIndex] = useState();
 

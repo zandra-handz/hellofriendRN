@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { View, StyleSheet, Text, Alert } from "react-native";
 import EscortBarMoments from "../moments/EscortBarMoments";
 import { Linking } from "react-native";
@@ -7,6 +7,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useFocusEffect } from "@react-navigation/native";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import useUpdateFriend from "@/src/hooks/useUpdateFriend";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import Animated, {
   SharedValue,
   useAnimatedReaction,
@@ -57,6 +58,8 @@ const ItemFooterMoments: React.FC<Props> = ({
 
   const [inputNumberVisible, setInputNumberVisible] = useState(false);
   const [ideaSent, setIdeaSent] = useState(false);
+
+  const { navigateBack } = useAppNavigations();
 
   const saveToHello = useCallback((moment) => {
     if (!friendId || !moment) {
@@ -111,6 +114,12 @@ const ItemFooterMoments: React.FC<Props> = ({
       ? data.length
       : 0;
 
+  useEffect(() => {
+    if (totalCount === 0) {
+      navigateBack();
+    }
+  }, [totalCount]);
+
   useAnimatedReaction(
     () => currentIndexValue.value,
     (newIndex, prevIndex) => {
@@ -148,8 +157,9 @@ const ItemFooterMoments: React.FC<Props> = ({
     }
   }, [currentIndex]);
 
-  const handleScrollToNext = () => { 
-    if (currentIndex === undefined) {
+  const handleScrollToNext = () => {
+    if (currentIndex === undefined || totalCount === 0) {
+      console.log('cannot scroll to next')
       return;
     }
 
@@ -160,7 +170,8 @@ const ItemFooterMoments: React.FC<Props> = ({
   };
 
   const handleScrollToPrev = () => {
-    if (currentIndex === undefined) {
+    if (currentIndex === undefined || totalCount === 0) {
+      console.log('cannot scroll to prev')
       return;
     }
 

@@ -14,21 +14,20 @@ import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext"; 
+
+
+
 const ScreenMomentView = () => {
   const route = useRoute();
- 
+   const currentIndex = route.params?.index ?? null;
 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { userCategories } = useCategories();
-  const currentIndex = route.params?.index ?? null;
+  const { userCategories } = useCategories(); 
   const { themeAheadOfLoading } = useFriendStyle();
   // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
-
-
-  
 
   const { preAddMomentMutation  } = usePreAddMoment({
     userId: user?.id,

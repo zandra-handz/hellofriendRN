@@ -11,6 +11,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import EscortBarMinusWidth from "./EscortBarMinusWidth";
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
+import MomentSearcher from "./MomentSearcher";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -85,6 +86,7 @@ const MomentsList = ({
     useState(false);
 
   const scrollToMoment = (moment) => {
+    console.log('scroll to moment: ', moment)
     if (moment.uniqueIndex !== undefined) {
       flatListRef.current?.scrollToOffset({
         offset: COMBINED_HEIGHT * moment.uniqueIndex,
@@ -218,6 +220,10 @@ const scrollHandler = useAnimatedScrollHandler({
   },
 });
 
+
+const handleCloseCategoryNav = () => {
+  setCategoryNavigatorVisible(false);
+}
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <Pressable
@@ -367,7 +373,7 @@ const scrollHandler = useAnimatedScrollHandler({
             <CategoryNavigator
               primaryColor={primaryColor}
               backgroundColor={primaryBackgroundColor}
-              onClose={() => setCategoryNavigatorVisible(false)}
+              onClose={handleCloseCategoryNav}
               visibilityValue={listVisibility}
               viewableItemsArray={viewableItemsArray}
               categoryNames={categoryNames}
@@ -406,6 +412,8 @@ const scrollHandler = useAnimatedScrollHandler({
           )}
 
           {!categoryNavigatorVisible && (
+            <>
+            <MomentSearcher onSearchPress={scrollToMoment} />
            
               <EscortBarMinusWidth
                 backgroundColor={primaryBackgroundColor}
@@ -414,6 +422,8 @@ const scrollHandler = useAnimatedScrollHandler({
                 navigateBack={navigateBack}
                 onPress={() => setCategoryNavigatorVisible(true)}
               />
+              
+            </>
          
           )}
         </View>

@@ -40,6 +40,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({
@@ -50,6 +51,7 @@ const ContentAddHello = ({
   backgroundColor,
 }) => {
   const navigation = useNavigation();
+  const { resetTheme } = useFriendStyle();
 
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
@@ -174,6 +176,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
       showFlashMessage(`Hello saved!`, false, 2000);
       deselectFriend(); // this sets selectedFriend to null
       setJustDeselectedFriend(true);
+      resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
     }
   }, [createHelloMutation.isSuccess]);
 

@@ -63,6 +63,7 @@ import * as MediaLibrary from "expo-media-library";
 // import ResultMessage from "./app/components/alerts/ResultMessage";
 
 import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
+import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
@@ -475,7 +476,7 @@ export const Layout = () => {
 
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
-      <FSMainSpinner isInitializing={isInitializing} />
+      <PeacefulGradientSpinner isInitializing={isInitializing} />
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
       <QuickActionsHandler navigationRef={navigationRef} />
       <TopLevelNavigationHandler

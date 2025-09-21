@@ -90,6 +90,7 @@ const useUpdateFaveTheme = ({ userId, friendId }: Props) => {
       lightColor: savedLightColor,
       manualTheme: manualThemeOn, 
     };
+    console.log(`theme:`,theme);
 
     try {
       updateFavesThemeMutation.mutate(theme);

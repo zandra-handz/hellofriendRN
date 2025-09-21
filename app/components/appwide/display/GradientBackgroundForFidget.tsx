@@ -1,45 +1,66 @@
 import React, { ReactNode, useMemo, useEffect, useState } from "react";
-import { ViewStyle, StyleProp, StyleSheet } from "react-native";
+import { ViewStyle, StyleProp, StyleSheet, Vibration } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ColorValue } from "react-native";
+ 
 import Animated, {
   useSharedValue,
+  withSequence,
   useAnimatedStyle,
   withTiming,
+  withRepeat,
+  runOnJS,
 } from "react-native-reanimated";
 
 import manualGradientColors from "@/src/hooks/StaticColors";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
-interface GradientBackgroundProps {
-  useFriendColors?: boolean | null;
-  friendColorLight?: string | null;
-  friendColorDark?: string | null;
+interface GradientBackgroundForFidgetProps {
+  switchColorSet?: boolean | null;
+  firstSetColorLight?: string | null;
+  firstSetColorDark?: string | null;
   reverse?: boolean;
   additionalStyles?: StyleProp<ViewStyle>;
   children: ReactNode;
 }
 
-const GradientBackground: React.FC<GradientBackgroundProps> = ({
-  useFriendColors,
-  friendColorLight = "white",
-  friendColorDark = "red",
+const GradientBackgroundForFidget: React.FC<
+  GradientBackgroundForFidgetProps
+> = ({
+  switchColorSet,
+  useVibration = false,
+  speed = 600,
+  firstSetColorLight = "white",
+  firstSetColorDark = "red",
+
+  firstSetDirection = [0,1,1,0], //[0, 0, 1, 0],
+
+  secondSetColorLight = "black",
+  secondSetColorDark = "orange",
+
+  secondSetDirection = [0, 1, 1, 0],
   additionalStyles,
   children,
 }) => {
-  const startColor = manualGradientColors.lightColor;
-  const endColor = manualGradientColors.darkColor;
+
+      const handleVibrate = () => {
+        if (useVibration) {
+               Vibration.vibrate(100); 
+
+        } 
+
+      };
 
   const direction = useMemo(() => {
-    if (useFriendColors) return [0, 0, 1, 0];
-    return [0, 1, 1, 0];
-  }, [useFriendColors]);
+    return [...firstSetDirection, ...secondSetDirection];
+ 
+  }, [  firstSetDirection, secondSetDirection]);
 
   const initialColors: [ColorValue, ColorValue] =
-    useFriendColors && friendColorDark && friendColorLight
-      ? [friendColorDark, friendColorLight]
-      : [startColor, endColor];
+    switchColorSet && firstSetColorDark && firstSetColorLight
+      ? [firstSetColorDark, firstSetColorLight]
+      : [secondSetColorLight, secondSetColorDark];
 
   const [currentColors, setCurrentColors] = useState(initialColors);
   const [previousColors, setPreviousColors] = useState(initialColors);
@@ -48,8 +69,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
 
   useEffect(() => {
     const newColors: [ColorValue, ColorValue] = [
-      friendColorDark ?? startColor,
-      friendColorLight ?? endColor,
+      firstSetColorDark ?? secondSetColorLight,
+      firstSetColorLight ?? secondSetColorDark,
     ];
 
     if (!currentColors.every((c, i) => c === newColors[i])) {
@@ -62,12 +83,25 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
       // Update current colors in the next frame
       requestAnimationFrame(() => {
         setCurrentColors(newColors);
-
+ 
         // Animate opacity to fade in the new gradient
-        transition.value = withTiming(1, { duration: 400 });
+        transition.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: speed }, () => {
+            // Call vibration on JS thread after first timing
+         //   if (useVibration) runOnJS(Vibration.vibrate)(100);
+          }),
+          withTiming(0, { duration: speed }, () => {
+            // Call vibration on JS thread after second timing
+            if (useVibration) runOnJS(Vibration.vibrate)(100);
+          })
+        ),
+          -1,
+          false
+        );
       });
     }
-  }, [friendColorDark, friendColorLight]);
+  }, [firstSetColorDark, firstSetColorLight]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: transition.value,
@@ -83,8 +117,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
       />
       <AnimatedLinearGradient
         colors={currentColors}
-        start={{ x: direction[0], y: direction[1] }}
-        end={{ x: direction[2], y: direction[3] }}
+        start={{ x: direction[4], y: direction[5] }}
+        end={{ x: direction[6], y: direction[7] }}
         style={[StyleSheet.absoluteFill, animatedStyle]}
       />
       {children}
@@ -99,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(GradientBackground);
+export default React.memo(GradientBackgroundForFidget);

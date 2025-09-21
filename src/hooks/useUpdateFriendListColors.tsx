@@ -52,7 +52,8 @@ const useUpdateFriendListColors = ({userId, setThemeState}: Props) => {
           fontColor: string,
           fontColorSecondary: string
         ) => {
-          queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
+          console.log('updating friend colors');
+          queryClient.setQueryData<Friend[]>(["friendList", userId], (oldData) => {
             if (!oldData) return oldData;
       
             return oldData.map((friend) =>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   View,
@@ -6,11 +7,15 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
- 
+ Pressable,
   TouchableWithoutFeedback,
   Keyboard,
   StyleSheet,
 } from "react-native";
+
+import GlobalPressable from "../appwide/button/GlobalPressable";
+
+ 
  
 
 const MomentsSearchBar = ({
@@ -28,11 +33,17 @@ const MomentsSearchBar = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
+ const handleSelect = (item) => {
+
+  handleItemPress(item);
+ }
+
   const textInputRef = useRef(null);
 
   const INPUT_CONTAINER_BORDER_RADIUS = 10;
 
   const handleItemPress = (item) => {
+    console.log('on press', item);
     onPress(item);
     handleOutsidePress();
     setSearchQuery("");
@@ -86,9 +97,11 @@ const MomentsSearchBar = ({
 
   const renderSearchResultItem = useCallback(
     ({ item, index }) => {
+
+      
       return (
-        <TouchableOpacity
-          onPress={() => handleItemPress(item)}
+        <GlobalPressable
+          onPress={() => handleSelect(item)}
           style={[
             styles.searchBarResultListItem,
             {
@@ -100,10 +113,10 @@ const MomentsSearchBar = ({
           <Text numberOfLines={1} style={[{ color: textColor, fontSize: 15 }]}>
             {searchKeys.map((key) => item[key]).join(" - ")}{" "}
           </Text>
-        </TouchableOpacity>
+        </GlobalPressable>
       );
     },
-    [handleItemPress, filteredData]
+    [handleSelect, filteredData]
   );
 
   return (

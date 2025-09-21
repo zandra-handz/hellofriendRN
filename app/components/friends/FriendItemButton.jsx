@@ -5,6 +5,7 @@ const FriendItemButton = ({
     width=50,
     height='100%',   
     buttonTitle='N/A',
+    backgroundColor,
     
 
     onPress,
@@ -14,7 +15,7 @@ const FriendItemButton = ({
     return(
         <TouchableOpacity
             onPress={ onPress ? onPress : () => {}}
-            style={[styles.container, {height: height, width: width}]}
+            style={[styles.container, {backgroundColor: backgroundColor, height: height, width: width}]}
             disabled={disabled} >
             <View style={styles.blurOverlay} />
 

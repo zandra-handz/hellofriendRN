@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useReadableColors from "@/src/hooks/useReadableColors";
 import ColorSwatchesSvg from "../../friends/ColorSwatchesSvg";
 import useUpdateFaveTheme from "@/src/hooks/SelectedFriendCalls/useUpdateFavesTheme";
@@ -13,16 +13,16 @@ import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 import Toggle from "../../user/Toggle";
 
 const EditTheme = ({
-  primaryColor='orange',
-  lighterOverlayColor='yellow',
+  primaryColor = "orange",
+  lighterOverlayColor = "yellow",
   manualGradientColors,
   themeAheadOfLoading,
   friendList,
   userId,
   friendId,
   manualThemeOn,
-}) => { 
-  const {  handleSetTheme } = useFriendStyle();
+}) => {
+  const { handleSetTheme } = useFriendStyle();
 
   const { updateFriendListColorsExcludeSaved } = useUpdateFriendListColors({
     userId: userId,
@@ -55,6 +55,7 @@ const EditTheme = ({
       console.log("turning manual off");
       try {
         await handleUpdateFavesTheme({
+ 
           manualThemeOn: false,
         });
 
@@ -108,7 +109,6 @@ const EditTheme = ({
       }
     }
   };
- 
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -133,9 +133,7 @@ const EditTheme = ({
 
         width: "100%",
         alignSelf: "flex-start",
-        backgroundColor: showEdit
-          ? lighterOverlayColor
-          : "transparent",
+        backgroundColor: showEdit ? lighterOverlayColor : "transparent",
         padding: showEdit ? 10 : 0,
         borderRadius: showEdit ? 10 : 0,
       }}
@@ -173,7 +171,7 @@ const EditTheme = ({
                 flexDirection: "row",
               }}
             ></View>
-            <Text style={[styles.label, { color: primaryColor}]}></Text>
+            <Text style={[styles.label, { color: primaryColor }]}></Text>
           </View>
 
           {!showEdit && (

@@ -34,7 +34,7 @@ const ButtonSelectFriend = ({
           borderRadius: borderRadius,
           height: height,
           overflow: "hidden",
-          backgroundColor: backgroundColor,
+          // backgroundColor: backgroundColor,
           borderColor: textColor,
           padding: 3,
              justifyContent: "center",
@@ -43,8 +43,8 @@ const ButtonSelectFriend = ({
     > 
       <View
         style={{
-          backgroundColor: !disabled ?  backgroundOverlayColor : 'transparent',
-          borderRadius: 999, width: 'auto', paddingHorizontal: 14, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'
+          backgroundColor: !disabled ?  backgroundColor : 'transparent',
+          borderRadius: borderRadius, width: 'auto', paddingHorizontal: 14, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'
           
         }}
       >
