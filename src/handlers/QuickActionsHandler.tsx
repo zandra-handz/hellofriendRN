@@ -34,13 +34,13 @@ export default function QuickActionsHandler({navigationRef}) {
   
   const lockInNext = settings?.lock_in_next ?? null;
   const lockInCustomString = settings?.lock_in_custom_string ?? null;
-  const pinned = lockIns.customString ? getName(lockIns.customString) : null;
+  const pinned = settings?.lock_in_custom_string ? getName(settings?.lock_in_custom_string ) : null;
   const upNext = !!(lockIns.next);
 
 useEffect(() => {
   const items = [
     // Pinned takes priority
-    ...(pinned
+    ...(settings?.lock_in_custom_string
       ? [
           {
             id: "Pinned",
@@ -52,7 +52,7 @@ useEffect(() => {
         ]
       : []),
     // Render upcoming only if no pinned AND upNext is true
-    ...(!pinned && upNext
+    ...(!settings?.lock_in_custom_string && settings?.lock_in_next
       ? [
           {
             id: "moments",

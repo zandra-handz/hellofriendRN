@@ -482,7 +482,7 @@ export const fetchFriendList = async () => {
     //   new Date(end).toISOString()
     // );
     // console.log("\x1b[34m%s\x1b[34m", "Duration (ms):", end - start);
- 
+ console.log('GET FRIENDLIST FROM API');
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendList");

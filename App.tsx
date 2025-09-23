@@ -444,7 +444,10 @@ export const Layout = () => {
             cardStyle: { backgroundColor: "#000002" },
           }}
         >
-          {user?.id ? (
+          {/* {user?.id ? ( */}
+            {user?.id 
+          //  && settings?.id 
+            ? (
             // user.app_setup_complete || !user.app_setup_complete ? (
             <>
               <Stack.Screen

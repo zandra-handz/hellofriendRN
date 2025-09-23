@@ -1,7 +1,7 @@
 // NOT CURRENTLY IN USE BUT AVAILABLE IF NEED TO SEPARATE CATEGORIES FRM SETTNIGS! (comment out on backend too)
 
 import React, { createContext, useContext, useMemo, ReactNode } from "react";
-import { useUser } from "./UserContext";
+import { useUser } from "./UserContext"; 
 import { useQuery  } from "@tanstack/react-query";
 import {   getUserCategories } from "../calls/api";
 
@@ -39,7 +39,7 @@ interface CategoriesProviderProps {
 export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   children,
 }) => {
-  const { user, isInitializing } = useUser();
+  const { user, isInitializing } = useUser(); 
  
   const {
     data: userCategories,

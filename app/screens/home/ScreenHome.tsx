@@ -42,7 +42,7 @@ import { File, Directory, Paths } from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 
 import { useFocusEffect } from "@react-navigation/native";
-import { useSharedValue } from "react-native-reanimated";
+ 
 
 
 // app components
@@ -64,22 +64,25 @@ const ScreenHome = () => {
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { updateSettings } = useUpdateSettings({userId: user?.id});
 
-  const upcomingId = useMemo(() => {
-    if (!upcomingHelloes?.[0]) {
-      return;
-    }
-    return upcomingHelloes[0].friend.id;
-  }, [upcomingHelloes]);
+  
+
+  // const upcomingId = useMemo(() => {
+  //   if (!upcomingHelloes?.[0]) {
+  //     return;
+  //   }
+  //   return upcomingHelloes[0].friend.id;
+  // }, [upcomingHelloes]);
 
   const lockIns = useMemo(() => ({
   next: settings?.lock_in_next ?? null,
   customString: settings?.lock_in_custom_string ?? null,
 }), [settings]);
 
+
   // const lockInNext = settings?.lock_in_next ?? null;
   // const lockInCustomString = settings?.lock_in_custom_string ?? null;
 
-console.log(lockIns);
+// console.log(lockIns);
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -109,6 +112,26 @@ console.log(lockIns);
     selectFriend,
   });
 
+  
+const lockedFriendId = useMemo(() => {
+  if (!friendList?.length || !upcomingHelloes?.length || !settings?.id) return null;
+
+  if (settings?.lock_in_custom_string) {
+    console.warn('GETTING FRIEND DATA');
+    return Number(settings.lock_in_custom_string);
+  } else if (settings?.lock_in_next && !settings?.lock_in_custom_string) {
+    return upcomingHelloes[0]?.friend?.id ?? null;
+  }
+  return null;
+}, [settings, upcomingHelloes, friendList]);
+
+useEffect(() => {
+  if (lockedFriendId && friendListFetched) {
+    handleSelectFriend(lockedFriendId);
+  }
+}, [lockedFriendId, friendListFetched]);
+
+
   const { handleDeselectFriend } = useDeselectFriend({
     resetTheme,
     selectFriend,
@@ -116,7 +139,21 @@ console.log(lockIns);
     lockIns,
   });
 
- 
+  //    useEffect(() => { 
+  //   if (settings?.lock_in_custom_string && upcomingHelloes?.length > 0) {
+  //     // console.log('selecting locked on friend');
+  //     handleSelectFriend(Number(settings?.lock_in_custom_string))
+
+  //   } else if (settings?.lock_in_next && !settings?.lock_in_custom_string && (upcomingHelloes.length > 0)) {
+
+  //     const upcoming = upcomingHelloes[0].friend.id ?? null;
+  //     if (upcoming) (
+  //       handleSelectFriend(upcoming)
+
+  //     ) 
+  //   }
+
+  // }, [upcomingHelloes, settings]);
 
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -130,17 +167,7 @@ console.log(lockIns);
 
   const PADDING_HORIZONTAL = 6;
 
-    useEffect(() => { 
-    if (lockIns?.customString) {
-      console.log('selecting locked on friend');
-      handleSelectFriend(Number(lockIns.customString))
 
-    } else if (lockIns?.next && !lockIns.customString && upcomingId) {
-
-      handleSelectFriend(upcomingId);
-    }
-
-  }, [upcomingId, lockIns]);
 
 
   useEffect(() => {
@@ -286,12 +313,7 @@ console.log(lockIns);
       newMomentTextRef.current.focus();
     }
   };
-  useEffect(() => {
-    console.log("ScreenHome rendered", {
-      friendId: selectedFriend?.id,
-      isKeyboard: friendList.length,
-    });
-  }, [friendList]);
+ 
   return (
     <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
@@ -343,7 +365,7 @@ console.log(lockIns);
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={[{ flex: 1 }]}
         >
-          {friendListFetched && ( //&& !isLoading  is in FSSpinner
+          {friendListFetched && settings?.id && upcomingHelloes?.length && ( //&& !isLoading  is in FSSpinner
             <View
               style={{
                 flex: 1,
@@ -352,7 +374,7 @@ console.log(lockIns);
                 paddingHorizontal: 0,
               }}
             >
-              {!selectedFriend?.id && (
+              {!selectedFriend?.id &&  (
                 <>
                   {friendList?.length < 1 && (
                     <NoFriendsMessageUI

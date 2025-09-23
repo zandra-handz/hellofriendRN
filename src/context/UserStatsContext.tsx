@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react"; 
 import { useUser } from "./UserContext"; 
+import { useUserSettings } from "./UserSettingsContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   
@@ -38,6 +39,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   children,
 }) => {
   const { user, isInitializing } = useUser();
+  const { settingsLoaded } = useUserSettings();
  
  
   const queryClient = useQueryClient();
@@ -48,7 +50,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   } = useQuery({
     queryKey: ["userStats", user?.id],
     queryFn: () => fetchCategoriesHistoryCountAPI({returnNonZeroesOnly: true}), //return non-empty categories only
-    enabled: !!user?.id, // testing removing this && !isInitializing,
+    enabled: !!user?.id && settingsLoaded, // testing removing this && !isInitializing,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   
   }); 

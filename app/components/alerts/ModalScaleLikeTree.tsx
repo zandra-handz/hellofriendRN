@@ -162,6 +162,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
 
   return (
     <>
+       <SafeAreaView style={{ flex: 1 }}> 
       <Modal
         transparent={!isFullscreen}
         visible={isVisible}
@@ -174,29 +175,31 @@ const ModalScaleLikeTree: React.FC<Props> = ({
         {handleRenderQuickView()}
 
         <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
-          <SafeAreaView style={{ flex: 1 }}>
-            <Animated.View //if you put padding here it will affect the info item
-              style={[
-                styles.modalContent,
+           
+          <Animated.View //if you put padding here it will affect the info item
+            style={[
+              styles.modalContent,
 
+              {
+                backgroundColor: primaryBackground,
+                borderRadius: borderRadius,
+              },
+            ]}
+          >
+            
+            <Animated.View
+              style={[
+                contentAnimationStyle,
                 {
-                  backgroundColor: primaryBackground,
-                  borderRadius: borderRadius,
+                  width: "100%",
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 },
               ]}
             >
-              <Animated.View
-                style={[
-                  contentAnimationStyle,
-                  {
-                    width: "100%",
-                    flex: 1,
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  },
-                ]}
-              >
-                <View style={styles.bodyContainer}>
+              <View style={styles.bodyContainer}>
+            
                   <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>
                     {children}
                   </View>
@@ -230,45 +233,51 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                       />
                     </Animated.View>
                   )}
-                </View>
-              </Animated.View>
+            
+              </View>
             </Animated.View>
-            {!isKeyboardVisible && (
-              <Animated.View
-                entering={FadeInUp.duration(800)}
-                exiting={FadeOutUp.duration(0)}
-                style={{
-                  height: bottomSpacer,
-                  //   position: 'absolute',
-                  bottom: 0,
+            
+          </Animated.View>
+          
+          {!isKeyboardVisible && (
+            <Animated.View
+              entering={FadeInUp.duration(800)}
+              exiting={FadeOutUp.duration(0)}
+              style={{
+                height: bottomSpacer,
+                //   position: 'absolute',
+                bottom: 0,
 
-                  width: "100%",
-                  backgroundColor:
-                    friendTheme === undefined
-                      ? manualGradientColors.lightColor
-                      : friendTheme.lightColor, //to match friend profile button circle color
-                  borderRadius: 10,
-                }}
-              >
-                <TreeModalBigButton
-                  onClose={handleCustomClose}
-                  friendTheme={friendTheme}
-                  label={buttonTitle}
-                  welcomeTextStyle={welcomeTextStyle}
-                  subWelcomeTextStyle={subWelcomeTextStyle}
-                  manualGradientColors={manualGradientColors}
-                  labelColor={
-                    friendTheme === undefined
-                      ? manualGradientColors.homeDarkColor
-                      : friendTheme.fontColorSecondary
-                  }
-                  rightSideElement={rightSideButtonItem}
-                />
-              </Animated.View>
-            )}
-          </SafeAreaView>
+                width: "100%",
+                backgroundColor:
+                  friendTheme === undefined
+                    ? manualGradientColors.lightColor
+                    : friendTheme.lightColor, //to match friend profile button circle color
+                borderRadius: 10,
+              }}
+            >
+              <TreeModalBigButton
+                onClose={handleCustomClose}
+                friendTheme={friendTheme}
+                label={buttonTitle}
+                welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                manualGradientColors={manualGradientColors}
+                labelColor={
+                  friendTheme === undefined
+                    ? manualGradientColors.homeDarkColor
+                    : friendTheme.fontColorSecondary
+                }
+                rightSideElement={rightSideButtonItem}
+              />
+              
+            </Animated.View>
+            
+          )}
+           
         </Animated.View>
       </Modal>
+      </SafeAreaView>
     </>
   );
 };

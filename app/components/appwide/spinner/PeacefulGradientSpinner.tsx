@@ -4,16 +4,19 @@ import { View, StyleSheet } from "react-native";
 import React from "react"; 
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext"; 
 import LoadingPage from "./LoadingPage"; 
+import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useFriendList } from "@/src/context/FriendListContext";
 type Props = {
   isInitializing: boolean;
 };
 
 const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
   const { isLoading } = useUpcomingHelloes();
+  const  { settings, loadingSettings } = useUserSettings();
  
   return (
     <>
-      {(isInitializing || isLoading) && (
+      {(isInitializing || isLoading || loadingSettings) && (
         <View
           style={{
             zIndex: 100000,
