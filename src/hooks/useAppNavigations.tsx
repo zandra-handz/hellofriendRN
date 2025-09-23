@@ -107,7 +107,7 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
-  const navigateToMoments = ({ scrollTo }: NavToMomentsProp) => {
+  const navigateToMoments = ({ scrollTo=null}: NavToMomentsProp) => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
 

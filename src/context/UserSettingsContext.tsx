@@ -17,6 +17,9 @@ interface UserSettings {
   manual_dark_mode: boolean;
   receive_notifications: boolean;
   screen_reader: boolean;
+  lock_in_next: boolean;
+  lock_in_custom_string: string;
+  simplify_app_for_focus: boolean;
 }
 
 interface UserSettingsContextType {}

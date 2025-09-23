@@ -18,7 +18,7 @@ type Props = {
   friendName: string;
 };
 
-const DeleteFriend = ({ userId, friendId, friendName = "" , deselectFriend}: Props) => {
+const DeleteFriend = ({ userId, friendId, friendName = "" , handleDeselectFriend}: Props) => {
   const [showDeleteOption, setShowDeleteOption] = useState<boolean>(false);
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({userId: userId});
 const { removeFromFriendList} = useRemoveFromFriendList({userId: userId});
@@ -41,7 +41,7 @@ const { handleDeleteFriend, deleteFriendMutation } = useDeleteFriend({removeFrom
   useEffect(() => {
     if (deleteFriendMutation.isSuccess) {
       showFlashMessage(`${friendName} deleted`, false, 1000);
-      deselectFriend();
+      handleDeselectFriend();
     }
 
   }, [deleteFriendMutation.isSuccess]);

@@ -178,7 +178,7 @@ const GoOptionsModal = ({
                 </BouncyEntrance>
               </View>
 
-              <View style={styles.sectionContainer}>
+              {/* <View style={styles.sectionContainer}>
                 <BouncyEntrance
                   delay={staggeredDelays[2]}
                   style={{ width: "100%" }}
@@ -210,7 +210,7 @@ const GoOptionsModal = ({
                     </Text>
                   </GlobalPressable>
                 </BouncyEntrance>
-              </View>
+              </View> */}
 
               <View style={styles.sectionContainer}>
                 <BouncyEntrance

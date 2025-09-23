@@ -54,8 +54,7 @@ const UserSettingsModal: React.FC<Props> = ({
           {/* // <View style={styles.bodyContainer}> */}
 
           <View style={styles.sectionContainer}>
-            <SectionAccessibilitySettings
-            manualGradientColors={manualGradientColors}
+            <SectionAccessibilitySettings 
               userId={userId}
               primaryColor={lightDarkTheme.primaryText}
               settings={settings}
@@ -64,6 +63,7 @@ const UserSettingsModal: React.FC<Props> = ({
           <View style={styles.sectionContainer}>
             <SectionFriendManagerSettings
               userId={userId}
+              settings={settings}
               primaryColor={lightDarkTheme.primaryText}
               manualGradientColors={manualGradientColors}
             />

@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Reset from "../appwide/button/Reset";
-
+import Toggle from "../user/Toggle";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 
 const SectionFriendManagerSettings = ({
   userId,
+  settings,
   primaryColor,
   manualGradientColors,
 }) => {
+  const { updateSettings, updateSettingsMutation } = useUpdateSettings({
+    userId: userId,
+  });
+
+  const toggleLockInNext = () => {
+    updateSettings({ lock_in_next: !settings.lock_in_next });
+  };
+
+    const lockInNext = useMemo(() => {
+      if (!settings) return false;
+      return settings.lock_in_next == true;
+    }, [settings]);
+
   return (
     <View
       style={{
@@ -19,6 +34,20 @@ const SectionFriendManagerSettings = ({
         alignSelf: "flex-start",
       }}
     >
+      <Toggle
+        primaryColor={primaryColor}
+        label="Autoselect Next Friend"
+        icon={
+          <MaterialCommunityIcons
+            name={"account"}
+            size={20}
+            color={primaryColor}
+          />
+        }
+        value={lockInNext}
+        onPress={toggleLockInNext}
+      />
+
       <Reset
         userId={userId}
         label="Reset all hello dates"

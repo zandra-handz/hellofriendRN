@@ -1,5 +1,12 @@
 //import * as Sentry from "@sentry/react-native";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   View,
   Alert,
@@ -15,7 +22,10 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import useSelectFriend from "@/src/hooks/useSelectFriend";
+import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 // app utils
@@ -34,11 +44,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSharedValue } from "react-native-reanimated";
 
+
 // app components
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
-import TopBarHome from "@/app/components/home/TopBarHome";
+// import TopBarHome from "@/app/components/home/TopBarHome";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponents";
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
@@ -46,14 +57,34 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 const ScreenHome = () => {
   const { user } = useUser();
   const { settings } = useUserSettings();
+  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+  const { updateSettings } = useUpdateSettings({userId: user?.id});
+
+  const upcomingId = useMemo(() => {
+    if (!upcomingHelloes?.[0]) {
+      return;
+    }
+    return upcomingHelloes[0].friend.id;
+  }, [upcomingHelloes]);
+
+  const lockIns = useMemo(() => ({
+  next: settings?.lock_in_next ?? null,
+  customString: settings?.lock_in_custom_string ?? null,
+}), [settings]);
+
+  // const lockInNext = settings?.lock_in_next ?? null;
+  // const lockInCustomString = settings?.lock_in_custom_string ?? null;
+
+console.log(lockIns);
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
   const { lightDarkTheme } = useLDTheme();
-  const { isLoading } = useUpcomingHelloes();
+
   const navigation = useNavigation();
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
@@ -61,7 +92,8 @@ const ScreenHome = () => {
 
   const spinnerStyle = "flow";
 
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
+    useFriendStyle();
 
   const { navigateToMomentFocusWithText, navigateToSelectFriend } =
     useAppNavigations();
@@ -69,7 +101,22 @@ const ScreenHome = () => {
     useImageUploadFunctions();
 
   const { friendList, friendListFetched } = useFriendList();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
+  const { selectedFriend, selectFriend  } = useSelectedFriend();
+  const { handleSelectFriend } = useSelectFriend({
+    friendList,
+    resetTheme,
+    getThemeAheadOfLoading,
+    selectFriend,
+  });
+
+  const { handleDeselectFriend } = useDeselectFriend({
+    resetTheme,
+    selectFriend,
+    updateSettings,
+    lockIns,
+  });
+
+ 
 
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -82,6 +129,19 @@ const ScreenHome = () => {
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
 
   const PADDING_HORIZONTAL = 6;
+
+    useEffect(() => { 
+    if (lockIns?.customString) {
+      console.log('selecting locked on friend');
+      handleSelectFriend(Number(lockIns.customString))
+
+    } else if (lockIns?.next && !lockIns.customString && upcomingId) {
+
+      handleSelectFriend(upcomingId);
+    }
+
+  }, [upcomingId, lockIns]);
+
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -197,7 +257,6 @@ const ScreenHome = () => {
   };
 
   const navigateToAddMomentScreen = () => {
-    
     if (newMomentText?.length > 0) {
       navigateToMomentFocusWithText({
         screenCameFrom: 0, //goes back to home screen that is now selected friend screen
@@ -403,7 +462,6 @@ const ScreenHome = () => {
               : lightDarkTheme.primaryBackground
           }
           dividerStyle={lightDarkTheme.divider}
-          deselectFriend={deselectFriend}
         />
       )}
 
@@ -417,7 +475,7 @@ const ScreenHome = () => {
           lightDarkTheme={lightDarkTheme}
           overlayColor={lightDarkTheme.overlayBackground}
           dividerStyle={lightDarkTheme.divider}
-          deselectFriend={deselectFriend}
+          handleDeselectFriend={handleDeselectFriend}
         />
       )}
     </SafeViewAndGradientBackground>

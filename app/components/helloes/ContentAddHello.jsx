@@ -18,8 +18,8 @@ import {
 } from "react-native";
 
 import DeleteUnused from "./DeleteUnused";
-import LocationModal from "../selectors/LocationModal";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import LocationModal from "../selectors/LocationModal"; 
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import EscortBar from "../moments/EscortBar";
 import IdeasAdded from "./IdeasAdded";
 import HelloNotes from "./HelloNotes";
@@ -41,6 +41,9 @@ import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import useDeselectFriend from "@/src/hooks/useDeselectFriend";
+
+import { useUserSettings } from "@/src/context/UserSettingsContext";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({
@@ -52,6 +55,15 @@ const ContentAddHello = ({
 }) => {
   const navigation = useNavigation();
   const { resetTheme } = useFriendStyle();
+  const { settings } = useUserSettings();
+
+  
+  const lockIns = useMemo(() => ({
+  next: settings?.lock_in_next ?? null,
+  customString: settings?.lock_in_custom_string ?? null,
+}), [settings]);
+
+  const { updateSettings } = useUpdateSettings({userId: userId});
 
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
@@ -67,10 +79,11 @@ const ContentAddHello = ({
     userId: userId,
   });
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [notesModalVisible, setNotesModalVisible] = useState(false);
-  const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
+  const [notesModalVisible, setNotesModalVisible] = useState(false); 
 const { navigateBack} = useAppNavigations();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
+  const { selectedFriend,  selectFriend } = useSelectedFriend();
+
+  const { handleDeselectFriend } = useDeselectFriend({resetTheme, selectFriend, updateSettings, lockIns});
 
   const { friendDash } = useFriendDash();
 
@@ -165,33 +178,36 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
     // setIsDoubleCheckerVisible(true);
   };
 
-  const toggleDoubleChecker = () => {
-    setIsDoubleCheckerVisible((prev) => !prev);
-  };
+ 
 
-  const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
+  // const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
 
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       showFlashMessage(`Hello saved!`, false, 2000);
-      deselectFriend(); // this sets selectedFriend to null
-      setJustDeselectedFriend(true);
-      resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
+      handleDeselectFriend(); // this sets selectedFriend to null
+      // setJustDeselectedFriend(true);
+     // resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
     }
   }, [createHelloMutation.isSuccess]);
 
   useEffect(() => {
-    if (justDeselectedFriend && selectedFriend === null) {
-      console.log("Friend is now deselected, proceeding…");
+    if (
+      // justDeselectedFriend 
+      // && 
+      selectedFriend === null) {
+   
 
       refetchUpcomingHelloes();
       refetchUserStats();
 
       navigateToMainScreen();
 
-      setJustDeselectedFriend(false); // reset the flag
+    //  setJustDeselectedFriend(false); // reset the flag
     }
-  }, [justDeselectedFriend, selectedFriend]);
+  }, [
+    // justDeselectedFriend, 
+    selectedFriend]);
 
   const toggleDeleteMoments = () => {
     setDeleteMoments(!deleteMoments);

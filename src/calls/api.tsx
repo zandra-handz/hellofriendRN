@@ -216,7 +216,7 @@ export const getUserSettings = async () => {
     // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
 
     const response = await helloFriendApiClient.get(`/users/settings/`);
-    // console.log("API GET Call getUserSettings", response.data);
+     console.log("API GET Call getUserSettings", response.data);
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
@@ -482,6 +482,7 @@ export const fetchFriendList = async () => {
     //   new Date(end).toISOString()
     // );
     // console.log("\x1b[34m%s\x1b[34m", "Duration (ms):", end - start);
+ 
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendList");
@@ -1104,7 +1105,7 @@ export const fetchPastHelloes = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/combinedhelloes/summary/`
     );
-    // console.log(response.data);
+ 
     if (response && response.data) {
       //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
 

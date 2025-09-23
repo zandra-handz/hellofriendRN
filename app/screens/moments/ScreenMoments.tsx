@@ -20,6 +20,7 @@ import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
+import useSelectFriend from "@/src/hooks/useSelectFriend";
 
 const ScreenMoments = () => {
   const route = useRoute();
@@ -48,19 +49,24 @@ const ScreenMoments = () => {
   const { userCategories } = useCategories();
   const { friendList } = useFriendList();
 
-  const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
+  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
+    useFriendStyle();
 
   const { loadingDash } = useFriendDash();
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
+  const { handleSelectFriend } = useSelectFriend({
+    friendList,
+    resetTheme,
+    getThemeAheadOfLoading,
+    selectFriend,
+  });
+
   const handleSelectUpNext = () => {
     const { id, name } = upcomingHelloes[0].friend;
-    const selectedFriend = id === null ? null : { id: id, name: name };
-    selectFriend(selectedFriend);
-    const friend = friendList.find((friend) => friend.id === id);
-    getThemeAheadOfLoading(friend);
+    handleSelectFriend(id);
   };
 
   // BUG this will let selected friend override, it needs to be able to know if navigating here from quick actions

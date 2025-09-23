@@ -30,6 +30,7 @@ const FriendTintPressable = ({
   onPress,
   onPressIn=() => console.log('on press in'),
   onPressOut=() => console.log('on press out'),
+  onLongPress,
   style,
   friendId,
   startingColor,
@@ -99,6 +100,7 @@ const FriendTintPressable = ({
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
       style={[style, { backgroundColor: 'transparent'}]}
       onPressIn={handleOnPressIn}
       onPressOut={handleOnPressOut}

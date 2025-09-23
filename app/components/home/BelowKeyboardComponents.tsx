@@ -1,9 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import AllHome from "./AllHome";
-import SelectedFriendHome from "./SelectedFriendHome";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import SelectedFriendHome from "./SelectedFriendHome"; 
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import Animated, {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
-
- import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 // app components
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
@@ -25,7 +24,7 @@ const HelloFriendFooter = ({
   username,
  
   friendId,
-  friendName, 
+  friendName,  
  
   lightDarkTheme,  
   overlayColor,
@@ -35,12 +34,11 @@ const HelloFriendFooter = ({
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 // const { friendDash } = useFriendDash();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { themeAheadOfLoading,  resetTheme } =
-    useFriendStyle();
-const { deselectFriend} = useSelectedFriend();
+  const { themeAheadOfLoading  } =
+    useFriendStyle(); 
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
-  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false); 
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   // const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
   //   useState(false);
@@ -68,11 +66,7 @@ const { deselectFriend} = useSelectedFriend();
       keyboardDidHideListener.remove();
     };
   }, []);
-
-  const handleDeselectFriend = () => {
-    deselectFriend();
-    resetTheme();
-  };
+ 
 
   // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
@@ -98,28 +92,7 @@ const { deselectFriend} = useSelectedFriend();
     [primaryColor]
   );
 
-  const RenderDeselectButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        primaryColor={primaryColor}
-        confirmationRequired={true}
-        confirmationTitle={"Just to be sure"}
-        confirmationMessage={"Deselect friend?"}
-        // label="Deselect"
-        label="Home"
-        icon={
-          <MaterialCommunityIcons
-            // name={"keyboard-backspace"}
-            name={"home-outline"}
-            size={footerIconSize}
-            color={primaryColor}
-          />
-        }
-        onPress={() => handleDeselectFriend()}
-      />
-    ),
-    [primaryColor]
-  );
+ 
 
   const RenderSettingsButton = useCallback(
     () => (
@@ -155,9 +128,10 @@ const { deselectFriend} = useSelectedFriend();
         onPress={() => setReportModalVisible(true)}
       />
     ),
-    [primaryColor]
+    [primaryColor, friendId]
   );
 
+ 
   const handleCenterButtonToggle = () => {
     // console.log("center button toggled!");
     // if (friendId) {
@@ -228,7 +202,7 @@ const { deselectFriend} = useSelectedFriend();
         ]}
       >
         <View style={styles.section}>
-          {!friendId ? <RenderSignOutButton /> : <RenderDeselectButton />}
+           <RenderSignOutButton /> 
         </View>
         {/* <View style={styles.section}>
             <ButtonData />
@@ -252,11 +226,11 @@ const { deselectFriend} = useSelectedFriend();
         </>
 
         <View style={[styles.divider, dividerStyle]} />
-        <>
+       
           <View style={styles.section}>
-            <RenderReportIssueButton />
+         <RenderReportIssueButton />  
           </View>
-        </>
+       
 
         <View style={[styles.divider, dividerStyle]} />
         <>
@@ -280,22 +254,7 @@ const { deselectFriend} = useSelectedFriend();
         </View>
       )}
 
-      {/* {friendSettingsModalVisible && !!friendId && (
-        <View>
-          <FriendSettingsModal
-            manualGradientColors={manualGradientColors}
-            lightDarkTheme={lightDarkTheme}
-            userId={userId}
-            isVisible={friendSettingsModalVisible}
-            themeAheadOfLoading={themeAheadOfLoading}
-            friendId={friendId}
-            friendName={friendName}
-            friendDash={friendDash} 
-            bottomSpacer={footerHeight - 30} //for safe view
-            closeModal={() => setFriendSettingsModalVisible(false)}
-          />
-        </View>
-      )} */}
+ 
 
       {categoriesModalVisible && (
         <View>

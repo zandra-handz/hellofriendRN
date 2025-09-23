@@ -404,59 +404,10 @@ const emitter = new NativeEventEmitter(ShareIntentModule);
  
 
 export const Layout = () => { 
-  // const emitter = new NativeEventEmitter(ShareIntentModule);
-
-  // useEffect(() => {
-  //   const sub = emitter.addListener("onShareReceived", (data) => {
-  //     console.log("Shared data:", data);
-  //     // Navigate into your ShareIntent screen here
-  //   });
-  //   return () => sub.remove();
-  // }, []);
-
-  // useEffect(() => {
-  //     const handleUrl = ({ url }: { url: string }) => {
-  //       console.log("App opened via intent:", url);
-  //       if (url.includes("share") && navigationRef.current?.isReady()) {
-  //         navigationRef.current.navigate("ShareIntent", { sharedUrl: url });
-  //       }
-  //     };
-
-  //     const subscription = Linking.addEventListener("url", handleUrl);
-
-  //     Linking.getInitialURL().then((url) => {
-  //       const tryNavigate = () => {
-  //         if (url && navigationRef.current?.isReady()) {
-  //           handleUrl({ url });
-  //         } else {
-  //           setTimeout(tryNavigate, 50);
-  //         }
-  //       };
-  //       tryNavigate();
-  //     });
-
-  //     return () => subscription.remove();
-  //   }, []);
-
-  // ===== TEST NAVIGATION AFTER 5 SECONDS =====
-  // const testTimeout = setTimeout(() => {
-  //   const testUrl = "myapp://share/test"; // fake share URL
-  //   console.log("Test: firing handleUrl with", testUrl);
-  //   handleUrl({ url: testUrl });
-  // }, 5000);
-
-  //   return () => {
-  //     subscription.remove();
-  //     clearTimeout(testTimeout);
-  //   };
-  // }, []);
-
-  // const { lightDarkTheme} = useLDTheme();
+ 
   const { user, isInitializing } = useUser();
-
-  // console.warn('LAYOUT RERENDERED');
-  const { settings } = useUserSettings();
-  // const manualDarkMode = settings?.manual_dark_mode;
+ 
+  const { settings } = useUserSettings(); 
 
   const receiveNotifications =
     settings?.receive_notifications === true

@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
-
+import { Vibration } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -34,11 +34,18 @@ const FriendListUI = ({
   data,
   friendId,
   onPress,
+  onLongPress,
 }: FriendListUIProps) => {
   const itemColor = lightDarkTheme.primaryText;
   const elementBackgroundColor = lightDarkTheme.overlayBackground;
 
   const { navigateToAddFriend } = useAppNavigations();
+
+  const handleLongPress = (id) => {
+    console.log('long presssssss');
+    Vibration.vibrate(100);
+    onLongPress(id);
+  };
 
   const ITEM_HEIGHT = 50;
 
@@ -63,18 +70,19 @@ const FriendListUI = ({
             style={styles.friendContainer}
             friendId={item.id}
             onPress={() => onPress(item.id)}
+            onLongPress={() => handleLongPress(item.id)}
           >
             <ButtonSelectFriend
               themeTextColor={lightDarkTheme.primaryText}
               backgroundOverlayColor={lightDarkTheme.overlayBackground}
-             
               friendId={friendId}
               themeAheadOfLoading={themeAheadOfLoading}
               borderRadius={ITEM_BORDER_RADIUS}
-               backgroundColor={CARD_BACKGROUND}
+              backgroundColor={CARD_BACKGROUND}
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
+ 
             />
           </FriendTintPressable>
         )}
@@ -97,6 +105,7 @@ const FriendListUI = ({
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
+ 
             />
           </View>
         )}

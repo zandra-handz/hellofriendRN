@@ -1,50 +1,53 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { View, Alert } from "react-native";
 import Toggle from "./Toggle";
-
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
-
-const SectionAccessibilitySettings = ({
-  manualGradientColors,
-  userId,
-  primaryColor,
-  settings,
-}) => {
-  const { updateSettingsMutation } = useUpdateSettings({ userId: userId });
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
+  const { updateSettingsMutation, updateSettings } = useUpdateSettings({ userId: userId });
 
   const manualTheme = useMemo(() => {
     if (!settings) return false;
     return settings.manual_dark_mode !== null;
   }, [settings]);
 
-  const updateSetting = async (setting) => {
-    console.error("update settings in section");
 
-    try {
-      const newSettings = { ...settings, ...setting };
-      await updateSettingsMutation.mutateAsync({
-        setting: newSettings,
-      });
-    } catch (error) {
-      console.error("Error updating user settings:", error);
+  useEffect(() => {
+    if (updateSettingsMutation.isSuccess) {
+      showFlashMessage('Success!', false, 1000); // modal covers this, need different approach
     }
-  };
+
+  }, [updateSettingsMutation.isSuccess]);
+
+  // const updateSetting = async (setting) => {
+  //   console.error("update settings in section");
+
+  //   try {
+  //     const newSettings = { ...settings, ...setting };
+  //     await updateSettingsMutation.mutateAsync({
+  //       setting: newSettings,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error updating user settings:", error);
+  //   }
+  // };
 
   const updateHighContrastMode = () => {
-    updateSetting({ high_contrast_mode: !settings.high_contrast_mode });
+    updateSettings({ high_contrast_mode: !settings.high_contrast_mode });
   };
 
   const updateLargeText = () => {
-    updateSetting({ large_text: !settings.large_text });
+    updateSettings({ large_text: !settings.large_text });
   };
 
   const updateSimplifyAppForFocus = () => {
-    updateSetting({ simplify_app_for_focus: !settings.simplify_app_for_focus });
+    updateSettings({ simplify_app_for_focus: !settings.simplify_app_for_focus });
   };
 
   const updateReceiveNotifications = () => {
-    updateSetting({ receive_notifications: !settings.receive_notifications });
+    updateSettings({ receive_notifications: !settings.receive_notifications });
     // updateNotificationSettings({
     //   receive_notifications: !settings.receive_notifications,
     // });
@@ -53,16 +56,16 @@ const SectionAccessibilitySettings = ({
   const toggleManualTheme = () => {
     const newValue = !manualTheme;
     if (newValue === true) {
-      updateSetting({ manual_dark_mode: false });
+      updateSettings({ manual_dark_mode: false });
     }
     if (newValue === false) {
-      updateSetting({ manual_dark_mode: null });
+      updateSettings({ manual_dark_mode: null });
     }
     //  setManualTheme(newValue);
   };
 
   const updateLightDark = () => {
-    updateSetting({ manual_dark_mode: !settings.manual_dark_mode });
+    updateSettings({ manual_dark_mode: !settings.manual_dark_mode });
   };
 
   //Screen reader declares loudly that this button is enabled
@@ -91,7 +94,7 @@ const SectionAccessibilitySettings = ({
       }}
     >
       <Toggle
-       manualGradientColors={manualGradientColors}
+        manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Manual theme"
         icon={
@@ -106,7 +109,7 @@ const SectionAccessibilitySettings = ({
       />
       {manualTheme && (
         <Toggle
-         manualGradientColors={manualGradientColors}
+          manualGradientColors={manualGradientColors}
           primaryColor={primaryColor}
           label="Light/Dark"
           icon={
@@ -137,7 +140,7 @@ const SectionAccessibilitySettings = ({
       />
 
       <Toggle
-          manualGradientColors={manualGradientColors}
+        manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Large Text"
         icon={
@@ -148,8 +151,7 @@ const SectionAccessibilitySettings = ({
       />
 
       <Toggle
-      
-          manualGradientColors={manualGradientColors}
+        manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Simplify App For Focus"
         icon={
@@ -164,7 +166,7 @@ const SectionAccessibilitySettings = ({
       />
 
       <Toggle
-          manualGradientColors={manualGradientColors}
+        manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Receive Notifications"
         icon={
@@ -179,7 +181,7 @@ const SectionAccessibilitySettings = ({
       />
 
       <Toggle
-          manualGradientColors={manualGradientColors}
+        manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Screen Reader"
         icon={

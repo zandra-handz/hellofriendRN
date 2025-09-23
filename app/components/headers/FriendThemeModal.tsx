@@ -1,13 +1,10 @@
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import SectionFriendSettings from "../friends/SectionFriendSettings";
-import SectionFriendStats from "../friends/SectionFriendStats"; 
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import SectionFriendTheme from "../friends/SectionFriendTheme";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-
-import DeleteFriend from "../friends/DeleteFriend";
+ 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 
@@ -21,22 +18,19 @@ interface Props {
   closeModal: () => void;
 }
 
-const FriendSettingsModal: React.FC<Props> = ({
+const FriendThemeModal: React.FC<Props> = ({
   userId,
   isVisible,
   friendId,
   friendName = "",
-  friendDash,
-  handleDeselectFriend,
-
+  friendDash, 
   bottomSpacer,
   closeModal,
   lightDarkTheme,
   themeAheadOfLoading, 
 }) => {
   const { friendList } = useFriendList();
-  //  console.log(friendDash?.friend_faves?.use_friend_color_theme);
-  //  console.log(friendDash);
+ 
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
@@ -61,45 +55,22 @@ const FriendSettingsModal: React.FC<Props> = ({
       children={
         <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={styles.bodyContainer}>
-            <View style={styles.sectionContainer}>
-              <SectionFriendStats
-                primaryColor={lightDarkTheme.primaryText}
-                friendDaysSince={friendDash?.days_since_words}
-                friendTimeScore={friendDash?.time_score}
-              />
-            </View>
-            <View style={styles.sectionContainer}>
-              <SectionFriendSettings
-                userId={userId}
-                themeAheadOfLoading={themeAheadOfLoading}
-                friendId={friendId}
-                friendPhone={friendDash?.suggestion_settings?.phone_number}
-                friendEffort={friendDash?.suggestion_settings?.effort_required}
-                friendPriority={friendDash?.suggestion_settings?.priority_level}
-                primaryColor={lightDarkTheme.primaryText}
-              />
-            </View>
  
+ 
+            <View style={styles.headerContainer}>
+              <SectionFriendTheme
+                primaryColor={lightDarkTheme.primaryText}
+                lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+                manualGradientColors={manualGradientColors}
+                themeAheadOfLoading={themeAheadOfLoading}
+                userId={userId}
+                friendId={friendId}
+                friendList={friendList}
+                manualThemeOn={friendDash?.friend_faves?.use_friend_color_theme}
+              />
+            </View>
           </ScrollView>
-          <View
-            style={{
-              position: "absolute",
-              width: 300,
-              height: 40,
-              bottom: 0,
-              right: 0,
-              zIndex: 60000,
-              elevation: 60000,
-              alignItems: "center",
-            }}
-          >
-            <DeleteFriend
-              userId={userId}
-              friendId={friendId}
-              friendName={friendName}
-              handleDeselectFriend={handleDeselectFriend}
-            />
-          </View>
+ 
         </View>
       }
       onClose={closeModal}
@@ -131,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendSettingsModal;
+export default FriendThemeModal;

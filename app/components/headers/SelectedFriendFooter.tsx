@@ -1,45 +1,45 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
 
- import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { Fontisto } from "@expo/vector-icons";
+
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app components
 import AboutAppModal from "./AboutAppModal";
-import ReportIssueModal from "./ReportIssueModal";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
-import CategoriesModal from "./CategoriesModal";
+
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-
-import useSignOut from "@/src/hooks/UserCalls/useSignOut";
+import FriendThemeModal from "./FriendThemeModal";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import manualGradientColors  from "@/src/hooks/StaticColors";
- import { AppFontStyles } from "@/src/hooks/StaticFonts";
- import { useFriendDash } from "@/src/context/FriendDashContext";
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
-  userId,
-  username,
- 
+  userId, 
+
   friendId,
-  friendName, 
- 
-  lightDarkTheme,  
+  friendName,
+  handleDeselectFriend,
+  lightDarkTheme,
   overlayColor,
-  dividerStyle,  
+  dividerStyle,
 }) => {
- 
-const { friendDash } = useFriendDash();
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { themeAheadOfLoading,  resetTheme } =
-    useFriendStyle();
-const { deselectFriend} = useSelectedFriend();
-  const [aboutModalVisible, setAboutModalVisible] = useState(false); 
-  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const { friendDash } = useFriendDash();
+  const { navigateToFidget } = useAppNavigations();
+  const { themeAheadOfLoading, resetTheme } = useFriendStyle();
+  // const { selectFriend } = useSelectedFriend();
+  // const { handleDeselectFriend} = useDeselectFriend({resetTheme, selectFriend});
+  const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [colorsModalVisible, setColorsModalVisible] = useState(false);
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
 
@@ -48,15 +48,12 @@ const { deselectFriend} = useSelectedFriend();
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
 
-  const primaryColor = lightDarkTheme.primaryText;  
- 
+  const primaryColor = lightDarkTheme.primaryText;
 
-  const handleDeselectFriend = () => {
-    deselectFriend();
-    resetTheme();
-  };
-
- 
+  // const handleDeselectFriend = () => {
+  //   deselectFriend();
+  //   resetTheme();
+  // };
 
   const RenderDeselectButton = useCallback(
     () => (
@@ -99,40 +96,36 @@ const { deselectFriend} = useSelectedFriend();
     ),
     [primaryColor]
   );
-
-  const RenderReportIssueButton = useCallback(
+  const RenderColorThemeButton = useCallback(
     () => (
       <FooterButtonIconVersion
         primaryColor={primaryColor}
-        label="Report"
+        label="Colors"
         icon={
           <MaterialCommunityIcons
-            name={"bug-outline"}
+            name={"palette"}
             size={footerIconSize}
             color={primaryColor}
           />
         }
-        onPress={() => setReportModalVisible(true)}
+        onPress={() => setColorsModalVisible(true)}
       />
     ),
     [primaryColor]
   );
 
   const handleCenterButtonToggle = () => {
-  
-      setFriendSettingsModalVisible(true);
-   
+    setFriendSettingsModalVisible(true);
   };
 
   const RenderFriendProfileButton = useCallback(
     () => (
       <FriendProfileButton
-              friendId={friendId}
+        friendId={friendId}
         friendName={friendName}
-       primaryColor={primaryColor}
+        primaryColor={primaryColor}
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
-
         onPress={() => handleCenterButtonToggle()}
       />
     ),
@@ -143,15 +136,18 @@ const { deselectFriend} = useSelectedFriend();
     () => (
       <FooterButtonIconVersion
         primaryColor={primaryColor}
-        label="About"
+        label="Visual"
         icon={
-          <MaterialCommunityIcons
-            name={"information-outline"}
+          <Fontisto
+            name={"spinner-fidget"}
+                name={"heartbeat-alt"}
+                // name={"heartbeat"}
             size={footerIconSize}
             color={primaryColor}
           />
         }
-        onPress={() => setAboutModalVisible(true)}
+        // onPress={() => setAboutModalVisible(true)}
+        onPress={navigateToFidget}
       />
     ),
     [primaryColor]
@@ -184,9 +180,9 @@ const { deselectFriend} = useSelectedFriend();
         ]}
       >
         <View style={styles.section}>
-        <RenderDeselectButton />
+          <RenderDeselectButton />
         </View>
- 
+
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
@@ -206,7 +202,7 @@ const { deselectFriend} = useSelectedFriend();
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderReportIssueButton />
+            <RenderColorThemeButton />
           </View>
         </>
 
@@ -222,7 +218,6 @@ const { deselectFriend} = useSelectedFriend();
         <View>
           <UserSettingsModal
             userId={userId}
-        
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
@@ -235,8 +230,8 @@ const { deselectFriend} = useSelectedFriend();
       {friendSettingsModalVisible && !!friendId && (
         <View>
           <FriendSettingsModal
-          userId={userId}
-          deselectFriend={deselectFriend}
+            userId={userId}
+            handleDeselectFriend={handleDeselectFriend}
             manualGradientColors={manualGradientColors}
             lightDarkTheme={lightDarkTheme}
             userId={userId}
@@ -244,14 +239,30 @@ const { deselectFriend} = useSelectedFriend();
             themeAheadOfLoading={themeAheadOfLoading}
             friendId={friendId}
             friendName={friendName}
-            friendDash={friendDash} 
+            friendDash={friendDash}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}
           />
         </View>
       )}
 
- 
+      {colorsModalVisible && !!friendId && (
+        <View>
+          <FriendThemeModal
+            userId={userId}
+            lightDarkTheme={lightDarkTheme}
+            userId={userId}
+            isVisible={colorsModalVisible}
+            themeAheadOfLoading={themeAheadOfLoading}
+            friendId={friendId}
+            friendName={friendName}
+            friendDash={friendDash}
+            bottomSpacer={footerHeight - 30} //for safe view
+            closeModal={() => setColorsModalVisible(false)}
+          />
+        </View>
+      )}
+
       {aboutModalVisible && (
         <View>
           <AboutAppModal
@@ -259,20 +270,6 @@ const { deselectFriend} = useSelectedFriend();
             closeModal={() => setAboutModalVisible(false)}
             bottomSpacer={footerHeight - 30} //for safe view
             primaryColor={primaryColor}
-          />
-        </View>
-      )}
-
-      {reportModalVisible && (
-        <View>
-          <ReportIssueModal
-            username={username}
-            primaryColor={primaryColor}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-            manualGradientColors={manualGradientColors}
-            isVisible={reportModalVisible}
-            bottomSpacer={footerHeight - 30} //for safe view
-            closeModal={() => setReportModalVisible(false)}
           />
         </View>
       )}

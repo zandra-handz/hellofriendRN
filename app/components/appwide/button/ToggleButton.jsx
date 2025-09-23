@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { TouchableOpacity, Animated, StyleSheet, Easing } from "react-native";
- 
+ import manualGradientColors from "@/src/hooks/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-const ToggleButton = ({ manualGradientColors, value, onToggle }) => {
+const ToggleButton = ({ value, onToggle }) => {
   const { lightDarkTheme } = useLDTheme();
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
  

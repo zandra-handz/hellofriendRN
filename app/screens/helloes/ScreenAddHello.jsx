@@ -24,7 +24,7 @@ const ScreenAddHello = () => {
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
-      useSolidOverlay={true}
+      useSolidOverlay={true}s
       styles={[{ flex: 1 }]}
     >
       <ContentAddHello

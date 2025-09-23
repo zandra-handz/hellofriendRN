@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View, DimensionValue } from "react-native";
 import React, { useCallback } from "react";
 import Animated, {
-  SlideInDown,
-  SlideOutDown,
-  FadeIn,
-  FadeOut,
+  // SlideInDown,
+  // SlideOutDown,
+  // FadeIn,
+  // FadeOut,
 } from "react-native-reanimated";
-
+import manualGradientColors from "@/src/hooks/StaticColors";
 import SoonItemButton from "./SoonItemButton";
 import { useNavigation } from "@react-navigation/native";
 
@@ -21,16 +21,13 @@ interface HomeScrollSoonProps {
 //single press will select friend but remain on home screen, double press will select friend and take user directly to moments screen
 const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   upcomingHelloes,
-  isLoading,
-  getThemeAheadOfLoading,
-
-  selectFriend,
+  isLoading, 
   friendList,
   primaryColor = "orange",
   overlayColor,
   darkerOverlayColor,
-  lighterOverlayColor,
-  manualGradientColors,
+  lighterOverlayColor, 
+  handleSelectFriend,
   startAtIndex = 1,
   height,
   maxHeight = 130,
@@ -44,31 +41,36 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
   const handleDoublePress = useCallback(
     (hello) => {
-      const { id, name } = hello.friend;
-      const selectedFriend = id === null ? null : { id: id, name: name };
-
-      const friend = friendList.find((friend) => friend.id === hello.friend.id);
-      getThemeAheadOfLoading(friend);
-      selectFriend(selectedFriend);
+      const { id } = hello.friend;
+      handleSelectFriend(id);
       navigation.navigate("Moments");
     },
-    [friendList, getThemeAheadOfLoading, selectFriend, navigation]
+    [
+      // friendList, 
+      handleSelectFriend, 
+      navigation
+    ]
   );
 
   const handlePress = useCallback(
     (hello) => {
-      if (!friendList || friendList.length < 1) {
-        return;
-      }
+      // if (!friendList || friendList.length < 1) {
+      //   return;
+      // }
       const id = hello.friend.id;
-      const name = hello.friend.name;
-      const selectedFriend = id === null ? null : { id: id, name: name };
+      // const name = hello.friend.name;
+      // const selectedFriend = id === null ? null : { id: id, name: name };
 
-      const friend = friendList.find((friend) => friend.id === id);
-      getThemeAheadOfLoading(friend);
-      selectFriend(selectedFriend);
+      // const friend = friendList.find((friend) => friend.id === id);
+      handleSelectFriend(id);
     },
-    [friendList, getThemeAheadOfLoading, selectFriend, navigation]
+    [
+      // friendList,
+      //  getThemeAheadOfLoading, 
+       handleSelectFriend, 
+      //  navigation
+      ]
+
   );
 
   const renderListItem = useCallback(

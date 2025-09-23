@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, DimensionValue } from "react-native";
 import React from "react";
 import ToggleButton from "../appwide/button/ToggleButton"; 
-
+ 
 interface Props {
   label: string;
   icon: React.ReactElement; 
@@ -9,7 +9,7 @@ interface Props {
   onPress: () => void;
 }
 
-const Toggle: React.FC<Props> = ({ manualGradientColors, label, icon, value, primaryColor, onPress }) => {
+const Toggle: React.FC<Props> = ({  label, icon, value, primaryColor, onPress }) => {
  
   return (
     <View style={{ flexDirection: "row", justifyContent: 'space-between', marginVertical: 6, alignItems: 'center' }}>
@@ -21,7 +21,7 @@ const Toggle: React.FC<Props> = ({ manualGradientColors, label, icon, value, pri
       <Text style={[styles.label, {color: primaryColor}]}>{label}</Text>
       
      </View>
-      <ToggleButton  manualGradientColors={manualGradientColors} value={value} onToggle={onPress} />
+      <ToggleButton value={value} onToggle={onPress} />
     </View>
   );
 };

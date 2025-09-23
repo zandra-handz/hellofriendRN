@@ -4,8 +4,8 @@ import GradientBackground from "../display/GradientBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import LoadingPage from "./LoadingPage";
-import LoadingShimmer from "./LoadingShimmer";
+// import LoadingPage from "./LoadingPage";
+// import LoadingShimmer from "./LoadingShimmer";
 import LoadingBlock from "./LoadingBlock";
 type Props = {};
 

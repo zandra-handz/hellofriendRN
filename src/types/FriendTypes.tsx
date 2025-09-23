@@ -21,6 +21,28 @@ export interface Friend {
   suggestion_settings: number;
 }
 
+export interface Friendlite { // friendList data
+  id: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  first_meet_entered: string;
+  next_meet: number;
+  user: number;
+
+  created_on: string;
+  updated_on: string;
+
+  saved_color_dark: string;
+  saved_color_light: string;
+  theme_color_dark: string;
+  theme_color_light: string;
+  theme_color_font: string;
+  theme_color_font_secondary: string;
+
+ 
+}
+
 export interface ThemeAheadOfLoading {
   darkColor: Friend["theme_color_dark"];
   lightColor: Friend["theme_color_light"];

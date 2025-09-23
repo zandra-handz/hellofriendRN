@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo} from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import UpNext from "./UpNext";
@@ -8,6 +8,10 @@ import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import useSelectFriend from "@/src/hooks/useSelectFriend";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+ 
 
 // Press function is internal
 const AllHome = ({
@@ -26,16 +30,33 @@ const AllHome = ({
   const { friendList } = useFriendList();
   const { upcomingHelloes } = useUpcomingHelloes();
   const { selectFriend } = useSelectedFriend();
+  const { navigateToMoments} = useAppNavigations();
 
+const { resetTheme } = useFriendStyle();
+  const { handleSelectFriend} = useSelectFriend({friendList, resetTheme, getThemeAheadOfLoading, selectFriend})
+
+  const upcomingId = useMemo(
+    () => {
+      if (!upcomingHelloes?.[0]) {
+        return
+
+      }
+      return upcomingHelloes[0].friend.id;
+
+    }, [upcomingHelloes]);
+
+
+  
   const onPress = () => {
-    const { id, name } = upcomingHelloes[0].friend;
-    const selectedFriend = id === null ? null : { id: id, name: name };
-    selectFriend(selectedFriend);
-    const friend = friendList.find((friend) => friend.id === id);
-    getThemeAheadOfLoading(friend);
+    handleSelectFriend(upcomingId);
+    // const { id, name } = upcomingHelloes[0].friend;
+    // const selectedFriend = id === null ? null : { id: id, name: name };
+    // selectFriend(selectedFriend);
+    // const friend = friendList.find((friend) => friend.id === id);
+    // getThemeAheadOfLoading(friend);
   };
 
-  console.log("hombutton rerendered");
+  // console.log("hombutton rerendered");
 
   return (
     <View
@@ -75,13 +96,11 @@ const AllHome = ({
               lighterOverlayColor={lighterOverlayColor}
               darkerOverlayColor={darkerOverlayColor}
               upcomingHelloes={upcomingHelloes}
-              isLoading={isLoading}
-              getThemeAheadOfLoading={getThemeAheadOfLoading}
-              selectFriend={selectFriend}
+              isLoading={isLoading} 
+              handleSelectFriend={handleSelectFriend}
               friendList={friendList}
               primaryColor={primaryColor}
-              overlayColor={overlayColor}
-              manualGradientColors={manualGradientColors}
+              overlayColor={overlayColor} 
               height={"100%"}
               maxHeight={700}
               borderRadius={10}
