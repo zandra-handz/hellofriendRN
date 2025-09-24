@@ -15,37 +15,21 @@ export default function QuickActionsHandler({navigationRef}) {
   const { settings } = useUserSettings();
   const { friendList} = useFriendList();
 
-    const lockIns = useMemo(() => ({
-    next: settings?.lock_in_next ?? false,
-    customString: settings?.lock_in_custom_string ?? null, 
-  }), [settings]);
-
-
   const upcoming = upcomingHelloes?.[0]?.friend?.name ?? "None";
+  const pinned = friendList?.find((friend) => friend.id === Number(settings?.lock_in_custom_string));
 
-  const getName = (id) => {
-    if (!friendList || friendList?.length < 1) {
-      return;
-    }
-
-    let friend = friendList.find((friend) => friend.id === id);
-    return friend?.name;
-  }
   
-  const lockInNext = settings?.lock_in_next ?? null;
-  const lockInCustomString = settings?.lock_in_custom_string ?? null;
-  const pinned = settings?.lock_in_custom_string ? getName(settings?.lock_in_custom_string ) : null;
-  const upNext = !!(lockIns.next);
 
 useEffect(() => {
+ 
   const items = [
     // Pinned takes priority
     ...(settings?.lock_in_custom_string
       ? [
           {
             id: "Pinned",
-            title: `Pinned: ${pinned}`,
-            subtitle: `Pinned: ${pinned}`,
+            title: `Pinned: ${pinned?.name ?? "Unknown"}`,
+            subtitle: `Pinned: ${pinned?.name ?? "Unknown"}`,
             icon: "heart",
             params: { screen: "Moments" },
           },
@@ -88,7 +72,7 @@ useEffect(() => {
   });
 
   return () => subscription.remove();
-}, [pinned, upNext, upcoming]);
+}, [settings, friendList, pinned, upcoming]);
 
   //   const subscription = QuickActions.addListener((action) => {
   //     if (!action) return;

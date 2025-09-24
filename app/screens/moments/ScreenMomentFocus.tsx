@@ -119,6 +119,9 @@ const ScreenMomentFocus = () => {
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       addColorChangeDelay={true}
+      forceFullOpacity={true}
+      useSolidOverlay={false}
+      useOverlayFade={false}
       backgroundOverlayHeight={"10%"}
       includeBackgroundOverlay={catCreatorVisible}
       styles={{ flex: 1 }}
@@ -154,12 +157,12 @@ const ScreenMomentFocus = () => {
           style={{
             width: "100%",
             flex: 1,
-            marginTop: SPACER_BETWEEN_BAR_AND_CARD,
-               paddingHorizontal: PADDING_HORIZONTAL,
+            marginTop: SPACER_BETWEEN_BAR_AND_CARD, 
         
           }}
         >
           <MomentWriteEditView
+         paddingHorizontal={PADDING_HORIZONTAL}
             defaultCategory={settings?.user_default_category}
             manualGradientColors={manualGradientColors}
             capsuleList={capsuleList}

@@ -36,6 +36,7 @@ type Props = {
 };
 
 const MomentWriteEditView = ({
+  paddingHorizontal,
   defaultCategory,
   manualGradientColors,
   themeAheadOfLoading,
@@ -339,6 +340,7 @@ const MomentWriteEditView = ({
         alignItems: "center",
         flex: 1,
         width: "100%",
+     
         //padding: 4,
       }}
       onPress={() => {}}
@@ -346,7 +348,8 @@ const MomentWriteEditView = ({
       <View style={{ flex: 1 }}>
         <View
           style={[
-            {
+            {   paddingHorizontal: paddingHorizontal,
+
               paddingVertical: cardPaddingVertical, // Padding needs to be on this view for some reason
               width: "100%",
               flex: 1,

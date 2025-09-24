@@ -162,7 +162,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
 
   return (
     <>
-       <SafeAreaView style={{ flex: 1 }}> 
+   
       <Modal
         transparent={!isFullscreen}
         visible={isVisible}
@@ -170,6 +170,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
         //   style={modalAnimationStyle}
         animationType="slide"
       >
+            <SafeAreaView style={{ flex: 1 }}> 
         {handleRenderHelperMessage()}
 
         {handleRenderQuickView()}
@@ -276,8 +277,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
           )}
            
         </Animated.View>
+              </SafeAreaView>
       </Modal>
-      </SafeAreaView>
+
     </>
   );
 };

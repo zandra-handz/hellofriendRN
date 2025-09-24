@@ -31,6 +31,7 @@ const SafeViewAndGradientBackground = ({
   backgroundOverlayColor,
   friendId,
 
+  forceFullOpacity=false,
   // startColor,
   // endColor,
   backgroundTransparentOverlayColor,
@@ -40,7 +41,7 @@ const SafeViewAndGradientBackground = ({
   useOverlayFade = false, 
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
-  header: Header,
+ 
 }: Props) => {
   // const insets = useSafeAreaInsets();
 
@@ -57,7 +58,9 @@ console.log(`safe area vuew rerendered on ${screenname}`)
     if (useSolidOverlay) {
       console.error('use solid overlay triggered');
       opacityValue.value = withTiming(0, { duration: 300 });
-    } else if (friendId) {
+    }  else if (forceFullOpacity) {
+      opacityValue.value = withTiming(1, { duration: 0 });
+    } else if  (friendId) {
       opacityValue.value = withTiming(0.46, { duration: 300 });
     } else {
       opacityValue.value = withTiming(1, { duration: 300 });

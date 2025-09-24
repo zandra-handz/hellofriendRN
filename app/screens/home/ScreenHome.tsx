@@ -112,22 +112,32 @@ const ScreenHome = () => {
     selectFriend,
   });
 
-  
-const lockedFriendId = useMemo(() => {
-  if (!friendList?.length || !upcomingHelloes?.length || !settings?.id) return null;
 
-  if (settings?.lock_in_custom_string) {
-    console.warn('GETTING FRIEND DATA');
-    return Number(settings.lock_in_custom_string);
-  } else if (settings?.lock_in_next && !settings?.lock_in_custom_string) {
-    return upcomingHelloes[0]?.friend?.id ?? null;
-  }
-  return null;
-}, [settings, upcomingHelloes, friendList]);
+  const lockedFriendId =
+  !friendList?.length || !upcomingHelloes?.length || !settings?.id
+    ? null
+    : settings?.lock_in_custom_string
+    ? Number(settings.lock_in_custom_string)
+    : settings?.lock_in_next && !settings?.lock_in_custom_string
+    ? upcomingHelloes[0]?.friend?.id ?? null
+    : null;
+
+  
+// const lockedFriendId = useMemo(() => {
+//   if (!friendList?.length || !upcomingHelloes?.length || !settings?.id) return null;
+
+//   if (settings?.lock_in_custom_string) {
+//     console.warn('GETTING FRIEND DATA');
+//     return Number(settings.lock_in_custom_string);
+//   } else if (settings?.lock_in_next && !settings?.lock_in_custom_string) {
+//     return upcomingHelloes[0]?.friend?.id ?? null;
+//   }
+//   return null;
+// }, [settings, upcomingHelloes, friendList]);
 
 useEffect(() => {
   if (lockedFriendId && friendListFetched) {
-    handleSelectFriend(lockedFriendId);
+    handleSelectFriend(Number(lockedFriendId));
   }
 }, [lockedFriendId, friendListFetched]);
 
