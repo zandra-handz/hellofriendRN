@@ -43,8 +43,7 @@ interface FriendStyleProviderProps {
 // I don't think gradient safe view stuff is being used but leaving it in uncommented for a bit
 export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
   children,
-}) => { 
-  // const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
+}) => {  
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: "#4caf50",
     lightColor: "#a0f143",
@@ -52,10 +51,7 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     fontColorSecondary: "#000000",
   });
 
-  // const updateSafeViewGradient = (boolean: boolean) => {
-  //   setUseGradientInSafeView((prev) => boolean);
-  // };
-
+ 
   const handleSetTheme = ({
     lightColor,
     darkColor,
@@ -88,89 +84,20 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     });
   };
 
-  // const updateFriendListColors = (
-  //   friendId: number,
-  //   darkColor: string,
-  //   lightColor: string,
-  //   fontColor: string,
-  //   fontColorSecondary: string
-  // ) => {
-  //   console.log("updating friend list colors");
-  //   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
-  //     if (!oldData) return oldData;
-
-  //     return oldData.map((friend) =>
-  //       friend.id === friendId
-  //         ? {
-  //             ...friend,
-  //             theme_color_dark: darkColor,
-  //             saved_color_dark: darkColor,
-  //             theme_color_light: lightColor,
-  //             saved_color_light: lightColor,
-  //             theme_color_font: fontColor,
-  //             theme_color_font_secondary: fontColorSecondary,
-  //           }
-  //         : friend
-  //     );
-  //   });
-  //   setThemeAheadOfLoading({
-  //     lightColor,
-  //     darkColor,
-  //     fontColor,
-  //     fontColorSecondary,
-  //   });
-  // };
-
-  // const updateFriendListColorsExcludeSaved = (
-  //   friendId: number,
-  //   darkColor: string,
-  //   lightColor: string,
-  //   fontColor: string,
-  //   fontColorSecondary: string
-  // ) => {
-  //   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
-  //     if (!oldData) return oldData;
-
-  //     return oldData.map((friend) =>
-  //       friend.id === friendId
-  //         ? {
-  //             ...friend,
-  //             theme_color_dark: darkColor,
-  //             theme_color_light: lightColor,
-  //             theme_color_font: fontColor,
-  //             theme_color_font_secondary: fontColorSecondary,
-  //             // saved_* not updated here
-  //           }
-  //         : friend
-  //     );
-  //   });
-
-  //   setThemeAheadOfLoading({
-  //     lightColor,
-  //     darkColor,
-  //     fontColor,
-  //     fontColorSecondary,
-  //   });
-  // };
-
+ 
   const contextValue = useMemo(
     () => ({
       themeAheadOfLoading,
       setThemeAheadOfLoading,
       getThemeAheadOfLoading,
       handleSetTheme,
-      resetTheme, 
-      // useGradientInSafeView,
-      // setUseGradientInSafeView,
-      // updateSafeViewGradient,
+      resetTheme,  
     }),
     [
       themeAheadOfLoading,
       getThemeAheadOfLoading,
       resetTheme,
-      handleSetTheme, 
-      // useGradientInSafeView,
-      // updateSafeViewGradient,
+      handleSetTheme,  
     ]
   );
   return (

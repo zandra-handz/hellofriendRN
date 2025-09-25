@@ -10,14 +10,14 @@ type Props = {
   isInitializing: boolean;
 };
 
-const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
+const LocalPeacefulGradientSpinner = ({ loading, label='loading' }: Props) => {
   const { isLoading } = useUpcomingHelloes();
   const  { settings, loadingSettings } = useUserSettings();
   const { loadingFriendList } = useFriendList();
  
   return (
     <>
-      {(isInitializing || isLoading || loadingSettings || loadingFriendList) && (
+      {(loading) && (
         <View
           style={{
             zIndex: 100000,
@@ -43,7 +43,7 @@ const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
             > 
               <LoadingPage
                 loading={true}
-                label={'loading Hellofriend'}
+                label={loading}
                 includeLabel={true}
                 labelColor={manualGradientColors.homeDarkColor}
                 color={manualGradientColors.homeDarkColor}
@@ -59,4 +59,4 @@ const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
   );
 };
 
-export default PeacefulGradientSpinner;
+export default LocalPeacefulGradientSpinner;

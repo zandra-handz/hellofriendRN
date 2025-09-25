@@ -31,6 +31,8 @@ const ScreenSelectFriend = ({
     next: settings?.lock_in_next ?? null,
     customString: settings?.lock_in_custom_string ?? null,
   }), [settings]);
+
+  
   const { user} = useUser();
 
   const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =

@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Friendlite } from "../types/FriendTypes";
-
+import { useFriendStyle } from "../context/FriendStyleContext";
 type Props = {
   // lockInNext: boolean;
   // lockInCustomString: string;
@@ -28,6 +28,7 @@ const useSelectFriend = ({
       console.log("returning");
       return;
     }
+    
     const selectedOption = friendList?.find((friend) => friend.id === friendId);
 
     const selectedFriend = selectedOption || null;

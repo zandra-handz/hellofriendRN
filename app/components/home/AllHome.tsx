@@ -1,4 +1,4 @@
-import React, { useMemo} from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import UpNext from "./UpNext";
@@ -10,11 +10,13 @@ import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
+import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
- 
 
 // Press function is internal
 const AllHome = ({
+  // friendId, //if this component is ever not wrapped in checking if friend is selected, will need to handle potential deselects
+  // lockInCustomString,
   isLoading,
   paddingHorizontal,
   getThemeAheadOfLoading,
@@ -30,24 +32,26 @@ const AllHome = ({
   const { friendList } = useFriendList();
   const { upcomingHelloes } = useUpcomingHelloes();
   const { selectFriend } = useSelectedFriend();
-  const { navigateToMoments} = useAppNavigations();
+  const { navigateToMoments } = useAppNavigations();
 
-const { resetTheme } = useFriendStyle();
-  const { handleSelectFriend} = useSelectFriend({friendList, resetTheme, getThemeAheadOfLoading, selectFriend})
+  const { resetTheme } = useFriendStyle();
+  const { handleSelectFriend } = useSelectFriend({
+    friendList,
+    resetTheme,
+    getThemeAheadOfLoading,
+    selectFriend,
+  });
 
-  const upcomingId = useMemo(
-    () => {
-      if (!upcomingHelloes?.[0]) {
-        return
+ 
+  const upcomingId = useMemo(() => {
+    if (!upcomingHelloes?.[0]) {
+      return;
+    }
+    return upcomingHelloes[0].friend.id;
+  }, [upcomingHelloes]);
 
-      }
-      return upcomingHelloes[0].friend.id;
-
-    }, [upcomingHelloes]);
-
-
-  
   const onPress = () => {
+   
     handleSelectFriend(upcomingId);
     // const { id, name } = upcomingHelloes[0].friend;
     // const selectedFriend = id === null ? null : { id: id, name: name };
@@ -96,11 +100,11 @@ const { resetTheme } = useFriendStyle();
               lighterOverlayColor={lighterOverlayColor}
               darkerOverlayColor={darkerOverlayColor}
               upcomingHelloes={upcomingHelloes}
-              isLoading={isLoading} 
+              isLoading={isLoading}
               handleSelectFriend={handleSelectFriend}
               friendList={friendList}
               primaryColor={primaryColor}
-              overlayColor={overlayColor} 
+              overlayColor={overlayColor}
               height={"100%"}
               maxHeight={700}
               borderRadius={10}

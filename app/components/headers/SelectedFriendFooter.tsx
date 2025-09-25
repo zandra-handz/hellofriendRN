@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Keyboard } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 
 import { Fontisto } from "@expo/vector-icons";
 
@@ -24,7 +24,9 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
   userId, 
-
+upNextId,
+lockedInNext,
+settings,
   friendId,
   friendName,
   handleDeselectFriend,
@@ -54,6 +56,21 @@ const SelectedFriendFooter = ({
   //   deselectFriend();
   //   resetTheme();
   // };
+console.log(upNextId, friendId);
+
+const addCheckToDeselect = useCallback(() => {
+  console.log(upNextId, friendId);
+  if (lockedInNext && Number(upNextId) === Number(friendId)) {
+    Alert.alert(
+      "Hi",
+      "Test",
+      [{ text: "OK", onPress: () => handleDeselectFriend(true) }]
+    );
+  } else {
+    handleDeselectFriend();
+  }
+}, [lockedInNext, upNextId, friendId, handleDeselectFriend]);
+
 
   const RenderDeselectButton = useCallback(
     () => (
@@ -72,7 +89,7 @@ const SelectedFriendFooter = ({
             color={primaryColor}
           />
         }
-        onPress={() => handleDeselectFriend()}
+        onPress={() => addCheckToDeselect()}
       />
     ),
     [primaryColor]
@@ -231,8 +248,7 @@ const SelectedFriendFooter = ({
         <View>
           <FriendSettingsModal
             userId={userId}
-            handleDeselectFriend={handleDeselectFriend}
-            manualGradientColors={manualGradientColors}
+            handleDeselectFriend={handleDeselectFriend} 
             lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={friendSettingsModalVisible}

@@ -47,7 +47,8 @@ const queryClient = useQueryClient();
   const {
   data: friendList = [],
   isPending,
-  isSuccess,
+  isLoading: loadingFriendList,
+  isSuccess: friendListFetched,
   isError,
 } = useQuery({
   queryKey: ["friendList", user?.id],
@@ -70,13 +71,16 @@ useEffect(() => {
     () => ({
       friendList, 
       // isPending,
-      friendListFetched: isSuccess,
+      friendListFetched,
+      loadingFriendList,
   
     }),
     [
       friendList, 
       // isPending,
-      isSuccess,
+    
+      loadingFriendList,
+      friendListFetched,
  
     ]
   );

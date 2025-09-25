@@ -8,7 +8,7 @@ import SectionFriendStats from "../friends/SectionFriendStats";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 import DeleteFriend from "../friends/DeleteFriend";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 
 interface Props {
@@ -33,8 +33,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   closeModal,
   lightDarkTheme,
   themeAheadOfLoading, 
-}) => {
-  const { friendList } = useFriendList();
+}) => { 
   //  console.log(friendDash?.friend_faves?.use_friend_color_theme);
   //  console.log(friendDash);
   return (

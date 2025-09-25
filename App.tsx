@@ -445,8 +445,8 @@ export const Layout = () => {
           }}
         >
           {/* {user?.id ? ( */}
-            {user?.id 
-          //  && settings?.id 
+            {user?.id  
+            //  && settings?.id 
             ? (
             // user.app_setup_complete || !user.app_setup_complete ? (
             <>

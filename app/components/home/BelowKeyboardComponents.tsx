@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import AllHome from "./AllHome";
-import SelectedFriendHome from "./SelectedFriendHome"; 
+import SelectedFriendHome from "./SelectedFriendHome";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import Animated, {
@@ -20,18 +20,18 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   userId,
   paddingHorizontal,
   isLoading,
-
+  lockInCustomString, /// to check if prev friend needs to be unpinned. to keep consistent with my other select hooks
   friendStyle,
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
   lighterOverlayBackgroundColor,
-  spinnerStyle,
+  spinnerStyle="flow",
   // loadingDash,
   // friendDash,
-  selectedFriendId,
-  selectedFriendName,
+  friendId,
+  friendName,
   friendListLength,
   onPress,
 }) => {
@@ -50,9 +50,11 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
         },
       ]}
     >
-      {!selectedFriendId && friendListLength > 0 && (
+      {!friendId && friendListLength > 0 && (
         <View style={{ height: "100%" }}>
           <AllHome
+            friendId={friendId}
+            lockInCustomString={lockInCustomString}
             paddingHorizontal={paddingHorizontal}
             lighterOverlayColor={lighterOverlayBackgroundColor}
             darkerOverlayColor={darkerOverlayBackgroundColor}
@@ -68,10 +70,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           />
         </View>
       )}
-      {selectedFriendId && (
+      {friendId && (
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
-          paddingHorizontal={paddingHorizontal}
+            paddingHorizontal={paddingHorizontal}
             userId={userId}
             friendStyle={friendStyle}
             primaryColor={primaryColor}
@@ -82,8 +84,8 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             spinnerStyle={spinnerStyle}
             loadingDash={loadingDash}
             friendDash={friendDash}
-            selectedFriendId={selectedFriendId}
-            selectedFriendName={selectedFriendName}
+            selectedFriendId={friendId}
+            selectedFriendName={friendName}
             onPress={onPress}
             height={"100%"}
           />
