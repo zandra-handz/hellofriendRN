@@ -37,7 +37,7 @@ import {
 } from "./src/context/UserSettingsContext";
 
 import { UserStatsProvider } from "./src/context/UserStatsContext";
-
+import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
 import { FriendListProvider } from "./src/context/FriendListContext";
 import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
@@ -239,6 +239,8 @@ export default Sentry.wrap(function App() {
         <UserSettingsProvider>
           <FriendListProvider>
             <UpcomingHelloesProvider>
+              <AutoSelectorProvider>
+                
               <CategoriesProvider>
                 <UserStatsProvider>
                   <SelectedFriendProvider>
@@ -270,6 +272,8 @@ export default Sentry.wrap(function App() {
                   </SelectedFriendProvider>
                 </UserStatsProvider>
               </CategoriesProvider>
+              
+              </AutoSelectorProvider>
             </UpcomingHelloesProvider>
           </FriendListProvider>
         </UserSettingsProvider>

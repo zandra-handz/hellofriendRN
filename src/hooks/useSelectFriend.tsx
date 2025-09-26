@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Friendlite } from "../types/FriendTypes";
 import { useFriendStyle } from "../context/FriendStyleContext";
+import { useSelectedFriend } from "../context/SelectedFriendContext";
 type Props = {
   // lockInNext: boolean;
   // lockInCustomString: string;
@@ -14,24 +15,37 @@ type Props = {
 };
 
 const useSelectFriend = ({
-  // lockInNext,
-  // lockInCustomString,
-  friendList,
-  resetTheme,
-  getThemeAheadOfLoading,
-  selectFriend,
+  
+  friendList, 
+  
   navigateOnSelect,
   actionOnNull,
-}: Props) => {
+  
+}: Props) => { 
+
+  const {  selectFriend } = useSelectedFriend(); 
+  const { resetTheme, getThemeAheadOfLoading} = useFriendStyle();
+
+
+
   const handleSelectFriend = (friendId) => {
+    console.log(friendId);
     if (!friendList || friendList?.length < 1) {
-      console.log("returning");
+      console.log("returninggggggggggggg");
+      return;
+    }
+
+    if (!friendId) {
+      console.log('deseelctinggggggggggggggggggggg');
+      selectFriend(null);
+      resetTheme();
       return;
     }
     
-    const selectedOption = friendList?.find((friend) => friend.id === friendId);
+    const selectedOption = friendList?.find((friend) => friend.id === Number(friendId));
 
     const selectedFriend = selectedOption || null;
+    console.log(selectedFriend);
     if (selectedOption) {
       selectFriend(selectedFriend);
       getThemeAheadOfLoading(selectedFriend);
@@ -40,14 +54,15 @@ const useSelectFriend = ({
         console.log('navigating back')
         navigateOnSelect();
       }
-    } else {
-      selectFriend(null);
-      resetTheme();
-
-      if (actionOnNull) {
-        actionOnNull();
-      }
     }
+    // } else {
+    //   selectFriend(null);
+    //   resetTheme();
+
+    //   if (actionOnNull) {
+    //     actionOnNull();
+    //   }
+    // }
 
     // if (navigationAction) {
     //   navigateAction();

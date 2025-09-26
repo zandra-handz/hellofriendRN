@@ -18,6 +18,7 @@ import {
 // app state
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 //import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -66,28 +67,31 @@ const ScreenHome = () => {
     useFriendStyle();
 
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
+
+  const { autoSelectId} = useAutoSelector();
  
   const { selectedFriend, selectFriend } = useSelectedFriend();
   const { handleSelectFriend } = useSelectFriend({
-    friendList,
-    resetTheme,
-    getThemeAheadOfLoading,
-    selectFriend,
+    friendList 
+    
   });
 
   const { settings } = useUserSettings();
 
-  // const upcomingId = useMemo(() => {
-  //   if (!upcomingHelloes?.[0]) {
-  //     return;
-  //   }
-  //   return upcomingHelloes[0].friend.id;
-  // }, [upcomingHelloes]);
+ console.error('SCREEN RERENDERED', settings);
+
+const upNextId = useMemo(() => {
+  console.error("Calculating upNextId because upcomingHelloes changed");
+  return upcomingHelloes?.[0]?.friend ?? null;
+}, [upcomingHelloes]);
+
 
   const lockInCustom = useMemo(
     () => settings?.lock_in_custom_string ?? null,
     [settings]
   );
+
+
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -110,46 +114,34 @@ const [screenReady, setScreenReady] = useState(false);
 
 
 useEffect(() => {
-  console.log('SETTINGS TRIGGERED A USEEFFECT IN SCREENHOME', settings?.lock_in_next);
+  console.log('AUTO SELECT ID', autoSelectId);
+}, [autoSelectId]);
+useEffect(() => {
+  // only run if we have an id mismatch
+  console.log('autoselect', autoSelectId)
+  if (autoSelectId && !selectedFriend?.id) {
 
-}, [settings]);
-useEffect(() => { 
-  console.log('useEffect runs!');
-  if (!friendListFetched || !settings?.id || !upcomingHelloes?.length) return;
-
-  if (selectedFriend?.id) {
-    setScreenReady(true);
-    return;
+    console.log('running handleselectfriend')
+    handleSelectFriend(autoSelectId);
   }
-
-  // calculate lockedFriendId here instead of useMemo
-  let lockedFriendId = null;
-  if (settings?.lock_in_custom_string) {
-    lockedFriendId = Number(settings.lock_in_custom_string);
-  } else if (settings?.lock_in_next) {
-    lockedFriendId = upcomingHelloes[0]?.friend?.id ?? null;
-  }
-
-  if (lockedFriendId) {
-    console.log('SELECTING FRIEND:', lockedFriendId);
-    handleSelectFriend(lockedFriendId);
-  } else {
-    setScreenReady(true);
-  }
-}, [
-  friendListFetched,
-  settings,
-  upcomingHelloes,
-  selectedFriend,
-  handleSelectFriend,
-]);
+  //  else if (!autoSelectId && selectedFriend) {
+  //   handleSelectFriend(null);
+  // }
+}, [autoSelectId, selectedFriend, handleSelectFriend]);
 
   const { handleDeselectFriend } = useDeselectFriend({
-    resetTheme,
-    selectFriend,
+    // resetTheme,
+    // selectFriend,
     updateSettings,
-    lockIns,
+    // lockIns,
+    upNextId,
+    friendList,
+    autoSelectId,
   });
+
+
+ 
+ 
 
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -162,12 +154,7 @@ useEffect(() => {
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
 
   const PADDING_HORIZONTAL = 6;
-
-
-      const lockIns = useMemo(() => ({
-      next: settings?.lock_in_next ?? null,
-      customString: settings?.lock_in_custom_string ?? null,
-    }), [settings]);
+ 
   
 
   useEffect(() => {
@@ -316,7 +303,7 @@ useEffect(() => {
 
   return (
     <>
-      <LocalPeacefulGradientSpinner loading={!screenReady} />
+      <LocalPeacefulGradientSpinner loading={autoSelectId === undefined} />
 
       <SafeViewAndGradientBackground
         friendColorLight={themeAheadOfLoading.lightColor}
@@ -338,11 +325,9 @@ useEffect(() => {
         backgroundOverlayBottomRadius={0}
         style={{ flex: 1 }}
       >
-        {((settings?.lock_in_next === false &&
-          settings?.lock_in_custom_string === null) ||
-          // (settings?.lock_in_next === true &&
-          //   settings?.lock_in_custom_string === null) ||
-          selectedFriend?.id) && (
+        {/* {((settings?.lock_in_next === false &&
+          settings?.lock_in_custom_string === null) || 
+          selectedFriend?.id) && ( */}
           <>
             {!friendListFetched && ( // isLoading is in FS Spinner
               <View
@@ -506,10 +491,11 @@ useEffect(() => {
               />
             )}
 
-            {selectedFriend?.id && (
+            {selectedFriend?.id && upcomingHelloes?.length && (
               <SelectedFriendFooter
                 userId={user?.id}
-                upNextId={upcomingHelloes[0]?.friend?.id}
+                upNextId={upNextId?.id}
+                autoSelectId={autoSelectId}
                 username={user?.username}
                 settings={settings}
                 lockedInNext={settings?.lock_in_next}
@@ -518,11 +504,13 @@ useEffect(() => {
                 lightDarkTheme={lightDarkTheme}
                 overlayColor={lightDarkTheme.overlayBackground}
                 dividerStyle={lightDarkTheme.divider}
+                resetTheme={resetTheme}
+                themeAheadOfLoading={themeAheadOfLoading}
                 handleDeselectFriend={handleDeselectFriend}
               />
             )}
           </>
-        )}
+        {/* )} */}
       </SafeViewAndGradientBackground>
     </>
   );

@@ -9,8 +9,8 @@ import AboutAppModal from "./AboutAppModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
-
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ import { useAutoSelector } from "@/src/context/AutoSelectorContext";
+ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import FriendThemeModal from "./FriendThemeModal";
@@ -21,10 +21,16 @@ import GradientBackground from "../appwide/display/GradientBackground";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendDash } from "@/src/context/FriendDashContext";
+import useUpdateLockins from "@/src/hooks/useUpdateLockins";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+
+
+import useSelectFriend from "@/src/hooks/useSelectFriend";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
   userId, 
 upNextId,
+autoSelectId,
 lockedInNext,
 settings,
   friendId,
@@ -33,15 +39,21 @@ settings,
   lightDarkTheme,
   overlayColor,
   dividerStyle,
+  resetTheme,
+  themeAheadOfLoading,
+
 }) => {
   const { friendDash } = useFriendDash();
-  const { navigateToFidget } = useAppNavigations();
-  const { themeAheadOfLoading, resetTheme } = useFriendStyle();
+  const { selectFriend } = useSelectedFriend();
+  const { navigateToFidget } = useAppNavigations(); 
+    const { updateSettings } = useUpdateSettings({userId: userId});
+  const { updateCustomLockIn, updateNextUpLockIn} = useUpdateLockins({updateSettings});
   // const { selectFriend } = useSelectedFriend();
   // const { handleDeselectFriend} = useDeselectFriend({resetTheme, selectFriend});
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
+
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
 
@@ -52,24 +64,57 @@ settings,
 
   const primaryColor = lightDarkTheme.primaryText;
 
+
+
   // const handleDeselectFriend = () => {
   //   deselectFriend();
   //   resetTheme();
   // };
 console.log(upNextId, friendId);
 
+ 
+
+const handleDeselect = useCallback(
+  (friendId) => {
+    if (!autoSelectId) {
+      selectFriend(null);
+      resetTheme();
+    } else if (autoSelectId === upNextId) {
+        
+      updateNextUpLockIn(false);
+      
+      
+  
+    } else {
+      console.log('ipdate custom')
+      updateCustomLockIn(null);
+     
+    }
+
+
+
+  }, [
+    autoSelectId,
+    upNextId,
+    friendId,
+
+  ]
+);
+
 const addCheckToDeselect = useCallback(() => {
-  console.log(upNextId, friendId);
+  console.log(upNextId, friendId, lockedInNext);
   if (lockedInNext && Number(upNextId) === Number(friendId)) {
     Alert.alert(
       "Hi",
       "Test",
-      [{ text: "OK", onPress: () => handleDeselectFriend(true) }]
+      [{ text: "OK", onPress: () => handleDeselect(friendId) }]
     );
   } else {
-    handleDeselectFriend();
+    handleDeselect(friendId);
   }
-}, [lockedInNext, upNextId, friendId, handleDeselectFriend]);
+}, [lockedInNext, upNextId, friendId, handleDeselect]);
+
+
 
 
   const RenderDeselectButton = useCallback(
@@ -312,4 +357,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectedFriendFooter;
+export default React.memo(SelectedFriendFooter);
