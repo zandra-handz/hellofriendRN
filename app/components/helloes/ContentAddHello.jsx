@@ -83,7 +83,7 @@ const ContentAddHello = ({
 const { navigateBack} = useAppNavigations();
   const { selectedFriend,  selectFriend } = useSelectedFriend();
 
-  const { handleDeselectFriend } = useDeselectFriend({resetTheme, selectFriend, updateSettings, lockIns});
+  const { handleDeselectFriend } = useDeselectFriend({updateSettings});
 
   const { friendDash } = useFriendDash();
 
@@ -180,14 +180,15 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
 
  
 
-  // const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
+  const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
 
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       showFlashMessage(`Hello saved!`, false, 2000);
       handleDeselectFriend(); // this sets selectedFriend to null
-      // setJustDeselectedFriend(true);
-     // resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
+      setJustDeselectedFriend(true);
+      selectFriend(null);
+     resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
     }
   }, [createHelloMutation.isSuccess]);
 
@@ -203,10 +204,10 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
 
       navigateToMainScreen();
 
-    //  setJustDeselectedFriend(false); // reset the flag
+     setJustDeselectedFriend(false); // reset the flag
     }
   }, [
-    // justDeselectedFriend, 
+    justDeselectedFriend, 
     selectedFriend]);
 
   const toggleDeleteMoments = () => {
@@ -310,6 +311,7 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
 
         handleCreateHello(requestData);
         showFlashMessage(`Hello added!`, false, 1000);
+  
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);
