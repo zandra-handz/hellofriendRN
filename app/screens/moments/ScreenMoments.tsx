@@ -10,10 +10,12 @@ import Loading from "@/app/components/appwide/display/Loading";
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+// import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 // import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
@@ -41,13 +43,24 @@ const ScreenMoments = () => {
 
   const { navigateToMomentView, navigateBack } = useAppNavigations();
 
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+
+  const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming(); 
+
+  // const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
   const { userCategories } = useCategories();
-  const { friendList } = useFriendList();
+  // const { friendList } = useFriendList();
+
+
+
+     const friendList = friendListAndUpcoming?.friends;
+  const upcomingHelloes = friendListAndUpcoming?.upcoming;
+  const upcomingId = friendListAndUpcoming?.next?.id;
+
+
 
   const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
     useFriendStyle();

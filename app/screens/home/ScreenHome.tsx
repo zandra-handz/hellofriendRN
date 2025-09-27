@@ -1,7 +1,6 @@
 //import * as Sentry from "@sentry/react-native";
 import React, {
-  useEffect,
-  useLayoutEffect,
+  useEffect, 
   useState,
   useRef,
   useCallback,
@@ -19,14 +18,10 @@ import {
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-//import { useFriendDash } from "@/src/context/FriendDashContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import useSelectFriend from "@/src/hooks/useSelectFriend";
-import useDeselectFriend from "@/src/hooks/useDeselectFriend";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
-import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import { useUserSettings } from "@/src/context/UserSettingsContext"; 
+import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
@@ -39,8 +34,7 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
 // third party  RESTORE SHARE INTENT WHEN PACKAGE IS UPDATED
 import { useShareIntentContext } from "expo-share-intent";
-import * as FileSystem from "expo-file-system";
-import { File, Directory, Paths } from "expo-file-system";
+import { File } from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 
 import { useFocusEffect } from "@react-navigation/native";
@@ -57,34 +51,46 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 
 const ScreenHome = () => {
   const { user } = useUser();
-  const { settings, loadingSettings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
+  const { settings  } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
 
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { friendList, friendListFetched, loadingFriendList } = useFriendList();
-  const { themeAheadOfLoading, resetTheme } = useFriendStyle();
+  // const { upcomingHelloes  } = useUpcomingHelloes();
+  const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
+    useFriendListAndUpcoming();
 
-  const { updateSettingsMutation } = useUpdateSettings({
+  const { setUpNextCache } = useUpNextCache({
     userId: user?.id,
+    friendListAndUpcoming: friendListAndUpcoming,
   });
 
-  const { autoSelectId } = useAutoSelector();
+  setUpNextCache();
 
-  const { selectedFriend } = useSelectedFriend();
+  const friendList = friendListAndUpcoming?.friends;
+  const upcomingHelloes = friendListAndUpcoming?.upcoming;
+  const upcomingId = friendListAndUpcoming?.next?.id;
 
-  const { handleSelectFriend } = useSelectFriend({
-    friendList,
-  });
+  // const { friendList, friendListFetched } = useFriendList();
+  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
+    useFriendStyle();
 
-  const upNextId = useMemo(() => {
-    console.error("Calculating upNextId because upcomingHelloes changed");
-    return upcomingHelloes?.[0]?.friend ?? null;
-  }, [upcomingHelloes]);
+ 
+
+  const { autoSelectId, autoSelectFriend } = useAutoSelector();
+
+  useEffect(() => {
+    console.log(`AUTO SELECT FRIEND`, autoSelectFriend);
+  }, [autoSelectFriend]);
+
+  const { selectedFriend, selectFriend } = useSelectedFriend();
+
+ 
+ 
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -101,49 +107,53 @@ const ScreenHome = () => {
 
   const [screenReady, setScreenReady] = useState(false);
 
-  console.error(
-    "SCREEN RERENDERED",
-    `lock in custom string ->`,
-    settings?.lock_in_custom_string,
-    `----------- lock in next ->`,
-    settings?.lock_in_next,
-    '----------- selected friend ->',
-    selectedFriend?.name,
-    '----------- auto select ->',
-    autoSelectId,
- 
-  );
+  // console.error(
+  //   "SCREEN RERENDERED",
+  //   `lock in custom string ->`,
+  //   settings?.lock_in_custom_string,
+  //   `----------- lock in next ->`,
+  //   settings?.lock_in_next,
+  //   "----------- selected friend ->",
+  //   selectedFriend?.name,
+  //   "----------- auto select ->",
+  //   autoSelectId
+  // );
 
   // useEffect(() => {
   //   console.log("AUTO SELECT ID", autoSelectId);
   // }, [autoSelectId]);
 
-  useEffect(() => {
-    if (updateSettingsMutation.isSuccess) {
-      console.log("THSSSSUCCCCHESSSSSSS!! ya bitch");
-    }
-  }, [updateSettingsMutation]);
+  // useEffect(() => {
+  //   if (friendListAndUpcoming) {
+  //     console.log(
+  //       "THSSSSUCCCCHESSSSSSS!! ya bitch",
+  //       friendListAndUpcoming.next,
+  //       friendListAndUpcoming?.upcoming?.length
+  //     );
+  //   }
+  // }, [friendListAndUpcoming]);
+
   useEffect(() => {
     // only run if we have an id mismatch
     // console.log("autoselect", autoSelectId);
     if (
-      autoSelectId &&
-      !selectedFriend?.id &&
-      !loadingSettings &&
-      !updateSettingsMutation?.isLoading
+      // !selectedFriend?.id &&
+      // && !loadingSettings
+      autoSelectFriend
     ) {
-      console.log("running handleselectfriend");
-      handleSelectFriend(autoSelectId);
+      if (autoSelectFriend.customFriend?.id) {
+        selectFriend(autoSelectFriend.customFriend);
+        getThemeAheadOfLoading(autoSelectFriend.customFriend);
+      } else if (autoSelectFriend.nextFriend?.id) {
+        selectFriend(autoSelectFriend.nextFriend);
+        getThemeAheadOfLoading(autoSelectFriend.nextFriend);
+      }
     }
-    //  else if (!autoSelectId && selectedFriend) {
-    //   handleSelectFriend(null);
-    // }
   }, [
-    autoSelectId,
-    selectedFriend,
-    handleSelectFriend,
-    updateSettingsMutation.isLoading,
-    loadingSettings,
+    autoSelectFriend,
+  
+
+    // loadingSettings,
   ]);
 
   // const { handleDeselectFriend } = useDeselectFriend({
@@ -341,7 +351,7 @@ const ScreenHome = () => {
           settings?.lock_in_custom_string === null) || 
           selectedFriend?.id) && ( */}
         <>
-          {!friendListFetched && ( // isLoading is in FS Spinner
+          {!friendListAndUpcomingIsSuccess && ( // isLoading is in FS Spinner
             <View
               style={{
                 zIndex: 100000,
@@ -371,7 +381,7 @@ const ScreenHome = () => {
               behavior={Platform.OS === "ios" ? "padding" : "height"}
               style={[{ flex: 1 }]}
             >
-              {friendListFetched &&
+              {friendListAndUpcomingIsSuccess &&
                 settings?.id &&
                 upcomingHelloes?.length && ( //&& !isLoading  is in FSSpinner
                   <View
@@ -501,22 +511,15 @@ const ScreenHome = () => {
 
           {selectedFriend?.id && upcomingHelloes?.length && (
             <SelectedFriendFooter
-              userId={user?.id}
-              settings={settings}
-              upNextId={upNextId?.id}
-              autoSelectId={autoSelectId}
-              username={user?.username}
-              settings={settings}
-              lockedInNext={settings?.lock_in_next}
-              friendId={selectedFriend?.id}
+              userId={user?.id}   
+             
               friendName={selectedFriend?.name}
               lightDarkTheme={lightDarkTheme}
               overlayColor={lightDarkTheme.overlayBackground}
-              dividerStyle={lightDarkTheme.divider}
+ 
               resetTheme={resetTheme}
               themeAheadOfLoading={themeAheadOfLoading}
-              // handleDeselectFriend={handleDeselectFriend}
-              friendList={friendList}
+ 
             />
           )}
         </>

@@ -14,43 +14,35 @@ type Props = {
   actionOnFail?: () => void;
 };
 
+// for manual selects
 const useSelectFriend = ({
-  
-  friendList, 
-  
+  friendList,
+
   navigateOnSelect,
-  actionOnNull,
-  
-}: Props) => { 
-
-  const {  selectFriend } = useSelectedFriend(); 
-  const { getThemeAheadOfLoading} = useFriendStyle();
-
-
+}: Props) => {
+  const { selectFriend } = useSelectedFriend();
+  const { getThemeAheadOfLoading } = useFriendStyle();
 
   const handleSelectFriend = (friendId) => {
-    console.log(`friend in handleSelectFriend`,friendId);
+    console.log(`friend in handleSelectFriend`, friendId);
     if (!friendList || friendList?.length < 1) {
- 
       return;
     }
 
-   
-    
-    const selectedOption = friendList?.find((friend) => friend.id === Number(friendId));
+    const selectedOption = friendList?.find(
+      (friend) => friend.id === Number(friendId)
+    );
 
     const selectedFriend = selectedOption || null;
     // console.log(selectedFriend);
     if (selectedOption) {
       selectFriend(selectedFriend);
       getThemeAheadOfLoading(selectedFriend);
-     
+
       if (navigateOnSelect) {
-        console.log('navigating back')
         navigateOnSelect();
       }
     }
- 
   };
 
   return { handleSelectFriend };

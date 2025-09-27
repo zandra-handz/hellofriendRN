@@ -9,7 +9,8 @@ import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
 import manualGradientColors  from "@/src/hooks/StaticColors";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -52,7 +53,9 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   const startingText = category?.description || null;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { helloesList } = useHelloes();
-  const { friendList } = useFriendList();
+  // const { friendList } = useFriendList();
+  const { friendListAndUpcoming} = useFriendListAndUpcoming();
+  const friendList = friendListAndUpcoming?.friends;
   const { selectedFriendStats } = useSelectedFriendStats();
 
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);

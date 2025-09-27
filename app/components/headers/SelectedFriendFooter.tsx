@@ -19,35 +19,34 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+ 
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import useUpdateLockins from "@/src/hooks/useUpdateLockins";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
-import useDeselectFriend from "@/src/hooks/useDeselectFriend";
-import useSelectFriend from "@/src/hooks/useSelectFriend";
+ 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 
 import { useQueryClient } from "@tanstack/react-query";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
   userId,
-  upNextId,
-  autoSelectId,
-  lockedInNext,
-settings,
-  friendId,
+ 
   friendName,
 
   lightDarkTheme,
   overlayColor,
   dividerStyle,
-  friendList,
+ 
   // resetTheme,
   // themeAheadOfLoading,
 }) => {
   const { friendDash } = useFriendDash();
-  const { selectFriend } = useSelectedFriend();
+  const { selectFriend, selectedFriend } = useSelectedFriend();
+  const friendId = selectedFriend?.id;
+
+  const { autoSelectFriend} = useAutoSelector();
   const { navigateToFidget } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
@@ -75,18 +74,15 @@ settings,
 
   const handleDeselect = useCallback(() => {
 
-
+ 
 
 
     deselectFriendFunction({
       userId,
       queryClient,
-     settings,
       updateSettings,
-      friendId,
-      upNextId,
-      autoSelectId,
-      friendList,
+      friendId, 
+      autoSelectFriend,
       selectFriend,
       resetTheme,
       getThemeAheadOfLoading,
@@ -94,27 +90,24 @@ settings,
   }, [
     userId,
     queryClient,
-    settings,
+    autoSelectFriend,
     updateSettings,
-    friendId,
-    upNextId,
-    autoSelectId,
-    friendList,
+    friendId, 
     selectFriend,
     resetTheme,
     getThemeAheadOfLoading,
   ]);
 
-  const addCheckToDeselect = useCallback(() => {
-    console.log(`addCheckToDeselect`, upNextId, friendId, lockedInNext);
-    if (lockedInNext && Number(upNextId) === Number(friendId)) {
-      Alert.alert("Hi", "Test", [
-        { text: "OK", onPress: () => handleDeselect() },
-      ]);
-    } else {
-      handleDeselect();
-    }
-  }, [lockedInNext, upNextId, friendId, handleDeselect]);
+  // const addCheckToDeselect = useCallback(() => {
+  //   console.log(`addCheckToDeselect`, upNextId, friendId, lockedInNext);
+  //   if (lockedInNext && Number(upNextId) === Number(friendId)) {
+  //     Alert.alert("Hi", "Test", [
+  //       { text: "OK", onPress: () => handleDeselect() },
+  //     ]);
+  //   } else {
+  //     handleDeselect();
+  //   }
+  // }, [lockedInNext, upNextId, friendId, handleDeselect]);
 
   const RenderDeselectButton = useCallback(
     () => (
@@ -136,7 +129,7 @@ settings,
         onPress={() => handleDeselect()}
       />
     ),
-    [primaryColor]
+    [primaryColor, friendId, autoSelectFriend, queryClient], 
   );
 
   const RenderSettingsButton = useCallback(

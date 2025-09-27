@@ -45,6 +45,7 @@ import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 // import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
+import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
@@ -233,52 +234,51 @@ export default Sentry.wrap(function App() {
 
   return (
     <ShareIntentProvider>
-
-    <QueryClientProvider client={queryClient}>
-      <UserProvider>
-        <UserSettingsProvider>
-          <FriendListProvider>
-            <UpcomingHelloesProvider>
-              <AutoSelectorProvider>
-                
-              <CategoriesProvider>
-                <UserStatsProvider>
-                  <SelectedFriendProvider>
-                    <FriendDashProvider>
-                      <CapsuleListProvider>
-                        <LocationsProvider>
-                          <HelloesProvider>
-                            <SelectedFriendStatsProvider>
-                              {/* <MessageContextProvider> */}
-                              <GestureHandlerRootView style={{ flex: 1 }}>
-                                <SafeAreaProvider>
-                                  <LDThemeProvider>
-                                    <RootSiblingParent>
-                                      <DeviceLocationProvider>
-                                        <FriendStyleProvider>
-                                          <Layout />
-                                        </FriendStyleProvider>
-                                      </DeviceLocationProvider>
-                                    </RootSiblingParent>
-                                  </LDThemeProvider>
-                                </SafeAreaProvider>
-                              </GestureHandlerRootView>
-                              {/* </MessageContextProvider> */}
-                            </SelectedFriendStatsProvider>
-                          </HelloesProvider>
-                        </LocationsProvider>
-                      </CapsuleListProvider>
-                    </FriendDashProvider>
-                  </SelectedFriendProvider>
-                </UserStatsProvider>
-              </CategoriesProvider>
-              
-              </AutoSelectorProvider>
-            </UpcomingHelloesProvider>
-          </FriendListProvider>
-        </UserSettingsProvider>
-      </UserProvider>
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <UserSettingsProvider>
+            <FriendListAndUpcomingProvider>
+              {/* <FriendListProvider> */}
+                {/* <UpcomingHelloesProvider> */}
+                  <AutoSelectorProvider>
+                    <CategoriesProvider>
+                      <UserStatsProvider>
+                        <SelectedFriendProvider>
+                          <FriendDashProvider>
+                            <CapsuleListProvider>
+                              <LocationsProvider>
+                                <HelloesProvider>
+                                  <SelectedFriendStatsProvider>
+                                    {/* <MessageContextProvider> */}
+                                    <GestureHandlerRootView style={{ flex: 1 }}>
+                                      <SafeAreaProvider>
+                                        <LDThemeProvider>
+                                          <RootSiblingParent>
+                                            <DeviceLocationProvider>
+                                              <FriendStyleProvider>
+                                                <Layout />
+                                              </FriendStyleProvider>
+                                            </DeviceLocationProvider>
+                                          </RootSiblingParent>
+                                        </LDThemeProvider>
+                                      </SafeAreaProvider>
+                                    </GestureHandlerRootView>
+                                    {/* </MessageContextProvider> */}
+                                  </SelectedFriendStatsProvider>
+                                </HelloesProvider>
+                              </LocationsProvider>
+                            </CapsuleListProvider>
+                          </FriendDashProvider>
+                        </SelectedFriendProvider>
+                      </UserStatsProvider>
+                    </CategoriesProvider>
+                  </AutoSelectorProvider>
+                {/* </UpcomingHelloesProvider> */}
+              {/* </FriendListProvider> */}
+            </FriendListAndUpcomingProvider>
+          </UserSettingsProvider>
+        </UserProvider>
+      </QueryClientProvider>
     </ShareIntentProvider>
   );
   // };
@@ -402,16 +402,12 @@ const linking = {
   },
 };
 
- 
 const emitter = new NativeEventEmitter(ShareIntentModule);
- 
- 
 
-export const Layout = () => { 
- 
+export const Layout = () => {
   const { user, isInitializing } = useUser();
- 
-  const { settings } = useUserSettings(); 
+
+  const { settings } = useUserSettings();
 
   const receiveNotifications =
     settings?.receive_notifications === true
@@ -449,9 +445,8 @@ export const Layout = () => {
           }}
         >
           {/* {user?.id ? ( */}
-            {user?.id  
-            //  && settings?.id 
-            ? (
+          {user?.id ? (
+            //  && settings?.id
             // user.app_setup_complete || !user.app_setup_complete ? (
             <>
               <Stack.Screen

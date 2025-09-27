@@ -8,12 +8,13 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
- 
+
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
- import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
-  
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
- import { useFriendList } from "@/src/context/FriendListContext";
+//  import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
 type Props = {
   categoryId: number;
@@ -24,16 +25,18 @@ type Props = {
 const CategoryFriendHistoryList = ({
   friendId,
   categoryId,
- 
+
   helloesList,
   primaryColor,
   closeModal,
   onViewHelloPress,
-}: Props) => {   
- const { friendList } = useFriendList();
+}: Props) => {
+  //  const { friendList } = useFriendList();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+
+  const friendList = friendListAndUpcoming?.friends;
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
-  
- 
+
   const {
     categoryHistory,
     isLoading,
@@ -54,17 +57,13 @@ const CategoryFriendHistoryList = ({
   }, [categoryHistory]);
 
   const handlePress = useCallback(
-    (helloId, momentOriginalId) => () => { 
+    (helloId, momentOriginalId) => () => {
       if (onViewHelloPress) {
-        
-      onViewHelloPress(helloId, momentOriginalId);
-      
+        onViewHelloPress(helloId, momentOriginalId);
       }
-    }, 
+    },
     [onViewHelloPress]
   );
-
- 
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
@@ -78,8 +77,6 @@ const CategoryFriendHistoryList = ({
     return hello.date || "";
   };
 
- 
- 
   const getCapsuleCount = (count: number) => {
     if (!count) {
       return ``;
@@ -88,22 +85,20 @@ const CategoryFriendHistoryList = ({
     return `(` + count + ` loaded)`;
   };
 
- 
-
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `friend-capsule-${categoryId}-${index}`;
 
   const renderMiniMomentItem = useCallback(
     ({ item, index }) => (
       <FriendHistoryMomentItem
-      item={item}
-      index={index}
-      onHelloPress={handlePress}
-      friendId={friendId}
-      friendName={getFriendNameFromList(item.friend)}
+        item={item}
+        index={index}
+        onHelloPress={handlePress}
+        friendId={friendId}
+        friendName={getFriendNameFromList(item.friend)}
         primaryColor={primaryColor}
-      helloDate={getHelloDateFromList(item.hello)}/>
-      
+        helloDate={getHelloDateFromList(item.hello)}
+      />
     ),
     [
       getFriendNameFromList,
@@ -117,7 +112,6 @@ const CategoryFriendHistoryList = ({
 
   return (
     <>
- 
       {categoryHistory && categoryHistory.length > 0 && (
         <FlatList
           ListHeaderComponent={
@@ -132,7 +126,7 @@ const CategoryFriendHistoryList = ({
               }}
             >
               <Text
-                style={[ AppFontStyles.subWelcomeText, { color: primaryColor}]}
+                style={[AppFontStyles.subWelcomeText, { color: primaryColor }]}
               >
                 History {getCapsuleCount(completedCapsuleCount)}
               </Text>

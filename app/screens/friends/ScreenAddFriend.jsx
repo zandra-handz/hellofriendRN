@@ -8,12 +8,16 @@ import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 const ScreenAddFriend = () => {
   const { lightDarkTheme } = useLDTheme();
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { friendList } = useFriendList();
+ 
+
+    const { friendListAndUpcoming} = useFriendListAndUpcoming();
+  const friendList = friendListAndUpcoming?.friends;
   const { user } = useUser();
   return (
     <SafeViewAndGradientBackground

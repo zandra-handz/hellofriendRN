@@ -3,9 +3,13 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react";
 import { useUser } from "./UserContext";
-import { fetchUpcomingHelloes } from "../calls/api";
+import {
+  fetchUpcomingHelloes,
+  fetchUpcomingHelloesAndFriends,
+} from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
 
 import useSignOut from "../hooks/UserCalls/useSignOut";
@@ -18,11 +22,9 @@ export const useUpcomingHelloes = () => {
 };
 
 export const UpcomingHelloesProvider = ({ children }) => {
- 
-  const { user, isInitializing  } = useUser();
+  const { user, isInitializing } = useUser();
   const { onSignOut } = useSignOut();
  
-
   const {
     data: upcomingHelloes,
     isLoading,
@@ -40,6 +42,16 @@ export const UpcomingHelloesProvider = ({ children }) => {
       if (isError) {
         return [];
       }
+
+      // console.log("data.upcoming!!", data);
+
+      // if (data.upcoming?.length && data.friends?.length) {
+      //   let upcomingFriend;
+      //   upcomingFriend = data.friends.find(
+      //     (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
+      //   );
+      //   setUpNext(upcomingFriend);
+      // }
       return data || [];
     },
   });
@@ -50,18 +62,16 @@ export const UpcomingHelloesProvider = ({ children }) => {
     }
   }, [isError]);
 
- 
-
   const contextValue = useMemo(
     () => ({
       upcomingHelloes,
       upcomingHelloesIsFetching: isFetching,
       upcomingHelloesIsSuccess: isSuccess,
 
- 
       isLoading,
+  
     }),
-    [upcomingHelloes, isFetching, isSuccess, isLoading]
+    [upcomingHelloes,  isFetching, isSuccess, isLoading]
   );
 
   return (

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { useQueryClient } from "@tanstack/react-query";
+// import { useQueryClient } from "@tanstack/react-query";
 export const findFriendInList = (id, friendList) => {
   if (!friendList?.length || id) {
     return;
@@ -12,102 +12,82 @@ export const findFriendInList = (id, friendList) => {
 export const deselectFriendFunction = async ({
   userId,
   queryClient,
-  settings,
+  // settings,
   updateSettings,
   friendId,
-  upNextId,
-  autoSelectId,
-  friendList,
+  // upNextId,
+  // autoSelectId,
+  autoSelectFriend,
+  // friendList,
   selectFriend,
   resetTheme,
   getThemeAheadOfLoading,
 }) => {
-  if (!updateSettings || !friendId) {
+  if (!updateSettings || !friendId || !autoSelectFriend) {
     return;
   }
-  //   if (updateSettings && friendId && autoSelectId) {
-  if (autoSelectId) {
-    // If deselecting the auto next. CUSTOM WILL ALWAYS TAKE PRECEDENCE OVER NEXT.
-    // so if autoSelectId is the nextUpId, it means there is no custom
-    // wiping it again here anyway for a visual of what backend should look like after this
-    if (autoSelectId === upNextId && upNextId === friendId) {
-      console.log(`upNextId: `, upNextId);
-      console.log(`friendId: `, friendId);
-      let updatesCaseOne = { lock_in_custom_string: null, lock_in_next: false };
-      console.log("updates");
 
-      queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
-        if (!oldData) return { ...updatesCaseOne }; // fallback if cache is empty
-        return {
-          ...oldData, // preserve existing fields
-          ...updatesCaseOne, // apply only the fields we want to change
-        };
-      });
-
-      //   const cachedSettings = queryClient.getQueryData(["userSettings", userId]);
-
-      //   console.log("Current cached settings:", cachedSettings);
-
-      await updateSettings({
-        lock_in_custom_string: null,
-        lock_in_next: false,
-      }); //custom string here is just to be safe
-      console.log("about to deselect");
-      selectFriend(null);
-      resetTheme();
-
-      //if deselecting the auto custom
-    } else if (autoSelectId === friendId) {
-      let updates = { lock_in_custom_string: null, lock_in_next: true };
-
-      queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
-        if (!oldData) return { ...updates };
-        return {
-          ...oldData,
-          ...updates,
-        };
-      });
-
-      await updateSettings({ lock_in_custom_string: null, lock_in_next: true }); //next up here is just to be safe
-      if (upNextId) {
-        let friendToSelect;
-        friendToSelect = findFriendInList(upNextId, friendList);
-        if (friendToSelect) {
-          selectFriend(friendToSelect);
-          getThemeAheadOfLoading(friendToSelect);
-        }
-      }
-
-      // deselecting NON custom when auto is turned on
-    } else if (autoSelectId === upNextId) {
-      let updatesCaseThree = {
-        lock_in_custom_string: null,
-        lock_in_next: true,
-      };
-
-      queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
-        if (!oldData) return { ...updatesCaseThree };
-        return {
-          ...oldData,
-          ...updatesCaseThree,
-        };
-      });
-
-      await updateSettings({ lock_in_custom_string: null, lock_in_next: true }); //next up here is just to be safe
-      if (upNextId) {
-        console.log("up next id!!!");
-        let friendToSelect;
-        friendToSelect = findFriendInList(upNextId, friendList);
-        if (friendToSelect) {
-          selectFriend(friendToSelect);
-          getThemeAheadOfLoading(friendToSelect);
-        }
-      }
-    }
-
-    // if no autoSelectId, deselect is just a true deselect with no backend call
-  } else {
-    selectFriend(null);
-    resetTheme();
+  if (
+    autoSelectFriend?.customFriend === undefined &&
+    autoSelectFriend?.nextFriend === undefined
+  ) {
+    console.log("autos not ready yet...");
+    // selectFriend(null);
+    // resetTheme(null);
+    return;
   }
+
+  if (autoSelectFriend?.customFriend?.id && autoSelectFriend?.nextFriend?.id) {
+    console.log("TURN CUSTOM OFF", autoSelectFriend);
+    console.log(autoSelectFriend?.nextFriend);
+    selectFriend(autoSelectFriend?.nextFriend);
+    getThemeAheadOfLoading(autoSelectFriend?.nextFriend);
+
+    let autoToNext;
+    autoToNext = { lock_in_custom_string: null };
+
+    queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
+      if (!oldData) return { ...autoToNext };
+      return {
+        ...oldData,
+        ...autoToNext,
+      };
+    });
+    return;
+  }
+
+  if (
+    autoSelectFriend?.nextFriend?.id &&
+    Number(friendId) === Number(autoSelectFriend?.nextFriend?.id)
+  ) {
+    console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
+    selectFriend(null);
+    resetTheme(null);
+
+    let autoOff;
+    autoOff = { lock_in_next: false };
+
+    queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
+      if (!oldData) return { ...autoOff };
+      return {
+        ...oldData,
+        ...autoOff,
+      };
+    });
+    return;
+  }
+
+  if (
+    autoSelectFriend?.customFriend?.id &&
+    Number(friendId) !== Number(autoSelectFriend?.customFriend?.id)
+  ) {
+    selectFriend(autoSelectFriend?.customFriend);
+    getThemeAheadOfLoading(autoSelectFriend?.customFriend);
+
+    return;
+  }
+
+  selectFriend(null);
+  resetTheme(null);
+  return;
 };

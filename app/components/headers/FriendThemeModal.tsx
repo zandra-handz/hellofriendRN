@@ -1,11 +1,11 @@
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionFriendTheme from "../friends/SectionFriendTheme";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
- 
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 
 interface Props {
@@ -23,14 +23,15 @@ const FriendThemeModal: React.FC<Props> = ({
   isVisible,
   friendId,
   friendName = "",
-  friendDash, 
+  friendDash,
   bottomSpacer,
   closeModal,
   lightDarkTheme,
-  themeAheadOfLoading, 
+  themeAheadOfLoading,
 }) => {
-  const { friendList } = useFriendList();
- 
+  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const friendList = friendListAndUpcoming?.friends;
+
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
@@ -55,8 +56,6 @@ const FriendThemeModal: React.FC<Props> = ({
       children={
         <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={styles.bodyContainer}>
- 
- 
             <View style={styles.headerContainer}>
               <SectionFriendTheme
                 primaryColor={lightDarkTheme.primaryText}
@@ -70,7 +69,6 @@ const FriendThemeModal: React.FC<Props> = ({
               />
             </View>
           </ScrollView>
- 
         </View>
       }
       onClose={closeModal}

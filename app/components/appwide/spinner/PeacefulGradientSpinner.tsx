@@ -1,23 +1,30 @@
 import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import { View, StyleSheet } from "react-native";
-import React from "react"; 
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext"; 
+import React from "react";  
 import LoadingPage from "./LoadingPage"; 
 import { useUserSettings } from "@/src/context/UserSettingsContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ import useSignIn from "@/src/hooks/UserCalls/useSignIn";
+
+ import { useUser } from "@/src/context/UserContext";
+
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 type Props = {
   isInitializing: boolean;
 };
 
 const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
-  const { isLoading } = useUpcomingHelloes();
+ 
   const  { settings, loadingSettings } = useUserSettings();
-  const { loadingFriendList } = useFriendList();
+  const { refetch } = useUser();
+  const {signinMutation } = useSignIn({ refetchUser: refetch});
+
+  const { isLoading} = useFriendListAndUpcoming();
+ 
  
   return (
     <>
-      {(isInitializing || isLoading || loadingSettings || loadingFriendList) && (
+      {(isInitializing || isLoading || loadingSettings || signinMutation.isPending || signinMutation.isLoading) && (
         <View
           style={{
             zIndex: 100000,

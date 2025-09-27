@@ -1,16 +1,22 @@
 import { Pressable, View } from "react-native";
-import React from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, {
+  withTiming,
+  withSequence,
   FadeOut,
-  FadeIn,
   SlideInDown,
+  useAnimatedStyle,
+  useSharedValue,
 } from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
 interface FriendHeaderMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
@@ -22,6 +28,7 @@ interface FriendHeaderMessageUIProps {
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
+  userId,
   friendId,
   primaryColor,
   welcomeTextStyle,
@@ -33,12 +40,89 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   // onPress,
 }) => {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-  const { autoSelectId } = useAutoSelector();
+  const { autoSelectFriend } = useAutoSelector();
+
+  const opacityValue = useSharedValue(0);
+  const scaleValue = useSharedValue(0);
+
+    const secondOpacityValue = useSharedValue(0);
+  const secondScaleValue = useSharedValue(0);
+
+  const animatedPinStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleValue.value }],
+      opacity: opacityValue.value,
+    };
+  });
+
+    const animatedSecondPinStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: secondScaleValue.value }],
+      opacity: secondOpacityValue.value,
+    };
+  });
+
+  const isLockedOn = useMemo(() => {
+    console.log("use memoooooooooooooooooooooo");
+    return friendId === autoSelectFriend?.customFriend?.id;
+  }, [friendId, autoSelectFriend]);
+
+  const isUpNext = useMemo(() => {
+    console.log("use memoooooooooooooooooooooo");
+    return friendId === autoSelectFriend?.nextFriend?.id;
+  }, [friendId, autoSelectFriend]);
+
+  useEffect(() => {
+    if (isLockedOn) {
+      opacityValue.value = withTiming(1, { duration: 100 });
+      scaleValue.value = withSequence(
+        withTiming(1.3, { duration: 100 }),
+        withTiming(1, { duration: 300 })
+      );
+    } else {
+      scaleValue.value = withSequence(
+        withTiming(1.2, { duration: 200 }),
+        withTiming(0, { duration: 100 })
+      );
+    }
+  }, [isLockedOn]);
+
+
+    useEffect(() => {
+    if (isUpNext) {
+      secondOpacityValue.value = withTiming(1, { duration: 100 });
+      secondScaleValue.value = withSequence(
+        withTiming(1.3, { duration: 100 }),
+        withTiming(1, { duration: 300 })
+      );
+    } else {
+      secondScaleValue.value = withSequence(
+        withTiming(1.2, { duration: 200 }),
+        withTiming(0, { duration: 100 })
+      );
+    }
+  }, [isUpNext]);
+
+  const { updateSettings } = useUpdateSettings({ userId });
 
   const { navigateToSelectFriend } = useAppNavigations();
 
-  const handleOnLongPress = () => {
-    Vibration.vibrate(100);
+  const toggleLockOnFriend = useCallback(() => {
+    if (!friendId || !autoSelectFriend) {
+      return;
+    }
+    if (friendId === autoSelectFriend?.customFriend?.id) {
+      updateSettings({ lock_in_custom_string: null });
+      Vibration.vibrate(100);
+      showFlashMessage(`${selectedFriendName} unpinned`, false, 1000);
+    } else {
+      updateSettings({ lock_in_custom_string: friendId });
+      Vibration.vibrate(100);
+      showFlashMessage(`${selectedFriendName} pinned!`, false, 1000);
+    }
+  }, [friendId, autoSelectFriend]);
+
+  const handleOnPress = () => {
     navigateToSelectFriend();
   };
 
@@ -46,7 +130,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   return (
     <GlobalPressable
-      onLongPress={handleOnLongPress}
+      onPress={handleOnPress}
+      onLongPress={toggleLockOnFriend}
       entering={SlideInDown}
       exiting={FadeOut}
       style={[
@@ -69,29 +154,68 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
         },
       ]}
     >
-      {friendId === autoSelectId && (
-
- 
       <View
         style={{
           position: "absolute",
-          top: 20,
-          right: 20,
-          padding: 4,
-          backgroundColor: manualGradientColors.lightColor,
-          borderRadius: 999,
-          zIndex: 9000,
-          alignItems: "center",
-          justifyContent: "center",
+          right: 0,
+         height: "100%",
+          width: "auto",
+          padding: 20,
+          flexDirection: "column", 
+          justifyContent: 'space-between',
+          alignItems: 'center',
+    
+          
         }}
       >
-        <MaterialCommunityIcons
-          name={"pin-outline"}
-          size={32}
-          color={manualGradientColors.homeDarkColor}
-        />
+        <Animated.View
+          style={[
+            animatedPinStyle,
+            {
+               padding: 4,
+              backgroundColor: manualGradientColors.lightColor,
+              borderRadius: 999,
+              zIndex: 9000,
+              alignItems: "center",
+              justifyContent: "center",
+              // marginBottom: 10,
+              overflow: 'hidden',
+              
+             
+            },
+          ]}
+        >
+          <MaterialCommunityIcons
+            name={"pin-outline"}
+            size={22}
+            color={manualGradientColors.homeDarkColor}
+          />
+        </Animated.View>
+        {/* )} */}
+
+      
+          <Animated.View
+            style={[
+              animatedSecondPinStyle,
+              {
+                padding: 4,
+                backgroundColor: manualGradientColors.lightColor,
+                borderRadius: 999,
+                zIndex: 9000,
+                alignItems: "center",
+                justifyContent: "center",
+              
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={"calendar-outline"}
+              size={22}
+              color={manualGradientColors.homeDarkColor}
+            />
+          </Animated.View>
+     
       </View>
-           )}
       <View
         style={{
           paddingTop: 50,

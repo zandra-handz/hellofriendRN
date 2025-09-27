@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React from "react";
 import GradientBackground from "../display/GradientBackground";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import LoadingPage from "./LoadingPage";
 // import LoadingShimmer from "./LoadingShimmer";
@@ -10,7 +10,8 @@ import LoadingBlock from "./LoadingBlock";
 type Props = {};
 
 const FSMainSpinner = ({ isInitializing }: Props) => {
-  const { isLoading } = useUpcomingHelloes();
+  // const { isLoading } = useUpcomingHelloes();
+  const { isLoading } = useFriendListAndUpcoming();
 
   const { themeAheadOfLoading } = useFriendStyle();
 

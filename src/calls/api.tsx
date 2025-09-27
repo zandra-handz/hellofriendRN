@@ -991,6 +991,19 @@ export const fetchUpcomingHelloes = async () => {
   }
 };
 
+
+export const fetchUpcomingHelloesAndFriends = async () => {
+  //use keys 'friends' = old friendlist data. 'upcoming' =old upcoming data
+  //this endpoint just combines the queries on backend
+  try {
+    const response = await helloFriendApiClient.get("/friends/upcoming/friends-included/");
+    // console.error(`NEW ENDPOINT`, response.data, )
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchUpcomingHelloes");
+  }
+};
+
 export const fetchMomentsAPI = async (friendId: number) => {
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
   try {

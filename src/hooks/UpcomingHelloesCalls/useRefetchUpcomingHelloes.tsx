@@ -10,8 +10,11 @@ const useRefetchUpcomingHelloes = ({ userId }: Props) => {
   const queryClient = useQueryClient();
 
   const refetchUpcomingHelloes = () => {
-    queryClient.refetchQueries({ queryKey: ["upcomingHelloes", userId] });
+    queryClient.refetchQueries({ queryKey: ["friendListAndUpcoming", userId] }); // might not want this to refetch friends too. on other hand might be simpler
   };
+
+
+ 
 
   return { refetchUpcomingHelloes };
 };

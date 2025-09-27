@@ -6,12 +6,12 @@ import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+// import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import useSelectFriend from "@/src/hooks/useSelectFriend";
-import useDeselectFriend from "@/src/hooks/useDeselectFriend";
+import useSelectFriend from "@/src/hooks/useSelectFriend"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
 // Press function is internal
 const AllHome = ({
@@ -29,8 +29,12 @@ const AllHome = ({
   lighterOverlayColor,
   darkerOverlayColor,
 }) => {
-  const { friendList } = useFriendList();
-  const { upcomingHelloes } = useUpcomingHelloes();
+  // const { friendList } = useFriendList();
+  // const { upcomingHelloes } = useUpcomingHelloes();
+  const { friendListAndUpcoming} = useFriendListAndUpcoming();
+  const friendList = friendListAndUpcoming?.friends;
+  const upcomingHelloes = friendListAndUpcoming?.upcoming;
+  const upcomingId = friendListAndUpcoming?.next?.id;
   const { selectFriend } = useSelectedFriend();
   const { navigateToMoments } = useAppNavigations();
 
@@ -43,24 +47,18 @@ const AllHome = ({
   });
 
  
-  const upcomingId = useMemo(() => {
-    if (!upcomingHelloes?.[0]) {
-      return;
-    }
-    return upcomingHelloes[0].friend.id;
-  }, [upcomingHelloes]);
+  // const upcomingId = useMemo(() => {
+  //   if (!upcomingHelloes?.[0]) {
+  //     return;
+  //   }
+  //   return upcomingHelloes[0].friend.id;
+  // }, [upcomingHelloes]);
 
   const onPress = () => {
    
-    handleSelectFriend(upcomingId);
-    // const { id, name } = upcomingHelloes[0].friend;
-    // const selectedFriend = id === null ? null : { id: id, name: name };
-    // selectFriend(selectedFriend);
-    // const friend = friendList.find((friend) => friend.id === id);
-    // getThemeAheadOfLoading(friend);
+    handleSelectFriend(upcomingId); 
   };
-
-  // console.log("hombutton rerendered");
+ 
 
   return (
     <View

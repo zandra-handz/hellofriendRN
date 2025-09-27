@@ -1,30 +1,19 @@
 import { View, Text } from "react-native";
-import React, {
-  createContext,
-  useContext,
- 
-  useMemo,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useMemo, ReactNode } from "react";
 
 import { useUserSettings } from "./UserSettingsContext";
-import { useUpcomingHelloes } from "./UpcomingHelloesContext";
-import { useFriendList } from "./FriendListContext";
- 
+
+import { findFriendInList } from "../hooks/deselectFriendFunction";
+import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
 
 import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
 
-interface AutoSelectorContextType {
- 
-}
+interface AutoSelectorContextType {}
 
 //HARD CODE LIGHT DARK COLOR LOCATION:
 //FRIENDTINTPRESSABLE unlikely to be resorted to but does have hard code to get TS to stop yelling at me
 
-const AutoSelectorContext = createContext<AutoSelectorContextType>({
- 
-  }, 
-);
+const AutoSelectorContext = createContext<AutoSelectorContextType>({});
 
 export const useAutoSelector = (): AutoSelectorContextType =>
   useContext(AutoSelectorContext);
@@ -37,9 +26,9 @@ interface AutoSelectorProviderProps {
 export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   children,
 }) => {
-  const { upcomingHelloes } = useUpcomingHelloes();
-  const { settings} = useUserSettings();
-  const { friendList } = useFriendList();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+
+  const { settings } = useUserSettings();
 
   // if (!upcomingHelloes?.length || !settings || !friendList?.length) {
   //     return;
@@ -47,24 +36,44 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
 
   // const upNextId = upcomingHelloes?.[0]?.friend?.id;
 
-  const upNextId = useMemo(() => {
-    console.error("Calculating upNextId because upcomingHelloes changed");
-    return upcomingHelloes?.[0]?.friend?.id ?? null;
-  }, [upcomingHelloes]);
-
   const autoSelectId = useMemo(() => {
-    return settings?.lock_in_custom_string
-      ? Number(settings?.lock_in_custom_string)
-      : settings?.lock_in_next
-        ? upNextId
-        : null;
-  }, [settings, upNextId]);
+    if (settings?.id && settings?.lock_in_custom_string) {
+      return Number(settings.lock_in_custom_string);
+    }
+
+    if (settings?.id && settings?.lock_in_next) {
+      return friendListAndUpcoming?.next?.id != null
+        ? Number(friendListAndUpcoming.next?.id)
+        : undefined;
+    }
+
+    return null;
+  }, [settings, friendListAndUpcoming]);
+
+const autoSelectFriend = useMemo(() => {
+  // if data isn’t ready yet, return undefined
+  if (!settings || !friendListAndUpcoming) return { customFriend: undefined, nextFriend: undefined };
+
+  const customFriend = settings.lock_in_custom_string
+    ? friendListAndUpcoming.friends.find(
+        (friend) => friend.id === Number(settings.lock_in_custom_string)
+      ) ?? null // return null if not found
+    : null;
+
+  const nextFriend = settings.lock_in_next
+    ? friendListAndUpcoming.next ?? null // return null if not set
+    : null;
+
+  return { customFriend, nextFriend };
+}, [settings, friendListAndUpcoming]);
+
 
   const contextValue = useMemo(
     () => ({
       autoSelectId,
+      autoSelectFriend,
     }),
-    [autoSelectId]
+    [autoSelectId, autoSelectFriend ]
   );
   return (
     <AutoSelectorContext.Provider value={contextValue}>

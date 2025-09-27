@@ -10,15 +10,39 @@ type Props = {
 const useAddToFriendList = ({ userId }: Props) => {
   const queryClient = useQueryClient();
 
+  // const addToFriendList = (newFriend: Friend) => {
+  //   queryClient.setQueryData<Friend[]>(["friendListAndUpcoming", userId], (old = []) => {
+  //     const isAlreadyFriend = old.some((friend) => friend.id === newFriend.id);
+  //     if (!isAlreadyFriend) {
+  //       return [...old, newFriend];
+  //     }
+  //     return old;
+  //   });
+  // };
+
   const addToFriendList = (newFriend: Friend) => {
-    queryClient.setQueryData<Friend[]>(["friendList", userId], (old = []) => {
-      const isAlreadyFriend = old.some((friend) => friend.id === newFriend.id);
-      if (!isAlreadyFriend) {
-        return [...old, newFriend];
+  queryClient.setQueryData(
+    ["friendListAndUpcoming", userId],
+    (old: { friends?: Friend[]; upcoming?: any[]; next?: Friend } | undefined) => {
+      if (!old) {
+        return { friends: [newFriend], upcoming: [] };
       }
-      return old;
-    });
-  };
+
+      const isAlreadyFriend = old.friends?.some(
+        (friend) => friend.id === newFriend.id
+      );
+
+      if (isAlreadyFriend) {
+        return old;  
+      }
+
+      return {
+        ...old,
+        friends: [...(old.friends ?? []), newFriend],
+      };
+    }
+  );
+};
 
   return { addToFriendList };
 };

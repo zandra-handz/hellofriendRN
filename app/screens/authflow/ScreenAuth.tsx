@@ -32,6 +32,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const usernameEntered = route.params?.usernameEntered ?? false;
@@ -158,6 +159,7 @@ const ScreenAuth = () => {
   };
 
   return (
+ 
     <PreAuthSafeViewAndGradientBackground
       settings={null}
       startColor={manualGradientColors.darkColor}
@@ -172,12 +174,15 @@ const ScreenAuth = () => {
         // paddingTop: 40, // TEMPORARY
       }}
     >
-      {signinMutation.isPending && (
+
+
+   
+      {/* {signinMutation.isPending && (
         <View
           style={{
             // backgroundColor: "orange",
-            zIndex: 100000,
-            elevation: 100000,
+            zIndex: 100,
+            elevation: 100,
             position: "absolute",
             width: "100%",
             height: "100%",
@@ -195,7 +200,7 @@ const ScreenAuth = () => {
             color={"yellow"}
           />
         </View>
-      )}
+      )} */}
       {!signinMutation.isPending && (
         // <KeyboardAvoidingView
         //   behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -306,6 +311,7 @@ const ScreenAuth = () => {
         )}
       </View>
     </PreAuthSafeViewAndGradientBackground>
+   
   );
 };
 

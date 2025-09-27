@@ -11,14 +11,14 @@ import React, {
 import {
   View,
   Text,
-  StyleSheet, 
-  Keyboard, 
+  StyleSheet,
+  Keyboard,
   Alert,
   Pressable,
 } from "react-native";
 
 import DeleteUnused from "./DeleteUnused";
-import LocationModal from "../selectors/LocationModal"; 
+import LocationModal from "../selectors/LocationModal";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import EscortBar from "../moments/EscortBar";
 import IdeasAdded from "./IdeasAdded";
@@ -30,10 +30,10 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 import PickHelloType from "./PickHelloType";
 import { useUserStats } from "@/src/context/UserStatsContext";
 import { useNavigation } from "@react-navigation/native";
-import { useLocations } from "@/src/context/LocationsContext"; 
+import { useLocations } from "@/src/context/LocationsContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import manualGradientColors  from "@/src/hooks/StaticColors"; 
+import manualGradientColors from "@/src/hooks/StaticColors";
 import HelloNotesModal from "../headers/HelloNotesModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -42,7 +42,8 @@ import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefet
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useDeselectFriend from "@/src/hooks/useDeselectFriend";
-
+import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
+import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
@@ -54,16 +55,16 @@ const ContentAddHello = ({
   backgroundColor,
 }) => {
   const navigation = useNavigation();
-  const { resetTheme } = useFriendStyle();
-  const { settings } = useUserSettings();
+  const { resetTheme, getThemeAheadOfLoading } = useFriendStyle();
+  const { autoSelectFriend } = useAutoSelector();
+  // const { settings } = useUserSettings();
 
-  
-  const lockIns = useMemo(() => ({
-  next: settings?.lock_in_next ?? null,
-  customString: settings?.lock_in_custom_string ?? null,
-}), [settings]);
+  //   const lockIns = useMemo(() => ({
+  //   next: settings?.lock_in_next ?? null,
+  //   customString: settings?.lock_in_custom_string ?? null,
+  // }), [settings]);
 
-  const { updateSettings } = useUpdateSettings({userId: userId});
+  const { updateSettings } = useUpdateSettings({ userId: userId });
 
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
@@ -79,11 +80,11 @@ const ContentAddHello = ({
     userId: userId,
   });
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [notesModalVisible, setNotesModalVisible] = useState(false); 
-const { navigateBack} = useAppNavigations();
-  const { selectedFriend,  selectFriend } = useSelectedFriend();
+  const [notesModalVisible, setNotesModalVisible] = useState(false);
+  const { navigateBack } = useAppNavigations();
+  const { selectedFriend, selectFriend } = useSelectedFriend();
 
-  const { handleDeselectFriend } = useDeselectFriend({updateSettings});
+  const { handleDeselectFriend } = useDeselectFriend({ updateSettings });
 
   const { friendDash } = useFriendDash();
 
@@ -99,8 +100,7 @@ const { navigateBack} = useAppNavigations();
   const [selectedTypeChoice, setSelectedTypeChoice] = useState(null);
   const [selectedTypeChoiceText, setSelectedTypeChoiceText] = useState(null);
 
-  const [selectedHelloLocation, setSelectedHelloLocation] =
-    useState(null);
+  const [selectedHelloLocation, setSelectedHelloLocation] = useState(null);
   const [existingLocationId, setExistingLocationId] = useState("");
   const [customLocation, setCustomLocation] = useState("");
   const [locationModalVisible, setLocationModalVisible] = useState(false);
@@ -138,8 +138,7 @@ const { navigateBack} = useAppNavigations();
     };
   }, []);
 
-const [ autoTrigger, setAutoTrigger ] = useState(false);
- 
+  const [autoTrigger, setAutoTrigger] = useState(false);
 
   const faveLocations = useMemo(() => {
     if (!locationList || !friendDash?.friend_faves?.locations) {
@@ -151,16 +150,19 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
     );
   }, [locationList, friendDash]);
 
-
-    const goBack = () => {
-    Alert.alert(`Leave`, `Go back to ideas screen? (Inputs here will be lost.)`, [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
-      { text: `Yes`, onPress: () => navigateBack()},
-    ]);
+  const goBack = () => {
+    Alert.alert(
+      `Leave`,
+      `Go back to ideas screen? (Inputs here will be lost.)`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: `Yes`, onPress: () => navigateBack() },
+      ]
+    );
 
     // setIsDoubleCheckerVisible(true);
   };
@@ -178,37 +180,41 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
     // setIsDoubleCheckerVisible(true);
   };
 
- 
-
   const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
 
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       showFlashMessage(`Hello saved!`, false, 2000);
-      handleDeselectFriend(); // this sets selectedFriend to null
+      if (autoSelectFriend?.customFriend?.id) {
+        selectFriend(autoSelectFriend.customFriend);
+        getThemeAheadOfLoading(autoSelectFriend.customFriend);
+      } else if (autoSelectFriend?.nextFriend?.id) {
+        selectFriend(autoSelectFriend.nextFriend);
+        getThemeAheadOfLoading(autoSelectFriend.nextFriend);
+      } else {
+        selectFriend(null);
+        resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
+      }
+
       setJustDeselectedFriend(true);
-      selectFriend(null);
-     resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
+      navigateToMainScreen();
     }
-  }, [createHelloMutation.isSuccess]);
+  }, [createHelloMutation.isSuccess, autoSelectFriend]);
 
   useEffect(() => {
     if (
-      // justDeselectedFriend 
-      // && 
-      selectedFriend === null) {
-   
-
+      // justDeselectedFriend
+      // &&
+      selectedFriend === null
+    ) {
       refetchUpcomingHelloes();
       refetchUserStats();
 
       navigateToMainScreen();
 
-     setJustDeselectedFriend(false); // reset the flag
+      setJustDeselectedFriend(false); // reset the flag
     }
-  }, [
-    justDeselectedFriend, 
-    selectedFriend]);
+  }, [justDeselectedFriend, selectedFriend]);
 
   const toggleDeleteMoments = () => {
     setDeleteMoments(!deleteMoments);
@@ -249,9 +255,8 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
   };
 
   const clearLocation = () => {
-       setSelectedHelloLocation(null);
-        setCustomLocation(null);
-
+    setSelectedHelloLocation(null);
+    setCustomLocation(null);
   };
 
   const handleLocationChange = (item) => {
@@ -311,7 +316,6 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
 
         handleCreateHello(requestData);
         showFlashMessage(`Hello added!`, false, 1000);
-  
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);
@@ -320,101 +324,95 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
 
   return (
     <View
-      style={[ 
+      style={[
         {
           flex: 1,
         },
       ]}
     >
-      <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
-      
-      <Text style={[fontStyle, { color: primaryColor }]}>
-        New hello details
-      </Text>
-        
+      <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
+        <Text style={[fontStyle, { color: primaryColor }]}>
+          New hello details
+        </Text>
       </View>
       <>
-        <View style={{flex: 1, paddingHorizontal: 4, paddingVertical: 10}}>
+        <View style={{ flex: 1, paddingHorizontal: 4, paddingVertical: 10 }}>
           <View style={{ flex: 1 }}>
             {/* {!isKeyboardVisible && ( */}
+            <View
+              style={{
+                width: "100%",
+                height: 100,
+              }}
+            >
+              <PickHelloType
+                primaryColor={primaryColor}
+                selected={selectedTypeChoice}
+                onChange={handleTypeChoiceChange}
+              />
+            </View>
+            {/* )} */}
+
+            {selectedTypeChoiceText && locationListIsSuccess && (
               <View
                 style={{
                   width: "100%",
                   height: 100,
+                  marginTop: 10,
+                  zIndex: 5000,
+                  // padding: 10,
                 }}
               >
-                <PickHelloType
+                <PickHelloLoc
                   primaryColor={primaryColor}
-                  selected={selectedTypeChoice}
-                  onChange={handleTypeChoiceChange}
+                  selected={selectedHelloLocation}
+                  onChange={handleLocationChange}
+                  faveLocations={faveLocations}
+                  savedLocations={locationList}
+                  setModalVisible={setLocationModalVisible}
+                  selectedLocation={selectedHelloLocation}
+                  clearLocation={clearLocation}
                 />
+                <PickHelloDate
+                  primaryColor={primaryColor}
+                  selected={helloDate}
+                  onChange={onChangeDate}
+                  modalVisible={showDatePicker}
+                  setModalVisible={setShowDatePicker}
+                />
+
+                <HelloNotes
+                  primaryColor={primaryColor}
+                  selected={notePreviewText}
+                  setModalVisible={setNotesModalVisible}
+                />
+
+                <IdeasAdded
+                  primaryColor={primaryColor}
+                  selected={momentsAdded.length}
+                  onPress={goBack}
+                />
+                <DeleteUnused
+                  primaryColor={primaryColor}
+                  checkboxState={deleteMoments}
+                  toggleCheckbox={toggleDeleteMoments}
+                />
+                {notesModalVisible && (
+                  <HelloNotesModal
+                    primaryColor={primaryColor}
+                    isVisible={notesModalVisible}
+                    closeModal={handleCloseModal}
+                    textRef={editedTextRef}
+                    mountingText={notePreviewText}
+                    onTextChange={updateNoteEditString}
+                  />
+                )}
               </View>
-            {/* )} */}
-
-            {selectedTypeChoiceText && 
-              locationListIsSuccess && (
-                <View
-                  style={{
-                    width: "100%",
-                    height: 100,
-                    marginTop: 10,
-                    zIndex: 5000,
-                    // padding: 10, 
-                  }}
-                >
-                  <PickHelloLoc
-                    primaryColor={primaryColor}
-                    selected={selectedHelloLocation}
-                    onChange={handleLocationChange}
-                    faveLocations={faveLocations}
-                    savedLocations={locationList}
-                    setModalVisible={setLocationModalVisible}
-                    selectedLocation={selectedHelloLocation}
-                    clearLocation={clearLocation}
-                  /> 
-                  <PickHelloDate
-                    primaryColor={primaryColor}
-                    selected={helloDate}
-                    onChange={onChangeDate}
-                    modalVisible={showDatePicker}
-                    setModalVisible={setShowDatePicker}
-                  />
-
-                  <HelloNotes
-                    primaryColor={primaryColor}
-                    selected={notePreviewText}
-                    setModalVisible={setNotesModalVisible}
-                  />
-
-                  <IdeasAdded
-                    primaryColor={primaryColor}
-                    selected={momentsAdded.length}
-                    onPress={goBack}
-                  />
-                 <DeleteUnused
-                 primaryColor={primaryColor}
-                 checkboxState={deleteMoments}
-                 toggleCheckbox={toggleDeleteMoments}
-                 
-                 />
-                  {notesModalVisible && (
-                    <HelloNotesModal
-                      primaryColor={primaryColor}
-                      isVisible={notesModalVisible}
-                      closeModal={handleCloseModal}
-                      textRef={editedTextRef}
-                      mountingText={notePreviewText}
-                      onTextChange={updateNoteEditString}
-              
-                    />
-                  )}
-                </View>
-              )}
+            )}
 
             {
-            // !isKeyboardVisible &&
-              selectedTypeChoiceText &&
-              locationListIsSuccess && (
+              // !isKeyboardVisible &&
+              selectedTypeChoiceText && locationListIsSuccess && (
                 <LocationModal
                   primaryColor={primaryColor}
                   faveLocations={faveLocations}
@@ -424,10 +422,10 @@ const [ autoTrigger, setAutoTrigger ] = useState(false);
                   setModalVisible={setLocationModalVisible}
                   selectedLocation={selectedHelloLocation}
                 />
-              )}
+              )
+            }
           </View>
 
-         
           {!isKeyboardVisible && selectedTypeChoiceText && (
             <EscortBar
               manualGradientColors={manualGradientColors}
@@ -462,7 +460,7 @@ const styles = StyleSheet.create({
     width: "100%",
 
     zIndex: 1,
-  },    
+  },
   checkbox: {
     paddingLeft: 10,
     paddingBottom: 2,

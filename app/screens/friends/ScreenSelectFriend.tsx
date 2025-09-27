@@ -1,9 +1,9 @@
 import { View, Pressable } from "react-native";
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
 import manualGradientColors from "@/src/hooks/StaticColors";
-import { useFriendList } from "@/src/context/FriendListContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -13,43 +13,74 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
-import useSelectFriend from "@/src/hooks/useSelectFriend";
-import useDeselectFriend from "@/src/hooks/useDeselectFriend";
-
+import useSelectFriend from "@/src/hooks/useSelectFriend"; 
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 // type Props = {
 //   navigationDisabled: boolean;
 // };
 
-const ScreenSelectFriend = ({ 
-  // navigationDisabled = false
- } ) => {
+const ScreenSelectFriend = (
+  {
+    // navigationDisabled = false
+  }
+) => {
   const { lightDarkTheme } = useLDTheme();
-  const { friendList } = useFriendList();
-  const { settings } = useUserSettings();
-  
-    const lockIns = useMemo(() => ({
-    next: settings?.lock_in_next ?? null,
-    customString: settings?.lock_in_custom_string ?? null,
-  }), [settings]);
+  const { autoSelectFriend } = useAutoSelector();
 
-  
-  const { user} = useUser();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const friendList = friendListAndUpcoming?.friends;
+  const queryClient = useQueryClient();
+  const { settings } = useUserSettings();
+
+  const lockIns = useMemo(
+    () => ({
+      next: settings?.lock_in_next ?? null,
+      customString: settings?.lock_in_custom_string ?? null,
+    }),
+    [settings]
+  );
+
+  const { user } = useUser();
 
   const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =
-    useFriendStyle(); 
+    useFriendStyle();
   const { selectedFriend, selectFriend } = useSelectedFriend();
-    const { updateSettings } = useUpdateSettings({userId: user?.id});
+  const { updateSettings } = useUpdateSettings({ userId: user?.id });
 
-    const toggleLockOnFriend = (id) => {
-      console.log('id')
-      if (id !== selectedFriend?.id) {
-        handleSelectFriend(id);
-      }
-      updateSettings({lock_in_custom_string: id})
+  const toggleLockOnFriend = (id) => {
+    console.log("id");
+    if (id !== selectedFriend?.id) {
+      handleSelectFriend(id);
     }
+    updateSettings({ lock_in_custom_string: id });
+  };
 
-  const { handleDeselectFriend} = useDeselectFriend({resetTheme, selectFriend, updateSettings, lockIns});
+  const handleDeselect = useCallback(() => {
+    deselectFriendFunction({
+      userId: user?.id,
+      queryClient: queryClient,
+      updateSettings: updateSettings,
+      friendId: selectedFriend?.id,
+      autoSelectFriend: autoSelectFriend,
+      selectFriend: selectFriend,
+      resetTheme: resetTheme,
+      getThemeAheadOfLoading: getThemeAheadOfLoading,
+    });
+  }, [
+    user?.id,
+    queryClient,
+    autoSelectFriend,
+    updateSettings,
+    selectedFriend?.id,
+    selectFriend,
+    resetTheme,
+    getThemeAheadOfLoading,
+  ]);
 
+ 
 
   const locale = "en-US";
   const { navigateBack } = useAppNavigations();
@@ -70,9 +101,15 @@ const ScreenSelectFriend = ({
 
     return summaryOfSorted;
   }, [friendList]);
-const empty = []; 
+  const empty = [];
 
-  const {handleSelectFriend} = useSelectFriend({friendList, resetTheme, getThemeAheadOfLoading, selectFriend, navigateOnSelect: navigateBack })
+  const { handleSelectFriend } = useSelectFriend({
+    friendList,
+    resetTheme,
+    getThemeAheadOfLoading,
+    selectFriend,
+    navigateOnSelect: navigateBack,
+  });
 
   // const handleSelectFriend = (itemId: number) => {
   //   const selectedOption = friendList.find((friend) => friend.id === itemId);
@@ -114,11 +151,13 @@ const empty = [];
           ]}
         >
           <Pressable
+            hitSlop={30}
             onPress={navigateBack}
-         onLongPress={handleDeselectFriend}
-       
+            onLongPress={handleDeselect}
             style={{
               position: "absolute",
+              // backgroundColor: "pink",
+
               left: 0,
               alignItems: "center",
               justifyContent: "center",
@@ -141,13 +180,15 @@ const empty = [];
         <View style={{ width: "100%", flex: 1 }}>
           {alphabFriendList && (
             <FriendListUI
+            autoSelectFriend={autoSelectFriend}
+            handleDeselect={handleDeselect}
               themeAheadOfLoading={themeAheadOfLoading}
               friendList={friendList}
               lightDarkTheme={lightDarkTheme}
               data={alphabFriendList}
               friendId={selectedFriend ? selectedFriend?.id : null}
               onPress={handleSelectFriend}
-                   onLongPress={toggleLockOnFriend}
+              onLongPress={toggleLockOnFriend}
             />
           )}
         </View>

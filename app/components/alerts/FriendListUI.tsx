@@ -16,8 +16,10 @@ import { Vibration } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import { Friend } from "@/src/types/FriendTypes";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import manualGradientColors from "@/src/hooks/StaticColors";
 
 type FriendListUIProps = {
   data: Friend[];
@@ -28,6 +30,8 @@ type FriendListUIProps = {
 type FriendListItem = Friend | { message: string };
 
 const FriendListUI = ({
+  handleDeselect,
+  autoSelectFriend,
   themeAheadOfLoading,
   friendList,
   lightDarkTheme,
@@ -42,7 +46,6 @@ const FriendListUI = ({
   const { navigateToAddFriend } = useAppNavigations();
 
   const handleLongPress = (id) => {
-    console.log('long presssssss');
     Vibration.vibrate(100);
     onLongPress(id);
   };
@@ -63,6 +66,58 @@ const FriendListUI = ({
         exiting={FadeOut}
         // entering={SlideInRight.duration(260).springify(2000)}
       >
+        <View
+          style={{
+            position: "absolute",
+            right: 0,
+            height: "100%",
+            width: "auto",
+            flexDirection: "column",
+            //backgroundColor: "orange",
+          }}
+        >
+          {autoSelectFriend?.customFriend?.id === item.id && (
+            <View
+              style={{
+                width: "auto",
+                height: "auto",
+                padding: 4,
+                zIndex: 2,
+                borderRadius: 999,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: manualGradientColors.homeDarkColor,
+              }}
+            >
+              <MaterialCommunityIcons
+                name={"pin-outline"}
+                size={12}
+                color={manualGradientColors.lightColor}
+              />
+            </View>
+          )}
+
+          {autoSelectFriend?.nextFriend?.id === item.id && (
+            <View
+              style={{
+                width: "auto",
+                height: "auto",
+                padding: 4,
+                zIndex: 2,
+                borderRadius: 999,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: manualGradientColors.homeDarkColor,
+              }}
+            >
+              <MaterialCommunityIcons
+                name={"calendar-clock"}
+                size={12}
+                color={manualGradientColors.lightColor}
+              />
+            </View>
+          )}
+        </View>
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
             friendList={friendList}
@@ -82,19 +137,21 @@ const FriendListUI = ({
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
- 
             />
           </FriendTintPressable>
         )}
 
         {item && "id" in item && item.id === selectedId && (
-          <View
+          <GlobalPressable
+          onLongPress={handleDeselect}
             style={[
               styles.friendContainer,
               {
-                borderWidth: 2,
-                borderColor: "yellow",
+                borderWidth: 0,
+                //borderColor: "yellow",
                 borderRadius: ITEM_BORDER_RADIUS,
+                borderRadius: 10,
+                backgroundColor: lightDarkTheme.overlayBackground,
               },
             ]}
           >
@@ -105,9 +162,8 @@ const FriendListUI = ({
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
- 
             />
-          </View>
+          </GlobalPressable>
         )}
 
         {!("id" in item) && friendList.length < 20 && (
@@ -134,7 +190,7 @@ const FriendListUI = ({
         )}
       </Animated.View>
     ),
-    [onPress, itemColor, elementBackgroundColor]
+    [onPress, itemColor, elementBackgroundColor, autoSelectFriend]
   );
 
   const extractItemKey = (item: FriendListItem, index: number) =>

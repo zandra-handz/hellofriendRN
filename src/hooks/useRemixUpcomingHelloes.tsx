@@ -11,7 +11,7 @@ export const useRemixUpcomingHelloes = ({userId}) => {
     mutationFn: () => remixAllNextHelloes(userId),
     onSuccess: () => {
   
-      queryClient.refetchQueries({ queryKey: ["upcomingHelloes", userId] });
+      queryClient.refetchQueries({ queryKey: ["friendListAndUpcoming", userId] }); //do we want it to refetch the friends too?
 
  
       if (timeoutRef.current) clearTimeout(timeoutRef.current);

@@ -2,18 +2,21 @@ import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetO
 import manualGradientColors from "@/src/hooks/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react"; 
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext"; 
+ 
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
 import LoadingPage from "./LoadingPage"; 
-import { useUserSettings } from "@/src/context/UserSettingsContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+// import { useUserSettings } from "@/src/context/UserSettingsContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 type Props = {
   isInitializing: boolean;
 };
 
 const LocalPeacefulGradientSpinner = ({ loading, label='loading' }: Props) => {
-  const { isLoading } = useUpcomingHelloes();
-  const  { settings, loadingSettings } = useUserSettings();
-  const { loadingFriendList } = useFriendList();
+ 
+  // const { isLoading } = useFriendListAndUpcoming();
+  // const  { settings, loadingSettings } = useUserSettings();
+  // const { loadingFriendList } = useFriendList();
  
   return (
     <>
