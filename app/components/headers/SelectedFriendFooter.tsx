@@ -9,8 +9,8 @@ import AboutAppModal from "./AboutAppModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
- import { useAutoSelector } from "@/src/context/AutoSelectorContext";
- import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useAutoSelector } from "@/src/context/AutoSelectorContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import FriendThemeModal from "./FriendThemeModal";
@@ -23,37 +23,44 @@ import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import useUpdateLockins from "@/src/hooks/useUpdateLockins";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
-
-
+import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
+import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
+import { useQueryClient } from "@tanstack/react-query";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
-  userId, 
-upNextId,
-autoSelectId,
-lockedInNext,
+  userId,
+  upNextId,
+  autoSelectId,
+  lockedInNext,
 settings,
   friendId,
   friendName,
-  handleDeselectFriend,
+
   lightDarkTheme,
   overlayColor,
   dividerStyle,
-  resetTheme,
-  themeAheadOfLoading,
-
+  friendList,
+  // resetTheme,
+  // themeAheadOfLoading,
 }) => {
   const { friendDash } = useFriendDash();
   const { selectFriend } = useSelectedFriend();
-  const { navigateToFidget } = useAppNavigations(); 
-    const { updateSettings } = useUpdateSettings({userId: userId});
-  const { updateCustomLockIn, updateNextUpLockIn} = useUpdateLockins({updateSettings});
+  const { navigateToFidget } = useAppNavigations();
+  const { updateSettings } = useUpdateSettings({ userId: userId });
+  const queryClient = useQueryClient();
+  const { updateCustomLockIn, updateNextUpLockIn } = useUpdateLockins({
+    updateSettings,
+  });
   // const { selectFriend } = useSelectedFriend();
   // const { handleDeselectFriend} = useDeselectFriend({resetTheme, selectFriend});
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
-
+  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
+    useFriendStyle();
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
 
@@ -64,58 +71,50 @@ settings,
 
   const primaryColor = lightDarkTheme.primaryText;
 
+  // console.log(`SELECTED FRIEND FOOTER RERENDERED: `, upNextId, friendId);
 
-
-  // const handleDeselectFriend = () => {
-  //   deselectFriend();
-  //   resetTheme();
-  // };
-console.log(upNextId, friendId);
-
- 
-
-const handleDeselect = useCallback(
-  (friendId) => {
-    if (!autoSelectId) {
-      selectFriend(null);
-      resetTheme();
-    } else if (autoSelectId === upNextId) {
-        
-      updateNextUpLockIn(false);
-      
-      
-  
-    } else {
-      console.log('ipdate custom')
-      updateCustomLockIn(null);
-     
-    }
+  const handleDeselect = useCallback(() => {
 
 
 
+
+    deselectFriendFunction({
+      userId,
+      queryClient,
+     settings,
+      updateSettings,
+      friendId,
+      upNextId,
+      autoSelectId,
+      friendList,
+      selectFriend,
+      resetTheme,
+      getThemeAheadOfLoading,
+    });
   }, [
-    autoSelectId,
-    upNextId,
+    userId,
+    queryClient,
+    settings,
+    updateSettings,
     friendId,
+    upNextId,
+    autoSelectId,
+    friendList,
+    selectFriend,
+    resetTheme,
+    getThemeAheadOfLoading,
+  ]);
 
-  ]
-);
-
-const addCheckToDeselect = useCallback(() => {
-  console.log(upNextId, friendId, lockedInNext);
-  if (lockedInNext && Number(upNextId) === Number(friendId)) {
-    Alert.alert(
-      "Hi",
-      "Test",
-      [{ text: "OK", onPress: () => handleDeselect(friendId) }]
-    );
-  } else {
-    handleDeselect(friendId);
-  }
-}, [lockedInNext, upNextId, friendId, handleDeselect]);
-
-
-
+  const addCheckToDeselect = useCallback(() => {
+    console.log(`addCheckToDeselect`, upNextId, friendId, lockedInNext);
+    if (lockedInNext && Number(upNextId) === Number(friendId)) {
+      Alert.alert("Hi", "Test", [
+        { text: "OK", onPress: () => handleDeselect() },
+      ]);
+    } else {
+      handleDeselect();
+    }
+  }, [lockedInNext, upNextId, friendId, handleDeselect]);
 
   const RenderDeselectButton = useCallback(
     () => (
@@ -134,7 +133,7 @@ const addCheckToDeselect = useCallback(() => {
             color={primaryColor}
           />
         }
-        onPress={() => addCheckToDeselect()}
+        onPress={() => handleDeselect()}
       />
     ),
     [primaryColor]
@@ -202,8 +201,8 @@ const addCheckToDeselect = useCallback(() => {
         icon={
           <Fontisto
             name={"spinner-fidget"}
-                name={"heartbeat-alt"}
-                // name={"heartbeat"}
+            name={"heartbeat-alt"}
+            // name={"heartbeat"}
             size={footerIconSize}
             color={primaryColor}
           />
@@ -293,7 +292,7 @@ const addCheckToDeselect = useCallback(() => {
         <View>
           <FriendSettingsModal
             userId={userId}
-            handleDeselectFriend={handleDeselectFriend} 
+            handleDeselectFriend={handleDeselect}
             lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={friendSettingsModalVisible}

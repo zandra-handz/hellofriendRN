@@ -48,6 +48,7 @@ export const LDThemeProvider = ({ children }) => {
 
   useEffect(() => {
     if (!settings) return;
+    console.log('rerendering LD theme useeffect');
     const newTheme =
       settings.manual_dark_mode !== null
         ? settings.manual_dark_mode

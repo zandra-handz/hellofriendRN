@@ -683,7 +683,7 @@ export const SearchForMidpointLocations = async (locationData: object) => {
 };
 
 export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
-  console.log(fieldUpdates);
+  // console.log(`payload in api call`, fieldUpdates);
   try {
     const response = await helloFriendApiClient.patch(
       `/users/settings/update/`,

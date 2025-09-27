@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useRef } from "react";
-import {  useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { addFriendAddress } from "../calls/api";
 
@@ -14,50 +14,50 @@ const useCreateFriendAddress = ({ userId, friendId }: Props) => {
 
   const queryClient = useQueryClient();
 
+  const createFriendAddressMutation = useMutation({
+    mutationFn: (data) => addFriendAddress(friendId, data),
+    onSuccess: (newAddress) => {
+      queryClient.setQueryData(
+        ["friendAddresses", userId, friendId],
+        (oldData) => {
+          if (!oldData || !Array.isArray(oldData)) return [newAddress];
 
+          const combinedData = [...oldData, newAddress];
 
-    const createFriendAddressMutation = useMutation({
-      mutationFn: (data) => addFriendAddress(friendId, data),
-      onSuccess: (newAddress) => {
-        queryClient.setQueryData(
-          ["friendAddresses", userId, friendId],
-          (oldData) => {
-            if (!oldData || !Array.isArray(oldData)) return [newAddress];
-  
-            const combinedData = [...oldData, newAddress];
-  
-            return combinedData.map((address) => {
-              if (address.is_default && address.id !== newAddress.id) {
-                console.log("Turning off default for", address.title);
-                return { ...address, is_default: false };
-              }
-              if (address.id === newAddress.id) {
-                console.log("Turning on default for address", address.title);
-                return { ...address, is_default: true };
-              }
-              return address;
-            });
-          }
-        );
-  
-        timeoutRef.current = setTimeout(() => {
-          createFriendAddressMutation.reset();
-        }, 2000);
-      },
-      onError: (error) => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
+          return combinedData.map((address) => {
+            if (address.is_default && address.id !== newAddress.id) {
+              console.log("Turning off default for", address.title);
+              return { ...address, is_default: false };
+            }
+            if (address.id === newAddress.id) {
+              console.log("Turning on default for address", address.title);
+              return { ...address, is_default: true };
+            }
+            return address;
+          });
         }
-  
-        console.error("Error adding address:", error);
-        timeoutRef.current = setTimeout(() => {
-          createFriendAddressMutation.reset();
-        }, 2000);
-      },
-    });
+      );
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
+      timeoutRef.current = setTimeout(() => {
+        createFriendAddressMutation.reset();
+      }, 2000);
+    },
+    onError: (error) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
-      const createFriendAddress = (title, address) => {
+      console.error("Error adding address:", error);
+      timeoutRef.current = setTimeout(() => {
+        createFriendAddressMutation.reset();
+      }, 2000);
+    },
+  });
+
+  const createFriendAddress = (title, address) => {
     try {
       const addressData = {
         title,
@@ -73,11 +73,10 @@ const useCreateFriendAddress = ({ userId, friendId }: Props) => {
     }
   };
 
-
   return {
     createFriendAddress,
     createFriendAddressMutation,
-  }
+  };
 };
 
 export default useCreateFriendAddress;

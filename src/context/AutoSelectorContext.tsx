@@ -54,7 +54,7 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
 
   const autoSelectId = useMemo(() => {
     return settings?.lock_in_custom_string
-      ? settings?.lock_in_custom_string
+      ? Number(settings?.lock_in_custom_string)
       : settings?.lock_in_next
         ? upNextId
         : null;

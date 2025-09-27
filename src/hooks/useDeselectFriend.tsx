@@ -23,15 +23,13 @@ const useDeselectFriend = ({
 }: Props) => {
   const { selectedFriend, selectFriend } = useSelectedFriend();
   const { resetTheme, getThemeAheadOfLoading } = useFriendStyle();
-  const {upcomingHelloes} = useUpcomingHelloes();
+  const { upcomingHelloes } = useUpcomingHelloes();
   const { friendList } = useFriendList();
-  const handleDeselectFriend = async ( ) => {
-
-    
-      const upNextId = useMemo(() => {
-        console.error("Calculating upNextId because upcomingHelloes changed");
-        return upcomingHelloes?.[0]?.friend?.id ?? null;
-      }, [upcomingHelloes]); 
+  const handleDeselectFriend = async () => {
+    const upNextId = useMemo(() => {
+      console.error("Calculating upNextId because upcomingHelloes changed");
+      return upcomingHelloes?.[0]?.friend?.id ?? null;
+    }, [upcomingHelloes]);
     console.error("handledeselect friend");
 
     if (updateSettings && selectedFriend?.id) {
@@ -46,7 +44,9 @@ const useDeselectFriend = ({
       } else {
         await updateSettings({ lock_in_custom_string: null });
 
-         const selectedOption = friendList?.find((friend) => friend.id === upNextId?.id);
+        const selectedOption = friendList?.find(
+          (friend) => friend.id === upNextId?.id
+        );
         console.log(`selectedOption`, selectedOption);
         selectFriend(selectedOption);
         if (selectedOption?.id) {

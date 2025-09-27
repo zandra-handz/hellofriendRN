@@ -33,6 +33,7 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
 
   const selectFriend = (friend: Friend) => {
     setSelectedFriend(friend);
+    console.log('selecting friend in context');
   };
 
   const deselectFriend = () => {

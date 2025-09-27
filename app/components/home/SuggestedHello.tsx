@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useMemo, useState } from "react";
-import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
- 
+import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+
 type Props = {
   friendId: number;
   padding: number;
@@ -15,7 +15,7 @@ type Props = {
 
 const SuggestedHello = ({
   isLoading, // ( = loadingDash )
-  friendId, 
+  friendId,
   primaryColor,
   primaryOverlayColor,
   primaryBackground,
@@ -26,7 +26,7 @@ const SuggestedHello = ({
   borderRadius = 14,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
-
+ 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
@@ -49,7 +49,7 @@ const SuggestedHello = ({
               {
                 fontFamily: "Poppins-Regular",
                 fontSize: subWelcomeTextStyle.fontSize,
-                fontWeight: 'bold',
+                fontWeight: "bold",
                 lineHeight: 20,
 
                 color: primaryColor,
@@ -66,7 +66,7 @@ const SuggestedHello = ({
                 color: primaryColor,
                 lineHeight: 32,
                 fontSize: welcomeTextStyle.fontSize - 12,
-            
+
                 opacity: 0.9,
                 paddingRight: 8, // EYEBALL
               },
@@ -102,15 +102,14 @@ const SuggestedHello = ({
           borderRadius: borderRadius,
           // backgroundColor: 'orange',
           padding: padding,
-         // paddingRight: 10,
+          // paddingRight: 10,
           width: "100%",
           backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
           borderRadius: 10,
         }}
-      > 
+      >
 
 
-     
         {/* {isLoading && (
           <LoadingBlock loading={true} borderRadius={borderRadius} />
         )} */}
@@ -127,7 +126,7 @@ const SuggestedHello = ({
               }}
             >
               <GeckoGoButton
-              size={60}
+                size={60}
                 onSinglePress={openModal}
                 onDoublePress={navigateToFinalize}
               />
@@ -145,7 +144,6 @@ const SuggestedHello = ({
             justifyContent: "center",
           }}
         ></View>
-                 
       </View>
       {optionsModalVisible && (
         <View>

@@ -3,9 +3,14 @@ import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import Animated, { FadeOut, FadeIn, SlideInDown } from "react-native-reanimated";
+import Animated, {
+  FadeOut,
+  FadeIn,
+  SlideInDown,
+} from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
+import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 interface FriendHeaderMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
@@ -17,30 +22,31 @@ interface FriendHeaderMessageUIProps {
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
+  friendId,
   primaryColor,
   welcomeTextStyle,
   backgroundColor = "red",
   selectedFriendName = "",
   loadingNewFriend = false,
- cardBackgroundColor,
+  cardBackgroundColor,
 
   // onPress,
 }) => {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+  const { autoSelectId } = useAutoSelector();
 
   const { navigateToSelectFriend } = useAppNavigations();
 
   const handleOnLongPress = () => {
-        Vibration.vibrate(100); 
+    Vibration.vibrate(100);
     navigateToSelectFriend();
-
   };
 
   const message = `${selectedFriendName}`;
 
   return (
     <GlobalPressable
-    onLongPress={handleOnLongPress}
+      onLongPress={handleOnLongPress}
       entering={SlideInDown}
       exiting={FadeOut}
       style={[
@@ -49,7 +55,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
-        
+
           marginBottom: 2,
           borderRadius: 4,
           paddingTop: 0, // same as friend message
@@ -58,14 +64,37 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           justifyContent: "flex-start",
           backgroundColor: "transparent",
 
-          minHeight:  150,
-          height: 'auto',
+          minHeight: 150,
+          height: "auto",
         },
       ]}
     >
+      {friendId === autoSelectId && (
+
+ 
       <View
         style={{
-         paddingTop: 50,
+          position: "absolute",
+          top: 20,
+          right: 20,
+          padding: 4,
+          backgroundColor: manualGradientColors.lightColor,
+          borderRadius: 999,
+          zIndex: 9000,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <MaterialCommunityIcons
+          name={"pin-outline"}
+          size={32}
+          color={manualGradientColors.homeDarkColor}
+        />
+      </View>
+           )}
+      <View
+        style={{
+          paddingTop: 50,
           paddingBottom: 30,
           width: "100%",
           height: "100%",

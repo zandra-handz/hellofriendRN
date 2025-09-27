@@ -175,6 +175,7 @@ paddingHorizontal,
             >
               <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
                 <FriendHeaderMessageUI
+                friendId={selectedFriendId}
                   cardBackgroundColor={CARD_BACKGROUND}
                   selectedFriendName={`${selectedFriendName}`}
                   loadingNewFriend={loadingDash}

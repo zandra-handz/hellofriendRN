@@ -24,28 +24,23 @@ const useSelectFriend = ({
 }: Props) => { 
 
   const {  selectFriend } = useSelectedFriend(); 
-  const { resetTheme, getThemeAheadOfLoading} = useFriendStyle();
+  const { getThemeAheadOfLoading} = useFriendStyle();
 
 
 
   const handleSelectFriend = (friendId) => {
-    console.log(friendId);
+    console.log(`friend in handleSelectFriend`,friendId);
     if (!friendList || friendList?.length < 1) {
-      console.log("returninggggggggggggg");
+ 
       return;
     }
 
-    if (!friendId) {
-      console.log('deseelctinggggggggggggggggggggg');
-      selectFriend(null);
-      resetTheme();
-      return;
-    }
+   
     
     const selectedOption = friendList?.find((friend) => friend.id === Number(friendId));
 
     const selectedFriend = selectedOption || null;
-    console.log(selectedFriend);
+    // console.log(selectedFriend);
     if (selectedOption) {
       selectFriend(selectedFriend);
       getThemeAheadOfLoading(selectedFriend);
@@ -55,18 +50,7 @@ const useSelectFriend = ({
         navigateOnSelect();
       }
     }
-    // } else {
-    //   selectFriend(null);
-    //   resetTheme();
-
-    //   if (actionOnNull) {
-    //     actionOnNull();
-    //   }
-    // }
-
-    // if (navigationAction) {
-    //   navigateAction();
-    // }
+ 
   };
 
   return { handleSelectFriend };
