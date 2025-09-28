@@ -38,8 +38,8 @@ const ScreenFidget = (props: Props) => {
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.priamryText;
 
-  console.log(friendDash.time_score);
-  console.log(friendDash.days_since);
+  // console.log(friendDash.time_score);
+  // console.log(friendDash.days_since);
 
   //   @property
   // def time_score(self):

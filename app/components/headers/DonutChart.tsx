@@ -1,5 +1,5 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Animated, {
   withDelay,
   withTiming,
@@ -16,8 +16,9 @@ import {
   SkFont,
   Skia,
   Text,
-  Group, 
-} from "@shopify/react-native-skia"; 
+  Group,
+} from "@shopify/react-native-skia";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -52,7 +53,7 @@ type Props = {
 const DonutChart = ({
   totalJS,
   primaryColor,
-   darkerOverlayBackgroundColor,
+  darkerOverlayBackgroundColor,
   onCategoryPress,
   onPlusPress,
   onCenterPress,
@@ -77,10 +78,9 @@ const DonutChart = ({
   const array = Array.from({ length: n });
 
   const innerRadius = radius - outerStrokeWidth / 2;
- 
+
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
-
 
   const fadeInValue = useSharedValue(0);
 
@@ -88,19 +88,18 @@ const DonutChart = ({
     return {
       opacity: fadeInValue.value,
       zIndex: 4,
-    }
-
+    };
   }, [fadeInValue]);
-
 
   useEffect(() => {
     if (!totalJS) {
       return;
-    } 
-    
+    }
 
-    fadeInValue.value = withDelay(totalJS * 80, withTiming(1, {duration: 500}));
-
+    fadeInValue.value = withDelay(
+      totalJS * 80,
+      withTiming(1, { duration: 500 })
+    );
   }, [totalJS]);
 
   useDerivedValue(() => {
@@ -185,8 +184,7 @@ const DonutChart = ({
             fontSize: labelsSize,
             fontFamily: "Poppins-Regular",
             fontWeight: "bold",
-            backgroundColor:
-              darkerOverlayBackgroundColor,
+            backgroundColor: darkerOverlayBackgroundColor,
 
             alignSelf: "center",
             padding: 4,
@@ -269,7 +267,7 @@ const DonutChart = ({
           <Text
             x={textX}
             //  x={0}
-          //  x={278}
+            //  x={278}
             //  y={radius + fontSize.height / 3.4}
             y={300}
             text={targetText}
@@ -284,28 +282,29 @@ const DonutChart = ({
       </Animated.View>
       {onPlusPress && onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
-          <Pressable
-            onPress={onCenterPress}
-            hitSlop={10}
-            style={{
-              zIndex: 100000,
-              elevation: 100000,
-              position: "absolute",
-              width: 40,
-              height: 40,
-              top: "50%",
-              left: "50%",
-              // backgroundColor: "red",
-              borderRadius: 999,
-              transform: [{ translateX: -20 }, { translateY: -20 }],
-            }}
-          />
-
           <MaterialCommunityIcons
             style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
             name={"leaf"}
             size={200}
             color={color}
+          />
+
+          <Pressable
+            onPress={onCenterPress}
+            hitSlop={10}
+            style={{
+              zIndex: 1000000,
+              elevation: 1000000,
+              position: "absolute",
+              width: 130,
+              height: 130,
+
+              top: "50%",
+              left: "50%",
+              //  backgroundColor: "red",
+              borderRadius: 999,
+              transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
+            }}
           />
         </View>
       )}
@@ -322,7 +321,7 @@ const DonutChart = ({
           // name={"playlist-plus"}
           name={"plus"}
           size={70}
-          opacity={.2}
+          opacity={0.2}
           color={primaryColor}
         />
       </Pressable>
@@ -339,7 +338,7 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 2,
 
-   // backgroundColor: "pink",
+    // backgroundColor: "pink",
   },
   centerWrapper: {
     justifyContent: "center",

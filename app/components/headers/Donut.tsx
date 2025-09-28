@@ -1,12 +1,12 @@
+import { View, StyleSheet, DimensionValue } from "react-native";
+import React, { useMemo, useEffect } from "react";
+
 import {
-  View, 
-  StyleSheet, 
-  DimensionValue,
-} from "react-native"; 
-import React, {   useMemo,  useEffect } from "react";
- 
-import { useSharedValue, withTiming, useDerivedValue  } from "react-native-reanimated";
- 
+  useSharedValue,
+  withTiming,
+  useDerivedValue,
+} from "react-native-reanimated";
+
 import DonutChart from "./DonutChart";
 import { useFont } from "@shopify/react-native-skia";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
@@ -15,7 +15,7 @@ type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
-   onPlusPress: () => void;
+  onPlusPress: () => void;
   data: string[];
   radius: number;
   strokeWidth: number;
@@ -33,8 +33,8 @@ type Props = {
 
 const Donut = ({
   friendStyle,
-  primaryColor, 
-   darkerOverlayBackgroundColor,
+  primaryColor,
+  darkerOverlayBackgroundColor,
   onCategoryPress,
   onCategoryLongPress,
   onPlusPress,
@@ -50,13 +50,12 @@ const Donut = ({
   labelsDistanceFromCenter = -17,
   labelsSliceEnd = 1,
   centerTextSize = 26,
-}: Props) => { 
- 
+}: Props) => {
   // console.log(`colors in donut: `, colors);
-  //   console.log(`data in donut: `, data); 
+  //   console.log(`data in donut: `, data);
   const { calculatePercentage } = useMomentSortingFunctions(data);
   const totalValue = useSharedValue(0);
-  const decimalsValue = useSharedValue<number[]>([]); 
+  const decimalsValue = useSharedValue<number[]>([]);
   const labelsValue = useSharedValue<string[]>([]);
   // const [ labelsJS, setLabelsJS ] = useState([]);
 
@@ -66,8 +65,6 @@ const Donut = ({
   const OUTER_STROKE_WIDTH = outerStrokeWidth;
   const GAP = gap;
   const n = colors.length;
- 
- 
 
   const getPieChartDataMetrics = (data) => {
     // console.warn(`DATA TO MAKE SERIES DATA: `, data);
@@ -102,74 +99,67 @@ const Donut = ({
     const dataCountList = data.filter((item) => Number(item.size) > 0);
     const { total, labels, percentages, decimals } =
       getPieChartDataMetrics(dataCountList);
- 
+
     return {
-    
       labels,
       total,
       decimals,
       percentages,
     };
   }, [data, colors]); //, labelSize]);
- 
+
   const categoryStopsValue = useSharedValue<number[]>([]);
 
-// useEffect(() => {
-//   if (!seriesData) return;
+  // useEffect(() => {
+  //   if (!seriesData) return;
 
-//   // cumulative totals per category
-//   let cumulative = 0;
-//   const categoryCounts = seriesData.decimals.map(d => {
-//     const count = Math.round(seriesData.total * d);
-//     cumulative += count;
-//     return cumulative;
-//   });
+  //   // cumulative totals per category
+  //   let cumulative = 0;
+  //   const categoryCounts = seriesData.decimals.map(d => {
+  //     const count = Math.round(seriesData.total * d);
+  //     cumulative += count;
+  //     return cumulative;
+  //   });
 
-//   console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
-//   // Animate to these new totals
-//   categoryTotals.value = withTiming(categoryCounts, { duration: 1000 });
-// }, [seriesData]);
+  //   console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
+  //   // Animate to these new totals
+  //   categoryTotals.value = withTiming(categoryCounts, { duration: 1000 });
+  // }, [seriesData]);
 
   // ⬇ useEffect to set shared values
   useEffect(() => {
     if (!seriesData) return;
     totalValue.value = withTiming(seriesData.total, { duration: 1000 });
-    
+
     decimalsValue.value = [...seriesData.decimals];
-   labelsValue.value = [...seriesData.labels];
+    labelsValue.value = [...seriesData.labels];
 
+    let cumulative = 0;
+    const categoryCounts = seriesData.decimals.map((d) => {
+      const count = Math.round(seriesData.total * d);
+      cumulative += count;
+      return cumulative;
+    });
 
-  let cumulative = 0;
-  const categoryCounts = seriesData.decimals.map(d => {
-    const count = Math.round(seriesData.total * d);
-    cumulative += count;
-    return cumulative;
-  });
-
-  // console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
-  // Animate to these new totals
-  categoryStopsValue.value = categoryCounts; 
-
-  
-
- 
+    // console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
+    // Animate to these new totals
+    categoryStopsValue.value = categoryCounts;
   }, [seriesData]);
 
-
   const categoryTotals = useDerivedValue(() => {
-  if (!categoryStopsValue.value || categoryStopsValue.value.length === 0) return 0;
+    if (!categoryStopsValue.value || categoryStopsValue.value.length === 0)
+      return 0;
 
-  const total = Math.ceil(totalValue.value); // round up to match “current item”
-  
-  for (let i = 0; i < categoryStopsValue.value.length; i++) {
-    if (total <= categoryStopsValue.value[i]) {
-      return i + 1; // +1 because categories start at 1
+    const total = Math.ceil(totalValue.value); // round up to match “current item”
+
+    for (let i = 0; i < categoryStopsValue.value.length; i++) {
+      if (total <= categoryStopsValue.value[i]) {
+        return i + 1; // +1 because categories start at 1
+      }
     }
-  }
 
-  return categoryStopsValue.value.length; // fallback to last category
-});
- 
+    return categoryStopsValue.value.length; // fallback to last category
+  });
 
   const font = useFont(
     require("@/app/assets/fonts/Poppins-Regular.ttf"),
@@ -186,27 +176,26 @@ const Donut = ({
   }
 
   const fontColor = primaryColor;
-  const iconColor = friendStyle.lightColor; 
-  const backgroundColor = 'transparent';
+  const iconColor = friendStyle.lightColor;
+  const backgroundColor = "transparent";
 
-  return ( 
-    <View style={styles.container}> 
+  return (
+    <View style={styles.container}>
       <View
         style={[
           {
             height: DIAMETER,
             width: DIAMETER,
-         
+
             borderRadius: RADIUS,
             backgroundColor: backgroundColor,
-          
           },
         ]}
       >
         <DonutChart
-        totalJS={totalJS}
+          totalJS={totalJS}
           primaryColor={primaryColor}
-   darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+          darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
           onCategoryPress={onCategoryPress}
           onCategoryLongPress={onCategoryLongPress}
           onPlusPress={onPlusPress}
@@ -224,7 +213,7 @@ const Donut = ({
           backgroundColor={backgroundColor}
           n={n}
           gap={GAP}
-          decimalsValue={decimalsValue} 
+          decimalsValue={decimalsValue}
           labelsValue={labelsValue}
           // labelsJS={labelsJS} // using derived value internally
           colors={colors}

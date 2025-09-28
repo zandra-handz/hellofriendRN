@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     zIndex: 1, 
-    paddingHorizontal: 10,
+    paddingHorizontal: 6,
     marginBottom: 10,
   },
   divider: {

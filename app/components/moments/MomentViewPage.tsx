@@ -1,18 +1,20 @@
 import { View, Text, DimensionValue, ScrollView } from "react-native";
-import React, { useState } from "react"; 
+import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
- import { AppFontStyles } from "@/src/hooks/StaticFonts";
- 
-import { MaterialCommunityIcons} from "@expo/vector-icons";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
   runOnJS,
   useAnimatedReaction,
 } from "react-native-reanimated";
+import GlobalPressable from "../appwide/button/GlobalPressable";
+import manualGradientColors from "@/src/hooks/StaticColors";
 
 interface Props {
   item: object;
@@ -23,7 +25,7 @@ interface Props {
   categoryColorsMap: object;
   currentIndexValue: SharedValue;
   cardScaleValue: SharedValue;
- 
+
   marginKeepAboveFooter: number;
 }
 
@@ -32,7 +34,7 @@ const MomentViewPage: React.FC<Props> = ({
   friendId,
   textColor,
   darkerOverlayColor,
-  lighterOverlayColor, 
+  lighterOverlayColor,
   item,
   index,
   width,
@@ -41,9 +43,7 @@ const MomentViewPage: React.FC<Props> = ({
   categoryColorsMap,
   currentIndexValue,
   cardScaleValue,
-}) => { 
- 
-
+}) => {
   const { handlePreAddMoment } = usePreAddMoment({
     userId: userId,
     friendId: friendId,
@@ -54,6 +54,44 @@ const MomentViewPage: React.FC<Props> = ({
   });
   const navigation = useNavigation();
   const welcomeTextStyle = AppFontStyles.welcomeText;
+  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
+
+  const [utilityTrayVisible, setUtilityTrayVisible] = useState(false);
+
+  const openUtilityTray = () => {
+    setUtilityTrayVisible(true);
+  };
+
+  const closeUtilityTray = () => {
+    setUtilityTrayVisible(false);
+  };
+
+  const toggleUtilityTray = () => {
+    setUtilityTrayVisible((prev) => !prev);
+  };
+
+  const renderTrayToggler = useCallback(() => {
+    return (
+      <GlobalPressable
+        onPress={toggleUtilityTray}
+        style={{
+          padding: 4,
+          paddingHorizontal: 2,
+          width: 'auto',
+
+          alignItems: "center",
+          //  backgroundColor: darkerOverlayColor,
+          borderRadius: 999,
+        }}
+      >
+        <MaterialCommunityIcons
+          name={!utilityTrayVisible ? "eye" : "eye-closed"}
+          size={20}
+          color={textColor}
+        />
+      </GlobalPressable>
+    );
+  }, [toggleUtilityTray, textColor]);
 
   const [currentIndex, setCurrentIndex] = useState();
 
@@ -80,19 +118,20 @@ const MomentViewPage: React.FC<Props> = ({
   }));
 
   const renderTrashIcon = () => {
-    return <MaterialCommunityIcons
-    name={'delete'}
-    size={20}
-    color={textColor}/>
-  }
+    return (
+      <MaterialCommunityIcons name={"delete"} size={20} color={textColor} />
+    );
+  };
 
   const handleEditMoment = () => {
-    console.log('navving to edit screen', item?.capsule);
+    console.log("navving to edit screen", item?.capsule);
+
     navigation.navigate("MomentFocus", {
       momentText: item?.capsule || null,
       updateExistingMoment: true,
       existingMomentObject: item || null,
     });
+    closeUtilityTray();
   };
 
   const saveToHello = async () => {
@@ -133,7 +172,7 @@ const MomentViewPage: React.FC<Props> = ({
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "transparent",
-          padding: 4,
+          padding: 6,
           borderWidth: 0,
           width: width,
         },
@@ -152,14 +191,15 @@ const MomentViewPage: React.FC<Props> = ({
             {
               padding: 20,
               borderRadius: 40,
+              borderRadius: 12,
               flexDirection: "column",
               justifyContent: "flex-start",
               flex: 1,
               marginBottom: marginBottom,
               zIndex: 1,
               overflow: "hidden",
-              backgroundColor:
-                darkerOverlayColor,
+              // backgroundColor: darkerOverlayColor,
+              backgroundColor: CARD_BACKGROUND,
             },
           ]}
         >
@@ -177,7 +217,7 @@ const MomentViewPage: React.FC<Props> = ({
               width: "100%",
             }}
           >
-            <MaterialCommunityIcons
+            {/* <MaterialCommunityIcons
               name={"leaf"}
               onPress={saveToHello}
               size={60}
@@ -186,15 +226,14 @@ const MomentViewPage: React.FC<Props> = ({
             />
             <MaterialCommunityIcons
               onPress={saveToHello}
-              name={"progress-upload"}
-              size={28}
-              style={{ position: "absolute", top: 16, right: 20 }}
+              name={"plus"}
+              size={26}
+              style={{ position: "absolute", top: 16, right: -8 }}
               color={textColor}
-            />
+            /> */}
 
             <Text
               style={[
-               
                 welcomeTextStyle,
                 {
                   color: textColor,
@@ -207,41 +246,105 @@ const MomentViewPage: React.FC<Props> = ({
               {item.user_category_name}
             </Text>
           </View>
-          <View style={{ flexDirection: "row" }}>
-            <MaterialCommunityIcons
-              name={"pencil-outline"}
-              onPress={handleEditMoment}
-              size={20}
-              color={lighterOverlayColor}
-              color={categoryColor}
-            />
-          </View>
 
-
-
-
-          
           <View style={{ height: "90%", width: "100%" }}>
             <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
               <Text
-                style={[ 
-                welcomeTextStyle,
-                  {color: textColor, fontSize: 15, lineHeight: 24 },
+                style={[
+                  welcomeTextStyle,
+                  { color: textColor, fontSize: 15, lineHeight: 24 },
                 ]}
               >
                 {" "}
                 {item.capsule}
               </Text>
-              <View style={{ flexDirection: "row", height: 40 }}>
-                <SlideToDeleteHeader
-                  itemToDelete={item}
-                  onPress={handleDelete}
-                  sliderWidth={"100%"}
-                  targetIcon={renderTrashIcon}
-                  sliderTextColor={textColor}
-                />
-              </View>
             </ScrollView>
+            <View
+              style={{
+                width: "100%",
+                height: "auto",
+                // backgroundColor: "orange",
+                justifyContent: "center",
+                position: "absolute",
+                flexDirection: "column",
+                bottom: 0,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  right: 0,
+                  bottom: 10,
+                }}
+              >
+                {renderTrayToggler()}
+              </View>
+
+              {utilityTrayVisible && (
+                <>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginBottom: 20,
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <GlobalPressable
+                    onPress={saveToHello}
+                      style={{
+                        padding: 2,
+                        borderRadius: 999,
+                        backgroundColor: manualGradientColors.lightColor,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name={"plus-circle"}
+                        // onPress={saveToHello}
+                        size={20}
+                        color={lighterOverlayColor}
+                        color={manualGradientColors.darkColor}
+                      />
+                    </GlobalPressable>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginBottom: 12,
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <GlobalPressable
+                    // onPress={handleEditMoment}
+                      style={{
+                        padding: 2,
+                        borderRadius: 999,
+                        backgroundColor: manualGradientColors.lightColor,
+                        backgroundColor: darkerOverlayColor,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name={"pencil-outline"}
+                        onPress={handleEditMoment}
+                        size={20}
+                        color={lighterOverlayColor}
+                        color={categoryColor}
+                      />
+                    </GlobalPressable>
+                  </View>
+                  <View style={{ flexDirection: "row", height: 40 }}>
+                    <SlideToDeleteHeader
+                    paddingHorizontal={6}
+                      itemToDelete={item}
+                      onPress={handleDelete}
+                      sliderWidth={"100%"}
+                      targetIcon={renderTrashIcon}
+                      sliderTextColor={textColor}
+                    />
+                  </View>
+                </>
+              )}
+            </View>
           </View>
         </View>
         {/* <SlideToDeleteHeader

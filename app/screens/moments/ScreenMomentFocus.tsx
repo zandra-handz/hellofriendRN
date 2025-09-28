@@ -52,12 +52,11 @@ const ScreenMomentFocus = () => {
   //using this arrangement below to keep top and bottom bar spacing the same :)
   const CARD_PADDING = 4;
   const SPACER_BETWEEN_BAR_AND_CARD = 2; // low bc there is already parent padding
-  const topBarHeight = 50; 
+  const topBarHeight = 50;
 
   const topBarTotalHeight = topBarHeight;
- 
+
   const handleOpenCatCreator = () => {
- 
     setCatCreatorVisible(true);
   };
 
@@ -131,7 +130,7 @@ const ScreenMomentFocus = () => {
           // entering={SlideInUp}
           // exiting={SlideOutUp}
           style={{
-            height: topBarTotalHeight,  
+            height: topBarTotalHeight,
             zIndex: 60000,
             paddingHorizontal: PADDING_HORIZONTAL,
           }}
@@ -157,12 +156,11 @@ const ScreenMomentFocus = () => {
           style={{
             width: "100%",
             flex: 1,
-            marginTop: SPACER_BETWEEN_BAR_AND_CARD, 
-        
+            marginTop: SPACER_BETWEEN_BAR_AND_CARD,
           }}
         >
           <MomentWriteEditView
-         paddingHorizontal={PADDING_HORIZONTAL}
+            paddingHorizontal={PADDING_HORIZONTAL}
             defaultCategory={settings?.user_default_category}
             manualGradientColors={manualGradientColors}
             capsuleList={capsuleList}

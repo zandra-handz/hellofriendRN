@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     width: "100%",
     zIndex: 1,
     // backgroundColor: "pink",
-    paddingHorizontal: 10,
+    paddingHorizontal: 6,
     marginBottom: 10,
   },
   divider: {

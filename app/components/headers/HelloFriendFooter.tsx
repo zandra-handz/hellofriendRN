@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
- 
+
 // app components
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
@@ -16,29 +16,28 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import manualGradientColors  from "@/src/hooks/StaticColors";
- import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 //  import { useFriendDash } from "@/src/context/FriendDashContext";
 const HelloFriendFooter = ({
   userId,
   username,
- 
+
   friendId,
-  friendName,  
- 
-  lightDarkTheme,  
+  friendName,
+
+  lightDarkTheme,
   overlayColor,
-  dividerStyle,  
+  dividerStyle,
 }) => {
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-// const { friendDash } = useFriendDash();
+  // const { friendDash } = useFriendDash();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { themeAheadOfLoading  } =
-    useFriendStyle(); 
+  const { themeAheadOfLoading } = useFriendStyle();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
-  const [reportModalVisible, setReportModalVisible] = useState(false); 
+  const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   // const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
   //   useState(false);
@@ -48,7 +47,7 @@ const HelloFriendFooter = ({
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
 
-  const primaryColor = lightDarkTheme.primaryText; 
+  const primaryColor = lightDarkTheme.primaryText;
   const primaryBackground = lightDarkTheme.primaryBackground;
 
   useEffect(() => {
@@ -66,7 +65,6 @@ const HelloFriendFooter = ({
       keyboardDidHideListener.remove();
     };
   }, []);
- 
 
   // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
@@ -91,8 +89,6 @@ const HelloFriendFooter = ({
     ),
     [primaryColor]
   );
-
- 
 
   const RenderSettingsButton = useCallback(
     () => (
@@ -131,25 +127,23 @@ const HelloFriendFooter = ({
     [primaryColor, friendId]
   );
 
- 
   const handleCenterButtonToggle = () => {
     // console.log("center button toggled!");
     // if (friendId) {
     //   setFriendSettingsModalVisible(true);
     // } else {
-      setCategoriesModalVisible((prev) => !prev);
+    setCategoriesModalVisible((prev) => !prev);
     // }
   };
 
   const RenderFriendProfileButton = useCallback(
     () => (
       <FriendProfileButton
-              friendId={friendId}
+        friendId={friendId}
         friendName={friendName}
-       primaryColor={primaryColor}
+        primaryColor={primaryColor}
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
-
         onPress={() => handleCenterButtonToggle()}
       />
     ),
@@ -177,7 +171,7 @@ const HelloFriendFooter = ({
   return (
     <GradientBackground
       useFriendColors={!!friendId}
-      screenname={'hellofriendfooter'}
+      screenname={"hellofriendfooter"}
       // startColor={manualGradientColors.lightColor}
       // endColor={manualGradientColors.darkColor}
       friendColorDark={themeAheadOfLoading.darkColor}
@@ -202,7 +196,7 @@ const HelloFriendFooter = ({
         ]}
       >
         <View style={styles.section}>
-           <RenderSignOutButton /> 
+          <RenderSignOutButton />
         </View>
         {/* <View style={styles.section}>
             <ButtonData />
@@ -226,11 +220,10 @@ const HelloFriendFooter = ({
         </>
 
         <View style={[styles.divider, dividerStyle]} />
-       
-          <View style={styles.section}>
-         <RenderReportIssueButton />  
-          </View>
-       
+
+        <View style={styles.section}>
+          <RenderReportIssueButton />
+        </View>
 
         <View style={[styles.divider, dividerStyle]} />
         <>
@@ -244,7 +237,6 @@ const HelloFriendFooter = ({
         <View>
           <UserSettingsModal
             userId={userId}
-        
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
@@ -253,8 +245,6 @@ const HelloFriendFooter = ({
           />
         </View>
       )}
-
- 
 
       {categoriesModalVisible && (
         <View>

@@ -10,6 +10,7 @@ import {
 import DragRightThickOutlineSvg from "@/app/assets/svgs/drag-right-thick-outline.svg";
 
 const SlideToDeleteHeader = ({
+  paddingHorizontal=6,
   onPress,
   itemToDelete,
   sliderText = "DELETE?",
@@ -95,6 +96,7 @@ const SlideToDeleteHeader = ({
             styles.slider,
             {
               flexDirection: "row",
+              paddingHorizontal: paddingHorizontal,
               backgroundColor: isDragging ? "#000002" : "transparent",
               transform: [{ translateX: position }],
               width: "auto",
@@ -110,7 +112,7 @@ const SlideToDeleteHeader = ({
             {sliderText}
           </Text>
 
-          <View style={{ paddingHorizontal: "2%" }}>
+          <View style={{ paddingHorizontal: 10}}>
             <DragRightThickOutlineSvg
               height={18}
               width={18}
@@ -121,7 +123,7 @@ const SlideToDeleteHeader = ({
       )}
 
       {TargetIcon && (
-        <View style={styles.iconContainer}>
+        <View style={[styles.iconContainer, {paddingRight: paddingHorizontal}]}>
           <TargetIcon
             height={30}
             width={30}
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: "3%",
+
     height: "100%",
     borderRadius: 30,
     borderWidth: 0.8,
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: "absolute",
-    right: 20,
+    right: 0,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -26,7 +26,7 @@ import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
-import { BlurView } from "expo-blur";
+ 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
