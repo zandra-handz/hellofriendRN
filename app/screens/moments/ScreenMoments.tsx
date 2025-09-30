@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentsList from "@/app/components/moments/MomentsList";
@@ -14,7 +14,7 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 // import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-
+import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 // import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -23,6 +23,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
+import manualGradientColors from "@/src/hooks/StaticColors";
 
 const ScreenMoments = () => {
   const route = useRoute();
@@ -42,9 +43,9 @@ const ScreenMoments = () => {
   });
 
   const { navigateToMomentView, navigateBack } = useAppNavigations();
+  const TIME_SCORE = 100;
 
-
-  const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming(); 
+  const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming();
 
   // const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
@@ -54,13 +55,9 @@ const ScreenMoments = () => {
   const { userCategories } = useCategories();
   // const { friendList } = useFriendList();
 
-
-
-     const friendList = friendListAndUpcoming?.friends;
+  const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
-
-
 
   const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
     useFriendStyle();
@@ -124,6 +121,22 @@ const ScreenMoments = () => {
       backgroundOverlayHeight={120}
       style={{ flex: 1 }}
     >
+            <View style={StyleSheet.absoluteFillObject}>
+        <GradientBackgroundBreathing
+          secondColorSetDark={themeAheadOfLoading.lightColor}
+          secondColorSetLight={themeAheadOfLoading.darkColor}
+          // firstColorSetDark={manualGradientColors.lightColor}
+          // firstColorSetLight={themeAheadOfLoading.darkColor}
+          firstColorSetDark={themeAheadOfLoading.lightColor}
+          firstColorSetLight={themeAheadOfLoading.darkColor}
+          // firstColorSetDark={manualGradientColors.lightColor}
+          // firstColorSetLight={manualGradientColors.darkColor}
+          timeScore={TIME_SCORE}
+          speed={2000}
+          style={{ flexDirection: "column", justifyContent: "flex-end" }}
+          direction={"horizontal"}
+        ></GradientBackgroundBreathing>
+      </View>
       <TopBarWithAddMoment
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.primaryBackground}

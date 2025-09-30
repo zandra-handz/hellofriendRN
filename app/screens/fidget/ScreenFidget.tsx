@@ -1,13 +1,11 @@
 import { View, StyleSheet, Text } from "react-native";
 import React, { useState, useMemo, useEffect } from "react";
 import Demo from "@/app/components/headers/SkiaDemo";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
-import GradientBackground from "@/app/components/appwide/display/GradientBackground";
+import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen"; 
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 import { SafeAreaView } from "react-native-safe-area-context";

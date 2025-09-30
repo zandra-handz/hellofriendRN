@@ -26,7 +26,7 @@ import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
- 
+
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -34,8 +34,8 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
-paddingHorizontal,
-  friendStyle, 
+  paddingHorizontal,
+  friendStyle,
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
@@ -115,7 +115,7 @@ paddingHorizontal,
         name={"leaf"}
         size={1200}
         color={"#8bc34a"}
-   //  color={friendStyle.lightColor}
+        //  color={friendStyle.lightColor}
 
         style={{
           position: "absolute",
@@ -175,9 +175,8 @@ paddingHorizontal,
             >
               <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
                 <FriendHeaderMessageUI
-                userId={userId}
-
-                friendId={selectedFriendId}
+                  userId={userId}
+                  friendId={selectedFriendId}
                   cardBackgroundColor={CARD_BACKGROUND}
                   selectedFriendName={`${selectedFriendName}`}
                   loadingNewFriend={loadingDash}
@@ -189,7 +188,7 @@ paddingHorizontal,
               </View>
 
               <View
-                style={{ 
+                style={{
                   flexDirection: "column",
                   flex: 1,
                   width: "100%",

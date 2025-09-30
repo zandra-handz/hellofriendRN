@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
-import { DimensionValue, View, ViewStyle } from "react-native";
+import { DimensionValue, View, ViewStyle, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // import manualGradientColors from "@/src/hooks/StaticColors";
 import { useRoute } from "@react-navigation/native";
@@ -31,22 +31,21 @@ const SafeViewAndGradientBackground = ({
   backgroundOverlayColor,
   friendId,
 
-  forceFullOpacity=false,
+  forceFullOpacity = false,
   // startColor,
   // endColor,
   backgroundTransparentOverlayColor,
   addColorChangeDelay = false,
   includeBackgroundOverlay = false,
   useSolidOverlay = false,
-  useOverlayFade = false, 
+  useOverlayFade = false,
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
- 
 }: Props) => {
   // const insets = useSafeAreaInsets();
 
   // const route = useRoute();
-console.log(`safe area vuew rerendered on ${screenname}`)
+  console.log(`safe area vuew rerendered on ${screenname}`);
   const opacityValue = useSharedValue(useOverlayFade ? 0 : 1);
 
   // const top = typeof insets.top === "number" ? insets.top : 0;
@@ -56,11 +55,11 @@ console.log(`safe area vuew rerendered on ${screenname}`)
 
   useEffect(() => {
     if (useSolidOverlay) {
-      console.error('use solid overlay triggered');
+      console.error("use solid overlay triggered");
       opacityValue.value = withTiming(0, { duration: 300 });
-    }  else if (forceFullOpacity) {
+    } else if (forceFullOpacity) {
       opacityValue.value = withTiming(1, { duration: 0 });
-    } else if  (friendId) {
+    } else if (friendId) {
       opacityValue.value = withTiming(0.46, { duration: 300 });
     } else {
       opacityValue.value = withTiming(1, { duration: 300 });
@@ -88,7 +87,9 @@ console.log(`safe area vuew rerendered on ${screenname}`)
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     if (addColorChangeDelay && includeBackgroundOverlay) {
-      console.error(`${screenname} add color change delay or include background overlay triggered thus`);
+      console.error(
+        `${screenname} add color change delay or include background overlay triggered thus`
+      );
       timeoutId = setTimeout(() => {
         setShowColorOverlay(true);
       }, 100);
@@ -101,44 +102,25 @@ console.log(`safe area vuew rerendered on ${screenname}`)
     };
   }, [includeBackgroundOverlay, addColorChangeDelay]);
 
- 
-
-  const useFriendColors = useMemo(
-    () => friendId, 
-    [
-      friendId, 
-    ]
-  );
-
+  const useFriendColors = useMemo(() => friendId, [friendId]);
 
   return (
     <GradientBackground
       useFriendColors={useFriendColors}
       screenname={screenname}
-      additionalStyles={[
- 
-        style,
-      ]} 
+      additionalStyles={[style]}
       friendColorDark={friendColorDark}
       friendColorLight={friendColorLight}
     >
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeAreaStyle}>
         <>
           {showColorOverlay && (
             <Animated.View
               style={[
                 fadeStyle,
+                styles.solidOverlayContainer,
                 {
-                  position: "absolute",
-                  zIndex: 0,
                   height: backgroundOverlayHeight,
-                  width: "100%",
-                  top: 0,
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  //opacity: 1,
-                  // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
                   backgroundColor: !useSolidOverlay
                     ? backgroundOverlayColor
                     : backgroundTransparentOverlayColor,
@@ -157,7 +139,20 @@ console.log(`safe area vuew rerendered on ${screenname}`)
   );
 };
 
+const styles = StyleSheet.create({
+  safeAreaStyle: {
+    flex: 1,
+  },
+  solidOverlayContainer: {
+    position: "absolute",
+    zIndex: 0,
+
+    width: "100%",
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+  },
+});
+
 export default SafeViewAndGradientBackground;
-
-
-

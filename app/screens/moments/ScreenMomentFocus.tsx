@@ -10,7 +10,7 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useHelloes } from "@/src/context/HelloesContext";
+ 
 
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 
@@ -18,9 +18,9 @@ import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import Animated, {
-  SlideInDown,
-  SlideInUp,
-  SlideOutUp,
+  // SlideInDown,
+  // SlideInUp,
+  // SlideOutUp,
 } from "react-native-reanimated";
 import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
 

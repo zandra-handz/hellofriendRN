@@ -12,7 +12,7 @@ type Props = {
   isInitializing: boolean;
 };
 
-const LocalPeacefulGradientSpinner = ({ loading, label='loading' }: Props) => {
+const LocalPeacefulGradientSpinner = ({ loading, label=null }: Props) => {
  
   // const { isLoading } = useFriendListAndUpcoming();
   // const  { settings, loadingSettings } = useUserSettings();
@@ -46,7 +46,7 @@ const LocalPeacefulGradientSpinner = ({ loading, label='loading' }: Props) => {
             > 
               <LoadingPage
                 loading={true}
-                label={loading}
+                label={label}
                 includeLabel={true}
                 labelColor={manualGradientColors.homeDarkColor}
                 color={manualGradientColors.homeDarkColor}

@@ -1,43 +1,49 @@
 import React from "react";
-import { View, Text } from "react-native";
-
+import { View, Text, StyleSheet } from "react-native";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 
 const LogoSmaller = () => {
-  const svgSize = 130;
-
-  const homeDarkColor = "#000002";
-
-  const fontStyle = {
-    fontFamily: "Poppins-Regular",
-    fontSize: 26,
-    lineHeight: 30,
-  };
+  // const svgSize = 130;
+  // const homeDarkColor = "#000002";
 
   return (
-    <View
-      style={{
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "auto",
-      }}
-    >
-      <View style={{}}>
+    <View style={styles.container}>
+      <View>
         <GeckoSolidSvg
-          height={svgSize}
-          width={svgSize}
-          color={homeDarkColor}
-          style={{ transform: [{ rotate: "190deg" }] }}
+          height={130}
+          width={130}
+          color={"#000002"}
+          style={styles.rotateGecko}
         />
       </View>
-      <View style={{ paddingHorizontal: "10%", marginTop: "14%" }}>
-        <Text style={[fontStyle, { textAlign: "center" }]}>
-          Welcome to hellofriend!
-        </Text>
+      <View style={styles.labelContainer}>
+        <Text style={styles.label}>Welcome to hellofriend!</Text>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    // height: "auto",
+  },
+  rotateGecko: {
+    transform: [{ rotate: "190deg" }],
+  },
+  label: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 26,
+    lineHeight: 30,
+    textAlign: "center",
+  },
+  labelContainer: {
+    paddingHorizontal: 6,
+    width: "100%",
+    marginTop: 40,
+  },
+});
 
 export default LogoSmaller;

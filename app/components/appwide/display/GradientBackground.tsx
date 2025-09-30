@@ -1,5 +1,5 @@
-import React, { ReactNode, useMemo, useEffect, useState } from "react";
-import { ViewStyle, StyleProp, StyleSheet } from "react-native";
+import React, {   ReactNode, useMemo, useEffect, useState } from "react";
+import { View, ViewStyle, StyleProp, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ColorValue } from "react-native";
 import Animated, {
@@ -73,8 +73,11 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
     opacity: transition.value,
   }));
 
+  const flattenMainStyle = StyleSheet.flatten([styles.container, additionalStyles])
+
   return (
-    <Animated.View style={[styles.container, additionalStyles]}>
+    // <Animated.View style={flattenMainStyle}>
+        <View style={flattenMainStyle}> 
       <LinearGradient
         colors={previousColors}
         start={{ x: direction[0], y: direction[1] }}
@@ -88,7 +91,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         style={[StyleSheet.absoluteFill, animatedStyle]}
       />
       {children}
-    </Animated.View>
+      </View>
+    // </Animated.View>
   );
 };
 

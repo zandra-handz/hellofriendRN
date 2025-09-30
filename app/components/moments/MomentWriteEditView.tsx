@@ -11,7 +11,7 @@ import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import LoadingPage from "../appwide/spinner/LoadingPage";
@@ -271,7 +271,7 @@ const MomentWriteEditView = ({
             // capsule: momentTextRef.current.getText(),
             capsule: momentTextToSave,
           };
-
+              showFlashMessage("Changes saved!", false, 2000);
           await handleEditMoment(existingMomentObject?.id, editData);
         }
       }

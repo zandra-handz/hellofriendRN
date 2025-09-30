@@ -15,16 +15,15 @@ type Props = {
 
 const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
  
-  const  { settings, loadingSettings } = useUserSettings();
-  const { refetch } = useUser();
-  const {signinMutation } = useSignIn({ refetchUser: refetch});
+  const  {  loadingSettings } = useUserSettings();
+ 
 
   const { isLoading} = useFriendListAndUpcoming();
  
  
   return (
     <>
-      {(isInitializing || isLoading || loadingSettings || signinMutation.isPending || signinMutation.isLoading) && (
+      {(isInitializing || isLoading || loadingSettings) && (
         <View
           style={{
             zIndex: 100000,

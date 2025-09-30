@@ -1,59 +1,57 @@
-import React, {
-  useState,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Text,
-  Keyboard,
- 
-} from "react-native";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { View, TextInput, StyleSheet, Text  } from "react-native";
+import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 
+// app spinner
+import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
+
+// app context
 import { useUser } from "@/src/context/UserContext";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+
+//app sibling
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
+// app hooks
+import useSignIn from "@/src/hooks/UserCalls/useSignIn";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+
+// app components
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
-import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
-import { useFocusEffect } from "@react-navigation/native";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
+import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 
-import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import useSignIn from "@/src/hooks/UserCalls/useSignIn";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
+//app static
+import manualGradientColors from "@/src/hooks/StaticColors";
+
+//app types
+import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
+import { signin } from "@/src/calls/api";
+
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const usernameEntered = route.params?.usernameEntered ?? false;
-  const { navigateToNewAccount, navigateBack, navigateToRecoverCredentials } =
-    useAppNavigations();
-  const { showSigninErrorMessage } = useMessageCentralizer();
-  const { lightDarkTheme } = useLDTheme();
-  const [username, setUsername] = useState(usernameEntered);
-  const [password, setPassword] = useState("");
 
   const { refetch } = useUser();
   const { onSignIn, signinMutation } = useSignIn({ refetchUser: refetch });
+
+  const { navigateToNewAccount, navigateToRecoverCredentials } =
+    useAppNavigations();
+ 
+  const { lightDarkTheme } = useLDTheme();
+  const [username, setUsername] = useState(usernameEntered);
+  const [password, setPassword] = useState("");
 
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
-  // const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   const placeholderTextColor = manualGradientColors.homeDarkColor;
+
+  console.log("screen auth rerendered");
 
   const INPUTS_GAP = 4;
   const DELAY_BEFORE_FOCUS = 300;
@@ -66,7 +64,7 @@ const ScreenAuth = () => {
 
   const handleFocusUsername = () => {
     setTimeout(() => {
-      if (usernameInputRef.current) {
+      if (usernameInputRef && usernameInputRef?.current) {
         usernameInputRef.current.focus();
       }
     }, DELAY_BEFORE_FOCUS);
@@ -74,61 +72,32 @@ const ScreenAuth = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // if (usernameEntered && !signinMutation.isSuccess) {
-          if (!signinMutation.isSuccess) {
-        console.log("KEYBOARD GETTING OPENED BY SCREEN AUTH");
+      if (!signinMutation.isSuccess) {
         setUsername(usernameEntered);
         handleFocusUsername();
       }
- 
     }, [usernameEntered, signinMutation.isSuccess])
   );
 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   useEffect(() => {
     if (signinMutation.isSuccess) {
-      showFlashMessage(`Success!`, false, 3000);
+      showFlashMessage(`Success!`, false, 2000);
     }
   }, [signinMutation.isSuccess]);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        console.log("Keyboard is now visible ✅");
-        setIsKeyboardVisible(true);
-      }
-    );
-
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        console.log("Keyboard is now hidden ❌");
-        setIsKeyboardVisible(false);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+    if (signinMutation.isError) {
+      showFlashMessage(`Oops! Couldn't sign in`, true, 2000);
+      setPassword(null);
+    }
+  }, [signinMutation.isError]);
 
   const handleCreateNew = () => {
+    console.log("rerendered create new");
     navigateToNewAccount({ usernameEntered: username });
   };
 
-  useEffect(() => {
-    if (signinMutation.isError) {
-      showSigninErrorMessage();
-      setPassword(null);
-    }
-  }, [signinMutation]);
-
   const handleAuthentication = async () => {
-    console.log("signing user in");
-    // handlePasswordBlur();
     try {
       onSignIn(username, password);
     } catch (error) {
@@ -159,9 +128,11 @@ const ScreenAuth = () => {
   };
 
   return (
+
+  <>
+      <LocalPeacefulGradientSpinner loading={signinMutation.isPending || signinMutation.isLoading} label={'Signing in'}/>
  
     <PreAuthSafeViewAndGradientBackground
-      settings={null}
       startColor={manualGradientColors.darkColor}
       endColor={manualGradientColors.lightColor}
       friendColorLight={null}
@@ -169,56 +140,18 @@ const ScreenAuth = () => {
       friendId={null}
       includeCustomStatusBar={false}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      style={{
-        flex: 1,
-        // paddingTop: 40, // TEMPORARY
-      }}
+      style={styles.container}
     >
-
-
-   
-      {/* {signinMutation.isPending && (
-        <View
-          style={{
-            // backgroundColor: "orange",
-            zIndex: 100,
-            elevation: 100,
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            flex: 1,
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-          }}
-        >
-          <LoadingPage
-            loading={true}
-            spinnerType="circle"
-            spinnerSize={40}
-            color={"yellow"}
-          />
-        </View>
-      )} */}
+        
       {!signinMutation.isPending && (
-        // <KeyboardAvoidingView
-        //   behavior={Platform.OS === "ios" ? "padding" : "height"}
-        //   style={[{ flex: 1, padding: 10, width: "100%" }]}
-        // >
         <View
-          style={{
-            paddingHorizontal: 10,
-            flex: 1,
-            // backgroundColor: "pink"
-          }}
+          style={styles.outerContainer}
         >
           <AuthScreenTopTray
             onBackPress={handleCreateNew}
             rightLabel={"Forgot password"}
             onRightPress={navigateToRecoverCredentials}
           />
-
           <AuthScreenHeader label={"Sign in"} />
 
           <View
@@ -291,7 +224,6 @@ const ScreenAuth = () => {
             )}
           </View>
         </View>
-        // </KeyboardAvoidingView>
       )}
       <View
         style={{
@@ -311,23 +243,28 @@ const ScreenAuth = () => {
         )}
       </View>
     </PreAuthSafeViewAndGradientBackground>
-   
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+
+  },
+  outerContainer: {
+    paddingHorizontal: 10,
+    flex: 1,
+  },
   inputsContainer: {
     height: 200,
     width: "100%",
     fontFamily: "Poppins-Regular",
-    //   backgroundColor: "hotpink",
     justifyContent: "flex-start",
     flex: 1,
   },
   input: {
     fontFamily: "Poppins-Regular",
-
-    height: "auto",
     borderWidth: 2.6,
     padding: 10,
     paddingTop: 10,
@@ -346,18 +283,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: "Poppins-Bold",
     textAlign: "center",
-  },
-  toggleButton: {
-    color: "black",
-    fontFamily: "Poppins-Bold",
-    fontSize: 14,
-    selfAlign: "center",
-  },
-  spinnerContainer: {
-    ...StyleSheet.absoluteFillObject, // Cover the entire screen
-    backgroundColor: "transparent", // Semi-transparent background
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 

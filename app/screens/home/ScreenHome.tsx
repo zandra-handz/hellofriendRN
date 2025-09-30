@@ -1,6 +1,6 @@
 //import * as Sentry from "@sentry/react-native";
 import React, {
-  useEffect, 
+  useEffect,
   useState,
   useRef,
   useCallback,
@@ -12,15 +12,16 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from "react-native";
 
 // app state
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
- 
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
-import { useUserSettings } from "@/src/context/UserSettingsContext"; 
+
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useUserSettings } from "@/src/context/UserSettingsContext";
 import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -56,7 +57,7 @@ import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateD
 
 const ScreenHome = () => {
   const { user } = useUser();
-  const { settings  } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
+  const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
 
@@ -79,8 +80,6 @@ const ScreenHome = () => {
   const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
     useFriendStyle();
 
- 
-
   const { autoSelectId, autoSelectFriend } = useAutoSelector();
 
   useEffect(() => {
@@ -88,9 +87,6 @@ const ScreenHome = () => {
   }, [autoSelectFriend]);
 
   const { selectedFriend, selectFriend } = useSelectedFriend();
-
- 
- 
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -151,7 +147,6 @@ const ScreenHome = () => {
     }
   }, [
     autoSelectFriend,
-  
 
     // loadingSettings,
   ]);
@@ -353,19 +348,12 @@ const ScreenHome = () => {
         <>
           {!friendListAndUpcomingIsSuccess && ( // isLoading is in FS Spinner
             <View
-              style={{
-                zIndex: 100000,
-                elevation: 100000,
-                position: "absolute",
-                backgroundColor: manualGradientColors.lightColor,
-                width: "100%",
-                height: "100%",
-                flex: 1,
-                top: 0,
-                bottom: 0,
-                right: 0,
-                left: 0,
-              }}
+              style={[
+                styles.loadingContainer,
+                {
+                  backgroundColor: manualGradientColors.lightColor,
+                },
+              ]}
             >
               <LoadingPage
                 loading={true}
@@ -385,12 +373,7 @@ const ScreenHome = () => {
                 settings?.id &&
                 upcomingHelloes?.length && ( //&& !isLoading  is in FSSpinner
                   <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "space-between",
-                      flexDirection: "column",
-                      paddingHorizontal: 0,
-                    }}
+                    style={styles.mainContainer}
                   >
                     {!selectedFriend?.id && (
                       <>
@@ -511,15 +494,12 @@ const ScreenHome = () => {
 
           {selectedFriend?.id && upcomingHelloes?.length && (
             <SelectedFriendFooter
-              userId={user?.id}   
-             
+              userId={user?.id}
               friendName={selectedFriend?.name}
               lightDarkTheme={lightDarkTheme}
               overlayColor={lightDarkTheme.overlayBackground}
- 
               resetTheme={resetTheme}
               themeAheadOfLoading={themeAheadOfLoading}
- 
             />
           )}
         </>
@@ -528,5 +508,25 @@ const ScreenHome = () => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    zIndex: 100000,
+    elevation: 100000,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    flex: 1,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+  },
+  mainContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    flexDirection: "column",
+  },
+});
 
 export default ScreenHome;

@@ -10,8 +10,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors  from "@/src/hooks/StaticColors";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
+  useSharedValue, 
   withSpring,
 } from "react-native-reanimated";
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
@@ -35,22 +34,19 @@ const ScreenWelcome = () => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
   };
 
-
-  const handleNavigateToNewAccoint = () => {
-
-  };
+ 
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       setConfirmedUserNotSignedIn(false);
     }
-  }, [user]);
+  }, [user?.id]);
 
   useEffect(() => {
-    if (!user && !isInitializing) {
+    if (!user?.id && !isInitializing) {
       setConfirmedUserNotSignedIn(true);
     }
-  }, [user, isInitializing]);
+  }, [user?.id, isInitializing]);
 
   const translateY = useSharedValue(500);
 
@@ -58,11 +54,7 @@ const ScreenWelcome = () => {
     translateY.value = withSpring(0, { duration: 3000 });
   }, []);
 
-  const logoRiseStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-    };
-  });
+ 
 
   return (
     <PreAuthSafeViewAndGradientBackground
@@ -104,7 +96,7 @@ const ScreenWelcome = () => {
                 label="loading user..."
                 spinnerType="circle"
                 spinnerSize={40}
-                color={manualGradientColors.homeDarkColor}
+                color={'red'}
                 labelColor={manualGradientColors.homeDarkColor}
               />
             )}
@@ -112,8 +104,7 @@ const ScreenWelcome = () => {
               <>
                 {/* <Animated.View */}
                 <View
-                  style={[
-                    // logoRiseStyle,
+                  style={[ 
                     {
                       width: "100%",
                       paddingBottom: 30,

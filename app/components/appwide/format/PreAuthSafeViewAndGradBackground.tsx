@@ -18,8 +18,7 @@ type Props = {
 
 export const PreAuthSafeViewAndGradientBackground = ({
   children,
-  style,
-  settings, 
+  style, 
   friendColorLight,
   friendColorDark,
   backgroundOverlayColor,

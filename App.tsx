@@ -19,14 +19,14 @@ import useNotificationsRegistration from "./src/hooks/useNotificationsRegistrati
 import Constants from "expo-constants";
 import {
   NavigationContainer,
-  getStateFromPath,
-  useNavigation,
+  getStateFromPath, 
 } from "@react-navigation/native";
 
-import ScreenShareIntent from "./app/screens/authflow/ScreenShareIntent";
+// DORMANT
+// import ScreenShareIntent from "./app/screens/authflow/ScreenShareIntent";
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
 import { RootSiblingParent } from "react-native-root-siblings";
-import { Alert, useColorScheme, Platform } from "react-native";
+import { Alert,  Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 // import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -38,13 +38,13 @@ import {
 
 import { UserStatsProvider } from "./src/context/UserStatsContext";
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
-import { FriendListProvider } from "./src/context/FriendListContext";
+// import { FriendListProvider } from "./src/context/FriendListContext";
 import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 // import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
-import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
+// import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
@@ -63,7 +63,7 @@ import * as MediaLibrary from "expo-media-library";
 // import { useLDTheme } from "./src/context/LDThemeContext";
 // import ResultMessage from "./app/components/alerts/ResultMessage";
 
-import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
+// import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
@@ -311,7 +311,7 @@ const linking = {
     initialRouteName: "Home",
     screens: {
       Home: "home",
-      ShareIntent: "shareintent",
+     // ShareIntent: "shareintent", this was only created between expo-share-intent versions
     },
   },
   getStateFromPath(path, config) {
@@ -324,7 +324,8 @@ const linking = {
       return {
         routes: [
           {
-            name: "ShareIntent",
+            // name: "ShareIntent",
+             name: "home",
           },
         ],
       };
@@ -337,7 +338,7 @@ const linking = {
       if (url.includes(getShareExtensionKey())) {
         // REQUIRED FOR iOS WHEN APP IS IN BACKGROUND
         console.debug(
-          "react-navigation[onReceiveURL] Redirect to ShareIntent Screen",
+          "react-navigation[onReceiveURL] Redirect to ShareIntent-- NOW HOME-- Screen",
           url
         );
         listener(`${getScheme()}://home`);
@@ -655,13 +656,13 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="ShareIntent"
                 component={ScreenShareIntent}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
             </>
           ) : (
             <>
