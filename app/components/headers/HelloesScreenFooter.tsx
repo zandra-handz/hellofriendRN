@@ -8,7 +8,7 @@ import SearchHelloesModal from "./SearchHelloesModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import ButtonData from "../buttons/scaffolding/ButtonData";
+ 
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";

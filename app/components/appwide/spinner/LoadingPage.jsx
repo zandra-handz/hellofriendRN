@@ -34,16 +34,7 @@ const LoadingPage = ({
   spinnerSize = 90,
   color = "limegreen",
   spinnerType = "wander", 
-}) => {
-  // const [showSpinner, setShowSpinner] = useState(loading);  
- 
-  // useEffect(() => {
-  //   if (loading) {
-  //     setShowSpinner(true); 
-  //   } else {
-  //     setShowSpinner(false);
-  //   }
-  // }, [loading]);
+}) => { 
  
   if (!loading) return null;
 

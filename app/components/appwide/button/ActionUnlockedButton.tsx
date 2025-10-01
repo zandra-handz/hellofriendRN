@@ -1,7 +1,6 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import React from "react"; 
-import Animated from "react-native-reanimated"; 
- import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react";
+import Animated from "react-native-reanimated";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -12,18 +11,16 @@ import {
 } from "react-native-reanimated";
 
 const ActionUnlockedButton = ({
-  isUnlocked = true, 
+  isUnlocked = true,
   primaryColor,
   manualGradientColors,
   label,
   onPress,
   pulseDuration = 2000,
-  includeArrow = false,
 }) => {
- 
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
- 
+
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
@@ -33,9 +30,7 @@ const ActionUnlockedButton = ({
   //  show animation based on if top item in FlatList in parent
   useAnimatedReaction(
     () => {
-      return Boolean(
-        isUnlocked
-      );
+      return Boolean(isUnlocked);
     },
     (isVisible, prevIsVisible) => {
       if (isVisible !== prevIsVisible) {
@@ -48,7 +43,7 @@ const ActionUnlockedButton = ({
             withTiming(1, { duration: pulseDuration }),
             -1,
             true
-          ); 
+          );
         } else {
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
@@ -61,8 +56,7 @@ const ActionUnlockedButton = ({
     [isUnlocked]
   );
 
-  const animatedCardsStyle = useAnimatedStyle(() => { 
-
+  const animatedCardsStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       progress.value,
       [0, 1],
@@ -71,9 +65,9 @@ const ActionUnlockedButton = ({
 
     return {
       backgroundColor,
-      alignItems: 'center',
-      textAlign: 'center',
-      alignSelf: 'center',
+      alignItems: "center",
+      textAlign: "center",
+      alignSelf: "center",
       color: textColor.value,
       transform: [{ translateY: translateYx2.value }],
     };
@@ -81,43 +75,25 @@ const ActionUnlockedButton = ({
 
   return (
     <AnimatedTouchableOpacity
-      style={[animatedCardsStyle, styles.actionUnlockedButton, {alignItems: "center"}]}
+      style={[
+        animatedCardsStyle,
+        styles.actionUnlockedButton,
+        { alignItems: "center" },
+      ]}
       onPress={() => {
         onPress(label);
       }}
     >
       <Animated.Text
         numberOfLines={1}
-        style={[
-          styles.buttonText,
-         
-          animatedCardsStyle, {color: primaryColor}
-        ]}
+        style={[styles.buttonText, animatedCardsStyle, { color: primaryColor }]}
       >
-         {label}{"  "}
-
+        {label}
+        {"  "}
       </Animated.Text>
-               {includeArrow && (
-                        <View
-              style={{
-                transform: [{ rotate: "180deg" }],
-                paddingRight: 20,
-                width: 20, 
-               // alignItems: "center",
-              }}
-            >
-                            <MaterialCommunityIcons
-                            size={20}
-                          color={"#121212"}
-                            name={'arrow-left'}
-                            />
-       
-            </View>
-         )}
     </AnimatedTouchableOpacity>
   );
 };
-
 
 const styles = StyleSheet.create({
   actionUnlockedButton: {
@@ -144,6 +120,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
-
 
 export default ActionUnlockedButton;

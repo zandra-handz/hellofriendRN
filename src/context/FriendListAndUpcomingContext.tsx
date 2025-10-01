@@ -80,7 +80,7 @@ export const FriendListAndUpcomingProvider = ({ children }) => {
     }, [isError]);
 
 const upNext = useMemo(() => {
-  return 'hi';
+  return friendListAndUpcoming?.next; // not sure if this is ready to go yet
 }, [friendListAndUpcoming]);
  
 

@@ -21,7 +21,7 @@ const GradientBackgroundFidgetOne = ({
   timeScore = 100,
   daysSince,
 }: Props) => {
-  const [changeColors, setChangeColors] = useState(false);
+  // const [changeColors, setChangeColors] = useState(false);
 
   const OGDirectionSet = [
     [0, 0, 1, 0], // startX, startY, endX, endY //00 TOP LEFT  // 11 BOTTOM RIGHT
@@ -59,13 +59,10 @@ const GradientBackgroundFidgetOne = ({
     <GradientBackgroundForFidget
       additionalStyles={style}
       children={children}
-      switchColorSet={changeColors}
+      switchColorSet={false} // change colors
       screenname={"fidget"}
       useVibration={!!(timeScore < 41)}
-      // additionalStyles={[
-
-      //   style,
-      // ]}
+ 
       firstSetColorDark={colors[0]}
       firstSetColorLight={colors[1]}
       firstSetDirection={directions[1]} //OGDirectionSet[0]

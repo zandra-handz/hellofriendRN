@@ -23,6 +23,7 @@ import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LeafPath from "./LeafPath";
+import manualGradientColors from "@/src/hooks/StaticColors";
 
 type Props = {
   onCategoryPress: () => void;
@@ -312,6 +313,7 @@ const DonutChart = ({
         onPress={onPlusPress}
         style={[
           styles.centerButton,
+          {backgroundColor: manualGradientColors.lightColor, zIndex: 2, borderRadius: 999, padding: 4}
           // { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
         ]}
         hitSlop={30}
@@ -319,10 +321,12 @@ const DonutChart = ({
         <MaterialCommunityIcons
           name={"lightning-bolt-outline"} //pencil-plus
           // name={"playlist-plus"}
-          name={"plus"}
-          size={70}
-          opacity={0.2}
+         name={"plus"}
+          size={26}
+          opacity={0.8}
           color={primaryColor}
+          color={manualGradientColors.homeDarkColor}
+          style={{zIndex: 1}}
         />
       </Pressable>
     </View>
@@ -349,10 +353,10 @@ const styles = StyleSheet.create({
     padding: 0,
     //borderRadius: 999,
     borderRadius: 4,
-    zIndex: 2,
+    // zIndex: 2,
 
-    right: -58,
-    bottom: -20,
+    right: -20,
+    bottom: 30,
   },
 });
 

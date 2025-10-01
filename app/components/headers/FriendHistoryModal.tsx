@@ -8,6 +8,7 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -27,8 +28,7 @@ const FriendHistoryModal: React.FC<Props> = ({
   darkerOverlayBackgroundColor,
   primaryColor,
   primaryOverlayColor,
-  welcomeTextStyle,
-  subWelcomeTextStyle,
+
   themeAheadOfLoading,
   isVisible,
   closeModal,
@@ -39,6 +39,10 @@ const FriendHistoryModal: React.FC<Props> = ({
   seriesData,
   // onLongPress,
 }) => { 
+
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText
 
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
   const nullQuickView = () => {

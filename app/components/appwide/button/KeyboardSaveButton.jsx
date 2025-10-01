@@ -13,10 +13,7 @@ const KeyboardSaveButton = ({
   height = "auto",
   fontFamily = "Poppins-Bold",
   maxHeight = 50,
-  imageSize = 50,
-  image = require("@/app/assets/shapes/redheadcoffee.png"),
-  imagePositionHorizontal = 0,
-  imagePositionVertical = 0,
+
   borderColor = "transparent",
   borderRadius = 10,
   isDisabled = true,
@@ -47,7 +44,7 @@ const KeyboardSaveButton = ({
         }}
       />
 
-      {image && (
+      {/* {image && (
         <Image
           source={image}
           style={{
@@ -58,7 +55,7 @@ const KeyboardSaveButton = ({
           }}
           resizeMode="contain"
         />
-      )}
+      )} */}
 
       <View
         style={{

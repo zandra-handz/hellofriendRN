@@ -147,7 +147,7 @@ const ModalWithGoBack: React.FC<Props> = ({
           {!useModalBar && (
             <ButtonBaseSpecialSave
               label="Back"
-              image={require("@/app/assets/shapes/redheadcoffee.png")}
+              // image={require("@/app/assets/shapes/redheadcoffee.png")}
               imageSize={80}
               labelSize={17}
               labelPlacement={"start"}

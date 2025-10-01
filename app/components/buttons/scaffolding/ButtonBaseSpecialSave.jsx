@@ -9,7 +9,8 @@ const ButtonBaseSpecialSave = ({
   label = "ADD NEW IMAGE",
   height = 60,
   imageSize = 90,
-  image = require("@/app/assets/shapes/redheadcoffee.png"),
+  // image = require("@/app/assets/shapes/redheadcoffee.png"),
+    image = None,
   imagePositionHorizontal = 0,
   imagePositionVertical = 8,
   dynamicPadding = 5,
@@ -56,7 +57,7 @@ const ButtonBaseSpecialSave = ({
           // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
         }}
       >
-        {image && (
+        {/* {image && (
           <Image
             source={image}
             style={{
@@ -68,7 +69,7 @@ const ButtonBaseSpecialSave = ({
             }}
             resizeMode="contain"
           />
-        )}
+        )} */}
       </View>
       <View
         style={{

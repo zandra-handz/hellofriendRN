@@ -17,8 +17,7 @@ const KeyboardCoasters: React.FC<KeyboardCoastersProps> = ({
   showMomentScreenButton,
   primaryColor,
   onPress,
-}) => {
-  //console.log("KEYBOARD COASTERS RERENDERED");
+}) => { 
   return (
     <>
       {isKeyboardVisible && (
@@ -29,7 +28,7 @@ const KeyboardCoasters: React.FC<KeyboardCoastersProps> = ({
       )}
 
       <View style={styles.absoluteContainer}>
-        {showMomentScreenButton && (
+        {showMomentScreenButton && isKeyboardVisible && (
           <ActionUnlockedButton
             onPress={onPress}
                primaryColor={primaryColor}
@@ -68,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default KeyboardCoasters;
+export default React.memo(KeyboardCoasters);

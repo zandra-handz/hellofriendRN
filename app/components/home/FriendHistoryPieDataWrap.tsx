@@ -142,8 +142,7 @@ const FriendHistoryPieDataWrap = React.memo(
                       }
                       primaryColor={primaryColor}
                       primaryOverlayColor={primaryOverlayColor}
-                      welcomeTextStyle={welcomeTextStyle}
-                      subWelcomeTextStyle={subWelcomeTextStyle}
+
                       colors={colors}
                       seriesData={seriesData}
                       data={friendHistorySortedList}

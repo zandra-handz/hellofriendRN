@@ -41,12 +41,10 @@ const HalfScreenModal: React.FC<Props> = ({
 
   const [internalIsVisible, setInternalIsVisible] = useState(isVisible);
 
-  const modalAnimationStyle = useAnimatedStyle(() => {
-    return { translateY: xAnim.value, scaleY: scaleAnim.value };
-  });
-  const headerHeight = "auto";
-
-  const headerSpacing = 10;
+  // const modalAnimationStyle = useAnimatedStyle(() => {
+  //   return { translateY: xAnim.value, scaleY: scaleAnim.value };
+  // });
+ 
 
   const translateY = useSharedValue(50);
 
@@ -58,7 +56,8 @@ const HalfScreenModal: React.FC<Props> = ({
 
     // Then bounce to 0
     translateY.value = withSpring(0, {
-      damping: 6,
+      // damping: 6,
+      damping: 20, // higher = less bounce
       stiffness: 150,
       mass: 0.8,
       overshootClamping: false,
@@ -89,11 +88,17 @@ const HalfScreenModal: React.FC<Props> = ({
       visible={isVisible}
       // style={modalAnimationStyle}
       animationType="slide"
+      style={{
+         backgroundColor: "rgba(0, 0, 0, 0.5)"
+      }}
     >
-      <Animated.View style={[
-        // modalAnimationStyle, 
-        
-        styles.modalContainer]}>
+      <Animated.View
+        style={[
+          // modalAnimationStyle,
+          styles.modalContainer,
+          // { backgroundColor: "rgba(0, 0, 0, 0.5)" }, // semi-transparent black
+        ]}
+      >
         <PlainSafeView style={{ flex: 1 }}>
           <View
             style={[
@@ -107,19 +112,15 @@ const HalfScreenModal: React.FC<Props> = ({
             ]}
           >
             <View
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                height: headerHeight,
-                paddingTop: contentPadding,
-                paddingHorizontal: contentPadding,
-                maxHeight: 50,
-                marginVertical: headerSpacing,
-                alignItems: "center",
-                justifyContent: "flex-start",
-              }}
+              style={[
+                styles.headerContainer,
+                {
+                  paddingTop: contentPadding,
+                  paddingHorizontal: contentPadding,
+                },
+              ]}
             >
-              {headerIcon && headerIcon}
+              {/* {headerIcon && headerIcon} */}
               {questionText && (
                 <Text style={[styles.questionText, { color: primaryColor }]}>
                   {questionText}
@@ -155,6 +156,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "column",
     justifyContent: "space-between",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    width: "100%",
+    maxHeight: 50,
+    marginVertical: 10, // header spacing
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   questionText: {
     fontSize: 20,

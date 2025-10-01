@@ -25,7 +25,7 @@ const useAddToFriendList = ({ userId }: Props) => {
     ["friendListAndUpcoming", userId],
     (old: { friends?: Friend[]; upcoming?: any[]; next?: Friend } | undefined) => {
       if (!old) {
-        return { friends: [newFriend], upcoming: [] };
+        return { friends: [newFriend], upcoming: [], next: null };
       }
 
       const isAlreadyFriend = old.friends?.some(

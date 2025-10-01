@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, TextInput, StyleSheet, Text  } from "react-native";
+import { View, TextInput, StyleSheet, Text } from "react-native";
 import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 
 // app spinner
@@ -14,7 +14,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
 // app hooks
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
-import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 // app components
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
@@ -39,7 +39,7 @@ const ScreenAuth = () => {
 
   const { navigateToNewAccount, navigateToRecoverCredentials } =
     useAppNavigations();
- 
+
   const { lightDarkTheme } = useLDTheme();
   const [username, setUsername] = useState(usernameEntered);
   const [password, setPassword] = useState("");
@@ -128,121 +128,120 @@ const ScreenAuth = () => {
   };
 
   return (
+    <>
+      <LocalPeacefulGradientSpinner
+        loading={signinMutation.isPending || signinMutation.isLoading}
+        label={"Signing in"}
+      />
 
-  <>
-      <LocalPeacefulGradientSpinner loading={signinMutation.isPending || signinMutation.isLoading} label={'Signing in'}/>
- 
-    <PreAuthSafeViewAndGradientBackground
-      startColor={manualGradientColors.darkColor}
-      endColor={manualGradientColors.lightColor}
-      friendColorLight={null}
-      friendColorDark={null}
-      friendId={null}
-      includeCustomStatusBar={false}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      style={styles.container}
-    >
-        
-      {!signinMutation.isPending && (
-        <View
-          style={styles.outerContainer}
-        >
-          <AuthScreenTopTray
-            onBackPress={handleCreateNew}
-            rightLabel={"Forgot password"}
-            onRightPress={navigateToRecoverCredentials}
-          />
-          <AuthScreenHeader label={"Sign in"} />
-
-          <View
-            style={[styles.inputsContainer, { gap: INPUTS_GAP }]}
-            accessible={true}
-            accessibilityLabel="Form container"
-          >
-            <AuthInputWrapper
-              condition={username}
-              label={"Username"}
-              children={
-                <TextInput
-                  style={[
-                    styles.input,
-                    isUsernameFocused && styles.inputFocused,
-                    { color: manualGradientColors.homeDarkColor },
-                  ]}
-                  placeholder="Username"
-                  placeholderTextColor={placeholderTextColor}
-                  // autoFocus={true}
-                  autoFocus={false}
-                  onChangeText={handleUsernameChange}
-                  value={username}
-                  onSubmitEditing={handleUsernameSubmit}
-                  ref={usernameInputRef}
-                  onPress={handleUsernameFocus}
-                  onFocus={handleUsernameFocus}
-                  onBlur={handleUsernameBlur}
-                  accessible={true}
-                  autoComplete={"username"}
-                  accessibilityLabel="Username input"
-                  accessibilityHint="Enter your username"
-                  importantForAccessibility="yes"
-                  enterKeyHint={"next"}
-                />
-              }
+      <PreAuthSafeViewAndGradientBackground
+        startColor={manualGradientColors.darkColor}
+        endColor={manualGradientColors.lightColor}
+        friendColorLight={null}
+        friendColorDark={null}
+        friendId={null}
+        includeCustomStatusBar={false}
+        backgroundOverlayColor={lightDarkTheme.primaryBackground}
+        style={styles.container}
+      >
+        {!signinMutation.isPending && (
+          <View style={styles.outerContainer}>
+            <AuthScreenTopTray
+              onBackPress={handleCreateNew}
+              rightLabel={"Forgot password"}
+              onRightPress={navigateToRecoverCredentials}
             />
+            <AuthScreenHeader label={"Sign in"} />
 
-            {username && usernameSubmitted && (
+            <View
+              style={[styles.inputsContainer, { gap: INPUTS_GAP }]}
+              accessible={true}
+              accessibilityLabel="Form container"
+            >
               <AuthInputWrapper
-                condition={password}
-                label={"Password"}
+                condition={username}
+                label={"Username"}
                 children={
                   <TextInput
                     style={[
                       styles.input,
-                      isPasswordFocused && styles.inputFocused,
+                      isUsernameFocused && styles.inputFocused,
                       { color: manualGradientColors.homeDarkColor },
                     ]}
-                    placeholder="Password"
+                    placeholder="Username"
                     placeholderTextColor={placeholderTextColor}
-                    // color={lightDarkTheme.primaryText}
-                    autoFocus={false} //true
-                    secureTextEntry={true}
-                    onChangeText={handlePasswordChange}
-                    onSubmitEditing={handleAuthentication}
-                    autoComplete={"current-password"}
-                    value={password}
-                    ref={passwordInputRef}
-                    onFocus={handlePasswordFocus}
-                    onBlur={handlePasswordBlur}
+                    // autoFocus={true}
+                    autoFocus={false}
+                    onChangeText={handleUsernameChange}
+                    value={username}
+                    onSubmitEditing={handleUsernameSubmit}
+                    ref={usernameInputRef}
+                    onPress={handleUsernameFocus}
+                    onFocus={handleUsernameFocus}
+                    onBlur={handleUsernameBlur}
                     accessible={true}
-                    accessibilityLabel="Password input"
-                    accessibilityHint="Enter your password"
+                    autoComplete={"username"}
+                    accessibilityLabel="Username input"
+                    accessibilityHint="Enter your username"
                     importantForAccessibility="yes"
-                    enterKeyHint={"enter"}
+                    enterKeyHint={"next"}
                   />
                 }
               />
-            )}
+
+              {username && usernameSubmitted && (
+                <AuthInputWrapper
+                  condition={password}
+                  label={"Password"}
+                  children={
+                    <TextInput
+                      style={[
+                        styles.input,
+                        isPasswordFocused && styles.inputFocused,
+                        { color: manualGradientColors.homeDarkColor },
+                      ]}
+                      placeholder="Password"
+                      placeholderTextColor={placeholderTextColor}
+                      // color={lightDarkTheme.primaryText}
+                      autoFocus={false} //true
+                      secureTextEntry={true}
+                      onChangeText={handlePasswordChange}
+                      onSubmitEditing={handleAuthentication}
+                      autoComplete={"current-password"}
+                      value={password}
+                      ref={passwordInputRef}
+                      onFocus={handlePasswordFocus}
+                      onBlur={handlePasswordBlur}
+                      accessible={true}
+                      accessibilityLabel="Password input"
+                      accessibilityHint="Enter your password"
+                      importantForAccessibility="yes"
+                      enterKeyHint={"enter"}
+                    />
+                  }
+                />
+              )}
+            </View>
           </View>
-        </View>
-      )}
-      <View
-        style={{
-          width: "100%",
-          bottom: 0,
-          paddingHorizontal: 4,
-        }}
-      >
-        {username && password && !signinMutation.isPending && (
-          <AuthBottomButton
-            onPress={handleAuthentication}
-            title={"Sign in"}
-            borderRadius={10}
-            backgroundColor={manualGradientColors.homeDarkColor}
-            labelColor={manualGradientColors.lightColor}
-          />
         )}
-      </View>
-    </PreAuthSafeViewAndGradientBackground>
+        <View
+          style={{
+            width: "100%",
+            bottom: 0,
+            paddingHorizontal: 4,
+          }}
+        >
+          {username && password && !signinMutation.isPending && (
+            <AuthBottomButton
+              onPress={handleAuthentication}
+              title={"Sign in"}
+              borderRadius={10}
+              backgroundColor={manualGradientColors.homeDarkColor}
+              labelColor={manualGradientColors.lightColor}
+            />
+          )}
+        </View>
+      </PreAuthSafeViewAndGradientBackground>
     </>
   );
 };
@@ -250,7 +249,6 @@ const ScreenAuth = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
   },
   outerContainer: {
     paddingHorizontal: 10,

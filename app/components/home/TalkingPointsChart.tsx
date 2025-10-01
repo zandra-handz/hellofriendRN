@@ -5,8 +5,7 @@ import React, {
   useEffect,
   useRef,
   useMemo,
-} from "react";
-import LoadingBlock from "../appwide/spinner/LoadingBlock";
+} from "react"; 
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 import manualGradientColors from "@/src/hooks/StaticColors";

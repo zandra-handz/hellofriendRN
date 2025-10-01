@@ -225,7 +225,7 @@ const { lightDarkTheme } = useLDTheme();
                 onPress={handleSubmit}
                 isDisabled={false}
                 fontFamily={"Poppins-Bold"}
-                image={require("@/app/assets/shapes/redheadcoffee.png")}
+                // image={require("@/app/assets/shapes/redheadcoffee.png")}
               />
             )}
           </>

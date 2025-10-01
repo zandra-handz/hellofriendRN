@@ -114,7 +114,7 @@ const CalculateTravelTimesBody = ({ userId, friendId, friendName, lightDarkTheme
         onPress={handleCalculate}
         isDisabled={!userAddresses?.chosen || !friendAddresses?.chosen}
         fontFamily={"Poppins-Bold"}
-        image={require("@/app/assets/shapes/redheadcoffee.png")}
+        // image={require("@/app/assets/shapes/redheadcoffee.png")}
       />
     </View>
   );

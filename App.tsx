@@ -37,7 +37,10 @@ import {
 } from "./src/context/UserSettingsContext";
 
 import { UserStatsProvider } from "./src/context/UserStatsContext";
+
+import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
+
 // import { FriendListProvider } from "./src/context/FriendListContext";
 import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
@@ -45,7 +48,7 @@ import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 // import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 // import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
-import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
+
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
@@ -248,8 +251,7 @@ export default Sentry.wrap(function App() {
                             <CapsuleListProvider>
                               <LocationsProvider>
                                 <HelloesProvider>
-                                  <SelectedFriendStatsProvider>
-                                    {/* <MessageContextProvider> */}
+                                  <SelectedFriendStatsProvider> 
                                     <GestureHandlerRootView style={{ flex: 1 }}>
                                       <SafeAreaProvider>
                                         <LDThemeProvider>

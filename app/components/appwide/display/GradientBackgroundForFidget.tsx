@@ -11,8 +11,7 @@ import Animated, {
   withRepeat,
   runOnJS,
 } from "react-native-reanimated";
-
-import manualGradientColors from "@/src/hooks/StaticColors";
+ 
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -44,13 +43,7 @@ const GradientBackgroundForFidget: React.FC<
   children,
 }) => {
 
-      const handleVibrate = () => {
-        if (useVibration) {
-               Vibration.vibrate(100); 
-
-        } 
-
-      };
+ 
 
   const direction = useMemo(() => {
     return [...firstSetDirection, ...secondSetDirection];

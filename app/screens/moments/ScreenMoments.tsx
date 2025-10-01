@@ -5,8 +5,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-import TopBarWithAddMoment from "./TopBarWithAddMoment";
-import Loading from "@/app/components/appwide/display/Loading";
+import TopBarWithAddMoment from "./TopBarWithAddMoment"; 
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -132,9 +131,9 @@ const ScreenMoments = () => {
           // firstColorSetDark={manualGradientColors.lightColor}
           // firstColorSetLight={manualGradientColors.darkColor}
           timeScore={TIME_SCORE}
-          speed={2000}
+          speed={5000}
           style={{ flexDirection: "column", justifyContent: "flex-end" }}
-          direction={"horizontal"}
+          direction={"vertical"}
         ></GradientBackgroundBreathing>
       </View>
       <TopBarWithAddMoment
@@ -162,11 +161,7 @@ const ScreenMoments = () => {
         }}
       ></View>
       <View style={{ width: "100%", height: 4 }}></View>
-      <Loading
-        backgroundColor={lightDarkTheme.primaryBackground}
-        isLoading={loadingDash}
-      />
-
+ 
       {selectedFriend && !loadingDash && (
         <>
           <View style={{ flex: 1 }}>

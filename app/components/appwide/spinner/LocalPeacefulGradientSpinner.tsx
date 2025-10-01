@@ -1,39 +1,27 @@
-import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-import React from "react"; 
- 
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
+// app components
+import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
+
+// static
+import manualGradientColors from "@/src/hooks/StaticColors";
+
 
 import LoadingPage from "./LoadingPage"; 
-// import { useUserSettings } from "@/src/context/UserSettingsContext";
-// import { useFriendList } from "@/src/context/FriendListContext";
 type Props = {
-  isInitializing: boolean;
+  loading: boolean;
+  label?: string;
 };
 
-const LocalPeacefulGradientSpinner = ({ loading, label=null }: Props) => {
+const LocalPeacefulGradientSpinner = ({ loading, label}: Props) => {
  
-  // const { isLoading } = useFriendListAndUpcoming();
-  // const  { settings, loadingSettings } = useUserSettings();
-  // const { loadingFriendList } = useFriendList();
- 
+
   return (
     <>
-      {(loading) && (
+      {loading && (
         <View
-          style={{
-            zIndex: 100000,
-            elevation: 100000,
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            flex: 1,
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-          }}
+          style={styles.container}
         >
           <View style={StyleSheet.absoluteFillObject}>
             <GradientBackgroundFidgetOne
@@ -42,18 +30,18 @@ const LocalPeacefulGradientSpinner = ({ loading, label=null }: Props) => {
               speed={600}
               secondColorSetDark={manualGradientColors.darkColor}
               secondColorSetLight={manualGradientColors.lightColor}
-           //  direction="horizontal"
-            > 
+              //  direction="horizontal"
+            >
               <LoadingPage
                 loading={true}
                 label={label}
                 includeLabel={true}
                 labelColor={manualGradientColors.homeDarkColor}
                 color={manualGradientColors.homeDarkColor}
-             //  color={'transparent'}
-                 spinnerType={'chase'}
+                //  color={'transparent'}
+                spinnerType={"chase"}
                 spinnerSize={40}
-              /> 
+              />
             </GradientBackgroundFidgetOne>
           </View>
         </View>
@@ -61,5 +49,20 @@ const LocalPeacefulGradientSpinner = ({ loading, label=null }: Props) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    zIndex: 100000,
+    elevation: 100000,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    flex: 1,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+  },
+});
 
 export default LocalPeacefulGradientSpinner;

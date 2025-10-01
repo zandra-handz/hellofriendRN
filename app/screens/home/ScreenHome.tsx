@@ -74,17 +74,17 @@ const ScreenHome = () => {
 
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
-  const upcomingId = friendListAndUpcoming?.next?.id;
+  // const upcomingId = friendListAndUpcoming?.next?.id;
 
   // const { friendList, friendListFetched } = useFriendList();
   const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
     useFriendStyle();
 
-  const { autoSelectId, autoSelectFriend } = useAutoSelector();
+  const { autoSelectFriend } = useAutoSelector();
 
-  useEffect(() => {
-    console.log(`AUTO SELECT FRIEND`, autoSelectFriend);
-  }, [autoSelectFriend]);
+  // useEffect(() => {
+  //   console.log(`AUTO SELECT FRIEND`, autoSelectFriend);
+  // }, [autoSelectFriend]);
 
   const { selectedFriend, selectFriend } = useSelectedFriend();
 
@@ -101,7 +101,7 @@ const ScreenHome = () => {
   const { requestPermission, imageUri, resizeImage } =
     useImageUploadFunctions();
 
-  const [screenReady, setScreenReady] = useState(false);
+  // const [screenReady, setScreenReady] = useState(false);
 
   // console.error(
   //   "SCREEN RERENDERED",
@@ -145,22 +145,7 @@ const ScreenHome = () => {
         getThemeAheadOfLoading(autoSelectFriend.nextFriend);
       }
     }
-  }, [
-    autoSelectFriend,
-
-    // loadingSettings,
-  ]);
-
-  // const { handleDeselectFriend } = useDeselectFriend({
-  //   // resetTheme,
-  //   // selectFriend,
-  //   updateSettings,
-  //   // lockIns,
-  //   upNextId,
-  //   friendList,
-  //   autoSelectId,
-  // });
-
+  }, [autoSelectFriend]);
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -237,6 +222,17 @@ const ScreenHome = () => {
   };
 
   useEffect(() => {
+    // console.log("request permissions!!");
+    requestPermission();
+  }, []);
+
+  useEffect(() => {
+    if (imageUri) {
+      navigateToAddImageScreen();
+    }
+  }, [imageUri]);
+
+  useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => setIsKeyboardVisible(true)
@@ -252,76 +248,65 @@ const ScreenHome = () => {
     };
   }, []);
 
-  const updateNewMomentTextString = (text) => {
-    console.log(text);
-
-    const textLengthPrev = newMomentText?.length;
+  const updateNewMomentTextString = (text) => { //just passing in moment text length as a boolean now instead of setting this
+    // const textLengthPrev = newMomentText?.length;
     setNewMomentText(text);
-    if (textLengthPrev === 0) {
-      if (text.length - textLengthPrev > 1) {
-        setShowMomentScreenButton(true);
-      }
-    }
-    if (text.length === 0) {
-      setShowMomentScreenButton(false);
-    }
-    if (text.length === 1) {
-      setShowMomentScreenButton(true);
-    }
+    // if (textLengthPrev === 0) {
+    //   if (text.length - textLengthPrev > 1) {
+    //     setShowMomentScreenButton(true);
+    //   }
+    // }
+    // if (text.length === 0) {
+    //   setShowMomentScreenButton(false);
+    // }
+    // if (text.length === 1) {
+    //   setShowMomentScreenButton(true);
+    // }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      if (newMomentText?.length > 0) {
-        setShowMomentScreenButton(true);
-      } else {
-        setShowMomentScreenButton(false);
-      }
-      return () => {};
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (newMomentText?.length > 0) {
+  //       console.log("usefocus effect triggered rerender of home screen");
+  //       setShowMomentScreenButton(true);
+  //     } else {
+  //       console.log("usefocus effect triggered rerender of home screen");
+  //       setShowMomentScreenButton(false);
+  //     }
+  //     return () => {};
+  //   }, [])
+  // );
 
   const clearNewMomentText = () => {
     setNewMomentText("");
     setShowMomentScreenButton(false);
   };
 
-  const navigateToAddMomentScreen = () => {
+  const navigateToAddMomentScreen = useCallback(() => {
     if (newMomentText?.length > 0) {
       navigateToMomentFocusWithText({
-        screenCameFrom: 0, //goes back to home screen that is now selected friend screen
+        screenCameFrom: 0,
         momentText: newMomentText,
       });
       clearNewMomentText();
     }
-  };
+  }, [newMomentText, navigateToMomentFocusWithText, clearNewMomentText]);
 
-  const navigateToAddImageScreen = () => {
-    navigation.navigate("AddImage", { imageUri: imageUri });
-  };
+  const navigateToAddImageScreen = useCallback(() => {
+    navigation.navigate("AddImage", { imageUri });
+  }, [navigation, imageUri]);
 
-  useEffect(() => {
-    // console.log("request permissions!!");
-    requestPermission();
-  }, []);
-
-  useEffect(() => {
-    if (imageUri) {
-      navigateToAddImageScreen();
-    }
-  }, [imageUri]);
-
-  const handleFocusPress = () => {
-    if (newMomentTextRef & newMomentTextRef.current) {
-      // console.log("focusing");
-      newMomentTextRef.current.focus();
-    }
-  };
+const handleFocusPress = () => {
+  if (newMomentTextRef && newMomentTextRef.current) {
+    newMomentTextRef.current.focus();
+  }
+};
 
   return (
     <>
-      <LocalPeacefulGradientSpinner loading={autoSelectId === undefined} />
-
+      <LocalPeacefulGradientSpinner
+        loading={autoSelectFriend?.customFriend === undefined}
+      />
       <SafeViewAndGradientBackground
         friendColorLight={themeAheadOfLoading.lightColor}
         friendColorDark={themeAheadOfLoading.darkColor}
@@ -372,9 +357,7 @@ const ScreenHome = () => {
               {friendListAndUpcomingIsSuccess &&
                 settings?.id &&
                 upcomingHelloes?.length && ( //&& !isLoading  is in FSSpinner
-                  <View
-                    style={styles.mainContainer}
-                  >
+                  <View style={styles.mainContainer}>
                     {!selectedFriend?.id && (
                       <>
                         {friendList?.length < 1 && (
@@ -437,7 +420,7 @@ const ScreenHome = () => {
                               primaryColor={lightDarkTheme.primaryText}
                               isKeyboardVisible={isKeyboardVisible}
                               isFriendSelected={!!selectedFriend?.id}
-                              showMomentScreenButton={showMomentScreenButton}
+                              showMomentScreenButton={(!!newMomentText?.length)}
                               onPress={navigateToAddMomentScreen}
                             />
                           </>

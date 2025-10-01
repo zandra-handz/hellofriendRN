@@ -102,10 +102,8 @@ const EditTheme = ({
           fontColor,
           fontColorSecondary
         );
-
-        // setFriendColorTheme((prev) => ({ ...prev, useFriendColorTheme: setting }));
-      } finally {
-        // setIsMakingCall(false);
+ 
+      } finally { 
       }
     }
   };

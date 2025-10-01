@@ -54,8 +54,7 @@ const SafeViewAndGradientBackground = ({
   // const right = typeof insets.right === "number" ? insets.right : 0;
 
   useEffect(() => {
-    if (useSolidOverlay) {
-      console.error("use solid overlay triggered");
+    if (useSolidOverlay) { 
       opacityValue.value = withTiming(0, { duration: 300 });
     } else if (forceFullOpacity) {
       opacityValue.value = withTiming(1, { duration: 0 });
@@ -87,9 +86,9 @@ const SafeViewAndGradientBackground = ({
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     if (addColorChangeDelay && includeBackgroundOverlay) {
-      console.error(
-        `${screenname} add color change delay or include background overlay triggered thus`
-      );
+      // console.error(
+      //   `${screenname} add color change delay or include background overlay triggered thus`
+      // );
       timeoutId = setTimeout(() => {
         setShowColorOverlay(true);
       }, 100);

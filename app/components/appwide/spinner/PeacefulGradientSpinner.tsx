@@ -4,9 +4,9 @@ import { View, StyleSheet } from "react-native";
 import React from "react";  
 import LoadingPage from "./LoadingPage"; 
 import { useUserSettings } from "@/src/context/UserSettingsContext";
- import useSignIn from "@/src/hooks/UserCalls/useSignIn";
+//  import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 
- import { useUser } from "@/src/context/UserContext";
+//  import { useUser } from "@/src/context/UserContext";
 
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 type Props = {

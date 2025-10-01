@@ -5,7 +5,7 @@ import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 const SmallAddButton = ({ 
-  primaryBackground,
+
   primaryColor,
 size=64,
   onPress,

@@ -235,7 +235,7 @@ const ContentAddImage = ({
           maxHeight={80}
           onPress={handleSave}
           // isDisabled={friendId && canContinue && imageUri ? false : true}
-          image={require("@/app/assets/shapes/redheadcoffee.png")}
+          // image={require("@/app/assets/shapes/redheadcoffee.png")}
         />
       )}
 

@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import manualGradientColors from "@/src/hooks/StaticColors";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 import GradientBackgroundForFidget from "../components/appwide/display/GradientBackgroundForFidget";
 type Props = {
   friendColorDark: string;
@@ -21,7 +20,7 @@ const GradientBackgroundBreathing = ({
   timeScore = 100,
   daysSince,
 }: Props) => {
-  const [changeColors, setChangeColors] = useState(false);
+  // const [changeColors, setChangeColors] = useState(false);
 
   const OGDirectionSet = [
     [0, 0, 1, 0], // startX, startY, endX, endY //00 TOP LEFT  // 11 BOTTOM RIGHT
@@ -59,7 +58,7 @@ const GradientBackgroundBreathing = ({
     <GradientBackgroundForFidget
       additionalStyles={style}
       children={children}
-      switchColorSet={changeColors}
+      switchColorSet={false} // was changeColors
       screenname={"fidget"}
       useVibration={!!(timeScore < 41)}
       // additionalStyles={[

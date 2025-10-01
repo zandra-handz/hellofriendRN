@@ -1,93 +1,93 @@
-import React, {
-  createContext,
-  useContext,
+// import React, {
+//   createContext,
+//   useContext,
  
-  useMemo,
-  useEffect,
-  ReactNode,
-} from "react";
-import { useUser } from "./UserContext"; 
-import { fetchFriendList } from "../calls/api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Friend } from "../types/FriendTypes"; 
-import useSignOut from "../hooks/UserCalls/useSignOut";
-interface FriendListContextType {
-  friendList: Friend[];
-  setFriendList: (friends: Friend[]) => void;
-  addToFriendList: (friend: Friend) => void;
-  removeFromFriendList: (friendId: number) => void;
-  updateFriend: (updatedFriend: Friend) => void;
+//   useMemo,
+//   useEffect,
+//   ReactNode,
+// } from "react";
+// import { useUser } from "./UserContext"; 
+// import { fetchFriendList } from "../calls/api";
+// import { useQuery, useQueryClient } from "@tanstack/react-query";
+// import { Friend } from "../types/FriendTypes"; 
+// import useSignOut from "../hooks/UserCalls/useSignOut";
+// interface FriendListContextType {
+//   friendList: Friend[];
+//   setFriendList: (friends: Friend[]) => void;
+//   addToFriendList: (friend: Friend) => void;
+//   removeFromFriendList: (friendId: number) => void;
+//   updateFriend: (updatedFriend: Friend) => void;
  
-}
+// }
 
 
-const FriendListContext = createContext<FriendListContextType>({
-  friendList: [],
-  setFriendList: () => {},
-  addToFriendList: () => {},
-  removeFromFriendList: () => {},
-  updateFriend: () => {},
+// const FriendListContext = createContext<FriendListContextType>({
+//   friendList: [],
+//   setFriendList: () => {},
+//   addToFriendList: () => {},
+//   removeFromFriendList: () => {},
+//   updateFriend: () => {},
   
-});
+// });
 
-export const useFriendList = (): FriendListContextType =>
-  useContext(FriendListContext);
+// export const useFriendList = (): FriendListContextType =>
+//   useContext(FriendListContext);
 
-interface FriendListProviderProps {
-  children: ReactNode;
-}
+// interface FriendListProviderProps {
+//   children: ReactNode;
+// }
 
-export const FriendListProvider: React.FC<FriendListProviderProps> = ({
-  children,
-}) => {
-  const { user, isInitializing  } = useUser();
-  const { onSignOut } = useSignOut(); 
-const queryClient = useQueryClient();
+// export const FriendListProvider: React.FC<FriendListProviderProps> = ({
+//   children,
+// }) => {
+//   const { user, isInitializing  } = useUser();
+//   const { onSignOut } = useSignOut(); 
+// const queryClient = useQueryClient();
 
-  const {
-  data: friendList = [],
-  isPending,
-  isLoading: loadingFriendList,
-  isSuccess: friendListFetched,
-  isError,
-} = useQuery({
-  queryKey: ["friendList", user?.id],
-  queryFn: () => fetchFriendList(),
-  retry: 3,
-  enabled: !!user?.id && !isInitializing,
-  staleTime: 1000 * 60 * 60 * 10, // 10 hours
-});
+//   const {
+//   data: friendList = [],
+//   isPending,
+//   isLoading: loadingFriendList,
+//   isSuccess: friendListFetched,
+//   isError,
+// } = useQuery({
+//   queryKey: ["friendList", user?.id],
+//   queryFn: () => fetchFriendList(),
+//   retry: 3,
+//   enabled: !!user?.id && !isInitializing,
+//   staleTime: 1000 * 60 * 60 * 10, // 10 hours
+// });
 
-useEffect(() => {
-  if (isError) {
-    onSignOut();
-  }
-}, [isError]);
+// useEffect(() => {
+//   if (isError) {
+//     onSignOut();
+//   }
+// }, [isError]);
 
  
  
 
-  const contextValue = useMemo(
-    () => ({
-      friendList, 
-      // isPending,
-      friendListFetched,
-      loadingFriendList,
+//   const contextValue = useMemo(
+//     () => ({
+//       friendList, 
+//       // isPending,
+//       friendListFetched,
+//       loadingFriendList,
   
-    }),
-    [
-      friendList, 
-      // isPending,
+//     }),
+//     [
+//       friendList, 
+//       // isPending,
     
-      loadingFriendList,
-      friendListFetched,
+//       loadingFriendList,
+//       friendListFetched,
  
-    ]
-  );
+//     ]
+//   );
 
-  return (
-    <FriendListContext.Provider value={contextValue}>
-      {children}
-    </FriendListContext.Provider>
-  );
-};
+//   return (
+//     <FriendListContext.Provider value={contextValue}>
+//       {children}
+//     </FriendListContext.Provider>
+//   );
+// };

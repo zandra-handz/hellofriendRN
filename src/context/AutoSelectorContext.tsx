@@ -27,7 +27,6 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   children,
 }) => {
   const { friendListAndUpcoming } = useFriendListAndUpcoming();
-
   const { settings } = useUserSettings();
 
   // if (!upcomingHelloes?.length || !settings || !friendList?.length) {
@@ -36,19 +35,19 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
 
   // const upNextId = upcomingHelloes?.[0]?.friend?.id;
 
-  const autoSelectId = useMemo(() => {
-    if (settings?.id && settings?.lock_in_custom_string) {
-      return Number(settings.lock_in_custom_string);
-    }
+  // const autoSelectId = useMemo(() => {
+  //   if (settings?.id && settings?.lock_in_custom_string) {
+  //     return Number(settings.lock_in_custom_string);
+  //   }
 
-    if (settings?.id && settings?.lock_in_next) {
-      return friendListAndUpcoming?.next?.id != null
-        ? Number(friendListAndUpcoming.next?.id)
-        : undefined;
-    }
+  //   if (settings?.id && settings?.lock_in_next) {
+  //     return friendListAndUpcoming?.next?.id != null
+  //       ? Number(friendListAndUpcoming.next?.id)
+  //       : undefined;
+  //   }
 
-    return null;
-  }, [settings, friendListAndUpcoming]);
+  //   return null;
+  // }, [settings, friendListAndUpcoming]);
 
 const autoSelectFriend = useMemo(() => {
   // if data isn’t ready yet, return undefined
@@ -70,10 +69,12 @@ const autoSelectFriend = useMemo(() => {
 
   const contextValue = useMemo(
     () => ({
-      autoSelectId,
+      // autoSelectId,
       autoSelectFriend,
     }),
-    [autoSelectId, autoSelectFriend ]
+    [
+      // autoSelectId,
+       autoSelectFriend ]
   );
   return (
     <AutoSelectorContext.Provider value={contextValue}>
