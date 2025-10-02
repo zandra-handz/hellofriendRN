@@ -34,3 +34,4 @@ module.exports = function (api) {
     ],
   };
 };
+//    "@expo/metro-config": "~54.0.2",

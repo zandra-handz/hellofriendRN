@@ -28,7 +28,7 @@ import manualGradientColors from "@/src/hooks/StaticColors";
 
 //app types
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
-import { signin } from "@/src/calls/api";
+ 
 
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();

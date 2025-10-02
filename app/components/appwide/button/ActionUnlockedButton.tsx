@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import {  Pressable, StyleSheet } from "react-native";
 import React from "react";
 import Animated from "react-native-reanimated";
 import {
@@ -18,8 +18,8 @@ const ActionUnlockedButton = ({
   onPress,
   pulseDuration = 2000,
 }) => {
-  const AnimatedTouchableOpacity =
-    Animated.createAnimatedComponent(TouchableOpacity);
+  const AnimatedPressable =
+    Animated.createAnimatedComponent(Pressable);
 
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
@@ -65,7 +65,7 @@ const ActionUnlockedButton = ({
 
     return {
       backgroundColor,
-      alignItems: "center",
+      alignItems: "center", 
       textAlign: "center",
       alignSelf: "center",
       color: textColor.value,
@@ -74,7 +74,7 @@ const ActionUnlockedButton = ({
   });
 
   return (
-    <AnimatedTouchableOpacity
+    <AnimatedPressable
       style={[
         animatedCardsStyle,
         styles.actionUnlockedButton,
@@ -91,7 +91,7 @@ const ActionUnlockedButton = ({
         {label}
         {"  "}
       </Animated.Text>
-    </AnimatedTouchableOpacity>
+    </AnimatedPressable>
   );
 };
 
@@ -114,8 +114,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "bold",
-    fontSize: 13,
-    // textTransform: "uppercase",
+    fontSize: 13, 
     height: "100%",
     alignSelf: "center",
   },

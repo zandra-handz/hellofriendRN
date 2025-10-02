@@ -1,14 +1,16 @@
 import React from "react";
 import {
   StyleSheet,
-  Pressable, 
+  Pressable,
+  View,
   Text,
   Image,
   GestureResponderEvent,
   ImageSourcePropType,
-} from "react-native"; 
+} from "react-native";
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
+import manualGradientColors from "@/src/hooks/StaticColors";
 
 type SignInButtonProps = {
   onPress: (event: GestureResponderEvent) => void;
@@ -21,13 +23,11 @@ const SignInButton: React.FC<SignInButtonProps> = ({
   onPress,
   title = "Sign in",
 }) => {
-   const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
-   
- 
+  const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
+
   // const shapeSize: number = 190;
   // const shapeHorPosition: number = -48;
   // const shapeVerPosition: number = -23;
-
 
   // need to make sure that pressable also works with accessibility stuff
   return (
@@ -44,44 +44,45 @@ const SignInButton: React.FC<SignInButtonProps> = ({
         source={coffeeCupHeartPng}
         style={{
           position: "absolute",
-          //shapeSize
+
           width: 190,
           height: 190,
-          // shapeHorPosition
           left: -48,
-          // shapeVerPosition
           top: -23,
         }}
         resizeMode="contain"
       />
-      <Text style={style.label}>
-        {title}
-      </Text>
+      <View
+        style={style.containerToCenterLabel}
+      >
+        <Text style={[style.label, { color : manualGradientColors.homeDarkColor }]}>{title}</Text>
+      </View>
     </GlobalPressable>
   );
 };
 
-
 const style = StyleSheet.create({
   button: {
-      backgroundColor: "#ebebeb",
-          borderRadius: 30,
-    paddingVertical: "3%",
+    backgroundColor: "#ebebeb",
+    height: 50,
+    borderRadius: 30, 
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
     overflow: "hidden",
-
+  },
+  containerToCenterLabel: {
+    width: "100%", 
+    flex: 1,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
     fontFamily: "Poppins-Bold",
-    fontSize: 14,
-    color: "#121212",
-  }
-
-
-
+    fontSize: 14, 
+  },
 });
 
 export default SignInButton;

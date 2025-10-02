@@ -27,9 +27,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import FocusedLocationCardUI from "./FocusedLocationCardUI";
-import { useLocations } from "@/src/context/LocationsContext";
-import useUpdateUserAddressCache from "@/src/hooks/useUpdateUserAddressCache";
-import useUpdateFriendAddressCache from "@/src/hooks/useUpdateFriendAddressCache";
+import { useLocations } from "@/src/context/LocationsContext"; 
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
@@ -50,20 +48,11 @@ const LocationsMapView = ({
   overlayColor,
   primaryBackground,
   welcomeTextStyle,
-  subWelcomeTextStyle,
-  manualGradientColors,
+  subWelcomeTextStyle, 
 }) => {
-  // const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
-  console.log(`past helloes`, pastHelloLocations);
+ 
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
-  const { getChosenUserAddress } = useUpdateUserAddressCache({
-    userId: userId,
-  });
-  const { getChosenFriendAddress } = useUpdateFriendAddressCache({
-    userId: userId,
-    friendId: friendId,
-  });
-  4;
+ 
 
   const { userAddresses } = useStartingUserAddresses({ userId: userId });
   const { friendAddresses } = useStartingFriendAddresses({
@@ -71,14 +60,13 @@ const LocationsMapView = ({
     friendId: friendId,
   });
 
- 
-
-  const userAddress = userAddresses?.chosen || userAddresses?.saved?.[0] || null;
+  const userAddress =
+    userAddresses?.chosen || userAddresses?.saved?.[0] || null;
 
   console.log(userAddress);
 
-  const friendAddress = friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
- 
+  const friendAddress =
+    friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
 
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
@@ -193,8 +181,7 @@ const LocationsMapView = ({
 
   useEffect(() => {
     if (currentLocationDetails && currentRegion) {
-      handleLocationAlreadyExists(currentLocationDetails);
-      //console.log('current location details in map view', currentLocationDetails);
+      handleLocationAlreadyExists(currentLocationDetails); 
       mapRef.current.animateToRegion(currentRegion, 200);
     }
   }, [currentRegion]);
@@ -212,24 +199,12 @@ const LocationsMapView = ({
       console.log("LOCATION EXISTS!");
       matchedLocation = { ...combinedLocations[index], matchedIndex: index };
       setFocusedLocation(matchedLocation);
-    } else {
-      // index = locationList.findIndex(
-      //   (location) =>
-      //     String(location.address) === String(locationDetails.address)
-      // );
-
-      //if no match is found, findIndex returns -1, whereas if index 0 will return 0
-      // if (index !== -1) {
-      //   matchedLocation = { ...locationList[index], matchedIndex: index };
+    } else { 
       locationIsOutsideFaves = true;
       setFocusedLocation(locationDetails);
-      // }
+    
     }
-
-    // return {
-    //   matchedLocation: matchedLocation || locationDetails,
-    //   locationIsOutsideFaves,
-    // };
+ 
   };
 
   useEffect(() => {
@@ -322,9 +297,7 @@ const LocationsMapView = ({
   useEffect(() => {
     if (focusedLocation) {
       try {
-        const { latitude, longitude } = focusedLocation;
-        //console.log(latitude, longitude);
-
+        const { latitude, longitude } = focusedLocation; 
         // Validate latitude and longitude are defined and within valid range
         if (
           mapRef.current &&
@@ -523,7 +496,10 @@ const LocationsMapView = ({
     );
   });
 
+console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
+
   const renderLocationsMap = (locations) => (
+     
     <>
       <MapView
         {...(Platform.OS === "android" && { provider: PROVIDER_GOOGLE })}
@@ -630,8 +606,10 @@ const LocationsMapView = ({
               style={[
                 styles.zoomOutButton,
                 {
-                  zIndex: 7000,
+           
+                  zIndex: 8000,
                   backgroundColor: primaryBackground,
+                    
                 },
               ]}
               onPress={fitToMarkers}
@@ -652,36 +630,21 @@ const LocationsMapView = ({
           {renderLocationsMap(pastHelloLocations)}
 
           {!isKeyboardVisible && (
-            <View
-              style={{
-                width: "100%",
-                // height: 70,
-                zIndex: 1200,
-                elevation: 1200,
-                flexDirection: "column",
-                position: "absolute",
-                bottom: 0,
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
+            <View style={styles.focusCardWrapper}>
               <FocusedLocationCardUI
                 focusedLocation={focusedLocation}
                 onSendPress={handleGoToLocationSendScreen}
-                onViewPress={handleGoToLocationViewScreen}
-                manualGradientColors={manualGradientColors}
+                onViewPress={handleGoToLocationViewScreen} 
                 primaryColor={primaryColor}
-                primaryBackground={primaryBackground}
-                welcomeTextStyle={welcomeTextStyle}
-                subWelcomeTextStyle={subWelcomeTextStyle}
+                primaryBackground={primaryBackground} 
               />
               <View
-                style={{
-                  backgroundColor: overlayColor,
-                  // flex: 1,
-                  height: 230,
-                  width: "100%",
-                }}
+                style={[
+                  styles.flatListWrapper,
+                  {
+                    backgroundColor: overlayColor,
+                  },
+                ]}
               >
                 {pastHelloLocations && (
                   <FlatList
@@ -716,6 +679,22 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     backgroundColor: "pink",
+  },
+  focusCardWrapper: {
+    width: "100%",
+    // height: 70,
+    zIndex: 1200,
+    elevation: 1200,
+    flexDirection: "column",
+    position: "absolute",
+    bottom: 0,
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  flatListWrapper: {
+    // flex: 1,
+    height: 230,
+    width: "100%",
   },
   gradientCover: {
     width: "100%",

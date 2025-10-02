@@ -28,6 +28,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
 // app utils
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import { logQueryCacheSize } from "@/src/utils/logQueryCacheSize";
 
 // app hooks
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -54,7 +55,7 @@ import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
-
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 const ScreenHome = () => {
   const { user } = useUser();
   const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
@@ -71,7 +72,19 @@ const ScreenHome = () => {
   });
 
   setUpNextCache();
+const queryClient = useQueryClient();
 
+//   queryClient.getQueryCache().getAll().forEach(query => {
+//   console.log({
+//     queryKey: query.queryKey,
+//     state: query.state,
+//     data: query.state.data,
+//     error: query.state.error,
+//   });
+// });
+ 
+
+// logQueryCacheSize(queryClient);
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   // const upcomingId = friendListAndUpcoming?.next?.id;

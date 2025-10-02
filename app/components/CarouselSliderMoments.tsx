@@ -158,8 +158,7 @@ const CarouselSliderMoments = ({
           pagingEnabled
           //   snapToOffsets={true}
           ListFooterComponent={() => <View style={{ width: 100 }} />}
-        />
-        {/* {type === 'location' && ( */}
+        /> 
 
         <ItemFooterMoments //this component is now NOT absolutely positioned, so that it can get calculated with the card above and they won't overlap on different screens
           userId={userId}

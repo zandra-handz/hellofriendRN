@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet, Text, Alert } from "react-native";
 import EscortBarMoments from "../moments/EscortBarMoments";
 import { Linking } from "react-native";
@@ -6,7 +6,6 @@ import AddPhoneNumber from "../alerts/AddPhoneNumber";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useFocusEffect } from "@react-navigation/native";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
-import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import Animated, {
   SharedValue,
@@ -47,15 +46,25 @@ const ItemFooterMoments: React.FC<Props> = ({
   categoryColorsMap, // in case want category colors
   totalItemCount,
   friendNumber,
-  useButtons = true,
-  onRightPress = () => {},
-  onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
   const { handlePreAddMoment } = usePreAddMoment({
     userId: userId,
     friendId: friendId,
   });
 
+  const totalCount = totalItemCount
+    ? totalItemCount
+    : data?.length
+      ? data.length
+      : 0;
+
+  useEffect(() => {
+    if (totalCount === 0) {
+      navigateBack();
+    }
+  }, [totalCount]);
+
+  const [currentIndex, setCurrentIndex] = useState(false);
   const [inputNumberVisible, setInputNumberVisible] = useState(false);
   const [ideaSent, setIdeaSent] = useState(false);
 
@@ -99,26 +108,11 @@ const ItemFooterMoments: React.FC<Props> = ({
   );
 
   const handleInputNumberClose = (success) => {
-    console.log("handleinputnumberclose");
     setInputNumberVisible(false);
     if (success) {
       handleSendAlert();
     }
   };
-
-  const [currentIndex, setCurrentIndex] = useState(false);
-
-  const totalCount = totalItemCount
-    ? totalItemCount
-    : data?.length
-      ? data.length
-      : 0;
-
-  useEffect(() => {
-    if (totalCount === 0) {
-      navigateBack();
-    }
-  }, [totalCount]);
 
   useAnimatedReaction(
     () => currentIndexValue.value,
@@ -159,7 +153,7 @@ const ItemFooterMoments: React.FC<Props> = ({
 
   const handleScrollToNext = () => {
     if (currentIndex === undefined || totalCount === 0) {
-      console.log('cannot scroll to next')
+      console.log("cannot scroll to next");
       return;
     }
 
@@ -171,24 +165,18 @@ const ItemFooterMoments: React.FC<Props> = ({
 
   const handleScrollToPrev = () => {
     if (currentIndex === undefined || totalCount === 0) {
-      console.log('cannot scroll to prev')
+      // console.log("cannot scroll to prev");
       return;
     }
 
     const prev = currentIndex - 1;
-    // console.log(totalCount - 1);
     const scrollToIndex = currentIndex <= 0 ? totalCount - 1 : prev;
     scrollTo(scrollToIndex);
-    // console.log(currentIndex);
   };
 
   const visibilityStyle = useAnimatedStyle(() => {
     return { opacity: visibilityValue.value };
   });
-
-  const item = useMemo(() => {
-    return data[currentIndex];
-  }, [currentIndex, data]);
 
   return (
     <>
@@ -202,9 +190,8 @@ const ItemFooterMoments: React.FC<Props> = ({
         style={[
           styles.container,
           {
-            height: height, //same as escort bar now
-            marginBottom: marginBottom,
-            // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            height: height,  
+            marginBottom: marginBottom, 
           },
           visibilityStyle,
         ]}
@@ -246,7 +233,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     zIndex: 1,
-    // backgroundColor: "pink",
     paddingHorizontal: 6,
     marginBottom: 10,
   },

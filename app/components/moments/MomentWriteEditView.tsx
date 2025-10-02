@@ -271,7 +271,7 @@ const MomentWriteEditView = ({
             // capsule: momentTextRef.current.getText(),
             capsule: momentTextToSave,
           };
-              showFlashMessage("Changes saved!", false, 2000);
+              showFlashMessage("Changes saved!", false, 1000);
           await handleEditMoment(existingMomentObject?.id, editData);
         }
       }

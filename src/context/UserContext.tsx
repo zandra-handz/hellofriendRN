@@ -23,6 +23,7 @@ import { User } from "../types/UserContextTypes";
 
 interface UserContextType {
   user: User | null;
+  refetch: () => void;
   isAuthenticated: boolean;
   isInitializing: boolean;
   userAppSettings: Record<string, any | null>;

@@ -1,9 +1,9 @@
-import { View, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import React, { ReactElement } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 type Props = {
   categoryColorsMap: object;
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const EscortBarMoments = ({
-  primaryBackground='orange',
+  primaryBackground = "orange",
   primaryColor,
   onLeftPress,
   onRightPress,
@@ -28,41 +28,22 @@ const EscortBarMoments = ({
   const { navigateBack } = useAppNavigations();
   return (
     <Animated.View
-      style={{ flexDirection: "row", width: "100%" }}
+      style={styles.container}
       entering={SlideInDown}
       exiting={SlideOutDown}
     >
       <GlobalPressable
         onPress={() => console.log("nada")}
         style={[
+          styles.containerButton,
           {
-            height: 50,
-            paddingHorizontal: 10,
-            flexDirection: "row",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "flex-end",
-
-            borderRadius: 10,
             backgroundColor: primaryBackground,
           },
         ]}
       >
         <Pressable
           hitSlop={10}
-          style={{
-            height: "100%",
-            alignItems: "center",
-            // justifyContent: "center",
-
-            width: 20,
-            //  flexShrink: 1,
-            position: "absolute",
-            left: 0,
-            flexDirection: "row",
-            // backgroundColor: 'pink',
-          }}
-          //   onPress={navigateBack}
+          style={styles.backButton}
           onPress={navigateBack}
         >
           <MaterialIcons
@@ -77,20 +58,11 @@ const EscortBarMoments = ({
             alignItems: "center",
             flexDirection: "row",
             width: "auto",
-
-            //  flexShrink: 1,
           }}
         >
           <Pressable
             hitSlop={20}
-            style={{
-              marginHorizontal: 10,
-              marginRight: 14, // eyeballing/instance of needing a weird customization
-              borderRadius: 9999,
-              alignItems: "center",
-              justifyContent: "center",
-              alignContent: "center",
-            }}
+            style={styles.prevButton}
             onPress={onLeftPress}
           >
             <MaterialIcons
@@ -103,14 +75,7 @@ const EscortBarMoments = ({
           {children}
           <Pressable
             hitSlop={20}
-            style={{
-              marginHorizontal: 10,
-              marginLeft: 6,
-              borderRadius: 9999,
-              alignItems: "center",
-              justifyContent: "center",
-              alignContent: "center",
-            }}
+            style={styles.nextButton}
             onPress={onRightPress}
           >
             <MaterialIcons
@@ -121,25 +86,15 @@ const EscortBarMoments = ({
             />
           </Pressable>
         </View>
-        {/* <View style={{ width: 40 }}></View> */}
         {includeSendButton && (
           <Pressable
             hitSlop={10}
-            style={{
-              height: "100%",
-              alignItems: "center",
-              // justifyContent: "center",
-
-              width: 20,
-              //  flexShrink: 1,
-              position: "absolute",
-              right: 0,
-              flexDirection: "row",
-            }}
+            style={styles.sendButton}
             onPress={onSendPress}
           >
-            <MaterialIcons
-              name={"keyboard-arrow-right"}
+            <MaterialCommunityIcons
+              // name={"keyboard-arrow-right"}
+              name={"send-circle-outline"}
               size={20}
               color={primaryColor}
             />
@@ -149,5 +104,55 @@ const EscortBarMoments = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    width: "100%",
+  },
+  containerButton: {
+    // not sure why it's a button
+    height: 50,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-end",
+
+    borderRadius: 10,
+  },
+  backButton: {
+    height: "100%",
+    alignItems: "center",
+    width: 20,
+    position: "absolute",
+    left: 0,
+    flexDirection: "row",
+  },
+  prevButton: {
+    marginHorizontal: 10,
+    marginRight: 14, // eyeballing/instance of needing a weird customization
+    borderRadius: 9999,
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  nextButton: {
+    marginHorizontal: 10,
+    marginLeft: 6,
+    borderRadius: 9999,
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  sendButton: {
+    height: "100%",
+    alignItems: "center",
+    width: 20,
+    position: "absolute",
+    right: 0,
+    flexDirection: "row",
+  },
+});
 
 export default EscortBarMoments;

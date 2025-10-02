@@ -14,7 +14,8 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
-, "src/context/LocationsContext.tsx"  ]
+// , "src/context/LocationsContext.tsx"  
+]
 }
 
 

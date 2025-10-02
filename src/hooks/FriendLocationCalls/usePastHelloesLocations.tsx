@@ -15,6 +15,11 @@ const usePastHelloesLocations = ({
   faveLocations,
   nonFaveLocations,
 }: Props) => {
+
+  // console.log(inPersonHelloes);
+  // console.log(locationList);
+  // console.warn(faveLocations);
+  // console.warn(nonFaveLocations);
   const { createLocationListWithHelloes, bermudaCoords } =
     useLocationHelloFunctions();
 

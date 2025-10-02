@@ -1,9 +1,8 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import GlobalPressable from "../appwide/button/GlobalPressable";
 import Animated, { SlideInUp, SlideOutUp } from "react-native-reanimated";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 type Props = {
@@ -17,9 +16,18 @@ const AuthScreenTopTray = ({
   onRightPress,
   rightLabel,
 }: Props) => {
+  const { navigateToWelcome } = useAppNavigations();
+  // const LEFT_BUTTONS_SPACER = 6;
 
-const { navigateToWelcome } = useAppNavigations();
-  const LEFT_BUTTONS_SPACER = 6;
+  const pressableOneStyles = StyleSheet.flatten([
+    styles.pressableContainer,
+    { backgroundColor: manualGradientColors.homeDarkColor },
+  ]);
+
+  const pressableTwoStyles = StyleSheet.flatten([
+    styles.pressableTwoContainer,
+    { backgroundColor: manualGradientColors.homeDarkColor },
+  ]);
 
   return (
     <Animated.View
@@ -27,50 +35,23 @@ const { navigateToWelcome } = useAppNavigations();
       exiting={SlideOutUp}
       style={styles.container}
     >
-      <View style={{flexDirection: 'row'}}>
-
-      <Pressable
-        onPress={navigateToWelcome}
-        style={{
-          height: 32,
-          width: 32,
-          alignItems: "center",
-          justifyContent: "center",
-          alignContent: "center",
-          flexDirection: "column",
-          backgroundColor: manualGradientColors.homeDarkColor,
-          borderRadius: 20,
-          marginRight: LEFT_BUTTONS_SPACER,
-        }}
-      >
-        <MaterialCommunityIcons
-          // name={"arrow-left"}
-          name={"home"}
-          size={16}
-          color={manualGradientColors.lightColor}
-        />
-      </Pressable>
-      <Pressable
-        onPress={onBackPress}
-        style={{
-          height: 32,
-          width: 32,
-          alignItems: "center",
-          justifyContent: "center",
-          alignContent: "center",
-          flexDirection: "column",
-          backgroundColor: manualGradientColors.homeDarkColor,
-          borderRadius: 20,
-        }}
-      >
-        <MaterialCommunityIcons
-          // name={"arrow-left"}
-          name={"swap-horizontal-variant"}
-          size={16}
-          color={manualGradientColors.lightColor}
-        />
-      </Pressable>
-              
+      <View style={{ flexDirection: "row", width: 100  }}>
+        <Pressable onPress={navigateToWelcome} style={pressableOneStyles}>
+          <MaterialCommunityIcons
+            // name={"arrow-left"}
+            name={"home"}
+            size={16}
+            color={manualGradientColors.lightColor}
+          />
+        </Pressable>
+        <Pressable onPress={onBackPress} style={pressableTwoStyles}>
+          <MaterialCommunityIcons
+            // name={"arrow-left"}
+            name={"swap-horizontal-variant"}
+            size={16}
+            color={manualGradientColors.lightColor}
+          />
+        </Pressable>
       </View>
       <View
         style={{
@@ -101,6 +82,26 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     // backgroundColor: "teal",
+  },
+  pressableContainer: {
+    height: 32,
+    width: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center",
+    flexDirection: "column",
+    borderRadius: 20,
+
+    marginRight: 6,
+  },
+  pressableTwoContainer: {
+    height: 32,
+    width: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center",
+    flexDirection: "column",
+    borderRadius: 20,
   },
   buttonText: {
     color: "black",

@@ -293,27 +293,19 @@ const DonutChart = ({
           <Pressable
             onPress={onCenterPress}
             hitSlop={10}
-            style={{
-              zIndex: 1000000,
-              elevation: 1000000,
-              position: "absolute",
-              width: 130,
-              height: 130,
-
-              top: "50%",
-              left: "50%",
-              //  backgroundColor: "red",
-              borderRadius: 999,
-              transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
-            }}
+            style={styles.centerCenterButton}
           />
         </View>
       )}
       <Pressable
         onPress={onPlusPress}
+        hitSlop={30}
         style={[
           styles.centerButton,
-          {backgroundColor: manualGradientColors.lightColor, zIndex: 2, borderRadius: 999, padding: 4}
+          {
+            backgroundColor: manualGradientColors.lightColor,
+      
+          },
           // { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
         ]}
         hitSlop={30}
@@ -321,12 +313,12 @@ const DonutChart = ({
         <MaterialCommunityIcons
           name={"lightning-bolt-outline"} //pencil-plus
           // name={"playlist-plus"}
-         name={"plus"}
-          size={26}
-          opacity={0.8}
+          name={"plus"}
+          size={22}
+          opacity={1}
           color={primaryColor}
           color={manualGradientColors.homeDarkColor}
-          style={{zIndex: 1}}
+          style={{ zIndex: 1 }}
         />
       </Pressable>
     </View>
@@ -348,15 +340,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  centerCenterButton: {
+                  zIndex: 1000000,
+              elevation: 1000000,
+              position: "absolute",
+              width: 130,
+              height: 130,
+
+              top: "50%",
+              left: "50%",
+              //  backgroundColor: "red",
+              borderRadius: 999,
+              transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
+
+  },
   centerButton: {
     position: "absolute",
     padding: 0,
     //borderRadius: 999,
-    borderRadius: 4,
+    borderRadius: 0,
     // zIndex: 2,
 
-    right: -20,
+    right: -10,
     bottom: 30,
+                zIndex: 2,
+            borderRadius: 999,
+            width: 34,
+            height: 34,
+            padding: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: 1,
   },
 });
 
