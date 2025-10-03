@@ -1,10 +1,8 @@
-import { useEffect, useMemo } from "react";
-import * as QuickActions from "expo-quick-actions";
-// import { useUser } from "../context/UserContext";
-// import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
+import { useEffect  } from "react";
+import * as QuickActions from "expo-quick-actions"; 
 import { useUserSettings } from "../context/UserSettingsContext";
 import { useFriendListAndUpcoming } from "../context/FriendListAndUpcomingContext";
-// import { useFriendList } from "../context/FriendListContext";
+ 
 
 // imports from Layout in App.tsx
 export default function QuickActionsHandler({ navigationRef }) {

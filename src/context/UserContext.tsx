@@ -1,24 +1,17 @@
 import React, {
   createContext,
   useContext,
-  useRef,
+  // useRef,
   useMemo,
   useEffect,
 } from "react";
 import * as SecureStore from "expo-secure-store";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import useSignOut from "../hooks/UserCalls/useSignOut";
-import {
-  signup,
-  signin,
-  signinWithoutRefresh,
-  getCurrentUser,
-  updateUserAccessibilitySettings,
-  updateSubscription,
-} from "../calls/api";
-import useSignIn from "../hooks/UserCalls/useSignIn";
-import useSignUp from "../hooks/UserCalls/useSignUp";
+import { getCurrentUser } from "../calls/api";
+// import useSignIn from "../hooks/UserCalls/useSignIn";
+// import useSignUp from "../hooks/UserCalls/useSignUp";
 import { User } from "../types/UserContextTypes";
 
 interface UserContextType {
@@ -42,9 +35,10 @@ export const useUser = () => {
   return context;
 };
 
-const TOKEN_KEY = "accessToken";
+// LEAVE THIS HERE FOR REFERENCE, IT IS CORRECT I JUST DON'T NEED A VARIABLE BECAUSE IT IS ONLY USED ONCE
+// const TOKEN_KEY = "accessToken";
 
-console.warn(`USER CONTEXT RERENDERED`);
+// console.warn(`USER CONTEXT RERENDERED`);
 
 interface UserProviderProps {
   children: React.ReactNode;
@@ -53,7 +47,7 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const { onSignOut } = useSignOut();
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const {
     data: user,
@@ -65,11 +59,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
     enabled: false, // never auto-run
-    retry: 3, //default anyway
+    retry: 3,  
   });
-
-  const { onSignIn } = useSignIn({ refetchUser: refetch });
-  const { onSignUp } = useSignUp({ signInNewUser: onSignIn });
+ 
 
   useEffect(() => {
     if (isError) {
@@ -79,89 +71,16 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
-      // console.warn("CHECKIGN IN CONTEXCREGKERFEFD");
+      const storedToken = await SecureStore.getItemAsync("accessToken");
       if (storedToken) {
-        await refetch(); // only fetch if token exists
+        await refetch(); 
       } else {
         onSignOut();
       }
     })();
   }, []);
 
-  // const signupMutation = useMutation({
-  //   mutationFn: signup,
-  //   onSuccess: async (result) => {
-  //     // if (result.data) {
-  //     //     await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
-  //     //     await reInitialize(); // Refetch user data after sign-up
-  //     // }
-  //     if (timeoutRef.current) {
-  //       clearTimeout(timeoutRef.current);
-  //     }
-
-  //     timeoutRef.current = setTimeout(() => {
-  //       signupMutation.reset();
-  //     }, 2000);
-  //   },
-  //   onError: () => {
-  //     if (timeoutRef.current) {
-  //       clearTimeout(timeoutRef.current);
-  //     }
-  //     timeoutRef.current = setTimeout(() => {
-  //       signupMutation.reset();
-  //     }, 2000);
-  //   },
-  // });
-
-  // const onSignUp = async (
-  //   username: string,
-  //   email: string,
-  //   password: string
-  // ) => {
-  //   try {
-  //     const credentials = { username, email, password };
-  //     await signupMutation.mutateAsync(credentials);
-  //     onSignIn(username, password);
-  //   } catch (error) {
-  //     console.error("Sign up error", error);
-  //   }
-  // };
-
-  //   const deleteUserAccountMutation = useMutation({
-  //     mutationFn: deleteUserAccount,
-  //     onSuccess: () => {
-  //       console.log("User deleted");
-  //       onSignOut();
-
-  //       if (timeoutRef.current) {
-  //         clearTimeout(timeoutRef.current);
-  //       }
-
-  //       timeoutRef.current = setTimeout(() => {
-  //         deleteUserAccountMutation.reset();
-  //       }, 2000);
-  //     },
-  //     onError: (error) => {
-  //       console.error("Sign in mutation error:", error);
-  //       if (timeoutRef.current) {
-  //         clearTimeout(timeoutRef.current);
-  //       }
-
-  //       timeoutRef.current = setTimeout(() => {
-  //         deleteUserAccountMutation.reset();
-  //       }, 2000);
-  //     },
-  //   });
-
-  //   const handleDeleteUserAccount = async () => {
-  //     try {
-  //       await deleteUserAccountMutation.mutateAsync();
-  //     } catch (error) {
-  //       console.error("Delete user error", error);
-  //     }
-  //   };
-
+ 
   const contextValue = useMemo(
     () => ({
       user,

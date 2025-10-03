@@ -1,0 +1,278 @@
+ "category": null, "friends": [{"id": 86, "name": 86}], "friendsCount": 1, "helloCount": 0, "id": 308, "isFave": false, "isPastHello": false, "latitude": "42.866656", "longitude": "-71.493493", "matchingHelloes": [], "parking_score": null, "personal_experience_info": null, "title": "Merrimack", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Wasaga Beach, ON, Canada", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 307, "isFave": false, "isPastHello": false, "latitude": "44.523723", "longitude": "-80.003300", "matchingHelloes": [], "parking_score": null, "personal_experience_info": null, "title": "Wasaga Beach", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "600 Nashua St, Milford, NH 03055, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 306, "isFave": false, "isPastHello": false, "latitude": "42.824100", "longitude": "-71.623685", "matchingHelloes": [], "parking_score": null, "personal_experience_info": null, "title": "Starbucks", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "East Boston, MA 02128, USA", "category": null, "friends": [{"id": 154, "name": 154}, {"id": 152, "name": 152}], "friendsCount": 2, "helloCount": 0, "id": 304, "isFave": false, "isPastHello": false, "latitude": "42.369543", "longitude": "-71.020061", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": null, "title": "Boston Logan International Airport", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "New York, NY 10004, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 303, "isFave": false, "isPastHello": false, "latitude": "40.703870", "longitude": "-74.013854", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "Testing new hook!!!", "title": "Statue of Liberty", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "4 Orchard View Dr Unit 2, Londonderry, NH 03053, USA", "category": "Bakeries", "friends": [{"id": 90, "name": 90}, {"id": 74, "name": 74}], "friendsCount": 2, "helloCount": 0, "id": 271, "isFave": false, "isPastHello": false, "latitude": "42.863480", "longitude": "-71.353304", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "Luccianos BakeShop", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1000 Auburn St, Manchester, NH 03103, USA", "category": null, "friends": [{"id": 92, "name": 92}], "friendsCount": 1, "helloCount": 0, "id": 270, "isFave": false, "isPastHello": false, "latitude": "42.985397", "longitude": "-71.438252", "matchingHelloes": [], "parking_score": "free parking lot nearby", "personal_experience_info": null, "title": "1000 Auburn St, Manchester, NH 03103, USA", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "184 Amherst Rd, Merrimack, NH 03054, USA", "category": "Horses", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 269, "isFave": false, "isPastHello": false, "latitude": "42.845626", "longitude": "-71.547549", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "", "title": "Horse Hill Nature Preserve", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Rainbow Lake, Derry, NH 03038, USA", "category": "Nature", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 268, "isFave": false, "isPastHello": false, "latitude": "42.922729", "longitude": "-71.328622", "matchingHelloes": [], "parking_score": "no parking whatsoever", "personal_experience_info": "", "title": "Rainbow Lake", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Thrissur, Kerala, India", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 267, "isFave": false, "isPastHello": false, "latitude": "10.527642", "longitude": "76.214435", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": null, "title": "Thrissur", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "7 Continental Blvd I, Merrimack, NH 03054, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 266, "isFave": false, "isPastHello": false, "latitude": "42.837475", "longitude": "-71.499446", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Subway", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "280 Daniel Webster Hwy, Merrimack, NH 03054, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 265, "isFave": false, "isPastHello": false, "latitude": "42.836186", "longitude": "-71.491666", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "PizzAroma", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1136 Arch St, Philadelphia, PA 19107, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 264, "isFave": false, "isPastHello": false, "latitude": "39.953159", "longitude": "-75.159098", "matchingHelloes": [], "parking_score": "no parking whatsoever", "personal_experience_info": "", "title": "Reading Terminal Market", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "80 Premium Outlets Blvd #355, Merrimack, NH 03054, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 263, "isFave": false, "isPastHello": false, "latitude": "42.826219", "longitude": "-71.500022", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "Claire's", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "304 Daniel Webster Hwy, Merrimack, NH 03054, USA", "category": "Restaurant", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 259, "isFave": false, "isPastHello": false, "latitude": "42.839682", "longitude": "-71.491525", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "Espresso martini", "title": "The Common Man Merrimack", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "258 Wallace Rd, Bedford, NH 03110, USA", "category": "Pharmacy", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 256, "isFave": true, "isPastHello": false, "latitude": "42.936327", "longitude": "-71.526918", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "Hiiii", "title": "Walgreens", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "515 Daniel Webster Hwy, Merrimack, NH 03054, USA", "category": "Restaurant", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 255, "isFave": false, "isPastHello": false, "latitude": "42.871895", "longitude": "-71.489065", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "Bleepabb", "title": "Jade Dragon Restaurant", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "915 Elm St, Manchester, NH 03101, USA", "category": "Bakery", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 252, "isFave": false, "isPastHello": false, "latitude": "42.991307", "longitude": "-71.462844", "matchingHelloes": [], "parking_score": "no parking whatsoever", "personal_experience_info": "", "title": "Dishon Gluten-Free Bakery & Coffee Shop", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1741 S Willow St, Manchester, NH 03103, USA", "category": "Bookstores", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 251, "isFave": false, "isPastHello": false, "latitude": "42.950600", "longitude": "-71.436342", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "Notes", "title": "Barnes & Noble", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1 Elliot Way Ste 2, Manchester, NH 03103, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 250, "isFave": false, "isPastHello": false, "latitude": "42.983409", "longitude": "-71.438006", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "My location", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1 Elliot Way # 200, Manchester, NH 03103, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 249, "isFave": false, "isPastHello": false, "latitude": "42.983987", "longitude": "-71.437883", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "My location", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "142 Turkey Hill Rd, Merrimack, NH 03054, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 248, "isFave": false, "isPastHello": false, "latitude": "42.846441", "longitude": "-71.504558", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "Hoooooome", "title": "My location", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "279 Salem St, Reading, MA 01867, USA", "category": "Sports", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 247, "isFave": false, "isPastHello": false, "latitude": "42.525570", "longitude": "-71.087011", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "Hhh", "title": "REI", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "7 Market St Ste 1, Bedford, NH 03110, USA", "category": null, "friends": [{"id": 7, "name": 7}], "friendsCount": 1, "helloCount": 0, "id": 246, "isFave": false, "isPastHello": false, "latitude": "42.954013", "longitude": "-71.476482", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "REI", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "35 Railroad Square, Nashua, NH 03064, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 245, "isFave": false, "isPastHello": false, "latitude": "42.764781", "longitude": "-71.466714", "matchingHelloes": [], "parking_score": "fairly stressful or unreliable street parking", "personal_experience_info": "hihihihihihihi", "title": "Riverwalk Bakery & Café", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "212 State Rte 101, Amherst, NH 03031, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 244, "isFave": false, "isPastHello": false, "latitude": "42.874780", "longitude": "-71.613425", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "Hiya!", "title": "The Black Forest", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "968 Elm St, Manchester, NH 03101, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 243, "isFave": false, "isPastHello": false, "latitude": "42.991812", "longitude": "-71.463419", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "The Birch on Elm", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "203A Broadway, Arlington, MA 02474, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 242, "isFave": false, "isPastHello": false, "latitude": "42.412049", "longitude": "-71.144452", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Breadboard Bakery", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "264 1st Ave., New York, NY 10009, USA", "category": "Bread", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 241, "isFave": false, "isPastHello": false, "latitude": "40.732183", "longitude": "-73.981602", "matchingHelloes": [], "parking_score": "", "personal_experience_info": "", "title": "Bread Story", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "465 Huntington Ave, Boston, MA 02115, USA", "category": "Art", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 240, "isFave": false, "isPastHello": false, "latitude": "42.339383", "longitude": "-71.093964", "matchingHelloes": [], "parking_score": "free parking lot nearby", "personal_experience_info": "hihihihihihihi", "title": "Museum of Fine Arts, Boston", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "2834 Dartmouth College Hwy, North Haverhill, NH 03774, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 239, "isFave": false, "isPastHello": false, "latitude": "44.092130", "longitude": "-72.025368", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "North Haverhill Fire Department", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Manchester, NH 03103, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 238, "isFave": false, "isPastHello": false, "latitude": "42.956149", "longitude": "-71.441810", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Stryker", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "20 Freedom Way, Franklin, MA 02038, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 237, "isFave": false, "isPastHello": false, "latitude": "42.051881", "longitude": "-71.395278", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "Owens & Minor - Boston Distribution Center", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "880 Technology Park Dr, Billerica, MA 01821, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 236, "isFave": false, "isPastHello": false, "latitude": "42.530778", "longitude": "-71.280208", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Medtronic", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "359 1st New Hampshire Turnpike, Northwood, NH 03261, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 235, "isFave": false, "isPastHello": false, "latitude": "43.202780", "longitude": "-71.165817", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Northwood Naturals", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1280 Main St W, Hamilton, ON L8S 4P5, Canada", "category": null, "friends": [{"id": 69, "name": 69}], "friendsCount": 1, "helloCount": 0, "id": 234, "isFave": false, "isPastHello": false, "latitude": "43.262245", "longitude": "-79.920286", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "H.G. Thode Library of Science and Engineering", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Boston, MA 02163, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 233, "isFave": false, "isPastHello": false, "latitude": "42.366352", "longitude": "-71.119600", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "HBS Parking Lot", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "315 W Hollis St, Nashua, NH 03060, USA", "category": null, "friends": [{"id": 90, "name": 90}], "friendsCount": 1, "helloCount": 0, "id": 231, "isFave": false, "isPastHello": false, "latitude": "42.751159", "longitude": "-71.486398", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "Testing the notes!", "title": "Dunkin'", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "165 Nashua Rd, Pepperell, MA 01463, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 230, "isFave": false, "isPastHello": false, "latitude": "42.643540", "longitude": "-71.561217", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Skydive Pepperell", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "117 E Berkeley St, Boston, MA 02118, USA", "category": null, "friends": [{"id": 90, "name": 90}], "friendsCount": 1, "helloCount": 0, "id": 228, "isFave": false, "isPastHello": false, "latitude": "42.343628", "longitude": "-71.065261", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "J.J. Foley's Cafe", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "514 Daniel Webster Hwy, Merrimack, NH 03054, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 227, "isFave": false, "isPastHello": false, "latitude": "42.873583", "longitude": "-71.489786", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "", "title": "Dunkin'", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1342 Clifton Ave, Clifton, NJ 07012, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 226, "isFave": false, "isPastHello": false, "latitude": "40.854084", "longitude": "-74.172920", "matchingHelloes": [], "parking_score": "free parking lot nearby", "personal_experience_info": "hihihihihihihighfhbooobbb hhhh. Hiyaaaaaa", "title": "Chocolate House Clifton", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "7 Continental Blvd, Merrimack, NH 03054, USA", "category": null, "friends": [{"id": 85, "name": 85}], "friendsCount": 1, "helloCount": 0, "id": 225, "isFave": true, "isPastHello": false, "latitude": "42.836891", "longitude": "-71.498762", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "Shaw's", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "25 Trafalgar Square, Nashua, NH 03063, USA", "category": null, "friends": [{"id": 99, "name": 99}], "friendsCount": 1, "helloCount": 0, "id": 224, "isFave": false, "isPastHello": false, "latitude": "42.785195", "longitude": "-71.503416", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Residence Inn Nashua", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1755 Genesis Dr, La Porte, IN 46350, USA", "category": null, "friends": [{"id": 92, "name": 92}], "friendsCount": 1, "helloCount": 0, "id": 223, "isFave": false, "isPastHello": false, "latitude": "41.633232", "longitude": "-86.707687", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "HRR Enterprises, Inc.", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "43 Birch St, Derry, NH 03038, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 222, "isFave": false, "isPastHello": false, "latitude": "42.877041", "longitude": "-71.320874", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Beckley Family Chiropractic PLLC", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Beckys Pl, Hollis, NH 03049, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 221, "isFave": false, "isPastHello": false, "latitude": "42.759846", "longitude": "-71.627337", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Beckys Place", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "390 Commercial St, Portland, ME 04101, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 220, "isFave": false, "isPastHello": false, "latitude": "43.650193", "longitude": "-70.255887", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Becky's Diner", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Hicksville, NY, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 219, "isFave": false, "isPastHello": false, "latitude": "40.773079", "longitude": "-73.527900", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Hicksville", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Random Hall, 290 Massachusetts Ave, Cambridge, MA 02139, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 218, "isFave": false, "isPastHello": false, "latitude": "42.361868", "longitude": "-71.098292", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Random Hall", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1 Henry Dr, Pocasset, MA 02559, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 217, "isFave": false, "isPastHello": false, "latitude": "41.707985", "longitude": "-70.585380", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "HII Unmanned Systems", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "5 Dan Hill Rd, Londonderry, NH 03053, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 216, "isFave": false, "isPastHello": false, "latitude": "42.837441", "longitude": "-71.409032", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Carriage Shack Farm LLC", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1185 Bedford Ave, Brooklyn, NY 11216, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 215, "isFave": false, "isPastHello": false, "latitude": "40.682743", "longitude": "-73.953593", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Beds Thai", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Catskill, NY 12414, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 214, "isFave": false, "isPastHello": false, "latitude": "42.207868", "longitude": "-73.912467", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Catskill", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Lemont, IL 60439, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 213, "isFave": false, "isPastHello": false, "latitude": "41.672949", "longitude": "-87.962884", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Waterfall Glen Forest Preserve", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "436 Amherst St, Nashua, NH 03063, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 212, "isFave": false, "isPastHello": false, "latitude": "42.788103", "longitude": "-71.515406", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Hellenic American University", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "37 E Hollis St, Nashua, NH 03060, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 211, "isFave": false, "isPastHello": false, "latitude": "42.758484", "longitude": "-71.459713", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "HeyHey", "title": "RAGE CAGE NH", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "220 S River Rd, Bedford, NH 03110, USA", "category": null, "friends": [{"id": 85, "name": 85}], "friendsCount": 1, "helloCount": 0, "id": 210, "isFave": true, "isPastHello": false, "latitude": "42.940494", "longitude": "-71.473905", "matchingHelloes": [], "parking_score": "free parking lot nearby", "personal_experience_info": "Hi", "title": "Target", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "59 High Range Rd, Londonderry, NH 03053, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 209, "isFave": false, "isPastHello": false, "latitude": "42.845579", "longitude": "-71.399314", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Sunnycrest Farm", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Rock Eden Rd, First 6th of October, Giza Governorate, Egypt", "category": null, "friends": [{"id": 74, "name": 74}], "friendsCount": 1, "helloCount": 0, "id": 208, "isFave": false, "isPastHello": false, "latitude": "29.930669", "longitude": "31.054204", "matchingHelloes": [], "parking_score": "unspecified", "personal_experience_info": "hihihihihihihi", "title": "Rock Eden Rd", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1 Franklin Park Rd, Boston, MA 02121, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 207, "isFave": false, "isPastHello": false, "latitude": "42.302827", "longitude": "-71.087691", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Franklin Park Zoo", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1667 Massachusetts Ave, Cambridge, MA 02138, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 189, "isFave": false, "isPastHello": false, "latitude": "42.382084", "longitude": "-71.119411", "matchingHelloes": [], "parking_score": "no parking whatsoever", "personal_experience_info": "hihihihihihihi", "title": "Lizard Lounge", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "57230 Bitche, France", "category": null, "friends": [{"id": 92, "name": 92}], "friendsCount": 1, "helloCount": 0, "id": 187, "isFave": false, "isPastHello": false, "latitude": "49.050415", "longitude": "7.427276", "matchingHelloes": [], "parking_score": "unspecified", "personal_experience_info": "", "title": "Bitche", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "321 Port Rd, Wells, ME 04090, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 178, "isFave": false, "isPastHello": false, "latitude": "43.347465", "longitude": "-70.548182", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Rachel Carson National Wildlife Refuge", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "565 Amherst St, Nashua, NH 03063, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 177, "isFave": false, "isPastHello": false, "latitude": "42.798817", "longitude": "-71.532394", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "565 Amherst St", "validatedAddress": true, "zipCode": "03063"}
+ LOG  []
+ LOG  {"address": "87 Amherst St, Manchester, NH 03101, USA", "category": null, "friends": [{"id": 68, "name": 68}], "friendsCount": 1, "helloCount": 0, "id": 175, "isFave": false, "isPastHello": false, "latitude": "42.991659", "longitude": "-71.460804", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "hihihihihihihi testing this to see what it looks like in display screen blaaagrg
+
+Fiona Apple: When I was a kid--10, 11, 12, 13--the thing I wanted most in the world was a best friend. I wanted to be important to people; to have people that understood me. I wanted to just be close to somebody. And back then, a thought would go through my head almost constantly: \"There's never gonna be a room someplace where there's a group of people sitting around, having fun, hanging out, where one of them goes, 'You know what would be great? We should call Fiona. Yeah, that would be good.' That'll never happen. There's nothing interesting about me.\" I just felt like I was a sad little boring thing.", "title": "What The Fluff! Donuts", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "81 Greenwood Ave, Bethel", "category": null, "friends": [{"id": 68, "name": 68}], "friendsCount": 1, "helloCount": 0, "id": 168, "isFave": false, "isPastHello": false, "latitude": "41.371903", "longitude": "-73.408297", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Rainy Day Paperback", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "255 Amherst St, Nashua, NH 03063, USA", "category": null, "friends": [{"id": 85, "name": 85}], "friendsCount": 1, "helloCount": 0, "id": 167, "isFave": true, "isPastHello": false, "latitude": "42.780308", "longitude": "-71.495423", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Whole Foods Market", "validatedAddress": true, "zipCode": "03063"}
+ LOG  []
+ LOG  {"address": "195 McGregor Street, Manchester NH 03102", "category": null, "friends": [{"id": 86, "name": 86}], "friendsCount": 1, "helloCount": 0, "id": 166, "isFave": false, "isPastHello": false, "latitude": "42.992519", "longitude": "-71.471987", "matchingHelloes": [], "parking_score": null, "personal_experience_info": null, "title": "195 McGregor Street, Manchester NH 03102", "validatedAddress": true, "zipCode": "03102"}
+ LOG  []
+ LOG  {"address": "889 Elm St, Manchester, NH 03101, USA", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 162, "isFave": false, "isPastHello": false, "latitude": "42.991116", "longitude": "-71.462635", "matchingHelloes": [], "parking_score": "", "personal_experience_info": "", "title": "The Moka Pot at City Hall Pub", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "1399 Queen Anne Rd, Teaneck, NJ 07666, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 159, "isFave": false, "isPastHello": false, "latitude": "40.901404", "longitude": "-74.004902", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Mocha Bleu Patisserie, Bistro + Mixology Bar", "validatedAddress": true, "zipCode": "07666"}
+ LOG  []
+ LOG  {"address": "176 Jackson Rd, Devens", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 157, "isFave": false, "isPastHello": false, "latitude": "42.541729", "longitude": "-71.610000", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Marty's Corner Cafe & Deli", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "866 Elm St, Manchester, NH 03101, USA", "category": null, "friends": [{"id": 86, "name": 86}], "friendsCount": 1, "helloCount": 0, "id": 155, "isFave": false, "isPastHello": false, "latitude": "42.990305", "longitude": "-71.463234", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Stash Box", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "2 Market St, Bedford, NH 03110, USA", "category": "Grocery", "friends": [{"id": 85, "name": 85}], "friendsCount": 1, "helloCount": 0, "id": 154, "isFave": true, "isPastHello": false, "latitude": "42.953457", "longitude": "-71.477395", "matchingHelloes": [], "parking_score": "fairly stressful or unreliable street parking", "personal_experience_info": "Cheap yay. Giving bad parking score bc it's Trader Joe's", "title": "Trader Joe's", "validatedAddress": true, "zipCode": "03110"}
+ LOG  []
+ LOG  {"address": "80 Old Granite St, Manchester, NH 03101, USA", "category": "Coffee", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 153, "isFave": false, "isPastHello": false, "latitude": "42.986273", "longitude": "-71.464861", "matchingHelloes": [], "parking_score": "free parking lot nearby", "personal_experience_info": "Hii", "title": "Hometown Coffee Roasters", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "452 Old Street Rd, Peterborough, NH 03458, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 152, "isFave": false, "isPastHello": false, "latitude": "42.888635", "longitude": "-71.936401", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Monadnock Community Hospital", "validatedAddress": true, "zipCode": "03458"}
+ LOG  []
+ LOG  {"address": "489 Amory St, Manchester, NH 03102, USA", "category": "Coffee", "friends": [{"id": 7, "name": 7}, {"id": 74, "name": 74}], "friendsCount": 2, "helloCount": 0, "id": 151, "isFave": true, "isPastHello": false, "latitude": "42.993570", "longitude": "-71.485455", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "Honestly the coffee is really good here? Think I had an americano", "title": "William & Sons Coffee Co.", "validatedAddress": true, "zipCode": "03102"}
+ LOG  []
+ LOG  {"address": "1 Patriot Pl, Foxborough, MA 02035, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 150, "isFave": false, "isPastHello": false, "latitude": "42.092532", "longitude": "-71.264127", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Gillette Stadium", "validatedAddress": true, "zipCode": "02035"}
+ LOG  []
+ LOG  {"address": "1 Elliot Way, Manchester, NH 03103, USA", "category": null, "friends": [{"id": 68, "name": 68}, {"id": 153, "name": 153}], "friendsCount": 2, "helloCount": 0, "id": 149, "isFave": false, "isPastHello": false, "latitude": "42.984051", "longitude": "-71.437762", "matchingHelloes": [], "parking_score": "location has free parking lot", "personal_experience_info": "", "title": "Elliot Hospital", "validatedAddress": true, "zipCode": "03103"}
+ LOG  []
+ LOG  {"address": "1 Delta Dr, Concord, NH 03301, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 148, "isFave": false, "isPastHello": false, "latitude": "43.224584", "longitude": "-71.536004", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "Not sure if place", "title": "Northeast Delta Dental", "validatedAddress": true, "zipCode": "03301"}
+ LOG  []
+ LOG  {"address": "815 Elm St, Manchester, NH 03101, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 146, "isFave": false, "isPastHello": false, "latitude": "42.989852", "longitude": "-71.462542", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "hihihihihihihi", "title": "815 Cocktails & Provisions", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "191 Hanover St, Boston, MA 02113, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 145, "isFave": false, "isPastHello": false, "latitude": "42.362514", "longitude": "-71.055584", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Cocktails & Cannoli: Boston's North End Dessert Tour", "validatedAddress": true, "zipCode": "02113"}
+ LOG  []
+ LOG  {"address": "51 E Pearl St # A, Nashua, NH 03060", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 144, "isFave": false, "isPastHello": false, "latitude": "42.760655", "longitude": "-71.463655", "matchingHelloes": [], "parking_score": null, "personal_experience_info": null, "title": "Crosby Bakery Inc", "validatedAddress": true, "zipCode": "03060"}
+ LOG  []
+ LOG  {"address": "915 Elm St, Manchester, NH 03101", "category": "", "friends": [], "friendsCount": 0, "helloCount": 0, "id": 143, "isFave": false, "isPastHello": false, "latitude": "42.991307", "longitude": "-71.462844", "matchingHelloes": [], "parking_score": "", "personal_experience_info": "", "title": "Dishon Bakery", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "1045 S Willow St, Manchester, NH 03103, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 142, "isFave": false, "isPastHello": false, "latitude": "42.961890", "longitude": "-71.440535", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Taco Bell", "validatedAddress": true, "zipCode": "03103"}
+ LOG  []
+ LOG  {"address": "860 5th Ave, Brooklyn, NY 11232, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 140, "isFave": false, "isPastHello": false, "latitude": "40.652280", "longitude": "-74.003322", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "hihihihihihihi", "title": "Tacos El Bronco", "validatedAddress": true, "zipCode": "11232"}
+ LOG  []
+ LOG  {"address": "Berkshire Shopping Center, 67 Newtown Rd, Danbury", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 134, "isFave": false, "isPastHello": false, "latitude": "41.407125", "longitude": "-73.415875", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "GameStop", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "2626 Brown Ave, Manchester", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 133, "isFave": false, "isPastHello": false, "latitude": "42.937960", "longitude": "-71.454451", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Simon Pizza & Roast Beef", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "610 Amherst St, Nashua, NH 03063, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 132, "isFave": false, "isPastHello": false, "latitude": "42.800181", "longitude": "-71.536977", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Frontera Tacos & Tequila", "validatedAddress": true, "zipCode": "03063"}
+ LOG  []
+ LOG  {"address": "410 S River Rd, Bedford, NH 03110, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 131, "isFave": false, "isPastHello": false, "latitude": "42.919880", "longitude": "-71.461011", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "New Hampshire Doughnut Co.", "validatedAddress": true, "zipCode": "03110"}
+ LOG  []
+ LOG  {"address": "2 S Beech St, Manchester, NH 03103, USA", "category": null, "friends": [{"id": 4, "name": 4}], "friendsCount": 1, "helloCount": 0, "id": 130, "isFave": false, "isPastHello": false, "latitude": "42.972548", "longitude": "-71.454989", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Aroma Joe's #34", "validatedAddress": true, "zipCode": "03103"}
+ LOG  []
+ LOG  {"address": "634 Daniel Webster Hwy, Merrimack", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 129, "isFave": false, "isPastHello": false, "latitude": "42.888298", "longitude": "-71.474938", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Hot Rize Bagel Cafe", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "436 Daniel Webster Hwy, Merrimack", "category": "Coffee", "friends": [{"id": 7, "name": 7}], "friendsCount": 1, "helloCount": 0, "id": 128, "isFave": false, "isPastHello": false, "latitude": "42.860962", "longitude": "-71.493916", "matchingHelloes": [], "parking_score": "free parking lot nearby", "personal_experience_info": "", "title": "Buckleys Bakery & Cafe", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "209 State Rte 101, Bedford", "category": null, "friends": [{"id": 4, "name": 4}], "friendsCount": 1, "helloCount": 0, "id": 127, "isFave": false, "isPastHello": false, "latitude": "42.946329", "longitude": "-71.513201", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Flight Coffee Company", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "930 Elm St, Manchester, NH 03101, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 126, "isFave": false, "isPastHello": false, "latitude": "42.991258", "longitude": "-71.463282", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "bluAqua Restrobar", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "2201 Washington Ave, Houston, TX 77007, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 125, "isFave": false, "isPastHello": false, "latitude": "29.767968", "longitude": "-95.380664", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "fond memories forever", "title": "Catalina Coffee", "validatedAddress": true, "zipCode": "77007"}
+ LOG  []
+ LOG  {"address": "2243 Richmond Ave., Houston, TX 77098, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 124, "isFave": false, "isPastHello": false, "latitude": "29.733594", "longitude": "-95.414642", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "love this place!!", "title": "Hobbit Cafe", "validatedAddress": true, "zipCode": "77098"}
+ LOG  []
+ LOG  {"address": "20 Pell St, New York, NY 10013, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 123, "isFave": false, "isPastHello": false, "latitude": "40.714982", "longitude": "-73.998022", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Anime Claw (Lower Manhattan)", "validatedAddress": true, "zipCode": "10013"}
+ LOG  []
+ LOG  {"address": "1020 South St, Philadelphia, PA 19147, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 122, "isFave": false, "isPastHello": false, "latitude": "39.942613", "longitude": "-75.159357", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Philadelphia's Magic Gardens", "validatedAddress": true, "zipCode": "19147"}
+ LOG  []
+ LOG  {"address": "25 Main St, Cooperstown, NY 13326, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 121, "isFave": false, "isPastHello": false, "latitude": "42.699846", "longitude": "-74.923244", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "National Baseball Hall of Fame and Museum", "validatedAddress": true, "zipCode": "13326"}
+ LOG  []
+ LOG  {"address": "55 Crystal Ave # 16, Derry, NH 03038, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 120, "isFave": false, "isPastHello": false, "latitude": "42.892236", "longitude": "-71.323893", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "BEACH BOUND Tanning & Spa", "validatedAddress": true, "zipCode": "03038"}
+ LOG  []
+ LOG  {"address": "Catwalk Road, Glenwood, NM 88039, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 119, "isFave": false, "isPastHello": false, "latitude": "33.324490", "longitude": "-108.878053", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Catwalk Recreation Area", "validatedAddress": true, "zipCode": "88039"}
+ LOG  []
+ LOG  {"address": "1 Line Dr, Manchester, NH 03101, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 118, "isFave": false, "isPastHello": false, "latitude": "42.981524", "longitude": "-71.466113", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Delta Dental Stadium", "validatedAddress": true, "zipCode": "03101"}
+ LOG  []
+ LOG  {"address": "679 Mast Rd, Manchester, NH 03102, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 117, "isFave": false, "isPastHello": false, "latitude": "42.993664", "longitude": "-71.506166", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Cats Kingdom", "validatedAddress": true, "zipCode": "03102"}
+ LOG  []
+ LOG  {"address": "12 W Hollis St, Nashua, NH 03060, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 116, "isFave": false, "isPastHello": false, "latitude": "42.757530", "longitude": "-71.464776", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Chicken N Chips", "validatedAddress": true, "zipCode": "03060"}
+ LOG  []
+ LOG  {"address": "57 Forest Ave, Glen Cove, NY 11542, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 115, "isFave": false, "isPastHello": false, "latitude": "40.871723", "longitude": "-73.625745", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Dog Groomers Long Island- Stylish Dog Woof Woof", "validatedAddress": true, "zipCode": "11542"}
+ LOG  []
+ LOG  {"address": "154 Litchfield Rd, Londonderry, NH 03053, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 114, "isFave": false, "isPastHello": false, "latitude": "42.900471", "longitude": "-71.429270", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Lucky 7 Stables", "validatedAddress": true, "zipCode": "03053"}
+ LOG  []
+ LOG  {"address": "287 Beech St, Belmont, MA 02478, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 113, "isFave": false, "isPastHello": false, "latitude": "42.389907", "longitude": "-71.179290", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Belmont Parkour Park", "validatedAddress": true, "zipCode": "02478"}
+ LOG  []
+ LOG  {"address": "291 S Broadway, Salem, NH 03079, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 112, "isFave": false, "isPastHello": false, "latitude": "42.758332", "longitude": "-71.211896", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Tokyo Japanese Steakhouse", "validatedAddress": true, "zipCode": "03079"}
+ LOG  []
+ LOG  {"address": "19 S 22nd St, Philadelphia, PA 19103, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 111, "isFave": false, "isPastHello": false, "latitude": "39.953174", "longitude": "-75.176381", "matchingHelloes": [], "parking_score": "street parking", "personal_experience_info": "Creepeh and awesome", "title": "The Mütter Museum at The College of Physicians of Philadelphia", "validatedAddress": true, "zipCode": "19103"}
+ LOG  []
+ LOG  {"address": "1073 6th Ave, New York, NY 10018, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 110, "isFave": false, "isPastHello": false, "latitude": "40.754068", "longitude": "-73.984905", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Kinokuniya New York", "validatedAddress": true, "zipCode": "10018"}
+ LOG  []
+ LOG  {"address": "83 Parkhurst Rd, Chelmsford, MA 01824, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 109, "isFave": false, "isPastHello": false, "latitude": "42.624864", "longitude": "-71.359174", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Sushi Yanagi", "validatedAddress": true, "zipCode": "01824"}
+ LOG  []
+ LOG  {"address": "326 S Broadway, Salem, NH 03079, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 108, "isFave": false, "isPastHello": false, "latitude": "42.754510", "longitude": "-71.209061", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Coffee Coffee", "validatedAddress": true, "zipCode": "03079"}
+ LOG  []
+ LOG  {"address": "100 rainbow california", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 107, "isFave": false, "isPastHello": false, "latitude": "33.410308", "longitude": "-117.147810", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "100 Rainbow", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1 Birch Street, Manchester, NH", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 106, "isFave": false, "isPastHello": false, "latitude": "42.877498", "longitude": "-71.320481", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "New", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "1 Oak Street, Manchester,NH", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 105, "isFave": false, "isPastHello": false, "latitude": "42.996903", "longitude": "-71.452339", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Misc", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "Secaucus, NJ 07094, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 104, "isFave": false, "isPastHello": false, "latitude": "40.782392", "longitude": "-74.071136", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "07094", "validatedAddress": true, "zipCode": "07094"}
+ LOG  []
+ LOG  {"address": "Zîmbreni, Moldova", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 103, "isFave": false, "isPastHello": false, "latitude": "46.838819", "longitude": "28.844584", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Zîmbreni", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "48683 Ahaus, Germany", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 102, "isFave": false, "isPastHello": false, "latitude": "52.079031", "longitude": "7.016540", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Ahaus", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "600 Amherst St Nashua nh", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 101, "isFave": false, "isPastHello": false, "latitude": "42.798380", "longitude": "-71.536601", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Amh", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "586 Nashua St, Milford, NH 03055, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 99, "isFave": false, "isPastHello": false, "latitude": "42.825129", "longitude": "-71.624875", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "586 Nashua St", "validatedAddress": true, "zipCode": "03055"}
+ LOG  []
+ LOG  {"address": "1000 Elm Street, Manchester, NH", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 98, "isFave": false, "isPastHello": false, "latitude": "42.992673", "longitude": "-71.464258", "matchingHelloes": [], "parking_score": null, "personal_experience_info": null, "title": "Test Address", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "375 Longwood Ave, Boston, MA 02215, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 97, "isFave": false, "isPastHello": false, "latitude": "42.339827", "longitude": "-71.108295", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "375 Longwood Ave", "validatedAddress": true, "zipCode": "02215"}
+ LOG  []
+ LOG  {"address": "596 New Boston Rd, Bedford, NH 03110, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 96, "isFave": false, "isPastHello": false, "latitude": "42.955911", "longitude": "-71.612856", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "596 New Boston Rd", "validatedAddress": true, "zipCode": "03110"}
+ LOG  []
+ LOG  {"address": "200 elm Street Manchester nh", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 95, "isFave": false, "isPastHello": false, "latitude": "42.980433", "longitude": "-71.463448", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Elm 23", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "585 Daniel Webster Hwy, Merrimack, NH 03054, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 94, "isFave": false, "isPastHello": false, "latitude": "42.881350", "longitude": "-71.478406", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "585 Daniel Webster Hwy", "validatedAddress": true, "zipCode": "03054"}
+ LOG  []
+ LOG  {"address": "359 Broadway, Cambridge, MA 02139, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 93, "isFave": false, "isPastHello": false, "latitude": "42.370983", "longitude": "-71.103863", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "359 Broadway", "validatedAddress": true, "zipCode": "02139"}
+ LOG  []
+ LOG  {"address": "142 Turkey Hill Rd, Merrimack nh", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 92, "isFave": false, "isPastHello": false, "latitude": "42.846441", "longitude": "-71.504558", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "Hello!", "title": "Home", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "250 Jackson St 4th floor, Lowell, MA 01852, USA", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 91, "isFave": false, "isPastHello": false, "latitude": "42.641034", "longitude": "-71.313001", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Coffee and Cotton", "validatedAddress": true, "zipCode": "01852"}
+ LOG  []
+ LOG  {"address": "80 Continental Blvd, Merrimack", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 82, "isFave": false, "isPastHello": false, "latitude": "42.825774", "longitude": "-71.512187", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Dunkin'", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "220 S River Rd, Bedford", "category": null, "friends": [], "friendsCount": 0, "helloCount": 0, "id": 81, "isFave": false, "isPastHello": false, "latitude": "42.940494", "longitude": "-71.473905", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "", "title": "Starbucks", "validatedAddress": true, "zipCode": null}
+ LOG  []
+ LOG  {"address": "121 S River Rd, Bedford, NH 03110, USA", "category": null, "friends": [{"id": 4, "name": 4}], "friendsCount": 1, "helloCount": 0, "id": 79, "isFave": false, "isPastHello": false, "latitude": "42.954267", "longitude": "-71.477845", "matchingHelloes": [], "parking_score": null, "personal_experience_info": "Hiiiii", "title": "Whole Foods Market", "validatedAddress": true, "zipCode": "03110"}
+ LOG  location details
+ LOG  something missing, cannnot get past helloes 132 171 6 126
+ LOG  OUTPUT []
+ LOG  4
+ LOG  safe area vuew rerendered on No screen name provided
+ LOG  {"address": "280 Daniel Webster Hwy, Merrimack, NH 03054, USA", "created_on": "2025-09-04T02:31:38.403796Z", "id": 10, "is_default": true, "latitude": "42.836186", "longitude": "-71.491666", "title": "PizzAroma", "updated_on": "2025-09-04T02:31:53.280787Z", "user": 2, "validated_address": true}
+ WARN  useCurrentLocation rerendered
+ LOG  PAST HELLO LOCATIONS []
+ LOG  fetching friend addresses
+ LOG  LOCATION EXISTS!
+ LOG  {"address": "280 Daniel Webster Hwy, Merrimack, NH 03054, USA", "created_on": "2025-09-04T02:31:38.403796Z", "id": 10, "is_default": true, "latitude": "42.836186", "longitude": "-71.491666", "title": "PizzAroma", "updated_on": "2025-09-04T02:31:53.280787Z", "user": 2, "validated_address": true}
+ WARN  useCurrentLocation rerendered
+ LOG  PAST HELLO LOCATIONS []

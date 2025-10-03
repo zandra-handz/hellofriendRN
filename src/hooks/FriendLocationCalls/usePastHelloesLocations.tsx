@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useMemo } from "react"; 
+import React, { useMemo, useCallback } from "react"; 
 import useLocationHelloFunctions from "../useLocationHelloFunctions";
 type Props = {
   friendId: number;
@@ -16,15 +16,16 @@ const usePastHelloesLocations = ({
   nonFaveLocations,
 }: Props) => {
 
-  // console.log(inPersonHelloes);
-  // console.log(locationList);
-  // console.warn(faveLocations);
-  // console.warn(nonFaveLocations);
+ 
+
+ 
   const { createLocationListWithHelloes, bermudaCoords } =
     useLocationHelloFunctions();
 
   const pastHelloLocations = useMemo(() => {
-    if (locationList && inPersonHelloes && faveLocations && nonFaveLocations) {
+    if (locationList?.length && inPersonHelloes?.length && faveLocations && nonFaveLocations) {
+     
+   
       return createLocationListWithHelloes(inPersonHelloes, [
         ...faveLocations,
         ...nonFaveLocations,
@@ -38,7 +39,7 @@ const usePastHelloesLocations = ({
       nonFaveLocations?.length
     );
     return [];
-  }, [locationList, inPersonHelloes, faveLocations]);
+  }, [locationList, inPersonHelloes, faveLocations, nonFaveLocations]);
 
   return { pastHelloLocations };
 };

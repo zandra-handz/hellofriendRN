@@ -216,7 +216,7 @@ export const getUserSettings = async () => {
     // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
 
     const response = await helloFriendApiClient.get(`/users/settings/`);
-     console.log("API GET Call getUserSettings", response.data);
+    console.log("API GET Call getUserSettings", response.data);
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
@@ -330,10 +330,12 @@ export const fetchCategoriesHistoryCountAPI = async ({
     const params = new URLSearchParams();
     params.append("only_with_capsules", returnNonZeroesOnly.toString());
     if (friendId != null) {
-       console.warn('gettin friend stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo');
+      console.warn(
+        "gettin friend stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo"
+      );
       params.append("friend_id", friendId.toString());
     } else {
-      console.warn('gettin user stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo');
+      console.warn("gettin user stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo");
     }
     // const url = `/users/categories/history/summary/?${params.toString()}`;
 
@@ -363,7 +365,7 @@ export const createUserCategory = async (
     const requestData = {
       user: userId,
       ...newCategoryData,
-    }
+    };
     console.log(requestData);
     const response = await helloFriendApiClient.post(
       `/users/${userId}/categories/add/`,
@@ -482,7 +484,7 @@ export const fetchFriendList = async () => {
     //   new Date(end).toISOString()
     // );
     // console.log("\x1b[34m%s\x1b[34m", "Duration (ms):", end - start);
- console.log('GET FRIENDLIST FROM API');
+    console.log("GET FRIENDLIST FROM API");
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendList");
@@ -491,7 +493,7 @@ export const fetchFriendList = async () => {
 
 export const fetchFriendAddresses = async (friendId: number) => {
   try {
-    console.log('fetching friend addresses');
+    console.log("fetching friend addresses");
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/addresses/all/`
     );
@@ -568,7 +570,7 @@ export const removeFriendAddress = async (
 
 export const fetchUserAddresses = async () => {
   try {
-    console.log('fetching user addresses');
+    console.log("fetching user addresses");
     const response = await helloFriendApiClient.get(`/users/addresses/all/`);
     return response.data;
   } catch (e: unknown) {
@@ -645,7 +647,7 @@ export const GetTravelComparisons = async (
   friendAddress: addressType,
   location: addressTypeVariant
 ) => {
-  console.log('getting travel comparison');
+  console.log("getting travel comparison");
   try {
     const locationData = {
       address_a_address: userAddress.address,
@@ -720,7 +722,7 @@ export const updateUserProfile = async (
 };
 
 export const fetchFriendDashboard = async (friendId: number) => {
-    const startTime = Date.now(); // TIMER START
+  const startTime = Date.now(); // TIMER START
 
   try {
     const response = await helloFriendApiClient.get(
@@ -976,7 +978,7 @@ export const fetchUpcomingHelloes = async () => {
     // );
 
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-// console.log(`UPCOMING HELLOES: `, response.data);
+    // console.log(`UPCOMING HELLOES: `, response.data);
     // const end = Date.now(); // log end time
     // console.log(
     //   "\x1b[32m%s\x1b[32m",
@@ -991,12 +993,13 @@ export const fetchUpcomingHelloes = async () => {
   }
 };
 
-
 export const fetchUpcomingHelloesAndFriends = async () => {
   //use keys 'friends' = old friendlist data. 'upcoming' =old upcoming data
   //this endpoint just combines the queries on backend
   try {
-    const response = await helloFriendApiClient.get("/friends/upcoming/friends-included/");
+    const response = await helloFriendApiClient.get(
+      "/friends/upcoming/friends-included/"
+    );
     // console.error(`NEW ENDPOINT`, response.data, )
     return response.data;
   } catch (e: unknown) {
@@ -1118,7 +1121,7 @@ export const fetchPastHelloes = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/combinedhelloes/summary/`
     );
- 
+
     if (response && response.data) {
       //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
 

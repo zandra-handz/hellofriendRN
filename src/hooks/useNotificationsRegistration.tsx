@@ -1,9 +1,8 @@
-import { View, Text } from 'react-native'
-import React, { useEffect} from 'react'
+ import React, { useEffect} from 'react'
 
 import * as Device from "expo-device";
 import Constants from "expo-constants";
-import { Platform, AccessibilityInfo } from "react-native";
+import { Platform } from "react-native";
 
 import * as Notifications from "expo-notifications";
 import * as SecureStore from "expo-secure-store";
@@ -12,7 +11,6 @@ import * as SecureStore from "expo-secure-store";
 import {
   updateUserAccessibilitySettings,
   updateSubscription,
-  getUserSettings,
 } from "../calls/api";
 type Props = {
   receiveNotifications: boolean | string; // 'not ready' if settings aren't ready yet
@@ -22,7 +20,7 @@ type Props = {
 const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: Props) => {
   useEffect(() => {
     async function registerOrRemove() {
-      console.log("NEW HOK TRIGGGERED");
+      // console.log("NEW HOK TRIGGGERED");
 
       if (receiveNotifications !== true && receiveNotifications !== false) {
         return; // Don't do anything if not ready
@@ -39,7 +37,7 @@ const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: P
   }, [receiveNotifications, expoPushToken]);
 
   const registerForNotifications = async () => {
-    console.warn("REGISTERING FOR NOTIFS!");
+    // console.warn("REGISTERING FOR NOTIFS!");
 
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
@@ -82,7 +80,7 @@ const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: P
       expo_push_token: pushTokenString,
     });
 
-    console.log("UPDATED USER SETTINGS WITH NOTIFICATION SETTINGS");
+    // console.log("UPDATED USER SETTINGS WITH NOTIFICATION SETTINGS");
   };
 
   const removeNotificationPermissions = async () => {

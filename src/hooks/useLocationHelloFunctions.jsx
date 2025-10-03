@@ -54,6 +54,7 @@ const useLocationHelloFunctions = () => {
       
 // filters out locations with helloCounts of 0. this is only used for the map display
     const createLocationListWithHelloes = (helloesListToSort, allLocations) => {
+      //  console.log('helloesToSort', helloesListToSort);
   if (allLocations && helloesListToSort) {
     const helloLocations = allLocations
       .filter((location) => location.isPastHello) // ✅ Only include locations with helloes
@@ -89,6 +90,8 @@ const useLocationHelloFunctions = () => {
           helloCount: location.helloCount || 1, // fallback to 1 or known count
         };
       });
+
+    console.log('OUTPUT', helloLocations)
 
     return helloLocations;
   }

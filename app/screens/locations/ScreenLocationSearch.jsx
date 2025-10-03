@@ -18,6 +18,8 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 
+
+
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
@@ -34,7 +36,7 @@ const ScreenLocationSearch = () => {
   const friendFaveIds = useMemo(
     () => friendDash?.friend_faves?.locations,
     [friendDash]
-  );
+  ); 
 
   const { locationList } = useLocations();
 
@@ -45,8 +47,7 @@ const ScreenLocationSearch = () => {
   }, [helloesList]);
 
   const { selectedFriend } = useSelectedFriend();
-
-  // console.log(`inhperson helloes`, inPersonHelloes);
+ 
 
   const [selectCurrentLocation, setSelectCurrentLocation] = useState(true);
 
@@ -88,13 +89,14 @@ const ScreenLocationSearch = () => {
     nonFaveLocations: nonFaveLocations,
   });
 
-  useEffect(() => {
-    if (pastHelloLocations?.length > 0) {
-      console.log('yayayyayayayyayayayayuayayyayayayayayayayyayayayayyayayayayyayayayayua')
-      console.log(pastHelloLocations[0]);
-    }
-
-  }, [pastHelloLocations]);
+  // useEffect(() => {
+  //   if (pastHelloLocations?.length > 0) {
+  //     console.log(
+  //       "yayayyayayayyayayayayuayayyayayayayayayayyayayayayyayayayayyayayayayua"
+  //     );
+  //     console.log(pastHelloLocations[0]);
+  //   }
+  // }, [pastHelloLocations]);
 
   const { bermudaCoords } = useLocationHelloFunctions();
 
@@ -133,30 +135,30 @@ const ScreenLocationSearch = () => {
     <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-            friendColorLight={lightDarkTheme.primaryBackground}
-      friendColorDark={lightDarkTheme.primaryBackground}
+      // friendColorLight={lightDarkTheme.primaryBackground}
+      // friendColorDark={lightDarkTheme.primaryBackground}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       // friendId={false}
-      backgroundOverlayHeight={"100%"}
-      useSolidOverlay={true}
-      useOverlayFade={true}
+      backgroundOverlayHeight={"10%"}
+      // useSolidOverlay={true}
+      // useOverlayFade={true}
+
+            addColorChangeDelay={true}
+      forceFullOpacity={true}
+      useSolidOverlay={false}
+      useOverlayFade={false}
       includeBackgroundOverlay={true}
       backgroundTransparentOverlayColor={lightDarkTheme.primaryBackground}
       backgroundOverlayBottomRadius={0}
       style={{ flex: 1 }}
     >
-      {pastHelloLocations && (
+      {/* {pastHelloLocations && ( */}
         <>
           <View style={styles.mapContainer}>
-            <LocationsMapView
-              currentLocationDetails={currentLocationDetails}
-              currentRegion={currentRegion}
-              useCurrentLocation={selectCurrentLocation}
+            <LocationsMapView 
               userId={user?.id}
-              friendId={selectedFriend?.id}
-              // userAddress={userAddress}
-              // friendAddress={friendAddress}
+              friendId={selectedFriend?.id} 
               pastHelloLocations={pastHelloLocations}
               faveLocations={faveLocations}
               nonFaveLocations={nonFaveLocations}
@@ -165,10 +167,8 @@ const ScreenLocationSearch = () => {
               themeAheadOfLoading={themeAheadOfLoading}
               primaryColor={lightDarkTheme.primaryText}
               overlayColor={lightDarkTheme.overlayBackground}
+              darkerOverlay={lightDarkTheme.darkerOverlayBackground}
               primaryBackground={lightDarkTheme.primaryBackground}
-              welcomeTextStyle={AppFontStyles.welcomeText}
-              subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-              manualGradientColors={manualGradientColors}
             />
           </View>
 
@@ -194,7 +194,7 @@ const ScreenLocationSearch = () => {
             </View>
           )}
         </>
-      )}
+      {/* )} */}
       {renderMapScreenFooter()}
     </SafeViewAndGradientBackground>
   );
@@ -204,8 +204,7 @@ const styles = StyleSheet.create({
   mapContainer: {
     flex: 1, // This ensures it takes up available space
     justifyContent: "flex-start",
-    
-    
+ 
   },
 });
 

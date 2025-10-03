@@ -8,13 +8,10 @@ type Props = {
 };
 
 const useFriendLocations = ({
- 
   inPersonHelloes,
   locationList,
   friendFaveIds,
 }: Props) => {
- 
-
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
       ([fave, notFave], item) => {
@@ -30,6 +27,7 @@ const useFriendLocations = ({
           matchingHelloes,
           helloCount,
         };
+        // console.log(newItem)
 
         return isFave
           ? [[...fave, newItem], notFave]
@@ -39,34 +37,32 @@ const useFriendLocations = ({
     );
   };
 
-
-    const [faveLocations, nonFaveLocations] = useMemo(() => {
-      if (locationList && inPersonHelloes && locationList) {
-        return makeSplitLists(
-          locationList,
-          friendFaveIds?.length
-            ? (location) => friendFaveIds.includes(location?.id)
-            : () => false,
-  
-          (location) =>
-            inPersonHelloes
-              .filter((hello) => hello.location === location?.id)
-              .map((hello) => ({
-                id: hello.id,
-                date: hello.date,
-              }))
-        );
-      }
-      return [[], []];
-    }, [locationList, friendFaveIds, inPersonHelloes]);
-
-
+  const [faveLocations, nonFaveLocations] = useMemo(() => {
  
+    if (locationList?.length && inPersonHelloes?.length) {
+      return makeSplitLists(
+        locationList,
+        friendFaveIds?.length
+          ? (location) => friendFaveIds.includes(location?.id)
+          : () => false,
 
+        (location) =>
+          inPersonHelloes
+            .filter((hello) => hello.location === location?.id)
+            .map((hello) => ({
+              id: hello.id,
+              date: hello.date,
+            }))
+      );
+    } else if (locationList?.length) {
+      return [[], locationList];
+    }
+    return [[], []];
+  }, [locationList, friendFaveIds, inPersonHelloes]);
 
   return {
     faveLocations,
-    nonFaveLocations, 
+    nonFaveLocations,
   };
 };
 

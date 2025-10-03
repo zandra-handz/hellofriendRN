@@ -1,5 +1,4 @@
 import React, { useEffect, createRef } from "react";
-// import * as QuickActions from "expo-quick-actions";
 import { useFonts } from "expo-font";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
@@ -19,16 +18,13 @@ import useNotificationsRegistration from "./src/hooks/useNotificationsRegistrati
 import Constants from "expo-constants";
 import {
   NavigationContainer,
-  getStateFromPath, 
+  getStateFromPath,
 } from "@react-navigation/native";
-
-// DORMANT
-// import ScreenShareIntent from "./app/screens/authflow/ScreenShareIntent";
+ 
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
 import { RootSiblingParent } from "react-native-root-siblings";
-import { Alert,  Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
-// import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
 import {
@@ -41,32 +37,23 @@ import { UserStatsProvider } from "./src/context/UserStatsContext";
 import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
 
-// import { FriendListProvider } from "./src/context/FriendListContext";
 import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
-// import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
-// import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
-
+ 
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 import { FriendDashProvider } from "./src/context/FriendDashContext";
 import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-// import * as Font from "expo-font";
+
 import * as Notifications from "expo-notifications";
-// import * as FileSystem from "expo-file-system";
 import * as Linking from "expo-linking";
 
 import * as MediaLibrary from "expo-media-library";
-
-// import { useGlobalStyle } from "./src/context/GlobalStyleContext";
-// import { useLDTheme } from "./src/context/LDThemeContext";
-// import ResultMessage from "./app/components/alerts/ResultMessage";
-
-// import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
+ 
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
@@ -75,8 +62,6 @@ import ScreenReload from "./app/screens/helloes/ScreenReload";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
 // import ScreenImages from "./app/screens/images/ScreenImages"; // REINSTATE
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
-// import ScreenLocationNav from "./app/screens/locations/ScreenLocationNav";
-// import ScreenLocations from "./app/screens/locations/ScreenLocations";
 import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
 import ScreenCalculateTravelTimes from "./app/screens/locations/ScreenCalculateTravelTimes";
@@ -84,10 +69,7 @@ import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
 import ScreenAuth from "./app/screens/authflow/ScreenAuth";
 import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
 import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
-
-// Don't think I am using
-// import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
-
+ 
 import ScreenLocationCreate from "./app/screens/locations/ScreenLocationCreate";
 import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
 
@@ -99,9 +81,6 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 
 import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 
-//DELETE
-// import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
-
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
 import ScreenImageView from "./app/screens/images/ScreenImageView";
@@ -111,9 +90,6 @@ import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLoca
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-4;
-
-import { NativeEventEmitter, NativeModules } from "react-native";
 
 const queryClient = new QueryClient();
 
@@ -151,27 +127,32 @@ export default Sentry.wrap(function App() {
 
   SplashScreen.preventAutoHideAsync();
 
-  const { hasShareIntent, shareIntent, resetShareIntent, error } =
+  const { hasShareIntent, shareIntent, 
+    // resetShareIntent, error 
+  } =
     useShareIntentContext();
 
   useEffect(() => {
-    let permissionsGranted = false;
+    // let permissionsGranted = false;
 
     async function requestPermissions() {
+      // not sure what permissionsGranted was supposed to be used for but commented it 
+      // out since it's not being used
       if (Platform.OS === "android" && Platform.Version >= 33) {
         const { status } = await MediaLibrary.requestPermissionsAsync(); // Request media library permissions
 
-        if (status === "granted") {
-          console.log("Media permissions granted!");
-          permissionsGranted = true;
-          // handleShareIntent(); // Process the share intent if permissions are granted
-        } else {
-          console.warn("Media permissions denied.");
-          permissionsGranted = false;
-        }
-      } else {
-        permissionsGranted = true;
-      }
+        // if (status === "granted") {
+        //   console.log("Media permissions granted!");
+        //   permissionsGranted = true;
+        //   // handleShareIntent(); // Process the share intent if permissions are granted
+        // } else {
+        //   console.warn("Media permissions denied.");
+        //   permissionsGranted = false;
+        // }
+      } 
+      // else {
+      //   permissionsGranted = true;
+      // }
     }
 
     requestPermissions();
@@ -180,7 +161,7 @@ export default Sentry.wrap(function App() {
   useEffect(() => {
     const notificationSubscription =
       Notifications.addNotificationReceivedListener((notification) => {
-        console.log("Notification received in foreground:", notification);
+        // console.log("Notification received in foreground:", notification);
         Alert.alert(
           notification.request.content.title,
           notification.request.content.body
@@ -227,7 +208,10 @@ export default Sentry.wrap(function App() {
 
   useEffect(() => {
     if (fontsLoaded) {
+      console.log('fonts loaded');
       SplashScreen.hideAsync();
+    } else {
+      console.log('fonts not loaded');
     }
   }, [fontsLoaded]);
 
@@ -240,43 +224,38 @@ export default Sentry.wrap(function App() {
       <QueryClientProvider client={queryClient}>
         <UserProvider>
           <UserSettingsProvider>
-            <FriendListAndUpcomingProvider>
-              {/* <FriendListProvider> */}
-                {/* <UpcomingHelloesProvider> */}
-                  <AutoSelectorProvider>
-                    <CategoriesProvider>
-                      <UserStatsProvider>
-                        <SelectedFriendProvider>
-                          <FriendDashProvider>
-                            <CapsuleListProvider>
-                              <LocationsProvider>
-                                <HelloesProvider>
-                                  <SelectedFriendStatsProvider> 
-                                    <GestureHandlerRootView style={{ flex: 1 }}>
-                                      <SafeAreaProvider>
-                                        <LDThemeProvider>
-                                          <RootSiblingParent>
-                                            <DeviceLocationProvider>
-                                              <FriendStyleProvider>
-                                                <Layout />
-                                              </FriendStyleProvider>
-                                            </DeviceLocationProvider>
-                                          </RootSiblingParent>
-                                        </LDThemeProvider>
-                                      </SafeAreaProvider>
-                                    </GestureHandlerRootView>
-                                    {/* </MessageContextProvider> */}
-                                  </SelectedFriendStatsProvider>
-                                </HelloesProvider>
-                              </LocationsProvider>
-                            </CapsuleListProvider>
-                          </FriendDashProvider>
-                        </SelectedFriendProvider>
-                      </UserStatsProvider>
-                    </CategoriesProvider>
-                  </AutoSelectorProvider>
-                {/* </UpcomingHelloesProvider> */}
-              {/* </FriendListProvider> */}
+            <FriendListAndUpcomingProvider> 
+              <AutoSelectorProvider>
+                <CategoriesProvider>
+                  <UserStatsProvider>
+                    <SelectedFriendProvider>
+                      <FriendDashProvider>
+                        <CapsuleListProvider>
+                          <LocationsProvider>
+                            <HelloesProvider>
+                              <SelectedFriendStatsProvider>
+                                <GestureHandlerRootView style={{ flex: 1 }}>
+                                  <SafeAreaProvider>
+                                    <LDThemeProvider>
+                                      <RootSiblingParent>
+                                        <DeviceLocationProvider>
+                                          <FriendStyleProvider>
+                                            <Layout />
+                                          </FriendStyleProvider>
+                                        </DeviceLocationProvider>
+                                      </RootSiblingParent>
+                                    </LDThemeProvider>
+                                  </SafeAreaProvider>
+                                </GestureHandlerRootView> 
+                              </SelectedFriendStatsProvider>
+                            </HelloesProvider>
+                          </LocationsProvider>
+                        </CapsuleListProvider>
+                      </FriendDashProvider>
+                    </SelectedFriendProvider>
+                  </UserStatsProvider>
+                </CategoriesProvider>
+              </AutoSelectorProvider> 
             </FriendListAndUpcomingProvider>
           </UserSettingsProvider>
         </UserProvider>
@@ -313,7 +292,7 @@ const linking = {
     initialRouteName: "Home",
     screens: {
       Home: "home",
-     // ShareIntent: "shareintent", this was only created between expo-share-intent versions
+      // ShareIntent: "shareintent", this was only created between expo-share-intent versions
     },
   },
   getStateFromPath(path, config) {
@@ -327,7 +306,7 @@ const linking = {
         routes: [
           {
             // name: "ShareIntent",
-             name: "home",
+            name: "home",
           },
         ],
       };
@@ -405,8 +384,6 @@ const linking = {
   },
 };
 
-const emitter = new NativeEventEmitter(ShareIntentModule);
-
 export const Layout = () => {
   const { user, isInitializing } = useUser();
 
@@ -440,14 +417,11 @@ export const Layout = () => {
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
-            headerMode: "screen",
-            // headerStyle: lightDarkTheme.header,
-            // headerTintColor: lightDarkTheme.headerTextColor,
+            headerMode: "screen", 
             contentContainerStyle: { flexGrow: 1 },
             cardStyle: { backgroundColor: "#000002" },
           }}
-        >
-          {/* {user?.id ? ( */}
+        > 
           {user?.id ? (
             //  && settings?.id
             // user.app_setup_complete || !user.app_setup_complete ? (
@@ -459,14 +433,6 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              {/* <Stack.Screen
-                name="UserDetails"
-                component={ScreenUserDetails}
-                options={{
-                  headerShown: false,
-                }}
-              /> */}
-
               <Stack.Screen
                 name="MomentFocus"
                 component={ScreenMomentFocus}
@@ -657,14 +623,7 @@ export const Layout = () => {
                 options={{
                   headerShown: false,
                 }}
-              />
-              {/* <Stack.Screen
-                name="ShareIntent"
-                component={ScreenShareIntent}
-                options={{
-                  headerShown: false,
-                }}
-              /> */}
+              /> 
             </>
           ) : (
             <>

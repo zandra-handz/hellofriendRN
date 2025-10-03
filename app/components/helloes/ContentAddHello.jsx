@@ -13,13 +13,11 @@ import {
   Text,
   StyleSheet,
   Keyboard,
-  Alert,
-  Pressable,
+  Alert, 
 } from "react-native";
 
 import DeleteUnused from "./DeleteUnused";
-import LocationModal from "../selectors/LocationModal";
-import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+import LocationModal from "../selectors/LocationModal"; 
 import EscortBar from "../moments/EscortBar";
 import IdeasAdded from "./IdeasAdded";
 import HelloNotes from "./HelloNotes";
@@ -41,10 +39,9 @@ import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import useDeselectFriend from "@/src/hooks/useDeselectFriend";
-import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
+ 
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+ 
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({
@@ -57,14 +54,8 @@ const ContentAddHello = ({
   const navigation = useNavigation();
   const { resetTheme, getThemeAheadOfLoading } = useFriendStyle();
   const { autoSelectFriend } = useAutoSelector();
-  // const { settings } = useUserSettings();
-
-  //   const lockIns = useMemo(() => ({
-  //   next: settings?.lock_in_next ?? null,
-  //   customString: settings?.lock_in_custom_string ?? null,
-  // }), [settings]);
-
-  const { updateSettings } = useUpdateSettings({ userId: userId });
+ 
+ 
 
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
@@ -84,7 +75,7 @@ const ContentAddHello = ({
   const { navigateBack } = useAppNavigations();
   const { selectedFriend, selectFriend } = useSelectedFriend();
 
-  const { handleDeselectFriend } = useDeselectFriend({ updateSettings });
+ 
 
   const { friendDash } = useFriendDash();
 
@@ -437,18 +428,7 @@ const ContentAddHello = ({
               onPress={openDoubleChecker}
             />
           )}
-        </View>
-
-        {/* {isDoubleCheckerVisible && (
-          <DoubleChecker
-            isVisible={isDoubleCheckerVisible}
-            toggleVisible={toggleDoubleChecker}
-            singleQuestionText="Ready to save hello?"
-            onPress={() => handleSave()}
-            manualGradientColors={manualGradientColors}
-            primaryColor={primaryColor}
-          />
-        )} */}
+        </View> 
       </>
     </View>
   );

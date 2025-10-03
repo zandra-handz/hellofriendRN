@@ -14,32 +14,14 @@ import useMomentContextFunctions from "../hooks/useMomentContextFunctions";
 
 type CapsuleListContextType = {
   capsuleList: MomentFromBackendType[];
-  capsuleCount: number;
-  categoryCount: number;
-  categoryNames: string[];
-  categoryStartIndices: Record<string, number>;
-  sortedByCategory: MomentFromBackendType[];
-  preAdded: number[];  
-  removeCapsules: (capsuleIdsToRemove: number[]) => void;
-  updateCapsule: (input: {
-    friendId: number;
-    capsuleId: number;
-    isPreAdded: boolean;
-  }) => void;
-  updatePreAdded: () => void;
-  updateCapsules: (updatedCapsules: any) => void;
-  sortByCategory: () => void; 
+  allCapsulesList: MomentFromBackendType[];
+  preAdded: number[];
 };
-const CapsuleListContext = createContext<CapsuleListContextType>({ capsuleList: [],
-  capsuleCount: 0,
-  categoryCount: 0,
-  categoryNames: [],
-  categoryStartIndices: {},
-  sortedByCategory: [], 
-  preAdded: [], 
-  updatePreAdded: () => {},
-  updateCapsules: () => {},
-  sortByCategory: () => {}, 
+
+const CapsuleListContext = createContext<CapsuleListContextType>({
+  capsuleList: [],
+  allCapsulesList: [],
+  preAdded: [],
 });
 
 export const useCapsuleList = () => {
@@ -137,14 +119,12 @@ export const CapsuleListProvider = ({ children }) => {
   
       capsuleList: capsules,
       allCapsulesList: allCapsules,
- 
       preAdded, 
  
     }),
     [ 
       capsules,
       allCapsules,
-   
       preAdded, 
  
     ]

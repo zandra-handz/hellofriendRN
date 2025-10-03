@@ -23,8 +23,7 @@ export const FriendListAndUpcomingProvider = ({ children }) => {
  
   const { user, isInitializing  } = useUser();
   const { onSignOut } = useSignOut();
- 
-    // const [upNext, setUpNext] = useState(undefined);
+  
 
   const {
     data: friendListAndUpcoming,
@@ -58,7 +57,7 @@ export const FriendListAndUpcomingProvider = ({ children }) => {
       },
     });
 
-
+// DONT DELETE, THIS IS FOR SETTING THE CACHE FOR NEXT IN CONTEXT IF WANT TO DOWN THE LINE
 //     useEffect(() => {
 //   if (isSuccess && data?.upcoming?.length && data?.friends?.length) {
 //     const upcomingFriend = data.friends.find(

@@ -27,11 +27,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import FocusedLocationCardUI from "./FocusedLocationCardUI";
-import { useLocations } from "@/src/context/LocationsContext"; 
+import { useLocations } from "@/src/context/LocationsContext";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import DualLocationSearcher from "./DualLocationSearcher";
+import Animated, { JumpingTransition } from "react-native-reanimated";
+import LocationListItem from "./LocationListItem";
 
 const LocationsMapView = ({
   // userAddress,
@@ -46,13 +48,10 @@ const LocationsMapView = ({
   themeAheadOfLoading,
   primaryColor,
   overlayColor,
+  darkerOverlay,
   primaryBackground,
-  welcomeTextStyle,
-  subWelcomeTextStyle, 
 }) => {
- 
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
- 
 
   const { userAddresses } = useStartingUserAddresses({ userId: userId });
   const { friendAddresses } = useStartingFriendAddresses({
@@ -63,7 +62,7 @@ const LocationsMapView = ({
   const userAddress =
     userAddresses?.chosen || userAddresses?.saved?.[0] || null;
 
-  console.log(userAddress);
+  // console.log(userAddress);
 
   const friendAddress =
     friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
@@ -71,6 +70,7 @@ const LocationsMapView = ({
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
   const mapRef = useRef(null);
+  const flatListRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const { locationList } = useLocations();
@@ -78,100 +78,29 @@ const LocationsMapView = ({
   const navigation = useNavigation();
   const [focusedLocation, setFocusedLocation] = useState(null);
 
-  const listItemIconSize = 15;
-  const listItemIconPadding = 6;
-  const listItemIconDiameter = listItemIconSize + listItemIconPadding * 2;
+  const LIST_ITEM_HEIGHT = 50;
+  const LIST_ITEM_PADDING = 4;
+  const LIST_ITEM_MARGIN = 1;
 
-  const listItemIconTwoSize = 15;
-  const listItemIconTwoPadding = 6;
-  const listItemIconTwoDiameter = listItemIconSize + listItemIconPadding * 2;
+  const TOTAL_ITEM_HEIGHT = LIST_ITEM_HEIGHT + LIST_ITEM_MARGIN;
 
   const [savedLocationsDDVisible, setSavedLocationsDDVisibility] =
     useState(false);
 
   // use item.isFave (property added when sorting in parent screen) to differentiate UI for saved locations
   const renderLocationItem = useCallback(
-    ({ item, index }) => (
-      <Pressable
-        style={{
-          height: 60,
-          padding: 10,
-          width: "100%",
-          flexDirection: "row",
-          backgroundColor: overlayColor,
-          marginVertical: 0.5,
-          justifyContent: "space-between",
-        }}
-        onPress={() => handlePress(item)}
-      >
-        <View
-          style={{ flexDirection: "column", alignText: "left", flexShrink: 1 }}
-        >
-          <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
-            {item.title}
-          </Text>
-
-          <Text style={{ color: primaryColor, fontSize: 11 }}>
-            {item.address}
-          </Text>
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          {item.isPastHello && (
-            <View
-              style={{
-                marginHorizontal: 2, // CAREFUL, switch this if putting this on the outer side again
-                padding: listItemIconTwoPadding,
-                height: listItemIconTwoDiameter,
-                width: listItemIconTwoDiameter,
-                borderRadius: listItemIconTwoDiameter / 2,
-                backgroundColor: primaryColor,
-              }}
-            >
-              <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                  {item.helloCount}
-                </Text>
-              </View>
-              <MaterialCommunityIcons
-                name="hand-wave-outline"
-                //  name="heart"
-                size={listItemIconTwoSize}
-                color={themeAheadOfLoading.darkColor}
-                opacity={0.6}
-              />
-            </View>
-          )}
-          {item.isFave && (
-            <View
-              style={{
-                marginLeft: 2,
-                padding: listItemIconPadding,
-                height: listItemIconDiameter,
-                width: listItemIconDiameter,
-                borderRadius: listItemIconDiameter / 2,
-                backgroundColor: primaryColor,
-              }}
-            >
-              <MaterialCommunityIcons
-                // name="map-marker-star"
-                name="heart"
-                size={listItemIconSize}
-                color={themeAheadOfLoading.darkColor}
-              />
-            </View>
-          )}
-        </View>
-      </Pressable>
+    ({ item, _index }) => (
+      <LocationListItem
+        item={item}
+        height={LIST_ITEM_HEIGHT}
+        padding={LIST_ITEM_PADDING}
+        marginTop={LIST_ITEM_MARGIN}
+        onPress={handlePress}
+        textColor={primaryColor}
+        // backgroundColor={overlayColor}
+        backgroundColor={darkerOverlay}
+        friendColor={themeAheadOfLoading.darkColor}
+      />
     ),
     [faveLocations, nonFaveLocations]
   );
@@ -181,15 +110,29 @@ const LocationsMapView = ({
 
   useEffect(() => {
     if (currentLocationDetails && currentRegion) {
-      handleLocationAlreadyExists(currentLocationDetails); 
-      mapRef.current.animateToRegion(currentRegion, 200);
+      console.log("current region!!!");
+      if (currentLocationDetails != focusedLocation) {
+        handleLocationAlreadyExists(currentLocationDetails);
+        mapRef.current.animateToRegion(currentRegion, 200);
+      } else {
+        console.log("region is the same");
+      }
     }
   }, [currentRegion]);
 
+  const getItemLayout = useCallback(
+    (_data, index) => ({
+      length: TOTAL_ITEM_HEIGHT,
+      offset: TOTAL_ITEM_HEIGHT * index,
+      index,
+    }),
+    []
+  );
+
   //pastHelloes is ALL LOCATIONS with the additional helloes data
-  const handleLocationAlreadyExists = (locationDetails, addMessage) => {
+  const handleLocationAlreadyExists = (locationDetails) => {
     let matchedLocation;
-    let locationIsOutsideFaves = false;
+    // let locationIsOutsideFaves = false;
 
     let index = combinedLocations.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
@@ -197,14 +140,17 @@ const LocationsMapView = ({
 
     if (index !== -1) {
       console.log("LOCATION EXISTS!");
+      if (index <= combinedLocationsForList?.length - 1) {
+        scrollToBelowLocation(index + 1);
+      } else {
+        scrollToBelowLocation(index);
+      }
       matchedLocation = { ...combinedLocations[index], matchedIndex: index };
       setFocusedLocation(matchedLocation);
-    } else { 
+    } else {
       locationIsOutsideFaves = true;
       setFocusedLocation(locationDetails);
-    
     }
- 
   };
 
   useEffect(() => {
@@ -284,9 +230,20 @@ const LocationsMapView = ({
     }
   };
 
+  const scrollToBelowLocation = (index) => {
+    if (index !== undefined) {
+      flatListRef.current?.scrollToOffset({
+        offset: TOTAL_ITEM_HEIGHT * index,
+        animated: true, // disables the "intermediate" rendering problem
+      });
+    }
+  };
+
   const handlePress = (location) => {
     if (location) {
-      handleLocationAlreadyExists(location, true); //true is for addMessage
+      handleLocationAlreadyExists(location, true);
+
+      //true is for addMessage
       // const appOnly = pastHelloLocations.find(
       //   (item) => item.id === location.id
       // );
@@ -297,7 +254,7 @@ const LocationsMapView = ({
   useEffect(() => {
     if (focusedLocation) {
       try {
-        const { latitude, longitude } = focusedLocation; 
+        const { latitude, longitude } = focusedLocation;
         // Validate latitude and longitude are defined and within valid range
         if (
           mapRef.current &&
@@ -325,123 +282,123 @@ const LocationsMapView = ({
     }
   }, [focusedLocation]);
 
-  const darkMapStyle = [
-    {
-      elementType: "geometry",
-      stylers: [{ color: "#212121" }],
-    },
-    {
-      elementType: "labels.icon",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#757575" }],
-    },
-    {
-      elementType: "labels.text.stroke",
-      stylers: [{ color: "#212121" }],
-    },
-    {
-      featureType: "administrative",
-      elementType: "geometry",
-      stylers: [{ color: "#757575" }],
-    },
-    {
-      featureType: "administrative.country",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#9e9e9e" }],
-    },
-    {
-      featureType: "administrative.land_parcel",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "administrative.locality",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#bdbdbd" }],
-    },
-    {
-      featureType: "poi",
-      elementType: "labels.text",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "poi",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#757575" }],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "geometry",
-      stylers: [{ color: "#181818" }],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#616161" }],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "labels.text.stroke",
-      stylers: [{ color: "#1b1b1b" }],
-    },
-    {
-      featureType: "road",
-      elementType: "geometry.fill",
-      stylers: [{ color: "#2c2c2c" }],
-    },
-    {
-      featureType: "road",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#8a8a8a" }],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "geometry",
-      stylers: [{ color: "#373737" }],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "geometry",
-      stylers: [{ color: "#3c3c3c" }],
-    },
-    {
-      featureType: "road.highway.controlled_access",
-      elementType: "geometry",
-      stylers: [{ color: "#4e4e4e" }],
-    },
-    {
-      featureType: "road.local",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#616161" }],
-    },
-    {
-      featureType: "transit",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#757575" }],
-    },
-    {
-      featureType: "transit.line",
-      elementType: "geometry",
-      stylers: [{ color: "#3d3d3d" }],
-    },
-    {
-      featureType: "transit.station",
-      elementType: "geometry",
-      stylers: [{ color: "#2e2e2e" }],
-    },
-    {
-      featureType: "water",
-      elementType: "geometry",
-      stylers: [{ color: "#000000" }],
-    },
-    {
-      featureType: "water",
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#3d3d3d" }],
-    },
-  ];
+  // const darkMapStyle = [
+  //   {
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#212121" }],
+  //   },
+  //   {
+  //     elementType: "labels.icon",
+  //     stylers: [{ visibility: "off" }],
+  //   },
+  //   {
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#757575" }],
+  //   },
+  //   {
+  //     elementType: "labels.text.stroke",
+  //     stylers: [{ color: "#212121" }],
+  //   },
+  //   {
+  //     featureType: "administrative",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#757575" }],
+  //   },
+  //   {
+  //     featureType: "administrative.country",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#9e9e9e" }],
+  //   },
+  //   {
+  //     featureType: "administrative.land_parcel",
+  //     stylers: [{ visibility: "off" }],
+  //   },
+  //   {
+  //     featureType: "administrative.locality",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#bdbdbd" }],
+  //   },
+  //   {
+  //     featureType: "poi",
+  //     elementType: "labels.text",
+  //     stylers: [{ visibility: "off" }],
+  //   },
+  //   {
+  //     featureType: "poi",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#757575" }],
+  //   },
+  //   {
+  //     featureType: "poi.park",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#181818" }],
+  //   },
+  //   {
+  //     featureType: "poi.park",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#616161" }],
+  //   },
+  //   {
+  //     featureType: "poi.park",
+  //     elementType: "labels.text.stroke",
+  //     stylers: [{ color: "#1b1b1b" }],
+  //   },
+  //   {
+  //     featureType: "road",
+  //     elementType: "geometry.fill",
+  //     stylers: [{ color: "#2c2c2c" }],
+  //   },
+  //   {
+  //     featureType: "road",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#8a8a8a" }],
+  //   },
+  //   {
+  //     featureType: "road.arterial",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#373737" }],
+  //   },
+  //   {
+  //     featureType: "road.highway",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#3c3c3c" }],
+  //   },
+  //   {
+  //     featureType: "road.highway.controlled_access",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#4e4e4e" }],
+  //   },
+  //   {
+  //     featureType: "road.local",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#616161" }],
+  //   },
+  //   {
+  //     featureType: "transit",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#757575" }],
+  //   },
+  //   {
+  //     featureType: "transit.line",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#3d3d3d" }],
+  //   },
+  //   {
+  //     featureType: "transit.station",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#2e2e2e" }],
+  //   },
+  //   {
+  //     featureType: "water",
+  //     elementType: "geometry",
+  //     stylers: [{ color: "#000000" }],
+  //   },
+  //   {
+  //     featureType: "water",
+  //     elementType: "labels.text.fill",
+  //     stylers: [{ color: "#3d3d3d" }],
+  //   },
+  // ];
 
   const MemoizedMarker = React.memo(({ location }) => {
     if (location.latitude === 25.0 && location.longitude === -71.0) {
@@ -458,32 +415,9 @@ const LocationsMapView = ({
         title={location.title}
         description={location.address}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            padding: 5,
-            width: "auto",
-            flex: 1,
-          }}
-        >
+        <View style={styles.markerContainer}>
           <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontWeight: "bold",
-                zIndex: 1000,
-                position: "absolute",
-                top: -12,
-                right: -20,
-                backgroundColor: "yellow",
-                padding: 4,
-                borderRadius: 20,
-                fontSize: 12,
-              }}
-            >
-              {location.helloCount}
-            </Text>
+            <Text style={styles.markerText}>{location.helloCount}</Text>
           </View>
           <MaterialCommunityIcons
             // name="map-marker-star"
@@ -496,16 +430,19 @@ const LocationsMapView = ({
     );
   });
 
-console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
+  const combinedLocationsForList = useMemo(
+    () => [...faveLocations, ...nonFaveLocations],
+    [faveLocations, nonFaveLocations]
+  );
 
   const renderLocationsMap = (locations) => (
-     
     <>
       <MapView
         {...(Platform.OS === "android" && { provider: PROVIDER_GOOGLE })}
         ref={mapRef}
         liteMode={isKeyboardVisible ? true : false}
-        style={[{ width: "100%", height: isKeyboardVisible ? "100%" : "100%" }]}
+        // style={[{ width: "100%", height: isKeyboardVisible ? "100%" : "100%" }]}
+         style={[{ width: "100%", height: 400 }]}
         initialRegion={currentRegion || null}
         //
         scrollEnabled={
@@ -606,10 +543,8 @@ console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
               style={[
                 styles.zoomOutButton,
                 {
-           
                   zIndex: 8000,
                   backgroundColor: primaryBackground,
-                    
                 },
               ]}
               onPress={fitToMarkers}
@@ -620,13 +555,6 @@ console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
             </Pressable>
           )}
 
-          {/* performance seems worse using the separated component below */}
-          {/* <MapViewWithHelloes
-            ref={mapRef}
-            locations={pastHelloLocations}
-            currentRegion={currentRegion}
-            isKeyboardVisible={isKeyboardVisible}
-          /> */}
           {renderLocationsMap(pastHelloLocations)}
 
           {!isKeyboardVisible && (
@@ -634,9 +562,9 @@ console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
               <FocusedLocationCardUI
                 focusedLocation={focusedLocation}
                 onSendPress={handleGoToLocationSendScreen}
-                onViewPress={handleGoToLocationViewScreen} 
+                onViewPress={handleGoToLocationViewScreen}
                 primaryColor={primaryColor}
-                primaryBackground={primaryBackground} 
+                primaryBackground={primaryBackground}
               />
               <View
                 style={[
@@ -646,17 +574,28 @@ console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
                   },
                 ]}
               >
-                {pastHelloLocations && (
-                  <FlatList
-                    data={[...faveLocations, ...nonFaveLocations]}
-                    keyExtractor={extractItemKey}
-                    renderItem={renderLocationItem}
-                    initialNumToRender={10}
-                    maxToRenderPerBatch={10}
-                    windowSize={10}
-                    removeClippedSubviews={true}
-                  />
-                )}
+                {/* {pastHelloLocations && ( */}
+                <FlatList 
+                  ref={flatListRef}
+                  data={combinedLocationsForList}
+                  //    itemLayoutAnimation={JumpingTransition}
+                  // scrollEventThrottle={16}
+                  keyExtractor={extractItemKey}
+                  renderItem={renderLocationItem}
+                  initialNumToRender={10}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  removeClippedSubviews={true}
+                  getItemLayout={getItemLayout}
+                  decelerationRate="normal"
+                  keyboardDismissMode="on-drag"
+                 // snapToInterval={TOTAL_ITEM_HEIGHT}
+                  // decelerationRate="fast"
+                  //  decelerationRate={0.5}
+
+                  ListFooterComponent={<View style={{ height: 260 }}></View>}
+                />
+                {/* )} */}
               </View>
             </View>
           )}
@@ -667,6 +606,25 @@ console.log(`PAST HELLO LOCATIONS`,pastHelloLocations);
 };
 
 const styles = StyleSheet.create({
+  markerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: 5,
+    width: "auto",
+    flex: 1,
+  },
+  markerText: {
+    fontWeight: "bold",
+    zIndex: 1000,
+    position: "absolute",
+    top: -12,
+    right: -20,
+    backgroundColor: "yellow",
+    padding: 4,
+    borderRadius: 20,
+    fontSize: 12,
+  },
   container: {
     flex: 1,
     justifyContent: "flex-start",
@@ -693,7 +651,7 @@ const styles = StyleSheet.create({
   },
   flatListWrapper: {
     // flex: 1,
-    height: 230,
+    height: 370,
     width: "100%",
   },
   gradientCover: {
@@ -785,8 +743,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   zoomOutButtonText: {
-    color: "white",
+ 
     fontWeight: "bold",
+    fontSize: 12,
+    lineHeight: 20,
   },
   sliderContainer: {
     width: 40,
