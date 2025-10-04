@@ -1,9 +1,10 @@
 import { View, Text, OpaqueColorValue } from "react-native";
 import React from "react"; 
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
  
-
+import manualGradientColors from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 
 type Props = {
@@ -17,12 +18,12 @@ type Props = {
 const TreeModalBigButton = ({
   onClose, 
   rightSideElement,
-  manualGradientColors,
- welcomeTextStyle,
-  subWelcomeTextStyle,
   label,
   labelColor,
 }: Props) => { 
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   return (
     <GlobalPressable
@@ -45,25 +46,7 @@ const TreeModalBigButton = ({
           }}
         >
           <View style={{ height: "100%" }}></View>
-          {/* <MaterialIcons
-            name={`keyboard-arrow-left`}
-            size={26}
-            color={manualGradientColors.homeDarkColor}
-          /> */}
-          {/* <Text
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.welcomeText,
-              {
-                fontSize: 20,
-
-                fontFamily: "Poppins-Bold",
-                color: manualGradientColors.homeDarkColor,
-              },
-            ]}
-          >
-            Close
-          </Text> */}
+ 
 
           <View style={{  }}>
             {rightSideElement != undefined && rightSideElement}

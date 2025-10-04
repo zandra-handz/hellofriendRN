@@ -18,7 +18,7 @@ const HelloesScreenFooter = ({
   primaryColor,
   overlayColor,
   dividerStyle,
-  helloesList,
+  // helloesList,
   flattenHelloes,
   onFilterPress,
   addToModalOpenPress,

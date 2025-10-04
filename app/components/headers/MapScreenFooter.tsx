@@ -10,6 +10,7 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 // import manualGradientColors  from "@/src/hooks/StaticColors";
 
+
 const MapScreenFooter = ({
   userAddress,
   friendAddress,

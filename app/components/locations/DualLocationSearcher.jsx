@@ -28,8 +28,7 @@ const DualLocationSearcher = ({
   primaryBackground,  
   savedLocationsDDVisible,
   setSavedLocationsDDVisibility,
-}) => {
-  const HEADER_HEIGHT = 60;
+}) => { 
 
   const searchStringRef = useRef(null);
   const [savedLocationsSearchIsVisible, setSavedLocationsVisibility] =

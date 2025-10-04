@@ -17,9 +17,7 @@ import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-
-
-
+import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
@@ -36,7 +34,7 @@ const ScreenLocationSearch = () => {
   const friendFaveIds = useMemo(
     () => friendDash?.friend_faves?.locations,
     [friendDash]
-  ); 
+  );
 
   const { locationList } = useLocations();
 
@@ -47,7 +45,6 @@ const ScreenLocationSearch = () => {
   }, [helloesList]);
 
   const { selectedFriend } = useSelectedFriend();
- 
 
   const [selectCurrentLocation, setSelectCurrentLocation] = useState(true);
 
@@ -122,8 +119,7 @@ const ScreenLocationSearch = () => {
         themeAheadOfLoading={themeAheadOfLoading}
         overlayColor={lightDarkTheme.overlayBackground}
         primaryBackground={lightDarkTheme.primaryBackground}
-        primaryColor={lightDarkTheme.primaryText}
-        welcomeTextStyle={AppFontStyles.welcomeText}
+        primaryColor={lightDarkTheme.primaryText} 
         dividerStyle={lightDarkTheme.divider}
         openAddresses={openModal}
       />
@@ -144,7 +140,7 @@ const ScreenLocationSearch = () => {
       // useSolidOverlay={true}
       // useOverlayFade={true}
 
-            addColorChangeDelay={true}
+      addColorChangeDelay={true}
       forceFullOpacity={true}
       useSolidOverlay={false}
       useOverlayFade={false}
@@ -154,48 +150,50 @@ const ScreenLocationSearch = () => {
       style={{ flex: 1 }}
     >
       {/* {pastHelloLocations && ( */}
-        <>
-          <View style={styles.mapContainer}>
-            <LocationsMapView 
+      <>
+ 
+        
+        <View style={styles.mapContainer}>
+          <LocationsMapView
+            userId={user?.id}
+            friendId={selectedFriend?.id}
+            pastHelloLocations={pastHelloLocations}
+            faveLocations={faveLocations}
+            nonFaveLocations={nonFaveLocations}
+            currentDayDrilledOnce={getCurrentDay()}
+            bermudaCoordsDrilledOnce={bermudaCoords}
+            themeAheadOfLoading={themeAheadOfLoading}
+            primaryColor={lightDarkTheme.primaryText}
+            overlayColor={lightDarkTheme.overlayBackground}
+            darkerOverlay={lightDarkTheme.darkerOverlayBackground}
+            primaryBackground={lightDarkTheme.primaryBackground}
+          />
+        </View>
+
+        {addressesModalVisible && (
+          <View>
+            <AddressesModal
+              currentLocationSelected={selectCurrentLocation}
+              handleDeselectCurrent={handleDeselectCurrent}
+              handleselectCurrent={handleDeselectCurrent}
+              // handleSelectUserAddress={}
+              // handleSelectFriendAddress={}
               userId={user?.id}
-              friendId={selectedFriend?.id} 
-              pastHelloLocations={pastHelloLocations}
-              faveLocations={faveLocations}
-              nonFaveLocations={nonFaveLocations}
-              currentDayDrilledOnce={getCurrentDay()}
-              bermudaCoordsDrilledOnce={bermudaCoords}
-              themeAheadOfLoading={themeAheadOfLoading}
+              friendId={selectedFriend?.id}
+              friendName={selectedFriend?.name}
               primaryColor={lightDarkTheme.primaryText}
-              overlayColor={lightDarkTheme.overlayBackground}
-              darkerOverlay={lightDarkTheme.darkerOverlayBackground}
               primaryBackground={lightDarkTheme.primaryBackground}
+              overlayColor={lightDarkTheme.overlayBackground}
+              userAddress={userAddress}
+              friendAddress={friendAddress}
+              isVisible={addressesModalVisible}
+              closeModal={closeModal}
             />
           </View>
-
-          {addressesModalVisible && (
-            <View>
-              <AddressesModal
-                currentLocationSelected={selectCurrentLocation}
-                handleDeselectCurrent={handleDeselectCurrent}
-                handleselectCurrent={handleDeselectCurrent}
-                // handleSelectUserAddress={}
-                // handleSelectFriendAddress={}
-                userId={user?.id}
-                friendId={selectedFriend?.id}
-                friendName={selectedFriend?.name}
-                primaryColor={lightDarkTheme.primaryText}
-                primaryBackground={lightDarkTheme.primaryBackground}
-                overlayColor={lightDarkTheme.overlayBackground}
-                userAddress={userAddress}
-                friendAddress={friendAddress}
-                isVisible={addressesModalVisible}
-                closeModal={closeModal}
-              />
-            </View>
-          )}
-        </>
+        )}
+      </>
       {/* )} */}
-      {renderMapScreenFooter()}
+      {/* {renderMapScreenFooter()} */}
     </SafeViewAndGradientBackground>
   );
 };
@@ -204,7 +202,6 @@ const styles = StyleSheet.create({
   mapContainer: {
     flex: 1, // This ensures it takes up available space
     justifyContent: "flex-start",
- 
   },
 });
 

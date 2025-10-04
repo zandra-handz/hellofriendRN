@@ -23,17 +23,19 @@ import {
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
+import TreeModalBigButtonFocusLocation from "../alerts/TreeModalBigButtonFocusLocation";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-import FocusedLocationCardUI from "./FocusedLocationCardUI";
-import { useLocations } from "@/src/context/LocationsContext";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
-import DualLocationSearcher from "./DualLocationSearcher";
+ 
+import FindNewLocation from "../headers/FindNewLocation";
 import Animated, { JumpingTransition } from "react-native-reanimated";
-import LocationListItem from "./LocationListItem";
+import LocationListItem from "./LocationListItem"; 
 
 const LocationsMapView = ({
   // userAddress,
@@ -52,6 +54,11 @@ const LocationsMapView = ({
   primaryBackground,
 }) => {
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
+
+  const CARD_HEIGHT = 60;
+  const CARD_SAFE_VIEW_PADDING = 50;
+
+  const { navigateBack } = useAppNavigations();
 
   const { userAddresses } = useStartingUserAddresses({ userId: userId });
   const { friendAddresses } = useStartingFriendAddresses({
@@ -73,7 +80,10 @@ const LocationsMapView = ({
   const flatListRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const { locationList } = useLocations();
+  const SHARED_SCREEN_MAP_HEIGHT = 456;
+  const SHARED_SCREEN_FLATLIST_HEIGHT = 300;
+
+ 
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
   const [focusedLocation, setFocusedLocation] = useState(null);
@@ -97,7 +107,7 @@ const LocationsMapView = ({
         marginTop={LIST_ITEM_MARGIN}
         onPress={handlePress}
         textColor={primaryColor}
-        // backgroundColor={overlayColor}
+        //backgroundColor={overlayColor}
         backgroundColor={darkerOverlay}
         friendColor={themeAheadOfLoading.darkColor}
       />
@@ -132,14 +142,14 @@ const LocationsMapView = ({
   //pastHelloes is ALL LOCATIONS with the additional helloes data
   const handleLocationAlreadyExists = (locationDetails) => {
     let matchedLocation;
-    // let locationIsOutsideFaves = false;
+    let locationIsOutsideFaves = false;
 
     let index = combinedLocations.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
     );
 
     if (index !== -1) {
-      console.log("LOCATION EXISTS!");
+      // console.log("LOCATION EXISTS!");
       if (index <= combinedLocationsForList?.length - 1) {
         scrollToBelowLocation(index + 1);
       } else {
@@ -442,7 +452,14 @@ const LocationsMapView = ({
         ref={mapRef}
         liteMode={isKeyboardVisible ? true : false}
         // style={[{ width: "100%", height: isKeyboardVisible ? "100%" : "100%" }]}
-         style={[{ width: "100%", height: 400 }]}
+        style={[
+          {
+            width: "100%",
+            height: !isKeyboardVisible ? SHARED_SCREEN_MAP_HEIGHT : "100%",
+            marginBottom: !isKeyboardVisible ? -CARD_SAFE_VIEW_PADDING :  - (CARD_SAFE_VIEW_PADDING + 60), // EYEBALL TO GET MAP TO STAY BELOW DARK TOP OF BACKGROUND
+           
+          },
+        ]}
         initialRegion={currentRegion || null}
         //
         scrollEnabled={
@@ -458,68 +475,38 @@ const LocationsMapView = ({
           <MemoizedMarker key={location.id.toString()} location={location} />
         ))}
       </MapView>
-
-      {/* 
-      {!isKeyboardVisible && (
-        <TouchableOpacity
-          style={[
-            styles.midpointsButton,
-            {
-              zIndex: 7000,
-              backgroundColor:
-                themeStyles.genericTextBackground.backgroundColor,
-            },
-          ]}
-          onPress={handleGoToMidpointLocationSearchScreen}
-        >
-          <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
-            Midpoints
-          </Text>
-        </TouchableOpacity>
-      )}
-
-      {!isKeyboardVisible && (
-        <TouchableOpacity
-          style={[
-            styles.zoomOutButton,
-            {
-              zIndex: 7000,
-              backgroundColor:
-                themeStyles.genericTextBackground.backgroundColor,
-            },
-          ]}
-          onPress={fitToMarkers}
-        >
-          <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
-            Show All
-          </Text>
-        </TouchableOpacity>
-      )}
-      <View style={styles.dualLocationSearcherContainer}>
-        <DualLocationSearcher
-          onPress={handlePress}
-          locationListDrilledOnce={locationList}
-        />
-      </View> */}
     </>
   );
 
   // COMPONENT RETURN
   return (
-    <View
-      style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}
-    >
+    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
       {pastHelloLocations && (
         <>
           <View style={styles.dualLocationSearcherContainer}>
-            <DualLocationSearcher
+            <View
+              style={{
+                width: "100%",
+           
+                flexGrow: 1,
+                padding: 0,
+                backgroundColor: primaryBackground,
+              }}
+            >
+              <FindNewLocation
+                primaryColor={primaryColor}
+                primaryBackground={primaryBackground}
+                onPress={handlePress}
+              />
+            </View>
+            {/* <DualLocationSearcher
               savedLocationsDDVisible={savedLocationsDDVisible}
               setSavedLocationsDDVisibility={setSavedLocationsDDVisibility}
               onPress={handlePress}
               locationListDrilledOnce={locationList}
               primaryColor={primaryColor}
               primaryBackground={primaryBackground}
-            />
+            /> */}
           </View>
           {!isKeyboardVisible && (
             <Pressable
@@ -555,29 +542,22 @@ const LocationsMapView = ({
             </Pressable>
           )}
 
-          {renderLocationsMap(pastHelloLocations)}
-
           {!isKeyboardVisible && (
-            <View style={styles.focusCardWrapper}>
-              <FocusedLocationCardUI
-                focusedLocation={focusedLocation}
-                onSendPress={handleGoToLocationSendScreen}
-                onViewPress={handleGoToLocationViewScreen}
-                primaryColor={primaryColor}
-                primaryBackground={primaryBackground}
-              />
+            <View style={styles.outerFlatListWrapper}>
               <View
                 style={[
                   styles.flatListWrapper,
                   {
+                    height: SHARED_SCREEN_FLATLIST_HEIGHT,
                     backgroundColor: overlayColor,
                   },
                 ]}
               >
                 {/* {pastHelloLocations && ( */}
-                <FlatList 
+                <FlatList
                   ref={flatListRef}
                   data={combinedLocationsForList}
+                  inverted={true}
                   //    itemLayoutAnimation={JumpingTransition}
                   // scrollEventThrottle={16}
                   keyExtractor={extractItemKey}
@@ -589,18 +569,49 @@ const LocationsMapView = ({
                   getItemLayout={getItemLayout}
                   decelerationRate="normal"
                   keyboardDismissMode="on-drag"
-                 // snapToInterval={TOTAL_ITEM_HEIGHT}
+                  // snapToInterval={TOTAL_ITEM_HEIGHT}
                   // decelerationRate="fast"
                   //  decelerationRate={0.5}
 
-                  ListFooterComponent={<View style={{ height: 260 }}></View>}
+                  ListFooterComponent={<View style={{ height: 8 }}></View>}
                 />
                 {/* )} */}
               </View>
             </View>
           )}
+          {renderLocationsMap(pastHelloLocations)}
         </>
       )}
+      <View style={{ width: "100%" }}>
+        <TreeModalBigButtonFocusLocation
+          height={CARD_HEIGHT + CARD_SAFE_VIEW_PADDING}
+          safeViewPaddingBottom={CARD_SAFE_VIEW_PADDING}
+          absolute={true}
+          label={focusedLocation?.title}
+          subLabel={focusedLocation?.address}
+          labelColor={themeAheadOfLoading.secondaryFontColor}
+          backgroundColor={overlayColor}
+          onLeftPress={navigateBack}
+          onRightPress={handleGoToLocationSendScreen}
+          onMainPress={handleGoToLocationViewScreen}
+        />
+        {/* <View
+          style={{
+            width: "100%",
+            height: 50,
+            bottom: -30,
+            position: "absolute",
+            backgroundColor: manualGradientColors.lightColor,
+          }}
+        ></View> */}
+        {/* <FocusedLocationCardUI
+          focusedLocation={focusedLocation}
+          onSendPress={handleGoToLocationSendScreen}
+          onViewPress={handleGoToLocationViewScreen}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+        /> */}
+      </View>
     </View>
   );
 };
@@ -636,90 +647,28 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     flexDirection: "row",
-    backgroundColor: "pink",
+    zIndex: 10000,
   },
-  focusCardWrapper: {
+  outerFlatListWrapper: {
     width: "100%",
-    // height: 70,
     zIndex: 1200,
     elevation: 1200,
     flexDirection: "column",
     position: "absolute",
-    bottom: 0,
+    //bottom: 0,
+    top: 0,
+    paddingTop: 40,
     justifyContent: "space-between",
     width: "100%",
   },
   flatListWrapper: {
-    // flex: 1,
-    height: 370,
+ 
     width: "100%",
-  },
-  gradientCover: {
-    width: "100%",
-    flex: 1,
-  },
-  gradientBelowFaves: {
-    width: "100%",
-    flex: 1,
-    zIndex: 4,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    height: "37%",
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-    width: "100%",
-    paddingTop: 60,
-    zIndex: 3,
-  },
-  detailsContainer: {
-    flexGrow: 1,
-    width: "100%",
-    padding: 20,
-    borderTopRightRadius: 50,
-    borderTopLeftRadius: 50,
-    marginTop: "0%",
-  },
-  detailsSubtitle: {
-    fontWeight: "bold",
-    fontSize: 15,
-  },
-  scrollContainer: {
-    width: "100%",
-    flex: 1,
-    flexDirection: "column",
-    zIndex: 1000,
-    justifyContent: "flex-end",
-    alignContent: "center",
-    alignItems: "center",
-    paddingHorizontal: "2%",
-  },
-  scrollTitleContainer: {
-    width: "100%",
-    zIndex: 1000,
-
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "left",
-    alignItems: "left",
-    textAlign: "left",
-    paddingHorizontal: "3%",
-    paddingBottom: "1%",
-    borderWidth: 0,
-    borderColor: "gray",
-  },
-  friendNameText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    textTransform: "uppercase",
   },
   midpointsButton: {
     position: "absolute",
     zIndex: 3000,
-    top: 120,
+    top: 346,
     right: 4,
     padding: 10,
     paddingHorizontal: 14,
@@ -733,7 +682,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 4,
     right: 4,
-    top: 170,
+    top: 396,
     padding: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
@@ -743,36 +692,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   zoomOutButtonText: {
- 
     fontWeight: "bold",
     fontSize: 12,
     lineHeight: 20,
-  },
-  sliderContainer: {
-    width: 40,
-    position: "absolute",
-    justifyContent: "flex-end",
-    flexDirection: "column",
-    bottom: 60,
-    right: 24,
-    height: "90%",
-    borderRadius: 20,
-    zIndex: 5000,
-    elevation: 5000,
-    backgroundColor: "transparent",
-  },
-  sliderStartAtTopContainer: {
-    width: 40,
-    position: "absolute",
-    justifyContent: "flex-start",
-    flexDirection: "column",
-    bottom: 10,
-    right: 24,
-    height: "90%",
-    borderRadius: 20,
-    zIndex: 6000,
-    elevation: 6000,
-    backgroundColor: "transparent",
   },
 });
 

@@ -38,11 +38,8 @@ const LocationItemFooter: React.FC<Props> = ({
  
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
-  primaryColor,
-  overlayColor,
+  primaryColor, 
   backgroundColor,
-  dividerStyle,
-  welcomeTextStyle,
   themeAheadOfLoading,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(false);

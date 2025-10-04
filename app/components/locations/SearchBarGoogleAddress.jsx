@@ -9,13 +9,23 @@ import React, {
 } from "react";
 import { StyleSheet } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
- 
+
 import GoogleLogoSvg from "@/app/assets/svgs/google-logo.svg";
 
 // The component wrapped with forwardRef
 const SearchBarGoogleAddress = forwardRef(
-  ({ onPress, mountingText, onTextChange, primaryColor, primaryBackground }, ref) => {
- 
+  (
+    {
+      onPress,
+      autoFocus,
+      mountingText,
+      onTextChange,
+      primaryColor,
+      primaryBackground,
+      paddingLeft,
+    },
+    ref
+  ) => {
     const googlePlacesRef = useRef();
     const [searchText, setSearchText] = useState("");
 
@@ -24,8 +34,9 @@ const SearchBarGoogleAddress = forwardRef(
     useEffect(() => {
       if (googlePlacesRef.current) {
         googlePlacesRef.current.setAddressText(mountingText);
+        googlePlacesRef.current.focus();
       }
-    }, []);
+    }, [autoFocus]);
 
     useImperativeHandle(ref, () => ({
       setText: (text) => {
@@ -47,10 +58,10 @@ const SearchBarGoogleAddress = forwardRef(
     };
 
     const handlePress = (data, details = null) => {
-      console.log("handlePress triggered in SearchBarGoogleAddress");
+      console.log(`DETAILS`, details);
       if (details) {
         const { lat, lng } = details.geometry.location;
-        console.log(lat, lng);
+        // console.log(lat, lng);
         const newLocation = {
           id: generateTemporaryId(),
           address: details.formatted_address,
@@ -63,28 +74,33 @@ const SearchBarGoogleAddress = forwardRef(
           friends: [],
         };
 
-        onPress(newLocation); 
+        onPress(newLocation);
+
         googlePlacesRef.current?.setAddressText("");
       }
-      googlePlacesRef.current?.setAddressText("");
+      // googlePlacesRef.current?.setAddressText("");
     };
 
-    const handleTextInputChange = (text) => {
-      setSearchText(text);  
+    const handleTextInputChange = (text) => { 
+      setSearchText(text);
       onTextChange?.(text); // UPDATE PARENT
     };
- 
 
     return (
       <GooglePlacesAutocomplete
         ref={googlePlacesRef}
+        autoFocus={autoFocus}
         placeholder="Search"
+        suppressDefaultStyles={true}
+     
+        listUnderlayColor="red"
         predefinedPlaces={[]}
-        keepResultsAfterBlur={true} // if remove, onPress won't work
+        keyboardShouldPersistTaps={'false'} // THIS FIXED THE DOUBLE RENDERING!
+       // keepResultsAfterBlur={true} // if remove, onPress won't work // EDIT THIS IS BECAUSE ON PRESS CAUSES EVERYTHNG TO RERENDER THE FIRST TIME
         textInputProps={{
-          autoFocus: mountingText.length > 0 ? true : false,
+          autoFocus: autoFocus,
           placeholderTextColor: primaryColor,
-          onChangeText: handleTextInputChange,  
+          onChangeText: handleTextInputChange,
         }}
         minLength={2}
         numberOfLines={1}
@@ -98,71 +114,128 @@ const SearchBarGoogleAddress = forwardRef(
         }}
         enablePoweredByContainer={false}
         styles={{
-          textInputContainer: [
-            styles.inputContainer,
-           
+          poweredContainer: [
             {
-              backgroundColor: primaryBackground,
-              borderRadius: 999,//INPUT_CONTAINER_BORDER_RADIUS,
-              borderColor: primaryColor,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              borderBottomRightRadius: 5,
+              borderBottomLeftRadius: 5,
+              borderColor: "#c8c7cc",
+              borderTopWidth: 0.5,
             },
           ],
+          description: [{ color: primaryColor }], // ROW LABELS
+          row: [
+            {
+              backgroundColor: primaryBackground,
+              opacity: 0.8,
+              padding: 13,
+              height: 44,
+              flexDirection: "row",
+            },
+          ],
+          separator: [
+            {
+              color: "hotpink",
+            },
+          ],
+          loader: [
+            {
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              height: 20,
+            },
+          ],
+          listView: [
+            {
+              color: "orange",
+              backgroundColor: "teal",
+              padding: 10,
+              // maxHeight: 400,
+            },
+          ],
+          separator: [
+            {
+              height: 0.5,
+              backgroundColor: "tranparent",
+            },
+          ],
+
+          textInputContainer: [
+            // styles.inputContainer,
+
+            {
+              width: "100%",
+              paddingLeft: paddingLeft,
+
+              backgroundColor: primaryBackground,
+              borderColor: "orange",
+              borderWidth: 0,
+
+            },
+          ],
+
           textInput: [
-            [ 
+            [
               {
                 color: primaryColor,
-                // paddingLeft: 10,
-                // height: 24,
-                backgroundColor: "transparent",
               },
             ],
           ],
         }}
-        renderLeftButton={() => (
-          <GoogleLogoSvg width={16} height={16} style={styles.iconStyle} />
-        )}
+        // renderLeftButton={() => (
+        //   <GoogleLogoSvg width={16} height={16} style={styles.iconStyle} />
+        // )}
       />
     );
   }
 );
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   textInputContainer: {
-    backgroundColor: "transparent",
+    flexDirection: "row",
     width: "100%",
-    paddingRight: 2,
-  },
-  inputContainer: {
-      
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: 48,
-    backgroundColor: "transparent",
-    paddingLeft: 10,
-    paddingVertical: 1,
- 
-    alignItems: "center",
-    // width: "80%", // Make input field take up full width
-    //borderWidth:1,
- 
-    paddingLeft: 10,
-    paddingVertical: 0,
-  },
-  listView: {
-    marginTop: -4,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "white",
-    maxHeight: 300,
-    width: "100%",
-  },
-  predefinedPlacesDescription: {
-    color: "#1faadb",
-  },
-  iconStyle: {
 
-    marginRight: 2,
+    borderColor: "orange",
+    borderWidth: 3,
+  },
+  textInput: {
+    backgroundColor: "#FFFFFF",
+    height: 44,
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    fontSize: 15,
+    flex: 1,
+  },
+  poweredContainer: {
+    justifyContent: "flex-end",
+    alignItems: "center",
+    borderBottomRightRadius: 5,
+    borderBottomLeftRadius: 5,
+    borderColor: "#c8c7cc",
+    borderTopWidth: 0.5,
+  },
+  powered: {},
+  listView: {},
+  row: {
+    backgroundColor: "#FFFFFF",
+    padding: 13,
+    height: 44,
+    flexDirection: "row",
+  },
+  separator: {
+    height: 0.5,
+    backgroundColor: "#c8c7cc",
+  },
+  description: {},
+  loader: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    height: 20,
   },
 });
 
