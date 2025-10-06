@@ -1,35 +1,41 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {  useState,   useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
-import MapScreenFooter from "@/app/components/headers/MapScreenFooter";
+ 
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useLocations } from "@/src/context/LocationsContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
-// import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
+import { useFriendDash } from "@/src/context/FriendDashContext"; 
 import AddressesModal from "@/app/components/headers/AddressesModal";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import CarouselItemModal from "@/app/components/appwide/carouselItemModal";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import useCurrentLocation from "@/src/hooks/useCurrentLocation";
+// import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
-import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
+ 
 const ScreenLocationSearch = () => {
-  const { currentLocationDetails, currentRegion } = useCurrentLocation();
+  // const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const { user } = useUser();
+  const [itemModalVisible, setItemModalVisible] = useState(false);
+  const [modalData, setModalData] = useState({ title: "", data: {} });
   const { themeAheadOfLoading } = useFriendStyle();
   const { lightDarkTheme } = useLDTheme();
 
-  const { friendDash } = useFriendDash();
-  // const friendFaveIds = friendDash?.friend_faves?.locations;
+  const handleSetModalData = (data) => {
+    setModalData(data);
+    setItemModalVisible(true);
+  };
+
+  const handleCloseItemModal = () => {
+    setItemModalVisible(false);
+  };
+
+  const { friendDash } = useFriendDash(); 
 
   const friendFaveIds = useMemo(
     () => friendDash?.friend_faves?.locations,
@@ -37,7 +43,6 @@ const ScreenLocationSearch = () => {
   );
 
   const { locationList } = useLocations();
-
   const { helloesList } = useHelloes();
 
   const inPersonHelloes = useMemo(() => {
@@ -46,38 +51,20 @@ const ScreenLocationSearch = () => {
 
   const { selectedFriend } = useSelectedFriend();
 
-  const [selectCurrentLocation, setSelectCurrentLocation] = useState(true);
-
-  //   const { userAddresses } = useStartingUserAddresses({ userId: user?.id });
-  // const { friendAddresses } = useStartingFriendAddresses({
-  //   userId: user?.id,
-  //   friendId: selectedFriend?.id,
-  // });
-
-  //   const [userAddress, setUserAddress] = useState({
-  //   address: 'loading',
-  //   id:  "",
-  // });
-
-  const [friendAddress, setFriendAddress] = useState({
-    address: "Loading",
-    id: "",
-  });
-
-  const handleDeselectCurrent = () => {
-    setSelectCurrentLocation(false);
-  };
-
-  const handleselectCurrent = () => {
-    setSelectCurrentLocation(true);
-  };
-
   const { faveLocations, nonFaveLocations } = useFriendLocations({
     inPersonHelloes: inPersonHelloes,
     locationList: locationList,
     friendFaveIds: friendFaveIds,
   });
+
+  const combinedLocationsObject = {
+    faveLocations,
+    nonFaveLocations,
+    combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
+  };
   const { getCurrentDay } = useLocationDetailFunctions();
+
+  const currentDay = getCurrentDay();
 
   const { pastHelloLocations } = usePastHelloesLocations({
     inPersonHelloes: inPersonHelloes,
@@ -85,15 +72,6 @@ const ScreenLocationSearch = () => {
     faveLocations: faveLocations,
     nonFaveLocations: nonFaveLocations,
   });
-
-  // useEffect(() => {
-  //   if (pastHelloLocations?.length > 0) {
-  //     console.log(
-  //       "yayayyayayayyayayayayuayayyayayayayayayayyayayayayyayayayayyayayayayua"
-  //     );
-  //     console.log(pastHelloLocations[0]);
-  //   }
-  // }, [pastHelloLocations]);
 
   const { bermudaCoords } = useLocationHelloFunctions();
 
@@ -107,39 +85,13 @@ const ScreenLocationSearch = () => {
     setAddressesModalVisible(false);
   };
 
-  const [userAddress, setUserAddress] = useState(null);
-
-  const renderMapScreenFooter = useCallback(() => {
-    return (
-      <MapScreenFooter
-        userId={user?.id}
-        friendId={selectedFriend?.id}
-        // friendName={selectedFriend?.name}
-
-        themeAheadOfLoading={themeAheadOfLoading}
-        overlayColor={lightDarkTheme.overlayBackground}
-        primaryBackground={lightDarkTheme.primaryBackground}
-        primaryColor={lightDarkTheme.primaryText} 
-        dividerStyle={lightDarkTheme.divider}
-        openAddresses={openModal}
-      />
-    );
-  }, [selectedFriend, userAddress, friendAddress]);
-
   return (
-    // <GestureHandlerRootView style={{flex: 1}}>
     <SafeViewAndGradientBackground
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      // friendColorLight={lightDarkTheme.primaryBackground}
-      // friendColorDark={lightDarkTheme.primaryBackground}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
-      // friendId={false}
       backgroundOverlayHeight={"10%"}
-      // useSolidOverlay={true}
-      // useOverlayFade={true}
-
       addColorChangeDelay={true}
       forceFullOpacity={true}
       useSolidOverlay={false}
@@ -149,51 +101,59 @@ const ScreenLocationSearch = () => {
       backgroundOverlayBottomRadius={0}
       style={{ flex: 1 }}
     >
-      {/* {pastHelloLocations && ( */}
       <>
- 
-        
         <View style={styles.mapContainer}>
           <LocationsMapView
             userId={user?.id}
             friendId={selectedFriend?.id}
+            friendName={selectedFriend?.name}
             pastHelloLocations={pastHelloLocations}
-            faveLocations={faveLocations}
-            nonFaveLocations={nonFaveLocations}
-            currentDayDrilledOnce={getCurrentDay()}
+            conbinedLocationsObject={combinedLocationsObject}
+            combinedLocationsForList={
+              combinedLocationsObject?.combinedLocations
+            } 
+            currentDayDrilledOnce={currentDay}
             bermudaCoordsDrilledOnce={bermudaCoords}
             themeAheadOfLoading={themeAheadOfLoading}
             primaryColor={lightDarkTheme.primaryText}
             overlayColor={lightDarkTheme.overlayBackground}
             darkerOverlay={lightDarkTheme.darkerOverlayBackground}
             primaryBackground={lightDarkTheme.primaryBackground}
+            openAddresses={openModal}
+            openItems={handleSetModalData}
+            closeItems={handleCloseItemModal}
           />
         </View>
 
         {addressesModalVisible && (
           <View>
             <AddressesModal
-              currentLocationSelected={selectCurrentLocation}
-              handleDeselectCurrent={handleDeselectCurrent}
-              handleselectCurrent={handleDeselectCurrent}
-              // handleSelectUserAddress={}
-              // handleSelectFriendAddress={}
               userId={user?.id}
               friendId={selectedFriend?.id}
               friendName={selectedFriend?.name}
               primaryColor={lightDarkTheme.primaryText}
               primaryBackground={lightDarkTheme.primaryBackground}
               overlayColor={lightDarkTheme.overlayBackground}
-              userAddress={userAddress}
-              friendAddress={friendAddress}
               isVisible={addressesModalVisible}
               closeModal={closeModal}
             />
           </View>
         )}
+
+        {itemModalVisible && (
+          <View>
+            <CarouselItemModal
+              // item={data[currentIndex]} not syncing right item, removed it from modal; data solely from the user-facing component
+              icon={modalData?.icon}
+              title={modalData?.title}
+              display={modalData?.contentData}
+              isVisible={itemModalVisible}
+              closeModal={() => setItemModalVisible(false)}
+              onPress={modalData?.onPress}
+            />
+          </View>
+        )}
       </>
-      {/* )} */}
-      {/* {renderMapScreenFooter()} */}
     </SafeViewAndGradientBackground>
   );
 };

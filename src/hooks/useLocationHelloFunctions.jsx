@@ -91,7 +91,7 @@ const useLocationHelloFunctions = () => {
         };
       });
 
-    console.log('OUTPUT', helloLocations)
+ 
 
     return helloLocations;
   }

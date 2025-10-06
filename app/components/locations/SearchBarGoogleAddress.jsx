@@ -17,12 +17,12 @@ const SearchBarGoogleAddress = forwardRef(
   (
     {
       onPress,
-      autoFocus,
+      autoFocus=true,
       mountingText,
       onTextChange,
       primaryColor,
       primaryBackground,
-      paddingLeft,
+      paddingLeft = 10,
     },
     ref
   ) => {

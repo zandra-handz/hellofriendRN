@@ -1,4 +1,4 @@
-import { Pressable, View } from "react-native";
+import {  View } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -36,10 +36,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   selectedFriendName = "",
   loadingNewFriend = false,
   cardBackgroundColor,
-
-  // onPress,
-}) => {
-  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+ 
+}) => { 
   const { autoSelectFriend } = useAutoSelector();
 
   const opacityValue = useSharedValue(0);
@@ -63,12 +61,12 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   });
 
   const isLockedOn = useMemo(() => {
-    console.log("use memoooooooooooooooooooooo");
+    // console.log("use memoooooooooooooooooooooo");
     return friendId === autoSelectFriend?.customFriend?.id;
   }, [friendId, autoSelectFriend]);
 
   const isUpNext = useMemo(() => {
-    console.log("use memoooooooooooooooooooooo");
+    // console.log("use memoooooooooooooooooooooo");
     return friendId === autoSelectFriend?.nextFriend?.id;
   }, [friendId, autoSelectFriend]);
 

@@ -12,6 +12,12 @@ const useFriendLocations = ({
   locationList,
   friendFaveIds,
 }: Props) => {
+
+
+  console.log('useFriendLocations');
+
+  console.log(locationList.map((location) => location?.id));
+
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
       ([fave, notFave], item) => {

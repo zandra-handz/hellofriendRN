@@ -1,11 +1,11 @@
 import { View, Text, OpaqueColorValue, StyleSheet } from "react-native";
-import React from "react"; 
+import React from "react";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/src/hooks/StaticColors"; 
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import InfoItem from "../headers/InfoItem";
+
+import InfoItemLocation from "../locations/InfoItemLocation";
 
 import HelpButton from "./HelpButton";
 
@@ -23,28 +23,40 @@ type Props = {
 };
 
 const TreeModalBigButtonFocusLocation = ({
+  userId,
+  friendId,
+  friendName,
   height,
   safeViewPaddingBottom,
+  themeAheadOfLoading,
   absolute = false,
   friendTheme,
-  rightSideElement,
+  location,
   label,
+  primaryColor = "orange",
   subLabel,
-  labelColor,
-  backgroundColor,
+  labelColor, 
   onLeftPress,
   onMainPress,
   onRightPress,
-  trayItems, // taking the place of infoItems that was in this component's inspo component
-}: Props) => {
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  // const BOTTOM_SPACER = 60; // taken from FriendHistoryModal
-  // moved height to parent in order to sync height with map padding, since map is below this component
+  openAddresses,
+  userAddress,
+  friendAddress,
+  openItems,
+  closeItems,
+}: Props) => { 
   const bottomSpacer = height;
 
+  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
+
   return (
-    <Animated.View>
+    <Animated.View
+      style={{
+        position: "absolute",
+        width: "100%",
+        bottom: 0, // EYEBALL
+      }}
+    >
       <Animated.View
         entering={FadeInUp.delay(500)}
         style={{
@@ -54,25 +66,40 @@ const TreeModalBigButtonFocusLocation = ({
           borderRadius: 30,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
-          padding: 30,
-          paddingTop: 18,
+          // padding: 30,
+          // paddingTop: 18,
+          paddingHorizontal: 8,
           paddingBottom: 26,
-         
+
           borderTopWidth: StyleSheet.hairlineWidth,
           borderColor: "red",
-          backgroundColor: backgroundColor,
+          backgroundColor: CARD_BACKGROUND,
 
           alignItems: "center",
-          height: "auto",
+
+          flex: 1,
         }}
       >
-        <InfoItem
-        infoText={'HIIIIIIIIIIIIIIIIIIIIIIIIIIII'}
-        primaryColor={labelColor}/>
-        <HelpButton
-          iconColor={labelColor}
-          fontColor={labelColor}
-          onPress={() => console.log("put something here")}
+        <InfoItemLocation
+          userId={userId}
+          friendId={friendId}
+          friendName={friendName}
+          infoText={"HIIIIIIIIIIIIIIIIIIIIIIIIIIII"}
+          primaryColor={primaryColor}
+          onAddressSettingsPress={openAddresses}
+          destinationLocation={location}
+          userLocation={userAddress}
+          friendLocation={friendAddress}
+          themeAheadOfLoading={themeAheadOfLoading}
+          onLocationDetailsPress={openItems}
+          onCloseLocationDetails={closeItems}
+          // children={
+          //   <HelpButton
+          //     iconColor={labelColor}
+          //     fontColor={labelColor}
+          //     onPress={() => console.log("put something here")}
+          //   />
+          // }
         />
       </Animated.View>
 
@@ -95,35 +122,11 @@ const TreeModalBigButtonFocusLocation = ({
       >
         <GlobalPressable
           onPress={onMainPress != undefined ? onMainPress : undefined}
-          style={{
-            height: "100%",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingHorizontal: 20,
-            overflow: "hidden",
-          }}
+          style={styles.mainPressButton}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "space-between",
-            }}
-          ></View>
           <GlobalPressable
             onPress={onRightPress}
-            style={{
-              height: 22,
-              width: 22,
-              height: "100%",
-              position: "absolute",
-              right: 0,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 15,
-              // backgroundColor: manualGradientColors.homeDarkColor,
-            }}
+            style={styles.rightPressButton}
           >
             <MaterialCommunityIcons
               name={"send-circle-outline"}
@@ -132,16 +135,7 @@ const TreeModalBigButtonFocusLocation = ({
             />
           </GlobalPressable>
 
-          <GlobalPressable
-            onPress={onLeftPress}
-            style={{
-              position: "absolute",
-              left: 0,
-              height: "100%",
-              alignItems: "center",
-              // backgroundColor: "orange",
-            }}
-          >
+          <GlobalPressable onPress={onLeftPress} style={styles.leftPressButton}>
             <MaterialIcons
               name={"keyboard-arrow-left"}
               color={labelColor}
@@ -158,12 +152,9 @@ const TreeModalBigButtonFocusLocation = ({
           >
             <Text
               numberOfLines={1}
-              style={[
-                welcomeTextStyle,
-                {
-                  // color: primaryColor,
+              style={[ 
+                { 
                   fontSize: 20,
-
                   fontFamily: "Poppins-Bold",
                   color: labelColor,
                 },
@@ -173,8 +164,7 @@ const TreeModalBigButtonFocusLocation = ({
             </Text>
             <Text
               numberOfLines={1}
-              style={[
-                subWelcomeTextStyle,
+              style={[ 
                 {
                   lineHeight: 12,
                   fontFamily: "Poppins-Bold",
@@ -191,5 +181,31 @@ const TreeModalBigButtonFocusLocation = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  mainPressButton: {
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    overflow: "hidden",
+  },
+  rightPressButton: {
+    width: 22,
+    height: "100%",
+    position: "absolute",
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+  },
+  leftPressButton: {
+    position: "absolute",
+    left: 0,
+    height: "100%",
+    alignItems: "center",
+  },
+});
 
 export default TreeModalBigButtonFocusLocation;

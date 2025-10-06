@@ -22,9 +22,7 @@ const AddressesModal: React.FC<Props> = ({
   closeModal,
   primaryColor,
   primaryBackground,
-  overlayColor,
-  userAddress, 
-  friendAddress, 
+  overlayColor, 
 }) => {
   const renderActiveAddresses = useCallback(() => {
     return (
@@ -34,12 +32,10 @@ const AddressesModal: React.FC<Props> = ({
         friendName={friendName}
         primaryColor={primaryColor}
         primaryBackground={primaryBackground}
-        overlayColor={overlayColor}
-        userAddress={userAddress} 
-        friendAddress={friendAddress} 
+        overlayColor={overlayColor} 
       />
     );
-  }, [userAddress, friendAddress]);
+  }, [userId, friendId, primaryBackground, overlayColor, primaryColor]);
 
   return (
     <ModalWithGoBack

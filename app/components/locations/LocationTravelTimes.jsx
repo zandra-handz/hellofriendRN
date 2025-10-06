@@ -20,20 +20,20 @@ const LocationTravelTimes = ({
   location,
   userAddress,
   friendAddress,
-  iconSize = 34,
+  iconSize = 20,
   themeAheadOfLoading,
   primaryColor = "orange",
 }) => {
- 
+  
   // const userAddress =
   //   userAddresses?.chosen || userAddresses?.saved?.[0] || null;
-  console.log(`in travel componentent`, userAddress);
+  // console.log(`in travel componentent`, userAddress);
 
-  // const friendAddress =
-  //   friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
+  // // const friendAddress =
+  // //   friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
 
-  console.log(`in travel componentent`, friendAddress);
-  console.log(`DESTINATION in travel component`, location);
+  // console.log(`in travel componentent`, friendAddress);
+  // console.log(`DESTINATION in travel component`, location);
   const {
     travelTimeResults,
     isTravelTimesPending,
@@ -58,40 +58,7 @@ const LocationTravelTimes = ({
     // triggerFetch();
     //navigateToAddMoment();
   };
-
-  // useEffect(() => {
-  //   if (triggerFetch && location && userAddress && friendAddress) {
-  //     try {
-  //       //console.log(location);
-  //       //console.log(defaultUserAddress);
-  //       //console.log(defaultAddress);
-
-  //       const locationData = {
-  //         address_a_address: userAddress.address,
-  //         address_a_lat: parseFloat(userAddress.lat),
-  //         address_a_long: parseFloat(userAddress.lng),
-  //         address_b_address: friendAddress.address,
-  //         address_b_lat: parseFloat(friendAddress.lat),
-  //         address_b_long: parseFloat(friendAddress.lng),
-  //         destination_address: location.address,
-  //         destination_lat: parseFloat(location.latitude),
-  //         destination_long: parseFloat(location.longitude),
-  //         perform_search: false,
-  //       };
-
-  //       // Trigger the mutation with the prepared location data
-  //       travelTimesMutation.mutate(locationData);
-
-  //       //console.log("Travel comparisons requested successfully");
-  //     } catch (error) {
-  //       console.error("Error getting travel comparisons:", error);
-  //     }
-
-  //     // Reset the trigger
-  //     setTriggerFetch(false);
-  //   }
-  // }, [triggerFetch, userAddress, friendAddress, location, travelTimesMutation]);
-
+ 
   const handlePress = () => {
     const now = Date.now();
     if (now - lastPress.current < DOUBLE_PRESS_DELAY) {
@@ -104,13 +71,7 @@ const LocationTravelTimes = ({
     }
     lastPress.current = now;
   };
-
-  // useEffect(() => {
-  //   if (travelTimeResults) {
-  //     setCachedTravelTimes(travelTimeResults);
-  //   }
-  // }, [travelTimeResults]);
-
+ 
   const handleGoToCalculateTravelTimesScreen = () => {
     //disabled at least for now because of the address selectors
     // navigation.navigate("CalculateTravelTimes", {
@@ -119,17 +80,7 @@ const LocationTravelTimes = ({
     // });
   };
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     if (location && defaultUserAddress && defaultAddress && !isModalVisible) {
-  //       setCachedTravelTimes(
-  //         checkCache(defaultUserAddress, defaultAddress, location)
-  //       );
-  //       //setIsCached(cachedData);
-  //     }
-  //   }, [location, defaultUserAddress, defaultAddress, isModalVisible])
-  // );
-
+ 
   const RenderFetchTimesButton = useCallback(
     () => (
       <Pressable
@@ -140,17 +91,18 @@ const LocationTravelTimes = ({
           width: "100%",
           alignItems: "center",
           justifyContent: "ceter",
-          maxWidth: 50,
+          maxWidth: 40,
+          backgroundColor: 'hotpink'
         }}
         onPress={handlePress}
       >
         <View style={{ position: "absolute", left: 0 }}>
-          <FontAwesome5 name="user-clock" size={20} color={primaryColor} />
+          <FontAwesome5 name="user-clock" size={iconSize-5} color={primaryColor} />
         </View>
-        <View style={{ position: "absolute", right: 0, top: 10 }}>
+        <View style={{ position: "absolute", right: 0, top: 10-5 }}>
           <FontAwesome5
             name="user-clock"
-            size={20}
+            size={iconSize-5}
             color={themeAheadOfLoading.lightColor}
           />
         </View>
@@ -196,7 +148,7 @@ const LocationTravelTimes = ({
                 loading={true}
                 color={themeAheadOfLoading.darkColor}
                 spinnerType="flow"
-                spinnerSize={30}
+                spinnerSize={20}
                 includeLabel={false}
               />
             </View>
@@ -259,9 +211,9 @@ const LocationTravelTimes = ({
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-    backgroundColor: "gray",
     flexSrink: 1,
     width: "auto",
+    minWidth: 80,
     alignItems: "center",
     height: "100%",
     overflow: "hidden",

@@ -1,10 +1,3 @@
-// old version, updateFriendDashboard is an empty function now. preserving this in case i need to revert something
-// if (friendDashboardData && friendDashboardData.length > 0) {
-//    friendDashboardData[0].friend_faves = updatedFaves;
-//    console.log(friendDashboardData);
-//    updateFriendDashboardData(friendDashboardData);
-//   console.log('Location added to friend\'s favorites.');
-//  }
 
 import React, {   useMemo } from "react";
 import {
@@ -15,7 +8,7 @@ import {
 } from "react-native";   
 import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {  MaterialIcons } from "@expo/vector-icons";
 
 const LocationNotes = ({
   location,
@@ -24,6 +17,8 @@ const LocationNotes = ({
   closeEditModal,
   themeAheadOfLoading,
   primaryColor,
+  compact=false,
+  noLabel=false,
 }) => {  
 
   const navigation = useNavigation();
@@ -56,17 +51,9 @@ const LocationNotes = ({
       contentData: location.personal_experience_info,
       onPress: () => handleGoToLocationEditScreenFocusNotes(),
     };
-    openEditModal(modalData);
-    //setModalVisible(true);
+    openEditModal(modalData); 
   };
-
-  // useLayoutEffect(() => {
-  //   if (location && location.personal_experience_info) {
-  //     setHasNotes(true);
-  //   } else {
-  //     setHasNotes(false);
-  //   }
-  // }, [location]);
+ 
   const hasNotes = useMemo(() => {
   return location && location.personal_experience_info ? true : false;
 }, [location]);
@@ -75,12 +62,12 @@ const LocationNotes = ({
 
     const memoizedIcon = useMemo(
     () => (
-      <MaterialCommunityIcons
-        name={hasNotes ? "note-check" : "note-plus-outline"}
+      <MaterialIcons
+        name={hasNotes ? "sticky-note-2" : "edit-note"}
         size={iconSize}
         color={
           hasNotes
-            ? themeAheadOfLoading.lightColor
+            ? primaryColor
             : primaryColor
         }
         style={{ marginRight: 4 }}
@@ -102,13 +89,17 @@ const LocationNotes = ({
           <Pressable
             onPress={handlePress}
             style={({ pressed }) => ({
-              flexDirection: "row",
+              flexDirection: compact ? "column" :  "row",
               alignItems: "center",
               opacity: pressed ? 0.6 : 1,
             })}
           >
             {memoizedIcon}
+            {!noLabel && (
+              
             <Text style={  {color: primaryColor}}>Notes</Text>
+            
+            )}
           </Pressable> 
         </View>
       )}

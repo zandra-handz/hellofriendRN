@@ -28,7 +28,7 @@ type Props = {
 const UserAddressChanger = ({
   userId,
   primaryColor,
-  overlayColor,
+ 
   backgroundColor,
 }: Props) => {
   const { userAddresses } = useStartingUserAddresses({ userId: userId });

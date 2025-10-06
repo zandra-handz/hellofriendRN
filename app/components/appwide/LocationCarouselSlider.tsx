@@ -220,8 +220,7 @@ const LocationCarouselSlider = ({
             display={modalData?.contentData}
             isVisible={itemModalVisible}
             closeModal={() => setItemModalVisible(false)}
-            onPress={modalData?.onPress}
-            manualGradientColors={manualGradientColors}
+            onPress={modalData?.onPress} 
           />
         </View>
       )}

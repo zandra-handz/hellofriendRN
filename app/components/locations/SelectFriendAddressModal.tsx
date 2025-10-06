@@ -76,7 +76,7 @@ const SelectFriendAddressModal: React.FC<Props> = ({
             primaryBackground={primaryBackground}
             welcomeTextStyle={welcomeTextStyle}
             manualGradientColors={manualGradientColors}
-            welcomeTextStyle={welcomeTextStyle}
+        
           />
         </View>
       }

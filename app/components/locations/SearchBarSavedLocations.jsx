@@ -24,8 +24,8 @@ const SearchBarSavedLocations = forwardRef(
       locationListDrilledTwice,
       onPress,
       mountingText = "default",
-      showFullList,
-      setShowFullList,
+      // showFullList,
+      // setShowFullList,
     
       onTextChange, 
       primaryColor,
@@ -36,7 +36,7 @@ const SearchBarSavedLocations = forwardRef(
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const textInputRef = useRef();
-    // const [showFullList, setShowFullList] = useState(true);
+    const [showFullList, setShowFullList] = useState(true);
 
     // const INPUT_CONTAINER_BORDER_RADIUS = 10;
 

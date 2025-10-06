@@ -16,53 +16,70 @@ const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
   onAddPress,
   onRemovePress,
   location,
+  iconSize,
   openEditModal,
   closeEditModal,
   themeAheadOfLoading,
   primaryColor,
 }) => {
-  const iconSize = 26;
   const fadeOpacity = 0.8;
 
   return (
     <View
-      style={{
-        paddingVertical: 10,
+      style={{ 
+        paddingRight: 4,
         flexDirection: "row",
-        width: "90%",
+        width: 88, //EYEBALL
         justifyContent: "space-between",
       }}
     >
-      <LocationSavingActions
-        handleAddToFaves={onAddPress}
-        handleRemoveFromFaves={onRemovePress}
-        userId={userId}
-        friendId={friendId}
-        friendName={friendName}
-        location={location}
-        iconSize={iconSize}
-        fadeOpacity={fadeOpacity}
-        themeAheadOfLoading={themeAheadOfLoading}
-        primaryColor={primaryColor}
-      />
-
-      <LocationParking
-        location={location}
-        openEditModal={openEditModal}
-        closeEditModal={closeEditModal}
-        iconSize={iconSize}
-        fadeOpacity={fadeOpacity}
-        primaryColor={primaryColor}
-      />
-      <LocationNotes
-        location={location}
-        openEditModal={openEditModal}
-        closeEditModal={closeEditModal}
-        iconSize={iconSize}
-        fadeOpacity={fadeOpacity}
+      {location?.id && (
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            // backgroundColor: "teal",
+          }}
+        >
+          <LocationSavingActions
+            handleAddToFaves={onAddPress}
+            handleRemoveFromFaves={onRemovePress}
+            userId={userId}
+            friendId={friendId}
+            friendName={friendName}
+            location={location}
+            iconSize={iconSize}
+            fadeOpacity={fadeOpacity}
             themeAheadOfLoading={themeAheadOfLoading}
-          primaryColor={primaryColor}
-      />
+            primaryColor={primaryColor}
+            compact={true}
+            noLabel={true}
+          />
+
+          <LocationParking
+            location={location}
+            openEditModal={openEditModal}
+            closeEditModal={closeEditModal}
+            iconSize={iconSize}
+            fadeOpacity={fadeOpacity}
+            primaryColor={primaryColor}
+            compact={true}
+            noLabel={true} // really only need compact or noLabel, not both, just experimenting rn
+          />
+          <LocationNotes
+            location={location}
+            openEditModal={openEditModal}
+            closeEditModal={closeEditModal}
+            iconSize={iconSize}
+            fadeOpacity={fadeOpacity}
+            themeAheadOfLoading={themeAheadOfLoading}
+            primaryColor={primaryColor}
+            compact={true}
+            noLabel={true}
+          />
+        </View>
+      )}
     </View>
   );
 };

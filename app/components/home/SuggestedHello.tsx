@@ -4,7 +4,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 
 type Props = {
   friendId: number;
@@ -23,10 +23,9 @@ const SuggestedHello = ({
   friendFutureDate,
   padding,
   height,
-  borderRadius = 14,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
- 
+
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
@@ -90,35 +89,17 @@ const SuggestedHello = ({
   return (
     <>
       <View
-        style={{
-          marginVertical: 4,
-          minHeight: 96, // EYEBALL
+        style={[styles.container, { 
           maxHeight: height + 40,
-          flexShrink: 1,
-          alignItems: "center",
-          flexDirection: "row",
-          overflow: "hidden",
-          justifyContent: "space-between",
-          borderRadius: borderRadius,
-          // backgroundColor: 'orange',
           padding: padding,
-          // paddingRight: 10,
-          width: "100%",
           backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
-          borderRadius: 10,
-        }}
+        }]}
       >
-
-
-        {/* {isLoading && (
-          <LoadingBlock loading={true} borderRadius={borderRadius} />
-        )} */}
         {!isLoading && (
           <View style={{ flexDirection: "row" }}>
             <View style={styles.textContainer}>{renderSuggestedHello}</View>
             <View
-              style={{
-                // backgroundColor: "orange",
+              style={{ 
                 flex: 1,
                 flexDirection: "column",
                 justifyContent: "center",
@@ -137,7 +118,6 @@ const SuggestedHello = ({
         <View
           style={{
             borderRadius: 20,
-            // height: "100%",
             width: "100%",
             flexDirection: "column",
             alignItems: "center",
@@ -163,9 +143,20 @@ const SuggestedHello = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 4,
+    minHeight: 96, // EYEBALL
+
+    flexShrink: 1,
+    alignItems: "center",
+    flexDirection: "row",
+    overflow: "hidden",
+    justifyContent: "space-between",
+    width: "100%",
+    borderRadius: 10,
+  },
   textContainer: {
     zIndex: 5,
-    // flexDirection: "column",
     width: "70%",
     flexGrow: 1,
     flexWrap: "wrap",

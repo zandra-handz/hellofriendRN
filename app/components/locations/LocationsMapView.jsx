@@ -33,8 +33,7 @@ import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
  
-import FindNewLocation from "../headers/FindNewLocation";
-import Animated, { JumpingTransition } from "react-native-reanimated";
+import FindNewLocation from "../headers/FindNewLocation"; 
 import LocationListItem from "./LocationListItem"; 
 
 const LocationsMapView = ({
@@ -42,9 +41,10 @@ const LocationsMapView = ({
   // friendAddress,
   userId,
   friendId,
+  friendName,
   pastHelloLocations,
-  faveLocations,
-  nonFaveLocations,
+  combinedLocationsObject,
+  combinedLocationsForList,
   currentDayDrilledOnce,
   bermudaCoordsDrilledOnce,
   themeAheadOfLoading,
@@ -52,8 +52,19 @@ const LocationsMapView = ({
   overlayColor,
   darkerOverlay,
   primaryBackground,
+  openAddresses,
+  openItems,
+  closeItems,
 }) => {
-  const combinedLocations = [...faveLocations, ...nonFaveLocations];
+
+  // const combinedLocationsForList = useMemo(
+  //   () => [...faveLocations, ...nonFaveLocations],
+  //   [faveLocations, nonFaveLocations]
+  // );
+
+ 
+  // console.log(`combined: `, combinedLocationsForList.map((location) => location?.id));
+ 
 
   const CARD_HEIGHT = 60;
   const CARD_SAFE_VIEW_PADDING = 50;
@@ -85,6 +96,24 @@ const LocationsMapView = ({
 
  
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
+
+
+  // initial scroll
+    useEffect(() => {
+
+      console.log(' USE EFFECT IN MAP VIEW')
+    if (currentLocationDetails && currentRegion) {
+   
+      if (currentLocationDetails != focusedLocation) {
+        handleLocationAlreadyExists(currentLocationDetails);
+        mapRef.current.animateToRegion(currentRegion, 200);
+      } else {
+        console.log("region is the same");
+      }
+    }
+  }, [ ]);
+
+
   const navigation = useNavigation();
   const [focusedLocation, setFocusedLocation] = useState(null);
 
@@ -96,8 +125,7 @@ const LocationsMapView = ({
 
   const [savedLocationsDDVisible, setSavedLocationsDDVisibility] =
     useState(false);
-
-  // use item.isFave (property added when sorting in parent screen) to differentiate UI for saved locations
+ 
   const renderLocationItem = useCallback(
     ({ item, _index }) => (
       <LocationListItem
@@ -106,29 +134,18 @@ const LocationsMapView = ({
         padding={LIST_ITEM_PADDING}
         marginTop={LIST_ITEM_MARGIN}
         onPress={handlePress}
-        textColor={primaryColor}
-        //backgroundColor={overlayColor}
+        textColor={primaryColor} 
         backgroundColor={darkerOverlay}
         friendColor={themeAheadOfLoading.darkColor}
       />
-    ),
-    [faveLocations, nonFaveLocations]
+    ), 
+        [handlePress, combinedLocationsForList] // NEED TO PASS THIS IN TO GET INDEX TO UPDATE IN PRESS FUNCTION
   );
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `location-${index}`;
 
-  useEffect(() => {
-    if (currentLocationDetails && currentRegion) {
-      console.log("current region!!!");
-      if (currentLocationDetails != focusedLocation) {
-        handleLocationAlreadyExists(currentLocationDetails);
-        mapRef.current.animateToRegion(currentRegion, 200);
-      } else {
-        console.log("region is the same");
-      }
-    }
-  }, [currentRegion]);
+
 
   const getItemLayout = useCallback(
     (_data, index) => ({
@@ -140,13 +157,15 @@ const LocationsMapView = ({
   );
 
   //pastHelloes is ALL LOCATIONS with the additional helloes data
-  const handleLocationAlreadyExists = (locationDetails) => {
+  const handleLocationAlreadyExists = useCallback( (locationDetails) => {
     let matchedLocation;
     let locationIsOutsideFaves = false;
 
-    let index = combinedLocations.findIndex(
+    let index = combinedLocationsForList.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
     );
+
+    // console.log(`LOCATION INDEX`, index);
 
     if (index !== -1) {
       // console.log("LOCATION EXISTS!");
@@ -155,13 +174,13 @@ const LocationsMapView = ({
       } else {
         scrollToBelowLocation(index);
       }
-      matchedLocation = { ...combinedLocations[index], matchedIndex: index };
+      matchedLocation = { ...combinedLocationsForList[index], matchedIndex: index };
       setFocusedLocation(matchedLocation);
     } else {
       locationIsOutsideFaves = true;
       setFocusedLocation(locationDetails);
     }
-  };
+  }, [combinedLocationsForList]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -212,7 +231,7 @@ const LocationsMapView = ({
         "Missing address",
         "Both you and your friend need to have an address set before searching."
       );
-      return; // stop here
+      return; 
     }
 
     navigation.navigate("MidpointLocationSearch", {
@@ -223,8 +242,8 @@ const LocationsMapView = ({
 
   // Function to fit all markers
   const fitToMarkers = () => {
-    if (mapRef.current && faveLocations && pastHelloLocations.length > 0) {
-      const coordinates = faveLocations
+    if (mapRef.current && combinedLocationsObject.faveLocations && pastHelloLocations.length > 0) {
+      const coordinates = combinedLocationsObject.faveLocations
         .filter(
           (location) =>
             location.latitude !== 25.0 || location.longitude !== -71.0
@@ -249,17 +268,13 @@ const LocationsMapView = ({
     }
   };
 
-  const handlePress = (location) => {
+  const handlePress = useCallback((location) => {
+    console.log('LOCATION PRESSED', location?.id);
     if (location) {
-      handleLocationAlreadyExists(location, true);
-
-      //true is for addMessage
-      // const appOnly = pastHelloLocations.find(
-      //   (item) => item.id === location.id
-      // );
-      // setAppOnlyLocationData(appOnly || null); // this is just the id... ??????????
+      handleLocationAlreadyExists(location);
+ 
     }
-  };
+  }, [combinedLocationsForList, handleLocationAlreadyExists]);
 
   useEffect(() => {
     if (focusedLocation) {
@@ -440,10 +455,6 @@ const LocationsMapView = ({
     );
   });
 
-  const combinedLocationsForList = useMemo(
-    () => [...faveLocations, ...nonFaveLocations],
-    [faveLocations, nonFaveLocations]
-  );
 
   const renderLocationsMap = (locations) => (
     <>
@@ -456,7 +467,7 @@ const LocationsMapView = ({
           {
             width: "100%",
             height: !isKeyboardVisible ? SHARED_SCREEN_MAP_HEIGHT : "100%",
-            marginBottom: !isKeyboardVisible ? -CARD_SAFE_VIEW_PADDING :  - (CARD_SAFE_VIEW_PADDING + 60), // EYEBALL TO GET MAP TO STAY BELOW DARK TOP OF BACKGROUND
+            marginBottom: !isKeyboardVisible ? CARD_SAFE_VIEW_PADDING :  - (CARD_SAFE_VIEW_PADDING-10), // EYEBALL TO GET MAP TO STAY BELOW DARK TOP OF BACKGROUND
            
           },
         ]}
@@ -478,7 +489,12 @@ const LocationsMapView = ({
     </>
   );
 
-  // COMPONENT RETURN
+  
+
+
+
+
+
   return (
     <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
       {pastHelloLocations && (
@@ -498,15 +514,7 @@ const LocationsMapView = ({
                 primaryBackground={primaryBackground}
                 onPress={handlePress}
               />
-            </View>
-            {/* <DualLocationSearcher
-              savedLocationsDDVisible={savedLocationsDDVisible}
-              setSavedLocationsDDVisibility={setSavedLocationsDDVisibility}
-              onPress={handlePress}
-              locationListDrilledOnce={locationList}
-              primaryColor={primaryColor}
-              primaryBackground={primaryBackground}
-            /> */}
+            </View> 
           </View>
           {!isKeyboardVisible && (
             <Pressable
@@ -584,33 +592,31 @@ const LocationsMapView = ({
       )}
       <View style={{ width: "100%" }}>
         <TreeModalBigButtonFocusLocation
+        userId={userId}
+        friendId={friendId}
+        friendName={friendName}
           height={CARD_HEIGHT + CARD_SAFE_VIEW_PADDING}
           safeViewPaddingBottom={CARD_SAFE_VIEW_PADDING}
+          themeAheadOfLoading={themeAheadOfLoading}
           absolute={true}
+          location={focusedLocation?.matchedIndex ? combinedLocationsForList.find((location) => location.id === focusedLocation?.id) : focusedLocation}
           label={focusedLocation?.title}
           subLabel={focusedLocation?.address}
+          primaryColor={primaryColor}
           labelColor={themeAheadOfLoading.secondaryFontColor}
-          backgroundColor={overlayColor}
+          backgroundColor={darkerOverlay}
           onLeftPress={navigateBack}
           onRightPress={handleGoToLocationSendScreen}
           onMainPress={handleGoToLocationViewScreen}
-        />
-        {/* <View
-          style={{
-            width: "100%",
-            height: 50,
-            bottom: -30,
-            position: "absolute",
-            backgroundColor: manualGradientColors.lightColor,
-          }}
-        ></View> */}
-        {/* <FocusedLocationCardUI
-          focusedLocation={focusedLocation}
-          onSendPress={handleGoToLocationSendScreen}
-          onViewPress={handleGoToLocationViewScreen}
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-        /> */}
+          openAddresses={openAddresses}
+          userAddress={userAddress}
+          friendAddress={friendAddress}
+          openItems={openItems}
+          closeItems={closeItems}
+     
+
+
+        /> 
       </View>
     </View>
   );
