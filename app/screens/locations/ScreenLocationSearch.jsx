@@ -108,6 +108,7 @@ const ScreenLocationSearch = () => {
             friendId={selectedFriend?.id}
             friendName={selectedFriend?.name}
             pastHelloLocations={pastHelloLocations}
+            faveLocations={combinedLocationsObject?.faveLocations}
             conbinedLocationsObject={combinedLocationsObject}
             combinedLocationsForList={
               combinedLocationsObject?.combinedLocations

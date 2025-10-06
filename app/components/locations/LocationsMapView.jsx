@@ -43,8 +43,10 @@ const LocationsMapView = ({
   friendId,
   friendName,
   pastHelloLocations,
+  
   combinedLocationsObject,
   combinedLocationsForList,
+  faveLocations, //also comes from the object, is here solely for the markers/'Show All' button
   currentDayDrilledOnce,
   bermudaCoordsDrilledOnce,
   themeAheadOfLoading,
@@ -240,10 +242,10 @@ const LocationsMapView = ({
     });
   };
 
-  // Function to fit all markers
-  const fitToMarkers = () => {
-    if (mapRef.current && combinedLocationsObject.faveLocations && pastHelloLocations.length > 0) {
-      const coordinates = combinedLocationsObject.faveLocations
+  
+  const fitToMarkers = useCallback(() => {
+    if (mapRef.current &&  faveLocations && pastHelloLocations.length > 0) {
+      const coordinates =  faveLocations
         .filter(
           (location) =>
             location.latitude !== 25.0 || location.longitude !== -71.0
@@ -257,7 +259,10 @@ const LocationsMapView = ({
         animated: true,
       });
     }
-  };
+  }, [
+    faveLocations
+
+  ]);
 
   const scrollToBelowLocation = (index) => {
     if (index !== undefined) {
