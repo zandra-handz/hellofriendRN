@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
 
-import { ShowQuickView } from "@/src/utils/ShowQuickView";
-import { daysSincedDateField } from "@/src/utils/DaysSince";
+// import { ShowQuickView } from "@/src/utils/ShowQuickView";
+// import { daysSincedDateField } from "@/src/utils/DaysSince";
 
-import HelloQuickView from "../alerts/HelloQuickView";
+// import HelloQuickView from "../alerts/HelloQuickView";
 
 const CalendarLights = ({
   helloesList,

@@ -15,7 +15,7 @@ import Animated, {
 import LocationCustomerReviews from "./LocationCustomerReviews";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 import manualGradientColors from "@/src/hooks/StaticColors";
-import Hours from "./Hours"; 
+import Hours from "./Hours";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 interface LocationPageViewProps {
   item: object;
@@ -51,7 +51,6 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   themeAheadOfLoading,
   primaryColor,
   primaryBackground,
-
 }) => {
   const [currentIndex, setCurrentIndex] = useState();
 
@@ -68,7 +67,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
-  console.log(index);
+  // console.log(index);
   const { additionalDetails } = useFetchAdditionalDetails({
     userId: userId,
     locationObject: item,
@@ -231,101 +230,103 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           ]}
         >
           <View style={{ height: "90%", width: "100%" }}>
-               <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
-                <View>
-            <Text
-              numberOfLines={2}
-              style={[
-                welcomeTextStyle,
-                {
-                  color: primaryColor,
-                  flexDirection: "row",
-                  width: "90%",
-                  flexWrap: "wrap",
-                },
-              ]}
-            >
-              {item.title}
-            </Text>
+            <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
+              <View>
+                <Text
+                  numberOfLines={2}
+                  style={[
+                    welcomeTextStyle,
+                    {
+                      color: primaryColor,
+                      flexDirection: "row",
+                      width: "90%",
+                      flexWrap: "wrap",
+                    },
+                  ]}
+                >
+                  {item.title}
+                </Text>
 
-            <LocationAddress
-              address={item?.address}
-              primaryColor={primaryColor}
-              subWelcomeTextStyle={subWelcomeTextStyle}
-            />
-          </View>
-          <LocationNumber
-            phoneNumber={additionalDetails?.phone}
-            primaryColor={primaryColor}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-          />
-
-          <View style={{}}>
-            <RenderOpenStatus />
-          </View>
-          <LocationUtilityTray
-            themeAheadOfLoading={themeAheadOfLoading}
-            primaryColor={primaryColor}
-            onAddPress={onAddPress}
-            onRemovePress={onRemovePress}
-            userId={userId}
-            friendId={friendId}
-            friendName={friendName}
-            location={item}
-            openEditModal={openModal}
-            closeEditModal={closeModal}
-          />
-          {additionalDetails && (
-            <>
-              <Text
-                numberOfLines={2}
-                style={[
-                  welcomeTextStyle,
-                  {
-                    color: primaryColor,
-                    flexDirection: "row",
-                    width: "90%",
-                    flexWrap: "wrap",
-                  },
-                ]}
-              >
-                Reviews
-              </Text>
-              <View style={{ marginVertical: 10 }}>
-                <LocationCustomerReviews
-                  formatDate={formatDate}
-                  reviews={additionalDetails.reviews}
+                <LocationAddress
+                  address={item?.address}
                   primaryColor={primaryColor}
-                  primaryBackground={primaryBackground}
+                  subWelcomeTextStyle={subWelcomeTextStyle}
                 />
               </View>
+              <LocationNumber
+                phoneNumber={additionalDetails?.phone}
+                primaryColor={primaryColor}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+              />
 
-              <Text
-                numberOfLines={2}
-                style={[
-                  welcomeTextStyle,
-                  {
-                    color: primaryColor,
-                    flexDirection: "row",
-                    width: "90%",
-                    flexWrap: "wrap",
-                  },
-                ]}
-              >
-                Hours
-              </Text>
-              <View style={{ marginVertical: 10 }}>
-                {renderHoursComponent()}
-
-                {!additionalDetails?.hours?.weekday_text && (
-                  <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
-                    No hours available
-                  </Text>
-                )}
+              <View style={{}}>
+                <RenderOpenStatus />
               </View>
-            </>
-          )}
-          </ScrollView>
+              <LocationUtilityTray
+                themeAheadOfLoading={themeAheadOfLoading}
+                primaryColor={primaryColor}
+                onAddPress={onAddPress}
+                onRemovePress={onRemovePress}
+                userId={userId}
+                friendId={friendId}
+                friendName={friendName}
+                location={item}
+                openEditModal={openModal}
+                closeEditModal={closeModal}
+              />
+              {additionalDetails && (
+                <>
+                  <Text
+                    numberOfLines={2}
+                    style={[
+                      welcomeTextStyle,
+                      {
+                        color: primaryColor,
+                        flexDirection: "row",
+                        width: "90%",
+                        flexWrap: "wrap",
+                      },
+                    ]}
+                  >
+                    Reviews
+                  </Text>
+                  <View style={{ marginVertical: 10 }}>
+                    <LocationCustomerReviews
+                      formatDate={formatDate}
+                      reviews={additionalDetails.reviews}
+                      primaryColor={primaryColor}
+                      primaryBackground={primaryBackground}
+                    />
+                  </View>
+
+                  <Text
+                    numberOfLines={2}
+                    style={[
+                      welcomeTextStyle,
+                      {
+                        color: primaryColor,
+                        flexDirection: "row",
+                        width: "90%",
+                        flexWrap: "wrap",
+                      },
+                    ]}
+                  >
+                    Hours
+                  </Text>
+                  <View style={{ marginVertical: 10 }}>
+                    {renderHoursComponent()}
+
+                    {!additionalDetails?.hours?.weekday_text && (
+                      <Text
+                        style={[subWelcomeTextStyle, { color: primaryColor }]}
+                      >
+                        No hours available
+                      </Text>
+                    )}
+                  </View>
+                </>
+              )}
+            </ScrollView>
           </View>
         </View>
       </View>

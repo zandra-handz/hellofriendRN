@@ -1,14 +1,15 @@
-import React, {  useState,   useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
- 
+import QuickView from "@/app/components/alerts/QuickView";
+import LocationQuickView from "@/app/components/alerts/LocationQuickView";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useLocations } from "@/src/context/LocationsContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import AddressesModal from "@/app/components/headers/AddressesModal";
 import CarouselItemModal from "@/app/components/appwide/carouselItemModal";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -17,14 +18,21 @@ import { useHelloes } from "@/src/context/HelloesContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 // import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
- 
-const ScreenLocationSearch = () => {
+
+interface Props {}
+
+const ScreenLocationSearch: React.FC<Props> = ({}) => {
   // const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const { user } = useUser();
   const [itemModalVisible, setItemModalVisible] = useState(false);
   const [modalData, setModalData] = useState({ title: "", data: {} });
   const { themeAheadOfLoading } = useFriendStyle();
   const { lightDarkTheme } = useLDTheme();
+
+  const [quickView, setQuickView] = useState(null);
+  const nullQuickView = () => {
+    setQuickView(null);
+  };
 
   const handleSetModalData = (data) => {
     setModalData(data);
@@ -35,7 +43,27 @@ const ScreenLocationSearch = () => {
     setItemModalVisible(false);
   };
 
-  const { friendDash } = useFriendDash(); 
+  //focusedLocation is in LocationsMapView
+  const handleViewLocation = (focusedLocation) => {
+    console.log("handledViewLocation pressed!!");
+    if (focusedLocation != undefined) {
+      setQuickView({
+        topBarText: `Location: ${focusedLocation.title}   |   ${focusedLocation.address}`,
+        view: (
+          <LocationQuickView
+          userId={user?.id}
+            focusedLocation={focusedLocation}
+            primaryColor={lightDarkTheme.primaryText}
+            themeAheadOfLoading={themeAheadOfLoading}
+          />
+        ),
+        message: `hi hi hi`,
+        update: false,
+      });
+    }
+  };
+
+  const { friendDash } = useFriendDash();
 
   const friendFaveIds = useMemo(
     () => friendDash?.friend_faves?.locations,
@@ -112,7 +140,7 @@ const ScreenLocationSearch = () => {
             conbinedLocationsObject={combinedLocationsObject}
             combinedLocationsForList={
               combinedLocationsObject?.combinedLocations
-            } 
+            }
             currentDayDrilledOnce={currentDay}
             bermudaCoordsDrilledOnce={bermudaCoords}
             themeAheadOfLoading={themeAheadOfLoading}
@@ -123,6 +151,9 @@ const ScreenLocationSearch = () => {
             openAddresses={openModal}
             openItems={handleSetModalData}
             closeItems={handleCloseItemModal}
+            handleViewLocation={handleViewLocation}
+            quickView={quickView}
+            nullQuickView={nullQuickView}
           />
         </View>
 

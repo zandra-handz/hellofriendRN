@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { View, StyleSheet } from "react-native"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { View, StyleSheet } from "react-native";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendHistoryBigPie from "../home/FriendHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
@@ -38,11 +38,9 @@ const FriendHistoryModal: React.FC<Props> = ({
   labelsSize,
   seriesData,
   // onLongPress,
-}) => { 
-
-
+}) => {
   const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
   const nullQuickView = () => {
@@ -59,7 +57,7 @@ const FriendHistoryModal: React.FC<Props> = ({
       const daysSince = daysSincedDateField(helloObject.date);
 
       const word = Number(daysSince) != 1 ? `days` : `day`;
-      console.log("helloobject@@");
+      // console.log("helloobject@@");
       setQuickView({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
         view: (

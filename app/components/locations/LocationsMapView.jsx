@@ -28,13 +28,14 @@ import TreeModalBigButtonFocusLocation from "../alerts/TreeModalBigButtonFocusLo
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
- 
-import FindNewLocation from "../headers/FindNewLocation"; 
-import LocationListItem from "./LocationListItem"; 
+
+import FindNewLocation from "../headers/FindNewLocation";
+import LocationListItem from "./LocationListItem";
+import QuickView from "../alerts/QuickView";
 
 const LocationsMapView = ({
   // userAddress,
@@ -43,7 +44,7 @@ const LocationsMapView = ({
   friendId,
   friendName,
   pastHelloLocations,
-  
+
   combinedLocationsObject,
   combinedLocationsForList,
   faveLocations, //also comes from the object, is here solely for the markers/'Show All' button
@@ -57,16 +58,16 @@ const LocationsMapView = ({
   openAddresses,
   openItems,
   closeItems,
+  handleViewLocation,
+  quickView,
+  nullQuickView,
 }) => {
-
   // const combinedLocationsForList = useMemo(
   //   () => [...faveLocations, ...nonFaveLocations],
   //   [faveLocations, nonFaveLocations]
   // );
 
- 
   // console.log(`combined: `, combinedLocationsForList.map((location) => location?.id));
- 
 
   const CARD_HEIGHT = 60;
   const CARD_SAFE_VIEW_PADDING = 50;
@@ -87,6 +88,22 @@ const LocationsMapView = ({
   const friendAddress =
     friendAddresses?.chosen || friendAddresses?.saved?.[0] || null;
 
+  const handleRenderQuickView = useCallback(() => {
+    return (
+      <>
+        {quickView && (
+          <QuickView
+            topBarText={quickView.topBarText}
+            isInsideModal={false}
+            message={quickView.message}
+            view={quickView.view}
+            onClose={nullQuickView}
+          />
+        )}
+      </>
+    );
+  }, [quickView, nullQuickView]);
+
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
   const mapRef = useRef(null);
@@ -96,16 +113,12 @@ const LocationsMapView = ({
   const SHARED_SCREEN_MAP_HEIGHT = 456;
   const SHARED_SCREEN_FLATLIST_HEIGHT = 300;
 
- 
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
 
-
   // initial scroll
-    useEffect(() => {
-
-      console.log(' USE EFFECT IN MAP VIEW')
+  useEffect(() => {
+    console.log(" USE EFFECT IN MAP VIEW");
     if (currentLocationDetails && currentRegion) {
-   
       if (currentLocationDetails != focusedLocation) {
         handleLocationAlreadyExists(currentLocationDetails);
         mapRef.current.animateToRegion(currentRegion, 200);
@@ -113,8 +126,7 @@ const LocationsMapView = ({
         console.log("region is the same");
       }
     }
-  }, [ ]);
-
+  }, []);
 
   const navigation = useNavigation();
   const [focusedLocation, setFocusedLocation] = useState(null);
@@ -127,7 +139,7 @@ const LocationsMapView = ({
 
   const [savedLocationsDDVisible, setSavedLocationsDDVisibility] =
     useState(false);
- 
+
   const renderLocationItem = useCallback(
     ({ item, _index }) => (
       <LocationListItem
@@ -136,18 +148,16 @@ const LocationsMapView = ({
         padding={LIST_ITEM_PADDING}
         marginTop={LIST_ITEM_MARGIN}
         onPress={handlePress}
-        textColor={primaryColor} 
+        textColor={primaryColor}
         backgroundColor={darkerOverlay}
         friendColor={themeAheadOfLoading.darkColor}
       />
-    ), 
-        [handlePress, combinedLocationsForList] // NEED TO PASS THIS IN TO GET INDEX TO UPDATE IN PRESS FUNCTION
+    ),
+    [handlePress, combinedLocationsForList] // NEED TO PASS THIS IN TO GET INDEX TO UPDATE IN PRESS FUNCTION
   );
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `location-${index}`;
-
-
 
   const getItemLayout = useCallback(
     (_data, index) => ({
@@ -159,30 +169,37 @@ const LocationsMapView = ({
   );
 
   //pastHelloes is ALL LOCATIONS with the additional helloes data
-  const handleLocationAlreadyExists = useCallback( (locationDetails) => {
-    let matchedLocation;
-    let locationIsOutsideFaves = false;
+  const handleLocationAlreadyExists = useCallback(
+    (locationDetails) => {
+      let matchedLocation;
+      let locationIsOutsideFaves = false;
 
-    let index = combinedLocationsForList.findIndex(
-      (location) => String(location.address) === String(locationDetails.address)
-    );
+      let index = combinedLocationsForList.findIndex(
+        (location) =>
+          String(location.address) === String(locationDetails.address)
+      );
 
-    // console.log(`LOCATION INDEX`, index);
+      // console.log(`LOCATION INDEX`, index);
 
-    if (index !== -1) {
-      // console.log("LOCATION EXISTS!");
-      if (index <= combinedLocationsForList?.length - 1) {
-        scrollToBelowLocation(index + 1);
+      if (index !== -1) {
+        // console.log("LOCATION EXISTS!");
+        if (index <= combinedLocationsForList?.length - 1) {
+          scrollToBelowLocation(index + 1);
+        } else {
+          scrollToBelowLocation(index);
+        }
+        matchedLocation = {
+          ...combinedLocationsForList[index],
+          matchedIndex: index,
+        };
+        setFocusedLocation(matchedLocation);
       } else {
-        scrollToBelowLocation(index);
+        locationIsOutsideFaves = true;
+        setFocusedLocation(locationDetails);
       }
-      matchedLocation = { ...combinedLocationsForList[index], matchedIndex: index };
-      setFocusedLocation(matchedLocation);
-    } else {
-      locationIsOutsideFaves = true;
-      setFocusedLocation(locationDetails);
-    }
-  }, [combinedLocationsForList]);
+    },
+    [combinedLocationsForList]
+  );
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -227,13 +244,20 @@ const LocationsMapView = ({
       });
     }
   };
+
+  const handleViewQuickLocation = () => {
+    if (!focusedLocation || focusedLocation != undefined) {
+      handleViewLocation(focusedLocation);
+    }
+  };
+
   const handleGoToMidpointLocationSearchScreen = () => {
     if (!userAddress?.id || !friendAddress?.id) {
       Alert.alert(
         "Missing address",
         "Both you and your friend need to have an address set before searching."
       );
-      return; 
+      return;
     }
 
     navigation.navigate("MidpointLocationSearch", {
@@ -242,10 +266,9 @@ const LocationsMapView = ({
     });
   };
 
-  
   const fitToMarkers = useCallback(() => {
-    if (mapRef.current &&  faveLocations && pastHelloLocations.length > 0) {
-      const coordinates =  faveLocations
+    if (mapRef.current && faveLocations && pastHelloLocations.length > 0) {
+      const coordinates = faveLocations
         .filter(
           (location) =>
             location.latitude !== 25.0 || location.longitude !== -71.0
@@ -259,10 +282,7 @@ const LocationsMapView = ({
         animated: true,
       });
     }
-  }, [
-    faveLocations
-
-  ]);
+  }, [faveLocations]);
 
   const scrollToBelowLocation = (index) => {
     if (index !== undefined) {
@@ -273,13 +293,15 @@ const LocationsMapView = ({
     }
   };
 
-  const handlePress = useCallback((location) => {
-    console.log('LOCATION PRESSED', location?.id);
-    if (location) {
-      handleLocationAlreadyExists(location);
- 
-    }
-  }, [combinedLocationsForList, handleLocationAlreadyExists]);
+  const handlePress = useCallback(
+    (location) => {
+      console.log("LOCATION PRESSED", location?.id);
+      if (location) {
+        handleLocationAlreadyExists(location);
+      }
+    },
+    [combinedLocationsForList, handleLocationAlreadyExists]
+  );
 
   useEffect(() => {
     if (focusedLocation) {
@@ -460,7 +482,6 @@ const LocationsMapView = ({
     );
   });
 
-
   const renderLocationsMap = (locations) => (
     <>
       <MapView
@@ -472,8 +493,9 @@ const LocationsMapView = ({
           {
             width: "100%",
             height: !isKeyboardVisible ? SHARED_SCREEN_MAP_HEIGHT : "100%",
-            marginBottom: !isKeyboardVisible ? CARD_SAFE_VIEW_PADDING :  - (CARD_SAFE_VIEW_PADDING-10), // EYEBALL TO GET MAP TO STAY BELOW DARK TOP OF BACKGROUND
-           
+            marginBottom: !isKeyboardVisible
+              ? CARD_SAFE_VIEW_PADDING
+              : -(CARD_SAFE_VIEW_PADDING - 10), // EYEBALL TO GET MAP TO STAY BELOW DARK TOP OF BACKGROUND
           },
         ]}
         initialRegion={currentRegion || null}
@@ -494,21 +516,16 @@ const LocationsMapView = ({
     </>
   );
 
-  
-
-
-
-
-
   return (
     <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
+      {handleRenderQuickView()}
       {pastHelloLocations && (
         <>
           <View style={styles.dualLocationSearcherContainer}>
             <View
               style={{
                 width: "100%",
-           
+
                 flexGrow: 1,
                 padding: 0,
                 backgroundColor: primaryBackground,
@@ -519,7 +536,7 @@ const LocationsMapView = ({
                 primaryBackground={primaryBackground}
                 onPress={handlePress}
               />
-            </View> 
+            </View>
           </View>
           {!isKeyboardVisible && (
             <Pressable
@@ -597,14 +614,20 @@ const LocationsMapView = ({
       )}
       <View style={{ width: "100%" }}>
         <TreeModalBigButtonFocusLocation
-        userId={userId}
-        friendId={friendId}
-        friendName={friendName}
+          userId={userId}
+          friendId={friendId}
+          friendName={friendName}
           height={CARD_HEIGHT + CARD_SAFE_VIEW_PADDING}
           safeViewPaddingBottom={CARD_SAFE_VIEW_PADDING}
           themeAheadOfLoading={themeAheadOfLoading}
           absolute={true}
-          location={focusedLocation?.matchedIndex ? combinedLocationsForList.find((location) => location.id === focusedLocation?.id) : focusedLocation}
+          location={
+            focusedLocation?.matchedIndex
+              ? combinedLocationsForList.find(
+                  (location) => location.id === focusedLocation?.id
+                )
+              : focusedLocation
+          }
           label={focusedLocation?.title}
           subLabel={focusedLocation?.address}
           primaryColor={primaryColor}
@@ -612,16 +635,14 @@ const LocationsMapView = ({
           backgroundColor={darkerOverlay}
           onLeftPress={navigateBack}
           onRightPress={handleGoToLocationSendScreen}
-          onMainPress={handleGoToLocationViewScreen}
+          // onMainPress={handleGoToLocationViewScreen}
+          onMainPress={handleViewQuickLocation}
           openAddresses={openAddresses}
           userAddress={userAddress}
           friendAddress={friendAddress}
           openItems={openItems}
           closeItems={closeItems}
-     
-
-
-        /> 
+        />
       </View>
     </View>
   );
@@ -673,7 +694,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   flatListWrapper: {
- 
     width: "100%",
   },
   midpointsButton: {
