@@ -15,13 +15,14 @@ import useMomentContextFunctions from "../hooks/useMomentContextFunctions";
 type CapsuleListContextType = {
   capsuleList: MomentFromBackendType[];
   allCapsulesList: MomentFromBackendType[];
-  preAdded: number[];
+  preAdded: number[]; 
 };
 
 const CapsuleListContext = createContext<CapsuleListContextType>({
   capsuleList: [],
   allCapsulesList: [],
-  preAdded: [],
+  preAdded: [], 
+
 });
 
 export const useCapsuleList = () => {

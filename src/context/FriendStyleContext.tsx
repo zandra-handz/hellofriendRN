@@ -51,13 +51,21 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     fontColorSecondary: "#000000",
   });
 
+  type handleSetThemeProps = {
+    lightColor: string;
+    darkColor: string;
+    fontColor: string;
+    fontColorSecondary: string;
+
+  };
+
  
   const handleSetTheme = ({
     lightColor,
     darkColor,
     fontColor,
     fontColorSecondary,
-  }) => {
+  }: handleSetThemeProps ) => {
     setThemeAheadOfLoading({
       lightColor: lightColor,
       darkColor: darkColor,

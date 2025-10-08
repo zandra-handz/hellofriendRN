@@ -130,7 +130,7 @@ const TreeModalBigButtonFocusLocation = ({
           >
             <MaterialCommunityIcons
               name={"send-circle-outline"}
-              size={22}
+              size={28}
               color={manualGradientColors.homeDarkColor}
             />
           </GlobalPressable>
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   rightPressButton: {
-    width: 22,
+    width: 28,
     height: "100%",
     position: "absolute",
     right: 0,

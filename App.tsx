@@ -84,8 +84,8 @@ import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
 import ScreenImageView from "./app/screens/images/ScreenImageView";
-import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
-import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
+// import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
+// import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
 
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
 
@@ -516,7 +516,7 @@ export const Layout = () => {
                   // header: () => <HeaderLocation headerTitle="Locations" />,
                 }}
               /> */}
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="LocationView"
                 component={ScreenLocationView}
                 options={{
@@ -531,7 +531,7 @@ export const Layout = () => {
                   headerMode: "screen",
                   headerShown: false,
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="LocationSend"
                 component={ScreenLocationSend}

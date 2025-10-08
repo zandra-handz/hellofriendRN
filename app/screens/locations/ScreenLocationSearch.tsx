@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
-import QuickView from "@/app/components/alerts/QuickView";
 import LocationQuickView from "@/app/components/alerts/LocationQuickView";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
@@ -28,10 +27,31 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
   const [modalData, setModalData] = useState({ title: "", data: {} });
   const { themeAheadOfLoading } = useFriendStyle();
   const { lightDarkTheme } = useLDTheme();
-
+  const { currentDay } = useLocationDetailFunctions();
   const [quickView, setQuickView] = useState(null);
   const nullQuickView = () => {
     setQuickView(null);
+  };
+
+  const selectedDay = useRef({ index: null, day: "" });
+
+  // not sure if so great
+  useEffect(() => {
+    if (currentDay?.index !== undefined && currentDay?.day !== undefined) {
+      selectedDay.current = {
+        index: currentDay.index,
+        day: currentDay.day,
+      };
+    }
+  }, [currentDay]);
+
+  const handleSelectedDay = (object) => {
+    if (object) {
+      if (selectedDay.current) {
+        selectedDay.current.day = object.day;
+        selectedDay.current.index = object.index;
+      }
+    }
   };
 
   const handleSetModalData = (data) => {
@@ -51,10 +71,14 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
         topBarText: `Location: ${focusedLocation.title}   |   ${focusedLocation.address}`,
         view: (
           <LocationQuickView
-          userId={user?.id}
+            userId={user?.id}
             focusedLocation={focusedLocation}
             primaryColor={lightDarkTheme.primaryText}
+            primaryBackground={lightDarkTheme.primaryBackground}
             themeAheadOfLoading={themeAheadOfLoading}
+            currentDay={currentDay}
+            selectedDay={selectedDay}
+            handleSelectedDay={handleSelectedDay}
           />
         ),
         message: `hi hi hi`,
@@ -90,9 +114,6 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
     nonFaveLocations,
     combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
   };
-  const { getCurrentDay } = useLocationDetailFunctions();
-
-  const currentDay = getCurrentDay();
 
   const { pastHelloLocations } = usePastHelloesLocations({
     inPersonHelloes: inPersonHelloes,
@@ -142,6 +163,8 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
               combinedLocationsObject?.combinedLocations
             }
             currentDayDrilledOnce={currentDay}
+            // selectedDay={selectedDay}
+            // handleSelectedDay={handleSelectedDay}
             bermudaCoordsDrilledOnce={bermudaCoords}
             themeAheadOfLoading={themeAheadOfLoading}
             primaryColor={lightDarkTheme.primaryText}

@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, StyleSheet, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 // import useFullHelloes from "@/src/hooks/useFullHelloes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -6,44 +6,62 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import ModalInfoText from "../headers/ModalInfoText";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
-
+import Hours from "../locations/Hours";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
-
+import manualGradientColors from "@/src/hooks/StaticColors";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
-
+import LocationCustomerReviews from "../locations/LocationCustomerReviews";
 import LocationAddress from "../locations/LocationAddress";
 import LocationNumber from "../locations/LocationNumber";
+import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
+import { FocusedLocation } from "@/src/types/LocationTypes";
 
+import LoadingBlock from "../appwide/spinner/LoadingBlock";
 type Props = {
-  //   data: FullHello;
-  //   momentOriginalId?: string;
-  //   index: number;
+  userId: number;
+  focusedLocation: FocusedLocation;
+  primaryColor: string;
+  primaryBackground: string;
+  themeAheadOfLoading: ThemeAheadOfLoading;
 };
 
 const LocationQuickView = ({
   userId,
   focusedLocation,
-  //   friendId,
-  //   momentOriginalId,
-  //   index,
+
   primaryColor,
+  primaryBackground,
   themeAheadOfLoading,
+  currentDay,
+  selectedDay,
+  handleSelectedDay,
 }: Props) => {
   if (!focusedLocation || !focusedLocation?.id) {
     return;
   }
+  const [rerenderCards, setRerenderCards] = useState(null);
+
+  const handleViewDayHrs = (sD) => {
+    handleSelectedDay(sD);
+    setRerenderCards(sD);
+  };
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   //   const [highlightedMoment, setHighlightedMoment] = useState(undefined);
-  const { additionalDetails } = useFetchAdditionalDetails({
+  const { additionalDetails, detailsLoading } = useFetchAdditionalDetails({
     userId: userId,
     locationObject: focusedLocation,
     enabled: true,
   });
 
   const { checkIfOpen } = useLocationDetailFunctions();
+
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString();
+  };
 
   const SPINNER_SIZE = 30;
 
@@ -63,21 +81,9 @@ const LocationQuickView = ({
         {additionalDetails && additionalDetails?.hours && (
           <View
             style={[
+              styles.openStatusContainer,
               {
-                borderWidth: 1.4,
                 borderColor: color,
-                alignItems: "center",
-                backgroundColor: "transparent",
-                //  themeStyles.primaryText.color,
-
-                width: "auto",
-                width: 80,
-                flexDirection: "row",
-                justifyContent: "center",
-                flexShrink: 1,
-                padding: 10,
-                paddingVertical: 6,
-                borderRadius: 10,
               },
             ]}
           >
@@ -90,131 +96,148 @@ const LocationQuickView = ({
     );
   };
 
-  const [locationToView, setLocationToView] = useState(undefined);
-  const [helloCapsuleData, setHelloCapsuleData] = useState(undefined);
+  const renderHoursComponent = useCallback(() => {
+    if (!additionalDetails?.hours?.weekday_text) return null;
+    // console.log('rerendering cards!', rerenderCards);
+    return (
+      <Hours
+        buttonHightlightColor={manualGradientColors.lightColor}
+        currentDay={currentDay}
+        onDaySelect={handleViewDayHrs}
+        daysHrsData={additionalDetails.hours.weekday_text}
+        initiallySelectedDay={selectedDay?.current || null}
+        welcomeTextStyle={welcomeTextStyle}
+        primaryColor={primaryColor}
+        primaryBackground={primaryBackground}
+      />
+    );
+  }, [
+    additionalDetails?.hours?.weekday_text,
+    manualGradientColors.lightColor,
+    currentDay,
+    handleViewDayHrs,
+    selectedDay?.current,
+  ]);
 
   const ICON_MARGIN_RIGHT = 10;
   const ICON_SIZE = 20;
 
   return (
     <>
-      {!locationToView && (
-        <View
-          style={{
-            flex: 1,
-
-            width: "100%",
-
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <LoadingPage
+      {!additionalDetails ||
+        (additionalDetails === undefined || detailsLoading && (
+          <View style={styles.loadingWrapper}>
+                  {/* <LoadingBlock
             loading={true}
-            spinnerType="circle"
-            spinnerSize={SPINNER_SIZE}
-            color={themeAheadOfLoading.lightColor}
-          />
-        </View>
-      )}
-      {locationToView && locationToView != undefined && (
-        <View style={{ width: "100%" }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: 4,
-            }}
-          >
-            <MaterialCommunityIcons
-              name={"calendar"}
-              color={primaryColor}
-              size={ICON_SIZE}
-              style={{ marginRight: ICON_MARGIN_RIGHT }}
-            />
-            {/* <ModalInfoText
-              infoText={helloToView.past_date_in_words}
-              primaryColor={primaryColor}
+            includeLabel={false}
+            delay={0}
+            onBlack={true}
+            
+            
+
             /> */}
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: 4,
-              flexWrap: "flex",
-              paddingRight: 10,
-            }}
-          >
-            <MaterialCommunityIcons
-              name={"calendar"}
-              color={primaryColor}
-              size={ICON_SIZE}
-              style={{ marginRight: ICON_MARGIN_RIGHT }}
+            <LoadingPage
+              loading={true}
+              spinnerType="circle"
+              spinnerSize={SPINNER_SIZE}
+              color={themeAheadOfLoading.lightColor}
             />
-            {/* <ModalInfoText
-              infoText={helloToView.type}
-              primaryColor={primaryColor}
-            /> */}
           </View>
-          {/* {helloToView?.location_name && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 4,
-                flexWrap: "flex",
-                paddingRight: 10,
-              }}
-            >
-              <MaterialCommunityIcons
-                name={"calendar"}
-                color={primaryColor}
-                size={ICON_SIZE}
-                style={{ marginRight: ICON_MARGIN_RIGHT }}
-              />
-              <ModalInfoText
-                fontSize={14}
-                lineHeight={18}
-                infoText={helloToView.location_name}
-                primaryColor={primaryColor}
-              />
+        ))}
+      {additionalDetails && additionalDetails != undefined && (
+        <View style={styles.outerContainer}>
+          <View style={styles.innerContainer}>
+            <View style={{}}>
+              <RenderOpenStatus />
             </View>
-          )} */}
-          {/* {helloToView?.additional_notes && (
-            <View
-              style={{
+          </View>
+{/*    
+          <Text
+            numberOfLines={2}
+            style={[
+              welcomeTextStyle,
+              {
+                color: primaryColor,
                 flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 4,
-                flexWrap: "flex",
-                paddingRight: 10,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "column",
-                  height: "100%",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"pencil"}
-                  color={primaryColor}
-                  size={ICON_SIZE}
-                  style={{ marginRight: ICON_MARGIN_RIGHT }}
-                />
-              </View>
-              <ModalInfoText
-                infoText={helloToView.additional_notes}
-                primaryColor={primaryColor}
-              />
-            </View>
-          )} */}
-        </View>
+                width: "90%",
+                flexWrap: "wrap",
+              },
+            ]}
+          >
+            Reviews
+          </Text> */}
+          <View style={{ marginVertical: 10 }}>
+            <LocationCustomerReviews
+              formatDate={formatDate}
+              reviews={additionalDetails.reviews}
+              primaryColor={primaryColor}
+              primaryBackground={primaryBackground}
+            />
+          </View>
+{/* 
+          <Text
+            numberOfLines={2}
+            style={[
+              welcomeTextStyle,
+              {
+                color: primaryColor,
+                flexDirection: "row",
+                width: "90%",
+                flexWrap: "wrap",
+              },
+            ]}
+          >
+            Hours
+          </Text> */}
+          <View style={{ marginVertical: 10 }}>
+            {renderHoursComponent()}
+
+            {!additionalDetails?.hours?.weekday_text && (
+              <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+                No hours available
+              </Text>
+            )}
+          </View>
+        </View> 
       )}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingWrapper: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  outerContainer: {
+    width: "100%",
+  },
+  innerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    flexWrap: "wrap",
+    paddingRight: 10,
+  },
+  openStatusContainer: {
+    borderWidth: 1.4,
+    alignItems: "center",
+    backgroundColor: "transparent",
+    width: 80,
+    flexDirection: "row",
+    justifyContent: "center",
+    flexShrink: 1,
+    padding: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+});
 
 export default LocationQuickView;

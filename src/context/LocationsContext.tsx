@@ -15,6 +15,9 @@ export const useLocations = () => {
   return useContext(LocationsContext);
 };
 
+
+
+
 export const LocationsProvider = ({ children }) => { 
   const { user } = useUser();
  

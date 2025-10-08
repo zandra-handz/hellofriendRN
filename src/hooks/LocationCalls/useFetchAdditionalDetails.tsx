@@ -24,7 +24,7 @@ const useFetchAdditionalDetails = ({
 }: Props) => {
   const queryClient = useQueryClient();
 
-  const { data: additionalDetails, detailsLoading, isPending } = useQuery({
+  const { data: additionalDetails, isLoading: detailsLoading, isPending } = useQuery({
     queryKey: ["additionalDetails", userId, locationObject?.id], // add user id after everything else is working
     enabled: !!(userId && locationObject?.id && enabled),
     staleTime: 1000 * 60 * 120, // 2 hours

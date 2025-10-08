@@ -20,6 +20,7 @@ import {
   Text,
   FlatList,
   Alert,
+  ScrollView,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
@@ -49,6 +50,7 @@ const LocationsMapView = ({
   combinedLocationsForList,
   faveLocations, //also comes from the object, is here solely for the markers/'Show All' button
   currentDayDrilledOnce,
+
   bermudaCoordsDrilledOnce,
   themeAheadOfLoading,
   primaryColor,
@@ -110,7 +112,7 @@ const LocationsMapView = ({
   const flatListRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const SHARED_SCREEN_MAP_HEIGHT = 456;
+  const SHARED_SCREEN_MAP_HEIGHT = 406;
   const SHARED_SCREEN_FLATLIST_HEIGHT = 300;
 
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
@@ -225,25 +227,25 @@ const LocationsMapView = ({
     });
   };
 
-  const handleGoToLocationViewScreen = () => {
-    if (
-      typeof focusedLocation.matchedIndex === "number" &&
-      focusedLocation.matchedIndex !== -1
-    ) {
-      navigation.navigate("LocationView", {
-        startingLocation: focusedLocation,
-        index: focusedLocation.matchedIndex,
-        userAddress: userAddress,
-        friendAddress: friendAddress,
-      });
-    } else {
-      navigation.navigate("UnsavedLocationView", {
-        unsavedLocation: focusedLocation,
-        userAddress: userAddress,
-        friendAddress: friendAddress,
-      });
-    }
-  };
+  // const handleGoToLocationViewScreen = () => {
+  //   if (
+  //     typeof focusedLocation.matchedIndex === "number" &&
+  //     focusedLocation.matchedIndex !== -1
+  //   ) {
+  //     navigation.navigate("LocationView", {
+  //       startingLocation: focusedLocation,
+  //       index: focusedLocation.matchedIndex,
+  //       userAddress: userAddress,
+  //       friendAddress: friendAddress,
+  //     });
+  //   } else {
+  //     navigation.navigate("UnsavedLocationView", {
+  //       unsavedLocation: focusedLocation,
+  //       userAddress: userAddress,
+  //       friendAddress: friendAddress,
+  //     });
+  //   }
+  // };
 
   const handleViewQuickLocation = () => {
     if (!focusedLocation || focusedLocation != undefined) {
@@ -538,42 +540,154 @@ const LocationsMapView = ({
               />
             </View>
           </View>
-          {!isKeyboardVisible && (
-            <Pressable
-              style={[
-                styles.midpointsButton,
-                {
-                  zIndex: 7000,
-                  backgroundColor: primaryBackground,
-                },
-              ]}
-              onPress={handleGoToMidpointLocationSearchScreen}
-            >
-              <Text style={[styles.zoomOutButtonText, { color: primaryColor }]}>
-                Midpoints
-              </Text>
-            </Pressable>
-          )}
-
-          {!isKeyboardVisible && (
-            <Pressable
-              style={[
-                styles.zoomOutButton,
-                {
-                  zIndex: 8000,
-                  backgroundColor: primaryBackground,
-                },
-              ]}
-              onPress={fitToMarkers}
-            >
-              <Text style={[styles.zoomOutButtonText, { color: primaryColor }]}>
-                Show All
-              </Text>
-            </Pressable>
-          )}
 
           {!isKeyboardVisible && (
             <View style={styles.outerFlatListWrapper}>
+              <ScrollView
+              horizontal
+              contentContainerStyle={{        horizontal: 'true',
+                  height: 50,
+                  alignItems: "center",
+                //  flexDirection: "row",
+                  backgroundColor: "pink",
+
+
+              }}
+                // style={{
+                //   width: "100%",
+                //   height: 50,
+                //   alignItems: "center",
+                //   flexDirection: "row",
+                //   backgroundColor: "pink",
+                // }}
+              >
+                {!isKeyboardVisible && (
+                  <Pressable
+                    style={[
+                      styles.midpointsButton,
+                      {
+                        zIndex: 7000,
+                        backgroundColor: primaryBackground,
+                      },
+                    ]}
+                    onPress={handleGoToMidpointLocationSearchScreen}
+                  >
+                    <Text
+                      style={[
+                        styles.zoomOutButtonText,
+                        { color: primaryColor },
+                      ]}
+                    >
+                      Midpoints
+                    </Text>
+                  </Pressable>
+                )}
+                                {!isKeyboardVisible && (
+                  <Pressable
+                    style={[
+                      styles.midpointsButton,
+                      {
+                        zIndex: 7000,
+                        backgroundColor: primaryBackground,
+                      },
+                    ]}
+                    onPress={handleGoToMidpointLocationSearchScreen}
+                  >
+                    <Text
+                      style={[
+                        styles.zoomOutButtonText,
+                        { color: primaryColor },
+                      ]}
+                    >
+                      Midpoints
+                    </Text>
+                  </Pressable>
+                )}
+                                {!isKeyboardVisible && (
+                  <Pressable
+                    style={[
+                      styles.midpointsButton,
+                      {
+                        zIndex: 7000,
+                        backgroundColor: primaryBackground,
+                      },
+                    ]}
+                    onPress={handleGoToMidpointLocationSearchScreen}
+                  >
+                    <Text
+                      style={[
+                        styles.zoomOutButtonText,
+                        { color: primaryColor },
+                      ]}
+                    >
+                      Midpoints
+                    </Text>
+                  </Pressable>
+                )}
+                                {!isKeyboardVisible && (
+                  <Pressable
+                    style={[
+                      styles.midpointsButton,
+                      {
+                        zIndex: 7000,
+                        backgroundColor: primaryBackground,
+                      },
+                    ]}
+                    onPress={handleGoToMidpointLocationSearchScreen}
+                  >
+                    <Text
+                      style={[
+                        styles.zoomOutButtonText,
+                        { color: primaryColor },
+                      ]}
+                    >
+                      Midpoints
+                    </Text>
+                  </Pressable>
+                )}
+                                {!isKeyboardVisible && (
+                  <Pressable
+                    style={[
+                      styles.midpointsButton,
+                      {
+                        zIndex: 7000,
+                        backgroundColor: primaryBackground,
+                      },
+                    ]}
+                    onPress={handleGoToMidpointLocationSearchScreen}
+                  >
+                    <Text
+                      style={[
+                        styles.zoomOutButtonText,
+                        { color: primaryColor },
+                      ]}
+                    >
+                      Midpoints
+                    </Text>
+                  </Pressable>
+                )}
+                {!isKeyboardVisible && (
+                  <Pressable
+                    style={[
+                      styles.zoomOutButton,
+                      {
+                        zIndex: 8000,
+                        backgroundColor: primaryBackground,
+                      },
+                    ]}
+                    onPress={fitToMarkers}
+                  >
+                    <Text
+                      style={[
+                        styles.zoomOutButtonText,
+                        { color: primaryColor },
+                      ]}
+                    >
+                      Show All
+                    </Text>
+                  </Pressable>
+                )}
+              </ScrollView>
               <View
                 style={[
                   styles.flatListWrapper,
@@ -603,7 +717,7 @@ const LocationsMapView = ({
                   // decelerationRate="fast"
                   //  decelerationRate={0.5}
 
-                  ListFooterComponent={<View style={{ height: 8 }}></View>}
+                  ListFooterComponent={<View style={{ height: 0 }}></View>}
                 />
                 {/* )} */}
               </View>
@@ -697,10 +811,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   midpointsButton: {
-    position: "absolute",
+    // position: "absolute",
     zIndex: 3000,
-    top: 346,
-    right: 4,
+    // top: 346,
+    // right: 4,
     padding: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
@@ -708,12 +822,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     elevation: 5,
+    width: "auto",
   },
   zoomOutButton: {
-    position: "absolute",
-    zIndex: 4,
-    right: 4,
-    top: 396,
+    // position: "absolute",
+    // zIndex: 4,
+    // right: 4,
+    // top: 396,
     padding: 10,
     paddingHorizontal: 14,
     borderRadius: 10,

@@ -17,6 +17,7 @@ type Props = {
   label?: string;
   labelColor?: string;
   delay: number;
+  onBlack: boolean;
 };
 
 const LoadingBlock = ({
@@ -26,6 +27,7 @@ const LoadingBlock = ({
   label = "",
   labelColor = "white",
   borderRadius = 0,
+  onBlack = false,
 }: Props) => {
   const { lightDarkTheme } = useLDTheme();
  
@@ -46,12 +48,15 @@ const LoadingBlock = ({
     }
   }, [loading, progress, delay]);
 
+
+  const color = onBlack ? lightDarkTheme.lighterOverlayBackground : lightDarkTheme.overlayBackground;
+
   // Animated style
   const animatedStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
       progress.value,
       [0.3, 0.6],
-      [lightDarkTheme.overlayBackground, "transparent"]
+      [color, "transparent"]
     ),
   }));
 
