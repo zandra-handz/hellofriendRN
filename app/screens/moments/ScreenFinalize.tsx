@@ -54,7 +54,9 @@ const ScreenFinalize = () => {
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
-      useSolidOverlay={true}
+ 
+          useSolidOverlay={false}
+      useOverlayFade={false} 
       style={{ flex: 1 }}
     >
       {selectedFriend?.id && (

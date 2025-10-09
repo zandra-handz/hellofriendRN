@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View, Pressable, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import BouncyEntrance from "./BouncyEntrance";
@@ -15,8 +15,8 @@ type Props = {
 const GoOptionsModal = ({
   isVisible,
   primaryColor,
-  backgroundColor,
-  modalBackgroundColor,  
+  //backgroundColor,
+  modalBackgroundColor,
   closeModal,
 }: Props) => {
   const {
@@ -26,8 +26,11 @@ const GoOptionsModal = ({
     navigateToFidget,
   } = useAppNavigations();
 
-
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+
+  const BUTTON_PADDING = 4;
+  const BUTTON_COLOR = manualGradientColors.lightColor;
+  const backgroundColor = manualGradientColors.homeDarkColor;
 
   const handleNavToMoments = () => {
     closeModal();
@@ -89,9 +92,9 @@ const GoOptionsModal = ({
                       width: "100%",
                       justifyContent: "center",
                       height: "auto",
-                      padding: 10,
+                      padding: BUTTON_PADDING,
                       borderRadius: 10,
-                      backgroundColor: manualGradientColors.darkColor,
+                      backgroundColor: BUTTON_COLOR,
                     }}
                   >
                     <Text
@@ -105,7 +108,7 @@ const GoOptionsModal = ({
                         },
                       ]}
                     >
-                      Send a meetup location
+                      Find a meetup
                     </Text>
                   </GlobalPressable>
                 </BouncyEntrance>
@@ -123,9 +126,9 @@ const GoOptionsModal = ({
                       width: "100%",
                       justifyContent: "center",
                       height: "auto",
-                      padding: 10,
+                      padding: BUTTON_PADDING,
                       borderRadius: 10,
-                      backgroundColor: manualGradientColors.darkColor,
+                      backgroundColor: BUTTON_COLOR,
                     }}
                   >
                     <Text
@@ -156,9 +159,9 @@ const GoOptionsModal = ({
                       width: "100%",
                       justifyContent: "center",
                       height: "auto",
-                      padding: 10,
+                      padding: BUTTON_PADDING,
                       borderRadius: 10,
-                      backgroundColor: manualGradientColors.darkColor,
+                      backgroundColor: BUTTON_COLOR,
                     }}
                   >
                     <Text
@@ -172,45 +175,11 @@ const GoOptionsModal = ({
                         },
                       ]}
                     >
-                      Skip to save hello
+                      Save hello
                     </Text>
                   </GlobalPressable>
                 </BouncyEntrance>
               </View>
-
-              {/* <View style={styles.sectionContainer}>
-                <BouncyEntrance
-                  delay={staggeredDelays[2]}
-                  style={{ width: "100%" }}
-                >
-                  <GlobalPressable
-                    onPress={handleNavToFidget}
-                    style={{
-                      flexDirection: "row",
-                      width: "100%",
-                      justifyContent: "center",
-                      height: "auto",
-                      padding: 10,
-                      borderRadius: 10,
-                      backgroundColor: manualGradientColors.darkColor,
-                    }}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        {
-                          color: primaryColor,
-                          backgroundColor: backgroundColor,
-                          borderRadius: 6,
-                          padding: 10,
-                        },
-                      ]}
-                    >
-                      Fidget spinner
-                    </Text>
-                  </GlobalPressable>
-                </BouncyEntrance>
-              </View> */}
 
               <View style={styles.sectionContainer}>
                 <BouncyEntrance
@@ -224,7 +193,7 @@ const GoOptionsModal = ({
                       width: "100%",
                       justifyContent: "center",
                       height: "auto",
-                      padding: 10,
+                      padding: BUTTON_PADDING,
                       borderRadius: 10,
                       backgroundColor: manualGradientColors.darkColor,
                     }}

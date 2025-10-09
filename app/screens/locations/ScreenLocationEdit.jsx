@@ -14,10 +14,9 @@ import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";
 import BodyStyling from "@/app/components/scaffolding/BodyStyling"; 
 import useUpdateLocation from "@/src/hooks/LocationCalls/useUpdateLocation";
 import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-
-import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
+ 
 
 const ScreenLocationEdit = () => {
   const route = useRoute();
@@ -157,7 +156,8 @@ const { lightDarkTheme } = useLDTheme();
               itemToDelete={location}
               onPress={handleDelete}
               sliderWidth={"100%"}
-              targetIcon={TrashOutlineSvg}
+              targetIcon={MaterialCommunityIcons}
+          
             />
           </View>
     

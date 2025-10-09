@@ -10,8 +10,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesList from "@/app/components/helloes/HelloesList";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
-import useFullHelloes from "@/src/hooks/useFullHelloes";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+import useFullHelloes from "@/src/hooks/useFullHelloes"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -23,7 +22,7 @@ const ScreenHelloes = () => {
   const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
-  const { navigateToHelloes } = useAppNavigations();
+ 
   // console.log(helloesListFull);
   const { flattenHelloes } = useHelloesManips({ helloesData: helloesListFull });
   //  console.log(`FLATTEENEEDDEDD`, flattenHelloes);
@@ -127,7 +126,8 @@ const ScreenHelloes = () => {
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
-      useSolidOverlay={true}
+      useSolidOverlay={false}
+      useOverlayFade={false} 
       style={{ flex: 1 }}
     >
       <View

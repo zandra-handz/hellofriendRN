@@ -14,7 +14,7 @@ module.exports = function (api) {
       },
     },
     plugins: [
-       [
+      [
         "module-resolver",
         {
           root: ["./"],
@@ -30,8 +30,8 @@ module.exports = function (api) {
           path: ".env",
         },
       ],
-      "react-native-worklets/plugin", // must be last
+      //"react-native-reanimated/plugin",
+     "react-native-worklets/plugin", // must be last
     ],
   };
 };
-//    "@expo/metro-config": "~54.0.2",

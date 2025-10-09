@@ -12,8 +12,8 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
- 
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+  
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // Forwarding ref to the parent to expose the TextInput value
 const FlatListChangeChoice = forwardRef(
@@ -80,8 +80,11 @@ const FlatListChangeChoice = forwardRef(
         >
           <Text style={[styles.title, {color: lightDarkTheme.primaryText}]}>
             {title}
-          </Text>
-          <EditPencilOutlineSvg height={30} width={30} color={"red"} />
+          </Text> 
+          <MaterialCommunityIcons
+          name={'pen'}
+          size={30}
+          color={'red'}/>
         </View>
         {choicesArray && (
           <FlatList

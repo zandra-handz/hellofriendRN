@@ -3,7 +3,10 @@
   "compilerOptions": {
     "jsx": "react-native",
     "allowJs": true,
-    "strict": true,
+    "strict": true, 
+    "esModuleInterop": true, // added
+    "module": "ESNext", // added
+"target": "ES2020", // added
     
     "paths": {
       "@/*": [
@@ -13,29 +16,7 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
-// , "src/context/LocationsContext.tsx"  
+    "**/*.tsx" 
 ]
 }
-
-
-// gpty gave me:
-// {
-//   "compilerOptions": {
-//     "target": "esnext",                       // modern JavaScript
-//     "module": "esnext",                       // modern ES modules
-//     "lib": ["esnext"],                        // use latest standard library
-//     "jsx": "react-native",                    // needed for JSX in React Native
-//     "moduleResolution": "node",              // ✅ use "node" here for React Native
-//     "resolveJsonModule": true,
-//     "allowJs": true,
-//     "noEmit": true,
-//     "isolatedModules": true,
-//     "strict": true,
-//     "esModuleInterop": true,
-//     "skipLibCheck": true,
-//     "forceConsistentCasingInFileNames": true,
-//     "types": ["react", "react-native"]       // make sure these are included
-//   },
-//   "exclude": ["node_modules"]
-// }
+ 

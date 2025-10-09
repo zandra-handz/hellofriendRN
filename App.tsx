@@ -1,5 +1,7 @@
 import React, { useEffect, createRef } from "react";
-import { useFonts } from "expo-font";
+// import { useFonts } from "expo-font";
+import { useFonts, Poppins_400Regular, Poppins_700Bold } from "@expo-google-fonts/poppins";
+
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -83,10 +85,7 @@ import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
-import ScreenImageView from "./app/screens/images/ScreenImageView";
-// import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
-// import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
-
+import ScreenImageView from "./app/screens/images/ScreenImageView"; 
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -119,12 +118,17 @@ const navigationRef = createRef();
 
 export default Sentry.wrap(function App() {
   // export default function App() {
-  const [fontsLoaded] = useFonts({
-    "Poppins-Regular": require("./app/assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Bold": require("./app/assets/fonts/Poppins-Bold.ttf"),
-    "Roboto-Regular": require("./app/assets/fonts/Roboto-Regular.ttf"),
+  // const [fontsLoaded] = useFonts({
+  //   "Poppins-Regular": require("./app/assets/fonts/Poppins-Regular.ttf"),
+  //   "Poppins-Bold": require("./app/assets/fonts/Poppins-Bold.ttf"), 
+  // });
+
+    const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
   });
 
+ 
   SplashScreen.preventAutoHideAsync();
 
   const { hasShareIntent, shareIntent, 
@@ -170,41 +174,7 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-  // useEffect(() => {
-  //   // Define the home screen quick actions
-  //   QuickActions.setItems([
-  //     {
-  //       id: "moments",
-  //       title: "Next up",
-  //       subtitle: "Go to ideas for next up",
-  //       icon: "heart",
-  //       params: { screen: "Moments" },
-  //     },
-  //     {
-  //       id: "momentFocus",
-  //       title: "Add idea",
-  //       subtitle: "Add a new idea",
-  //       icon: "star",
-  //       params: { screen: "MomentFocus" },
-  //     },
-  //   ]);
-
-  //   // Listen for quick action presses
-  //   const subscription = QuickActions.addListener((action) => {
-  //     if (!action) return;
-
-  //     switch (action.id) {
-  //       case "moments":
-  //         navigationRef.current?.navigate("Moments");
-  //         break;
-  //       case "momentFocus":
-  //         navigationRef.current?.navigate("MomentFocus");
-  //         break;
-  //     }
-  //   });
-
-  //   return () => subscription.remove();
-  // }, []);
+ 
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -507,31 +477,7 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              {/* <Stack.Screen
-                name="Locations"
-                component={ScreenLocations}
-                options={{
-                  headerMode: "screen",
-                  headerShown: false,
-                  // header: () => <HeaderLocation headerTitle="Locations" />,
-                }}
-              /> */}
-              {/* <Stack.Screen
-                name="LocationView"
-                component={ScreenLocationView}
-                options={{
-                  headerMode: "screen",
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="UnsavedLocationView"
-                component={ScreenUnsavedLocationView}
-                options={{
-                  headerMode: "screen",
-                  headerShown: false,
-                }}
-              /> */}
+ 
               <Stack.Screen
                 name="LocationSend"
                 component={ScreenLocationSend}
@@ -552,21 +498,7 @@ export const Layout = () => {
                 options={() => ({
                   headerShown: false,
                 })}
-              />
-              {/* <Stack.Screen
-                  name="LocationSave"
-                  component={ScreenAddLocation}
-                  options={() => ({
-                    headerShown: true,
-                    header: () => (
-                      <HeaderBase
-                        headerTitle="Save Location"
-                        icon="heartbeat"
-                        navigateTo="LocationSearch"
-                      />
-                    ),
-                  })}
-                /> */}
+              /> 
               <Stack.Screen
                 name="LocationSearch"
                 component={ScreenLocationSearch}

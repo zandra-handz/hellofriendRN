@@ -30,9 +30,9 @@ const BouncyEntrance: React.FC<BouncyEntranceProps> = ({ children, delay = 0, st
     translateY.value = withDelay(
       delay,
       withSpring(0, {
-        damping: 6,
+        damping: 20, // controls the bouncy-aftereffectness
         stiffness: 150,
-        mass: 0.8,
+        mass: 0.2, // lower = faster
         overshootClamping: false,
       })
     );

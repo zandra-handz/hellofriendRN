@@ -1,11 +1,10 @@
 import { ExpoConfig, ConfigContext } from '@expo/config';
-import * as dotenv from 'dotenv'; 
-// import withShareIntent from "./withShareIntent";
+ 
 
 const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
   return {
     ...baseConfig,
-    expo: {
+ 
       name: 'sampleproject',
       slug: 'sampleproject',
       version: '1.0.0',
@@ -91,8 +90,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
             ios: { useFrameworks: 'static' },
           },
         ],
- 
-        // withShareIntent,
+  
       ],
 
       scheme: 'hellofriend',
@@ -101,8 +99,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
         eas: {
           projectId: '3564e25f-85ac-4c60-9f14-93d9153871b3',
         },
-      },
-    },
+      }, 
   };
 };
 

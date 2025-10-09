@@ -26,6 +26,7 @@
 
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
 import {usePathValue, Canvas, Path, useFont, processTransform3d, Text, Skia} from "@shopify/react-native-skia";
+import { Poppins_400Regular } from '@expo-google-fonts/poppins';
 
 //const rrct = Skia.Path.Make();
   const rrct = Skia.Path.MakeFromSVGString(
@@ -44,8 +45,7 @@ rrct.addRRect(Skia.RRectXY(Skia.XYWHRect(0, 0, 100, 100), 10, 10));
     scale.value -= event.changeX / 400;
   });
  
-    const smallFont = useFont(
-      require("@/app/assets/fonts/Poppins-Regular.ttf"),
+    const smallFont = useFont(Poppins_400Regular,
       14
     );
   const clip = usePathValue((path) => {

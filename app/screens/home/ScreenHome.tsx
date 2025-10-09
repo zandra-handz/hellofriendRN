@@ -28,7 +28,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
 // app utils
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import { logQueryCacheSize } from "@/src/utils/logQueryCacheSize";
+// import { logQueryCacheSize } from "@/src/utils/logQueryCacheSize";
 
 // app hooks
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -39,7 +39,7 @@ import { useShareIntentContext } from "expo-share-intent";
 import { File } from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 
-import { useFocusEffect } from "@react-navigation/native";
+// import { useFocusEffect } from "@react-navigation/native";
 
 // app components
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
@@ -54,8 +54,8 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/src/hooks/StaticColors";
 import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+// import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
+// import { QueryClient, useQueryClient } from "@tanstack/react-query";
 const ScreenHome = () => {
   const { user } = useUser();
   const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
@@ -72,16 +72,6 @@ const ScreenHome = () => {
   });
 
   setUpNextCache();
-const queryClient = useQueryClient();
-
-//   queryClient.getQueryCache().getAll().forEach(query => {
-//   console.log({
-//     queryKey: query.queryKey,
-//     state: query.state,
-//     data: query.state.data,
-//     error: query.state.error,
-//   });
-// });
  
 
 // logQueryCacheSize(queryClient);
@@ -94,11 +84,7 @@ const queryClient = useQueryClient();
     useFriendStyle();
 
   const { autoSelectFriend } = useAutoSelector();
-
-  // useEffect(() => {
-  //   console.log(`AUTO SELECT FRIEND`, autoSelectFriend);
-  // }, [autoSelectFriend]);
-
+ 
   const { selectedFriend, selectFriend } = useSelectedFriend();
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();

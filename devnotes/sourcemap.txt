@@ -1,0 +1,70 @@
+10/8/2025
+
+
+PS C:\Users\alexa\OneDrive\Desktop\CodingSpace\hellofriendRN> npx expo export --dev --dump-sourcemap   
+>>
+env: load .env.local .env
+env: export GOOGLE_API_KEY SENTRY_AUTH_TOKEN
+Starting Metro Bundler
+Android Bundled 88403ms node_modules\expo\AppEntry.js (3378 modules)
+iOS Bundled 88425ms node_modules\expo\AppEntry.js (3366 modules)
+
+› Assets (55):
+app\assets\fonts\Poppins-Bold.ttf (154 kB)
+app\assets\fonts\Poppins-Regular.ttf (158 kB)
+app\assets\shapes\coffeecupdarkheart.png (822 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\AntDesign.ttf (130 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Entypo.ttf (66.2 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\EvilIcons.ttf (13.5 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Feather.ttf (55.6 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome.ttf (166 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome5_Brands.ttf (134 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome5_Regular.ttf (33.7 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome5_Solid.ttf (203 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome6_Brands.ttf (209 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome6_Regular.ttf (68 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\FontAwesome6_Solid.ttf (424 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Fontisto.ttf (314 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Foundation.ttf (57 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Ionicons.ttf (390 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\MaterialCommunityIcons.ttf (1.31 MB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\MaterialIcons.ttf (357 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Octicons.ttf (69.4 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\SimpleLineIcons.ttf (54.1 kB)
+node_modules\@expo\vector-icons\build\vendor\react-native-vector-icons\Fonts\Zocial.ttf (25.8 kB)
+node_modules\@react-navigation\elements\src\assets\back-icon-mask.png (913 B)
+node_modules\@react-navigation\elements\src\assets\back-icon.png (10 variations | 338 B)
+node_modules\react-native-google-places-autocomplete\images\powered_by_google_on_white.png (3 variations | 2.51 kB)
+node_modules\react-native-ratings\dist\images\airbnb-star-selected.png (934 B)
+node_modules\react-native-ratings\dist\images\airbnb-star.png (930 B)
+node_modules\react-native-ratings\dist\images\bell.png (2.99 kB)
+node_modules\react-native-ratings\dist\images\heart.png (1.93 kB)
+node_modules\react-native-ratings\dist\images\rocket.png (4.05 kB)
+node_modules\react-native-ratings\dist\images\star.png (1.96 kB)
+node_modules\react-native\Libraries\LogBox\UI\LogBoxImages\alert-triangle.png (609 B)
+node_modules\react-native\Libraries\LogBox\UI\LogBoxImages\chevron-left.png (126 B)
+node_modules\react-native\Libraries\LogBox\UI\LogBoxImages\chevron-right.png (123 B)
+node_modules\react-native\Libraries\LogBox\UI\LogBoxImages\close.png (187 B)
+node_modules\react-native\Libraries\LogBox\UI\LogBoxImages\loader.png (282 B)
+node_modules\reanimated-color-picker\lib\src\assets\angular-luminance.png (115 kB)
+node_modules\reanimated-color-picker\lib\src\assets\arrow-icon.png (243 B)
+node_modules\reanimated-color-picker\lib\src\assets\blackGradient.png (76.3 kB)
+node_modules\reanimated-color-picker\lib\src\assets\blackRadial.png (64 kB)
+node_modules\reanimated-color-picker\lib\src\assets\circularHue.png (131 kB)
+node_modules\reanimated-color-picker\lib\src\assets\grid.png (3.3 kB)
+node_modules\reanimated-color-picker\lib\src\assets\Hue.png (135 kB)
+node_modules\reanimated-color-picker\lib\src\assets\transparent-texture.png (192 B)
+
+› android bundles (2):
+_expo/static/js/android/AppEntry-d41d8cd98f00b204e9800998ecf8427e.js (20.2 MB)
+_expo/static/js/android/AppEntry-d41d8cd98f00b204e9800998ecf8427e.js.map (30.5 MB)
+
+› ios bundles (2):
+_expo/static/js/ios/AppEntry-d41d8cd98f00b204e9800998ecf8427e.js (20.2 MB)
+_expo/static/js/ios/AppEntry-d41d8cd98f00b204e9800998ecf8427e.js.map (30.5 MB)
+
+› Files (1):
+metadata.json (6.65 kB)
+
+Exported: dist
+PS C:\Users\alexa\OneDrive\Desktop\CodingSpace\hellofriendRN> 

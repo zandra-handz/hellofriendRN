@@ -18,10 +18,15 @@ import {
   Text,
   Group,
 } from "@shopify/react-native-skia";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+// import GlobalPressable from "../appwide/button/GlobalPressable";
+// import LightningBoltOutline from '@expo/vector-icons/MaterialCommunityIcons/LightningBoltOutline';
+
+ 
+
+import MyIconSet from "@/app/assets/IconSet";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/src/hooks/StaticColors";
 
@@ -283,9 +288,10 @@ const DonutChart = ({
       </Animated.View>
       {onPlusPress && onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
-          <MaterialCommunityIcons
-            style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
+          <MyIconSet
             name={"leaf"}
+            style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
+           
             size={200}
             color={color}
           />
@@ -299,7 +305,7 @@ const DonutChart = ({
       )}
       <Pressable
         onPress={onPlusPress}
-        hitSlop={30}
+        hitSlop={60}
         style={[
           styles.centerButton,
           {
@@ -310,15 +316,15 @@ const DonutChart = ({
         ]}
         hitSlop={30}
       >
-        <MaterialCommunityIcons
-          name={"lightning-bolt-outline"} //pencil-plus
-          // name={"playlist-plus"}
+        <MyIconSet
+          // name={"lightning-bolt-outline"} //pencil-plus
+          // // name={"playlist-plus"}
           name={"plus"}
           size={22}
           opacity={1}
           color={primaryColor}
           color={manualGradientColors.homeDarkColor}
-          style={{ zIndex: 1 }}
+          // style={{ zIndex: 1 }}
         />
       </Pressable>
     </View>
@@ -349,7 +355,7 @@ const styles = StyleSheet.create({
 
               top: "50%",
               left: "50%",
-              //  backgroundColor: "red",
+             // backgroundColor: "red",
               borderRadius: 999,
               transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
 
@@ -357,6 +363,10 @@ const styles = StyleSheet.create({
   centerButton: {
     position: "absolute",
     padding: 0,
+
+           zIndex: 1000000,
+              elevation: 1000000,
+              backgroundColor: 'red',
     //borderRadius: 999,
     borderRadius: 0,
     // zIndex: 2,

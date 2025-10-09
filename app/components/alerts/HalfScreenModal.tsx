@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import PlainSafeView from "../appwide/format/PlainSafeView";
+import { AppFontStyles } from "@/src/hooks/StaticFonts";
 
 interface Props {
   isVisible: boolean;
@@ -166,10 +167,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   questionText: {
-    fontSize: 20,
+    fontSize: 18,
     textAlign: "center",
     fontFamily: "Poppins-Regular",
-    marginLeft: 10,
+    // marginLeft: 10,
   },
   buttonContainer: {
     justifyContent: "center",

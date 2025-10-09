@@ -11,6 +11,8 @@ import DonutChart from "./DonutChart";
 import { useFont } from "@shopify/react-native-skia";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 
+import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
+
 type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
@@ -161,13 +163,11 @@ const Donut = ({
     return categoryStopsValue.value.length; // fallback to last category
   });
 
-  const font = useFont(
-    require("@/app/assets/fonts/Poppins-Regular.ttf"),
+  const font = useFont(Poppins_400Regular,
     centerTextSize
   );
 
-  const smallFont = useFont(
-    require("@/app/assets/fonts/Poppins-Regular.ttf"),
+  const smallFont = useFont(Poppins_400Regular,
     14
   );
 

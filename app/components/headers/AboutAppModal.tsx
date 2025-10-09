@@ -25,20 +25,20 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
       useModalBar={true}
-      rightSideButtonItem={
-        <Image
-          source={require("@/app/assets/shapes/redheadcoffee.png")}
-          style={{
-            position: "absolute",
-            width: 80,
-            height: 80,
+      // rightSideButtonItem={
+      //   <Image
+      //     source={require("@/app/assets/shapes/redheadcoffee.png")}
+      //     style={{
+      //       position: "absolute",
+      //       width: 80,
+      //       height: 80,
 
-            top: -26,
-            right: 0,
-          }}
-          resizeMode="contain"
-        />
-      }
+      //       top: -26,
+      //       right: 0,
+      //     }}
+      //     resizeMode="contain"
+      //   />
+      // }
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons

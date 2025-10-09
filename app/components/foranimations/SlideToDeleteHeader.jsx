@@ -127,6 +127,8 @@ const SlideToDeleteHeader = ({
           <TargetIcon
             height={30}
             width={30}
+            size={30}
+            name="trash"
             color={isDragging ? appLightColor : "transparent"}
           />
         </View>

@@ -20,6 +20,10 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import { Friend } from "@/src/types/FriendTypes";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import manualGradientColors from "@/src/hooks/StaticColors";
+import iconSet from "@expo/vector-icons/build/Fontisto";
+import PinOutline from '@expo/vector-icons/MaterialCommunityIcons/pin-outline';
+import MyIconSet from "@/app/assets/IconSet";
+ 
 
 type FriendListUIProps = {
   data: Friend[];
@@ -89,8 +93,8 @@ const FriendListUI = ({
                 backgroundColor: manualGradientColors.homeDarkColor,
               }}
             >
-              <MaterialCommunityIcons
-                name={"pin-outline"}
+              <MyIconSet name="pin-outline"
+                // name={"pin-outline"}
                 size={12}
                 color={manualGradientColors.lightColor}
               />
