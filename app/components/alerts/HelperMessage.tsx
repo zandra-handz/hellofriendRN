@@ -14,8 +14,8 @@ import Animated, {
   
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

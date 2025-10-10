@@ -4,8 +4,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+import manualGradientColors  from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";

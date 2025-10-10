@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
@@ -14,7 +14,7 @@ import Animated, {
   useAnimatedReaction,
 } from "react-native-reanimated";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 interface Props {
   item: object;

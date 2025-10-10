@@ -1,7 +1,7 @@
 import { Pressable } from "react-native";
 import React from "react"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 interface Colors {
   lightColor: string;
   homeDarkColor: string;

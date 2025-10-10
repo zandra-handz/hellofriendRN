@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 

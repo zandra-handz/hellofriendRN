@@ -1,10 +1,10 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 // import { BaseAnimationBuilder } from "react-native-reanimated";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import React from "react";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 type Props = {
   //   enteringStyle?: BaseAnimationBuilder | typeof BaseAnimationBuilder;
   //   exitingStyle?: BaseAnimationBuilder | typeof BaseAnimationBuilder;

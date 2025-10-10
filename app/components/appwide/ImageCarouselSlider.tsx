@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,

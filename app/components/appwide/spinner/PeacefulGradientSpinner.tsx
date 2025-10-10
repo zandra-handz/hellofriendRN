@@ -1,5 +1,5 @@
 import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react";  
 import LoadingPage from "./LoadingPage"; 

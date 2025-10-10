@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from "react";
 import { View, Alert } from "react-native";
 import Toggle from "./Toggle";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";

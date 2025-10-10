@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
-import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 
 const ButtonBaseSpecialSave = ({
   manualGradientColors,

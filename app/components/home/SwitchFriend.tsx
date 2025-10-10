@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 type Props = {
   fontSize: number;

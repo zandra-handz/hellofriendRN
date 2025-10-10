@@ -18,7 +18,7 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
  
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import useUpdateLockins from "@/src/hooks/useUpdateLockins";

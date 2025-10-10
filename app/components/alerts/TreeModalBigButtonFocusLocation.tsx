@@ -2,7 +2,7 @@ import { View, Text, OpaqueColorValue, StyleSheet } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
-import manualGradientColors from "@/src/hooks/StaticColors"; 
+import manualGradientColors from "@/app/styles/StaticColors"; 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 
 import InfoItemLocation from "../locations/InfoItemLocation";

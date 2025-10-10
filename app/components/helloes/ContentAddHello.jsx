@@ -31,13 +31,13 @@ import { useNavigation } from "@react-navigation/native";
 import { useLocations } from "@/src/context/LocationsContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import HelloNotesModal from "../headers/HelloNotesModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
  
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";

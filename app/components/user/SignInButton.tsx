@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 type SignInButtonProps = {
   onPress: (event: GestureResponderEvent) => void;

@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import PlainSafeView from "../appwide/format/PlainSafeView";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+ 
 
 interface Props {
   isVisible: boolean;

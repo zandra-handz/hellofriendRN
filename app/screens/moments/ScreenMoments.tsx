@@ -22,7 +22,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 const ScreenMoments = () => {
   const route = useRoute();

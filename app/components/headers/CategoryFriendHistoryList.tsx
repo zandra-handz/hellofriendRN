@@ -10,7 +10,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
 //  import { useFriendList } from "@/src/context/FriendListContext";

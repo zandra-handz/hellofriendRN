@@ -19,7 +19,7 @@ module.exports = function (api) {
         {
           root: ["./"],
           alias: {
-            "@": "./", // now "@/src/..." works
+            "@": "./", // NEED TO SET THIS IN METRO TOO
           },
         },
       ],

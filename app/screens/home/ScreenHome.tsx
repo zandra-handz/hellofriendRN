@@ -51,8 +51,8 @@ import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponen
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 // import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 // import { QueryClient, useQueryClient } from "@tanstack/react-query";

@@ -4,7 +4,7 @@ import { View, Text, Pressable, DimensionValue } from "react-native";
  
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
- 
+ import { AppFontStyles } from "@/app/styles/AppFonts";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useNavigation } from "@react-navigation/native";
 import useDoublePress from "../buttons/useDoublePress";
@@ -20,8 +20,7 @@ interface FriendModalIntegratorProps {
   useGenericTextColor?: boolean;
   iconSize: number;
   width: DimensionValue;
-  customLabel: string | null;
-  customFontStyle: object | null;
+  customLabel: string | null; 
 }
 
 
@@ -30,8 +29,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   
   color,
   height = "auto",
-  customLabel = "",
-  customFontStyle,
+  customLabel = "", 
  
   useGenericTextColor = false,
   includeLabel = false,
@@ -77,8 +75,7 @@ const { handleDoublePress} = useDoublePress({onSinglePress: navigateToSelectFrie
   const RenderText = useCallback(
     () => (
       <Text
-        style={[
-          customFontStyle ? customFontStyle : defaultLabelStyle,
+        style={[ AppFontStyles.subWelcomeText, 
           {
             color:
               friendName && !useGenericTextColor
@@ -95,9 +92,7 @@ const { handleDoublePress} = useDoublePress({onSinglePress: navigateToSelectFrie
           firstSelectLabel}
       </Text>
     ),
-    [
-      customFontStyle,
-
+    [ 
       defaultLabelStyle,
       friendName,
       themeAheadOfLoading,

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { View, Text } from "react-native";
 import { useHelloes } from "@/src/context/HelloesContext";
-import useHelloesManips from "@/src/hooks/useHelloesManips";
+import useHelloesManips from "@/src/hooks/HelloesFunctions/useHelloesManips";
 import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -10,9 +10,9 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesList from "@/app/components/helloes/HelloesList";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
-import useFullHelloes from "@/src/hooks/useFullHelloes"; 
+import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenHelloes = () => {
   const navigation = useNavigation();

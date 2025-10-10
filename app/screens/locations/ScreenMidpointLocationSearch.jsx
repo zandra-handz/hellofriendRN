@@ -6,9 +6,9 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ContentFindMidpoint from "@/app/components/locations/ContentFindMidpoint";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 const ScreenMidpointLocationSearch = () => {
   const route = useRoute();
   const userAddress = route?.params?.userAddress ?? null;

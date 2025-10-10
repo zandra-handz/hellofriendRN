@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo } from "react";
-import { fetchPastHelloesFull } from "../calls/api";
-import { useUser } from "../context/UserContext";
+import { fetchPastHelloesFull } from "../../calls/api";
+import { useUser } from "../../context/UserContext";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 type Props = {

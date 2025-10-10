@@ -7,7 +7,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 type Props = {
   userChangedCategory: boolean;
  

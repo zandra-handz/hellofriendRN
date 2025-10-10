@@ -1,8 +1,8 @@
 import { View, Text, OpaqueColorValue } from "react-native";
 import React from "react"; 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 // ((
 //   FOR REFERENCE interface ThemeAheadOfLoading {
 //   darkColor: Friend["theme_color_dark"];

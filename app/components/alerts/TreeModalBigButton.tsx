@@ -3,8 +3,8 @@ import React from "react";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { MaterialIcons } from "@expo/vector-icons";
  
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 
 type Props = {

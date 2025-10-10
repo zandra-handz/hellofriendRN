@@ -15,9 +15,9 @@ import Animated, {
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-  import { AppFontStyles } from "@/src/hooks/StaticFonts";
+  import { AppFontStyles } from "@/app/styles/AppFonts";
 import { Moment } from "@/src/types/MomentContextTypes";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
  
 interface MomentItemsProps {
   index: number;

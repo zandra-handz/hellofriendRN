@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/src/types/NavigationTypes";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
  

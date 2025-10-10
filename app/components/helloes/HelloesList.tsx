@@ -2,7 +2,8 @@ import { View, Pressable } from "react-native";
 import React, { useEffect, useCallback, useMemo, useRef } from "react";
 import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+
 import Animated, {
   LinearTransition, 
 } from "react-native-reanimated";

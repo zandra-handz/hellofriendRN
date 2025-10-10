@@ -4,7 +4,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import UpNext from "./UpNext";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
 // import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 // import { useFriendList } from "@/src/context/FriendListContext";

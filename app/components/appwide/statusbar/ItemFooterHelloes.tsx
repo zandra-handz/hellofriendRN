@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 import EscortBarMoments from "../../moments/EscortBarMoments";
-import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import Animated, {
   SharedValue,
   useAnimatedReaction,

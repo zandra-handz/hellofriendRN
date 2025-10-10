@@ -8,8 +8,8 @@ import React, {
 } from "react"; 
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
 // import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; // moved to parent

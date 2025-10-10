@@ -10,7 +10,7 @@ import Animated, {
 import CategoryButton from "./CategoryButton";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import SearchModal from "../headers/SearchModal";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 import { SharedValue } from "react-native-reanimated";
 
 type Props = {

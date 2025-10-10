@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React from "react"; 
 import SwitchFriend from "@/app/components/home/SwitchFriend";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
  
 import { useFriendDash } from "@/src/context/FriendDashContext";
  ;

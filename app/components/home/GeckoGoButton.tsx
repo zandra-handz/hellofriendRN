@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 // import useDoublePress from "../buttons/useDoublePress";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 import { FontAwesome6 } from "@expo/vector-icons";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import { Vibration } from "react-native";

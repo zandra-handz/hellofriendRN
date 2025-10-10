@@ -23,12 +23,12 @@ import {
   ScrollView,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import TreeModalBigButtonFocusLocation from "../alerts/TreeModalBigButtonFocusLocation";
-
+import manualGradientColors from "@/app/styles/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
+// import Animated, { JumpingTransition } from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
@@ -48,9 +48,12 @@ const LocationsMapView = ({
 
   combinedLocationsObject,
   combinedLocationsForList,
+  locationCategories,
+  // categories,
   faveLocations, //also comes from the object, is here solely for the markers/'Show All' button
   currentDayDrilledOnce,
-
+  handleCategoryPress,
+  highlightedCategory,
   bermudaCoordsDrilledOnce,
   themeAheadOfLoading,
   primaryColor,
@@ -129,6 +132,16 @@ const LocationsMapView = ({
       }
     }
   }, []);
+
+  //   const categories = useMemo(() => {
+  //   return Array.from(
+  //     new Set(
+  //       combinedLocationsForList
+  //         .map((item) => item.category)
+  //         .filter(Boolean) // remove null/undefined
+  //     )
+  //   );
+  // }, [ combinedLocationsForList]);
 
   const navigation = useNavigation();
   const [focusedLocation, setFocusedLocation] = useState(null);
@@ -544,15 +557,15 @@ const LocationsMapView = ({
           {!isKeyboardVisible && (
             <View style={styles.outerFlatListWrapper}>
               <ScrollView
-              horizontal
-              contentContainerStyle={{        horizontal: 'true',
+                horizontal
+                contentContainerStyle={{
+                  horizontal: "true",
                   height: 50,
+                  paddingBottom: 10,
                   alignItems: "center",
-                //  flexDirection: "row",
-                  backgroundColor: "pink",
-
-
-              }}
+                  //  flexDirection: "row",
+                  backgroundColor: primaryBackground,
+                }}
                 // style={{
                 //   width: "100%",
                 //   height: 50,
@@ -582,90 +595,43 @@ const LocationsMapView = ({
                     </Text>
                   </Pressable>
                 )}
-                                {!isKeyboardVisible && (
-                  <Pressable
-                    style={[
-                      styles.midpointsButton,
-                      {
-                        zIndex: 7000,
-                        backgroundColor: primaryBackground,
-                      },
-                    ]}
-                    onPress={handleGoToMidpointLocationSearchScreen}
-                  >
-                    <Text
-                      style={[
-                        styles.zoomOutButtonText,
-                        { color: primaryColor },
-                      ]}
-                    >
-                      Midpoints
-                    </Text>
-                  </Pressable>
+
+                {!isKeyboardVisible && locationCategories != undefined && (
+                  <>
+                    {locationCategories?.map((category) => (
+                      <GlobalPressable
+                        key={category}
+                        style={[
+                          styles.midpointsButton,
+                          {
+                            padding: 0,
+                            height: 30,
+                            backgroundColor:
+                              highlightedCategory === category
+                                ? manualGradientColors.lightColor
+                                : primaryBackground,
+                          },
+                        ]}
+                        onPress={() => handleCategoryPress(category)}
+                      >
+                        <Text
+                          style={[
+                            styles.zoomOutButtonText,
+                            {
+                              color:
+                                highlightedCategory === category
+                                  ? manualGradientColors.homeDarkColor
+                                  : primaryColor,
+                            },
+                          ]}
+                        >
+                          {category}
+                        </Text>
+                      </GlobalPressable>
+                    ))}
+                  </>
                 )}
-                                {!isKeyboardVisible && (
-                  <Pressable
-                    style={[
-                      styles.midpointsButton,
-                      {
-                        zIndex: 7000,
-                        backgroundColor: primaryBackground,
-                      },
-                    ]}
-                    onPress={handleGoToMidpointLocationSearchScreen}
-                  >
-                    <Text
-                      style={[
-                        styles.zoomOutButtonText,
-                        { color: primaryColor },
-                      ]}
-                    >
-                      Midpoints
-                    </Text>
-                  </Pressable>
-                )}
-                                {!isKeyboardVisible && (
-                  <Pressable
-                    style={[
-                      styles.midpointsButton,
-                      {
-                        zIndex: 7000,
-                        backgroundColor: primaryBackground,
-                      },
-                    ]}
-                    onPress={handleGoToMidpointLocationSearchScreen}
-                  >
-                    <Text
-                      style={[
-                        styles.zoomOutButtonText,
-                        { color: primaryColor },
-                      ]}
-                    >
-                      Midpoints
-                    </Text>
-                  </Pressable>
-                )}
-                                {!isKeyboardVisible && (
-                  <Pressable
-                    style={[
-                      styles.midpointsButton,
-                      {
-                        zIndex: 7000,
-                        backgroundColor: primaryBackground,
-                      },
-                    ]}
-                    onPress={handleGoToMidpointLocationSearchScreen}
-                  >
-                    <Text
-                      style={[
-                        styles.zoomOutButtonText,
-                        { color: primaryColor },
-                      ]}
-                    >
-                      Midpoints
-                    </Text>
-                  </Pressable>
-                )}
+
                 {!isKeyboardVisible && (
                   <Pressable
                     style={[
@@ -700,9 +666,9 @@ const LocationsMapView = ({
                 {/* {pastHelloLocations && ( */}
                 <FlatList
                   ref={flatListRef}
+                  // itemLayoutAnimation={JumpingTransition} 
                   data={combinedLocationsForList}
-                  inverted={true}
-                  //    itemLayoutAnimation={JumpingTransition}
+                  inverted={true} 
                   // scrollEventThrottle={16}
                   keyExtractor={extractItemKey}
                   renderItem={renderLocationItem}
@@ -816,12 +782,12 @@ const styles = StyleSheet.create({
     // top: 346,
     // right: 4,
     padding: 10,
-    paddingHorizontal: 14,
+    paddingHorizontal: 10,
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
+    // shadowColor: "#000",
+    // shadowOpacity: 0.1,
+    // shadowOffset: { width: 0, height: 2 },
+    // elevation: 5,
     width: "auto",
   },
   zoomOutButton: {
@@ -832,13 +798,9 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
   },
   zoomOutButtonText: {
-    fontWeight: "bold",
+    // fontWeight: "bold",
     fontSize: 12,
     lineHeight: 20,
   },

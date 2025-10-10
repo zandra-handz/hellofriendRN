@@ -1,13 +1,12 @@
-import {  View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import manualGradientColors from "@/src/hooks/StaticColors";
+
+import manualGradientColors from "@/app/styles/StaticColors";
+import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   withTiming,
   withSequence,
-  FadeOut,
-  SlideInDown,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
@@ -32,18 +31,16 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   friendId,
   primaryColor,
   welcomeTextStyle,
-  backgroundColor = "red",
   selectedFriendName = "",
   loadingNewFriend = false,
   cardBackgroundColor,
- 
-}) => { 
+}) => {
   const { autoSelectFriend } = useAutoSelector();
 
   const opacityValue = useSharedValue(0);
   const scaleValue = useSharedValue(0);
 
-    const secondOpacityValue = useSharedValue(0);
+  const secondOpacityValue = useSharedValue(0);
   const secondScaleValue = useSharedValue(0);
 
   const animatedPinStyle = useAnimatedStyle(() => {
@@ -53,7 +50,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     };
   });
 
-    const animatedSecondPinStyle = useAnimatedStyle(() => {
+  const animatedSecondPinStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: secondScaleValue.value }],
       opacity: secondOpacityValue.value,
@@ -85,8 +82,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     }
   }, [isLockedOn]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (isUpNext) {
       secondOpacityValue.value = withTiming(1, { duration: 100 });
       secondScaleValue.value = withSequence(
@@ -130,103 +126,50 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     <GlobalPressable
       onPress={handleOnPress}
       onLongPress={toggleLockOnFriend}
-      entering={SlideInDown}
-      exiting={FadeOut}
-      style={[
-        {
-          backgroundColor: backgroundColor,
-          alignText: "center",
-          flexWrap: "flex",
-          width: "100%",
-
-          marginBottom: 2,
-          borderRadius: 4,
-          paddingTop: 0, // same as friend message
-          paddingBottom: 0, // same as friend message
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          backgroundColor: "transparent",
-
-          minHeight: 150,
-          height: "auto",
-        },
-      ]}
+      style={styles.container}
     >
-      <View
-        style={{
-          position: "absolute",
-          right: 0,
-         height: "100%",
-          width: "auto",
-          padding: 20,
-          flexDirection: "column", 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-    
-          
-        }}
-      >
+      <View style={styles.innerContainer}>
         <Animated.View
           style={[
             animatedPinStyle,
             {
-               padding: 4,
               backgroundColor: manualGradientColors.lightColor,
-              borderRadius: 999,
-              zIndex: 9000,
-              alignItems: "center",
-              justifyContent: "center",
-              // marginBottom: 10,
-              overflow: 'hidden',
-              
-             
             },
+            styles.animatedContainer,
           ]}
         >
-          <MaterialCommunityIcons
-            name={"pin-outline"}
-            size={22}
+          <SvgIcon
+            name={"pin_outline"}
+            height={22}
+            width={22}
             color={manualGradientColors.homeDarkColor}
           />
         </Animated.View>
-        {/* )} */}
 
-      
-          <Animated.View
-            style={[
-              animatedSecondPinStyle,
-              {
-                padding: 4,
-                backgroundColor: manualGradientColors.lightColor,
-                borderRadius: 999,
-                zIndex: 9000,
-                alignItems: "center",
-                justifyContent: "center",
-              
-              },
-            ]}
-          >
-            <MaterialCommunityIcons
-              name={"calendar-outline"}
-              size={22}
-              color={manualGradientColors.homeDarkColor}
-            />
-          </Animated.View>
-     
+        <Animated.View
+          style={[
+            animatedSecondPinStyle,
+            {
+              backgroundColor: manualGradientColors.lightColor,
+            },
+            styles.animatedContainer,
+          ]}
+        >
+          <SvgIcon
+            name={"calendar_outline"}
+            height={22}
+            width={22}
+            color={manualGradientColors.homeDarkColor}
+          />
+        </Animated.View>
       </View>
       <View
-        style={{
-          paddingTop: 50,
-          paddingBottom: 30,
-          width: "100%",
-          height: "100%",
-          flexWrap: "flex",
-          borderRadius: 10,
-          paddingHorizontal: 8,
-          justifyContent: "center",
-          paddingHorizontal: 20,
-          backgroundColor: cardBackgroundColor, // semi-transparent background
-        }}
+        style={[
+          styles.labelContainer,
+          {
+            backgroundColor: cardBackgroundColor, // semi-transparent background
+          },
+        ]}
       >
         <Animated.Text
           numberOfLines={2}
@@ -234,11 +177,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             welcomeTextStyle,
             {
               color: primaryColor,
-              width: "100%",
-              //  color: backgroundColor,
-              fontSize: 40,
-              lineHeight: 48,
             },
+            styles.label,
           ]}
         >
           {selectedFriendName && !loadingNewFriend && message}
@@ -247,5 +187,54 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     </GlobalPressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignText: "center",
+    flexWrap: "wrap",
+    width: "100%",
+    marginBottom: 2,
+    borderRadius: 4,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    backgroundColor: "transparent",
+    minHeight: 150,
+    height: "auto",
+  },
+  innerContainer: {
+    position: "absolute",
+    right: 0,
+    height: "100%",
+    width: "auto",
+    padding: 20,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  animatedContainer: {
+    padding: 4,
+    borderRadius: 999,
+    zIndex: 9000,
+    alignItems: "center",
+    justifyContent: "center",
+    // marginBottom: 10,
+    overflow: "hidden",
+  },
+  labelContainer: {
+    paddingTop: 50,
+    paddingBottom: 30,
+    width: "100%",
+    height: "100%",
+    flexWrap: "wrap",
+    borderRadius: 10,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  label: {
+    width: "100%",
+    fontSize: 40,
+    lineHeight: 48,
+  },
+});
 
 export default FriendHeaderMessageUI;

@@ -24,10 +24,11 @@
 
 const { withSentryConfig } = require("@sentry/react-native/metro");
 
-const { getDefaultConfig } = require('expo/metro-config');
+const { getDefaultConfig } = require("expo/metro-config");
 let config = getDefaultConfig(__dirname);
 
 const { transformer, resolver } = config;
+const path = require('path');
 
 config.transformer = {
   ...transformer,
@@ -38,6 +39,10 @@ config.resolver = {
   ...resolver,
   assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
   sourceExts: [...resolver.sourceExts, "svg"],
+
+  extraNodeModules: { // adding this here fixed reload!!!
+    "@": path.resolve(__dirname), // '@' points to the project root
+  },
 };
 
 // --- Wrap with Sentry ---

@@ -15,7 +15,7 @@ import * as Sharing from "expo-sharing";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useDeleteImage from "@/src/hooks/ImageCalls/useDeleteImage";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 const ScreenImageView = () => {
   const route = useRoute();
   const startingIndex = route.params?.index ?? null;
@@ -86,7 +86,13 @@ const handleShare = async (currentIndex: number) => {
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
+           backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
+          backgroundOverlayHeight=""
+            includeBackgroundOverlay={true}
+  
+            useSolidOverlay={false}
+      useOverlayFade={false}  
       style={{ flex: 1 }}
     >
       <ImageCarouselSlider

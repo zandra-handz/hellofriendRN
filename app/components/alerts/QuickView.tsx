@@ -12,8 +12,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 const QuickView = ({
   message,

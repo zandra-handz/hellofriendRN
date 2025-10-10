@@ -14,14 +14,14 @@ import MessagePage from "../alerts/MessagePage";
  
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import useCreateFriend from "@/src/hooks/useCreateFriend";
+import useCreateFriend from "@/src/hooks/FriendCalls/useCreateFriend";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import useAddToFriendList from "@/src/hooks/FriendListCalls/useAddToFriendList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import AuthInputWrapper from "../user/AuthInputWrapper";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 import EscortBar from "../moments/EscortBar";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 // import { useUser } from "@/src/context/UserContext";
 
 const ContentAddFriend = ({

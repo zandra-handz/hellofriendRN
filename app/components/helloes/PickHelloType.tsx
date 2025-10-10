@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import React, { useCallback } from "react";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 type Props = {

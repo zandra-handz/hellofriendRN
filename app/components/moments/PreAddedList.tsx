@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { FlashList } from "@shopify/flash-list";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage"; // no error message for this one
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import CheckboxListItem from "./CheckboxListItem";
 import EscortBar from "./EscortBar";

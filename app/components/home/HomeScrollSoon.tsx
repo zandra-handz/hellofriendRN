@@ -6,7 +6,7 @@ import Animated, {
   // FadeIn,
   // FadeOut,
 } from "react-native-reanimated";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import SoonItemButton from "./SoonItemButton";
 import { useNavigation } from "@react-navigation/native";
 

@@ -23,7 +23,7 @@ import {
   resetPassword,
 } from "@/src/calls/api";
 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 // import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 

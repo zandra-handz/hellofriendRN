@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback  } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native"; 
-import useLocationHours from "@/src/hooks/useLocationHours";
+import useLocationHours from "@/src/hooks/LocationCalls/useLocationHours";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
  

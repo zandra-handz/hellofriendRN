@@ -16,7 +16,7 @@ import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import MomentFocusTray from "./MomentFocusTray";
 import { close } from "@sentry/react-native";
 type Props = {

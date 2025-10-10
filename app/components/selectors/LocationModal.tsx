@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import { MaterialIcons } from "@expo/vector-icons";
 import PickerComplexList from "./PickerComplexList";
 

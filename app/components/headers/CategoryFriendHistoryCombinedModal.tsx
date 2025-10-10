@@ -8,14 +8,14 @@ import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ModalListWithView from "../alerts/ModalListWithView";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 

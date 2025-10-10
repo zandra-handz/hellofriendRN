@@ -4,9 +4,9 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
-import useFullHelloes from "@/src/hooks/useFullHelloes";
+import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage"; 
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenHelloView = () => {

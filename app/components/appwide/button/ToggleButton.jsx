@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { TouchableOpacity, Animated, StyleSheet, Easing } from "react-native";
- import manualGradientColors from "@/src/hooks/StaticColors";
+ import manualGradientColors from "@/app/styles/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ToggleButton = ({ value, onToggle }) => {
   const { lightDarkTheme } = useLDTheme();

@@ -1,13 +1,13 @@
 import { View } from "react-native";
 import React, { useState  } from "react"; 
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
  
 
 import SelectAddressModal from "./SelectAddressModal";
 import SelectFriendAddressModal from "./SelectFriendAddressModal";
 
  
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 import UserAddressChanger from "./UserAddressChanger";
 import FriendAddressChanger from "./FriendAddressChanger";

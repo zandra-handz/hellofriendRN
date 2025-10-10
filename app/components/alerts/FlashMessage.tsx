@@ -9,8 +9,8 @@ import Animated, {
 import PlainSafeView from "../appwide/format/PlainSafeView"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 const FlashMessage = ({
 

@@ -1,10 +1,12 @@
 import { View, Text, FlatList } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import useFullHelloes from "@/src/hooks/useFullHelloes"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
+ 
 import { FullHello } from "@/src/types/HelloTypes";
 import ModalInfoText from "../headers/ModalInfoText";
 import LoadingPage from "../appwide/spinner/LoadingPage";
+
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   data: FullHello;
@@ -16,14 +18,13 @@ const HelloQuickView = ({
   data,
   friendId,
   momentOriginalId,
-  index, 
+  index,
   primaryColor,
   themeAheadOfLoading,
-}: Props) => {  
-
- if (!data || !data?.id) {
-  return;
- }
+}: Props) => {
+  if (!data || !data?.id) {
+    return;
+  }
   const [highlightedMoment, setHighlightedMoment] = useState(undefined);
 
   const SPINNER_SIZE = 30;
@@ -38,7 +39,7 @@ const HelloQuickView = ({
           paddingHorizontal: 8,
         }}
       >
-        <Text style={{ color: "black" }}>{item[1]?.capsule}</Text> 
+        <Text style={{ color: "black" }}>{item[1]?.capsule}</Text>
       </View>
     ),
     [highlightedMoment]
@@ -114,10 +115,11 @@ const HelloQuickView = ({
               paddingVertical: 4,
             }}
           >
-            <MaterialCommunityIcons
+            <SvgIcon
               name={"calendar"}
               color={primaryColor}
-              size={ICON_SIZE}
+              height={ICON_SIZE}
+              width={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
             <ModalInfoText
@@ -134,10 +136,11 @@ const HelloQuickView = ({
               paddingRight: 10,
             }}
           >
-            <MaterialCommunityIcons
+            <SvgIcon
               name={"calendar"}
               color={primaryColor}
-              size={ICON_SIZE}
+              height={ICON_SIZE}
+              width={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
             <ModalInfoText
@@ -155,10 +158,11 @@ const HelloQuickView = ({
                 paddingRight: 10,
               }}
             >
-              <MaterialCommunityIcons
+              <SvgIcon
                 name={"calendar"}
                 color={primaryColor}
-                size={ICON_SIZE}
+                height={ICON_SIZE}
+                width={ICON_SIZE}
                 style={{ marginRight: ICON_MARGIN_RIGHT }}
               />
               <ModalInfoText
@@ -186,10 +190,11 @@ const HelloQuickView = ({
                   justifyContent: "flex-start",
                 }}
               >
-                <MaterialCommunityIcons
+                <SvgIcon
                   name={"pencil"}
                   color={primaryColor}
-                  size={ICON_SIZE}
+                  height={ICON_SIZE}
+                  width={ICON_SIZE}
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
               </View>
@@ -219,10 +224,11 @@ const HelloQuickView = ({
                   width: "100%",
                 }}
               >
-                <MaterialCommunityIcons
+                <SvgIcon
                   name={"pencil"}
                   color={primaryColor}
-                  size={ICON_SIZE}
+                  height={ICON_SIZE}
+                  width={ICON_SIZE}
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
                 {helloCapsuleData && (

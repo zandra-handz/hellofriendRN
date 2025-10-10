@@ -28,7 +28,7 @@ import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 // import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LeafPath from "./LeafPath";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 type Props = {
   onCategoryPress: () => void;

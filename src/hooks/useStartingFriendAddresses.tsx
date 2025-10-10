@@ -4,9 +4,12 @@ import { fetchFriendAddresses } from "@/src/calls/api";
 
 import { useQuery } from "@tanstack/react-query";
 
-const useStartingFriendAddresses = ({ userId, friendId }) => {
-  // console.warn("STARTING ADDRESSES");
+type Props = {
+  userId: number;
+  friendId: number;
+}
 
+const useStartingFriendAddresses = ({ userId, friendId }: Props) => {
   const {
     data: friendAddresses = [],
     // isLoading,

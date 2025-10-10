@@ -6,12 +6,12 @@ import SelectFriendAddressModal from "./SelectFriendAddressModal";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import useCreateFriendAddress from "@/src/hooks/useCreateFriendAddress";
-import useDeleteFriendAddress from "@/src/hooks/useDeleteFriendAddress";
+import useCreateFriendAddress from "@/src/hooks/AddressCalls/useCreateFriendAddress";
+import useDeleteFriendAddress from "@/src/hooks/AddressCalls/useDeleteFriendAddress";
 import useUpdateFriendDefaultAddress from "@/src/hooks/useUpdateFriendDefaultAddress";
 import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
 import useUpdateFriendAddressCache from "@/src/hooks/useUpdateFriendAddressCache";
 type Props = {
   userId: number;

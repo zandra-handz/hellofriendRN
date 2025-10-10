@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, {   useCallback } from "react";
 import { useWindowDimensions } from "react-native"; 
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, {
   useAnimatedRef, 
   useAnimatedScrollHandler,

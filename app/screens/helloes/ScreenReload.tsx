@@ -7,7 +7,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
  
 import ReloadList from "@/app/components/helloes/ReloadList";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useRoute } from "@react-navigation/native";
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";

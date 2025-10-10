@@ -6,7 +6,7 @@ import {
   StyleSheet,
   DimensionValue,
 } from "react-native";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import { LinearGradient } from "expo-linear-gradient";

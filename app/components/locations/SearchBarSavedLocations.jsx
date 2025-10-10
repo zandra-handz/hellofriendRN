@@ -16,7 +16,7 @@ import {
   Keyboard,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 const SearchBarSavedLocations = forwardRef(
   (

@@ -6,8 +6,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import DualLocationSearcher from "./DualLocationSearcher";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
-import manualGradientColors  from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 interface SelectAddressModalProps {
   isVisible: boolean; // = is editing address
   closeModal: () => void;

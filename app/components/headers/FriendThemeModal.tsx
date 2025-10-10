@@ -1,6 +1,6 @@
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionFriendTheme from "../friends/SectionFriendTheme";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";

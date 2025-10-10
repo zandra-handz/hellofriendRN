@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { StyleSheet, View, Modal } from "react-native";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 // import { AppFontStyles } from "@/src/hooks/StaticFonts";
 import Animated, {
   FadeInUp,
@@ -18,6 +18,7 @@ import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { ItemViewProps } from "@/src/types/MiscTypes";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+
 interface Props {
   isVisible: boolean;
   isFullscreen?: boolean;

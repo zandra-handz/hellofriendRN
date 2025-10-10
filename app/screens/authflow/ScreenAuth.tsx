@@ -24,7 +24,7 @@ import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 
 //app static
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 //app types
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";

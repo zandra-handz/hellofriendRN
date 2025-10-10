@@ -17,7 +17,7 @@ import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 const ScreenMomentView = () => {
   const route = useRoute();

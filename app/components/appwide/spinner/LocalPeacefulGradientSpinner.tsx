@@ -5,7 +5,7 @@ import { View, StyleSheet } from "react-native";
 import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 
 // static
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 
 import LoadingPage from "./LoadingPage"; 

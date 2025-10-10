@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React, { useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { removeFriendAddress } from "../calls/api";
+import { removeFriendAddress } from "../../calls/api";
 
 type Props = {
   userId: number;

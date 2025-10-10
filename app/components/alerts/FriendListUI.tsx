@@ -6,7 +6,7 @@ import {
   ListRenderItemInfo,
 } from "react-native";
 import Animated, {
-  SlideInRight,
+ 
   SlideInDown,
   FadeOut,
 } from "react-native-reanimated";
@@ -19,9 +19,8 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { Friend } from "@/src/types/FriendTypes";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import iconSet from "@expo/vector-icons/build/Fontisto";
-import PinOutline from '@expo/vector-icons/MaterialCommunityIcons/pin-outline';
+import manualGradientColors from "@/app/styles/StaticColors";
+
 import MyIconSet from "@/app/assets/IconSet";
  
 

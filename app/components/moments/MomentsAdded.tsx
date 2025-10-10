@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react"; 
 import { useNavigation } from "@react-navigation/native";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, {
   SlideInDown,
   FadeIn,

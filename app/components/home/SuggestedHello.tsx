@@ -3,8 +3,8 @@ import React, { useMemo, useState } from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 type Props = {
   friendId: number;

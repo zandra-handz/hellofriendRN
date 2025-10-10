@@ -8,7 +8,7 @@ import {
   AccessibilityInfo,
 } from "react-native";
 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
 

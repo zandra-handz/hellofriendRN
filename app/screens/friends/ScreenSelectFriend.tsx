@@ -2,7 +2,7 @@ import { View, Pressable } from "react-native";
 import React, { useMemo, useCallback } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 // import { useFriendList } from "@/src/context/FriendListContext";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";

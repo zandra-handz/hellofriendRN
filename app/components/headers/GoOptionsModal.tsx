@@ -3,8 +3,8 @@ import { ScrollView, StyleSheet, View, Pressable, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import manualGradientColors from "@/src/hooks/StaticColors";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import BouncyEntrance from "./BouncyEntrance";
 type Props = {

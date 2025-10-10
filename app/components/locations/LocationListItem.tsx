@@ -35,11 +35,24 @@ const LocationListItem = ({
     },
   ];
 
+  const titleStyle = React.useMemo(
+    () => [styles.title, { color: textColor }],
+    [textColor]
+  );
+  const addressStyle = React.useMemo(
+    () => [styles.address, { color: textColor }],
+    [textColor]
+  );
+
   return (
     <Pressable style={containerFlattenedStyle} onPress={() => onPress(item)}>
       <View style={styles.labelContainer}>
-        <Text numberOfLines={1}  style={[{ color: textColor }]}>{item.title}</Text>
-        <Text numberOfLines={1}  style={{ color: textColor, fontSize: 11 }}>{item.address}</Text>
+        <Text numberOfLines={1} style={titleStyle}>
+          {item.title}
+        </Text>
+        <Text numberOfLines={1} style={addressStyle}>
+          {item.address}
+        </Text>
       </View>
 
       <View style={styles.iconsContainer}>
@@ -71,14 +84,13 @@ const LocationListItem = ({
         )}
 
         {item.isFave && (
-   
-            <MaterialCommunityIcons
-              // name="map-marker-star"
-              name="heart"
-              size={ICON_SIZE}
-              color={friendColor}
-              style={{marginLeft: 10}}
-            /> 
+          <MaterialCommunityIcons
+            // name="map-marker-star"
+            name="heart"
+            size={ICON_SIZE}
+            color={friendColor}
+            style={{ marginLeft: 10 }}
+          />
         )}
       </View>
     </Pressable>
@@ -91,20 +103,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 10,
+    alignItems: 'center',
   },
   labelContainer: {
     flexDirection: "column",
     alignText: "left",
     // backgroundColor: 'orange',
-    width: '100%',
+    width: "100%",
     flexShrink: 1,
   },
   iconsContainer: {
     flexDirection: "row",
     // backgroundColor: 'teal',
     paddingLeft: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
+  title: {
+    fontSize: 12,
+  },
+  address: {
+    fontSize: 12,
+    opacity: .7,
+  }
 });
 
 export default LocationListItem;

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { View, StyleSheet } from "react-native";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendHistoryBigPie from "../home/FriendHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 interface Props {
   isVisible: boolean;
   closeModal: () => void;

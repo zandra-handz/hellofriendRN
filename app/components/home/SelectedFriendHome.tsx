@@ -20,7 +20,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";

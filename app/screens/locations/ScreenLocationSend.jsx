@@ -13,7 +13,7 @@ import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
 import AddPhoneNumber from "@/app/components/alerts/AddPhoneNumber";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 const ScreenLocationSend = () => {
   const route = useRoute();

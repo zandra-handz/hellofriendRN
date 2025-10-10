@@ -1,7 +1,7 @@
 import { Text } from "react-native";
  
 import React from "react"; 
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 type Props = {
   label: string;

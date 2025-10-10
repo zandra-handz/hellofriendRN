@@ -9,7 +9,7 @@ import {
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import Animated, { SlideInLeft } from "react-native-reanimated";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
 import SearchBarGoogleAddress from "../locations/SearchBarGoogleAddress";
 import FlashMessage from "../alerts/FlashMessage";

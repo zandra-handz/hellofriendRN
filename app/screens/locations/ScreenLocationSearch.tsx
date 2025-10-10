@@ -103,17 +103,51 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
 
   const { selectedFriend } = useSelectedFriend();
 
+
+  
+   const [ highlightedCategory, setHighlightedCategory ] = useState(null);
   const { faveLocations, nonFaveLocations } = useFriendLocations({
     inPersonHelloes: inPersonHelloes,
     locationList: locationList,
     friendFaveIds: friendFaveIds,
   });
 
-  const combinedLocationsObject = {
-    faveLocations,
-    nonFaveLocations,
-    combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
-  };
+const combinedLocationsObject = {
+  faveLocations,
+  nonFaveLocations,
+  combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
+};
+
+// categories list, reactive to combinedLocations changes
+const categories = useMemo(() => {
+  return Array.from(
+    new Set(
+      combinedLocationsObject.combinedLocations
+        .map((item) => item.category)
+        .filter(Boolean) // remove null/undefined
+    )
+  );
+}, [combinedLocationsObject.combinedLocations]);
+
+
+
+const handleCategoryPress = (category) => {
+  if (!category) return;
+
+  if (category !== highlightedCategory) {
+    setHighlightedCategory(category);
+  } else {
+    setHighlightedCategory(null);
+  }
+};
+
+
+const filteredCombinedLocations = useMemo(() => {
+  if (!highlightedCategory) return combinedLocationsObject.combinedLocations;
+  return combinedLocationsObject.combinedLocations.filter(
+    (item) => item.category === highlightedCategory
+  );
+}, [highlightedCategory, combinedLocationsObject.combinedLocations]);
 
   const { pastHelloLocations } = usePastHelloesLocations({
     inPersonHelloes: inPersonHelloes,
@@ -159,10 +193,16 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
             pastHelloLocations={pastHelloLocations}
             faveLocations={combinedLocationsObject?.faveLocations}
             conbinedLocationsObject={combinedLocationsObject}
-            combinedLocationsForList={
-              combinedLocationsObject?.combinedLocations
+            // combinedLocationsForList={
+            //   combinedLocationsObject?.combinedLocations
+            // }
+                        combinedLocationsForList={
+              filteredCombinedLocations
             }
+            locationCategories={categories}
+            highlightedCategory={highlightedCategory}
             currentDayDrilledOnce={currentDay}
+            handleCategoryPress={handleCategoryPress}
             // selectedDay={selectedDay}
             // handleSelectedDay={handleSelectedDay}
             bermudaCoordsDrilledOnce={bermudaCoords}

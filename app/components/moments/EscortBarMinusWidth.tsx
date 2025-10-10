@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";

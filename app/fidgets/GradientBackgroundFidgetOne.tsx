@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
  
 
 import GradientBackgroundForFidget from "../components/appwide/display/GradientBackgroundForFidget";

@@ -1,7 +1,7 @@
 
 import React, { useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

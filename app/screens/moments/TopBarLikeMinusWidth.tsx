@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import ToNextButton from "@/app/components/moments/ToNextButton";
 import ActionAndBack from "@/app/components/moments/ActionAndBack";
-import { AppFontStyles } from "@/src/hooks/StaticFonts"; 
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 type Props = {
   onPress: () => void;
   onPressLabel: string;

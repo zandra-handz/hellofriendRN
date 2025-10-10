@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { removeUserAddress } from "../calls/api";
+import { removeUserAddress } from "../../calls/api";
 
 type Props = {
   userId: number;

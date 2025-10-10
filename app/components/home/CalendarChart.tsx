@@ -2,8 +2,8 @@ import { View } from "react-native";
 import React, { useState } from "react";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import MonthModal from "../headers/MonthModal";
-import useHelloesManips from "@/src/hooks/useHelloesManips";
-import manualGradientColors from "@/src/hooks/StaticColors";
+import useHelloesManips from "@/src/hooks/HelloesFunctions/useHelloesManips";
+import manualGradientColors from "@/app/styles/StaticColors";
 type Props = {
   outerPadding: DimensionValue;
   combinedData: any;

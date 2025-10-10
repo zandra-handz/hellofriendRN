@@ -4,15 +4,15 @@ import React, { useEffect, useMemo, useCallback, useState } from "react";
 import SelectAddressModal from "./SelectAddressModal";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
-import useCreateUserAddress from "@/src/hooks/useCreateUserAddress";
-import useDeleteUserAddress from "@/src/hooks/useDeleteUserAddress";
+import useCreateUserAddress from "@/src/hooks/AddressCalls/useCreateUserAddress";
+import useDeleteUserAddress from "@/src/hooks/AddressCalls/useDeleteUserAddress";
 import useUpdateUserDefaultAddress from "@/src/hooks/useUpdatreUserAddress";
 
 import useUpdateUserAddressCache from "@/src/hooks/useUpdateUserAddressCache";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { findDefaultAddress } from "@/src/hooks/FindDefaultAddress";
-import { AppFontStyles } from "@/src/hooks/StaticFonts";
-import manualGradientColors  from "@/src/hooks/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import manualGradientColors  from "@/app/styles/StaticColors";
 
 type Props = {
   currentLocationSelected: boolean; // ?
