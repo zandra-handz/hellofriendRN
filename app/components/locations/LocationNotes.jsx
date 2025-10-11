@@ -5,51 +5,28 @@ import {
   Text, 
   Pressable,
   StyleSheet,
-} from "react-native";   
-import { useNavigation } from "@react-navigation/native";
-
-import {  MaterialIcons } from "@expo/vector-icons";
+} from "react-native";    
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 
 const LocationNotes = ({
   location,
   iconSize = 26, 
-  openEditModal,
-  closeEditModal,
+  openEditModal, 
   themeAheadOfLoading,
   primaryColor,
   compact=false,
   noLabel=false,
 }) => {  
-
-  const navigation = useNavigation();
-
-  const closeModalAfterDelay = () => {
-    let timeout;
-    timeout = setTimeout(() => {
-      closeEditModal();
-    }, 1000);
-  };
-
-  const handleGoToLocationEditScreenFocusNotes = () => {
-    navigation.navigate("LocationEdit", {
-      location: location,
-      category: location.category || "",
-      notes: location.personal_experience_info || "",
-      parking: location.parking_score || "",
-      focusOn: "focusNotes",
-    });
-    //doesn't help
-    closeModalAfterDelay();
-  };
-
-
-
+  
   const handlePress = () => {
     const modalData = {
       title: "Notes",
       icon: memoizedIcon,
       contentData: location.personal_experience_info,
-      onPress: () => handleGoToLocationEditScreenFocusNotes(),
+      location: location,
+      focusOn: 'focusNotes',
+ 
     };
     openEditModal(modalData); 
   };
@@ -62,8 +39,8 @@ const LocationNotes = ({
 
     const memoizedIcon = useMemo(
     () => (
-      <MaterialIcons
-        name={hasNotes ? "sticky-note-2" : "edit-note"}
+      <SvgIcon
+        name={hasNotes ? "note_text" : "note_edit_outline"}
         size={iconSize}
         color={
           hasNotes

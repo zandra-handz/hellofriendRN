@@ -5,6 +5,10 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import LocationTravelTimes from "./LocationTravelTimes";
 import LocationUtilityTray from "./LocationUtilityTray";
 
+import LocationSavingActions from "./LocationSavingActions";
+import LocationParking from "./LocationParking";
+import LocationNotes from "./LocationNotes";
+
 import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
 import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
 
@@ -30,8 +34,7 @@ const InfoItemLocation = ({
   onLocationDetailsPress,
   onCloseLocationDetails,
   children,
-}: Props) => { 
-
+}: Props) => {
   const { handleAddToFaves, addToFavesMutation } = useAddToFaves({
     userId: userId,
     friendId: friendId,
@@ -42,6 +45,8 @@ const InfoItemLocation = ({
       friendId: friendId,
     }
   );
+
+  const fadeOpacity = 0.8;
 
   const onAddPress = () => {
     if (!destinationLocation?.id) {
@@ -80,7 +85,7 @@ const InfoItemLocation = ({
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row",   minWidth: 80 }}>
+      <View style={{ flexDirection: "row", minWidth: 80 }}>
         <GlobalPressable
           onPress={onAddressSettingsPress}
           style={styles.addressesButton}
@@ -97,7 +102,7 @@ const InfoItemLocation = ({
           />
         </GlobalPressable>
 
-        <View style={{marginLeft: 6}}>
+        <View style={{ marginLeft: 6 }}>
           <LocationTravelTimes
             iconSize={ICON_SIZE}
             location={destinationLocation}
@@ -110,7 +115,64 @@ const InfoItemLocation = ({
       </View>
 
       <View style={{ minWidth: 80 }}>
-        <LocationUtilityTray
+        <View
+          style={{
+            paddingRight: 4,
+            flexDirection: "row",
+            width: 88, //EYEBALL
+            justifyContent: "space-between",
+          }}
+        >
+          {destinationLocation?.id && (
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                // backgroundColor: "teal",
+              }}
+            >
+              <LocationSavingActions
+                handleAddToFaves={onAddPress}
+                handleRemoveFromFaves={onRemovePress}
+                userId={userId}
+                friendId={friendId}
+                friendName={friendName}
+                location={destinationLocation}
+                iconSize={ICON_SIZE}
+                fadeOpacity={fadeOpacity}
+                themeAheadOfLoading={themeAheadOfLoading}
+                primaryColor={primaryColor}
+                compact={true}
+                noLabel={true}
+              />
+
+              <LocationParking
+                location={destinationLocation}
+                openEditModal={onLocationDetailsPress}
+                closeEditModal={onCloseLocationDetails}
+                iconSize={ICON_SIZE}
+                fadeOpacity={fadeOpacity}
+                primaryColor={primaryColor}
+                compact={true}
+                noLabel={true} // really only need compact or noLabel, not both, just experimenting rn
+              />
+              <LocationNotes
+                location={destinationLocation}
+                openEditModal={onLocationDetailsPress}
+                closeEditModal={onCloseLocationDetails}
+                iconSize={ICON_SIZE}
+                fadeOpacity={fadeOpacity}
+                themeAheadOfLoading={themeAheadOfLoading}
+                primaryColor={primaryColor}
+                compact={true}
+                noLabel={true}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* <LocationUtilityTray
           themeAheadOfLoading={themeAheadOfLoading}
           primaryColor={primaryColor}
           onAddPress={onAddPress}
@@ -122,7 +184,7 @@ const InfoItemLocation = ({
           location={destinationLocation}
           openEditModal={onLocationDetailsPress}
           closeEditModal={onCloseLocationDetails}
-        />
+        /> */}
       </View>
 
       {children}
@@ -143,7 +205,7 @@ const styles = StyleSheet.create({
   addressesButton: {
     width: "auto",
     flexDirection: "row",
-    flexShrink: 1, 
+    flexShrink: 1,
   },
 });
 

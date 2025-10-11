@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   iconColor: string;
@@ -40,11 +41,7 @@ const HelpButton = ({
       >
         help
       </Text>
-      <MaterialCommunityIcons
-        name={"help-circle"}
-        size={24}
-        color={iconColor}
-      />
+      <SvgIcon name={"help_circle"}  size={24} color={iconColor} />
     </GlobalPressable>
   );
 };

@@ -4,12 +4,17 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Moment } from "../types/MomentContextTypes";
 import { RootStackParamList } from "../types/NavigationTypes";
-
+import { Location } from "../types/LocationTypes";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type NavToHelloViewProps = {
   startingIndex: number | null; // can this be null?
   inPersonFilter: boolean;
+};
+
+type NavToLocationEditProps = {
+  location: Location;
+  focusOn: string;
 };
 
 type NavToMomentsProp = {
@@ -48,6 +53,7 @@ interface hookReturns {
     inPersonFilter,
   }: NavToHelloViewProps) => void;
   navigateToLocationSearch: () => void;
+  navigateToLocationEdit: ({ location, focusOn }: NavToLocationEditProps) => void;
   navigateToMomentFocus: ({ screenCameFrom }: NavToMomentFocusProp) => void;
   navigateToMomentFocusWithText: ({
     screenCameFrom,
@@ -66,10 +72,8 @@ interface hookReturns {
 const useAppNavigations = (): hookReturns => {
   const navigation = useNavigation<NavigationProp>();
 
-
   const navigateToHome = () => {
-    navigation.navigate("hellofriend")
-
+    navigation.navigate("hellofriend");
   };
 
   const navigateToAddFriend = () => {
@@ -91,6 +95,18 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("HelloView", { startingIndex, inPersonFilter });
   };
 
+  const navigateToLocationEdit = ({
+    location,
+    focusOn,
+  }: NavToLocationEditProps) => {
+    navigation.navigate("LocationEdit", {
+      category: location.category || "",
+      notes: location.personal_experience_info || "",
+      parking: location.parking_score || "",
+      focusOn: focusOn,
+    });
+  };
+
   const navigateToMomentFocus = ({ screenCameFrom }: NavToMomentFocusProp) => {
     navigation.navigate("MomentFocus", {
       screenCameFrom: screenCameFrom,
@@ -107,7 +123,7 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
-  const navigateToMoments = ({ scrollTo=null}: NavToMomentsProp) => {
+  const navigateToMoments = ({ scrollTo = null }: NavToMomentsProp) => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
 
@@ -129,7 +145,6 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToWelcome = () => {
     navigation.navigate("Welcome");
-
   };
 
   const navigateToAuth = ({ usernameEntered }: NavToAuthProp) => {
@@ -142,7 +157,6 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToRecoverCredentials = () => {
     navigation.navigate("RecoverCredentials");
-
   };
 
   const navigateBack = () => {
@@ -156,6 +170,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToFinalize,
     navigateToHelloes,
     navigateToHelloView,
+    navigateToLocationEdit,
     navigateToLocationSearch,
     navigateToMomentFocus,
     navigateToMomentFocusWithText,

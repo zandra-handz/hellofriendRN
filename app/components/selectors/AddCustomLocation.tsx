@@ -4,13 +4,13 @@ import {
   Pressable,
   StyleSheet,
   TextInput,
-  Alert,
+ 
 } from "react-native";
-import React, { useState, useEffect, useRef, useMemo } from "react"; 
-import {  MaterialIcons } from "@expo/vector-icons";
+import React, { useState, useEffect, useRef } from "react"; 
+ 
 import Animated, { SlideInLeft } from "react-native-reanimated"; 
 import manualGradientColors from "@/app/styles/StaticColors";
- 
+ import SvgIcon from "@/app/styles/SvgIcons";
 import FlashMessage from "../alerts/FlashMessage";
 
 type Props = {
@@ -127,8 +127,8 @@ const AddCustomLocation = ({
               : "transparent",
           }}
         >
-          <MaterialIcons
-            name={!inputActive ? "add" : "keyboard-backspace"}
+          <SvgIcon
+            name={!inputActive ? "plus" : "chevron_left"}
             color={primaryColor}
             color={manualGradientColors.homeDarkColor}
             size={16}

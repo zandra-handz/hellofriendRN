@@ -140,8 +140,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
         >
           <SvgIcon
             name={"pin_outline"}
-            height={22}
-            width={22}
+            size={22} 
             color={manualGradientColors.homeDarkColor}
           />
         </Animated.View>
@@ -157,8 +156,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
         >
           <SvgIcon
             name={"calendar_outline"}
-            height={22}
-            width={22}
+            size={22} 
             color={manualGradientColors.homeDarkColor}
           />
         </Animated.View>

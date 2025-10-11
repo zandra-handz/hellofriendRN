@@ -6,7 +6,7 @@ type Props = {
   onPress: () => void;
   onTextChange: () => void;
   isVisible: boolean;
-  closeDialog: () => void;
+  onClose: () => void;
   autoFocus: boolean;
   title: string;
   inputType: string;

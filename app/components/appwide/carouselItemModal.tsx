@@ -4,8 +4,7 @@ import {
   ScrollView,
   StyleSheet, 
   View,
-  Text,
-  AccessibilityInfo,
+  Text, 
 } from "react-native";
 
 import manualGradientColors  from "@/app/styles/StaticColors";

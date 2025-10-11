@@ -18,6 +18,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
   import { AppFontStyles } from "@/app/styles/AppFonts";
 import { Moment } from "@/src/types/MomentContextTypes";
 import manualGradientColors  from "@/app/styles/StaticColors";
+
+import SvgIcon from "@/app/styles/SvgIcons";
  
 interface MomentItemsProps {
   index: number;

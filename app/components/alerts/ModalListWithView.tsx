@@ -5,13 +5,9 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
   FadeInUp,
-  FadeOutUp,
-  SlideInUp,
-  SlideOutDown,
-  FadeOutDown,
+  FadeOutUp, 
   useSharedValue,
-  useAnimatedStyle,
-  useAnimatedReaction,
+  useAnimatedStyle, 
   withTiming,
   withDelay,
 } from "react-native-reanimated";

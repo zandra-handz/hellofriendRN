@@ -114,8 +114,7 @@ const FindNewLocation = ({
       >
         <View
           style={{
-            flexDirection: "row",
-            backgroundColor: "orange",
+            flexDirection: "row", 
             height: "100%",
             alignItems: "center",
             justifyContent: "flex-start",
@@ -131,7 +130,7 @@ const FindNewLocation = ({
               height: HEIGHT,
               alignItems: 'center', 
               justifyContent: 'center',
-              backgroundColor: 'yellow',
+            //  backgroundColor: 'yellow',
               
             }}
           >

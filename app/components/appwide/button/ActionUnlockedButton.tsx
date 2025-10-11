@@ -10,14 +10,24 @@ import {
   withTiming,
 } from "react-native-reanimated";
 
+import manualGradientColors from "@/app/styles/StaticColors";
+
+
+type Props = {
+  isUnlocked: boolean;
+  primaryColor: string;
+  label: string;
+  onPress: (label: string) => void;  
+  pulseDuration?: number;
+}
+
 const ActionUnlockedButton = ({
   isUnlocked = true,
-  primaryColor,
-  manualGradientColors,
+  primaryColor='orange', 
   label,
   onPress,
   pulseDuration = 2000,
-}) => {
+} : Props) => {
   const AnimatedPressable =
     Animated.createAnimatedComponent(Pressable);
 
@@ -96,18 +106,15 @@ const ActionUnlockedButton = ({
 };
 
 const styles = StyleSheet.create({
-  actionUnlockedButton: {
-    // borderBottomWidth: 0.8,
+  actionUnlockedButton: { 
     borderWidth: StyleSheet.hairlineWidth,
-    alignText: "right",
-    flexDirection: "row",
+    // alignText: "right", 
     alignContent: "center",
     justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 2,
     paddingHorizontal: 10,
-    //marginHorizontal: 6,
     borderRadius: 16,
     height: "auto",
     width: "auto",

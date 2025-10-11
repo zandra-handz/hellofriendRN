@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   categoryColorsMap: object;
@@ -46,8 +46,8 @@ const EscortBarMoments = ({
           style={styles.backButton}
           onPress={navigateBack}
         >
-          <MaterialIcons
-            name={"keyboard-arrow-left"}
+          <SvgIcon
+            name={"chevron-left"}
             size={20}
             color={primaryColor}
           />
@@ -65,8 +65,8 @@ const EscortBarMoments = ({
             style={styles.prevButton}
             onPress={onLeftPress}
           >
-            <MaterialIcons
-              name={"keyboard-double-arrow-left"}
+            <SvgIcon
+              name={"chevron_double_left"}
               size={20}
               style={{ opacity: 0.6 }}
               color={primaryColor}
@@ -78,8 +78,8 @@ const EscortBarMoments = ({
             style={styles.nextButton}
             onPress={onRightPress}
           >
-            <MaterialIcons
-              name={"keyboard-double-arrow-right"}
+            <SvgIcon
+              name={"chevron_double_right"}
               size={20}
               style={{ opacity: 0.6 }}
               color={primaryColor}
@@ -92,9 +92,8 @@ const EscortBarMoments = ({
             style={styles.sendButton}
             onPress={onSendPress}
           >
-            <MaterialCommunityIcons
-              // name={"keyboard-arrow-right"}
-              name={"send-circle-outline"}
+            <SvgIcon 
+              name={"send_circle_outline"}
               size={20}
               color={primaryColor}
             />

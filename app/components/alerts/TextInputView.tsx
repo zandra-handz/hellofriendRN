@@ -12,8 +12,8 @@ import Animated, {
   FadeOut,
   withDelay,
 } from "react-native-reanimated";
-import PlainSafeView from "../appwide/format/PlainSafeView"; 
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import PlainSafeView from "../appwide/format/PlainSafeView";  
+import SvgIcon from "@/app/styles/SvgIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TextInputView = ({
@@ -183,8 +183,8 @@ const TextInputView = ({
           >
             Got it!
           </Text>
-          <MaterialCommunityIcons
-            name={"check-circle"}
+          <SvgIcon
+            name={"check_circle"}
             size={24}
             // color={themeStyles.primaryText.color}
             color={manualGradientColors.lightColor}

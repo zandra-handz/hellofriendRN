@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet, FlatList } from "react-native";
-import { MaterialCommunityIcons  } from "@expo/vector-icons";
+ 
 import AddCustomLocation from "./AddCustomLocation";
 import LocationItemsModal from "./LocationItemsModal";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 const PickerComplexList = ({
   primaryColor,
@@ -103,8 +104,8 @@ const PickerComplexList = ({
       questionText="Select location"
       backgroundColor={backgroundColor}
       headerIcon={
-        <MaterialCommunityIcons
-          name={"storefront-outline"}
+        <SvgIcon
+          name={"map_marker"}
           size={30}
           color={primaryColor}
         />

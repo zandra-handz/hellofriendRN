@@ -19,7 +19,7 @@ export const ShowQuickView = ({
   update=false,
   duration=2000,
 }: Props) => {
-  const triggerKey = Date.now();
+  // const triggerKey = Date.now();
 
   if (currentSibling) {
     console.log("current sibling detected!");

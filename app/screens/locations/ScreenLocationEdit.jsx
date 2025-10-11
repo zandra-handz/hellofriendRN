@@ -1,22 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Keyboard } from "react-native";
- 
+import { View, Text, StyleSheet, Keyboard } from "react-native";
+
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
-
+import LocationAddress from "@/app/components/locations/LocationAddress";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useUser } from "@/src/context/UserContext"; 
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import ButtonBaseSpecialSave from "@/app/components/buttons/scaffolding/ButtonBaseSpecialSave";
-import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
-import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";
-import BodyStyling from "@/app/components/scaffolding/BodyStyling"; 
-import useUpdateLocation from "@/src/hooks/LocationCalls/useUpdateLocation";
-import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { useUser } from "@/src/context/UserContext";
+import {  useLDTheme } from "@/src/context/LDThemeContext";
  
+import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
+import useUpdateLocation from "@/src/hooks/LocationCalls/useUpdateLocation";
+import EscortBar from "@/app/components/moments/EscortBar";
+// import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import { LinearGradient } from "expo-linear-gradient";
+
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 const ScreenLocationEdit = () => {
   const route = useRoute();
@@ -26,22 +29,33 @@ const ScreenLocationEdit = () => {
   const parking = route.params?.parking ?? null;
   const focusOn = route.params?.focusOn ?? null;
 
-
+  // const { friendListAndUpcoming} = useFriendListAndUpcoming();
+  // const friendList = friendListAndUpcoming?.friends;
   const { user } = useUser();
+  const { selectedFriend } = useSelectedFriend();
 
-
-  const { handleDeleteLocation, deleteLocationMutation } = useDeleteLocation({userId: user?.id, locationId: location?.id});
-  const { handleUpdateLocation, updateLocationMutation } = useUpdateLocation({userId: user?.id, locationId: location?.id});
+  const { handleDeleteLocation, deleteLocationMutation } = useDeleteLocation({
+    userId: user?.id,
+    locationId: location?.id,
+  });
+  const { handleUpdateLocation, updateLocationMutation } = useUpdateLocation({
+    userId: user?.id,
+    locationId: location?.id,
+  });
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const navigation = useNavigation();
- 
-const { lightDarkTheme } = useLDTheme(); 
+
+  const { lightDarkTheme } = useLDTheme();
   const { themeAheadOfLoading } = useFriendStyle();
 
   const editedTextRef = useRef(null);
   const editedCategoryRef = useRef(null);
+
+  const fontStyle = AppFontStyles.welcomeText;
+  const primaryColor = lightDarkTheme.primaryText;
+  const backgroundColor = lightDarkTheme.primaryBackground;
 
   // useLayoutEffect(() => {
   //   if ((focusOn === 'focusNotes') && editedTextRef && editedTextRef.current) {
@@ -101,7 +115,7 @@ const { lightDarkTheme } = useLDTheme();
   const updateParkingScore = (text) => {
     if (editedParkingScoreRef && editedParkingScoreRef.current) {
       editedParkingScoreRef.current.setText(text);
-      console.log("in parent", editedParkingScoreRef.current.getText());
+ 
     }
   };
 
@@ -135,142 +149,105 @@ const { lightDarkTheme } = useLDTheme();
     }
   }, [deleteLocationMutation]);
 
+  const flattenedHeaderStyle = [fontStyle, { color: primaryColor }];
+
   return (
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.container]}
+    <SafeViewAndGradientBackground
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
+      friendId={selectedFriend?.id}
+      backgroundOverlayHeight=""
+      includeBackgroundOverlay={true}
+      useOverlayFade={false}
+      useSolidOverlay={false}
+      styles={[{ flex: 1 }]}
     >
-      {/* <View
-                style={{
-                  width: "100%",
-      
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              > */}
-    
-          <View style={styles.sliderContainer}>
-            <SlideToDeleteHeader
-              itemToDelete={location}
-              onPress={handleDelete}
-              sliderWidth={"100%"}
-              targetIcon={MaterialCommunityIcons}
-          
+      <View style={styles.headerWrapper}>
+        <Text style={flattenedHeaderStyle}>Edit location</Text>
+      </View>
+
+      <View style={styles.bodyWrapper}>
+        <View style={styles.everythingBesidesTypeWrapper}>
+          <LocationAddress
+            address={location?.address}
+            primaryColor={primaryColor}
+          />
+          <TextEditBox
+            ref={editedCategoryRef}
+            autoFocus={focusOn === "focusCategory"}
+            title={"Edit category"}
+            mountingText={category}
+            onTextChange={updateCategoryEditString}
+            multiline={false}
+            height={"100%"}
+          />
+
+          <View
+            style={{
+              height: isKeyboardVisible ? "50%" : "30%",
+              flexGrow: 1,
+              marginBottom: "3%",
+            }}
+          >
+            <TextEditBox
+              ref={editedTextRef}
+              autoFocus={focusOn === "focusNotes"}
+              title={"Edit notes"}
+              mountingText={notes}
+              onTextChange={updateNoteEditString}
+              height={"100%"}
             />
           </View>
-    
-
-      <BodyStyling
-        backgroundColor={lightDarkTheme.primaryBackground}
-        friendLightColor={themeAheadOfLoading.lightColor}
-        height={"96%"}
-        width={"101%"}
-        minHeight={"96%"}
-        paddingTop={"4%"}
-        paddingHorizontal={"0%"} //too much padding will cause the Type picker to flow to next line
-        children={
-          <>
-            <View
-              style={{
-                height: isKeyboardVisible ? "30%" : "20%",
-                marginBottom: "3%",
-              }}
-            >
-              <TextEditBox
-                ref={editedCategoryRef}
-                autoFocus={focusOn === "focusCategory"}
-                title={"Edit category"}
-                mountingText={category}
-                onTextChange={updateCategoryEditString}
-                multiline={false}
-                height={"100%"}
-              />
-            </View>
-
-            <View
-              style={{
-                height: isKeyboardVisible ? "50%" : "30%",
-                flexGrow: 1,
-                marginBottom: "3%",
-              }}
-            >
-              <TextEditBox
-                ref={editedTextRef}
-                autoFocus={focusOn === "focusNotes"}
-                title={"Edit notes"}
-                mountingText={notes}
-                onTextChange={updateNoteEditString}
-                height={"100%"}
-              />
-            </View>
-
-            <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
-              <FlatListChangeChoice
-                lightDarkTheme={lightDarkTheme}
-                themeAheadOfLoading={themeAheadOfLoading}
-                horizontal={true}
-                choicesArray={parkingScores}
-                ref={editedParkingScoreRef}
-                title={"Change parking score"}
-                oldChoice={parking}
-                onChoiceChange={updateParkingScore}
-              />
-            </View>
-            {!isKeyboardVisible && (
-              <ButtonBaseSpecialSave
-                label="SAVE CHANGES "
-                maxHeight={80}
-                onPress={handleSubmit}
-                isDisabled={false}
-                fontFamily={"Poppins-Bold"}
-                // image={require("@/app/assets/shapes/redheadcoffee.png")}
-              />
-            )}
-          </>
-        }
-      />
-
-      {/* </View> */}
-      {isKeyboardVisible && (
-        <View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            width: "100%",
-            flex: 1,
-            zIndex: 2000,
-          }}
-        >
-          <KeyboardSaveButton
-            label="SAVE CHANGES "
-            onPress={handleSubmit}
-            isDisabled={false}
-            image={false}
+        </View>
+        <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
+          <FlatListChangeChoice
+            lightDarkTheme={lightDarkTheme}
+            themeAheadOfLoading={themeAheadOfLoading}
+            horizontal={true}
+            choicesArray={parkingScores}
+            ref={editedParkingScoreRef}
+            title={"Change parking score"}
+            oldChoice={parking}
+            onChoiceChange={updateParkingScore}
           />
         </View>
+      </View>
+      {!isKeyboardVisible && (
+        <EscortBar
+          primaryColor={primaryColor}
+          primaryBackground={backgroundColor}
+          forwardFlowOn={false}
+          label={"Save changes"}
+          onPress={handleSubmit}
+        />
       )}
-    </LinearGradient>
+    </SafeViewAndGradientBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
   },
-  sliderContainer: {
-    //position: "absolute",
-    bottom: 0,
-    left: -4,
-    right: 0,
-    zIndex: 3,
-    height: 30,
+  headerWrapper: {
+    padding: 10,
+  },
+  bodyWrapper: {
+    flex: 1,
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+  },
+  typeWrapper: {
     width: "100%",
+    height: 100,
+  },
+  everythingBesidesTypeWrapper: {
+    width: "100%",
+    height: 100,
+    marginTop: 10,
+    zIndex: 5000,
   },
 });
 

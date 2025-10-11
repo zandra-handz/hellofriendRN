@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
 import LocationQuickView from "@/app/components/alerts/LocationQuickView";
@@ -9,28 +15,33 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useLocations } from "@/src/context/LocationsContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-import AddressesModal from "@/app/components/headers/AddressesModal";
-import CarouselItemModal from "@/app/components/appwide/carouselItemModal";
+import AddressesModal from "@/app/components/headers/AddressesModal"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 // import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
-
+ 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import DescriptionView from "@/app/components/alerts/DescriptionView"; 
 interface Props {}
 
 const ScreenLocationSearch: React.FC<Props> = ({}) => {
   // const { currentLocationDetails, currentRegion } = useCurrentLocation();
-  const { user } = useUser();
-  const [itemModalVisible, setItemModalVisible] = useState(false);
-  const [modalData, setModalData] = useState({ title: "", data: {} });
+  const { user } = useUser(); 
   const { themeAheadOfLoading } = useFriendStyle();
+  const { navigateToLocationEdit } = useAppNavigations();
   const { lightDarkTheme } = useLDTheme();
   const { currentDay } = useLocationDetailFunctions();
   const [quickView, setQuickView] = useState(null);
   const nullQuickView = () => {
     setQuickView(null);
+  };
+
+  const [descriptionView, setDescriptionView] = useState(null);
+  const nullDescriptionView = () => {
+    setDescriptionView(null);
   };
 
   const selectedDay = useRef({ index: null, day: "" });
@@ -53,14 +64,39 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
       }
     }
   };
+ 
+  const handleNavigateToLocationEdit = (data) => {
+    if (data == undefined) {
+      return;
+    }
 
-  const handleSetModalData = (data) => {
-    setModalData(data);
-    setItemModalVisible(true);
+    navigateToLocationEdit({ location: data.location, focusOn: data.focusOn });
+    nullDescriptionView();
   };
 
-  const handleCloseItemModal = () => {
-    setItemModalVisible(false);
+  const handleViewItemDescription = (data) => {
+    if (data != undefined) {
+      setDescriptionView({
+        topBarText: `Location: ${data.title}`,
+        view: (
+          <View
+            style={{
+              backgroundColor: lightDarkTheme.primaryBackground,
+              flex: 1,
+            }}
+          >
+            <Text style={{ color: lightDarkTheme.primaryText }}>
+              {data?.contentData}
+            </Text>
+          </View>
+        ),
+        message: `hi hi hi`,
+        bottom: 120, // space from bottom of screen
+        height: 200,
+        update: false,
+        onRightPress: () => handleNavigateToLocationEdit(data),
+      });
+    }
   };
 
   //focusedLocation is in LocationsMapView
@@ -87,6 +123,25 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
     }
   };
 
+  const handleRenderDescriptionView = useCallback(() => {
+    return (
+      <>
+        {descriptionView && (
+          <DescriptionView
+            topBarText={descriptionView.topBarText}
+            isInsideModal={false}
+            message={descriptionView.message}
+            view={descriptionView.view}
+            onClose={nullDescriptionView}
+            onRightPress={descriptionView.onRightPress}
+            bottom={descriptionView.bottom}
+            height={descriptionView.height}
+          />
+        )}
+      </>
+    );
+  }, [descriptionView, nullDescriptionView]);
+
   const { friendDash } = useFriendDash();
 
   const friendFaveIds = useMemo(
@@ -103,51 +158,46 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
 
   const { selectedFriend } = useSelectedFriend();
 
-
-  
-   const [ highlightedCategory, setHighlightedCategory ] = useState(null);
+  const [highlightedCategory, setHighlightedCategory] = useState(null);
   const { faveLocations, nonFaveLocations } = useFriendLocations({
     inPersonHelloes: inPersonHelloes,
     locationList: locationList,
     friendFaveIds: friendFaveIds,
   });
 
-const combinedLocationsObject = {
-  faveLocations,
-  nonFaveLocations,
-  combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
-};
+  const combinedLocationsObject = {
+    faveLocations,
+    nonFaveLocations,
+    combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
+  };
 
-// categories list, reactive to combinedLocations changes
-const categories = useMemo(() => {
-  return Array.from(
-    new Set(
-      combinedLocationsObject.combinedLocations
-        .map((item) => item.category)
-        .filter(Boolean) // remove null/undefined
-    )
-  );
-}, [combinedLocationsObject.combinedLocations]);
+  // categories list, reactive to combinedLocations changes
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(
+        combinedLocationsObject.combinedLocations
+          .map((item) => item.category)
+          .filter(Boolean) // remove null/undefined
+      )
+    );
+  }, [combinedLocationsObject.combinedLocations]);
 
+  const handleCategoryPress = (category) => {
+    if (!category) return;
 
+    if (category !== highlightedCategory) {
+      setHighlightedCategory(category);
+    } else {
+      setHighlightedCategory(null);
+    }
+  };
 
-const handleCategoryPress = (category) => {
-  if (!category) return;
-
-  if (category !== highlightedCategory) {
-    setHighlightedCategory(category);
-  } else {
-    setHighlightedCategory(null);
-  }
-};
-
-
-const filteredCombinedLocations = useMemo(() => {
-  if (!highlightedCategory) return combinedLocationsObject.combinedLocations;
-  return combinedLocationsObject.combinedLocations.filter(
-    (item) => item.category === highlightedCategory
-  );
-}, [highlightedCategory, combinedLocationsObject.combinedLocations]);
+  const filteredCombinedLocations = useMemo(() => {
+    if (!highlightedCategory) return combinedLocationsObject.combinedLocations;
+    return combinedLocationsObject.combinedLocations.filter(
+      (item) => item.category === highlightedCategory
+    );
+  }, [highlightedCategory, combinedLocationsObject.combinedLocations]);
 
   const { pastHelloLocations } = usePastHelloesLocations({
     inPersonHelloes: inPersonHelloes,
@@ -184,6 +234,7 @@ const filteredCombinedLocations = useMemo(() => {
       backgroundOverlayBottomRadius={0}
       style={{ flex: 1 }}
     >
+      {handleRenderDescriptionView()}
       <>
         <View style={styles.mapContainer}>
           <LocationsMapView
@@ -196,9 +247,7 @@ const filteredCombinedLocations = useMemo(() => {
             // combinedLocationsForList={
             //   combinedLocationsObject?.combinedLocations
             // }
-                        combinedLocationsForList={
-              filteredCombinedLocations
-            }
+            combinedLocationsForList={filteredCombinedLocations}
             locationCategories={categories}
             highlightedCategory={highlightedCategory}
             currentDayDrilledOnce={currentDay}
@@ -212,8 +261,10 @@ const filteredCombinedLocations = useMemo(() => {
             darkerOverlay={lightDarkTheme.darkerOverlayBackground}
             primaryBackground={lightDarkTheme.primaryBackground}
             openAddresses={openModal}
-            openItems={handleSetModalData}
-            closeItems={handleCloseItemModal}
+            // openItems={handleSetModalData}
+            openItems={handleViewItemDescription}
+            // closeItems={handleCloseItemModal}
+            closeItems={nullDescriptionView}
             handleViewLocation={handleViewLocation}
             quickView={quickView}
             nullQuickView={nullQuickView}
@@ -235,19 +286,7 @@ const filteredCombinedLocations = useMemo(() => {
           </View>
         )}
 
-        {itemModalVisible && (
-          <View>
-            <CarouselItemModal
-              // item={data[currentIndex]} not syncing right item, removed it from modal; data solely from the user-facing component
-              icon={modalData?.icon}
-              title={modalData?.title}
-              display={modalData?.contentData}
-              isVisible={itemModalVisible}
-              closeModal={() => setItemModalVisible(false)}
-              onPress={modalData?.onPress}
-            />
-          </View>
-        )}
+  
       </>
     </SafeViewAndGradientBackground>
   );

@@ -2,7 +2,7 @@ import { View, Text, Keyboard, StyleSheet } from "react-native";
 import React from "react";
 import KeyboardCoasterNotNow from "./KeyboardCoasterNotNow";
 import ActionUnlockedButton from "../appwide/button/ActionUnlockedButton";
-import manualGradientColors  from "@/app/styles/StaticColors";
+
 interface KeyboardCoastersProps {
   isKeyboardVisible: boolean;
   isFriendSelected: boolean;
@@ -13,11 +13,11 @@ interface KeyboardCoastersProps {
 
 const KeyboardCoasters: React.FC<KeyboardCoastersProps> = ({
   isKeyboardVisible,
- 
+
   showMomentScreenButton,
   primaryColor,
   onPress,
-}) => { 
+}) => {
   return (
     <>
       {isKeyboardVisible && (
@@ -31,11 +31,9 @@ const KeyboardCoasters: React.FC<KeyboardCoastersProps> = ({
         {showMomentScreenButton && isKeyboardVisible && (
           <ActionUnlockedButton
             onPress={onPress}
-               primaryColor={primaryColor}
-               manualGradientColors={manualGradientColors}
+            primaryColor={primaryColor}
             label={"Pick category"}
             isUnlocked={true}
-            includeArrow={true}
           />
         )}
       </View>

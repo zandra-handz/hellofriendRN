@@ -8,16 +8,10 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Keyboard,
-  Alert, 
-} from "react-native";
+import { View, Text, StyleSheet, Keyboard, Alert } from "react-native";
 
 import DeleteUnused from "./DeleteUnused";
-import LocationModal from "../selectors/LocationModal"; 
+import LocationModal from "../selectors/LocationModal";
 import EscortBar from "../moments/EscortBar";
 import IdeasAdded from "./IdeasAdded";
 import HelloNotes from "./HelloNotes";
@@ -39,23 +33,15 @@ import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
- 
+
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
- 
+
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
-const ContentAddHello = ({
-  userId,
-
-  fontStyle,
-  primaryColor,
-  backgroundColor,
-}) => {
+const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
   const navigation = useNavigation();
   const { resetTheme, getThemeAheadOfLoading } = useFriendStyle();
   const { autoSelectFriend } = useAutoSelector();
- 
- 
 
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
@@ -74,8 +60,6 @@ const ContentAddHello = ({
   const [notesModalVisible, setNotesModalVisible] = useState(false);
   const { navigateBack } = useAppNavigations();
   const { selectedFriend, selectFriend } = useSelectedFriend();
-
- 
 
   const { friendDash } = useFriendDash();
 
@@ -105,7 +89,6 @@ const ContentAddHello = ({
 
   useFocusEffect(
     useCallback(() => {
-      // const moments = filterOutNonAdded;
       setMomentsAdded(filterOutNonAdded);
       return () => {
         setMomentsAdded([]);
@@ -128,8 +111,6 @@ const ContentAddHello = ({
       keyboardDidHideListener.remove();
     };
   }, []);
-
-  const [autoTrigger, setAutoTrigger] = useState(false);
 
   const faveLocations = useMemo(() => {
     if (!locationList || !friendDash?.friend_faves?.locations) {
@@ -154,8 +135,6 @@ const ContentAddHello = ({
         { text: `Yes`, onPress: () => navigateBack() },
       ]
     );
-
-    // setIsDoubleCheckerVisible(true);
   };
 
   const openDoubleChecker = () => {
@@ -167,8 +146,6 @@ const ContentAddHello = ({
       },
       { text: `Yes`, onPress: () => handleSave() },
     ]);
-
-    // setIsDoubleCheckerVisible(true);
   };
 
   const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
@@ -297,7 +274,6 @@ const ContentAddHello = ({
           friend: selectedFriend.id,
           type: selectedTypeChoiceText,
           manualLocation: customLocation,
-          // notes: editedTextRef.current.getText(),
           notes: notePreviewText,
           locationId: existingLocationId,
           date: formattedDate,
@@ -312,48 +288,27 @@ const ContentAddHello = ({
       console.log("catching errors elsewhere, not sure i need this", error);
     }
   };
+  const fontStyle = AppFontStyles.welcomeText;
+  const flattenedHeaderStyle = [fontStyle, { color: primaryColor }];
 
   return (
-    <View
-      style={[
-        {
-          flex: 1,
-        },
-      ]}
-    >
-      <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
-        <Text style={[fontStyle, { color: primaryColor }]}>
-          New hello details
-        </Text>
+    <View style={styles.container}>
+      <View style={styles.headerWrapper}>
+        <Text style={flattenedHeaderStyle}>New hello details</Text>
       </View>
       <>
-        <View style={{ flex: 1, paddingHorizontal: 4, paddingVertical: 10 }}>
+        <View style={styles.bodyWrapper}>
           <View style={{ flex: 1 }}>
-            {/* {!isKeyboardVisible && ( */}
-            <View
-              style={{
-                width: "100%",
-                height: 100,
-              }}
-            >
+            <View style={styles.typeWrapper}>
               <PickHelloType
                 primaryColor={primaryColor}
                 selected={selectedTypeChoice}
                 onChange={handleTypeChoiceChange}
               />
             </View>
-            {/* )} */}
 
             {selectedTypeChoiceText && locationListIsSuccess && (
-              <View
-                style={{
-                  width: "100%",
-                  height: 100,
-                  marginTop: 10,
-                  zIndex: 5000,
-                  // padding: 10,
-                }}
-              >
+              <View style={styles.everythingBellowTypeWrapper}>
                 <PickHelloLoc
                   primaryColor={primaryColor}
                   selected={selectedHelloLocation}
@@ -401,26 +356,21 @@ const ContentAddHello = ({
               </View>
             )}
 
-            {
-              // !isKeyboardVisible &&
-              selectedTypeChoiceText && locationListIsSuccess && (
-                <LocationModal
-                  primaryColor={primaryColor}
-                  faveLocations={faveLocations}
-                  savedLocations={locationList}
-                  onLocationChange={handleLocationChange}
-                  modalVisible={locationModalVisible}
-                  setModalVisible={setLocationModalVisible}
-                  selectedLocation={selectedHelloLocation}
-                />
-              )
-            }
+            {selectedTypeChoiceText && locationListIsSuccess && (
+              <LocationModal
+                primaryColor={primaryColor}
+                faveLocations={faveLocations}
+                savedLocations={locationList}
+                onLocationChange={handleLocationChange}
+                modalVisible={locationModalVisible}
+                setModalVisible={setLocationModalVisible}
+                selectedLocation={selectedHelloLocation}
+              />
+            )}
           </View>
 
           {!isKeyboardVisible && selectedTypeChoiceText && (
-            <EscortBar
-              manualGradientColors={manualGradientColors}
-              subWelcomeTextStyle={AppFontStyles.subWelcomeText}
+            <EscortBar  
               primaryColor={primaryColor}
               primaryBackground={backgroundColor}
               forwardFlowOn={false}
@@ -428,7 +378,7 @@ const ContentAddHello = ({
               onPress={openDoubleChecker}
             />
           )}
-        </View> 
+        </View>
       </>
     </View>
   );
@@ -437,33 +387,24 @@ const ContentAddHello = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-
-    zIndex: 1,
   },
-  checkbox: {
-    paddingLeft: 10,
-    paddingBottom: 2,
-    paddingRight: 1,
+  headerWrapper: {
+    padding: 10,
   },
-  controlButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  controlButtonText: {
-    fontSize: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
-  },
-  buttonContainer: {
-    width: "104%",
-    height: "auto",
-    position: "absolute",
-    bottom: -10,
+  bodyWrapper: {
     flex: 1,
-    right: -2,
-    left: -2,
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+  },
+  typeWrapper: {
+    width: "100%",
+    height: 100,
+  },
+  everythingBellowTypeWrapper: {
+    width: "100%",
+    height: 100,
+    marginTop: 10,
+    zIndex: 5000,
   },
 });
 

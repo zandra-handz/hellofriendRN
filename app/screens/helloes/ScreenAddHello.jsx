@@ -32,7 +32,7 @@ const ScreenAddHello = () => {
         userId={user?.id}
         primaryColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.overlayBackground}
-        fontStyle={AppFontStyles.welcomeText} 
+     
       />
     </SafeViewAndGradientBackground>
   );

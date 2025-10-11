@@ -30,7 +30,10 @@ export type RootStackParamList = {
     favorite: boolean;
   };
   LocationSend: undefined;
-  LocationEdit: undefined;
+  LocationEdit: {
+    location: Location,
+    focusOn?: string,
+  }
   LocationCreate: undefined;
   LocationSearch: undefined;
   MidpointLocationSearch: undefined;

@@ -7,11 +7,10 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import PlainSafeView from "../appwide/format/PlainSafeView"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import PlainSafeView from "../appwide/format/PlainSafeView";  
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import manualGradientColors  from "@/app/styles/StaticColors";
 
@@ -162,8 +161,8 @@ const QuickView = ({
           >
             Got it!
           </Text>
-          <MaterialCommunityIcons
-            name={"check-circle"}
+          <SvgIcon
+            name={"check_circle"}
             size={24}
             color={manualGradientColors.lightColor}
           />

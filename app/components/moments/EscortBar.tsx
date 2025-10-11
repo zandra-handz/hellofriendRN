@@ -1,8 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
- import { AppFontStyles } from "@/app/styles/AppFonts";
-
+ import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import ToNextButton from "./ToNextButton";
 import ActionAndBack from "./ActionAndBack"; 

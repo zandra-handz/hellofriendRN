@@ -1,9 +1,6 @@
-import { View, Text, FlatList, StyleSheet, ScrollView } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-// import useFullHelloes from "@/src/hooks/useFullHelloes";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-// import { FullHello } from "@/src/types/HelloTypes";
-// import ModalInfoText from "../headers/ModalInfoText";
+import { View, Text,  StyleSheet  } from "react-native";
+import React, { useCallback,   useState } from "react";
+ 
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import Hours from "../locations/Hours";
@@ -119,8 +116,8 @@ const LocationQuickView = ({
     selectedDay?.current,
   ]);
 
-  const ICON_MARGIN_RIGHT = 10;
-  const ICON_SIZE = 20;
+  // const ICON_MARGIN_RIGHT = 10;
+  // const ICON_SIZE = 20;
 
   return (
     <>

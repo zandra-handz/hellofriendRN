@@ -1,8 +1,9 @@
 import { View, Text, Linking } from "react-native";
-import React, { useCallback } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import React, { useCallback } from "react"; 
+import SvgIcon from "@/app/styles/SvgIcons";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
-const LocationAddress = ({ address, primaryColor, subWelcomeTextStyle }) => {
+const LocationAddress = ({ address, primaryColor  }) => {
  
 
   const handleGetDirections = useCallback(() => {
@@ -13,10 +14,13 @@ const LocationAddress = ({ address, primaryColor, subWelcomeTextStyle }) => {
 }
   }, [address]);
 
+
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+
   return (
     <View style={{ flexDirection: "row", width: "100%" }}>
-      <MaterialCommunityIcons
-        name="map-marker"
+      <SvgIcon
+        name="map_marker"
         size={20}
         color={primaryColor}
       />

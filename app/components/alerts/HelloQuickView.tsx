@@ -118,8 +118,7 @@ const HelloQuickView = ({
             <SvgIcon
               name={"calendar"}
               color={primaryColor}
-              height={ICON_SIZE}
-              width={ICON_SIZE}
+              size={ICON_SIZE} 
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
             <ModalInfoText
@@ -139,8 +138,8 @@ const HelloQuickView = ({
             <SvgIcon
               name={"calendar"}
               color={primaryColor}
-              height={ICON_SIZE}
-              width={ICON_SIZE}
+              size={ICON_SIZE}
+          
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
             <ModalInfoText
@@ -161,8 +160,7 @@ const HelloQuickView = ({
               <SvgIcon
                 name={"calendar"}
                 color={primaryColor}
-                height={ICON_SIZE}
-                width={ICON_SIZE}
+                size={ICON_SIZE} 
                 style={{ marginRight: ICON_MARGIN_RIGHT }}
               />
               <ModalInfoText
@@ -193,8 +191,7 @@ const HelloQuickView = ({
                 <SvgIcon
                   name={"pencil"}
                   color={primaryColor}
-                  height={ICON_SIZE}
-                  width={ICON_SIZE}
+                  size={ICON_SIZE} 
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
               </View>
@@ -227,8 +224,7 @@ const HelloQuickView = ({
                 <SvgIcon
                   name={"pencil"}
                   color={primaryColor}
-                  height={ICON_SIZE}
-                  width={ICON_SIZE}
+                  size={ICON_SIZE} 
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
                 {helloCapsuleData && (

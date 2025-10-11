@@ -2,8 +2,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
-  DimensionValue,
+  Pressable, 
 } from "react-native";
 import React from "react"; 
 

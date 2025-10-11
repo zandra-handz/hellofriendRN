@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { MaterialIcons } from "@expo/vector-icons";
+ 
 import PickerComplexList from "./PickerComplexList";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 const LocationModal = ({
   primaryColor,
@@ -14,13 +15,13 @@ const LocationModal = ({
   buttonHeight = "auto",
 }) => {
   const locationPin = useMemo(() => {
-    return <MaterialIcons name={"bookmark"} size={20}  color={manualGradientColors.lightColor} />;
+    return <SvgIcon name={"bookmark"} size={20}  color={manualGradientColors.lightColor} />;
   }, [primaryColor]);
 
   const bookmarkedPin = useMemo(() => {
     return (
-      <MaterialIcons
-        name={"location-pin"}
+      <SvgIcon
+        name={"map_marker"}
         size={20}
        
         color={primaryColor}

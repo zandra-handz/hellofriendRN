@@ -6,7 +6,7 @@ import ImageFocusTray from "@/app/screens/images/ImageFocusTray";
 import InputSingleValue from "@/app/components/appwide/input/InputSingleValue";
 
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
+ 
 import { useFocusEffect } from "@react-navigation/native";
 import useCreateImage from "@/src/hooks/ImageCalls/useCreateImage";
 

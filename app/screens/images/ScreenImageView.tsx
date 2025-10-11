@@ -9,7 +9,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
 import { useUser } from "@/src/context/UserContext";
-import * as FileSystem from "expo-file-system";
+// import * as FileSystem from "expo-file-system";
 import { File, Directory, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import useImages from "@/src/hooks/ImageCalls/useImages";

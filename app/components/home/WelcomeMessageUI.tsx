@@ -62,9 +62,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
     >
       <SvgIcon
         name={"leaf"}
-        size={1200}
-        width={1200}
-        height={1200}
+        size={1200} 
         color={manualGradientColors.homeDarkColor}
         style={styles.leaf}
       />

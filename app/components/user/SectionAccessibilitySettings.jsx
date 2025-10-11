@@ -1,9 +1,9 @@
 import React, { useMemo, useEffect } from "react";
 import { View, Alert } from "react-native";
 import Toggle from "./Toggle";
-import manualGradientColors from "@/app/styles/StaticColors";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import manualGradientColors from "@/app/styles/StaticColors"; 
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+import SvgIcon from "@/app/styles/SvgIcons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
   const { updateSettingsMutation, updateSettings } = useUpdateSettings({ userId: userId });
@@ -98,8 +98,8 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
         primaryColor={primaryColor}
         label="Manual theme"
         icon={
-          <MaterialCommunityIcons
-            name={"theme-light-dark"}
+          <SvgIcon
+            name={"theme_light_dark"}
             size={20}
             color={primaryColor}
           />
@@ -113,8 +113,8 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
           primaryColor={primaryColor}
           label="Light/Dark"
           icon={
-            <MaterialIcons
-              name={"settings-display"}
+            <SvgIcon
+              name={"compare"}
               size={20}
               color={primaryColor}
             />
@@ -129,8 +129,8 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
         primaryColor={primaryColor}
         label="High Contrast Mode"
         icon={
-          <MaterialCommunityIcons
-            name={"text-shadow"}
+          <SvgIcon
+            name={"text_shadow"}
             size={20}
             color={primaryColor}
           />
@@ -144,7 +144,7 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
         primaryColor={primaryColor}
         label="Large Text"
         icon={
-          <MaterialIcons name={"text-fields"} size={20} color={primaryColor} />
+          <SvgIcon name={"format_font_size_increase"} size={20} color={primaryColor} />
         }
         value={settings.large_text}
         onPress={updateLargeText}
@@ -155,8 +155,8 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
         primaryColor={primaryColor}
         label="Simplify App For Focus"
         icon={
-          <MaterialCommunityIcons
-            name={"image-filter-center-focus"}
+          <SvgIcon
+            name={"image_filter_center_focus"}
             size={20}
             color={primaryColor}
           />
@@ -170,7 +170,7 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
         primaryColor={primaryColor}
         label="Receive Notifications"
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             name={"bell"}
             size={20}
             color={primaryColor}
@@ -185,7 +185,7 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
         primaryColor={primaryColor}
         label="Screen Reader"
         icon={
-          <MaterialIcons name={"volume-up"} size={20} color={primaryColor} />
+          <SvgIcon name={"volume_high"} size={20} color={primaryColor} />
         }
         value={settings.screen_reader}
         onPress={toggleScreenReader}

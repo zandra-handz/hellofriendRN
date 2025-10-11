@@ -2,51 +2,32 @@ import React, { useMemo } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import useDynamicUIFunctions from "@/src/hooks/useDynamicUIFunctions";
-import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 const LocationParking = ({
   location,
   iconSize = 26,
   fadeOpacity = 0.8,
-  openEditModal,
-  closeEditModal,
+  openEditModal, 
   primaryColor,
   compact = false,
   noLabel = false,
 }) => {
   const { getNumericParkingScore } = useLocationDetailFunctions();
 
-  const { getScoreColor } = useDynamicUIFunctions();
-  // const { label, score } = getNumericParkingScore(location.parking_score);
+  const { getScoreColor } = useDynamicUIFunctions(); 
 
-  const navigation = useNavigation();
-
-  const closeModalAfterDelay = () => {
-    let timeout;
-    timeout = setTimeout(() => {
-      closeEditModal();
-    }, 1000);
-  };
-
-  const handleGoToLocationEditScreenFocusParking = () => {
-    navigation.navigate("LocationEdit", {
-      location: location,
-      category: location.category || "",
-      notes: location.personal_experience_info || "",
-      parking: location.parking_score || "",
-      focusOn: "focusParking",
-    });
-    // not sure if working the way I want it
-    closeModalAfterDelay();
-  };
+  
+ 
 
   const handlePress = () => {
     const modalData = {
+      
       title: "Parking score",
       icon: memoizedIcon,
       contentData: scoreLabel,
-      onPress: () => handleGoToLocationEditScreenFocusParking(),
+      location: location,
+      focusOn: "focusParking" //I don't think this exists as an option yet 10/11/2025
     };
     openEditModal(modalData);
   };
@@ -71,8 +52,8 @@ const LocationParking = ({
   // and is a mildly ugly color in DevTools when I profile
   const memoizedIcon = useMemo(
     () => (
-      <MaterialCommunityIcons
-        name={hasNotes ? "car" : "car-cog"}
+      <SvgIcon
+        name={hasNotes ? "car" : "car_cog"}
         size={iconSize}
         color={hasNotes ? scoreColor : primaryColor}
         opacity={hasNotes ? 1 : fadeOpacity}

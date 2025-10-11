@@ -183,7 +183,7 @@ const ImageCarouselSlider = ({
         {/* )} */}
       </>
 
-      {itemModalVisible && (
+      {/* {itemModalVisible && (
         <View>
           <CarouselItemModal
             // item={data[currentIndex]} not syncing right item, removed it from modal; data solely from the user-facing component
@@ -196,7 +196,7 @@ const ImageCarouselSlider = ({
             manualGradientColors={manualGradientColors}
           />
         </View>
-      )}
+      )} */}
     </>
   );
 };
