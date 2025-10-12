@@ -27,8 +27,7 @@ const FriendHistoryPieDataWrap = React.memo(
     selectedFriendName,
     primaryColor,
     manualGradientColors,
-    welcomeTextStyle,
-    subWelcomeTextStyle,
+ 
     primaryOverlayColor,
     darkerOverlayBackgroundColor,
     themeAheadOfLoading,
@@ -36,8 +35,7 @@ const FriendHistoryPieDataWrap = React.memo(
     const { helloesList } = useHelloes();
     // const { friendList } = useFriendList();
     const { selectedFriendStats } = useSelectedFriendStats();
-
-    const [largeFriendChartVisible, setLargeFriendChartVisible] =
+     const [largeFriendChartVisible, setLargeFriendChartVisible] =
       useState(false);
 
     const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
@@ -166,8 +164,7 @@ const FriendHistoryPieDataWrap = React.memo(
               darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
               primaryColor={primaryColor}
               primaryOverlayColor={primaryOverlayColor}
-              welcomeTextStyle={welcomeTextStyle}
-              subWelcomeTextStyle={subWelcomeTextStyle}
+        
               seriesData={seriesData}
               isVisible={largeFriendChartVisible}
               closeModal={handleCloseLargeChart}

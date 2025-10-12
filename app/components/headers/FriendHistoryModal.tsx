@@ -9,6 +9,8 @@ import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
 import { AppFontStyles } from "@/app/styles/AppFonts";
+ 
+
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -42,6 +44,7 @@ const FriendHistoryModal: React.FC<Props> = ({
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
+  
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
   const nullQuickView = () => {
     setQuickView(null);
@@ -57,7 +60,7 @@ const FriendHistoryModal: React.FC<Props> = ({
       const daysSince = daysSincedDateField(helloObject.date);
 
       const word = Number(daysSince) != 1 ? `days` : `day`;
-      // console.log("helloobject@@");
+   
       setQuickView({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
         view: (

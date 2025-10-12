@@ -1,6 +1,7 @@
 // AnimatedPieChart.js
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
+// import GlobalPressable from "../appwide/button/GlobalPressable";
 import Svg, { G, Path } from "react-native-svg";
 import Animated, {
   useSharedValue,
@@ -73,9 +74,9 @@ export default function AnimatedPieChart({
   showPercentages = false,
   showLabels = true,
   onSectionPress = null,
+
   labelsSize = 9,
 }) {
-
   const MAX_FONT_SIZE = 44;
 
   const progress = useSharedValue(0);
@@ -111,10 +112,7 @@ export default function AnimatedPieChart({
 
           const toRad = (angle) => (angle - 90) * (Math.PI / 180);
 
-          const labelDistanceFactor = 0.68; // .8  // adjust to move farther away from center
-
-          // const x = radius + radius * 0.6 * Math.cos(toRad(midAngle));
-          // const y = radius + radius * 0.6 * Math.sin(toRad(midAngle));
+          const labelDistanceFactor = 0.68;
 
           const x =
             radius + radius * labelDistanceFactor * Math.cos(toRad(midAngle));
@@ -200,6 +198,32 @@ export default function AnimatedPieChart({
           );
         })}
       </View>
+
+      {/* Center "All" Button */}
+      {showLabels && (
+        <Pressable
+          onPress={() => onSectionPress?.('all', data[0].name)}
+          style={{
+            position: "absolute",
+       
+            top: size / 2 - 30, // center vertically (adjust half of button height)
+            left: size / 2 - 30, // center horizontally (adjust half of button width)
+            width: 60,
+            height: 60,
+            borderRadius: 999,
+            backgroundColor: primaryOverlayColor,
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 20,
+          }}
+        >
+          <Text
+            style={[welcomeTextStyle, { color: primaryColor, fontSize: 30 }]}
+          >
+            All
+          </Text>
+        </Pressable>
+      )}
 
       <Svg width={size} height={size}>
         <G>

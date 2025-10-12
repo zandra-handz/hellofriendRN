@@ -95,8 +95,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
 
-  //const ELEMENTS_BACKGROUND = CARD_BACKGROUND;
-  const ELEMENTS_BACKGROUND = "transparent";
+//const ELEMENTS_BACKGROUND = CARD_BACKGROUND;
+ const ELEMENTS_BACKGROUND = "transparent";
 
   return (
     <View

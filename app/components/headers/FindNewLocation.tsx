@@ -1,16 +1,9 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  Alert,
-} from "react-native";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import React, { useState, useRef } from "react";
+
+import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, { SlideInLeft } from "react-native-reanimated";
 import manualGradientColors from "@/app/styles/StaticColors";
-import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
 import SearchBarGoogleAddress from "../locations/SearchBarGoogleAddress";
 import FlashMessage from "../alerts/FlashMessage";
 import SearchBarAnimationWrapper from "../foranimations/SearchBarAnimationWrapper";
@@ -31,33 +24,26 @@ type Props = {
 const FindNewLocation = ({
   primaryColor = "orange",
   primaryBackground,
-  userId,
+  // userId,
   height = 60,
   fontStyle = 1,
   onPress,
-  addToOnPress,
+  // addToOnPress,
 }: Props) => {
-  const newCategoryRef = useRef(null);
-  const [newCategory, setNewCategory] = useState("");
-
   const searchStringRef = useRef(null);
 
-
   const HEIGHT = height - 20;
-  const SEARCH_INPUT_LEFT_PADDING = 60;  // so google search input isn't covered by back button
-
-  const [searchString, setSearchString] = useState("");
+  const SEARCH_INPUT_LEFT_PADDING = 60; // so google search input isn't covered by back button
+ 
   const [mountingText, setMountingText] = useState("");
 
   const updateSearchString = (text) => {
-    setSearchString(text);
+ 
 
     if (searchStringRef && searchStringRef.current) {
       searchStringRef.current.setText(text);
     }
-  };
-
-//   const ENTER_MESSAGE_WIDTH = 60;
+  }; 
 
   const [flashMessage, setFlashMessage] = useState<null | {
     text: string;
@@ -65,27 +51,18 @@ const FindNewLocation = ({
     duration: number;
   }>(null);
 
- 
   const [inputActive, setInputActive] = useState(false);
-
-  useEffect(() => {
-    if (inputActive && newCategoryRef.current) {
-      console.log("ready!!!!!!");
-      setTimeout(() => setNewCategory(""), 0);
-      setTimeout(() => {
-        newCategoryRef.current?.focus();
-      }, 50);
-    } else if (!inputActive && newCategoryRef.current) {
-      setTimeout(() => {
-        setNewCategory("");
-      }, 50);
-    }
-  }, [inputActive]);
 
   const toggleInput = () => {
     setInputActive((prev) => !prev);
   };
 
+  const flattenedButtonStyle = StyleSheet.flatten([
+    styles.buttonContainer,
+    {
+      height: HEIGHT,
+    },
+  ]);
   return (
     <>
       {flashMessage && (
@@ -99,44 +76,22 @@ const FindNewLocation = ({
 
       <View
         style={{
-        //   flexDirection: "row",
-        //   alignItems: "center",
-         
+          //   flexDirection: "row",
+          //   alignItems: "center",
 
           paddingLeft: 0,
           borderRadius: fontStyle === 2 ? 20 : 0,
           width: inputActive ? "100%" : 60,
-          height: !inputActive ? HEIGHT : '100%',
+          height: !inputActive ? HEIGHT : "100%",
           backgroundColor: inputActive
             ? manualGradientColors.lightColor
             : "transparent",
         }}
       >
-        <View
-          style={{
-            flexDirection: "row", 
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "flex-start",
-          }}
-        >
-          <Pressable
-            onPress={toggleInput}
-            style={{
-              width: "auto",
-              paddingHorizontal: 10,
-             // position: "absolute",
-              zIndex: 40000,
-              height: HEIGHT,
-              alignItems: 'center', 
-              justifyContent: 'center',
-            //  backgroundColor: 'yellow',
-              
-            }}
-          >
-            <MaterialIcons
-              name={!inputActive ? "add" : "keyboard-backspace"}
-              color={primaryColor}
+        <View style={styles.innerContainer}>
+          <Pressable onPress={toggleInput} style={flattenedButtonStyle}>
+            <SvgIcon
+              name={!inputActive ? "plus" : "chevron_left"}
               color={manualGradientColors.homeDarkColor}
               size={16}
               style={{
@@ -147,15 +102,7 @@ const FindNewLocation = ({
           </Pressable>
 
           {!inputActive && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: 36,
-                width: 200,
-                height: "100%",
-              }}
-            >
+            <View style={styles.labelWrapper}>
               <Text
                 style={[
                   {
@@ -176,34 +123,23 @@ const FindNewLocation = ({
           <Animated.View
             key="inputBox"
             entering={SlideInLeft}
-            style={{
-              width: "100%",
-              // flexGrow: 1,
-              position: "absolute",
-              left: 0,
-              right: 0,
-              paddingLeft: 0,
-              paddingRight: 0,
-              backgroundColor: "pink",
-            }}
+            style={styles.animatedViewContainer}
           >
             <SearchBarAnimationWrapper>
-                <View style={{width: '100%'}}>
-
-            
-              <SearchBarGoogleAddress
-                ref={searchStringRef}
-                mountingText={mountingText}
-                autoFocus={true}
-                onPress={onPress}
-                searchBarLeftPadding={40}
-                visible={true}
-                onTextChange={updateSearchString}
-                paddingLeft={SEARCH_INPUT_LEFT_PADDING}
-                primaryColor={primaryColor}
-                primaryBackground={primaryBackground}
-              />
-                  </View>
+              <View style={{ width: "100%" }}>
+                <SearchBarGoogleAddress
+                  ref={searchStringRef}
+                  mountingText={mountingText}
+                  autoFocus={true}
+                  onPress={onPress}
+                  searchBarLeftPadding={40}
+                  visible={true}
+                  onTextChange={updateSearchString}
+                  paddingLeft={SEARCH_INPUT_LEFT_PADDING}
+                  primaryColor={primaryColor}
+                  primaryBackground={primaryBackground}
+                />
+              </View>
             </SearchBarAnimationWrapper>
           </Animated.View>
         )}
@@ -211,5 +147,34 @@ const FindNewLocation = ({
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  innerContainer: {
+    flexDirection: "row",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  buttonContainer: {
+    width: "auto",
+    paddingHorizontal: 10,
+    zIndex: 40000,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  labelWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 36,
+    width: 200,
+    height: "100%",
+  },
+  animatedViewContainer: {
+    width: "100%",
+    position: "absolute",
+    left: 0,
+    right: 0,
+  },
+});
 
 export default FindNewLocation;

@@ -66,7 +66,7 @@ import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
 import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
-import ScreenCalculateTravelTimes from "./app/screens/locations/ScreenCalculateTravelTimes";
+ 
 import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
 import ScreenAuth from "./app/screens/authflow/ScreenAuth";
 import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
@@ -512,15 +512,7 @@ export const Layout = () => {
                 options={{
                   headerShown: false,
                 }}
-              />
-              <Stack.Screen
-                name="CalculateTravelTimes"
-                component={ScreenCalculateTravelTimes}
-                options={{
-                  headerShown: false,
-                }}
-              />
-
+              /> 
               <Stack.Screen
                 name="AddImage"
                 component={ScreenAddImage}

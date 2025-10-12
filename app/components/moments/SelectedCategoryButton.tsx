@@ -2,7 +2,8 @@ import { View, Text } from "react-native";
 import React, { useEffect, useState, useRef  } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
@@ -131,8 +132,8 @@ const SelectedCategoryButton = ({
                 justifyContent: "flex-end",
               }}
             >
-              <MaterialCommunityIcons
-                name={"pencil-outline"}
+              <SvgIcon
+                name={"pencil"}
                 size={iconSize}
                 style={{ height: iconSize }}
                 color={primaryColor}
@@ -163,7 +164,7 @@ const SelectedCategoryButton = ({
             }}
           >
             {isFriendDefault && (
-              <MaterialCommunityIcons
+              <SvgIcon
                 name={"star"}
                 size={16}
                 style={{ height: 20 }}
@@ -171,7 +172,7 @@ const SelectedCategoryButton = ({
               />
             )}
             {isFrozen && (
-              <MaterialCommunityIcons
+              <SvgIcon
                 name={"pin"}
                 size={16}
                 style={{ height: 20 }}

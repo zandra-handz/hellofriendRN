@@ -18,8 +18,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // Forwarding ref to the parent to expose the TextInput value
 const FlatListChangeChoice = forwardRef(
   (
-    {
-      lightDarkTheme,
+    { 
+      primaryColor,
+      backgroundColor,
       themeAheadOfLoading,
       title = "title",
       horizontal = true,
@@ -78,7 +79,7 @@ const FlatListChangeChoice = forwardRef(
             height: "auto",
           }}
         >
-          <Text style={[styles.title, {color: lightDarkTheme.primaryText}]}>
+          <Text style={[styles.title, {color: primaryColor}]}>
             {title}
           </Text> 
           <MaterialCommunityIcons
@@ -104,16 +105,16 @@ const FlatListChangeChoice = forwardRef(
                     {
                       width: 130,
                       borderWidth: 1,
-                      backgroundColor: lightDarkTheme.primaryBackground,
+                      backgroundColor: backgroundColor,
                       borderColor:
                         item.value === newChoice
                           ? themeAheadOfLoading.darkColor
-                          : lightDarkTheme.primaryBackground,
+                          : backgroundColor
                     },
                   ]}
                 >
-                  <Text style={[lightDarkTheme.priamryText]}>{index + 1}</Text>
-                  <Text style={[lightDarkTheme.priamryText]}>{item.label}</Text>
+                  <Text style={[primaryColor]}>{index + 1}</Text>
+                  <Text style={[primaryColor]}>{item.label}</Text>
                 </TouchableOpacity>
               </View>
             )}

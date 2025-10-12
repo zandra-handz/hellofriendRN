@@ -4,7 +4,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext"; 
-import { AppFontStyles } from "@/app/styles/AppFonts";
+// import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  

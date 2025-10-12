@@ -23,18 +23,13 @@ const ScreenHelloes = () => {
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
  
-  // console.log(helloesListFull);
+ 
   const { flattenHelloes } = useHelloesManips({ helloesData: helloesListFull });
-  //  console.log(`FLATTEENEEDDEDD`, flattenHelloes);
+ 
 
   const [helloesData, setHelloesData] = useState(helloesListFull || []);
 
-  // useEffect(() => {
-  //   if (helloesListFull && helloesListFull.length > 0) {
-  //     setHelloesData(helloesListFull);
-  //   }
-
-  // }, [helloesListFull]);
+ 
 
   const [flattenHelloesData, setFlattenHelloesData] = useState(
     flattenHelloes || []

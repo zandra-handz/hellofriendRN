@@ -47,7 +47,7 @@ const EscortBarMoments = ({
           onPress={navigateBack}
         >
           <SvgIcon
-            name={"chevron-left"}
+            name={"chevron_left"}
             size={20}
             color={primaryColor}
           />

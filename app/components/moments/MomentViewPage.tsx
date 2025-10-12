@@ -5,8 +5,8 @@ import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
@@ -84,8 +84,8 @@ const MomentViewPage: React.FC<Props> = ({
           borderRadius: 999,
         }}
       >
-        <MaterialCommunityIcons
-          name={!utilityTrayVisible ? "eye" : "eye-closed"}
+        <SvgIcon
+          name={!utilityTrayVisible ? "eye" : "eye_closed"}
           size={20}
           color={textColor}
         />
@@ -119,7 +119,7 @@ const MomentViewPage: React.FC<Props> = ({
 
   const renderTrashIcon = () => {
     return (
-      <MaterialCommunityIcons name={"delete"} size={20} color={textColor} />
+      <SvgIcon name={"delete"} size={20} color={textColor} />
     );
   };
 
@@ -216,21 +216,7 @@ const MomentViewPage: React.FC<Props> = ({
               //  flex: 1,
               width: "100%",
             }}
-          >
-            {/* <MaterialCommunityIcons
-              name={"leaf"}
-              onPress={saveToHello}
-              size={60}
-              style={{ position: "absolute", top: 0, right: 0 }}
-              color={categoryColor}
-            />
-            <MaterialCommunityIcons
-              onPress={saveToHello}
-              name={"plus"}
-              size={26}
-              style={{ position: "absolute", top: 16, right: -8 }}
-              color={textColor}
-            /> */}
+          > 
 
             <Text
               style={[
@@ -298,9 +284,8 @@ const MomentViewPage: React.FC<Props> = ({
                         backgroundColor: manualGradientColors.lightColor,
                       }}
                     >
-                      <MaterialCommunityIcons
-                        name={"plus-circle"}
-                        // onPress={saveToHello}
+                      <SvgIcon
+                        name={"plus_circle"} 
                         size={20}
                         color={lighterOverlayColor}
                         color={manualGradientColors.darkColor}
@@ -323,8 +308,8 @@ const MomentViewPage: React.FC<Props> = ({
                         backgroundColor: darkerOverlayColor,
                       }}
                     >
-                      <MaterialCommunityIcons
-                        name={"pencil-outline"}
+                      <SvgIcon
+                        name={"pencil"}
                         onPress={handleEditMoment}
                         size={20}
                         color={lighterOverlayColor}

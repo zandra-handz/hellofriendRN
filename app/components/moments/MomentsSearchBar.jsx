@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 import {
   View,
   TextInput,
   FlatList,
-  Text,
-  TouchableOpacity,
- Pressable,
+  Text, 
   TouchableWithoutFeedback,
   Keyboard,
   StyleSheet,
 } from "react-native";
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
+
+import SvgIcon from "@/app/styles/SvgIcons";
 
  
  
@@ -43,7 +42,7 @@ const MomentsSearchBar = ({
   const INPUT_CONTAINER_BORDER_RADIUS = 10;
 
   const handleItemPress = (item) => {
-    console.log('on press', item);
+ 
     onPress(item);
     handleOutsidePress();
     setSearchQuery("");
@@ -54,8 +53,7 @@ const MomentsSearchBar = ({
   useEffect(() => {
     if (autoFocus) {
       const timeout = setTimeout(() => {
-        setTriggerAutoFocus(true);
-        // console.log("autofocus triggered");
+        setTriggerAutoFocus(true); 
         if (textInputRef && textInputRef.current) {
           textInputRef.current.focus();
         }
@@ -156,8 +154,8 @@ const MomentsSearchBar = ({
             onBlur={handleBlur} // Clears when user moves away from the input
           />
           <View>
-            <MaterialCommunityIcons
-              name={"comment-search-outline"}
+            <SvgIcon
+              name={"comment_search_outline"}
               size={iconSize}
               color={textColor}
               style={{ paddingHorizontal: 10, overflow: "hidden" }}

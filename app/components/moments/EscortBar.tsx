@@ -6,7 +6,8 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import ToNextButton from "./ToNextButton";
 import ActionAndBack from "./ActionAndBack"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialIcons  } from "@expo/vector-icons";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   onPress: () => void;
@@ -18,7 +19,7 @@ type Props = {
 const EscortBar = ({
   onPress,
   label = "Save and Continue",
-  iconName = "keyboard-arrow-left",
+  iconName = "chevron_left",
   forwardFlowOn = true, 
  
   primaryColor,
@@ -58,7 +59,7 @@ const EscortBar = ({
           }}
           onPress={navigateBack}
         >
-          <MaterialIcons
+          <SvgIcon
             name={`${iconName}`}
             size={20}
             color={primaryColor}

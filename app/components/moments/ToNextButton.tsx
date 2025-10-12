@@ -1,7 +1,7 @@
 import { Pressable } from "react-native";
 import React from "react";
-import manualGradientColors  from "@/app/styles/StaticColors";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import manualGradientColors  from "@/app/styles/StaticColors"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 
 interface Colors {
   lightColor: string;
@@ -27,8 +27,8 @@ const ToNextButton = ({   onPress }: Props) => {
       }}
       onPress={onPress}
     >
-      <MaterialCommunityIcons
-        name={"arrow-right"}
+      <SvgIcon
+        name={"arrow_right"}
         size={25}
         color={manualGradientColors.homeDarkColor}
       />

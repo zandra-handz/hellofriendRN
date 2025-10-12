@@ -1,9 +1,8 @@
 // EditCategoryDescriptionView.tsx
 import React, { useRef, useState, useEffect } from "react";
-import { View, TextInput } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, TextInput } from "react-native"; 
 import GlobalPressable from "../appwide/button/GlobalPressable"; 
- 
+ import SvgIcon from "@/app/styles/SvgIcons";
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
  
 export default function EditCategoryDescriptionView({
@@ -69,7 +68,7 @@ useEffect(() => {
         />
       </View>
       <GlobalPressable onPress={handleUpdateCategory}>
-        <MaterialCommunityIcons
+        <SvgIcon
           name="check"
           size={20}
           color={primaryColor}

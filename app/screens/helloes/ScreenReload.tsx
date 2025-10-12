@@ -21,7 +21,7 @@ const ScreenReload = () => {
   const { capsuleList } = useCapsuleList();
   const { friendDash, loadingDash } = useFriendDash();
   const { lightDarkTheme } = useLDTheme(); 
-  console.log("reload screen");
+ 
 
   return (
     <SafeViewAndGradientBackground 

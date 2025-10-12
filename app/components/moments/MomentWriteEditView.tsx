@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  View,
-  Text,
+  View, 
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
@@ -17,8 +16,7 @@ import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import MomentFocusTray from "./MomentFocusTray";
-import { close } from "@sentry/react-native";
+import MomentFocusTray from "./MomentFocusTray"; 
 type Props = {
   screenCameFromToParent: number;
   momentText: string;

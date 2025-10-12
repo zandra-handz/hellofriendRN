@@ -1,7 +1,7 @@
 import { View, Pressable  } from "react-native";
 import React from "react";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 import manualGradientColors  from "@/app/styles/StaticColors";
 // no props rn
 // type Props = {
@@ -33,7 +33,7 @@ const TopBarWithAddMoment = ({ textColor, backgroundColor }) => {
       >
         <Pressable hitSlop={20} onPress={handleNavigateToCreateNew}>
           <View style={{ position: "absolute", top: 0, right: -10 }}>
-            <MaterialCommunityIcons
+            <SvgIcon
               name={"plus"}
               size={16}
               color={manualGradientColors.homeDarkColor}
@@ -44,7 +44,7 @@ const TopBarWithAddMoment = ({ textColor, backgroundColor }) => {
             />
           </View>
 
-          <MaterialCommunityIcons name="leaf" size={26} color={textColor} />
+          <SvgIcon name="leaf" size={26} color={textColor} />
         </Pressable>
       </View>
     </View>

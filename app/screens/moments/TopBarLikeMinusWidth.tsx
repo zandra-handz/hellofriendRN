@@ -1,6 +1,6 @@
 import { View, Pressable, Text } from "react-native";
-import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import React from "react"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import ToNextButton from "@/app/components/moments/ToNextButton";
 import ActionAndBack from "@/app/components/moments/ActionAndBack";
@@ -69,8 +69,8 @@ const TopBarLikeMinusWidth = ({
               justifyContent: "center",
             }}
           >
-            <MaterialIcons
-              name={"keyboard-arrow-up"}
+            <SvgIcon
+              name={"chevron_up"}
               size={16}
               //   color={manualGradientColors.homeDarkColor}
               // color={themeStyles.primaryText.color}
@@ -106,8 +106,8 @@ const TopBarLikeMinusWidth = ({
             //   onPress={navigateBack}
             onPress={navigateBack}
           >
-            <MaterialIcons
-              name={"keyboard-arrow-left"}
+            <SvgIcon
+              name={"chevron_left"}
               size={20}
               color={primaryColor}
             />

@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react"; 
 import GlobalPressable from "../appwide/button/GlobalPressable";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   item: object;
@@ -20,6 +19,11 @@ const FriendHistoryMomentItem = ({
   primaryColor = "orange",
   onHelloPress,
 }: Props) => {
+
+
+  // console.log(item);
+
+  
   return (
     <View
       style={[
@@ -34,11 +38,7 @@ const FriendHistoryMomentItem = ({
     >
       <View style={styles.momentItemTextContainer}>
         <View style={styles.checkboxContainer}>
-          <MaterialCommunityIcons
-            name={"leaf"}
-            size={24}
-            color={primaryColor}
-          />
+          <SvgIcon name={"leaf"} size={24} color={primaryColor} />
         </View>
 
         <View style={{ width: "100%", flexShrink: 1 }}>
@@ -67,23 +67,25 @@ const FriendHistoryMomentItem = ({
                 zIndex: 40000,
                 elevation: 40000,
               }}
-              onPress={onHelloPress(item.hello, item.original_id)}
+              onPress={onHelloPress(item.hello.id, item.original_id)}
             >
-              <MaterialCommunityIcons
+              <SvgIcon
                 // name="hand-wave-outline"
-                name="calendar-heart"
+                name="calendar"
                 size={16}
                 color={primaryColor}
                 style={{ marginHorizontal: 4 }}
               />
             </GlobalPressable>
           </View>
-          {/* <Text style={[styles.momentItemText, themeStyles.primaryText]}>
-              {item.time_score}
-            </Text> */}
-          <Text style={[styles.momentItemText, { color: primaryColor }]}>
-            {item.capsule}
-          </Text>
+          {item.capsules.map((capsule) => (
+            <Text
+              key={capsule.id}
+              style={[styles.momentItemText, { color: primaryColor }]}
+            >
+              {capsule.capsule}
+            </Text>
+          ))}
         </View>
       </View>
     </View>

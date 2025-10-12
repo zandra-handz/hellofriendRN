@@ -97,7 +97,7 @@ const CategoryFriendHistoryList = ({
         friendId={friendId}
         friendName={getFriendNameFromList(item.friend)}
         primaryColor={primaryColor}
-        helloDate={getHelloDateFromList(item.hello)}
+        helloDate={getHelloDateFromList(item.hello.id)} //hmmmmm backend now returns hello as an object on this. dunno if I like that
       />
     ),
     [
@@ -162,13 +162,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
 
+
     width: "100%",
   },
   momentItemText: {
-    fontSize: 11,
-    // lineHeight: 15,
+    fontSize: 11, 
     fontFamily: "Poppins-Regular",
-    // width: "100%",
+ 
   },
   momentCheckboxContainer: {
     flexDirection: "row",

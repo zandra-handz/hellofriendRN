@@ -20,20 +20,20 @@ import {
   Keyboard,
 } from "react-native";
 import Animated, {
-  SlideInDown,
+  // SlideInDown,
   withTiming,
   useSharedValue,
-  useAnimatedProps,
+  // useAnimatedProps,
   useAnimatedStyle,
   withSequence,
 } from "react-native-reanimated";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 import { useFocusEffect } from "@react-navigation/native";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
-import keyframes from "react-native-reanimated/lib/typescript/css/stylesheet/keyframes";
-import { TextHeightBehavior } from "@shopify/react-native-skia";
+// import keyframes from "react-native-reanimated/lib/typescript/css/stylesheet/keyframes";
+// import { TextHeightBehavior } from "@shopify/react-native-skia";
 
 interface QuickWriteMomentProps {
   title?: string;
@@ -246,7 +246,7 @@ const QuickWriteMoment = forwardRef(
                         borderColor: buttonColor,
                       }}
                     >
-                      <MaterialCommunityIcons
+                      <SvgIcon
                         name="plus"
                         color={buttonColor}
                         size={20}
@@ -288,7 +288,7 @@ const QuickWriteMoment = forwardRef(
                             borderColor: buttonColor,
                           }}
                         >
-                          <MaterialCommunityIcons
+                          <SvgIcon
                             name="plus"
                             color={buttonColor}
                             size={20}
@@ -334,7 +334,7 @@ const QuickWriteMoment = forwardRef(
                             borderColor: buttonColor,
                           }}
                         >
-                          <MaterialCommunityIcons
+                          <SvgIcon
                             name="plus"
                             color={buttonColor}
                             size={20}

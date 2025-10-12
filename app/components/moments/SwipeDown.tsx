@@ -1,10 +1,8 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react"; 
-import { MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";  
+import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
-  SlideInUp,
-  SlideOutUp,
-  FadeOut,
+ 
   SharedValue,
   useAnimatedReaction,
   runOnJS,
@@ -59,8 +57,8 @@ const SwipeDown = ({
           {hide ? label : flipLabel}
         </Text>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <MaterialIcons
-            name={hide ? "swipe-down" : "swipe-up"}
+          <SvgIcon
+            name={"gesture_swipe_vertical"}
             size={20}
             color={primaryColor}
           />

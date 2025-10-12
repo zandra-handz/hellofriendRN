@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, TextInput, StyleSheet, Text } from "react-native";
+import { View, TextInput, StyleSheet  } from "react-native";
 import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 
 // app spinner

@@ -45,9 +45,7 @@ const FriendHistoryBigPie = ({
     }
     setViewCategoryId(categoryId);
     upDrillCategoryId(categoryId);
-    setViewCategoryName(categoryName);
-    // setHistoryModalVisible(true);
-    // console.log(`category ${categoryId} -- ${categoryName} pressed!`);
+    setViewCategoryName(categoryName); 
   };
 
   const pieScale = useSharedValue(1);

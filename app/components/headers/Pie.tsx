@@ -1,44 +1,36 @@
 import { View, StyleSheet } from "react-native";
-import React from "react"; 
+import React from "react";
 
 import AnimatedPieChart from "./AnimatedPieChart";
 
 type Props = {
- 
-  showPercentages: boolean,
+  showPercentages: boolean;
   showLabels: boolean;
   widthAndHeight: number;
-
 };
 
 const Pie = ({
-   darkerOverlayBackgroundColor,
+  darkerOverlayBackgroundColor,
   primaryColor,
-    primaryOverlayColor,
+  primaryOverlayColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
   showPercentages = false,
   showLabels = true,
   widthAndHeight = 50,
   labelsSize = 9,
-  onSectionPress = null,
- 
-  seriesData, 
-}) => { 
- 
- 
-
-
- 
+  onSectionPress = null, 
+  seriesData,
+}) => {
   return (
     <View style={styles.container}>
       <AnimatedPieChart
-      duration={400}
+        duration={400}
         darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-  primaryColor={primaryColor}
-  primaryOverlayColor={primaryOverlayColor}
-  welcomeTextStyle={welcomeTextStyle}
-  subWelcomeTextStyle={subWelcomeTextStyle}
+        primaryColor={primaryColor}
+        primaryOverlayColor={primaryOverlayColor}
+        welcomeTextStyle={welcomeTextStyle}
+        subWelcomeTextStyle={subWelcomeTextStyle}
         data={seriesData}
         showLabels={showLabels}
         showPercentages={showPercentages}
@@ -46,7 +38,7 @@ const Pie = ({
         size={widthAndHeight}
         radius={widthAndHeight / 2}
         onSectionPress={onSectionPress ? onSectionPress : null}
- 
+       
       />
     </View>
   );

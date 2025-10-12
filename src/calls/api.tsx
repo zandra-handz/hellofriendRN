@@ -280,13 +280,16 @@ export const getUserCategories = async (userId: number) => {
 //   }
 // };
 
+
+// NEW AS OF !0/!2 THIS NOW GROUPS BY HELLO AND RETURNS LITE HELLO OBJECT
+// NOT SURE IF I LIKE THE REDUNDANCY WTIH HELLOESLIST BUT THIS VIEW IS MORE USEFUL
 export const fetchCapsulesHistoryAPI = async ({
   categoryId,
   friendId,
   returnNonZeroesOnly = true,
   page = 1,
 }: {
-  categoryId: number;
+  categoryId: number | string; // front end only: if 'all' is sent, it means to remove the cateogry filter but also let front end keep track of categoryId === 'all'
   friendId: number | null;
   returnNonZeroesOnly: boolean;
   page: number;
@@ -294,7 +297,7 @@ export const fetchCapsulesHistoryAPI = async ({
   try {
     const params = new URLSearchParams();
 
-    if (categoryId) params.append("user_category_id", String(categoryId));
+    if (categoryId && categoryId !== 'all') params.append("user_category_id", String(categoryId));
     if (friendId) params.append("friend_id", String(friendId));
     if (returnNonZeroesOnly) params.append("only_with_capsules", "true");
     params.append("page", String(page));
@@ -302,7 +305,7 @@ export const fetchCapsulesHistoryAPI = async ({
     const response = await helloFriendApiClient.get(
       `/friends/categories/history/capsules/?${params.toString()}`
     );
-    // console.log(`response from capsules history`, response.data);
+   //  console.log(`response from capsules history`, response.data);
     if (response?.data) {
       // console.log(response.data);
       return response.data; // DRF-style: { count, next, previous, results }

@@ -3,20 +3,16 @@ import React, {
   useEffect,
   useRef,
   useCallback,
-  useMemo,
+ 
 } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   TextInput,
   StyleSheet,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  FlatList,
+  Keyboard, 
   ScrollView,
-} from "react-native";
-import { findNodeHandle } from "react-native";
+} from "react-native"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
 import manualGradientColors  from "@/app/styles/StaticColors";

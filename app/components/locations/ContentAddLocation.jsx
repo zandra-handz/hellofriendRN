@@ -1,23 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
- 
+
 import useCreateLocation from "@/src/hooks/LocationCalls/useCreateLocation";
-import { View, Text, TextInput, Keyboard, StyleSheet } from "react-native";
-
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-
-import BodyStyling from "../scaffolding/BodyStyling"; 
-
+import { View, Keyboard, StyleSheet } from "react-native";
+import LocationAddress from "./LocationAddress";
+import EscortBar from "../moments/EscortBar";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 
 const ContentAddLocation = ({
-userId,
+  userId,
   lightDarkTheme,
   themeAheadOfLoading,
+  primaryColor = "orange",
+  backgroundColor = "red",
   title,
   address,
-  close,
 }) => {
   const notesTextRef = useRef(null);
   const categoryRef = useRef(null);
@@ -26,7 +24,9 @@ userId,
 
   const navigation = useNavigation();
 
-  const { handleCreateLocation, createLocationMutation } = useCreateLocation({userId: userId})
+  const { handleCreateLocation, createLocationMutation } = useCreateLocation({
+    userId: userId,
+  });
 
   const parkingScores = [
     { label: "Free parking", value: "location has free parking lot" },
@@ -111,183 +111,93 @@ userId,
   };
 
   return (
-    <View style={styles.container}>
-      <View height={30} width={'100%'}
-      />
-      <BodyStyling
-      backgroundColor={lightDarkTheme.primaryBackground}
-friendLightColor={themeAheadOfLoading.lightColor}
-        height={"96%"}
-        width={"101%"}
-        minHeight={"96%"}
-        paddingTop={"4%"}
-        paddingHorizontal={"0%"} //too much padding will cause the Type picker to flow to next line
-        children={
-          <>
-            <View style={styles.paddingForElements}>
-              <>
-                <View style={styles.locationDetailsContainer}>
-                  <Text
-                    style={[styles.locationTitle ]}
-                  >
-                    {title}
-                  </Text>
-                  <Text
-                    style={[styles.locationAddress, {color: lightDarkTheme.primaryText}]}
-                  >
-                    {address}
-                  </Text>
-                  <View
-                    style={{
-                      height: isKeyboardVisible ? "30%" : "20%",
-                      marginBottom: "3%",
-                    }}
-                  >
-                    <TextEditBox
-                      ref={categoryRef}
-                      autoFocus={true}
-                      title={"Add to category: "}
-                      mountingText={""}
-                      onTextChange={updateCategoryEditString}
-                      multiline={false}
-                      height={"100%"}
-                    />
-                  </View>
-
-                  <View
-                    style={{
-                      height: isKeyboardVisible ? "50%" : "30%",
-                      flexGrow: 1,
-                      marginBottom: "3%",
-                    }}
-                  >
-                    <TextEditBox
-                      ref={notesTextRef}
-                      autoFocus={false}
-                      title={"Add notes"}
-                      mountingText={""}
-                      onTextChange={updateNoteEditString}
-                      height={"100%"}
-                    />
-                  </View>
-                  <View
-                    style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}
-                  >
-                    <FlatListChangeChoice
-                      lightDarkTheme={lightDarkTheme}
-                      themeAheadOfLoading={themeAheadOfLoading}
-                      horizontal={true}
-                      choicesArray={parkingScores}
-                      ref={parkingScoreRef}
-                      title={"Set parking score"}
-                      oldChoice={null}
-                      onChoiceChange={updateParkingScore}
-                    />
-                  </View>
-
-                  {/* <Text style={[styles.previewTitle, themeStyles.genericText]}>
-                Give this location a parking score
-              </Text>
-
-              <PickerParkingType
-                height={"20%"}
-                containerText=""
-                selectedTypeChoice={parkingType}
-                onTypeChoiceChange={onParkingTypeChange}
-              /> */}
-
-                  <TextInput
-                    style={[styles.textArea]} // removed themeStyles.input
-                    value={personalExperience}
-                    onChangeText={setPersonalExperience}
-                    placeholder="Optional notes"
-                    placeholderTextColor="darkgray"
-                    multiline
-                    numberOfLines={4}
-                  />
-
-                  {/* <View style={styles.friendCheckboxesContainer}>
-                <FlatList
-                  data={friendList}
-                  keyExtractor={(item) => item.id.toString()} // Ensure each key is unique
-                  renderItem={({ item }) => (
-                    <CheckBox
-                      title={item.name}
-                      checked={selectedFriends.includes(item.id)}
-                      onPress={() => handleFriendSelect(item.id)}
-                    />
-                  )}
-                  style={styles.flatList}
-                  showsVerticalScrollIndicator={false}
-                />
-              </View> */}
-                </View>
-              </>
-            </View>
-            <ButtonBaseSpecialSave
-              label="SAVE "
-              maxHeight={80}
-              onPress={handleSubmit}
-              isDisabled={false}
-              fontFamily={"Poppins-Bold"}
-              // image={require("@/app/assets/shapes/redheadcoffee.png")}
+    <>
+      <View style={styles.bodyWrapper}>
+        <View style={styles.everythingBesidesTypeWrapper}>
+          <LocationAddress address={address} primaryColor={primaryColor} />
+          <TextEditBox
+            ref={categoryRef}
+            autoFocus={true}
+            title={"Add to category: "}
+            mountingText={""}
+            onTextChange={updateCategoryEditString}
+            multiline={false}
+            height={"100%"}
+          />
+          <View
+            style={{
+              height: isKeyboardVisible ? "50%" : "30%",
+              flexGrow: 1,
+              marginBottom: "3%",
+            }}
+          >
+            <TextEditBox
+              ref={notesTextRef}
+              autoFocus={false}
+              title={"Add notes"}
+              mountingText={""}
+              onTextChange={updateNoteEditString}
+              height={"100%"}
             />
-          </>
-        }
-      />
-    </View>
+          </View>
+          <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
+            <FlatListChangeChoice 
+              primaryColor={lightDarkTheme.primaryText}
+              backgroundColor={lightDarkTheme.backgroundColor}
+              themeAheadOfLoading={themeAheadOfLoading}
+              horizontal={true}
+              choicesArray={parkingScores}
+              ref={parkingScoreRef}
+              title={"Set parking score"}
+              oldChoice={null}
+              onChoiceChange={updateParkingScore}
+            />
+          </View>
+        </View>
+      </View>
+
+      {!isKeyboardVisible && (
+        <EscortBar
+          primaryColor={primaryColor}
+          primaryBackground={backgroundColor}
+          forwardFlowOn={false}
+          label={"Save"}
+          onPress={handleSubmit}
+        />
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
-    zIndex: 1,
   },
-  paddingForElements: {
-    paddingHorizontal: "4%",
+  headerWrapper: {
+    padding: 10,
+  },
+  bodyWrapper: {
     flex: 1,
-    //backgroundColor: 'pink',
-    paddingBottom: "5%",
-    flexDirection: "column",
-    justifyContent: "space-between",
+    paddingHorizontal: 4,
+    paddingVertical: 10,
   },
-  locationDetailsContainer: {
-    borderRadius: 8,
-    marginVertical: "2%",
+  typeWrapper: {
+    width: "100%",
+    height: 100,
   },
-  locationTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  locationAddress: {
-    fontSize: 16,
-  },
-  previewContainer: {},
-  previewTitle: {
-    fontSize: 16,
-    marginBottom: "4%",
-  },
-  input: {
-    height: "auto",
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-  },
+  everythingBesidesTypeWrapper: {
+    width: "100%",
+    height: 100,
+    marginTop: 10,
+    zIndex: 5000,
+  }, 
   textArea: {
     height: "100",
     textAlignVertical: "top",
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 20,
-  },
-  friendCheckboxesContainer: {
-    height: 130,
-  },
-  flatList: {},
+  }, 
 });
 
 export default ContentAddLocation;
