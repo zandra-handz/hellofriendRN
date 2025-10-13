@@ -1,7 +1,11 @@
 import React, { useEffect, createRef } from "react";
 // import { useFonts } from "expo-font";
-import { useFonts, Poppins_400Regular, Poppins_700Bold } from "@expo-google-fonts/poppins";
-
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_700Bold,
+} from "@expo-google-fonts/poppins";
+import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -22,7 +26,7 @@ import {
   NavigationContainer,
   getStateFromPath,
 } from "@react-navigation/native";
- 
+
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, Platform } from "react-native";
@@ -43,7 +47,7 @@ import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
- 
+
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
@@ -55,7 +59,7 @@ import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
 
 import * as MediaLibrary from "expo-media-library";
- 
+
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
@@ -66,12 +70,12 @@ import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
 import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
- 
+
 import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
 import ScreenAuth from "./app/screens/authflow/ScreenAuth";
 import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
 import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
- 
+
 import ScreenLocationCreate from "./app/screens/locations/ScreenLocationCreate";
 import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
 
@@ -85,7 +89,7 @@ import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
-import ScreenImageView from "./app/screens/images/ScreenImageView"; 
+import ScreenImageView from "./app/screens/images/ScreenImageView";
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -120,27 +124,27 @@ export default Sentry.wrap(function App() {
   // export default function App() {
   // const [fontsLoaded] = useFonts({
   //   "Poppins-Regular": require("./app/assets/fonts/Poppins-Regular.ttf"),
-  //   "Poppins-Bold": require("./app/assets/fonts/Poppins-Bold.ttf"), 
+  //   "Poppins-Bold": require("./app/assets/fonts/Poppins-Bold.ttf"),
   // });
 
-    const [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_700Bold,
   });
 
- 
   SplashScreen.preventAutoHideAsync();
 
-  const { hasShareIntent, shareIntent, 
-    // resetShareIntent, error 
-  } =
-    useShareIntentContext();
+  const {
+    hasShareIntent,
+    shareIntent,
+    // resetShareIntent, error
+  } = useShareIntentContext();
 
   useEffect(() => {
     // let permissionsGranted = false;
 
     async function requestPermissions() {
-      // not sure what permissionsGranted was supposed to be used for but commented it 
+      // not sure what permissionsGranted was supposed to be used for but commented it
       // out since it's not being used
       if (Platform.OS === "android" && Platform.Version >= 33) {
         const { status } = await MediaLibrary.requestPermissionsAsync(); // Request media library permissions
@@ -153,7 +157,7 @@ export default Sentry.wrap(function App() {
         //   console.warn("Media permissions denied.");
         //   permissionsGranted = false;
         // }
-      } 
+      }
       // else {
       //   permissionsGranted = true;
       // }
@@ -174,14 +178,12 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
- 
-
   useEffect(() => {
     if (fontsLoaded) {
-      console.log('fonts loaded');
+      console.log("fonts loaded");
       SplashScreen.hideAsync();
     } else {
-      console.log('fonts not loaded');
+      console.log("fonts not loaded");
     }
   }, [fontsLoaded]);
 
@@ -194,7 +196,7 @@ export default Sentry.wrap(function App() {
       <QueryClientProvider client={queryClient}>
         <UserProvider>
           <UserSettingsProvider>
-            <FriendListAndUpcomingProvider> 
+            <FriendListAndUpcomingProvider>
               <AutoSelectorProvider>
                 <CategoriesProvider>
                   <UserStatsProvider>
@@ -216,7 +218,7 @@ export default Sentry.wrap(function App() {
                                       </RootSiblingParent>
                                     </LDThemeProvider>
                                   </SafeAreaProvider>
-                                </GestureHandlerRootView> 
+                                </GestureHandlerRootView>
                               </SelectedFriendStatsProvider>
                             </HelloesProvider>
                           </LocationsProvider>
@@ -225,7 +227,7 @@ export default Sentry.wrap(function App() {
                     </SelectedFriendProvider>
                   </UserStatsProvider>
                 </CategoriesProvider>
-              </AutoSelectorProvider> 
+              </AutoSelectorProvider>
             </FriendListAndUpcomingProvider>
           </UserSettingsProvider>
         </UserProvider>
@@ -387,11 +389,11 @@ export const Layout = () => {
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
-            headerMode: "screen", 
+            headerMode: "screen",
             contentContainerStyle: { flexGrow: 1 },
             cardStyle: { backgroundColor: "#000002" },
           }}
-        > 
+        >
           {user?.id ? (
             //  && settings?.id
             // user.app_setup_complete || !user.app_setup_complete ? (
@@ -464,6 +466,13 @@ export const Layout = () => {
                 }}
               />
               <Stack.Screen
+                name="History"
+                component={ScreenHistory}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
                 name="Helloes"
                 component={ScreenHelloes}
                 options={{
@@ -477,7 +486,7 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
- 
+
               <Stack.Screen
                 name="LocationSend"
                 component={ScreenLocationSend}
@@ -498,7 +507,7 @@ export const Layout = () => {
                 options={() => ({
                   headerShown: false,
                 })}
-              /> 
+              />
               <Stack.Screen
                 name="LocationSearch"
                 component={ScreenLocationSearch}
@@ -512,7 +521,7 @@ export const Layout = () => {
                 options={{
                   headerShown: false,
                 }}
-              /> 
+              />
               <Stack.Screen
                 name="AddImage"
                 component={ScreenAddImage}
@@ -547,7 +556,7 @@ export const Layout = () => {
                 options={{
                   headerShown: false,
                 }}
-              /> 
+              />
             </>
           ) : (
             <>

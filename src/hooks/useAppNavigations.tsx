@@ -47,13 +47,17 @@ interface hookReturns {
   navigateToAddFriend: () => void;
   navigateToSelectFriend: () => void;
   navigateToFinalize: () => void;
+  navigateToHistory: () => void;
   navigateToHelloes: () => void;
   navigateToHelloView: ({
     startingIndex,
     inPersonFilter,
   }: NavToHelloViewProps) => void;
   navigateToLocationSearch: () => void;
-  navigateToLocationEdit: ({ location, focusOn }: NavToLocationEditProps) => void;
+  navigateToLocationEdit: ({
+    location,
+    focusOn,
+  }: NavToLocationEditProps) => void;
   navigateToMomentFocus: ({ screenCameFrom }: NavToMomentFocusProp) => void;
   navigateToMomentFocusWithText: ({
     screenCameFrom,
@@ -82,6 +86,10 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToSelectFriend = () => {
     navigation.navigate("SelectFriend");
+  };
+
+  const navigateToHistory = () => {
+    navigation.navigate("History");
   };
 
   const navigateToHelloes = () => {
@@ -168,6 +176,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToAddFriend,
     navigateToSelectFriend,
     navigateToFinalize,
+    navigateToHistory,
     navigateToHelloes,
     navigateToHelloView,
     navigateToLocationEdit,

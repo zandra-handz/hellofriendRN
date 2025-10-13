@@ -1,36 +1,38 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
- import { AppFontStyles } from "@/app/styles/AppFonts";
+import Animated from "react-native-reanimated";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import ToNextButton from "./ToNextButton";
-import ActionAndBack from "./ActionAndBack"; 
+import ActionAndBack from "./ActionAndBack";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialIcons  } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = {
   onPress: () => void;
   label: string;
   iconName: string;
   forwardFlowOn: boolean;
+  primaryColor: string;
+  primaryBackground: string;
 };
 
 const EscortBarFidgetScreen = ({
   onPress,
   label = "Save and Continue",
   iconName = "keyboard-arrow-left",
-  forwardFlowOn = true, 
- style,
+  forwardFlowOn = true,
+  style,
   primaryColor,
   primaryBackground,
-}: Props) => { 
-  const { navigateBack } = useAppNavigations(); 
+}: Props) => {
+  const { navigateBack } = useAppNavigations();
 
   return (
-    <Animated.View style={style}
-    //  entering={SlideInDown} exiting={SlideOutDown}
-    
+    <Animated.View
+      style={style}
+      //  entering={SlideInDown} exiting={SlideOutDown}
     >
       <GlobalPressable
         onPress={onPress}
@@ -39,50 +41,56 @@ const EscortBarFidgetScreen = ({
             height: 50,
             paddingHorizontal: 5,
             flexDirection: "row",
-            backgroundColor: 'orange',
-            
-            width: "100%", 
+            backgroundColor: "orange",
+
+            width: "100%",
             alignItems: "center",
             justifyContent: "space-between",
-            borderRadius: 10, 
+            borderRadius: 10,
             backgroundColor: primaryBackground,
-      
-        
           },
         ]}
       >
-        <View style={{width: '100%', flexDirection: 'row' , alignItems: 'center', height: '100%', justifyContent: "space-between",  }}>
-
-        <Pressable
-          hitSlop={10}
+        <View
           style={{
-            height: "100%",
+            width: "100%",
+            flexDirection: "row",
             alignItems: "center",
-            justifyContent: "center",
+            height: "100%",
+            justifyContent: "space-between",
           }}
-          onPress={navigateBack}
         >
-          <MaterialIcons
-            name={`${iconName}`}
-            size={20}
-            color={primaryColor}
-          />
-        </Pressable>
-
-        <View style={{ alignItems: "center", flexDirection: "row"  }}>
-          <Text
-            style={[ 
-              AppFontStyles?.subWelcomeText,
-              { color: primaryColor, fontSize: 13, marginRight: 12 },
-            ]}
+          <Pressable
+            hitSlop={10}
+            style={{
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={navigateBack}
           >
-            {label}
-          </Text>
+            <MaterialIcons
+              name={`${iconName}`}
+              size={20}
+              color={primaryColor}
+            />
+          </Pressable>
 
+          <View style={{ alignItems: "center", flexDirection: "row" }}>
+            <Text
+              style={[
+                AppFontStyles?.subWelcomeText,
+                { color: primaryColor, fontSize: 13, marginRight: 12 },
+              ]}
+            >
+              {label}
+            </Text>
 
-          {forwardFlowOn && <ToNextButton  onPress={onPress} />}
-          {!forwardFlowOn && <ActionAndBack  onPress={onPress} iconName={'refresh'} />}
-        </View>
+            {forwardFlowOn && <ToNextButton onPress={onPress} />}
+            {!forwardFlowOn && (
+              <ActionAndBack onPress={onPress} iconName={"refresh"} />
+            )}
+          </View>
         </View>
       </GlobalPressable>
     </Animated.View>

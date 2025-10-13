@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useUserStats } from "@/src/context/UserStatsContext";
 import UserHistoryModal from "../headers/UserHistoryModal";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
- 
+ import manualGradientColors from "@/app/styles/StaticColors";
 import UserHistoryMiniPie from "./UserHistoryMiniPie";
 
 type Props = {
@@ -22,8 +22,7 @@ const UserHistoryPieDataWrap = ({
   chartBorder = 6,
   chartBorderColor = "hotpink",
   labelsSize = 9,
-  showLabels = false,
-  manualGradientColors,
+  showLabels = false, 
   darkerOverlayBackgroundColor,
   primaryColor,
   primaryOverlayColor,

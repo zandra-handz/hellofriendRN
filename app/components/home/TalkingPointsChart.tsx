@@ -5,9 +5,10 @@ import React, {
   useEffect,
   useRef,
   useMemo,
-} from "react"; 
+} from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,7 +21,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
 // import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting"; // moved to parent
 import { useCategories } from "@/src/context/CategoriesContext";
- 
+
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -46,8 +47,12 @@ const TalkingPointsChart = ({
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
-  const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } =
-    useAppNavigations();
+  const {
+    navigateToMoments,
+    navigateToMomentView,
+    navigateToMomentFocus,
+    navigateToHistory,
+  } = useAppNavigations();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
   // const { categoryStartIndices } = useTalkingPCategorySorting({
@@ -189,13 +194,12 @@ const TalkingPointsChart = ({
   return (
     <>
       <>
-
-
-
         {!isLoading && (
           <Pressable
-            onPress={toggleShowHistory}
+            // onPress={toggleShowHistory}
+            onPress={navigateToHistory}
             style={{
+              
               height: 30,
               paddingHorizontal: PADDING,
               position: "absolute",
@@ -208,8 +212,6 @@ const TalkingPointsChart = ({
               flexDirection: "row",
             }}
           >
-
-
             <Ionicons
               name={!showHistory ? "pie-chart" : "close"}
               size={30}
@@ -228,7 +230,6 @@ const TalkingPointsChart = ({
                 {"   "}category history
               </Text>
             )}
-             
           </Pressable>
         )}
         <View
@@ -342,9 +343,9 @@ const TalkingPointsChart = ({
                     >
                       History{"  "}
                     </Text>
-                    <FriendHistoryPieDataWrap
+                    {/* <FriendHistoryPieDataWrap
                       friendId={selectedFriendId}
-                      friendStyle={friendStyle}
+          
                       selectedFriendName={selectedFriendName}
                       primaryColor={primaryColor}
                       primaryOverlayColor={primaryOverlayColor}
@@ -359,7 +360,19 @@ const TalkingPointsChart = ({
                       chartBorderColor={primaryBackgroundColor}
                       showLabels={false}
                       chartRadius={SMALL_CHART_RADIUS}
-                    />
+                    /> */}
+                    <Pressable
+                      onPress={navigateToHistory}
+                      style={{
+                             hitSlop: 20,
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        marginLeft: 10,
+                   
+                        backgroundColor: "hotpink",
+                      }}
+                    ></Pressable>
                   </View>
                   <Text
                     style={[
@@ -372,7 +385,7 @@ const TalkingPointsChart = ({
                   <View
                     style={{ flexDirection: "row", justifyContent: "flex-end" }}
                   >
-                    <UserHistoryPieDataWrap
+                    {/* <UserHistoryPieDataWrap
                       friendStyle={friendStyle}
                       primaryColor={primaryColor}
                       primaryOverlayColor={primaryOverlayColor}
@@ -386,31 +399,28 @@ const TalkingPointsChart = ({
                       chartBorderColor={primaryBackgroundColor}
                       showLabels={false}
                       chartRadius={SMALL_CHART_RADIUS}
-                    />
+                    /> */}
                   </View>
                 </View>
               )}
             </>
           )}
         </View>
-    
       </>
     </>
   );
 };
 
-
 const styles = StyleSheet.create({
-   blurContainer: {
- flex: 1,
- padding: 20,
- margin: 16,
- textAlign: 'center',
- justifyContent: 'center',
- overflow: 'hidden',
- borderRadius: 20,
- },
-
+  blurContainer: {
+    flex: 1,
+    padding: 20,
+    margin: 16,
+    textAlign: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    borderRadius: 20,
+  },
 });
 
 export default TalkingPointsChart;

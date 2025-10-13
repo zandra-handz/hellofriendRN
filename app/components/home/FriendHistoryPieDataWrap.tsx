@@ -6,6 +6,7 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
 import FriendHistoryModal from "../headers/FriendHistoryModal";
+import manualGradientColors from "@/app/styles/StaticColors";
 // import { useFriendList } from "@/src/context/FriendListContext";
 type Props = {
   chartRadius: number;
@@ -17,17 +18,13 @@ type Props = {
 const FriendHistoryPieDataWrap = React.memo(
   ({
     friendId,
-
     chartRadius = 90,
     chartBorder = 6,
     chartBorderColor = "hotpink",
     labelsSize = 9,
     showLabels = false,
-    friendStyle,
     selectedFriendName,
-    primaryColor,
-    manualGradientColors,
- 
+    primaryColor, 
     primaryOverlayColor,
     darkerOverlayBackgroundColor,
     themeAheadOfLoading,
@@ -67,7 +64,7 @@ const FriendHistoryPieDataWrap = React.memo(
         "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
 
       const start = hexToRgb(manualGradientColors.darkColor);
-      const end = hexToRgb(friendStyle.darkColor);
+      const end = hexToRgb(themeAheadOfLoading.darkColor);
 
       return Array.from({ length: count }, (_, i) => {
         const t = i / Math.max(count - 1, 1);
@@ -79,7 +76,7 @@ const FriendHistoryPieDataWrap = React.memo(
     }, [
       friendHistorySortedList,
       manualGradientColors.darkColor,
-      friendStyle.darkColor,
+      themeAheadOfLoading.darkColor,
     ]);
 
     const seriesData = useMemo(() => {
