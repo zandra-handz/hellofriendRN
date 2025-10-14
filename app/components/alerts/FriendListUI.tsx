@@ -5,24 +5,17 @@ import {
   FlatList,
   ListRenderItemInfo,
 } from "react-native";
-import Animated, {
- 
-  SlideInDown,
-  FadeOut,
-} from "react-native-reanimated";
+import Animated, { SlideOutRight, SlideInDown } from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
 import { Vibration } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { Friend } from "@/src/types/FriendTypes";
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+// import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import manualGradientColors from "@/app/styles/StaticColors";
-
-import MyIconSet from "@/app/assets/IconSet";
- 
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type FriendListUIProps = {
   data: Friend[];
@@ -45,6 +38,7 @@ const FriendListUI = ({
 }: FriendListUIProps) => {
   const itemColor = lightDarkTheme.primaryText;
   const elementBackgroundColor = lightDarkTheme.overlayBackground;
+  const primaryBackground = lightDarkTheme.primaryBackground;
 
   const { navigateToAddFriend } = useAppNavigations();
 
@@ -61,39 +55,43 @@ const FriendListUI = ({
 
   const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
 
+  const flattenedItemInnerContainerStyle = StyleSheet.flatten([
+    styles.itemInnerContainer,
+    {
+      backgroundColor: manualGradientColors.homeDarkColor,
+    },
+  ]);
+
+  const flattenedGlobalPressableStyle = StyleSheet.flatten([
+    styles.friendContainer,
+    {
+      borderRadius: 10,
+      backgroundColor: elementBackgroundColor,
+    },
+  ]);
+
+  const flattenedSelectedFriendContainerStyle = StyleSheet.flatten([
+    styles.friendContainer,
+    {
+      backgroundColor: primaryBackground,
+      borderRadius: ITEM_BORDER_RADIUS,
+
+      height: ITEM_HEIGHT,
+    },
+  ]);
+
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
       <Animated.View
         style={styles.friendContainer}
         entering={SlideInDown.duration(180)}
-        exiting={FadeOut}
-        // entering={SlideInRight.duration(260).springify(2000)}
+        exiting={SlideOutRight}
       >
-        <View
-          style={{
-            position: "absolute",
-            right: 0,
-            height: "100%",
-            width: "auto",
-            flexDirection: "column",
-            //backgroundColor: "orange",
-          }}
-        >
+        <View style={styles.itemContainer}>
           {autoSelectFriend?.customFriend?.id === item.id && (
-            <View
-              style={{
-                width: "auto",
-                height: "auto",
-                padding: 4,
-                zIndex: 2,
-                borderRadius: 999,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: manualGradientColors.homeDarkColor,
-              }}
-            >
-              <MyIconSet name="pin-outline"
-                // name={"pin-outline"}
+            <View style={flattenedItemInnerContainerStyle}>
+              <SvgIcon
+                name="pin_outline"
                 size={12}
                 color={manualGradientColors.lightColor}
               />
@@ -101,20 +99,9 @@ const FriendListUI = ({
           )}
 
           {autoSelectFriend?.nextFriend?.id === item.id && (
-            <View
-              style={{
-                width: "auto",
-                height: "auto",
-                padding: 4,
-                zIndex: 2,
-                borderRadius: 999,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: manualGradientColors.homeDarkColor,
-              }}
-            >
-              <MaterialCommunityIcons
-                name={"calendar-clock"}
+            <View style={flattenedItemInnerContainerStyle}>
+              <SvgIcon
+                name={"calendar_clock"}
                 size={12}
                 color={manualGradientColors.lightColor}
               />
@@ -124,15 +111,15 @@ const FriendListUI = ({
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
             friendList={friendList}
-            startingColor={lightDarkTheme.overlayBackground}
+            startingColor={elementBackgroundColor}
             style={styles.friendContainer}
             friendId={item.id}
             onPress={() => onPress(item.id)}
             onLongPress={() => handleLongPress(item.id)}
           >
             <ButtonSelectFriend
-              themeTextColor={lightDarkTheme.primaryText}
-              backgroundOverlayColor={lightDarkTheme.overlayBackground}
+              themeTextColor={itemColor}
+              backgroundOverlayColor={elementBackgroundColor}
               friendId={friendId}
               themeAheadOfLoading={themeAheadOfLoading}
               borderRadius={ITEM_BORDER_RADIUS}
@@ -146,17 +133,8 @@ const FriendListUI = ({
 
         {item && "id" in item && item.id === selectedId && (
           <GlobalPressable
-          onLongPress={handleDeselect}
-            style={[
-              styles.friendContainer,
-              {
-                borderWidth: 0,
-                //borderColor: "yellow",
-                borderRadius: ITEM_BORDER_RADIUS,
-                borderRadius: 10,
-                backgroundColor: lightDarkTheme.overlayBackground,
-              },
-            ]}
+            onLongPress={handleDeselect}
+            style={flattenedGlobalPressableStyle}
           >
             <ButtonSelectFriend
               disabled={true}
@@ -172,22 +150,12 @@ const FriendListUI = ({
         {!("id" in item) && friendList.length < 20 && (
           <Pressable
             onPress={navigateToAddFriend}
-            style={[
-              styles.friendContainer,
-              {
-                backgroundColor: lightDarkTheme.primaryBackground,
-                borderRadius: ITEM_BORDER_RADIUS,
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-                height: ITEM_HEIGHT,
-              },
-            ]}
+            style={flattenedSelectedFriendContainerStyle}
           >
-            <MaterialCommunityIcons
-              name={"account-plus"}
+            <SvgIcon
+              name={"account_plus"}
               size={26}
-              color={lightDarkTheme.primaryText}
+              color={itemColor}
             />
           </Pressable>
         )}
@@ -201,13 +169,7 @@ const FriendListUI = ({
 
   return (
     <Animated.View
-      style={{
-        flex: 1,
-        minHeight: 2,
-        minWidth: 2,
-        height: "100%",
-        width: "100%",
-      }}
+      style={styles.animatedViewContainer}
     >
       {data && ( // this will work with an empty [] so you can add a friend for the first time too
         <FlatList
@@ -223,16 +185,44 @@ const FriendListUI = ({
 };
 
 const styles = StyleSheet.create({
+  itemContainer: {
+    position: "absolute",
+    right: 0,
+    height: "100%",
+    width: "auto",
+    flexDirection: "column",
+  },
+  itemInnerContainer: {
+    width: "auto",
+    padding: 4,
+    zIndex: 2,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   friendContainer: {
     flex: 1,
     margin: 2,
     overflow: "hidden",
-    // borderRadius: 2,
+    alignItems: "center",
     justifyContent: "center",
     flexGrow: 1,
   },
   pressedStyle: {
     opacity: 0.2,
+  },
+  selectedFriendWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  animatedViewContainer: {
+    flex: 1,
+    minHeight: 2,
+    minWidth: 2,
+    height: "100%",
+    width: "100%",
   },
 });
 

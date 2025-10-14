@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import EffortSettingSlider from "../../friends/EffortSettingSlider";
@@ -25,7 +24,7 @@ const EditEffort = ({
 
   const handleSave = () => {
     try {
-      handleUpdateFriendSettings({ effort: effortRef.current.getValue()});
+      handleUpdateFriendSettings({ effort: effortRef.current.getValue() });
       setEffort(effortRef.current.getValue());
       setShowEdit(false);
     } catch (error) {
@@ -69,11 +68,7 @@ const EditEffort = ({
               flexDirection: "row",
             }}
           >
-            <MaterialCommunityIcons
-              name={"calendar"}
-              size={20}
-              color={primaryColor}
-            />
+            <SvgIcon name={"calendar"} size={20} color={primaryColor} />
           </View>
           <Text style={[styles.label, { color: primaryColor }]}>
             Effort: {effort}
@@ -83,7 +78,7 @@ const EditEffort = ({
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {!showEdit && (
             <Pressable onPress={togglePhoneEdit}>
-              <MaterialCommunityIcons
+              <SvgIcon
                 name={"pencil"}
                 size={20}
                 color={primaryColor}
@@ -94,14 +89,14 @@ const EditEffort = ({
           {showEdit && (
             <>
               <Pressable onPress={togglePhoneEdit} style={{ marginRight: 10 }}>
-                <MaterialCommunityIcons
+                <SvgIcon
                   name={"cancel"}
                   size={20}
                   color={primaryColor}
                 />
               </Pressable>
               <Pressable onPress={handleSave}>
-                <MaterialCommunityIcons
+                <SvgIcon
                   name={"check"}
                   size={20}
                   color={primaryColor}

@@ -22,36 +22,39 @@ const ButtonSelectFriend = ({
     }
   }, [friendId, themeAheadOfLoading]);
 
- return (
-  <View
-    style={[
-      styles.row,
-      {
-        borderRadius,
-        height,
-        borderColor: textColor,
-      },
-    ]}
-  >
+  return (
     <View
       style={[
-        styles.inner, 
-        { backgroundColor: !disabled ? backgroundColor : "transparent", borderRadius }
+        styles.row,
+        {
+          borderRadius,
+          height,
+          borderColor: textColor,
+        },
       ]}
     >
-      <Text
-        numberOfLines={1}
+      <View
         style={[
-          styles.name,
-          { color, fontSize: friend.name.length < 14 ? 15 : 12 },
+          styles.inner,
+          {
+            backgroundColor: !disabled ? backgroundColor : "transparent",
+            borderRadius,
+          },
         ]}
       >
-        {friend.name}
-      </Text>
+        <Text
+          numberOfLines={1}
+          style={[
+            styles.name,
+            { color, fontSize: friend.name.length < 14 ? 15 : 12 },
+          ]}
+        >
+          {friend.name}
+        </Text>
+      </View>
     </View>
-  </View>
-);
-}
+  );
+};
 
 const styles = StyleSheet.create({
   row: {

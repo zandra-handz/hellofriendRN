@@ -24,7 +24,6 @@ const useSelectFriend = ({
   const { getThemeAheadOfLoading } = useFriendStyle();
 
   const handleSelectFriend = (friendId) => {
-    console.log(`friend in handleSelectFriend`, friendId);
     if (!friendList || friendList?.length < 1) {
       return;
     }
@@ -36,12 +35,11 @@ const useSelectFriend = ({
     const selectedFriend = selectedOption || null;
     // console.log(selectedFriend);
     if (selectedOption) {
-      selectFriend(selectedFriend);
-      getThemeAheadOfLoading(selectedFriend);
-
       if (navigateOnSelect) {
         navigateOnSelect();
       }
+      selectFriend(selectedFriend);
+      getThemeAheadOfLoading(selectedFriend);
     }
   };
 

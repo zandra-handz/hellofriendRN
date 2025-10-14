@@ -9,6 +9,8 @@ import {
 } from "react-native";
 
 import AccountSvg from "./svgs/account";
+import AccountPlusSvg from "./svgs/account-plus";
+import AccountSwitchOutlineSvg from "./svgs/account-switch-outline";
 import ArrowRightSvg from "./svgs/arrow-right";
 import BellSvg from "./svgs/bell";
 
@@ -17,7 +19,9 @@ import EyeSvg from "./svgs/eye";
 import EyeClosedSvg from "./svgs/eye-closed";
 import DeleteSvg from "./svgs/delete";
 import LeafSvg from "./svgs/leaf";
+import CalendarClockSvg from "./svgs/calendar-clock";
 import CalendarSvg from "./svgs/calendar";
+import CancelSvg from "./svgs/cancel";
 import CarSvg from "./svgs/car";
 import CarCogSvg from "./svgs/car-cog";
 import CheckSvg from "./svgs/check";
@@ -55,12 +59,16 @@ import VolumeHighSvg from "./svgs/volume-high";
 
 const svgIcons = {
   account: AccountSvg,
+  account_plus: AccountPlusSvg,
+  account_switch_outline: AccountSwitchOutlineSvg,
   arrow_right: ArrowRightSvg,
   bookmark: BookmarkSvg,
   bell: BellSvg,
   delete: DeleteSvg,
   leaf: LeafSvg, // welcome message
   calendar: CalendarSvg, // hello quick view
+  calendar_clock: CalendarClockSvg,
+  cancel: CancelSvg,
   check: CheckSvg,
   compare: CompareSvg,
   comment_search_outline: CommentSearchOutlineSvg,
@@ -76,7 +84,7 @@ const svgIcons = {
   send_circle_outline: SendCircleOutlineSvg, // location map screen button
   chevron_left: ChevronLeftSvg,
   chevron_down: ChevronDownSvg,
-   chevron_up: ChevronUpSvg,
+  chevron_up: ChevronUpSvg,
   chevron_double_left: ChevronDoubleLeftSvg,
   chevron_double_right: ChevronDoubleRightSvg,
   help_circle: HelpCircleSvg, // help button
@@ -92,7 +100,7 @@ const svgIcons = {
   theme_light_dark: ThemeLightDarkSvg,
   text_shadow: TextShadowSvg,
   format_font_size_increase: FormatFontSizeIncreaseSvg,
-  volume_high: VolumeHighSvg
+  volume_high: VolumeHighSvg,
 };
 
 type Props = {
