@@ -82,8 +82,8 @@ const FriendTintPressable = ({
 
   const handleOnPressOut = (event) => {
 
-    // visibility.value = withTiming(0, { duration: 300 });
-    // scaleValue.value = withTiming(0, { duration: 300 });
+    visibility.value = withTiming(0, { duration: 300 });
+    scaleValue.value = withTiming(0, { duration: 300 });
 
     onPressOut();
   };
