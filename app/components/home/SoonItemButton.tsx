@@ -9,6 +9,7 @@ import {
 import manualGradientColors from "@/app/styles/StaticColors";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
+import UpcomingFriendPressable from "../appwide/button/UpcomingFriendPressable";
 import { LinearGradient } from "expo-linear-gradient";
 interface SoonItemButtonProps {
   width: DimensionValue;
@@ -78,7 +79,7 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
     setFontColor(textColor);
   };
   return (
-    <FriendTintPressable
+    <UpcomingFriendPressable
       friendList={friendList}
       friendId={friendId}
       startingColor={overlayColor}
@@ -125,7 +126,7 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
           <Text style={[styles.text, { color: fontColor }]}>{friendName}</Text>
         </View>
       </View>
-    </FriendTintPressable>
+    </UpcomingFriendPressable>
   );
 };
 

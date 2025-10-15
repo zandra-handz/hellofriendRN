@@ -7,12 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { ColorValue } from "react-native"; 
-
-// HARD CODED COLOR 
-import { LinearGradient } from "expo-linear-gradient";
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
-
+import { ColorValue } from "react-native";
  
 type Props = {
   onPress: () => void;
@@ -23,22 +18,26 @@ type Props = {
   useFriendColors?: boolean; // just here to be the same as GradientBackground logic to avoid confusion
   reverse?: boolean; // reverses gradient, mostly just here for experimenting
 };
- 
 
 const FriendTintPressable = ({
+  touchLocationX,
+  touchLocationY,
   friendList,
+  friendColorValues,
+  screenDiagonal,
+  visibility,
+  scaleValue,
+  setGradientColors,
   onPress,
-  onPressIn=() => console.log('on press in'),
-  onPressOut=() => console.log('on press out'),
+  onPressIn = () => console.log("on press in"),
+  onPressOut = () => console.log("on press out"),
   onLongPress,
   style,
   friendId,
-  startingColor,
   children,
   useFriendColors = true,
   reverse = false,
-}: Props) => { 
-
+}: Props) => {
   const scale = useSharedValue(1);
   const gradientScale = useSharedValue(0);
   const transition = useSharedValue(0);
@@ -47,72 +46,103 @@ const FriendTintPressable = ({
     (friend) => Number(friendId) === Number(friend.id)
   );
 
-  const handleOnPressIn = () => {
-            scale.value = withSpring(0.95, {duration: 100});
-        gradientScale.value = withTiming(1.4,  { duration: 50 });
-        transition.value = withTiming(1, {duration: 100});
-       onPressIn();
-  }
+  const handleOnPressIn = (event) => {
+    const { pageX, pageY, locationX, locationY } = event.nativeEvent;
+    touchLocationX.value = pageX;
+    touchLocationY.value = pageY;
+    visibility.value = withTiming(1, { duration: 0 });
+  
+    scaleValue.value = withTiming(screenDiagonal + 800, { duration: 200 });
+    // console.log("Screen position:", pageX, pageY);
+    // console.log("Within element:", locationX, locationY);
+    // friendColorValues.value = [
+    //   friendColors.theme_color_dark,
+    //   friendColors.theme_color_light,
+    // ];
+    setGradientColors([
+      friendColors.theme_color_dark,
+      friendColors.theme_color_light,
+    ]);
+
+    console.log("friend colors set", friendColorValues.value);
+
+    // scale.value = withSpring(0.95, { duration: 100 });
+    // gradientScale.value = withTiming(1.4, { duration: 50 });
+    // transition.value = withTiming(1, { duration: 100 });
+    onPressIn();
+  };
+
+  const handleOnPress = () => { 
+    // scaleValue.value = withTiming(screenDiagonal + 700, { duration: 80 });
 
 
-    const handleOnPressOut = () => {
+    onPress();
+    
+  };
 
-        //           scale.value = withSpring(0.95, {duration: 100});
-        // gradientScale.value = withTiming(1.4,  { duration: 50 });
-        // transition.value = withTiming(1, {duration: 100});
-        scale.value = withSpring(1);
-        transition.value = withTiming(0);
-         gradientScale.value = withTiming(0);
-        onPressOut();
-        // onPressIn();
-  }
+  const handleOnPressOut = (event) => {
 
-  const direction = useMemo(() => {
-    if (useFriendColors) return [0, 0, 1, 0];
-    if (reverse) return [0, 0, 1, 1];
-    return [0, 1, 1, 0];
-  }, [useFriendColors, reverse]);
+    // visibility.value = withTiming(0, { duration: 300 });
+    // scaleValue.value = withTiming(0, { duration: 300 });
 
-  const highlightColors = useMemo<[ColorValue, ColorValue]>(() => {
-    if (friendColors && friendColors?.theme_color_dark && friendColors?.theme_color_light) {
-      return [friendColors.theme_color_dark, friendColors.theme_color_light];
-    } else {
-      return ["#4caf50","#a0f143" ];
-    }
-  }, [friendColors]);
+    onPressOut();
+  };
 
-  // transition.value = 0;
+  // const direction = useMemo(() => {
+  //   if (useFriendColors) return [0, 0, 1, 0];
+  //   if (reverse) return [0, 0, 1, 1];
+  //   return [0, 1, 1, 0];
+  // }, [useFriendColors, reverse]);
 
-  // transition.value = withTiming(1, { duration: 600 });
+  // const highlightColors = useMemo<[ColorValue, ColorValue]>(() => {
+  //   if (
+  //     friendColors &&
+  //     friendColors?.theme_color_dark &&
+  //     friendColors?.theme_color_light
+  //   ) {
+  //     return [friendColors.theme_color_dark, friendColors.theme_color_light];
+  //   } else {
+  //     return ["#4caf50", "#a0f143"];
+  //   }
+  // }, [friendColors]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ scale: scale.value }],
+      // transform: [{ scale: scale.value }],
     };
   });
 
   const animatedColorStyle = useAnimatedStyle(() => {
     return {
-      opacity: transition.value, transform: [{ scale: gradientScale.value }],
+      opacity: transition.value,
+      transform: [{ scale: gradientScale.value }],
     };
   });
 
   return (
     <Pressable
-      onPress={onPress}
-      onLongPress={onLongPress}
-      style={[style, { backgroundColor: 'transparent'}]}
       onPressIn={handleOnPressIn}
       onPressOut={handleOnPressOut}
-    >
-      <AnimatedLinearGradient
-        colors={highlightColors}
-        start={{ x: direction[0], y: direction[1] }}
-        end={{ x: direction[2], y: direction[3] }}
-        style={[StyleSheet.absoluteFill, animatedColorStyle, style]}
-      /> 
-      <Animated.View style={[animatedStyle]}>{children}</Animated.View>
- 
+       onPress={handleOnPress}
+     onLongPress={onLongPress}
+    //     onPress={() => {
+    //   // Delay the actual onPress by 200ms
+    //   setTimeout(() => {
+    //     handleOnPress?.();
+    //   }, 200);
+    // }}
+      style={[
+        style,
+        {
+          // backgroundColor: "red",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 50000,
+        },
+      ]}
+    > 
+      {/* <Animated.View style={[animatedStyle]}>{children}</Animated.View> */}
+            <Animated.View>{children}</Animated.View>
     </Pressable>
   );
 };

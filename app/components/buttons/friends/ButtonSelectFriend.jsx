@@ -1,46 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const ButtonSelectFriend = ({
-  friendId,
   disabled = false,
   friend,
   backgroundColor,
   borderRadius,
   color,
   height = 70,
-  themeAheadOfLoading,
-  themeTextColor,
+  fontColor,
 }) => {
-  const [textColor, setTextColor] = useState(themeTextColor);
-
-  useEffect(() => {
-    if (friendId && themeAheadOfLoading) {
-      if (friend.id === friendId) {
-        setTextColor(themeAheadOfLoading.fontColor);
-      }
-    }
-  }, [friendId, themeAheadOfLoading]);
+  const flattenedBackgroundColorStyle = StyleSheet.flatten([
+  
+    {
+      backgroundColor: !disabled ? backgroundColor : "transparent",
+      borderRadius,
+    },  styles.inner,
+  ]);
 
   return (
     <View
       style={[
-        styles.row,
+    
         {
           borderRadius,
           height,
-          borderColor: textColor,
+          borderColor: fontColor,
+ 
         },
+            styles.row,
       ]}
     >
       <View
-        style={[
-          styles.inner,
-          {
-            backgroundColor: !disabled ? backgroundColor : "transparent",
-            borderRadius,
-          },
-        ]}
+        style={flattenedBackgroundColorStyle}
       >
         <Text
           numberOfLines={1}
@@ -61,6 +53,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     width: "100%",
+    justifyContent: 'center',
+    // backgroundColor: 'pink',
+ flex: 1,
     textAlign: "center",
     borderWidth: 0,
     overflow: "hidden",
@@ -74,6 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+
   },
   name: {
     alignSelf: "center",

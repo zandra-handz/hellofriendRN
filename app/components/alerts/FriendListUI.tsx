@@ -26,10 +26,17 @@ type FriendListUIProps = {
 type FriendListItem = Friend | { message: string };
 
 const FriendListUI = ({
+  touchLocationX,
+  touchLocationY,
+  visibility,
+  scale,
+  screenDiagonal,
   handleDeselect,
   autoSelectFriend,
   themeAheadOfLoading,
+  friendColors,
   friendList,
+  setGradientColors,
   lightDarkTheme,
   data,
   friendId,
@@ -63,21 +70,22 @@ const FriendListUI = ({
   ]);
 
   const flattenedGlobalPressableStyle = StyleSheet.flatten([
-    styles.friendContainer,
+ 
     {
       borderRadius: 10,
       backgroundColor: elementBackgroundColor,
     },
+       styles.friendContainer,
   ]);
 
   const flattenedSelectedFriendContainerStyle = StyleSheet.flatten([
-    styles.friendContainer,
+
     {
       backgroundColor: primaryBackground,
       borderRadius: ITEM_BORDER_RADIUS,
 
       height: ITEM_HEIGHT,
-    },
+    },    styles.friendContainer,
   ]);
 
   const renderFriendSelectItem = useCallback(
@@ -110,6 +118,13 @@ const FriendListUI = ({
         </View>
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
+          touchLocationX={touchLocationX}
+          touchLocationY={touchLocationY}
+          visibility={visibility}
+          scaleValue={scale}
+          screenDiagonal={screenDiagonal}
+          setGradientColors={setGradientColors}
+          friendColorValues={friendColors}
             friendList={friendList}
             startingColor={elementBackgroundColor}
             style={styles.friendContainer}
@@ -143,6 +158,7 @@ const FriendListUI = ({
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
+               fontColor={themeAheadOfLoading.fontColor}
             />
           </GlobalPressable>
         )}
@@ -207,7 +223,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
-    flexGrow: 1,
+   
+ 
+    // backgroundColor: 'hotpink',
   },
   pressedStyle: {
     opacity: 0.2,
@@ -223,6 +241,7 @@ const styles = StyleSheet.create({
     minWidth: 2,
     height: "100%",
     width: "100%",
+    alignItems: 'center', 
   },
 });
 

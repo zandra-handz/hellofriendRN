@@ -1,5 +1,5 @@
-import { View, Pressable, StyleSheet } from "react-native";
-import React, { useMemo, useCallback } from "react";
+import { View, Pressable, StyleSheet, Dimensions } from "react-native";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -19,9 +19,23 @@ import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import SvgIcon from "@/app/styles/SvgIcons";
-// type Props = {
-//   navigationDisabled: boolean;
-// };
+import Animated, {
+  withTiming,
+  withSpring,
+  useDerivedValue,
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedProps,
+} from "react-native-reanimated";
+
+import { ColorValue } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
+import { LinearGradient } from "expo-linear-gradient";
+import ScreenAddImage from "../images/ScreenAddImage";
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 const ScreenSelectFriend = (
   {
@@ -34,15 +48,12 @@ const ScreenSelectFriend = (
   const { friendListAndUpcoming } = useFriendListAndUpcoming();
   const friendList = friendListAndUpcoming?.friends;
   const queryClient = useQueryClient();
-  // const { settings } = useUserSettings();
+  // 🔹 Shared values for circle position
+  const touchLocationX = useSharedValue(-999);
+  const touchLocationY = useSharedValue(-999);
+  const visibility = useSharedValue(0);
 
-  // const lockIns = useMemo(
-  //   () => ({
-  //     next: settings?.lock_in_next ?? null,
-  //     customString: settings?.lock_in_custom_string ?? null,
-  //   }),
-  //   [settings]
-  // );
+  const friendColors = useSharedValue(["#4caf50", "#a0f143"]);
 
   const { user } = useUser();
 
@@ -87,7 +98,7 @@ const ScreenSelectFriend = (
   const alphabFriendList: object[] = useMemo(() => {
     if (!friendList || !(friendList?.length > 0)) {
       return [];
-    } 
+    }
     const summaryOfSorted = friendList
       .slice()
       .sort((a, b) =>
@@ -100,7 +111,67 @@ const ScreenSelectFriend = (
 
     return summaryOfSorted;
   }, [friendList]);
+
+  // useEffect(() => {
+  //   console.log("touch locations changed!");
+  //   if (touchLocationX !== -999 && touchLocationY !== -999) {
+  //     visibility.value = withTiming(1, { duration: 80 });
+  //     scale.value = withTiming(20, { duration: 1000 });
+  //   } else {
+  //     visibility.value = withTiming(1, { duration: 80 });
+  //     scale.value = withTiming(0, { duration: 3000 });
+  //   }
+  // }, [touchLocationX, touchLocationY]);
+
+  const [gradientColors, setGradientColors] = useState<
+    [ColorValue, ColorValue]
+  >(["#4caf50", "#a0f143"]);
+  const screenDiagonal = Math.sqrt(screenWidth ** 2 + screenHeight ** 2);
+  // useEffect(() => {
+  //   console.warn("touch changed");
+  //   // const screenDiagonal = Math.sqrt(screenWidth ** 2 + screenHeight ** 2);
+
+  //   if (touchLocationX !== -999 && touchLocationY !== -999 && friendColors) {
+  //     visibility.value = withTiming(1, { duration: 80 });
+  //     scale.value = withTiming(screenDiagonal, { duration: 2000 });
+  //     setGradientColors(friendColors.value);
+  //     console.log("setting colors: ", friendColors.value);
+  //   } else {
+  //     visibility.value = withTiming(0, { duration: 300 });
+  //     scale.value = withTiming(circleSize, { duration: 300 });
+  //   }
+  // }, [touchLocationX, touchLocationY, friendColors]);
+
+  const scale = useSharedValue(0);
+
+  const animatedGradientProps = useAnimatedProps(() => ({
+    colors: friendColors.value.length >= 2
+      ? (friendColors.value as [ColorValue, ColorValue])
+      : ['#4caf50', '#a0f143'], // fallback
+  })) as any; // ✅ cast to any to satisfy TS
  
+ 
+
+  const animatedCircleStyle = useAnimatedStyle(() => {
+    
+    // calculate size: either initial or full screen
+    const size = scale.value; // scale.value could be initial 50 -> full screen
+
+    // adjust position so the circle expands from touch point
+    const left = touchLocationX.value - size / 2;
+    const top = touchLocationY.value - size / 2;
+
+    return {
+      // position: "absolute",
+      top,
+      left,
+      width: size,
+      height: size,
+      borderRadius: size / 2, // keep circle shape
+      backgroundColor: "rgba(255,255,255,0.4)",
+      opacity: visibility.value,
+    };
+  }, [scale, visibility, touchLocationX, touchLocationY]);
 
   const { handleSelectFriend } = useSelectFriend({
     friendList,
@@ -110,23 +181,6 @@ const ScreenSelectFriend = (
     navigateOnSelect: navigateBack,
   });
 
-  // const handleSelectFriend = (itemId: number) => {
-  //   const selectedOption = friendList.find((friend) => friend.id === itemId);
-
-  //   const selectedFriend = selectedOption || null;
-  //   if (selectedOption) {
-  //     selectFriend(selectedFriend);
-  //     getThemeAheadOfLoading(selectedFriend);
-  //   } else {
-  //     selectFriend(null);
-  //     resetTheme();
-  //   }
-
-  //   if (!navigationDisabled) {
-  //     navigateBack();
-  //   }
-  // };
-
   const flattenedTopBarStyle = StyleSheet.flatten([
     {
       backgroundColor: lightDarkTheme.primaryBackground,
@@ -134,49 +188,85 @@ const ScreenSelectFriend = (
     styles.topBar,
   ]);
 
+  const direction = [0, 0, 1, 0];
+
   return (
-    <SafeViewAndGradientBackground
-      friendColorLight={manualGradientColors.lightColor}
-      friendColorDark={manualGradientColors.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={false}
-      style={styles.safeViewContainer}
-    >
-      <View style={flattenedTopBarStyle}>
-        <Pressable
-          hitSlop={30}
-          onPress={navigateBack}
-          onLongPress={handleDeselect}
-          style={styles.topBarButton}
+    <>
+      <SafeViewAndGradientBackground
+        friendColorLight={manualGradientColors.lightColor}
+        friendColorDark={manualGradientColors.darkColor}
+        backgroundOverlayColor={lightDarkTheme.primaryBackground}
+        friendId={false}
+        style={styles.safeViewContainer}
+      >
+        <Animated.View
+          style={[
+            animatedCircleStyle,
+            ,
+            {
+              position: "absolute",
+              overflow: "hidden",
+              borderRadius: 999,
+
+              width: 10,
+              height: 10,
+              //  zIndex: 40000,
+              backgroundColor: "red",
+        
+            },
+          ]}
         >
+          <AnimatedLinearGradient
+            //  animatedProps={animatedGradientProps }
+            colors={gradientColors}
+            start={{ x: direction[0], y: direction[1] }}
+            end={{ x: direction[2], y: direction[3] }}
+            style={[StyleSheet.absoluteFill ]}
+          />
+        </Animated.View>
+        <View style={flattenedTopBarStyle}>
+          <Pressable
+            hitSlop={30}
+            onPress={navigateBack}
+            onLongPress={handleDeselect}
+            style={styles.topBarButton}
+          >
+            <SvgIcon
+              name={"chevron_left"}
+              size={20}
+              color={lightDarkTheme.primaryText}
+            />
+          </Pressable>
           <SvgIcon
-            name={"chevron_left"}
-            size={20}
+            name="account_switch_outline"
+            size={26}
             color={lightDarkTheme.primaryText}
           />
-        </Pressable>
-        <SvgIcon
-          name="account_switch_outline"
-          size={26}
-          color={lightDarkTheme.primaryText}
-        />
-      </View>
-      <View style={styles.friendsListWrapper}>
-        {alphabFriendList && (
-          <FriendListUI
-            autoSelectFriend={autoSelectFriend}
-            handleDeselect={handleDeselect}
-            themeAheadOfLoading={themeAheadOfLoading}
-            friendList={friendList}
-            lightDarkTheme={lightDarkTheme}
-            data={alphabFriendList}
-            friendId={selectedFriend ? selectedFriend?.id : null}
-            onPress={handleSelectFriend}
-            onLongPress={toggleLockOnFriend}
-          />
-        )}
-      </View>
-    </SafeViewAndGradientBackground>
+        </View>
+        <View style={styles.friendsListWrapper}>
+          {alphabFriendList && (
+            <FriendListUI
+              touchLocationX={touchLocationX}
+              touchLocationY={touchLocationY}
+              friendColors={friendColors}
+              visibility={visibility}
+              scale={scale}
+              setGradientColors={setGradientColors}
+              screenDiagonal={screenDiagonal}
+              autoSelectFriend={autoSelectFriend}
+              handleDeselect={handleDeselect}
+              themeAheadOfLoading={themeAheadOfLoading}
+              friendList={friendList}
+              lightDarkTheme={lightDarkTheme}
+              data={alphabFriendList}
+              friendId={selectedFriend ? selectedFriend?.id : null}
+              onPress={handleSelectFriend}
+              onLongPress={toggleLockOnFriend}
+            />
+          )}
+        </View>
+      </SafeViewAndGradientBackground>
+    </>
   );
 };
 
