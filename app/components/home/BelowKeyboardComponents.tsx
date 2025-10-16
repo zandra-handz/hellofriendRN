@@ -20,6 +20,8 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   userId,
   paddingHorizontal,
   isLoading,
+  themeAheadOfLoading,
+  getThemeAheadOfLoading,
   lockInCustomString, /// to check if prev friend needs to be unpinned. to keep consistent with my other select hooks
   friendStyle,
   primaryColor,
@@ -36,7 +38,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   onPress,
 }) => {
   const { friendDash, loadingDash } = useFriendDash();
-  const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
+
 
   return (
     <Animated.View

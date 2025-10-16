@@ -83,8 +83,7 @@ const EditTheme = ({
           response.savedLightColor,
           false
         );
-
-        console.log(response);
+ 
 
         // await updateFriendFavesColorThemeSetting(
         await handleUpdateFavesTheme({

@@ -3,7 +3,7 @@ import React, { createContext, useContext, useMemo, ReactNode } from "react";
 
 import { useUserSettings } from "./UserSettingsContext";
 
-import { findFriendInList } from "../hooks/deselectFriendFunction";
+// import { findFriendInList } from "../hooks/deselectFriendFunction";
 import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
 
 import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";

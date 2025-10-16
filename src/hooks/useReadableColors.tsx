@@ -28,14 +28,20 @@ export interface Friend {
 }
 
 
-const useReadableColors = (friendList: Friend[], selectedFriendId) => {
+const useReadableColors = (friendList: Friend[], selectedFriendId ) => {
   const getSavedColorTheme = () => {
     const currentFriend = friendList.find(
       (friend) => friend.id === selectedFriendId
     );
 
-    if (!currentFriend) {
-      return;
+    if (!currentFriend || !currentFriend?.saved_color_dark || !currentFriend?.saved_color_light) {
+
+      return {
+        savedDarkColor: "#4caf50",
+        savedLightColor: "#a0f143",
+        
+
+      };
     }
     return {
       savedDarkColor: currentFriend.saved_color_dark,

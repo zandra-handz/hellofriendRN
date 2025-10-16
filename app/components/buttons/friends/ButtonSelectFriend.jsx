@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const ButtonSelectFriend = ({
@@ -11,29 +11,26 @@ const ButtonSelectFriend = ({
   fontColor,
 }) => {
   const flattenedBackgroundColorStyle = StyleSheet.flatten([
-  
     {
       backgroundColor: !disabled ? backgroundColor : "transparent",
       borderRadius,
-    },  styles.inner,
+ 
+    },
+    styles.inner,
   ]);
 
   return (
     <View
       style={[
-    
         {
           borderRadius,
           height,
           borderColor: fontColor,
- 
         },
-            styles.row,
+        styles.row,
       ]}
     >
-      <View
-        style={flattenedBackgroundColorStyle}
-      >
+      <View style={flattenedBackgroundColorStyle}>
         <Text
           numberOfLines={1}
           style={[
@@ -52,10 +49,9 @@ const styles = StyleSheet.create({
   row: {
     flex: 1,
     flexDirection: "row",
-    width: "100%",
-    justifyContent: 'center',
-    // backgroundColor: 'pink',
- flex: 1,
+    selfAlign: 'center',
+    justifyContent: "center", 
+ 
     textAlign: "center",
     borderWidth: 0,
     overflow: "hidden",
@@ -65,16 +61,18 @@ const styles = StyleSheet.create({
   inner: {
     width: "auto",
     paddingHorizontal: 14,
-    height: "100%",
+ alignContent: 'center',
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-
+    textAlign: 'center', 
   },
   name: {
     alignSelf: "center",
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
+    justifyContent: 'center',
+  
   },
   iconContainer: {
     paddingBottom: 6,

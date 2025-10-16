@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     height: "100%",
-    width: "auto",
+
     flexDirection: "column",
   },
   itemInnerContainer: {
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
     borderRadius: 999,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center" 
   },
 
   friendContainer: {
@@ -223,9 +223,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
+    width: '100%',
+   // backgroundColor: 'teal',
    
- 
-    // backgroundColor: 'hotpink',
+  
   },
   pressedStyle: {
     opacity: 0.2,
@@ -234,6 +235,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
+  
   },
   animatedViewContainer: {
     flex: 1,
@@ -242,6 +244,7 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     alignItems: 'center', 
+ 
   },
 });
 

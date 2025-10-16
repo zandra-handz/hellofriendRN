@@ -1,16 +1,12 @@
 import React, { useRef, useState } from "react";
 import {
   View,
-  Text,
-  Pressable,
+  Text, 
   StyleSheet,
   DimensionValue,
-} from "react-native";
-import manualGradientColors from "@/app/styles/StaticColors";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import FriendTintPressable from "../appwide/button/FriendTintPressable";
+} from "react-native"; 
 import UpcomingFriendPressable from "../appwide/button/UpcomingFriendPressable";
-import { LinearGradient } from "expo-linear-gradient";
+ 
 interface SoonItemButtonProps {
   width: DimensionValue;
   date: string;
@@ -31,9 +27,7 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   onDoublePress = () => console.log("Soon Item button dounle press"),
   disabled = false,
   textColor = "white",
-  friendList,
-  primaryBackground,
-  lighterOverlayColor,
+  friendList, 
   darkerOverlayColor,
   primaryColor,
   overlayColor = "hotpink",

@@ -129,12 +129,13 @@ const ScreenHome = () => {
   // }, [friendListAndUpcoming]);
 
   useEffect(() => {
+    console.log('AUTOSELECTING FRIEND')
     // only run if we have an id mismatch
     // console.log("autoselect", autoSelectId);
     if (
       // !selectedFriend?.id &&
       // && !loadingSettings
-      autoSelectFriend
+      autoSelectFriend && !selectedFriend?.id
     ) {
       if (autoSelectFriend.customFriend?.id) {
         selectFriend(autoSelectFriend.customFriend);
@@ -145,6 +146,7 @@ const ScreenHome = () => {
       }
     }
   }, [autoSelectFriend]);
+
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -435,6 +437,7 @@ const handleFocusPress = () => {
                           paddingHorizontal={PADDING_HORIZONTAL}
                           isLoading={isLoading}
                           friendStyle={themeAheadOfLoading}
+                          getThemeAheadOfLoading={getThemeAheadOfLoading}
                           friendId={selectedFriend?.id}
                           friendName={selectedFriend?.name}
                           primaryOverlayColor={lightDarkTheme.overlayBackground}

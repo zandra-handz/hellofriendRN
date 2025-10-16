@@ -7,20 +7,14 @@ import React, {
   useMemo,
 } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-// import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { Ionicons } from "@expo/vector-icons";
+
 import Donut from "../headers/Donut";
-// import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; // moved to parent
 import { AppState, AppStateStatus } from "react-native";
-import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
-import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
-// import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting"; // moved to parent
 import { useCategories } from "@/src/context/CategoriesContext";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   selectedFriend: boolean;
@@ -36,17 +30,18 @@ const TalkingPointsChart = ({
   isLoading, // loadingDash
 
   selectedFriendId,
-  selectedFriendName,
+  // selectedFriendName,
   primaryColor,
-  primaryBackgroundColor,
+  // primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
-  themeAheadOfLoading,
+  // themeAheadOfLoading,
 }: Props) => {
-  const welcomeTextStyle = AppFontStyles.welcomeText;
+  // const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
+
   const {
     navigateToMoments,
     navigateToMomentView,
@@ -54,26 +49,12 @@ const TalkingPointsChart = ({
     navigateToHistory,
   } = useAppNavigations();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
-
-  // const { categoryStartIndices } = useTalkingPCategorySorting({
-  //   listData: capsuleList,
-  // });
-
-  const [showHistory, setShowHistory] = useState(false);
-  // const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
-  //   listData: capsuleList,
-  // });
+ 
 
   const categories = categorySizes();
 
-  const toggleShowHistory = useCallback(() => {
-    setShowHistory((prev) => !prev);
-  }, []);
-
   const appState = useRef(AppState.currentState);
-  const SMALL_CHART_RADIUS = 30;
-  const SMALL_CHART_BORDER = 3;
-
+ 
   useEffect(() => {
     const subscription = AppState.addEventListener(
       "change",
@@ -97,29 +78,14 @@ const TalkingPointsChart = ({
 
     return () => subscription.remove(); // cleanup
   }, [capsuleListCount]);
-
-  useFocusEffect(
-    useCallback(() => {
-      // This runs when the screen gains focus (do nothing here)
-
-      return () => {
-        // This runs when the screen loses focus
-        if (showHistory) {
-          setShowHistory(false);
-        }
-      };
-    }, [showHistory])
-  );
+ 
 
   const HEIGHT = 420;
-  const PADDING = 20;
 
   const CHART_RADIUS = 150;
-  // const CHART_STROKE_WIDTH = 20;
-  // const CHART_OUTER_STROKE_WIDTH = 26;
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
-  // const GAP = 0.03;
+
   const GAP = 0.01;
 
   const LABELS_SIZE = 11;
@@ -146,22 +112,32 @@ const TalkingPointsChart = ({
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-  useEffect(
-    useCallback(() => {
-      if (!capsuleListCount || capsuleListCount < 1) {
-        return;
-      }
+  // useEffect(
+  //   useCallback(() => {
+  //     if (!capsuleListCount || capsuleListCount < 1) {
+  //       return;
+  //     }
 
-      // let categories = categorySizes();
-      // setTempCategoriesSortedList(categories.sortedList);
-      if (
-        JSON.stringify(categories.sortedList) !==
-        JSON.stringify(tempCategoriesSortedList)
-      ) {
-        setTempCategoriesSortedList(categories.sortedList);
-      }
-    }, [capsuleListCount, categories])
-  );
+  //     if (
+  //       JSON.stringify(categories.sortedList) !==
+  //       JSON.stringify(tempCategoriesSortedList)
+  //     ) {
+  //       setTempCategoriesSortedList(categories.sortedList);
+  //     }
+  //   }, [capsuleListCount, categories])
+  // );
+
+
+  useEffect(() => {
+  if (!capsuleListCount || capsuleListCount < 1) return;
+
+  if (
+    JSON.stringify(categories.sortedList) !==
+    JSON.stringify(tempCategoriesSortedList)
+  ) {
+    setTempCategoriesSortedList(categories.sortedList);
+  }
+}, [capsuleListCount, categories]);
 
   useEffect(() => {
     if (userCategories && userCategories.length > 0) {
@@ -191,58 +167,40 @@ const TalkingPointsChart = ({
       .map((item) => item.color);
   }, [categoryColors, categories]);
 
+  const flattenedHistoryLabelWrapperStyle = StyleSheet.flatten([
+    [
+      styles.historyLabelWrapper,
+      {
+        color: primaryColor,
+      },
+    ],
+  ]);
+
   return (
     <>
       <>
         {!isLoading && (
-          <Pressable
-            // onPress={toggleShowHistory}
-            onPress={navigateToHistory}
-            style={{
-              
-              height: 30,
-              paddingHorizontal: PADDING,
-              position: "absolute",
-              zIndex: 20000,
-              elevation: 20000,
-              top: 370,
-              right: 0,
-              alignItems: "center",
-              width: "100%",
-              flexDirection: "row",
-            }}
-          >
-            <Ionicons
-              name={!showHistory ? "pie-chart" : "close"}
+          <Pressable onPress={navigateToHistory} style={styles.container}>
+            <SvgIcon
+              name={  "pie_chart"}
               size={30}
               color={primaryColor}
-            />
-            {!showHistory && (
-              <Text
-                style={[
-                  {
-                    color: primaryColor,
-                    fontFamily: "Poppins-Regular",
-                    fontSize: 13,
-                  },
-                ]}
-              >
-                {"   "}category history
+            /> 
+              <Text style={flattenedHistoryLabelWrapperStyle}>
+                {"   "}history
               </Text>
-            )}
+          
           </Pressable>
         )}
         <View
           style={[
             {
               overflow: "hidden",
-              height: !showHistory
-                ? HEIGHT
-                : HEIGHT + (SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2),
+              height: HEIGHT,
               flexGrow: 1,
               flex: 1,
-              padding: PADDING,
-              paddingBottom: !showHistory ? PADDING : 0,
+              padding: 20, // PADDING
+              paddingBottom: 20,
               backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
               borderRadius: 20,
               minHeight: HEIGHT,
@@ -286,12 +244,7 @@ const TalkingPointsChart = ({
 
               {isFocused && (
                 <View
-                  style={{
-                    marginHorizontal: 0,
-                    alignItems: "center",
-                    flexDirection: "column",
-                    height: "74%",
-                  }}
+                  style={styles.donutWrapper}
                 >
                   <Donut
                     friendStyle={friendStyle}
@@ -314,95 +267,7 @@ const TalkingPointsChart = ({
                   />
                 </View>
               )}
-
-              {showHistory && selectedFriendId && !isLoading && (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    // backgroundColor: themeStyles.primaryBackground.backgroundColor,
-                    width: "100%",
-                    bottom: 0,
-                    // backgroundColor: 'teal',
-                    height: SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2,
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flex: 1,
-
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        { color: primaryColor, alignSelf: "center" },
-                      ]}
-                    >
-                      History{"  "}
-                    </Text>
-                    {/* <FriendHistoryPieDataWrap
-                      friendId={selectedFriendId}
-          
-                      selectedFriendName={selectedFriendName}
-                      primaryColor={primaryColor}
-                      primaryOverlayColor={primaryOverlayColor}
-                      darkerOverlayBackgroundColor={
-                        darkerOverlayBackgroundColor
-                      }
-                      welcomeTextStyle={welcomeTextStyle}
-                      subWelcomeTextStyle={subWelcomeTextStyle}
-                      manualGradientColors={manualGradientColors}
-                      themeAheadOfLoading={themeAheadOfLoading}
-                      chartBorder={SMALL_CHART_BORDER}
-                      chartBorderColor={primaryBackgroundColor}
-                      showLabels={false}
-                      chartRadius={SMALL_CHART_RADIUS}
-                    /> */}
-                    <Pressable
-                      onPress={navigateToHistory}
-                      style={{
-                             hitSlop: 20,
-                        width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        marginLeft: 10,
-                   
-                        backgroundColor: "hotpink",
-                      }}
-                    ></Pressable>
-                  </View>
-                  <Text
-                    style={[
-                      subWelcomeTextStyle,
-                      { color: primaryColor, alignSelf: "center" },
-                    ]}
-                  >
-                    All time{"  "}
-                  </Text>
-                  <View
-                    style={{ flexDirection: "row", justifyContent: "flex-end" }}
-                  >
-                    {/* <UserHistoryPieDataWrap
-                      friendStyle={friendStyle}
-                      primaryColor={primaryColor}
-                      primaryOverlayColor={primaryOverlayColor}
-                      darkerOverlayBackgroundColor={
-                        darkerOverlayBackgroundColor
-                      }
-                      welcomeTextStyle={welcomeTextStyle}
-                      subWelcomeTextStyle={subWelcomeTextStyle}
-                      manualGradientColors={manualGradientColors}
-                      chartBorder={SMALL_CHART_BORDER}
-                      chartBorderColor={primaryBackgroundColor}
-                      showLabels={false}
-                      chartRadius={SMALL_CHART_RADIUS}
-                    /> */}
-                  </View>
-                </View>
-              )}
+ 
             </>
           )}
         </View>
@@ -412,15 +277,25 @@ const TalkingPointsChart = ({
 };
 
 const styles = StyleSheet.create({
-  blurContainer: {
-    flex: 1,
-    padding: 20,
-    margin: 16,
-    textAlign: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-    borderRadius: 20,
+  container: {
+    height: 30,
+    paddingHorizontal: 20, // PADDING
+    position: "absolute",
+    zIndex: 20000,
+    elevation: 20000,
+    top: 370,
+    right: 0,
+    alignItems: "center",
+    width: "100%",
+    flexDirection: "row",
   },
+  historyLabelWrapper: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 13,
+  },
+  donutWrapper: {
+    
+  }
 });
 
 export default TalkingPointsChart;

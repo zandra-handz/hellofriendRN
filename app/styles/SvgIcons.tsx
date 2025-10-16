@@ -31,6 +31,7 @@ import ChevronDownSvg from "./svgs/chevron-down";
 import ChevronUpSvg from "./svgs/chevron-up";
 import ChevronDoubleRightSvg from "./svgs/chevron-double-right";
 import ChevronDoubleLeftSvg from "./svgs/chevron-double-left";
+import CloseOutlineSvg from "./svgs/close-outline"; //IonIcons
 import CommentSearchOutlineSvg from "./svgs/comment-search-outline";
 import CompareSvg from "./svgs/compare";
 import FormatFontSizeIncreaseSvg from "./svgs/format-font-size-increase";
@@ -42,6 +43,7 @@ import MapMarkerSvg from "./svgs/map-marker";
 import NoteEditOutlineSvg from "./svgs/note-edit-outline";
 import NoteTextSvg from "./svgs/note-text";
 import PencilSvg from "./svgs/pencil";
+import PieChartSvg from "./svgs/pie-chart" // IonIcons
 import PinOutlineSvg from "./svgs/pin-outline";
 import PlusSvg from "./svgs/plus";
 import PlusCircleSvg from "./svgs/plus-circle";
@@ -70,11 +72,13 @@ const svgIcons = {
   calendar_clock: CalendarClockSvg,
   cancel: CancelSvg,
   check: CheckSvg,
+  close_outline: CloseOutlineSvg,
   compare: CompareSvg,
   comment_search_outline: CommentSearchOutlineSvg,
   eye: EyeSvg,
   eye_closed: EyeClosedSvg,
   pencil: PencilSvg, // hello quick view
+  pie_chart: PieChartSvg,
   pin_outline: PinOutlineSvg, // friend header
   plus: PlusSvg,
   plus_circle: PlusCircleSvg,

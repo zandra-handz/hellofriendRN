@@ -63,9 +63,9 @@ const ScreenSelectFriend = (
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
 
   const toggleLockOnFriend = (id) => {
-    if (id !== selectedFriend?.id) {
-      handleSelectFriend(id);
-    }
+    // if (id !== selectedFriend?.id) {
+    //   handleSelectFriend(id);
+    // }
     updateSettings({ lock_in_custom_string: id });
   };
 
@@ -92,7 +92,7 @@ const ScreenSelectFriend = (
   ]);
 
   const locale = "en-US";
-  const { navigateBack } = useAppNavigations();
+  const { navigateBack, navigateToHome } = useAppNavigations();
 
   // usememo is not actually doing anything since dependency is a list...
   const alphabFriendList: object[] = useMemo(() => {
@@ -167,7 +167,8 @@ const ScreenSelectFriend = (
       left,
       width: size,
       height: size,
-      borderRadius: size / 2, // keep circle shape
+     // borderRadius: size / 2, // keep circle shape
+      borderRadius: 999,
       backgroundColor: "rgba(255,255,255,0.4)",
       opacity: visibility.value,
     };
@@ -178,7 +179,8 @@ const ScreenSelectFriend = (
     resetTheme,
     getThemeAheadOfLoading,
     selectFriend,
-    navigateOnSelect: navigateBack,
+    navigateOnSelect: navigateToHome,
+    //   navigateOnSelect: undefined,
   });
 
   const flattenedTopBarStyle = StyleSheet.flatten([
@@ -188,7 +190,7 @@ const ScreenSelectFriend = (
     styles.topBar,
   ]);
 
-  const direction = [0, 0, 1, 0];
+  const direction = [0, 0,  1, 0];
 
   return (
     <>

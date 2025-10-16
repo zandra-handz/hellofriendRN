@@ -96,7 +96,7 @@ const useUpdateFaveTheme = ({ userId, friendId }: Props) => {
       updateFavesThemeMutation.mutate(theme);
       // await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
     } catch (error) {
-      console.error("Error saving hello:", error);
+      console.error("Error updating friend theme:", error);
     }
   };
 
