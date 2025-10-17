@@ -17,6 +17,8 @@ import manualGradientColors  from "@/app/styles/StaticColors";
 
 type Props = {
   onPress?: () => void;
+  onPressIn: () => void;
+  onPressOut: () => void;
   onLongPress?: () => void;
   hitSlop?: number;
   zIndex?: number;

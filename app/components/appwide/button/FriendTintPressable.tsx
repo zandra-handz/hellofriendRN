@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useState, useMemo, useRef } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, View, StyleSheet } from "react-native";
+import GlobalPressable from "./GlobalPressable";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -27,7 +28,7 @@ const FriendTintPressable = ({
   touchLocationX,
   touchLocationY,
   friendList,
-  
+
   screenDiagonal,
   visibility,
   scaleValue,
@@ -46,7 +47,7 @@ const FriendTintPressable = ({
   const QUICK_PRESS_THRESHOLD = 150; // ms
   const { navigateBack, navigateToHome } = useAppNavigations();
 
-  // const scale = useSharedValue(1);
+  const scale = useSharedValue(1);
   // const gradientScale = useSharedValue(0);
   // const transition = useSharedValue(0);
 
@@ -55,22 +56,27 @@ const FriendTintPressable = ({
   );
 
   useEffect(() => {
-  return () => {
-    if (quickPressTimeout.current) {
-      clearTimeout(quickPressTimeout.current);
-      quickPressTimeout.current = undefined;
-    }
-  };
-}, []);
+    return () => {
+      if (quickPressTimeout.current) {
+        clearTimeout(quickPressTimeout.current);
+        quickPressTimeout.current = undefined;
+      }
+    };
+  }, []);
 
   const handleOnPressIn = (event) => {
+    // scale animation is fode from global pressable
+    scale.value = withSpring(0.65, {
+      stiffness: 500, // higher = faster response
+      damping: 30, // higher = less bounce
+      mass: 0.5, // lower mass = quicker
+    });
+    quickPressTimeout.current = setTimeout(() => {
+      console.log("This is a long press!");
+      clearTimeout(quickPressTimeout.current);
+      quickPressTimeout.current = undefined; // ✅ clear safely
+    }, QUICK_PRESS_THRESHOLD);
 
-      quickPressTimeout.current = setTimeout(() => {
-    console.log("This is a long press!");
-    clearTimeout(quickPressTimeout.current);
-    quickPressTimeout.current = undefined; // ✅ clear safely
-  }, QUICK_PRESS_THRESHOLD);
- 
     setPressed(true);
     console.log("pressed innnn");
     const { pageX, pageY, locationX, locationY } = event.nativeEvent;
@@ -117,6 +123,12 @@ const FriendTintPressable = ({
   };
 
   const handleOnPressOut = () => {
+    // scale animation is fode from global pressable
+    scale.value = withSpring(1, {
+      stiffness: 600, // higher = faster response
+      damping: 30, // higher = less bounce
+      mass: 0.5, // lower mass = quicker
+    });
     if (quickPressTimeout.current) {
       clearTimeout(quickPressTimeout.current);
       quickPressTimeout.current = undefined;
@@ -134,63 +146,33 @@ const FriendTintPressable = ({
     // onPressOut();
   };
 
-  // const direction = useMemo(() => {
-  //   if (useFriendColors) return [0, 0, 1, 0];
-  //   if (reverse) return [0, 0, 1, 1];
-  //   return [0, 1, 1, 0];
-  // }, [useFriendColors, reverse]);
-
-  // const highlightColors = useMemo<[ColorValue, ColorValue]>(() => {
-  //   if (
-  //     friendColors &&
-  //     friendColors?.theme_color_dark &&
-  //     friendColors?.theme_color_light
-  //   ) {
-  //     return [friendColors.theme_color_dark, friendColors.theme_color_light];
-  //   } else {
-  //     return ["#4caf50", "#a0f143"];
-  //   }
-  // }, [friendColors]);
-
-  // const animatedStyle = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [{ scale: scale.value }],
-  //   };
-  // });
-
-  // const animatedColorStyle = useAnimatedStyle(() => {
-  //   return {
-  //     opacity: transition.value,
-  //     transform: [{ scale: gradientScale.value }],
-  //   };
-  // });
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
 
   return (
-    <Pressable
-      onPressIn={handleOnPressIn}
-      onPressOut={handleOnPressOut}
-      onPress={handleOnPress}
-      onLongPress={onLongPress}
-      //     onPress={() => {
-      //   // Delay the actual onPress by 200ms
-      //   setTimeout(() => {
-      //     handleOnPress?.();
-      //   }, 200);
-      // }}
-      style={[ 
+    <View
+      style={[
         style,
         {
-          width: '100%',
-     
+          width: "100%",
           alignItems: "center",
           justifyContent: "center",
           zIndex: 50000,
         },
       ]}
     >
-      {/* <Animated.View style={[animatedStyle]}>{children}</Animated.View> */}
-      <Animated.View>{children}</Animated.View>
-    </Pressable>
+      <Pressable
+        onPressIn={handleOnPressIn}
+        onPressOut={handleOnPressOut}
+        onPress={handleOnPress}
+        onLongPress={onLongPress}
+      >
+        <Animated.View style={animatedButtonStyle}>{children}</Animated.View>
+      </Pressable>
+    </View>
   );
 };
 

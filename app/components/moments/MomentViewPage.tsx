@@ -301,6 +301,7 @@ const MomentViewPage: React.FC<Props> = ({
                   >
                     <GlobalPressable
                     // onPress={handleEditMoment}
+                         onPress={handleEditMoment}
                       style={{
                         padding: 2,
                         borderRadius: 999,
@@ -309,8 +310,7 @@ const MomentViewPage: React.FC<Props> = ({
                       }}
                     >
                       <SvgIcon
-                        name={"pencil"}
-                        onPress={handleEditMoment}
+                        name={"pencil"} 
                         size={20}
                         color={lighterOverlayColor}
                         color={categoryColor}

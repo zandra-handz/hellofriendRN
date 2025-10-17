@@ -40,7 +40,9 @@ export type RootStackParamList = {
   CalculateTravelTimes: undefined;
   AddImage: undefined;
   AddHello: undefined;
-  SelectFriend: undefined;
+  SelectFriend: {
+    useNavigateBack?: boolean 
+  };
   AddFriend: undefined;
 
   Fidget: undefined;

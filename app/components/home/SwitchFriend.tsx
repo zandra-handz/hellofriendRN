@@ -19,7 +19,7 @@ type Props = {
 //similar to topbar but has its own spinner instead of centering based on parent component
 const SwitchFriend = ({
  
-  welcomeTextStyle,
+  
   primaryColor,
   fontSize = 13,
   editMode = false,
@@ -29,11 +29,13 @@ const SwitchFriend = ({
 }: Props) => {
   const { selectedFriend } = useSelectedFriend();
   const navigation = useNavigation();
+
+  const { navigateToSelectFriend} = useAppNavigations();
   // const friendModalButtonHeight = 16;
 
   const handleNavigateToFriendSelect = () => {
     if (editMode) {
-      navigation.navigate("SelectFriend");
+      navigateToSelectFriend({useNavigateBack: true})
     } else {
       return;
     }

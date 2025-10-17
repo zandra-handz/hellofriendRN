@@ -186,7 +186,6 @@ const Donut = ({
           {
             height: DIAMETER,
             width: DIAMETER,
-
             borderRadius: RADIUS,
             backgroundColor: backgroundColor,
           },

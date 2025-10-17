@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ScrollView, StyleSheet, View, Pressable, Text } from "react-native";
+import {   StyleSheet, View,   Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HalfScreenModal from "../alerts/HalfScreenModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -22,8 +22,7 @@ const GoOptionsModal = ({
   const {
     navigateToMoments,
     navigateToLocationSearch,
-    navigateToFinalize,
-    navigateToFidget,
+    navigateToFinalize, 
   } = useAppNavigations();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -47,13 +46,8 @@ const GoOptionsModal = ({
     navigateToFinalize();
   };
 
-  const handleNavToFidget = () => {
-    closeModal();
-    navigateToFidget();
-  };
-
   const count = 5; // number of items
-  const speed = 30; // milliseconds between each item
+  const speed = 20; // milliseconds between each item
 
   const staggeredDelays = useMemo(() => {
     const getStaggeredDelays = (count: number, speed: number): number[] => {
@@ -87,24 +81,21 @@ const GoOptionsModal = ({
                 >
                   <GlobalPressable
                     onPress={handleNavToLocationSearch}
-                    style={{
-                      flexDirection: "row",
-                      width: "100%",
-                      justifyContent: "center",
-                      height: "auto",
-                      padding: BUTTON_PADDING,
-                      borderRadius: 10,
-                      backgroundColor: BUTTON_COLOR,
-                    }}
+                    style={[
+                      styles.button,
+                      {
+                        padding: BUTTON_PADDING,
+                        backgroundColor: BUTTON_COLOR,
+                      },
+                    ]}
                   >
                     <Text
                       style={[
                         subWelcomeTextStyle,
+                        styles.text,
                         {
                           color: primaryColor,
                           backgroundColor: backgroundColor,
-                          borderRadius: 6,
-                          padding: 10,
                         },
                       ]}
                     >
@@ -120,25 +111,21 @@ const GoOptionsModal = ({
                 >
                   <GlobalPressable
                     onPress={handleNavToMoments}
-                    style={{
-                      flexDirection: "row",
-
-                      width: "100%",
-                      justifyContent: "center",
-                      height: "auto",
-                      padding: BUTTON_PADDING,
-                      borderRadius: 10,
-                      backgroundColor: BUTTON_COLOR,
-                    }}
+                    style={[
+                      styles.text,
+                      {
+                        padding: BUTTON_PADDING,
+                        backgroundColor: BUTTON_COLOR,
+                      },
+                    ]}
                   >
                     <Text
                       style={[
                         subWelcomeTextStyle,
+                        styles.text,
                         {
                           color: primaryColor,
                           backgroundColor: backgroundColor,
-                          borderRadius: 6,
-                          padding: 10,
                         },
                       ]}
                     >
@@ -154,24 +141,21 @@ const GoOptionsModal = ({
                 >
                   <GlobalPressable
                     onPress={handleNavToFinalize}
-                    style={{
-                      flexDirection: "row",
-                      width: "100%",
-                      justifyContent: "center",
-                      height: "auto",
-                      padding: BUTTON_PADDING,
-                      borderRadius: 10,
-                      backgroundColor: BUTTON_COLOR,
-                    }}
+                    style={[
+                      styles.button,
+                      {
+                        padding: BUTTON_PADDING,
+                        backgroundColor: BUTTON_COLOR,
+                      },
+                    ]}
                   >
                     <Text
                       style={[
                         subWelcomeTextStyle,
+                        styles.text,
                         {
                           color: primaryColor,
                           backgroundColor: backgroundColor,
-                          borderRadius: 6,
-                          padding: 10,
                         },
                       ]}
                     >
@@ -188,24 +172,22 @@ const GoOptionsModal = ({
                 >
                   <GlobalPressable
                     onPress={closeModal}
-                    style={{
-                      flexDirection: "row",
-                      width: "100%",
-                      justifyContent: "center",
-                      height: "auto",
-                      padding: BUTTON_PADDING,
-                      borderRadius: 10,
-                      backgroundColor: manualGradientColors.darkColor,
-                    }}
+                    style={[
+                      styles.button,
+                      {
+                        padding: BUTTON_PADDING,
+
+                        backgroundColor: manualGradientColors.darkColor,
+                      },
+                    ]}
                   >
                     <Text
                       style={[
                         subWelcomeTextStyle,
+                        styles.text,
                         {
                           color: primaryColor,
                           backgroundColor: backgroundColor,
-                          borderRadius: 6,
-                          padding: 10,
                         },
                       ]}
                     >
@@ -224,10 +206,6 @@ const GoOptionsModal = ({
 };
 
 const styles = StyleSheet.create({
-  bodyContainer: {},
-  headerContainer: {
-    margin: "2%",
-  },
   sectionContainer: {
     marginVertical: 6,
     flexDirection: "row",
@@ -235,17 +213,16 @@ const styles = StyleSheet.create({
 
     flexWrap: "wrap",
   },
-  headerText: {
-    fontFamily: "Poppins-Bold",
-    fontSize: 18,
+  button: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "center",
+    height: "auto",
+    borderRadius: 10,
   },
   text: {
-    lineHeight: 21,
-    fontSize: 14,
-  },
-  linkText: {
-    fontSize: 14,
-    fontWeight: "bold",
+    borderRadius: 6,
+    padding: 10,
   },
 });
 

@@ -27,7 +27,7 @@ import Animated, {
   useAnimatedStyle,
   withSequence,
 } from "react-native-reanimated";
- 
+
 import SvgIcon from "@/app/styles/SvgIcons";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -66,8 +66,7 @@ const QuickWriteMoment = forwardRef(
     const opacityValue = useSharedValue(0);
 
     const scaleValue = useSharedValue(1);
-
-    const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+ 
 
     useEffect(() => {
       if (isKeyboardVisible) {
@@ -83,36 +82,9 @@ const QuickWriteMoment = forwardRef(
       }
     }, [isKeyboardVisible]);
 
-    // const animatedStyle = useAnimatedStyle(
-    //   () => ({
-    //     opacity: opacityValue.value,
-    //   }),
-    //   [opacityValue]
-    // );
-
     const textValue = useSharedValue("");
-    // const [isFocused, setIsFocused] = useState(false);
 
-    // const animatedProps = useAnimatedProps(() => {
-    //   return {
-    //     scale: scaleValue.value,
-    //   };
-    // });
-
-    // const animatedFontStyle = useAnimatedStyle(
-    //   () => ({
-    //     transform: [{ scale: scaleValue.value }],
-    //   }),
-    //   [scaleValue]
-    // );
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
-
-    // const animatedProps2 = useAnimatedProps(() => {
-    //   return {
-    //     text: `Box width: ${textValue.value}`,
-    //     defaultValue: `Box width: ${scaleValue.value}`,
-    //   };
-    // }, [textValue]);
 
     const textInputRef = useRef();
     useImperativeHandle(ref, () => ({
@@ -149,15 +121,7 @@ const QuickWriteMoment = forwardRef(
     const handleFocusText = () => {
       ref.current.focus();
     };
-
-    // const handleManualFocus = useCallback(() => {
-    //   const timeout = setTimeout(() => {
-    //     if (ref.current) {
-    //       ref.current.focus();
-    //     }
-    //   }, 50);
-    //   return () => clearTimeout(timeout);
-    // }, []);
+ 
 
     const lastCharScale = useSharedValue(1);
 
@@ -246,11 +210,7 @@ const QuickWriteMoment = forwardRef(
                         borderColor: buttonColor,
                       }}
                     >
-                      <SvgIcon
-                        name="plus"
-                        color={buttonColor}
-                        size={20}
-                      />
+                      <SvgIcon name="plus" color={buttonColor} size={20} />
                     </Pressable>
                     <Text
                       style={[
@@ -288,11 +248,7 @@ const QuickWriteMoment = forwardRef(
                             borderColor: buttonColor,
                           }}
                         >
-                          <SvgIcon
-                            name="plus"
-                            color={buttonColor}
-                            size={20}
-                          />
+                          <SvgIcon name="plus" color={buttonColor} size={20} />
                         </View>
                         <Text
                           style={[
@@ -311,34 +267,26 @@ const QuickWriteMoment = forwardRef(
                     {!multiline && (
                       <Pressable
                         onPress={handleSelectImage}
-                        style={{
-                          flexDirection: "row",
-                          marginLeft: 30,
-                          zIndex: 5000,
-                          zIndex: 5000,
-                          elevation: 5000,
-                          width: "auto",
-                          height: 30,
-                          alignItems: "center",
-                          opacity: multiline ? 0 : 0.9,
-                        }}
+                        style={[
+                          styles.selectImageButton,
+                          {
+                            opacity: multiline ? 0 : 0.9,
+                          },
+                        ]}
                       >
                         <View
                           style={{
-                            height: addIconSize,
-                            width: addIconSize,
                             alignItems: "center",
                             justifyContent: "center",
-                            borderRadius: addIconSize / 2,
                             borderWidth: 1,
+                            height: addIconSize,
+                            width: addIconSize,
+                            borderRadius: addIconSize / 2,
+
                             borderColor: buttonColor,
                           }}
                         >
-                          <SvgIcon
-                            name="plus"
-                            color={buttonColor}
-                            size={20}
-                          />
+                          <SvgIcon name="plus" color={buttonColor} size={20} />
                         </View>
                         <Text
                           style={[
@@ -368,7 +316,6 @@ const QuickWriteMoment = forwardRef(
                   //onPress={onPress} // since we can't manually re-place the caret, just nav to edit screen
                   style={{
                     flex: 1, // NEED THIS
-                    // backgroundColor: "teal",
                   }}
                 >
                   {isKeyboardVisible && (
@@ -376,43 +323,15 @@ const QuickWriteMoment = forwardRef(
                       ref={scrollRef}
                       style={{
                         flex: 1,
-                        // backgroundColor: "red"
                       }}
                       contentContainerStyle={{
                         paddingHorizontal: 10,
-                        paddingVertical: 0, // change if adding color to parent
+                        paddingVertical: 0,
                         paddingBottom: 10,
                       }}
                       keyboardShouldPersistTaps="handled"
                       inverted={true}
                     >
-                      {/* <View
-                        style={{
-                          width: "100%",
-                          height: 100,
-                          backgroundColor: "pink",
-                          borderWidth: 1,
-                          borderColor: "black",
-                        }}
-                      ></View>
-                      <View
-                        style={{
-                          width: "100%",
-                          height: 100,
-                          backgroundColor: "pink",
-                          borderWidth: 1,
-                          borderColor: "black",
-                        }}
-                      ></View>
-                      <View
-                        style={{
-                          width: "100%",
-                          height: 100,
-                          backgroundColor: "pink",
-                          borderWidth: 1,
-                          borderColor: "black",
-                        }}
-                      ></View> */}
                       <Text
                         style={{
                           fontSize: 17,
@@ -440,18 +359,7 @@ const QuickWriteMoment = forwardRef(
                   textBreakStrategy={"highQuality"}
                   autoFocus={focusMode}
                   pointerEvents="none"
-                  style={[
-                    styles.textInput,
-                    {
-                      // backgroundColor: "hotpink",
-                      zIndex: 1,
-
-                      marginLeft: 0,
-                      height: 10,
-                      fontSize: 0.01,
-                      color: "transparent",
-                    },
-                  ]}
+                  style={styles.textInputInvisible}
                   color={"transparent"}
                   caretHidden={true}
                   value={isKeyboardVisible ? value : ""}
@@ -504,6 +412,26 @@ const styles = StyleSheet.create({
     lineHeight: 33,
     fontFamily: "Poppins-Regular",
     color: "transparent",
+  },
+
+  textInputInvisible: {
+    borderRadius: 20,
+    paddingVertical: 0,
+    marginLeft: 0,
+    flex: 1,
+    lineHeight: 33,
+    zIndex: 1,
+
+    fontSize: 0.01,
+  },
+  selectImageButton: {
+    flexDirection: "row",
+    marginLeft: 30,
+    zIndex: 5000,
+    elevation: 5000,
+    width: "auto",
+    height: 30,
+    alignItems: "center",
   },
 });
 

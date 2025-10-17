@@ -20,7 +20,7 @@ const SectionAccountSettings = ({ primaryColor }) => {
 
       <NoToggle
         label="Password"
-        icon={<SvgIcon name={"lock_oultline"} size={20} color={primaryColor} />}
+        icon={<SvgIcon name={"lock_outline"} size={20} color={primaryColor} />}
         onPress={() => navigation.navigate("UserDetails")}
       />
       <NoToggle

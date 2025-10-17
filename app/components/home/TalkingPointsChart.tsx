@@ -5,8 +5,7 @@ import React, {
   useEffect,
   useRef,
   useMemo,
-} from "react";
-import { useFocusEffect } from "@react-navigation/native";
+} from "react"; 
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import Donut from "../headers/Donut";
@@ -28,16 +27,12 @@ const TalkingPointsChart = ({
   categorySizes,
   generateGradientColors,
   isLoading, // loadingDash
-
-  selectedFriendId,
-  // selectedFriendName,
-  primaryColor,
-  // primaryBackgroundColor,
+ 
+  primaryColor, 
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
-  // themeAheadOfLoading,
-}: Props) => {
-  // const welcomeTextStyle = AppFontStyles.welcomeText;
+ 
+}: Props) => { 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
@@ -49,12 +44,11 @@ const TalkingPointsChart = ({
     navigateToHistory,
   } = useAppNavigations();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
- 
 
   const categories = categorySizes();
 
   const appState = useRef(AppState.currentState);
- 
+
   useEffect(() => {
     const subscription = AppState.addEventListener(
       "change",
@@ -78,7 +72,6 @@ const TalkingPointsChart = ({
 
     return () => subscription.remove(); // cleanup
   }, [capsuleListCount]);
- 
 
   const HEIGHT = 420;
 
@@ -127,17 +120,16 @@ const TalkingPointsChart = ({
   //   }, [capsuleListCount, categories])
   // );
 
-
   useEffect(() => {
-  if (!capsuleListCount || capsuleListCount < 1) return;
+    if (!capsuleListCount || capsuleListCount < 1) return;
 
-  if (
-    JSON.stringify(categories.sortedList) !==
-    JSON.stringify(tempCategoriesSortedList)
-  ) {
-    setTempCategoriesSortedList(categories.sortedList);
-  }
-}, [capsuleListCount, categories]);
+    if (
+      JSON.stringify(categories.sortedList) !==
+      JSON.stringify(tempCategoriesSortedList)
+    ) {
+      setTempCategoriesSortedList(categories.sortedList);
+    }
+  }, [capsuleListCount, categories]);
 
   useEffect(() => {
     if (userCategories && userCategories.length > 0) {
@@ -167,43 +159,34 @@ const TalkingPointsChart = ({
       .map((item) => item.color);
   }, [categoryColors, categories]);
 
-  const flattenedHistoryLabelWrapperStyle = StyleSheet.flatten([
-    [
-      styles.historyLabelWrapper,
-      {
-        color: primaryColor,
-      },
-    ],
-  ]);
-
   return (
     <>
       <>
         {!isLoading && (
-          <Pressable onPress={navigateToHistory} style={styles.container}>
-            <SvgIcon
-              name={  "pie_chart"}
-              size={30}
-              color={primaryColor}
-            /> 
-              <Text style={flattenedHistoryLabelWrapperStyle}>
-                {"   "}history
-              </Text>
-          
+          <Pressable
+            onPress={navigateToHistory}
+            style={styles.historyContainer}
+          >
+            <SvgIcon name={"pie_chart"} size={30} color={primaryColor} />
+            <Text
+              style={[
+                styles.historyLabelWrapper,
+                {
+                  color: primaryColor,
+                },
+              ]}
+            >
+              {"   "}history
+            </Text>
           </Pressable>
         )}
         <View
           style={[
+            styles.container,
             {
-              overflow: "hidden",
               height: HEIGHT,
-              flexGrow: 1,
-              flex: 1,
-              padding: 20, // PADDING
-              paddingBottom: 20,
-              backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
-              borderRadius: 20,
               minHeight: HEIGHT,
+              backgroundColor: primaryOverlayColor,
             },
           ]}
         >
@@ -215,37 +198,24 @@ const TalkingPointsChart = ({
 
           {!isLoading && (
             <>
-              <View
-                style={{
-                  borderRadius: 20,
-                  flexDirection: "row",
-                  width: "100%",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <Text
-                    style={[
-                      {
-                        fontFamily: "Poppins-Bold",
-                        fontSize: subWelcomeTextStyle.fontSize + 3,
+              <View style={styles.labelContainer}>
+                <Text
+                  style={[
+                    {
+                      // fontFamily: "Poppins-Bold",
+                      fontSize: subWelcomeTextStyle.fontSize + 3,
 
-                        color: primaryColor,
-                        opacity: 0.9,
-                        // color: manualGradientColors.homeDarkColor,
-                      },
-                    ]}
-                  >
-                    Ideas
-                  </Text>
-                </View>
+                      color: primaryColor,
+                      opacity: 0.9,
+                    },
+                  ]}
+                >
+                  Ideas
+                </Text>
               </View>
 
               {isFocused && (
-                <View
-                  style={styles.donutWrapper}
-                >
+                <View style={styles.donutWrapper}>
                   <Donut
                     friendStyle={friendStyle}
                     primaryColor={primaryColor}
@@ -267,7 +237,6 @@ const TalkingPointsChart = ({
                   />
                 </View>
               )}
- 
             </>
           )}
         </View>
@@ -278,6 +247,14 @@ const TalkingPointsChart = ({
 
 const styles = StyleSheet.create({
   container: {
+    overflow: "hidden",
+    flexGrow: 1,
+    flex: 1,
+    padding: 20, // PADDING
+    paddingBottom: 20,
+    borderRadius: 20,
+  },
+  historyContainer: {
     height: 30,
     paddingHorizontal: 20, // PADDING
     position: "absolute",
@@ -289,13 +266,18 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
   },
+  labelContainer: {
+    borderRadius: 20,
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   historyLabelWrapper: {
     fontFamily: "Poppins-Regular",
     fontSize: 13,
   },
-  donutWrapper: {
-    
-  }
+  donutWrapper: {},
 });
 
 export default TalkingPointsChart;

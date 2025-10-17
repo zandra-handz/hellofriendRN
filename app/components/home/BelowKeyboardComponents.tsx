@@ -41,9 +41,11 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
 
 
   return (
-    <Animated.View
-      entering={FadeInUp}
-      exiting={FadeOutDown}
+    // <Animated.View
+
+    <View
+      // entering={FadeInUp}
+      // exiting={FadeOutDown}
       style={[
         {
           alignItems: "center",
@@ -93,7 +95,8 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           />
         </View>
       )}
-    </Animated.View>
+    {/* </Animated.View> */}
+    </View>
   );
 };
 

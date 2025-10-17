@@ -54,6 +54,8 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
+import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
 // import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 // import { QueryClient, useQueryClient } from "@tanstack/react-query";
 const ScreenHome = () => {

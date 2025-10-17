@@ -107,7 +107,7 @@ const SuggestedHello = ({
               }}
             >
               <GeckoGoButton
-                size={60}
+           
                 onSinglePress={openModal}
                 onDoublePress={navigateToFinalize}
               />

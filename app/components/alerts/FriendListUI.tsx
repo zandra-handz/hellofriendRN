@@ -91,9 +91,9 @@ const FriendListUI = ({
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
       <Animated.View
-        style={styles.friendContainer}
-        entering={SlideInDown.duration(180)}
-        exiting={SlideOutRight}
+        // style={styles.friendContainer}
+        // entering={SlideInDown.duration(180)}
+        // exiting={SlideOutRight}
       >
         <View style={styles.itemContainer}>
           {autoSelectFriend?.customFriend?.id === item.id && (
@@ -116,6 +116,7 @@ const FriendListUI = ({
             </View>
           )}
         </View>
+        
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
           touchLocationX={touchLocationX}
@@ -184,7 +185,7 @@ const FriendListUI = ({
     "id" in item ? item.id.toString() : `add-friend-${index}`;
 
   return (
-    <Animated.View
+    <View
       style={styles.animatedViewContainer}
     >
       {data && ( // this will work with an empty [] so you can add a friend for the first time too
@@ -194,9 +195,10 @@ const FriendListUI = ({
           renderItem={renderFriendSelectItem}
           numColumns={1}
           showsVerticalScrollIndicator={false}
+          style={{width: '100%'}}
         />
       )}
-    </Animated.View>
+    </View>
   );
 };
 
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     height: "100%",
-
+ 
     flexDirection: "column",
   },
   itemInnerContainer: {
@@ -223,8 +225,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
-    width: '100%',
-   // backgroundColor: 'teal',
+    width: 'auto', 
+    
    
   
   },
@@ -244,6 +246,7 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     alignItems: 'center', 
+    // paddingHorizontal: 4,
  
   },
 });

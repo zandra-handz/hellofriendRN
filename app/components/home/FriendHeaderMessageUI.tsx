@@ -1,7 +1,7 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-
+import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
@@ -9,6 +9,8 @@ import Animated, {
   withSequence,
   useAnimatedStyle,
   useSharedValue,
+  useDerivedValue,
+  withSpring,
 } from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
@@ -37,11 +39,45 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 }) => {
   const { autoSelectFriend } = useAutoSelector();
 
+    const isFocused = useSharedValue(false);
+
+
   const opacityValue = useSharedValue(0);
   const scaleValue = useSharedValue(0);
 
   const secondOpacityValue = useSharedValue(0);
   const secondScaleValue = useSharedValue(0);
+
+  const verticalValue = useSharedValue(0);
+    // ✅ useFocusEffect updates shared value
+  useFocusEffect(
+    useCallback(() => {
+      isFocused.value = true;
+      return () => { 
+        isFocused.value = false;
+      };
+    }, [])
+  );
+
+  // ✅ useDerivedValue declared at top level
+  useDerivedValue(() => {
+    if (isFocused.value) {
+      // Runs every time screen focuses
+      verticalValue.value = withSpring(0, {
+  stiffness: 400, // default ~100
+  damping: 10,    // default ~10
+  mass: 0.5,      // default 1
+});
+    }
+  });
+
+    const animatedVerticalStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: verticalValue.value }],
+      // opacity: opacityValue.value,
+    };
+  });
+
 
   const animatedPinStyle = useAnimatedStyle(() => {
     return {
@@ -101,6 +137,11 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   const { navigateToSelectFriend } = useAppNavigations();
 
+    const handleNavigateToSelectFriend = () => {
+    navigateToSelectFriend({useNavigateBack: false})
+
+  };
+
   const toggleLockOnFriend = useCallback(() => {
     if (!friendId || !autoSelectFriend) {
       return;
@@ -116,14 +157,22 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     }
   }, [friendId, autoSelectFriend]);
 
-  const handleOnPress = () => {
-    navigateToSelectFriend();
+  const handleOnPress = () => { 
+        verticalValue.value = withSpring(-170, {
+  stiffness: 400,
+  damping: 10,   
+  mass: 0.8,      
+});
+    isFocused.value = false
+    handleNavigateToSelectFriend();
   };
 
   const message = `${selectedFriendName}`;
 
   return (
-    <GlobalPressable
+    <Animated.View style={animatedVerticalStyle}>
+      
+    <Pressable
       onPress={handleOnPress}
       onLongPress={toggleLockOnFriend}
       style={styles.container}
@@ -182,7 +231,9 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           {selectedFriendName && !loadingNewFriend && message}
         </Animated.Text>
       </View>
-    </GlobalPressable>
+    </Pressable>
+    
+    </Animated.View>
   );
 };
 
@@ -197,7 +248,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "transparent",
     minHeight: 150,
-    height: "auto",
+    height: "auto", 
+    zIndex: 30000,
   },
   innerContainer: {
     position: "absolute",

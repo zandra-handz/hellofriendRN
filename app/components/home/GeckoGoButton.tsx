@@ -1,26 +1,23 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 // import useDoublePress from "../buttons/useDoublePress";
-import manualGradientColors  from "@/app/styles/StaticColors";
-import { FontAwesome6 } from "@expo/vector-icons";
+import manualGradientColors from "@/app/styles/StaticColors";
+
+import SvgIcon from "@/app/styles/SvgIcons";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import { Vibration } from "react-native";
 
 type Props = {
   onSinglePress: () => void;
-  onDoublePress: () => void;
-  size: number;
-
-  borderRadius: number;
+  onDoublePress: () => void; 
 };
 
 const GeckoGoButton = ({
   onSinglePress,
   onDoublePress,
-  size=60,
-
-  borderRadius=10,
+ 
+ 
 }: Props) => {
   // const { handleDoublePress } = useDoublePress({
   //   onSinglePress: onSinglePress,
@@ -28,42 +25,31 @@ const GeckoGoButton = ({
 
   // });
 
-  const onLongPressVibrate = () => {
-    Vibration.vibrate(100); 
-    onDoublePress();
 
+
+  const onLongPressVibrate = () => {
+    Vibration.vibrate(100);
+    onDoublePress();
   };
 
-  return (
-    <GlobalPressable
-      // onPress={navigateToMoments}
-      // onPress={handleDoublePress}
-      onLongPress={onLongPressVibrate}
-      onPress={onSinglePress}
-      style={{ 
-        padding: 10,
+  const flattenedContainerStyle = StyleSheet.flatten(        [styles.container, { 
 
         backgroundColor: manualGradientColors.lightColor,
-        justifyContent: "center",
-        borderRadius: borderRadius,
-        padding: 0,
-        width: size,
-        minWidth: size, 
-        height: size, 
+      }]
+    )
 
-        overflow: "hidden",
-      }}
+  
+
+  return (
+    <GlobalPressable 
+      onLongPress={onLongPressVibrate}
+      onPress={onSinglePress}
+      style={   [styles.container, { 
+
+        backgroundColor: manualGradientColors.lightColor,
+      }]}
     >
-      <View
-        style={{
-          position: "absolute",
-          opacity: 0.9,
-          position: "absolute",
-          top: -62,
-          right: 6,
-          transform: [{ rotate: "90deg" }],
-        }}
-      >
+      <View style={styles.geckoRotateContainer}>
         <GeckoSolidSvg
           width={144}
           height={144}
@@ -71,27 +57,20 @@ const GeckoGoButton = ({
           style={{ opacity: 1 }}
         />
       </View>
-      <View
-        style={{
-          bottom: 0,
-          position: "absolute",
-          alignItems: "center",
-          flexDirection: "row",
-          width: "100%",
-          left: 6,
-        }}
-      >
+      <View style={styles.geckoLabelContainer}>
         <Text
-          style={{
+          style={
+            {
             color: manualGradientColors.homeDarkColor,
             fontSize: 18,
             fontWeight: "bold",
-          }}
+          }
+        }
         >
           GO{" "}
         </Text>
-        <FontAwesome6
-          name={"arrow-right"}
+        <SvgIcon
+          name={"arrow_right"}
           size={20}
           color={manualGradientColors.homeDarkColor}
         />
@@ -99,5 +78,36 @@ const GeckoGoButton = ({
     </GlobalPressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+            padding: 10,
+
+        justifyContent: "center",
+        borderRadius: 10,
+        padding: 0,
+        width: 60,
+        minWidth: 60,
+        height: 60,
+
+        overflow: "hidden",
+
+  },
+  geckoRotateContainer: {
+    position: "absolute",
+    opacity: 0.9,
+    top: -62,
+    right: 6,
+    transform: [{ rotate: "90deg" }],
+  },
+  geckoLabelContainer: {
+    bottom: 0,
+    position: "absolute",
+    alignItems: "center",
+    flexDirection: "row",
+    width: "100%",
+    left: 6,
+  },
+});
 
 export default GeckoGoButton;

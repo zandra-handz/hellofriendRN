@@ -12,6 +12,11 @@ type NavToHelloViewProps = {
   inPersonFilter: boolean;
 };
 
+
+type NavToSelectFriendProps = {
+  useNavigateBack?: boolean;
+}
+
 type NavToLocationEditProps = {
   location: Location;
   focusOn: string;
@@ -45,7 +50,7 @@ type NavToNewAccountProp = {
 interface hookReturns {
   navigateToHome: () => void;
   navigateToAddFriend: () => void;
-  navigateToSelectFriend: () => void;
+  navigateToSelectFriend: ({useNavigateBack}: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
   navigateToHistory: () => void;
   navigateToHelloes: () => void;
@@ -84,8 +89,10 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("AddFriend");
   };
 
-  const navigateToSelectFriend = () => {
-    navigation.navigate("SelectFriend");
+  const navigateToSelectFriend = ({
+    useNavigateBack,
+  }: NavToSelectFriendProps) => {
+    navigation.navigate("SelectFriend", {useNavigateBack});
   };
 
   const navigateToHistory = () => {

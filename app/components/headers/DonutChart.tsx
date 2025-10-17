@@ -8,8 +8,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   runOnJS,
-} from "react-native-reanimated";
-import { scheduleOnRN } from "react-native-worklets";
+} from "react-native-reanimated"; 
 import {
   Canvas,
   Path,
@@ -22,8 +21,8 @@ import {
 // import LightningBoltOutline from '@expo/vector-icons/MaterialCommunityIcons/LightningBoltOutline';
 
  
-
-import MyIconSet from "@/app/assets/IconSet";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 // import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -288,7 +287,7 @@ const DonutChart = ({
       </Animated.View>
       {onPlusPress && onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
-          <MyIconSet
+          <SvgIcon
             name={"leaf"}
             style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
            
@@ -316,7 +315,7 @@ const DonutChart = ({
         ]}
         hitSlop={30}
       >
-        <MyIconSet
+        <SvgIcon
           // name={"lightning-bolt-outline"} //pencil-plus
           // // name={"playlist-plus"}
           name={"plus"}

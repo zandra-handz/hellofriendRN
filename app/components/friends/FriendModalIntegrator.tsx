@@ -46,7 +46,12 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   const { loadingDash } = useFriendDash(); 
 
   const { navigateToAddFriend, navigateToSelectFriend} = useAppNavigations();
-const { handleDoublePress} = useDoublePress({onSinglePress: navigateToSelectFriend, onDoublePress: navigateToAddFriend})
+
+  const handleNavigateToSelectFriend = () => {
+    navigateToSelectFriend({useNavigateBack: false})
+
+  };
+const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSelectFriend, onDoublePress: navigateToAddFriend})
   
   const [lastPress, setLastPress] = useState<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

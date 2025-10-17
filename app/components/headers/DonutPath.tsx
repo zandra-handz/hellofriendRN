@@ -44,7 +44,7 @@ const DonutPath = ({
     return withTiming(sum + gap, {
       duration: 1000,
     });
-  }); 
+  });
 
   const end = useDerivedValue(() => {
     if (index === decimalsValue.value.length - 1) {
@@ -57,7 +57,7 @@ const DonutPath = ({
     return withTiming(sum, {
       duration: 1000,
     });
-  }); 
+  });
 
   return (
     <Path
@@ -65,8 +65,8 @@ const DonutPath = ({
       color={color}
       style="stroke"
       strokeWidth={strokeWidth}
-    strokeJoin="round"
-     // strokeJoin="miter"
+      strokeJoin="round"
+      // strokeJoin="miter"
       strokeCap="square"
       // strokeCap="round"
       start={start}
