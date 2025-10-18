@@ -13,14 +13,14 @@ import FooterButtonIconVersion from "./FooterButtonIconVersion";
 
 import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import manualGradientColors from "@/app/styles/StaticColors";
+ 
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 // types
-import { LDTheme } from "@/src/types/LDThemeTypes"; 
+import { LDTheme } from "@/src/types/LDThemeTypes";
 
 type Props = {
   userId: number;
@@ -86,11 +86,14 @@ const HelloFriendFooter = ({
         // label="Deselect"
         label="Sign out"
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             // name={"keyboard-backspace"}
             name={"logout"}
             size={footerIconSize}
             color={primaryColor}
+            style={{
+              transform: [{ scaleX: -1 }],
+            }}
           />
         }
         onPress={() => onSignOut()}
@@ -105,8 +108,8 @@ const HelloFriendFooter = ({
         primaryColor={primaryColor}
         label="Settings"
         icon={
-          <MaterialIcons
-            name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
+          <SvgIcon
+            name={"settings_suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
             color={primaryColor}
@@ -124,8 +127,8 @@ const HelloFriendFooter = ({
         primaryColor={primaryColor}
         label="Report"
         icon={
-          <MaterialCommunityIcons
-            name={"bug-outline"}
+          <SvgIcon
+            name={"bug_outline"}
             size={footerIconSize}
             color={primaryColor}
           />
@@ -151,8 +154,7 @@ const HelloFriendFooter = ({
         friendId={null}
         friendName={null}
         primaryColor={primaryColor}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading} 
         onPress={() => handleCenterButtonToggle()}
       />
     ),
@@ -165,8 +167,8 @@ const HelloFriendFooter = ({
         primaryColor={primaryColor}
         label="About"
         icon={
-          <MaterialCommunityIcons
-            name={"information-outline"}
+          <SvgIcon
+            name={"information_outline"}
             size={footerIconSize}
             color={primaryColor}
           />
@@ -181,8 +183,6 @@ const HelloFriendFooter = ({
     <GradientBackground
       useFriendColors={false}
       screenname={"hellofriendfooter"}
-      // startColor={manualGradientColors.lightColor}
-      // endColor={manualGradientColors.darkColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
@@ -249,8 +249,7 @@ const HelloFriendFooter = ({
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
-            lightDarkTheme={lightDarkTheme}
-            manualGradientColors={manualGradientColors}
+            lightDarkTheme={lightDarkTheme} 
           />
         </View>
       )}
@@ -258,12 +257,8 @@ const HelloFriendFooter = ({
       {categoriesModalVisible && (
         <View>
           <CategoriesModal
-            userId={userId}
-            manualGradientColors={manualGradientColors}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-            primaryColor={primaryColor}
-            primaryBackground={primaryBackground}
-            lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+            userId={userId}  
+            primaryColor={primaryColor}  
             isVisible={categoriesModalVisible}
             isKeyboardVisible={isKeyboardVisible}
             bottomSpacer={footerHeight - 30} //for safe view
@@ -286,9 +281,7 @@ const HelloFriendFooter = ({
         <View>
           <ReportIssueModal
             username={username}
-            primaryColor={primaryColor}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-            manualGradientColors={manualGradientColors}
+            primaryColor={primaryColor} 
             isVisible={reportModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setReportModalVisible(false)}

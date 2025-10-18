@@ -13,6 +13,8 @@ import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
+
+
 type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
@@ -111,24 +113,7 @@ const Donut = ({
   }, [data, colors]); //, labelSize]);
 
   const categoryStopsValue = useSharedValue<number[]>([]);
-
-  // useEffect(() => {
-  //   if (!seriesData) return;
-
-  //   // cumulative totals per category
-  //   let cumulative = 0;
-  //   const categoryCounts = seriesData.decimals.map(d => {
-  //     const count = Math.round(seriesData.total * d);
-  //     cumulative += count;
-  //     return cumulative;
-  //   });
-
-  //   console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
-  //   // Animate to these new totals
-  //   categoryTotals.value = withTiming(categoryCounts, { duration: 1000 });
-  // }, [seriesData]);
-
-  // ⬇ useEffect to set shared values
+ 
   useEffect(() => {
     if (!seriesData) return;
     totalValue.value = withTiming(seriesData.total, { duration: 1000 });
@@ -142,9 +127,7 @@ const Donut = ({
       cumulative += count;
       return cumulative;
     });
-
-    // console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
-    // Animate to these new totals
+ 
     categoryStopsValue.value = categoryCounts;
   }, [seriesData]);
 

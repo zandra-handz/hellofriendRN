@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ColorValue } from "react-native";
 import React from "react";
 import ToggleButton from "../appwide/button/ToggleButton";
 
@@ -7,6 +7,7 @@ interface Props {
   icon: React.ReactElement;
   value: boolean;
   onPress: () => void;
+  primaryColor: ColorValue;
 }
 
 const Toggle: React.FC<Props> = ({

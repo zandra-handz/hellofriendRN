@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useRef,
   useMemo,
-} from "react"; 
+} from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import Donut from "../headers/Donut";
@@ -13,29 +13,47 @@ import { AppState, AppStateStatus } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
 import { useCategories } from "@/src/context/CategoriesContext";
-import SvgIcon from "@/app/styles/SvgIcons";
-
+import SvgIcon from "@/app/styles/SvgIcons"; 
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
 };
 
 const TalkingPointsChart = ({
-  friendStyle,
+  // themeAheadOfLoading,
   capsuleListCount,
   categoryStartIndices,
   categorySizes,
   generateGradientColors,
-  isLoading, // loadingDash
- 
-  primaryColor, 
+friendId,
+  primaryColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
- 
-}: Props) => { 
+}: Props) => {
+  const { themeAheadOfLoading } = useFriendStyle();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
+
+  // const { capsuleList } = useCapsuleList();
+  // const capsuleListCount = capsuleList?.length;
+
+  // const { categoryStartIndices } = useTalkingPCategorySorting({
+  //   listData: capsuleList,
+  // });
+
+  // const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
+  //   listData: capsuleList,
+  // });
+
+    const categories = categorySizes();
+
+
+  console.log("TALKING POINTS COMP RERENDERED", categorySizes);
 
   const {
     navigateToMoments,
@@ -45,11 +63,11 @@ const TalkingPointsChart = ({
   } = useAppNavigations();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
-  const categories = categorySizes();
 
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
+    console.log('APP STATE!')
     const subscription = AppState.addEventListener(
       "change",
       (nextState: AppStateStatus) => {
@@ -88,6 +106,32 @@ const TalkingPointsChart = ({
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
+  useEffect(() => {
+    if (!capsuleListCount || capsuleListCount < 1) return;
+
+    console.log("first useeffect");
+
+    if (
+      JSON.stringify(categories.sortedList) !==
+      JSON.stringify(tempCategoriesSortedList)
+    ) {
+      setTempCategoriesSortedList(categories.sortedList);
+    }
+  }, [capsuleListCount, categories]);
+
+  useEffect(() => {
+    if (userCategories && userCategories.length > 0) {
+      console.log("useeffect");
+      setCategoryColors(
+        generateGradientColors(
+          userCategories,
+          themeAheadOfLoading.lightColor,
+          themeAheadOfLoading.darkColor
+        )
+      );
+    }
+  }, [userCategories, themeAheadOfLoading]);
+
   const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
       if (categoryLabel && categoryStartIndices) {
@@ -105,43 +149,8 @@ const TalkingPointsChart = ({
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-  // useEffect(
-  //   useCallback(() => {
-  //     if (!capsuleListCount || capsuleListCount < 1) {
-  //       return;
-  //     }
+ 
 
-  //     if (
-  //       JSON.stringify(categories.sortedList) !==
-  //       JSON.stringify(tempCategoriesSortedList)
-  //     ) {
-  //       setTempCategoriesSortedList(categories.sortedList);
-  //     }
-  //   }, [capsuleListCount, categories])
-  // );
-
-  useEffect(() => {
-    if (!capsuleListCount || capsuleListCount < 1) return;
-
-    if (
-      JSON.stringify(categories.sortedList) !==
-      JSON.stringify(tempCategoriesSortedList)
-    ) {
-      setTempCategoriesSortedList(categories.sortedList);
-    }
-  }, [capsuleListCount, categories]);
-
-  useEffect(() => {
-    if (userCategories && userCategories.length > 0) {
-      setCategoryColors(
-        generateGradientColors(
-          userCategories,
-          friendStyle.lightColor,
-          friendStyle.darkColor
-        )
-      );
-    }
-  }, [userCategories, friendStyle]);
 
   const colors = useMemo(() => {
     if (
@@ -161,86 +170,71 @@ const TalkingPointsChart = ({
 
   return (
     <>
-      <>
-        {!isLoading && (
-          <Pressable
-            onPress={navigateToHistory}
-            style={styles.historyContainer}
-          >
-            <SvgIcon name={"pie_chart"} size={30} color={primaryColor} />
-            <Text
-              style={[
-                styles.historyLabelWrapper,
-                {
-                  color: primaryColor,
-                },
-              ]}
-            >
-              {"   "}history
-            </Text>
-          </Pressable>
-        )}
-        <View
+      <Pressable onPress={navigateToHistory} style={styles.historyContainer}>
+        <SvgIcon name={"pie_chart"} size={30} color={primaryColor} />
+        <Text
           style={[
-            styles.container,
+            styles.historyLabelWrapper,
             {
-              height: HEIGHT,
-              minHeight: HEIGHT,
-              backgroundColor: primaryOverlayColor,
+              color: primaryColor,
             },
           ]}
         >
-          {/* {isLoading && (
-            <LoadingBlock
-            loading={true}
-            />
-          )} */}
+          {"   "}history
+        </Text>
+      </Pressable>
 
-          {!isLoading && (
-            <>
-              <View style={styles.labelContainer}>
-                <Text
-                  style={[
-                    {
-                      // fontFamily: "Poppins-Bold",
-                      fontSize: subWelcomeTextStyle.fontSize + 3,
+      <View
+        style={[
+          styles.container,
+          {
+            height: HEIGHT,
+            minHeight: HEIGHT,
+            backgroundColor: primaryOverlayColor,
+          },
+        ]}
+      >
+        <>
+          <View style={styles.labelContainer}>
+            <Text
+              style={[
+                {
+                  fontSize: subWelcomeTextStyle.fontSize + 3,
 
-                      color: primaryColor,
-                      opacity: 0.9,
-                    },
-                  ]}
-                >
-                  Ideas
-                </Text>
-              </View>
+                  color: primaryColor,
+                  opacity: 0.9,
+                },
+              ]}
+            >
+              Ideas
+            </Text>
+          </View>
 
-              {isFocused && (
-                <View style={styles.donutWrapper}>
-                  <Donut
-                    friendStyle={friendStyle}
-                    primaryColor={primaryColor}
-                    darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                    onCategoryPress={handleMomentViewScrollTo}
-                    onCenterPress={handleMomentScreenNoScroll}
-                    onPlusPress={handleNavigateToCreateNew}
-                    totalJS={capsuleListCount}
-                    radius={CHART_RADIUS}
-                    strokeWidth={CHART_STROKE_WIDTH}
-                    outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-                    gap={GAP}
-                    labelsSize={LABELS_SIZE}
-                    labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-                    labelsSliceEnd={LABELS_SLICE_END}
-                    data={categories?.sortedList || []}
-                    colors={colors}
-                    centerTextSize={CENTER_TEXT_SIZE}
-                  />
-                </View>
-              )}
-            </>
+          {isFocused && (
+            <View style={styles.donutWrapper}>
+              <Donut
+                friendStyle={themeAheadOfLoading}
+                primaryColor={primaryColor}
+                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                onCategoryPress={handleMomentViewScrollTo}
+                onCenterPress={handleMomentScreenNoScroll}
+                onPlusPress={handleNavigateToCreateNew}
+                totalJS={capsuleListCount}
+                radius={CHART_RADIUS}
+                strokeWidth={CHART_STROKE_WIDTH}
+                outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+                gap={GAP}
+                labelsSize={LABELS_SIZE}
+                labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+                labelsSliceEnd={LABELS_SLICE_END}
+                data={categories?.sortedList || []}
+                colors={colors}
+                centerTextSize={CENTER_TEXT_SIZE}
+              />
+            </View>
           )}
-        </View>
-      </>
+        </>
+      </View>
     </>
   );
 };

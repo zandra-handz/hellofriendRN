@@ -1,13 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
 import React from "react";
-import { ScrollView, StyleSheet, View, Text } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
- 
+import { ScrollView, StyleSheet, View, Text, ColorValue } from "react-native";
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 import { Linking } from "react-native";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-
+import manualGradientColors from "@/app/styles/StaticColors";
 interface Props {
+  username: string;
+  primaryColor: ColorValue;
   isVisible: boolean;
   closeModal: () => void;
   bottomSpacer: number;
@@ -15,15 +16,13 @@ interface Props {
 
 const ReportIssueModal: React.FC<Props> = ({
   username,
-  primaryColor = 'orange',
-  subWelcomeTextStyle,
-  manualGradientColors,
+  primaryColor = "orange",
 
   isVisible,
   bottomSpacer,
   closeModal,
-}) => { 
-
+}) => {
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const generateUniqueEmailURL = () => {
     const uniqueId = uuidv4(); // Generate a unique ID
     const subject = `Hellofriend Bug Report\n\nID: ${uniqueId}`;
@@ -36,8 +35,8 @@ const ReportIssueModal: React.FC<Props> = ({
       bottomSpacer={bottomSpacer}
       isVisible={isVisible}
       headerIcon={
-        <MaterialCommunityIcons
-          name={"bug-outline"}
+        <SvgIcon
+          name={"bug_outline"}
           size={30}
           color={primaryColor}
         />
@@ -45,7 +44,7 @@ const ReportIssueModal: React.FC<Props> = ({
       buttonTitle={`Report a bug`}
       useModalBar={true}
       rightSideButtonItem={
-        <MaterialCommunityIcons
+        <SvgIcon
           name={`bug`}
           size={50}
           color={manualGradientColors.darkHomeColor}
@@ -54,14 +53,12 @@ const ReportIssueModal: React.FC<Props> = ({
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
-            <Text
-              style={[subWelcomeTextStyle, { color: primaryColor}]}
-            >
+            <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
               Please report any issues
               <Text
                 onPress={() => Linking.openURL(generateUniqueEmailURL())}
                 style={[
-                  styles.linkText, 
+                  styles.linkText,
                   { color: manualGradientColors.lightColor },
                 ]}
               >

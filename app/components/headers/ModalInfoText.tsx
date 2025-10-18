@@ -1,10 +1,11 @@
-import { View, Text } from "react-native";
+import {  Text, ColorValue } from "react-native";
 import React from "react";
  
 type Props = {
   infoText: string;
   fontSize: number;
   lineHeight: number;
+  primaryColor: ColorValue;
 };
 
 const ModalInfoText = ({

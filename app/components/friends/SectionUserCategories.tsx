@@ -7,6 +7,7 @@ import {
   TextInput,
   FlatList,
   Alert,
+  ColorValue,
 } from "react-native";
  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,22 +19,22 @@ import useDeleteCategory from "@/src/hooks/CategoryCalls/useDeleteCategory";
 
 import AddNewCategory from "../headers/AddNewCategory";
 
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+
 type Props = {
   userId: number;
   userCategories: object[];
+  primaryColor: ColorValue;
 };
 
 const SectionUserCategories = ({
   userId,
-  userCategories,
-  manualGradientColors,
-  subWelcomeTextStyle,
-  primaryColor = 'orange',
-  primaryBackground = 'orange',
-  lighterOverlayColor = 'orange',
-}) => {
+  userCategories,  
+  primaryColor = 'orange', 
+}: Props) => {
  
-
+const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory(
     { userId: userId }
   );

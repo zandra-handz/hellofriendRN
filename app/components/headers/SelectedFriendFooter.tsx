@@ -1,44 +1,43 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import React, {   useState, useCallback } from "react";
+import { View, StyleSheet } from "react-native";
 
 import { Fontisto } from "@expo/vector-icons";
 
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// app components
-import AboutAppModal from "./AboutAppModal";
+// app components 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import FriendThemeModal from "./FriendThemeModal";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import GradientBackground from "../appwide/display/GradientBackground";
-import manualGradientColors from "@/app/styles/StaticColors";
  
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
+import GradientBackground from "../appwide/display/GradientBackground";
+ 
+
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import useUpdateLockins from "@/src/hooks/useUpdateLockins";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
- 
+
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
- 
 
 import { useQueryClient } from "@tanstack/react-query";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
   userId,
- 
+
   friendName,
 
   lightDarkTheme,
   overlayColor,
   dividerStyle,
- 
+
   // resetTheme,
   // themeAheadOfLoading,
 }) => {
@@ -46,7 +45,7 @@ const SelectedFriendFooter = ({
   const { selectFriend, selectedFriend } = useSelectedFriend();
   const friendId = selectedFriend?.id;
 
-  const { autoSelectFriend} = useAutoSelector();
+  const { autoSelectFriend } = useAutoSelector();
   const { navigateToFidget } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
@@ -73,15 +72,11 @@ const SelectedFriendFooter = ({
   // console.log(`SELECTED FRIEND FOOTER RERENDERED: `, upNextId, friendId);
 
   const handleDeselect = useCallback(() => {
-
- 
-
-
     deselectFriendFunction({
       userId,
       queryClient,
       updateSettings,
-      friendId, 
+      friendId,
       autoSelectFriend,
       selectFriend,
       resetTheme,
@@ -92,7 +87,7 @@ const SelectedFriendFooter = ({
     queryClient,
     autoSelectFriend,
     updateSettings,
-    friendId, 
+    friendId,
     selectFriend,
     resetTheme,
     getThemeAheadOfLoading,
@@ -119,9 +114,9 @@ const SelectedFriendFooter = ({
         // label="Deselect"
         label="Back"
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             // name={"keyboard-backspace"}
-            name={"account-arrow-left-outline"}
+            name={"account_arrow_left_outline"}
             size={footerIconSize}
             color={primaryColor}
           />
@@ -129,7 +124,7 @@ const SelectedFriendFooter = ({
         onPress={() => handleDeselect()}
       />
     ),
-    [primaryColor, friendId, autoSelectFriend, queryClient], 
+    [primaryColor, friendId, autoSelectFriend, queryClient]
   );
 
   const RenderSettingsButton = useCallback(
@@ -138,9 +133,8 @@ const SelectedFriendFooter = ({
         primaryColor={primaryColor}
         label="Settings"
         icon={
-          <MaterialIcons
-            name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
-            //  name={"app-settings-alt"}
+          <SvgIcon
+            name={"settings_suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             size={footerIconSize}
             color={primaryColor}
           />
@@ -156,7 +150,7 @@ const SelectedFriendFooter = ({
         primaryColor={primaryColor}
         label="Colors"
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             name={"palette"}
             size={footerIconSize}
             color={primaryColor}
@@ -178,15 +172,14 @@ const SelectedFriendFooter = ({
         friendId={friendId}
         friendName={friendName}
         primaryColor={primaryColor}
-        themeAheadOfLoading={themeAheadOfLoading}
-        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading} 
         onPress={() => handleCenterButtonToggle()}
       />
     ),
     [themeAheadOfLoading, friendId, friendName]
   );
 
-  const RenderAboutAppButton = useCallback(
+  const RenderFidgetButton = useCallback(
     () => (
       <FooterButtonIconVersion
         primaryColor={primaryColor}
@@ -209,9 +202,7 @@ const SelectedFriendFooter = ({
 
   return (
     <GradientBackground
-      useFriendColors={!!friendId}
-      // startColor={manualGradientColors.lightColor}
-      // endColor={manualGradientColors.darkColor}
+      useFriendColors={!!friendId} 
       friendColorDark={themeAheadOfLoading.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
@@ -263,7 +254,7 @@ const SelectedFriendFooter = ({
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderAboutAppButton />
+            <RenderFidgetButton />
           </View>
         </>
       </View>
@@ -276,7 +267,6 @@ const SelectedFriendFooter = ({
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
             lightDarkTheme={lightDarkTheme}
-            manualGradientColors={manualGradientColors}
           />
         </View>
       )}
@@ -312,17 +302,6 @@ const SelectedFriendFooter = ({
             friendDash={friendDash}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setColorsModalVisible(false)}
-          />
-        </View>
-      )}
-
-      {aboutModalVisible && (
-        <View>
-          <AboutAppModal
-            isVisible={aboutModalVisible}
-            closeModal={() => setAboutModalVisible(false)}
-            bottomSpacer={footerHeight - 30} //for safe view
-            primaryColor={primaryColor}
           />
         </View>
       )}

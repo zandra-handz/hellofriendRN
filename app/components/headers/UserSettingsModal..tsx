@@ -1,20 +1,22 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 // import { AccessibilityInfo } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
+import manualGradientColors from "@/app/styles/StaticColors";
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { LDTheme } from "@/src/types/LDThemeTypes";
 interface Props {
   userId: number;
   isVisible: boolean;
   bottomSpacer: number;
   closeModal: () => void;
+  lightDarkTheme: LDTheme;
 }
 
 const UserSettingsModal: React.FC<Props> = ({
@@ -23,8 +25,7 @@ const UserSettingsModal: React.FC<Props> = ({
   isVisible,
   bottomSpacer,
   closeModal,
-  lightDarkTheme,
-  manualGradientColors,
+  lightDarkTheme, 
 }) => { 
   
  const { settings } = useUserSettings();
@@ -34,7 +35,7 @@ const UserSettingsModal: React.FC<Props> = ({
       bottomSpacer={bottomSpacer}
       isVisible={isVisible}
       headerIcon={
-        <MaterialCommunityIcons
+        <SvgIcon
           name={"wrench"}
           size={30}
           color={lightDarkTheme.primaryText}
@@ -43,7 +44,7 @@ const UserSettingsModal: React.FC<Props> = ({
       buttonTitle="Settings"
       useModalBar={true}
       rightSideButtonItem={
-        <MaterialCommunityIcons
+        <SvgIcon
           name={`wrench`}
           size={50}
           color={manualGradientColors.darkHomeColor}

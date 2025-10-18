@@ -1,12 +1,12 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ColorValue } from "react-native";
 import React from "react";
 import ButtonResetHelloes from "../../buttons/helloes/ButtonResetHelloes";
+ 
 interface Props {
   userId: number;
   label: string;
   icon: React.ReactElement;
-  value: boolean;
-  onPress: () => void;
+  primaryColor: ColorValue;
 }
 
 const Reset: React.FC<Props> = ({
@@ -14,26 +14,13 @@ const Reset: React.FC<Props> = ({
   label,
   icon,
   primaryColor = "orange",
-  manualGradientColors,
 }) => {
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginVertical: 6,
-        alignItems: "center",
-      }}
-    >
-      <View style={{ flexDirection: "row" }}>
+    <View style={styles.container}>
+      <View style={styles.row}>
         {icon && (
           <View
-            style={{
-              width: 40,
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "start",
-            }}
+            style={styles.iconWrapper}
           >
             {icon}
           </View>
@@ -42,44 +29,30 @@ const Reset: React.FC<Props> = ({
       </View>
       <ButtonResetHelloes
         userId={userId} 
-        manualGradientColors={manualGradientColors}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  row: {
+  container: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginVertical: 6,
     alignItems: "center",
-    marginBottom: 8,
   },
-  labelSection: {
+  row: {
     flexDirection: "row",
-    alignItems: "center",
   },
-  icon: {
-    paddingTop: 2,
-    marginRight: 10,
+  iconWrapper: {
+    width: 40,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   label: {
     fontSize: 14,
     fontWeight: "bold",
-  },
-  customButton: {
-    marginLeft: 6,
-    borderRadius: 15,
-    backgroundColor: "#ccc",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-
-  altButton: {
-    borderRadius: 15,
-    paddingVertical: 4,
-    alignContent: "center",
-    paddingHorizontal: 10,
   },
 });
 

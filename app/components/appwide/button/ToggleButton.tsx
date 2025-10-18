@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
-import { TouchableOpacity, Animated, StyleSheet, Easing } from "react-native";
+import {   Pressable, Animated, StyleSheet, Easing } from "react-native";
  import manualGradientColors from "@/app/styles/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-const ToggleButton = ({ value, onToggle }) => {
+
+
+type Props = {
+  value: boolean;
+  onToggle: () => void;
+}
+
+const ToggleButton = ({ value, onToggle }: Props) => {
   const { lightDarkTheme } = useLDTheme();
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
  
@@ -29,7 +36,7 @@ const ToggleButton = ({ value, onToggle }) => {
   const accessibilityState = { selected: value };
 
   return (
-    <TouchableOpacity
+    <Pressable
       accessible={true}
       accessibilityRole="button"
       accessibilityLabel={`Toggle button. ${accessibilityLabel}`}
@@ -54,7 +61,7 @@ const ToggleButton = ({ value, onToggle }) => {
           { backgroundColor: lightDarkTheme.primaryBackground },
         ]}
       />
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

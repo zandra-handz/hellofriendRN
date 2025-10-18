@@ -1,16 +1,16 @@
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import SvgIcon from "@/app/styles/SvgIcons";
 import SectionFriendSettings from "../friends/SectionFriendSettings";
-import SectionFriendStats from "../friends/SectionFriendStats"; 
+import SectionFriendStats from "../friends/SectionFriendStats";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 import DeleteFriend from "../friends/DeleteFriend";
- 
-import { FriendDashboardData } from "@/src/types/FriendTypes";
 
+import { FriendDashboardData } from "@/src/types/FriendTypes";
+import { LDTheme } from "@/src/types/LDThemeTypes";
+import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 interface Props {
   isVisible: boolean;
   userId: number;
@@ -19,6 +19,9 @@ interface Props {
   friendDash: FriendDashboardData;
   bottomSpacer: number;
   closeModal: () => void;
+  lightDarkTheme: LDTheme;
+  themeAheadOfLoading: ThemeAheadOfLoading;
+  handleDeselectFriend: () => void;
 }
 
 const FriendSettingsModal: React.FC<Props> = ({
@@ -32,25 +35,19 @@ const FriendSettingsModal: React.FC<Props> = ({
   bottomSpacer,
   closeModal,
   lightDarkTheme,
-  themeAheadOfLoading, 
+  themeAheadOfLoading,
 }) => { 
-  //  console.log(friendDash?.friend_faves?.use_friend_color_theme);
-  //  console.log(friendDash);
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
       friendTheme={themeAheadOfLoading}
       isVisible={isVisible}
       headerIcon={
-        <MaterialCommunityIcons
-          name={"wrench"}
-          size={30}
-          color={lightDarkTheme.priamryText}
-        />
+        <SvgIcon name={"wrench"} size={30} color={lightDarkTheme.primaryText} />
       }
       useModalBar={true}
       rightSideButtonItem={
-        <MaterialCommunityIcons
+        <SvgIcon
           name={`wrench`}
           size={50}
           color={themeAheadOfLoading.fontColorSecondary}
@@ -78,19 +75,9 @@ const FriendSettingsModal: React.FC<Props> = ({
                 primaryColor={lightDarkTheme.primaryText}
               />
             </View>
- 
           </ScrollView>
           <View
-            style={{
-              position: "absolute",
-              width: 300,
-              height: 40,
-              bottom: 0,
-              right: 0,
-              zIndex: 60000,
-              elevation: 60000,
-              alignItems: "center",
-            }}
+            style={styles.deleteFriendContainer}
           >
             <DeleteFriend
               userId={userId}
@@ -127,6 +114,16 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     lineHeight: 21,
+  },
+  deleteFriendContainer: {
+    position: "absolute",
+    width: 300,
+    height: 40,
+    bottom: 0,
+    right: 0,
+    zIndex: 60000,
+    elevation: 60000,
+    alignItems: "center",
   },
 });
 

@@ -1,32 +1,34 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { View, StyleSheet, ColorValue } from "react-native"; 
 import NoToggle from "./NoToggle";
 import SvgIcon from "@/app/styles/SvgIcons";
 
-const SectionAccountSettings = ({ primaryColor }) => {
-  const navigation = useNavigation();
+
+type Props = {
+  primaryColor: ColorValue;
+}
+
+const SectionAccountSettings = ({ primaryColor }: Props) => {
+ 
 
   return (
-    <View
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <NoToggle
         primaryColor={primaryColor}
         label="Account"
         icon={<SvgIcon name={"account"} size={20} color={primaryColor} />}
-        onPress={() => navigation.navigate("UserDetails")}
+        onPress={() => console.log("nothing here yet")}
       />
 
       <NoToggle
         label="Password"
         icon={<SvgIcon name={"lock_outline"} size={20} color={primaryColor} />}
-        onPress={() => navigation.navigate("UserDetails")}
+        onPress={() => console.log("nothing here yet")}
       />
       <NoToggle
         label="Delete Account"
         icon={<SvgIcon name={"delete"} size={20} color={primaryColor} />}
-        onPress={() => navigation.navigate("UserDetails")}
+        onPress={() => console.log("nothing here yet")}
       />
     </View>
   );

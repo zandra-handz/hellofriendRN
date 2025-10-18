@@ -6,23 +6,9 @@ import {
 
 import { useUser } from "./UserContext";
 
-interface UserSettings {
-  id: number | null;
-  user: number | null;
-  expo_push_token: string | null;
-  high_contrast_mode: boolean;
-  interests: string | null;
-  language_preference: string | null;
-  large_text: boolean;
-  manual_dark_mode: boolean;
-  receive_notifications: boolean;
-  screen_reader: boolean;
-  lock_in_next: boolean;
-  lock_in_custom_string: string;
-  simplify_app_for_focus: boolean;
-}
+import { UserSettings, UserSettingsContextType } from "../types/UserSettingsTypes";
 
-interface UserSettingsContextType {}
+ 
 
 const UserSettingsContext = createContext<UserSettingsContextType | undefined>(
   undefined

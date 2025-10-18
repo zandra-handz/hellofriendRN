@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
+import { View, Text, ScrollView, StyleSheet, ColorValue  } from "react-native";
  
-
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import SvgIcon from "@/app/styles/SvgIcons"; 
 
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
@@ -10,6 +9,7 @@ interface AboutAppModalProps {
   isVisible: boolean;
   closeModal: () => void;
   bottomSpacer: number;
+  primaryColor: ColorValue;
   
 }
 
@@ -41,8 +41,8 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
       // }
       isVisible={isVisible}
       headerIcon={
-        <MaterialCommunityIcons
-          name={"information-outline"}
+        <SvgIcon
+          name={"information_outline"}
           size={30}
           color={primaryColor}
         />

@@ -1,12 +1,12 @@
-import { View, Text } from "react-native";
+import { View, StyleSheet, ColorValue } from "react-native";
 import React from "react";
 import ModalInfoText from "./ModalInfoText";
 
 type Props = {
   infoText: string;
-  fontSize: number;
-  lineHeight: number;
-  primaryColor: string;
+  fontSize?: number;
+  lineHeight?: number;
+  primaryColor: ColorValue;
 };
 
 const InfoItem = ({
@@ -17,11 +17,7 @@ const InfoItem = ({
 }: Props) => {
   return (
     <View
-      style={{
-        flex: 1,
-        flexDirection: "row",
-  
-      }}
+      style={styles.container}
     >
       <ModalInfoText
         infoText={infoText}
@@ -32,5 +28,12 @@ const InfoItem = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+  },
+});
 
 export default InfoItem;

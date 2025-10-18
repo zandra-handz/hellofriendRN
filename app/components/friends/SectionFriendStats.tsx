@@ -1,13 +1,19 @@
 import React from "react";
-import { View } from "react-native"; 
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { ColorValue, View } from "react-native";
+import SvgIcon from "@/app/styles/SvgIcons";
 import NoToggle from "../user/NoToggle";
 
-const SectionFriendStats = ({ primaryColor, friendDaysSince, friendTimeScore }) => {
- 
+type Props = {
+  primaryColor: ColorValue;
+  friendDaysSince: string;
+  friendTimeScore: string;
+};
 
+const SectionFriendStats = ({
+  primaryColor,
+  friendDaysSince,
+  friendTimeScore,
+}: Props) => {
   return (
     <View
       style={{
@@ -16,10 +22,10 @@ const SectionFriendStats = ({ primaryColor, friendDaysSince, friendTimeScore }) 
       }}
     >
       <NoToggle
-      primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label={friendDaysSince}
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             name={"timer"}
             size={20}
             color={primaryColor}
@@ -31,7 +37,7 @@ const SectionFriendStats = ({ primaryColor, friendDaysSince, friendTimeScore }) 
       <NoToggle
         label={friendTimeScore}
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             name={"heart"}
             size={20}
             color={primaryColor}

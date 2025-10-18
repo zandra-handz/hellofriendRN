@@ -8,7 +8,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   runOnJS,
-} from "react-native-reanimated"; 
+} from "react-native-reanimated";
 import {
   Canvas,
   Path,
@@ -16,16 +16,10 @@ import {
   Skia,
   Text,
   Group,
-} from "@shopify/react-native-skia";
-// import GlobalPressable from "../appwide/button/GlobalPressable";
-// import LightningBoltOutline from '@expo/vector-icons/MaterialCommunityIcons/LightningBoltOutline';
-
- 
- 
+} from "@shopify/react-native-skia"; 
 import SvgIcon from "@/app/styles/SvgIcons";
 import DonutPath from "./DonutPath";
-import { Text as RNText } from "react-native";
-// import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Text as RNText } from "react-native"; 
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/app/styles/StaticColors";
 
@@ -102,7 +96,8 @@ const DonutChart = ({
     }
 
     fadeInValue.value = withDelay(
-      totalJS * 80,
+      // totalJS * 20,
+      0,
       withTiming(1, { duration: 500 })
     );
   }, [totalJS]);
@@ -165,10 +160,8 @@ const DonutChart = ({
         onPress={() => onCategoryPress(categoryLabel)}
         key={index}
         style={({ pressed }) => [
+          styles.categoryLabelsContainer,
           {
-            zIndex: 66666,
-            elevation: 66666,
-            position: "absolute",
             left: x,
             top: y,
             transform: [
@@ -177,25 +170,24 @@ const DonutChart = ({
               ...(pressed ? [{ scale: 0.97 }] : []),
             ],
             backgroundColor: pressed ? "#ddd" : "transparent",
+            shadowOpacity: pressed ? 0.3 : 0,
+            zIndex: 66666,
+            elevation: 66666,
+            position: "absolute",
             padding: 4,
             borderRadius: 10,
-            shadowOpacity: pressed ? 0.3 : 0,
           },
         ]}
       >
         <RNText
-          style={{
-            color: color,
-            fontSize: labelsSize,
-            fontFamily: "Poppins-Regular",
-            fontWeight: "bold",
-            backgroundColor: darkerOverlayBackgroundColor,
-
-            alignSelf: "center",
-            padding: 4,
-            borderRadius: 4,
-            paddingHorizontal: 10,
-          }}
+          style={[
+            styles.RNText,
+            {
+              color: color,
+              fontSize: labelsSize,
+              backgroundColor: darkerOverlayBackgroundColor,
+            },
+          ]}
         >
           {labelText}
         </RNText>
@@ -271,9 +263,6 @@ const DonutChart = ({
 
           <Text
             x={textX}
-            //  x={0}
-            //  x={278}
-            //  y={radius + fontSize.height / 3.4}
             y={300}
             text={targetText}
             font={font}
@@ -290,7 +279,6 @@ const DonutChart = ({
           <SvgIcon
             name={"leaf"}
             style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
-           
             size={200}
             color={color}
           />
@@ -309,7 +297,6 @@ const DonutChart = ({
           styles.centerButton,
           {
             backgroundColor: manualGradientColors.lightColor,
-      
           },
           // { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
         ]}
@@ -341,45 +328,60 @@ const styles = StyleSheet.create({
 
     // backgroundColor: "pink",
   },
+  categoryLabelsContainer: {
+    zIndex: 66666,
+    elevation: 66666,
+    position: "absolute",
+    padding: 4,
+    borderRadius: 10,
+  },
   centerWrapper: {
     justifyContent: "center",
     alignItems: "center",
   },
   centerCenterButton: {
-                  zIndex: 1000000,
-              elevation: 1000000,
-              position: "absolute",
-              width: 130,
-              height: 130,
+    zIndex: 1000000,
+    elevation: 1000000,
+    position: "absolute",
+    width: 130,
+    height: 130,
 
-              top: "50%",
-              left: "50%",
-             // backgroundColor: "red",
-              borderRadius: 999,
-              transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
-
+    top: "50%",
+    left: "50%",
+    // backgroundColor: "red",
+    borderRadius: 999,
+    transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
   },
   centerButton: {
     position: "absolute",
     padding: 0,
 
-           zIndex: 1000000,
-              elevation: 1000000,
-              backgroundColor: 'red',
+    zIndex: 1000000,
+    elevation: 1000000,
+    backgroundColor: "red",
     //borderRadius: 999,
     borderRadius: 0,
     // zIndex: 2,
 
     right: -10,
     bottom: 30,
-                zIndex: 2,
-            borderRadius: 999,
-            width: 34,
-            height: 34,
-            padding: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: 1,
+    zIndex: 2,
+    borderRadius: 999,
+    width: 34,
+    height: 34,
+    padding: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: 1,
+  },
+  RNText: {
+    fontFamily: "Poppins-Regular",
+    fontWeight: "bold",
+
+    alignSelf: "center",
+    padding: 4,
+    borderRadius: 4,
+    paddingHorizontal: 10,
   },
 });
 

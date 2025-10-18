@@ -23,7 +23,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   themeAheadOfLoading,
   getThemeAheadOfLoading,
   lockInCustomString, /// to check if prev friend needs to be unpinned. to keep consistent with my other select hooks
-  friendStyle,
+ 
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
@@ -38,6 +38,9 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   onPress,
 }) => {
   const { friendDash, loadingDash } = useFriendDash();
+
+
+  console.log('below keyboard rerendered', lockInCustomString)
 
 
   return (
@@ -78,8 +81,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
             paddingHorizontal={paddingHorizontal}
-            userId={userId}
-            friendStyle={friendStyle}
+            userId={userId} 
             primaryColor={primaryColor}
             primaryOverlayColor={primaryOverlayColor}
             primaryBackgroundColor={primaryBackgroundColor}

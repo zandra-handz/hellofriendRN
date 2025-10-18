@@ -15,7 +15,7 @@ const useMomentSortingFunctions = ({ listData} : Props) => {
 const categorySizes = () => {
 
  
-  // console.log("categorySizes called");
+   console.log("categorySizes called");
   if (!listData || (listData?.length === 0)) return { sortedList: [], lookupMap: new Map() };
 
   const categorySizeMap = new Map();

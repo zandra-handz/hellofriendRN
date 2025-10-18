@@ -25,7 +25,7 @@ import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
-
+import { useFriendDash } from "@/src/context/FriendDashContext"; 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -34,21 +34,24 @@ interface SelectedFriendHomeProps {
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
   paddingHorizontal,
-  friendStyle,
+ 
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
 
-  loadingDash,
-  friendDash,
+  // loadingDash,
+  // friendDash,
   selectedFriendId,
-  selectedFriendName,
-  themeAheadOfLoading,
+  selectedFriendName, 
 }) => {
+
+  const { loadingDash, friendDash } = useFriendDash();
+
+    console.log('selected friend home rerendered')
   const headerRef = useRef(null);
   const { capsuleList } = useCapsuleList();
-
+ 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
@@ -58,11 +61,16 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     listData: capsuleList,
   });
 
+
+console.log('home screen rerendered')
   const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
-  const loading = loadingDash;
+
+  // const categorySizesCalled = categorySizes;
+  
+  const loading = loadingDash; 
   //const loading = true;
 
   const handleScroll = (event) => {
@@ -87,12 +95,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     };
   });
 
-  const PADDING_HORIZONTAL = 4;
+  // const PADDING_HORIZONTAL = 4;
 
-  const spacerAroundCalendar = 10;
+  // const spacerAroundCalendar = 10;
 
   const SELECTED_FRIEND_CARD_HEIGHT = 120;
-  const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
+  // const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
 
 //const ELEMENTS_BACKGROUND = CARD_BACKGROUND;
@@ -219,13 +227,16 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 />
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
+                  {!loadingDash &&  (
+
+             
                   <TalkingPointsChart
-                    isLoading={loading}
+                    // isLoading={loading}
                     capsuleListCount={capsuleList.length}
                     categoryStartIndices={categoryStartIndices}
                     categorySizes={categorySizes}
                     generateGradientColors={generateGradientColors}
-                    friendStyle={friendStyle}
+                
                     primaryColor={primaryColor}
                     primaryBackgroundColor={ELEMENTS_BACKGROUND}
                     darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
@@ -233,8 +244,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     loadingNewFriend={loadingDash}
                     selectedFriendId={selectedFriendId}
                     selectedFriendName={selectedFriendName}
-                    themeAheadOfLoading={themeAheadOfLoading}
+                  
                   />
+                       )}
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
@@ -305,4 +317,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectedFriendHome;
+export default React.memo(SelectedFriendHome);

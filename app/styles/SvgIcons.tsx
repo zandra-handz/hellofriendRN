@@ -9,11 +9,13 @@ import {
 } from "react-native";
 
 import AccountSvg from "./svgs/account";
+import AccountArrowLeftOutlineSvg from "./svgs/account-arrow-left-outline";
 import AccountPlusSvg from "./svgs/account-plus";
 import AccountSwitchOutlineSvg from "./svgs/account-switch-outline";
 import ArrowRightSvg from "./svgs/arrow-right";
 import BellSvg from "./svgs/bell";
-
+import BugSvg from "./svgs/bug";
+import BugOutlineSvg from "./svgs/bug-outline";
 import BookmarkSvg from "./svgs/bookmark";
 import EyeSvg from "./svgs/eye";
 import EyeClosedSvg from "./svgs/eye-closed";
@@ -36,23 +38,33 @@ import CommentSearchOutlineSvg from "./svgs/comment-search-outline";
 import CompareSvg from "./svgs/compare";
 import FormatFontSizeIncreaseSvg from "./svgs/format-font-size-increase";
 import GestureSwipeVerticalSvg from "./svgs/gesture-swipe-vertical";
+import HeartSvg from './svgs/heart';
 import HelpCircleSvg from "./svgs/help-circle";
+import InformationOutlineSvg from "./svgs/information-outline";
 import ImageFilterCenterFocusSvg from "./svgs/image-filter-center-focus";
 import LockOutlineSvg from "./svgs/lock-outline";
+import LogoutSvg from "./svgs/logout";
 import MapMarkerSvg from "./svgs/map-marker";
 import NoteEditOutlineSvg from "./svgs/note-edit-outline";
 import NoteTextSvg from "./svgs/note-text";
+import PaletteSvg from "./svgs/palette";
 import PencilSvg from "./svgs/pencil";
-import PieChartSvg from "./svgs/pie-chart" // IonIcons
+import PieChartSvg from "./svgs/pie-chart"; // IonIcons
 import PinOutlineSvg from "./svgs/pin-outline";
 import PlusSvg from "./svgs/plus";
 import PlusCircleSvg from "./svgs/plus-circle";
+import RefreshSvg from "./svgs/refresh";
 import CalendarOutlineSvg from "./svgs/calendar-outline";
 import SendSvg from "./svgs/send";
 import SendCircleOutlineSvg from "./svgs/send-circle-outline";
+import SettingsSuggestSvg from "./svgs/settings_suggest";
 import StarSvg from "./svgs/star";
 import TextShadowSvg from "./svgs/text-shadow";
+import TimerSvg from "./svgs/timer";
+import TimerSyncSvg from "./svgs/timer-sync";
+import TreeSvg from "./svgs/tree";
 import ThemeLightDarkSvg from "./svgs/theme-light-dark";
+import WrenchSvg from "./svgs/wrench";
 import VolumeHighSvg from "./svgs/volume-high";
 // Import your SVGs here
 // Example:
@@ -61,11 +73,14 @@ import VolumeHighSvg from "./svgs/volume-high";
 
 const svgIcons = {
   account: AccountSvg,
+  account_arrow_left_outline: AccountArrowLeftOutlineSvg,
   account_plus: AccountPlusSvg,
   account_switch_outline: AccountSwitchOutlineSvg,
   arrow_right: ArrowRightSvg,
   bookmark: BookmarkSvg,
   bell: BellSvg,
+  bug: BugSvg,
+  bug_outline: BugOutlineSvg,
   delete: DeleteSvg,
   leaf: LeafSvg, // welcome message
   calendar: CalendarSvg, // hello quick view
@@ -77,6 +92,7 @@ const svgIcons = {
   comment_search_outline: CommentSearchOutlineSvg,
   eye: EyeSvg,
   eye_closed: EyeClosedSvg,
+  palette: PaletteSvg,
   pencil: PencilSvg, // hello quick view
   pie_chart: PieChartSvg,
   pin_outline: PinOutlineSvg, // friend header
@@ -84,6 +100,7 @@ const svgIcons = {
   plus_circle: PlusCircleSvg,
   calendar_outline: CalendarOutlineSvg, // friend header
   lock_outlne: LockOutlineSvg,
+  logout: LogoutSvg,
   send: SendSvg,
   send_circle_outline: SendCircleOutlineSvg, // location map screen button
   chevron_left: ChevronLeftSvg,
@@ -91,8 +108,10 @@ const svgIcons = {
   chevron_up: ChevronUpSvg,
   chevron_double_left: ChevronDoubleLeftSvg,
   chevron_double_right: ChevronDoubleRightSvg,
+  heart: HeartSvg,
   help_circle: HelpCircleSvg, // help button
   image_filter_center_focus: ImageFilterCenterFocusSvg,
+  information_outline: InformationOutlineSvg,
   gesture_swipe_vertical: GestureSwipeVerticalSvg,
   check_circle: CheckCircleSvg,
   map_marker: MapMarkerSvg,
@@ -100,10 +119,16 @@ const svgIcons = {
   note_text: NoteTextSvg, // location notes
   car: CarSvg,
   car_cog: CarCogSvg,
+  refresh: RefreshSvg,
+  settings_suggest: SettingsSuggestSvg,
   star: StarSvg,
   theme_light_dark: ThemeLightDarkSvg,
   text_shadow: TextShadowSvg,
+  timer: TimerSvg,
+  timer_sync: TimerSyncSvg,
+  tree: TreeSvg,
   format_font_size_increase: FormatFontSizeIncreaseSvg,
+  wrench: WrenchSvg,
   volume_high: VolumeHighSvg,
 };
 

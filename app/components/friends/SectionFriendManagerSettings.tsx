@@ -1,17 +1,26 @@
 import React, { useMemo } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View,  StyleSheet, ColorValue } from "react-native";
 import Reset from "../appwide/button/Reset";
-import Toggle from "../user/Toggle";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Toggle from "../user/Toggle"; 
+ 
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
+import { UserSettings } from "@/src/types/UserSettingsTypes";
+
+
+type Props = {
+  userId: number;
+  settings: UserSettings;
+  primaryColor: ColorValue;
+}
 
 const SectionFriendManagerSettings = ({
   userId,
   settings,
-  primaryColor,
-  manualGradientColors,
-}) => {
-  const { updateSettings, updateSettingsMutation } = useUpdateSettings({
+  primaryColor, 
+}: Props) => {
+  const { updateSettings } = useUpdateSettings({
     userId: userId,
   });
 
@@ -26,19 +35,13 @@ const SectionFriendManagerSettings = ({
 
   return (
     <View
-      style={{
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        padding: 0,
-        width: "100%",
-        alignSelf: "flex-start",
-      }}
+      style={styles.container}
     >
       <Toggle
         primaryColor={primaryColor}
         label="Autoselect Next Friend"
         icon={
-          <MaterialCommunityIcons
+          <SvgIcon
             name={"account"}
             size={20}
             color={primaryColor}
@@ -52,14 +55,13 @@ const SectionFriendManagerSettings = ({
         userId={userId}
         label="Reset all hello dates"
         icon={
-          <MaterialCommunityIcons
-            name={"timer"}
+          <SvgIcon
+            name={"timer_sync"}
             size={20}
             color={primaryColor}
           />
         }
-        primaryColor={primaryColor}
-        manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor} 
       />
     </View>
   );
@@ -67,11 +69,8 @@ const SectionFriendManagerSettings = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    padding: 0, // changed this from ModalColorTheme
-    width: "100%",
-    alignSelf: "flex-start",
+        width: "100%",
+        alignSelf: "flex-start",
   },
   friendSettingsRow: {
     flexDirection: "row",

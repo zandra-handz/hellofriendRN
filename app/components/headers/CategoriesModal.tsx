@@ -1,27 +1,27 @@
-import React, { use, useState } from "react";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, {  useState } from "react";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 import SectionUserCategories from "../friends/SectionUserCategories";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-import HelperMessage from "../alerts/HelperMessage";
+import HelperMessage from "../alerts/HelperMessage"; 
 import InfoItem from "./InfoItem";
+import manualGradientColors from "@/app/styles/StaticColors";
 import { useCategories } from "@/src/context/CategoriesContext";
+import { ColorValue } from "react-native";
 interface Props {
   userId: number;
   isVisible: boolean;
   closeModal: () => void;
   isKeyboardVisible: boolean;
   bottomSpacer: number; // added to pass in footer height to put modal above footer, includes padding
+  primaryColor: ColorValue;
+ 
 }
 
 const CategoriesModal: React.FC<Props> = ({
   userId,
- 
-  manualGradientColors,
-  primaryColor,
-  primaryBackground,
-  lighterOverlayColor,
-  subWelcomeTextStyle,
+  
+  primaryColor, 
   isVisible,
   isKeyboardVisible = false,
   closeModal,
@@ -34,6 +34,8 @@ const CategoriesModal: React.FC<Props> = ({
     error: boolean;
   }>(null);
 
+
+ 
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
@@ -43,7 +45,7 @@ const CategoriesModal: React.FC<Props> = ({
       helpModeTitle="Help mode: Categories"
       useModalBar={true}
       rightSideButtonItem={
-        <MaterialCommunityIcons
+        <SvgIcon
           name={`tree`}
           size={50}
           color={manualGradientColors.darkHomeColor}
@@ -54,17 +56,13 @@ const CategoriesModal: React.FC<Props> = ({
         <>
           <SectionUserCategories
             userId={userId}
-            userCategories={userCategories}
-            manualGradientColors={manualGradientColors}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-            primaryColor={primaryColor}
-            primaryBackground={primaryBackground}
-            lighterOverlayColor={lighterOverlayColor}
+            userCategories={userCategories} 
+            primaryColor={primaryColor} 
           />
           {helperMessage && (
             <HelperMessage
               message={helperMessage.text}
-              error={helperMessage.error}
+              update={helperMessage.error}
               onClose={() => setHelperMessage(null)}
             />
           )}

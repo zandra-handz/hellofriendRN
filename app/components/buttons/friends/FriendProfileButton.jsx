@@ -5,13 +5,13 @@ import LoadingPage from "../../appwide/spinner/LoadingPage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-
+import manualGradientColors from "@/app/styles/StaticColors";
 const FriendProfileButton = ({
   friendId,
   friendName,
   primaryColor = "orange",
   themeAheadOfLoading,
-  manualGradientColors,
+ 
   onPress,
 }) => {
   const { dashLoaded, loadingDash, friendDash } = useFriendDash();

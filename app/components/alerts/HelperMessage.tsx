@@ -4,14 +4,14 @@ import Animated, {
   runOnJS,
   useSharedValue,
   useAnimatedStyle,
-  withTiming, 
+  withTiming,
   withDelay,
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HelperMessage = ({
@@ -21,12 +21,12 @@ const HelperMessage = ({
   update = false,
   onClose,
 }: {
-  message: string;
+  message?: string;
   isInsideModal?: boolean;
-  update?: boolean;
+  update?: boolean; // is this supposed to be error? unsure but changed anyway, if this component goes funky look here first
   duration?: number;
   onClose: () => void;
-  topBarText: string;
+  topBarText?: string;
 }) => {
   const scale = useSharedValue(0);
   const translateX = useSharedValue(-600);
@@ -58,116 +58,99 @@ const HelperMessage = ({
   }));
 
   const insets = useSafeAreaInsets();
-  const flattenedSafeViewStyle = [
-    StyleSheet.absoluteFillObject,
-    styles.overlay,
-  ];
-
-  const flattenedContainerStyle = StyleSheet.flatten([
-    topBarStyle,
-    styles.container,
-    {
-      top: isInsideModal ? 0 : insets.top,
-    },
-  ]);
-
-  const flattenedTopBarContainerStyle = StyleSheet.flatten([
-    styles.topBarContainer,
-    {
-      backgroundColor: lightDarkTheme.overlayBackground,
-    },
-  ]);
-
-  const flattenedMessageContainerStyle = StyleSheet.flatten([
-    styles.messageContainer,
-    animatedStyle,
-
-    {
-      backgroundColor: lightDarkTheme.primaryBackground,
-    },
-  ]);
-
-  const flattenedMessageWrapperStyle = StyleSheet.flatten(
-    [
-                AppFontStyles.subWelcomeText,
-                { color: lightDarkTheme.primaryText, lineHeight: 24 },
-              ]
-  )
 
   return (
-    <PlainSafeView turnSafeOff={isInsideModal} style={flattenedSafeViewStyle}>
-      <Animated.View style={flattenedContainerStyle}>
-        <View
-          style={flattenedTopBarContainerStyle}
+    <PlainSafeView
+      turnSafeOff={isInsideModal}
+      style={[StyleSheet.absoluteFillObject, styles.overlay]}
+    >
+      <>
+        <Animated.View
+          style={[
+            topBarStyle,
+            styles.container,
+            {
+              top: isInsideModal ? 0 : insets.top,
+            },
+          ]}
         >
-          <Text
+          <View
             style={[
+              styles.topBarContainer,
               {
-                color: lightDarkTheme.primaryText,
-                fontFamily: "Poppins-Bold",
-                fontSize: 14,
-                padding: 4,
-                paddingHorizontal: 10,
-                borderRadius: 999,
+                backgroundColor: lightDarkTheme.overlayBackground,
               },
             ]}
           >
-            {topBarText}
-          </Text>
-        </View>
-      </Animated.View>
-
-      <Animated.View style={flattenedMessageContainerStyle}>
-        {!update && (
-          <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Text
-              style={flattenedMessageWrapperStyle}
+              style={[
+                styles.topBarText,
+                {
+                  color: lightDarkTheme.primaryText,
+                },
+              ]}
             >
-              {" "}
-              {message}
+              {topBarText}
             </Text>
-          </ScrollView>
-        )}
-        {update && (
-          <Text
-            style={[
-              AppFontStyles.subWelcomeText,
-              { color: lightDarkTheme.primaryText },
-            ]}
-          >
-            update
-          </Text>
-        )}
-        <Pressable
-          onPress={handleManualClose}
-          hitSlop={30}
-          style={{
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "row",
-            borderRadius: 999,
-          }}
+          </View>
+        </Animated.View>
+
+        <Animated.View
+          style={[
+            styles.messageContainer,
+            animatedStyle,
+
+            {
+              backgroundColor: lightDarkTheme.primaryBackground,
+            },
+          ]}
         >
-          <Text
-            style={[
-              {
-                color: lightDarkTheme.primaryText,
-                fontFamily: "Poppins-Bold",
-                fontSize: 13,
-                marginRight: 5,
-              },
-            ]}
+          {!update && (
+            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+              <Text
+                style={[
+                  AppFontStyles.subWelcomeText,
+                  { color: lightDarkTheme.primaryText, lineHeight: 24 },
+                ]}
+              >
+                {" "}
+                {message}
+              </Text>
+            </ScrollView>
+          )}
+          {update && (
+            <Text
+              style={[
+                AppFontStyles.subWelcomeText,
+                { color: lightDarkTheme.primaryText },
+              ]}
+            >
+              update
+            </Text>
+          )}
+          <Pressable
+            onPress={handleManualClose}
+            hitSlop={30}
+            style={styles.closeButton}
           >
-            Got it!
-          </Text>
-          <MaterialCommunityIcons
-            name={"check-circle"}
-            size={24}
-            color={manualGradientColors.lightColor}
-          />
-        </Pressable>
-      </Animated.View>
+            <Text
+              style={[
+                styles.closeButtonLabel,
+                {
+                  color: lightDarkTheme.primaryText,
+                },
+              ]}
+            >
+              Got it!
+            </Text>
+            <SvgIcon
+              name={"check_circle"}
+              size={24}
+              color={manualGradientColors.lightColor}
+            />
+          </Pressable>
+        </Animated.View>
+      </>
     </PlainSafeView>
   );
 };
@@ -199,6 +182,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
+  topBarText: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 14,
+    padding: 4,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+  },
   messageContainer: {
     padding: 20,
     minHeight: 200,
@@ -215,6 +205,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
+  },
+  closeButton: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    borderRadius: 999,
+  },
+  closeButtonLabel: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    marginRight: 5,
   },
 });
 

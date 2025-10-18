@@ -1,13 +1,17 @@
 import React from "react";
-import { Alert, StyleSheet, Pressable } from "react-native";
- import { useRemixUpcomingHelloes } from "@/src/hooks/useRemixUpcomingHelloes";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { Alert, StyleSheet, Pressable, DimensionValue } from "react-native";
+import { useRemixUpcomingHelloes } from "@/src/hooks/useRemixUpcomingHelloes";
+import SvgIcon from "@/app/styles/SvgIcons";
+import manualGradientColors from "@/app/styles/StaticColors";
 
-const ButtonResetHelloes = ({ userId, iconSize = 15, manualGradientColors }) => {
-  const { handleRemixAllNextHelloes } =
-    useRemixUpcomingHelloes({userId}); // MOVE TO CONTEXT
 
- 
+type Props = {
+  userId: number;
+  iconSize: DimensionValue;
+}
+const ButtonResetHelloes = ({ userId, iconSize = 15 }: Props) => {
+  const { handleRemixAllNextHelloes } = useRemixUpcomingHelloes({ userId }); // MOVE TO CONTEXT
+
   const handleOnPress = () => {
     Alert.alert(
       "Warning!",
@@ -22,7 +26,6 @@ const ButtonResetHelloes = ({ userId, iconSize = 15, manualGradientColors }) => 
       ]
     );
   };
-console.log('user id!', userId); 
   return (
     <Pressable
       onPress={handleOnPress}
@@ -32,7 +35,7 @@ console.log('user id!', userId);
         pressed && styles.pressedStyle,
       ]}
     >
-      <MaterialCommunityIcons
+      <SvgIcon
         name={"refresh"}
         size={iconSize}
         color={manualGradientColors.homeDarkColor}
