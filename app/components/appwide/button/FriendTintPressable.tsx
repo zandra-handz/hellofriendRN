@@ -33,6 +33,7 @@ const FriendTintPressable = ({
   visibility,
   scaleValue,
   setGradientColors,
+  handleNavAfterSelect,
   onPress,
   onPressIn = () => console.log("on press in"),
   onPressOut = () => console.log("on press out"),
@@ -40,6 +41,7 @@ const FriendTintPressable = ({
   style,
   friendId,
   children,
+  useNavigateBack,
   useFriendColors = true,
   reverse = false,
 }: Props) => {
@@ -63,6 +65,15 @@ const FriendTintPressable = ({
       }
     };
   }, []);
+
+  const handleNavAction = () => {
+    if (useNavigateBack) {
+      navigateBack();
+    } else {
+      navigateToHome()
+    }
+
+  };
 
   const handleOnPressIn = (event) => {
     // scale animation is fode from global pressable
@@ -115,7 +126,7 @@ const FriendTintPressable = ({
       { duration: 280 },
       (finished) => {
         if (finished) {
-          runOnJS(navigateToHome)();
+          runOnJS(handleNavAfterSelect)();
           runOnJS(onPress)(); // use runOnJS to safely call JS code from the UI thread
         }
       }

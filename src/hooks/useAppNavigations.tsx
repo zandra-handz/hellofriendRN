@@ -12,10 +12,13 @@ type NavToHelloViewProps = {
   inPersonFilter: boolean;
 };
 
+type NavToAddImageProps = {
+  imageUri: string;
+}
 
 type NavToSelectFriendProps = {
   useNavigateBack?: boolean;
-}
+};
 
 type NavToLocationEditProps = {
   location: Location;
@@ -50,7 +53,7 @@ type NavToNewAccountProp = {
 interface hookReturns {
   navigateToHome: () => void;
   navigateToAddFriend: () => void;
-  navigateToSelectFriend: ({useNavigateBack}: NavToSelectFriendProps) => void;
+  navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
   navigateToHistory: () => void;
   navigateToHelloes: () => void;
@@ -58,6 +61,10 @@ interface hookReturns {
     startingIndex,
     inPersonFilter,
   }: NavToHelloViewProps) => void;
+  navigateToAddImage: ({
+    imageUri
+  }: NavToAddImageProps) => void;
+  
   navigateToLocationSearch: () => void;
   navigateToLocationEdit: ({
     location,
@@ -92,7 +99,7 @@ const useAppNavigations = (): hookReturns => {
   const navigateToSelectFriend = ({
     useNavigateBack,
   }: NavToSelectFriendProps) => {
-    navigation.navigate("SelectFriend", {useNavigateBack});
+    navigation.navigate("SelectFriend", { useNavigateBack });
   };
 
   const navigateToHistory = () => {
@@ -108,6 +115,10 @@ const useAppNavigations = (): hookReturns => {
     inPersonFilter,
   }: NavToHelloViewProps) => {
     navigation.navigate("HelloView", { startingIndex, inPersonFilter });
+  };
+
+  const navigateToAddImage = ({ imageUri }: NavToAddImageProps) => {
+    navigation.navigate("AddImage", { imageUri });
   };
 
   const navigateToLocationEdit = ({
@@ -186,6 +197,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToHistory,
     navigateToHelloes,
     navigateToHelloView,
+    navigateToAddImage,
     navigateToLocationEdit,
     navigateToLocationSearch,
     navigateToMomentFocus,

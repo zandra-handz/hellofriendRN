@@ -38,6 +38,8 @@ const FriendListUI = ({
   friendList,
   setGradientColors,
   lightDarkTheme,
+  handleNavAfterSelect,
+  useNavigateBack,
   data,
   friendId,
   onPress,
@@ -131,6 +133,8 @@ const FriendListUI = ({
             style={styles.friendContainer}
             friendId={item.id}
             onPress={() => onPress(item.id)}
+            handleNavAfterSelect={handleNavAfterSelect}
+            useNavigateBack={useNavigateBack}
             onLongPress={() => handleLongPress(item.id)}
           >
             <ButtonSelectFriend

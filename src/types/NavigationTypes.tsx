@@ -15,12 +15,15 @@ export type RootStackParamList = {
   PreAdded: undefined;
   Finalize: undefined;
   Reload: undefined;
-  Images: undefined;
-  ImageView: undefined;
   Helloes: undefined;
   HelloView: {
     startingIndex: number | null;
     inPersonFilter: boolean;
+  };
+  Images: undefined;
+  ImageView: undefined;
+  AddImage: {
+    imageUri: string;
   };
   Locations: undefined;
   LocationView: undefined;
@@ -38,7 +41,6 @@ export type RootStackParamList = {
   LocationSearch: undefined;
   MidpointLocationSearch: undefined;
   CalculateTravelTimes: undefined;
-  AddImage: undefined;
   AddHello: undefined;
   SelectFriend: {
     useNavigateBack?: boolean 

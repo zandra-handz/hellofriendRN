@@ -36,8 +36,7 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
 // third party  RESTORE SHARE INTENT WHEN PACKAGE IS UPDATED
 import { useShareIntentContext } from "expo-share-intent";
-import { File } from "expo-file-system";
-import { useNavigation } from "@react-navigation/native";
+import { File } from "expo-file-system"; 
 
 // import { useFocusEffect } from "@react-navigation/native";
 
@@ -78,6 +77,7 @@ const ScreenHome = () => {
 
 // logQueryCacheSize(queryClient);
   const friendList = friendListAndUpcoming?.friends;
+  const friendListLength = friendList?.length || 0;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   // const upcomingId = friendListAndUpcoming?.next?.id;
 
@@ -93,12 +93,12 @@ const ScreenHome = () => {
 
   const { lightDarkTheme } = useLDTheme();
 
-  const navigation = useNavigation();
+
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
-  const { navigateToMomentFocusWithText } = useAppNavigations();
+  const { navigateToMomentFocusWithText, navigateToAddImage } = useAppNavigations();
   const { requestPermission, imageUri, resizeImage } =
     useImageUploadFunctions();
 
@@ -204,7 +204,7 @@ const ScreenHome = () => {
           // Validate that it's an image
           if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
             const resizedImage = await resizeImage(fileInfo.uri);
-            navigation.navigate("AddImage", { imageUri: resizedImage.uri }); // Navigate with resized image URI
+            navigateToAddImage({ imageUri: resizedImage.uri }); // Navigate with resized image URI
           } else {
             Alert.alert(
               "Unsupported File",
@@ -229,11 +229,18 @@ const ScreenHome = () => {
     requestPermission();
   }, []);
 
+
+  // MAKE SURE THIS WORKS BEFORE DELETING NAV TO ADD IMAGE SCREEN
   useEffect(() => {
     if (imageUri) {
-      navigateToAddImageScreen();
+      // navigateToAddImageScreen();
+      navigateToAddImage({imageUri: imageUri})
     }
   }, [imageUri]);
+
+  //   const navigateToAddImageScreen = useCallback(() => {
+  //   navigateToAddImage({ imageUri });
+  // }, [navigation, imageUri]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -295,9 +302,7 @@ const ScreenHome = () => {
     }
   }, [newMomentText, navigateToMomentFocusWithText, clearNewMomentText]);
 
-  const navigateToAddImageScreen = useCallback(() => {
-    navigation.navigate("AddImage", { imageUri });
-  }, [navigation, imageUri]);
+
 
 const handleFocusPress = () => {
   if (newMomentTextRef && newMomentTextRef.current) {
@@ -315,7 +320,7 @@ const handleFocusPress = () => {
         friendColorDark={themeAheadOfLoading.darkColor}
         screenname={`home`}
         backgroundOverlayColor={
-          friendList?.length > 0
+          friendListLength > 0
             ? lightDarkTheme.primaryBackground
             : lightDarkTheme.overlayBackground
         }
@@ -363,7 +368,7 @@ const handleFocusPress = () => {
                   <View style={styles.mainContainer}>
                     {!selectedFriend?.id && (
                       <>
-                        {friendList?.length < 1 && (
+                        {friendListLength < 1 && (
                           <NoFriendsMessageUI
                             backgroundColor={lightDarkTheme.overlayBackground}
                             //  backgroundColor={'transparent'}
@@ -375,7 +380,7 @@ const handleFocusPress = () => {
                           />
                         )}
 
-                        {friendList?.length > 0 && (
+                        {friendListLength > 0 && (
                           <>
                             <WelcomeMessageUI
                               paddingHorizontal={PADDING_HORIZONTAL}
@@ -432,7 +437,7 @@ const handleFocusPress = () => {
                     )}
                     {!isKeyboardVisible &&
                       // && !loadingDash
-                      friendList?.length > 0 && ( // loadingDash internally spins the components between friend selects
+                      friendListLength > 0 && ( // loadingDash internally spins the components between friend selects
                         <BelowKeyboardComponents
                           userId={user?.id}
                           lockInCustomString={settings?.lock_in_custom_string}
@@ -453,7 +458,7 @@ const handleFocusPress = () => {
                           lighterOverlayBackgroundColor={
                             lightDarkTheme.lighterOverlayBackground
                           }
-                          friendListLength={friendList?.length || 0}
+                          friendListLength={friendListLength || 0}
                           onPress={navigateToAddMomentScreen}
                         />
                       )}
@@ -470,12 +475,12 @@ const handleFocusPress = () => {
               friendName={selectedFriend?.name}
               // friendDash={friendDash}
               lightDarkTheme={lightDarkTheme}
+              friendListLength={friendListLength}
               overlayColor={
-                friendList?.length > 0
+                friendListLength > 0
                   ? lightDarkTheme.overlayBackground
                   : lightDarkTheme.primaryBackground
-              }
-              dividerStyle={lightDarkTheme.divider}
+              } 
             />
           )}
 

@@ -16,8 +16,7 @@ const LDThemeContext = createContext();
 export const useLDTheme = () => useContext(LDThemeContext);
 
 export const LDThemeProvider = ({ children }) => {
-  const { settings } = useUserSettings();
-  console.log("LD THEME STYLES RERENDERED");
+  const { settings } = useUserSettings(); 
   const colorScheme = useColorScheme();
 
   const [styles, setStyles] = useState({
@@ -102,31 +101,10 @@ export const lightTheme = {
     borderBottomWidth: 1,
   },
   headerTextColor: "#121212",
-  // },
-  // styles: StyleSheet.create({
-  //   input: {
-  //     color: "#121212",
-  //     borderWidth: 1,
-  //     borderRadius: 20,
-  //     padding: 10,
-  //     width: "100%",
-  //     borderColor: "lightgray",
-  //     backgroundColor: "white",
-  //     placeholderTextColor: "lightgray", // ⚠️ not valid in StyleSheet, use prop on <TextInput />
-  //     fontFamily: "Poppins-Regular",
-  //     textAlign: "left",
-  //     fontSize: 16,
-  //   },
-  //   gradientContainer: {
-  //     ...StyleSheet.absoluteFillObject,
-  //     flex: 1,
-  //   },
-  // }),
+ 
 };
 
-export const darkTheme = {
-  // colors: {
-  // overlayBackground: "rgba(0, 0, 0, 0.6)",
+export const darkTheme = { 
     overlayBackground: "rgba(0, 0, 0, 0.46)",
   darkerOverlayBackground: "rgba(0, 0, 0, 0.75)",
   lighterOverlayBackground: "rgba(255, 255, 255, 0.3)",
@@ -151,25 +129,5 @@ export const darkTheme = {
   },
   headerTextColor: "#d3d3d3",
 
-  // },
-  // styles: StyleSheet.create({
-  //   input: {
-  //     color: "#d3d3d3",
-  //     borderWidth: 1,
-  //     borderColor: "#d3d3d3",
-  //     backgroundColor: "#121212",
-  //     // placeholderTextColor: not valid here, pass via <TextInput />
-  //     borderRadius: 20,
-  //     padding: 10,
-  //     width: "100%",
-  //     fontFamily: "Poppins-Regular",
-  //     textAlign: "left",
-  //     fontSize: 16,
-  //   },
-  //   gradientContainer: {
-  //     ...StyleSheet.absoluteFillObject,
-  //     flex: 1,
-  //   },
-  // }),
-};
-// export default LDThemeProvider;
+ 
+}; 

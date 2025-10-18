@@ -18,21 +18,26 @@ import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-//  import { useFriendDash } from "@/src/context/FriendDashContext";
+
+// types
+import { LDTheme } from "@/src/types/LDThemeTypes"; 
+
+type Props = {
+  userId: number;
+  username: string;
+  lightDarkTheme: LDTheme;
+  friendListLength: number;
+};
 const HelloFriendFooter = ({
   userId,
   username,
-
-  friendId,
-  friendName,
-
   lightDarkTheme,
-  overlayColor,
-  dividerStyle,
-}) => {
+  friendListLength,
+}: Props) => {
+  const dividerStyle = lightDarkTheme.divider;
+
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  // const { friendDash } = useFriendDash();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { themeAheadOfLoading } = useFriendStyle();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
@@ -49,6 +54,10 @@ const HelloFriendFooter = ({
 
   const primaryColor = lightDarkTheme.primaryText;
   const primaryBackground = lightDarkTheme.primaryBackground;
+  const overlayColor =
+    friendListLength > 0
+      ? lightDarkTheme.overlayBackground
+      : lightDarkTheme.primaryBackground;
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -124,7 +133,7 @@ const HelloFriendFooter = ({
         onPress={() => setReportModalVisible(true)}
       />
     ),
-    [primaryColor, friendId]
+    [primaryColor]
   );
 
   const handleCenterButtonToggle = () => {
@@ -139,15 +148,15 @@ const HelloFriendFooter = ({
   const RenderFriendProfileButton = useCallback(
     () => (
       <FriendProfileButton
-        friendId={friendId}
-        friendName={friendName}
+        friendId={null}
+        friendName={null}
         primaryColor={primaryColor}
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
         onPress={() => handleCenterButtonToggle()}
       />
     ),
-    [themeAheadOfLoading, friendId, friendName]
+    [themeAheadOfLoading]
   );
 
   const RenderAboutAppButton = useCallback(
@@ -170,7 +179,7 @@ const HelloFriendFooter = ({
 
   return (
     <GradientBackground
-      useFriendColors={!!friendId}
+      useFriendColors={false}
       screenname={"hellofriendfooter"}
       // startColor={manualGradientColors.lightColor}
       // endColor={manualGradientColors.darkColor}

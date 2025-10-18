@@ -1,5 +1,5 @@
 import { View, Pressable, StyleSheet, Dimensions } from "react-native";
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -19,13 +19,14 @@ import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import SvgIcon from "@/app/styles/SvgIcons";
+import { useNavigation } from "@react-navigation/native";
 import Animated, {
-  withTiming,
-  withSpring,
-  useDerivedValue,
+  // withTiming,
+  // withSpring,
+  // useDerivedValue,
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedProps,
+  // useAnimatedProps,
 } from "react-native-reanimated";
 
 import { ColorValue } from "react-native";
@@ -34,7 +35,7 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 import { LinearGradient } from "expo-linear-gradient";
-import ScreenAddImage from "../images/ScreenAddImage";
+ 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 const ScreenSelectFriend = (
@@ -42,6 +43,7 @@ const ScreenSelectFriend = (
     // navigationDisabled = false
   }
 ) => {
+  const navigation = useNavigation();
   const route = useRoute();
   const useNavigateBack = route?.params?.useNavigateBack ?? false;
   const { lightDarkTheme } = useLDTheme();
@@ -95,11 +97,14 @@ const ScreenSelectFriend = (
 
   const locale = "en-US";
   const { navigateBack, navigateToHome } = useAppNavigations();
-
+ 
   const handleNavAfterSelect = useCallback(() => {
+    console.log(JSON.stringify(navigation.getState(), null, 2));
     if (!useNavigateBack) {
+      console.log('will nav home')
       navigateToHome();
     } else {
+      console.log('will nav back')
       navigateBack();
     }
   }, [useNavigateBack]);
@@ -170,7 +175,7 @@ const ScreenSelectFriend = (
     resetTheme,
     getThemeAheadOfLoading,
     selectFriend,
-    navigateOnSelect: handleNavAfterSelect,
+   // navigateOnSelect: handleNavAfterSelect,
     //   navigateOnSelect: undefined,
   });
 
@@ -262,6 +267,8 @@ const ScreenSelectFriend = (
                 data={alphabFriendList}
                 friendId={selectedFriend ? selectedFriend?.id : null}
                 onPress={handleSelectFriend}
+                handleNavAfterSelect={handleNavAfterSelect}
+                useNavigateBack={!!useNavigateBack}
                 onLongPress={toggleLockOnFriend}
               />
             )}
