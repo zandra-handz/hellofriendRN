@@ -19,9 +19,11 @@ import {
 } from "@shopify/react-native-skia"; 
 import SvgIcon from "@/app/styles/SvgIcons";
 import DonutPath from "./DonutPath";
-import { Text as RNText } from "react-native"; 
+import { Text as RNText } from "react-native";
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/app/styles/StaticColors";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 type Props = {
   onCategoryPress: () => void;
@@ -51,6 +53,8 @@ type Props = {
 
 const DonutChart = ({
   totalJS,
+  positionsValue,
+  positions,
   primaryColor,
   darkerOverlayBackgroundColor,
   onCategoryPress,
@@ -67,22 +71,21 @@ const DonutChart = ({
   n,
   gap,
   decimalsValue,
-  categoryTotals,
   labelsValue,
+  lastFlush,
+  resetLeaves,
   colors,
   labelsSize,
   labelsDistanceFromCenter,
   labelsSliceEnd,
 }: Props) => {
   const array = Array.from({ length: n });
-
   const innerRadius = radius - outerStrokeWidth / 2;
 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
 
   const fadeInValue = useSharedValue(0);
-
   const LabelOverlayStyle = useAnimatedStyle(() => {
     return {
       opacity: fadeInValue.value,
@@ -119,11 +122,13 @@ const DonutChart = ({
     () => `${Math.round(totalValue.value)}`,
     []
   );
-  const targetCategories = useDerivedValue(
-    () => `${Math.round(categoryTotals.value)}`,
-    []
-  );
-  // const fontSize = font.measureText("$0");
+
+  // const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
+
+  // useEffect(() => {
+  //   // Update shared value whenever selectedFriend changes
+  //   friendIdValue.value = selectedFriend?.id ?? -1;
+  // }, [selectedFriend?.id]);
 
   const textX = useDerivedValue(() => {
     const _fontSize = font.measureText(targetText.value);
@@ -154,6 +159,8 @@ const DonutChart = ({
     const approxCharWidth = labelsSize * 0.55; // works well for Poppins-Regular
     const textWidth = labelText.length * approxCharWidth;
     const textHeight = labelsSize;
+
+    // console.log(colors);
 
     return (
       <Pressable
@@ -234,26 +241,15 @@ const DonutChart = ({
             );
           })}
 
-          {/* DONT DELETE MIGHT NEED 
-        <Rect
-          x={radius - 22}
-          //  y={radius - 22}
-          y={20}
-          x={240}
-          //  y={radius + fontSize.height / 3.4}
-          y={270}
-          width={fontSize.width}
-          height={fontSize.height + 10}
-          opacity={0.0}
-          color={themeStyles.overlayBackgroundColor.backgroundColor} // your desired background color
-          color={"pink"}
-        /> */}
-
           <LeafPath
+            lastFlush={lastFlush}
+            totalJS={totalJS}
+            positionsValue={positionsValue}
+            positions={positions}
             count={targetText}
+            totalValue={totalValue}
             decimals={decimalsValue}
             categoryStops={categoryStopsValue}
-            categoryTotals={targetCategories}
             centerX={radius - labelsSize - 40} // WEIRD EYEBALL
             centerY={radius - labelsSize - 40} // WEIRD EYEBALL
             radius={radius / 4}
@@ -274,6 +270,25 @@ const DonutChart = ({
       <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
         {LabelOverlays}
       </Animated.View>
+
+      <Pressable
+        onPress={() => resetLeaves()}
+        style={{
+          width: 40,
+          height: 40,
+          position: "absolute",
+          borderRadius: 999,
+          zIndex: 10000,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: "hotpink",
+        }}
+      >
+        <SvgIcon
+        name="refresh"
+        color={primaryColor}
+        size={24}/>
+      </Pressable>
       {onPlusPress && onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <SvgIcon
@@ -298,19 +313,15 @@ const DonutChart = ({
           {
             backgroundColor: manualGradientColors.lightColor,
           },
-          // { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
         ]}
         hitSlop={30}
       >
         <SvgIcon
-          // name={"lightning-bolt-outline"} //pencil-plus
-          // // name={"playlist-plus"}
           name={"plus"}
           size={22}
           opacity={1}
           color={primaryColor}
           color={manualGradientColors.homeDarkColor}
-          // style={{ zIndex: 1 }}
         />
       </Pressable>
     </View>

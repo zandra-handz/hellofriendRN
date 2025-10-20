@@ -1,174 +1,141 @@
 import React, { useEffect, useState } from "react";
-
-import {
-  Group,
-  Path,
-  usePathValue,
-  processTransform2d,
-} from "@shopify/react-native-skia";
+import { Group } from "@shopify/react-native-skia";
 import {
   useSharedValue,
   useDerivedValue,
-  withTiming,
-  withDelay,
-  Easing,
   runOnJS,
 } from "react-native-reanimated";
- 
-
-
-// const leafPath =
-//   "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z";
-
 import { Skia } from "@shopify/react-native-skia";
-
-function LeafInstance({
-  leafPath,
-  x,
-  y,
-  size,
-  index,
-  color,
-}: {
-  leafPath: SkPath;
-  x: number;
-  y: number;
-  size: number;
-  index: number;
-  color: string;
-}) {
-  const scale = useSharedValue(0);
-
-  useEffect(() => {
-    scale.value = withDelay(
-      index * 120,
-      withTiming((index + 1) * 0.5, {
-        duration: 500,
-        easing: Easing.out(Easing.exp),
-      })
-    );
-  }, []);
-
-  const clip = usePathValue((path) => {
-    "worklet";
-    path.transform(processTransform2d([{ scale: scale.value }]));
-  }, leafPath);
-
-  return (
-    <Path
-      path={clip}
-      color={color}
-      style="fill"
-      transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-    />
-  );
-}
+import { calculateLeavesWorklet } from "./UtilLeafCalc";
+import { LeafInstance } from "./LeafInstance";
 
 interface LeafPathProps {
-  count: ReturnType<typeof useSharedValue>; // Reanimated shared value
+  totalJS: number | SharedValue<number>;
+  count: ReturnType<typeof useSharedValue>;
+  totalValue: ReturnType<typeof useSharedValue>;
+  categoryStops: ReturnType<typeof useSharedValue>;
+  decimals: ReturnType<typeof useSharedValue>;
   centerX: number;
   centerY: number;
   radius: number;
-  colors: string[]; // not sure h/o
+  colors: string[];
+  flushLeaves?: ReturnType<typeof useSharedValue>;
+  delayMs?: number; // optional delay in milliseconds
 }
- 
+
 export default function LeafPath({
+  totalJS,
   count,
-  categoryTotals,
- 
+  totalValue,
+  categoryStops,
   decimals,
   centerX,
   centerY,
   radius,
   colors,
+  delayMs = 100, // default delay 100ms
+  positionsValue,
+  positions,
+ 
+  lastFlush,
 }: LeafPathProps) {
-  const leafPath = Skia.Path.MakeFromSVGString(
+  const scale = useSharedValue(0);
+  const lastCount = useSharedValue(-1);
+  // const positionsValue = useSharedValue<
+  //   { x: number; y: number; size: number; color: string }[]
+  // >([]);
+console.log(positions)
+const prevFlush = useSharedValue(-1); // store previous flush timestamp
+
+
+ 
+  const [positionsJS, setPositionsJS] = useState<
+    { x: number; y: number; size: number; color: string }[]
+  >([]);
+
+//   useDerivedValue(() => {
+//   'worklet';
+//   // Only reset when lastFlush changes
+//   if (lastFlush.value !== prevFlush.value) {
+//     console.log('UPDATING FLUSH')
+//         runOnJS(setPositionsJS)([])
+//     positionsValue.value = [];
+//     scale.value = 0;
+//     lastCount.value = -1;
+
+
+//     // update prevFlush to current flush timestamp
+//     prevFlush.value = lastFlush.value;
+//   }
+// }, [lastFlush]);
+
+
+  // useEffect(() => {
+  //   console.log(`positions:`, positionsJS, colors)
+
+  // }, [positionsJS]);
+  const [show, setShow] = useState(false); // controls delayed render
+
+  // show component after a short delay
+  useEffect(() => {
+    const timeout = setTimeout(() => setShow(true), delayMs);
+    return () => clearTimeout(timeout); // cleanup
+  }, [delayMs]);
+
+  // Derived category totals
+  const categoryTotals = useDerivedValue(() => {
+    if (!categoryStops.value || categoryStops.value.length === 0) return 0;
+
+    const total = Math.ceil(totalValue.value);
+    for (let i = 0; i < categoryStops.value.length; i++) {
+      if (total <= categoryStops.value[i]) return i + 1;
+    }
+    return categoryStops.value.length;
+  });
+
+  // Calculate leaves on UI thread
+  // useDerivedValue(() => {
+  //   calculateLeavesWorklet({
+  //     totalJS,
+  //     categoryTotals,
+  //     lastCount,
+  //     scale,
+  //     count,
+  //     decimals,
+  //     colors,
+  //     centerX,
+  //     centerY,
+  //     radius,
+  //     positionsValue,
+  //   });
+  // }, [count, categoryTotals, decimals, colors, lastFlush]);
+
+  // Mirror UI thread → JS thread
+  useDerivedValue(() => {
+    runOnJS(setPositionsJS)(positionsValue.value);
+  }, [positionsValue]);
+
+ 
+
+  const leafSvgString = Skia.Path.MakeFromSVGString(
     "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"
   );
  
- 
-
- 
-  const scale = useSharedValue(0);
-
-  const [positionsJS, setPositionsJS] = useState([]);
-  const lastCount = useSharedValue(-1); // default to -1 so first update runs
-
-  useDerivedValue(() => {
- 
-    // Guard: required values must exist
-    if (!count || !decimals || decimals?.value?.length < 1) {
-      if (lastCount.value !== -1) {
-        // NEED THIS CHECK OR WILL RERENDER FOREVER WHEN COMPONENT MOUNTED
-        runOnJS(setPositionsJS)([]);
-        lastCount.value = -1;
-      }
-      return;
-    }
-
-    const n = Math.floor(categoryTotals.value);
-
-    // Only update if count changed
-    if (lastCount.value === n) return;
-
-    const arr: { x: number; y: number }[] = [];
-    const boxSize = radius * 2;
-    const columns = Math.ceil(Math.sqrt(n - 1));
-    const rows = Math.ceil((n - 1) / columns);
-
-    for (let i = 0; i < n; i++) {
-      const decSize = decimals.value[i] ?? 1;
-
-      if (i === 0) {
-        arr.push({
-          x: centerX - decSize * 10,
-          y: centerY,
-          size: decSize * 10,
-          color: colors[0],
-        });
-      } else {
-        const index = i - 1;
-        const col = index % columns;
-        const row = Math.floor(index / columns);
-
-        const offsetX =
-          ((col + 0.5) / columns - 0.5) * boxSize * 2.4 + decSize * 5;
-        const offsetY =
-          ((row + 0.5) / rows - 0.5) * boxSize * 2.4 + decSize * 5;
-
-        arr.push({
-          x: centerX + offsetX,
-          y: centerY + offsetY,
-          size: decSize * 10,
-          color: colors[i] ?? colors[0],
-        });
-      }
-
-      // Animate leaf scale (optional, stays local to leaf)
-      scale.value = withDelay(
-        i * 120,
-        withTiming((i + 1) * 0.5, {
-          duration: 100,
-          easing: Easing.out(Easing.exp),
-        })
-      );
-    }
-
-    runOnJS(setPositionsJS)(arr);
-    lastCount.value = n; // update shared value
-  }, [count, decimals, colors, centerX, centerY, radius]);
+  // don't render until delay expires
+  if (!show) return null;
 
   return (
     <Group blendMode="multiply">
-      {positionsJS?.map((p, i) => (
+      {positions.map((p, i) => (
         <LeafInstance
           key={i}
-          leafPath={leafPath}
-          x={p.x}
-          y={p.y}
-          size={p.size}
+          leafPath={leafSvgString}
+          x={positions[i].x}
+          y={positions[i].y}
+          size={positions[i].size}
           index={i}
-          color={p.color}
+          //color={p.color}
+          color={colors[i]}
         />
       ))}
     </Group>

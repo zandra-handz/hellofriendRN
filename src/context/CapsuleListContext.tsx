@@ -3,6 +3,7 @@ import React, {
   useContext,
   useMemo,
   useState,
+  useEffect,
 } from "react";
 import { useSelectedFriend } from "./SelectedFriendContext";
 import {
@@ -114,6 +115,76 @@ export const CapsuleListProvider = ({ children }) => {
   categoryStartIndices = {},
   preAdded = [],
 } = sortedCapsuleList ?? {};
+
+
+
+const categorySizes = useMemo(() => {
+  console.log("categorySizes called");
+
+  if (!capsules || capsules.length === 0) {
+    return { sortedList: [], lookupMap: new Map(), categoryStartIndices: {}, categoryNames: [] };
+  }
+
+  const categorySizeMap = new Map<number, { name: string; size: number }>();
+  const categoryStartIndices: Record<string, number> = {};
+  const categoryNames: { category: string; categoryId: number }[] = [];
+  const seenCategories = new Set<string>();
+
+  capsules.forEach((moment: Moment, index: number) => {
+    const categoryId = Number(moment.user_category);
+    const categoryName = String(moment.user_category_name);
+
+    // Count sizes
+    const current = categorySizeMap.get(categoryId) || { name: categoryName, size: 0 };
+    categorySizeMap.set(categoryId, { name: current.name, size: current.size + 1 });
+
+    // Capture start indices & unique names
+    if (!seenCategories.has(categoryName)) {
+      seenCategories.add(categoryName);
+      categoryStartIndices[categoryName] = index;
+      categoryNames.push({ category: categoryName, categoryId });
+    }
+  });
+
+  const sortedList = Array.from(categorySizeMap.entries())
+    .map(([user_category, { name, size }]) => ({
+      user_category,
+      name,
+      size,
+      value: size,
+    }))
+    .sort((a, b) => b.size - a.size);
+
+  return { sortedList, lookupMap: categorySizeMap, categoryStartIndices, categoryNames };
+}, [capsules]);
+
+
+//  const categorySizes = useMemo(() => {
+//    console.log("categorySizes called");
+//   if (!capsules|| (capsules?.length === 0)) return { sortedList: [], lookupMap: new Map() };
+
+//   const categorySizeMap = new Map();
+ 
+//   capsules.forEach((moment: Moment) => {
+//     const categoryId = Number(moment?.user_category);
+//     const categoryName = String(moment?.user_category_name);
+//     const currentSizeAndName = categorySizeMap.get(categoryId) || {size: 0, name: categoryName};
+
+//     categorySizeMap.set(categoryId, {name: currentSizeAndName.name, size: currentSizeAndName.size + 1});
+//   });
+ 
+//   const sortedList = Array.from(categorySizeMap.entries())
+//     .map(([user_category, sizeAndName]) => ({
+//       user_category,
+//       name: sizeAndName.name,
+//       size: sizeAndName.size,
+//       value: sizeAndName.size,
+//     }))
+//     .sort((a, b) => b.size - a.size);
+
+//   return { sortedList, lookupMap: categorySizeMap };
+
+//  }, [capsules]);
  
 
  
@@ -124,12 +195,14 @@ export const CapsuleListProvider = ({ children }) => {
       capsuleList: capsules,
       allCapsulesList: allCapsules,
       preAdded, 
+      categorySizes,
  
     }),
     [ 
       capsules,
       allCapsules,
       preAdded, 
+      categorySizes,
  
     ]
   );

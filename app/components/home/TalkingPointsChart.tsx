@@ -18,6 +18,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
+ 
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -25,35 +27,45 @@ type Props = {
 
 const TalkingPointsChart = ({
   // themeAheadOfLoading,
+ 
   capsuleListCount,
-  categoryStartIndices,
-  categorySizes,
-  generateGradientColors,
-friendId,
-  primaryColor,
-  primaryOverlayColor,
-  darkerOverlayBackgroundColor,
+  loadingDash,
+  // categoryStartIndices,
+  // categorySizes,
+  // generateGradientColors,
+ 
+  // primaryColor,
+  // primaryOverlayColor,
+  // darkerOverlayBackgroundColor,
 }: Props) => {
+console.log('loading dash', loadingDash)
+  
   const { themeAheadOfLoading } = useFriendStyle();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
+const { lightDarkTheme } = useLDTheme(); 
 
-  // const { capsuleList } = useCapsuleList();
+const primaryColor = lightDarkTheme.primaryText;
+const primaryOverlayColor = lightDarkTheme.primaryOverlayColor;
+const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
+  const { capsuleList, categorySizes } = useCapsuleList();
   // const capsuleListCount = capsuleList?.length;
+
+ 
 
   // const { categoryStartIndices } = useTalkingPCategorySorting({
   //   listData: capsuleList,
   // });
 
-  // const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
-  //   listData: capsuleList,
-  // });
+  const {   generateGradientColors } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
 
-    const categories = categorySizes();
+    const categories = categorySizes;
 
 
-  console.log("TALKING POINTS COMP RERENDERED", categorySizes);
+ console.log("TALKING POINTS COMP RERENDERED" );
 
   const {
     navigateToMoments,
@@ -61,35 +73,12 @@ friendId,
     navigateToMomentFocus,
     navigateToHistory,
   } = useAppNavigations();
-  const [categoryColors, setCategoryColors] = useState<string[]>([]);
+  // const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
 
   const appState = useRef(AppState.currentState);
 
-  useEffect(() => {
-    console.log('APP STATE!')
-    const subscription = AppState.addEventListener(
-      "change",
-      (nextState: AppStateStatus) => {
-        console.log("App state changed:", nextState);
 
-        if (
-          appState.current.match(/inactive|background/) &&
-          nextState === "active"
-        ) {
-          console.log("App has come to the foreground!");
-          if (!capsuleListCount || capsuleListCount < 1) {
-            return;
-          }
-          setTempCategoriesSortedList(categories.sortedList);
-        }
-
-        appState.current = nextState;
-      }
-    );
-
-    return () => subscription.remove(); // cleanup
-  }, [capsuleListCount]);
 
   const HEIGHT = 420;
 
@@ -119,26 +108,65 @@ friendId,
     }
   }, [capsuleListCount, categories]);
 
-  useEffect(() => {
-    if (userCategories && userCategories.length > 0) {
-      console.log("useeffect");
-      setCategoryColors(
-        generateGradientColors(
-          userCategories,
-          themeAheadOfLoading.lightColor,
-          themeAheadOfLoading.darkColor
-        )
-      );
-    }
-  }, [userCategories, themeAheadOfLoading]);
+
+  // const [ categoryColors, setCategoryColors] = useState([])
+
+  // useEffect(() => {
+  //   if (userCategories && userCategories.length > 0 && themeAheadOfLoading?.lightColor) {
+  //  console.log(capsuleList?.[0]?.id)
+  //     setCategoryColors(
+  //       generateGradientColors(
+  //         userCategories,
+  //         themeAheadOfLoading.lightColor,
+  //         themeAheadOfLoading.darkColor
+  //       )
+  //     );
+  //   }
+  // }, [userCategories, themeAheadOfLoading]);
+
+const categoryColors = useMemo(() => {
+  if (!userCategories?.length || !themeAheadOfLoading?.lightColor) return [];
+
+  return generateGradientColors(
+    userCategories,
+    themeAheadOfLoading.lightColor,
+    themeAheadOfLoading.darkColor
+  );
+}, [userCategories, themeAheadOfLoading?.lightColor, themeAheadOfLoading?.darkColor]);
+
+
+    useEffect(() => {
+    console.log('APP STATE!')
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextState: AppStateStatus) => {
+        console.log("App state changed:", nextState);
+
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextState === "active"
+        ) {
+          console.log("App has come to the foreground!");
+          if (!capsuleListCount || capsuleListCount < 1) {
+            return;
+          }
+          setTempCategoriesSortedList(categories.sortedList);
+        }
+
+        appState.current = nextState;
+      }
+    );
+
+    return () => subscription.remove(); // cleanup
+  }, [capsuleListCount]);
 
   const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
-      if (categoryLabel && categoryStartIndices) {
-        navigateToMomentView({ index: categoryStartIndices[categoryLabel] });
+      if (categoryLabel && categorySizes.categoryStartIndices) {
+        navigateToMomentView({ index: categorySizes.categoryStartIndices[categoryLabel] });
       }
     },
-    [navigateToMomentView, categoryStartIndices]
+    [navigateToMomentView, categorySizes.categoryStartIndices]
   );
 
   const handleMomentScreenNoScroll = useCallback(() => {
@@ -151,22 +179,37 @@ friendId,
 
  
 
+  const sortedCategories = useMemo(() => categories?.sortedList || [], [categories?.sortedList]);
 
-  const colors = useMemo(() => {
-    if (
-      !categoryColors ||
-      !categories?.sortedList ||
-      categories?.sortedList.length < 1
-    )
-      return [];
+const colors = useMemo(() => {
+  if (!categoryColors || sortedCategories.length === 0) return [];
+  console.log('calculating colors')
+  const userCategorySet = new Set(sortedCategories.map((item) => item.user_category));
+  return categoryColors
+    .filter((item) => userCategorySet.has(item.user_category))
+    .map((item) => item.color);
+}, [categoryColors, sortedCategories]);
 
-    const userCategorySet = new Set(
-      categories.sortedList.map((item) => item.user_category)
-    );
-    return categoryColors
-      .filter((item) => userCategorySet.has(item.user_category))
-      .map((item) => item.color);
-  }, [categoryColors, categories]);
+  // const colors = useMemo(() => {
+ 
+  //   if (
+  //     !categoryColors ||
+  //     !categories?.sortedList ||
+  //     categories?.sortedList.length < 1
+  //   )
+  //     return [];
+  //  console.log('calculating colors')
+  //   const userCategorySet = new Set(
+  //     categories.sortedList.map((item) => item.user_category)
+  //   );
+  //   return categoryColors
+  //     .filter((item) => userCategorySet.has(item.user_category))
+  //     .map((item) => item.color);
+  // }, [
+  //   categoryColors, 
+    
+  //   categories
+  // ]);
 
   return (
     <>
@@ -212,7 +255,7 @@ friendId,
 
           {isFocused && (
             <View style={styles.donutWrapper}>
-              <Donut
+              <Donut 
                 friendStyle={themeAheadOfLoading}
                 primaryColor={primaryColor}
                 darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
@@ -274,4 +317,4 @@ const styles = StyleSheet.create({
   donutWrapper: {},
 });
 
-export default TalkingPointsChart;
+export default React.memo(TalkingPointsChart);

@@ -70,7 +70,7 @@ console.log('home screen rerendered')
 
   // const categorySizesCalled = categorySizes;
   
-  const loading = loadingDash; 
+  const loading = loadingDash;
   //const loading = true;
 
   const handleScroll = (event) => {
@@ -232,21 +232,22 @@ console.log('home screen rerendered')
              
                   <TalkingPointsChart
                     // isLoading={loading}
+                    // loadingDash={loadingDash}
                     capsuleListCount={capsuleList.length}
-                    categoryStartIndices={categoryStartIndices}
-                    categorySizes={categorySizes}
-                    generateGradientColors={generateGradientColors}
+                    // categoryStartIndices={categoryStartIndices}
+                    // categorySizes={categorySizes}
+                    // generateGradientColors={generateGradientColors}
                 
-                    primaryColor={primaryColor}
-                    primaryBackgroundColor={ELEMENTS_BACKGROUND}
-                    darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                    primaryOverlayColor={ELEMENTS_BACKGROUND}
-                    loadingNewFriend={loadingDash}
-                    selectedFriendId={selectedFriendId}
-                    selectedFriendName={selectedFriendName}
+                    // primaryColor={primaryColor}
+                    // primaryBackgroundColor={ELEMENTS_BACKGROUND}
+                    // darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                    // primaryOverlayColor={ELEMENTS_BACKGROUND}
+                    // loadingNewFriend={loadingDash}
+                    // selectedFriendId={selectedFriendId}
+                    // selectedFriendName={selectedFriendName}
                   
                   />
-                       )}
+                  )}
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
