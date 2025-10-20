@@ -22,8 +22,8 @@ import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 type Props = {
   onCategoryPress: () => void;

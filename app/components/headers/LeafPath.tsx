@@ -44,7 +44,7 @@ export default function LeafPath({
   // const positionsValue = useSharedValue<
   //   { x: number; y: number; size: number; color: string }[]
   // >([]);
-console.log(positions)
+// console.log(positions)
 const prevFlush = useSharedValue(-1); // store previous flush timestamp
 
 
@@ -83,15 +83,15 @@ const prevFlush = useSharedValue(-1); // store previous flush timestamp
   }, [delayMs]);
 
   // Derived category totals
-  const categoryTotals = useDerivedValue(() => {
-    if (!categoryStops.value || categoryStops.value.length === 0) return 0;
+  // const categoryTotals = useDerivedValue(() => {
+  //   if (!categoryStops.value || categoryStops.value.length === 0) return 0;
 
-    const total = Math.ceil(totalValue.value);
-    for (let i = 0; i < categoryStops.value.length; i++) {
-      if (total <= categoryStops.value[i]) return i + 1;
-    }
-    return categoryStops.value.length;
-  });
+  //   const total = Math.ceil(totalValue.value);
+  //   for (let i = 0; i < categoryStops.value.length; i++) {
+  //     if (total <= categoryStops.value[i]) return i + 1;
+  //   }
+  //   return categoryStops.value.length;
+  // });
 
   // Calculate leaves on UI thread
   // useDerivedValue(() => {
@@ -111,9 +111,10 @@ const prevFlush = useSharedValue(-1); // store previous flush timestamp
   // }, [count, categoryTotals, decimals, colors, lastFlush]);
 
   // Mirror UI thread → JS thread
-  useDerivedValue(() => {
-    runOnJS(setPositionsJS)(positionsValue.value);
-  }, [positionsValue]);
+
+  // useDerivedValue(() => {
+  //   runOnJS(setPositionsJS)(positionsValue.value);
+  // }, [positionsValue]);
 
  
 
