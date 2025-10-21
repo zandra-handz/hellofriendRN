@@ -47,7 +47,6 @@ export default function LeafPath({
 // console.log(positions)
 const prevFlush = useSharedValue(-1); // store previous flush timestamp
 
-
  
   const [positionsJS, setPositionsJS] = useState<
     { x: number; y: number; size: number; color: string }[]
@@ -136,7 +135,8 @@ const prevFlush = useSharedValue(-1); // store previous flush timestamp
           size={positions[i].size}
           index={i}
           //color={p.color}
-          color={colors[i]}
+          // color={colors[i]} [reversed colors]
+          color={positions[i].color}
         />
       ))}
     </Group>

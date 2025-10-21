@@ -190,6 +190,8 @@ const colors = useMemo(() => {
     .map((item) => item.color);
 }, [categoryColors, sortedCategories]);
 
+const colorsReversed = useMemo(() => colors.slice().reverse(), [colors]);
+
   // const colors = useMemo(() => {
  
   //   if (
@@ -272,6 +274,7 @@ const colors = useMemo(() => {
                 labelsSliceEnd={LABELS_SLICE_END}
                 data={categories?.sortedList || []}
                 colors={colors}
+                colorsReversed={colorsReversed}
                 centerTextSize={CENTER_TEXT_SIZE}
               />
             </View>

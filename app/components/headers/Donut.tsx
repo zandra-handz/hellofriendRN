@@ -56,6 +56,7 @@ const Donut = ({
   strokeWidth = 6,
   outerStrokeWidth = 9,
   colors,
+  colorsReversed,
   gap = 0.03,
   labelsSize = 8,
   labelsDistanceFromCenter = -17,
@@ -78,12 +79,13 @@ const Donut = ({
   const OUTER_STROKE_WIDTH = outerStrokeWidth;
   const GAP = gap;
   const n = colors.length;
+ 
 
   // DONT DELETE
   // const [ colorsSynced, setColorsSynced] = useState(['transparent']);
   // const [ totalJSSynced, setTotalJSSynced] = useState(0)
   const categoryStopsValue = useSharedValue<number[]>([]);
-  console.log("donut rerendered");
+  // console.log("donut rerendered");
 
   useEffect(() => {
     if (selectedFriend?.id) {
@@ -97,7 +99,7 @@ const Donut = ({
   const resetLeaves = () => {
     lastFlush.value = Date.now();
   };
-  console.log("DONUT CHART RERENDERED", colors);
+ 
 
   const getPieChartDataMetrics = (data) => {
     const total = data.reduce(
@@ -111,15 +113,21 @@ const Donut = ({
     }));
     const percentages = calculatePercentage(data, total);
 
-    const decimals = percentages.map(
+    const reverseDecimals = percentages.map(
       (number) => Number(number.toFixed(0)) / 100
-    );
+    ).reverse();
+
+    const decimals = percentages
+  .map((number) => Number(number.toFixed(0)) / 100)
+  ;
+
 
     return {
       total,
       labels,
       percentages,
       decimals,
+      reverseDecimals,
     };
   };
   // console.log("donut rerendered!");
@@ -137,6 +145,8 @@ const Donut = ({
   //   console.log("weeeeeeeeeeeeeeeeee");
   // }, [selectedFriend?.id]);
 
+  const reverseDecimalsValue = useSharedValue([]);
+
   useEffect(() => {
     if (!data || data.length === 0) return;
 
@@ -145,16 +155,20 @@ const Donut = ({
 
     totalValue.value = 0;
     decimalsValue.value = [];
+
+    reverseDecimalsValue.value = [];
+    
     labelsValue.value = [];
     categoryStopsValue.value = [];
     // setColorsSynced([]);
-    const { total, labels, percentages, decimals } =
+    const { total, labels, percentages, decimals, reverseDecimals } =
       getPieChartDataMetrics(dataCountList);
 
     console.log("SERIES DATA UPDATED");
 
     totalValue.value = withTiming(total, { duration: 1000 });
     decimalsValue.value = [...decimals];
+    reverseDecimalsValue.value = [...reverseDecimals];
     labelsValue.value = [...labels];
 
     let cumulative = 0;
@@ -167,7 +181,7 @@ const Donut = ({
     categoryStopsValue.value = categoryCounts;
     // setColorsSynced(colors);
     // setTotalJSSynced(totalJS)
-  }, [data, colors, totalJS]);
+  }, [data,  colorsReversed, totalJS]); //colors  // colors reversed always happens afyer colors
 
   // inside your Donut component
   const positionsValue = useSharedValue<
@@ -182,7 +196,6 @@ const Donut = ({
   const categoryTotals = useDerivedValue(() => {
     if (!categoryStopsValue.value || categoryStopsValue.value.length === 0)
       return 0;
-    console.log(`cat values`, categoryStopsValue.value);
     const total = Math.ceil(totalValue.value);
     for (let i = 0; i < categoryStopsValue.value.length; i++) {
       if (total <= categoryStopsValue.value[i]) return i + 1;
@@ -211,8 +224,6 @@ const Donut = ({
     return categoryStopsValue.value?.length ?? 0; // e.g. 7
   });
 
-  const spread = 1;
-
   const leafRadius = radius - labelsSize - 20;
   const leafCenterX = radius - labelsSize - 40;
   const leafCenterY = radius / 2;
@@ -227,8 +238,11 @@ const Donut = ({
     "worklet";
 
     if (!decimalsValue.value || decimalsValue.value.length < 1) return [];
-
-    const n = totalCategories.value;
+    console.log(
+      `dec valuesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss`,
+      decimalsValue.value
+    );
+    const n = totalCategories.value; 
     const arr: { x: number; y: number; size: number; color: string }[] = [];
 
     // const boxSize = leafRadius * 2;
@@ -238,18 +252,20 @@ const Donut = ({
 
     for (let i = 0; i < n; i++) {
       const decSize = decimalsValue.value[i] ?? 1;
-      const rawSize = decSize * 10;
-      const leafSize = Math.min(Math.max(rawSize, minLeafSize), maxLeafSize);
 
-      // can remove this part if don't want
-      // Optional variance
-      // const variance = 0.2;
-      // const finalSize = leafSize * (1 + (Math.random() * 2 - 1) * variance);
+      
 
-      const variance = 0.2;
-      let finalSize = leafSize * (1 + (Math.random() * 2 - 1) * variance);
+      const minLeafSize = 3;
+      const maxLeafSize = 6;
+      const scaleFactor = 7 / n; // e.g., fewer leaves → scale up, more leaves → scale down
+      // console.log(`scale factor`, scaleFactor)
+      const baseSize =
+        minLeafSize + decSize * (maxLeafSize - minLeafSize) * scaleFactor;
+        // console.log(`BASE SIZE`, baseSize)
+      const variance = 0.2; // 20% random variation
+      let finalSize = baseSize * (1 + (Math.random() * 2 - 1) * variance);
 
-      // clamp again to enforce min/max
+      // 4️⃣ Clamp to ensure min/max
       finalSize = Math.min(Math.max(finalSize, minLeafSize), maxLeafSize);
 
       // spread multiplier should probably depend on how many categories there are
@@ -260,7 +276,7 @@ const Donut = ({
           x: leafCenterX - finalSize,
           y: leafCenterY,
           size: finalSize,
-          color: colors[i] ?? colors[0],
+          color: colorsReversed[i] ?? colorsReversed[0],
         });
       } else {
         const index = i - 1;
@@ -274,13 +290,13 @@ const Donut = ({
           x: leafCenterX + offsetX,
           y: leafCenterY + offsetY,
           size: finalSize,
-          color: colors[i] ?? colors[0],
+          color: colorsReversed[i] ?? colorsReversed[0],
         });
       }
     }
 
     return arr;
-  }, [decimalsValue, colors, totalCategories]);
+  }, [decimalsValue, colorsReversed, totalCategories]);
 
   /**
    * 2️⃣ Dynamic growth animation — how “grown” each leaf is (0–1)
@@ -302,6 +318,7 @@ const Donut = ({
         Math.max((totalValue.value - prevStop) / (stop - prevStop), 0),
         1
       );
+ 
 
       // easing curve
       const eased = Easing.out(Easing.cubic)(progress);
@@ -319,6 +336,9 @@ const Donut = ({
     "worklet";
     const base = leafPositions.value;
     const growth = leafScales.value;
+    // console.log('base: ', base )
+    // console.log('growth: ', growth)
+   
 
     if (!base || base.length === 0) return [];
 
@@ -338,244 +358,7 @@ const Donut = ({
     runOnJS(setPositions)(animatedLeaves.value);
   }, [animatedLeaves]);
 
-  // useDerivedValue(() => {
-  //   'worklet';
-
-  //   // guard to avoid spamming
-  //   if (
-  //     !totalJS ||
-  //     !decimalsValue.value ||
-  //     decimalsValue.value.length < 1 ||
-  //     totalJS < totalValue.value
-  //   ) {
-  //     if (lastCount.value !== -1) {
-  //       runOnJS(setPositions)([]);
-  //       lastCount.value = -1;
-  //     }
-  //     return;
-  //   }
-
-  //   const n = Math.round(categoryTotals.value)
-
-  //   // avoid redundant updates
-  //   if (lastCount.value === n) return;
-
-  //   const arr: { x: number; y: number; size: number; color: string }[] = [];
-  //   const boxSize = leafRadius * 2;
-  //   const columns = Math.ceil(Math.sqrt(n - 1));
-  //   const rows = Math.ceil((n - 1) / columns);
-
-  //   for (let i = 0; i < n; i++) {
-  //     const decSize = decimalsValue.value[i] ?? 1;
-
-  //     if (i === 0) {
-  //       arr.push({
-  //         x: leafCenterX - decSize * 10,
-  //         y: leafCenterY,
-  //         size: decSize * 10,
-  //         color: colors[0],
-
-  //       });
-  //     } else {
-  //       const index = i - 1;
-  //       const col = index % columns;
-  //       const row = Math.floor(index / columns);
-  //       const offsetX = ((col + 0.5) / columns - 0.5) * boxSize * 2.4 + decSize * 5;
-  //       const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * 2.4 + decSize * 5;
-
-  //       arr.push({
-  //         x: leafCenterX + offsetX,
-  //         y: leafCenterY + offsetY,
-  //         size: decSize * 10,
-  //         color: colors[i] ?? colors[0],
-  //       });
-  //     }
-
-  //         scale.value = withDelay(
-  //       i * 120,
-  //       withTiming((i + 1) * 0.5, {
-  //         duration: 100,
-  //         easing: Easing.out(Easing.exp),
-  //       })
-  //     );
-  //   }
-
-  //   // ✅ push to JS only when it changes
-  //   runOnJS(setPositions)(arr);
-  //   lastCount.value = n;
-  // }, [totalJS, decimalsValue, colors, categoryTotals, lastFlush ]);
-
-  // // run the equivalent of calculateLeaves worklet
-  // useDerivedValue(() => {
-  //   // guard
-  //   if (
-  //     !totalJS ||
-  //     !decimalsValue.value ||
-  //     decimalsValue.value.length < 1 ||
-  //     totalJS < totalValue.value
-  //   ) {
-  //     if (lastCount.value !== -1) {
-  //       positionsValue.value = [];
-  //       lastCount.value = -1;
-  //     }
-  //     return;
-  //   }
-
-  //   const n = Math.round(categoryStopsValue.value[categoryStopsValue.value.length - 1] || 0);
-
-  //   if (lastCount.value === n) return;
-
-  //   const arr: { x: number; y: number; size: number; color: string }[] = [];
-  //   const boxSize = RADIUS * 2;
-  //   const columns = Math.ceil(Math.sqrt(n - 1));
-  //   const rows = Math.ceil((n - 1) / columns);
-
-  //   for (let i = 0; i < n; i++) {
-  //     const decSize = decimalsValue.value[i] ?? 1;
-
-  //     if (i === 0) {
-  //       arr.push({
-  //         x: RADIUS - decSize * 10,
-  //         y: RADIUS,
-  //         size: decSize * 10,
-  //         color: colors[0],
-  //       });
-  //     } else {
-  //       const index = i - 1;
-  //       const col = index % columns;
-  //       const row = Math.floor(index / columns);
-
-  //       const offsetX = ((col + 0.5) / columns - 0.5) * boxSize * 2.4 + decSize * 5;
-  //       const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * 2.4 + decSize * 5;
-
-  //       arr.push({
-  //         x: RADIUS + offsetX,
-  //         y: RADIUS + offsetY,
-  //         size: decSize * 10,
-  //         color: colors[i] ?? colors[0],
-  //       });
-  //     }
-
-  //     // animate scale per leaf
-  //     scale.value = withDelay(
-  //       i * 120,
-  //       withTiming((i + 1) * 0.5, {
-  //         duration: 100,
-  //         easing: Easing.out(Easing.exp),
-  //       })
-  //     );
-  //   }
-
-  //   positionsValue.value = arr;
-  //   lastCount.value = n;
-  // }, [decimalsValue, colors, totalJS]);
-
-  // useEffect(() => {
-  //   if (!data || data.length === 0) return;
-
-  //   const dataCountList = data.filter((item) => Number(item.size) > 0);
-  //   if (dataCountList.length === 0) return;
-
-  //   const { total, labels, percentages, decimals } = getPieChartDataMetrics(dataCountList);
-
-  //   // Update shared values
-  //   totalValue.value = withTiming(total, { duration: 1000 });
-  //   decimalsValue.value = [...decimals];
-  //   labelsValue.value = [...labels];
-
-  //   let cumulative = 0;
-  //   const categoryCounts = decimals.map((d) => {
-  //     const count = Math.round(total * d);
-  //     cumulative += count;
-  //     return cumulative;
-  //   });
-  //   categoryStopsValue.value = categoryCounts;
-
-  //   // Trigger the leaf calculation worklet
-  //   calculateLeavesWorklet({
-  //     totalJS: total,
-  //     categoryTotals: categoryStopsValue,
-  //     lastCount: useSharedValue(-1), // could be a shared value defined in component
-  //     scale: useSharedValue(0),
-  //     count: totalValue,
-  //     decimals: decimalsValue,
-  //     colors,
-  //     centerX: RADIUS,
-  //     centerY: RADIUS,
-  //     radius: RADIUS,
-  //     positionsValue,
-  //   });
-  // }, [data, colors, totalJS]);
-
-  // const seriesData = useMemo(() => {
-  //   if (!data || data.length === 0) return null;
-
-  //   const dataCountList = data.filter((item) => Number(item.size) > 0);
-  //   if (dataCountList.length === 0) return null;
-
-  //   const { total, labels, percentages, decimals } = getPieChartDataMetrics(dataCountList);
-
-  //   return { labels, total, decimals, percentages };
-  // }, [data, colors]);
-
-  // useEffect(() => {
-  //   if (!seriesData) return;
-
-  //   console.log("SERIES DATA UPDATED", seriesData);
-
-  //   // Update shared values safely
-  //   totalValue.value = withTiming(seriesData.total ?? 0, { duration: 1000 });
-  //   decimalsValue.value = seriesData.decimals ? [...seriesData.decimals] : [];
-  //   labelsValue.value = seriesData.labels ? [...seriesData.labels] : [];
-
-  //   let cumulative = 0;
-  //   const categoryCounts =
-  //     seriesData.decimals?.map((d) => {
-  //       const count = Math.round(seriesData.total * d);
-  //       cumulative += count;
-  //       return cumulative;
-  //     }) ?? [];
-
-  //   categoryStopsValue.value = categoryCounts;
-  // }, [seriesData]);
-
-  // const seriesData = useMemo(() => {
-  //   if (!data) return;
-
-  //   const dataCountList = data.filter((item) => Number(item.size) > 0);
-  //   const { total, labels, percentages, decimals } =
-  //     getPieChartDataMetrics(dataCountList);
-
-  //   return {
-  //     labels,
-  //     total,
-  //     decimals,
-  //     percentages,
-  //   };
-  // }, [data, colors]); //, labelSize]);
-
-  // useEffect(() => {
-  //   console.log('SERIES DATA')
-  //   if (!seriesData) {
-  //     console.log('NO SERIES DATA')
-
-  //     return;
-  //   }
-  //   // THIS IS THE MASTER TRIGGER FOR WHOLE ANIMATION
-  //   totalValue.value = withTiming(seriesData.total, { duration: 1000 });
-
-  //   decimalsValue.value = [...seriesData.decimals];
-  //   labelsValue.value = [...seriesData.labels];
-
-  //   let cumulative = 0;
-  //   const categoryCounts = seriesData.decimals.map((d) => {
-  //     const count = Math.round(seriesData.total * d);
-  //     cumulative += count;
-  //     return cumulative;
-  //   });
-
-  //   categoryStopsValue.value = categoryCounts;
-  // }, [seriesData]);
+ 
 
   const font = useFont(Poppins_400Regular, centerTextSize);
 
