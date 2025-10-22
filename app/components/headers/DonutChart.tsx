@@ -172,17 +172,14 @@ const DonutChart = ({
             left: x,
             top: y,
             transform: [
-              { translateX: -textWidth / 2 },
-              { translateY: -textHeight / 2 },
-              ...(pressed ? [{ scale: 0.97 }] : []),
+              { translateX: -textWidth / 1.4},
+              { translateY: -textHeight / 1 }, // /2
+               ...(pressed ? [{ scale: 0.7 }] : [{ scale: 1 }]),
             ],
             backgroundColor: pressed ? "#ddd" : "transparent",
-            shadowOpacity: pressed ? 0.3 : 0,
-            zIndex: 66666,
-            elevation: 66666,
-            position: "absolute",
-            padding: 4,
-            borderRadius: 10,
+            shadowOpacity: pressed ? 0.2 : 0,
+     
+     
           },
         ]}
       >
@@ -193,6 +190,8 @@ const DonutChart = ({
               color: color,
               fontSize: labelsSize,
               backgroundColor: darkerOverlayBackgroundColor,
+              paddingVertical: 6,
+                  
             },
           ]}
         >
@@ -271,7 +270,7 @@ const DonutChart = ({
         {LabelOverlays}
       </Animated.View>
 
-      <Pressable
+      {/* <Pressable
         onPress={() => resetLeaves()}
         style={{
           width: 40,
@@ -288,7 +287,7 @@ const DonutChart = ({
         name="refresh"
         color={primaryColor}
         size={24}/>
-      </Pressable>
+      </Pressable> */}
       {onPlusPress && onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <SvgIcon
@@ -345,6 +344,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     padding: 4,
     borderRadius: 10,
+
   },
   centerWrapper: {
     justifyContent: "center",

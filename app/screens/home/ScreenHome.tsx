@@ -56,6 +56,8 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
+
+import { useSharedValue } from "react-native-reanimated";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 const ScreenHome = () => {
@@ -84,7 +86,27 @@ const ScreenHome = () => {
 
   const { autoSelectFriend } = useAutoSelector();
 
+    const [positions, setPositions] = useState<
+      { x: number; y: number; size: number; color: string }[]
+    >([]);
+  
+
   const { selectedFriend, selectFriend } = useSelectedFriend();
+
+  const selectedFriendIdValue = useSharedValue(selectedFriend?.id);
+
+  useEffect(() => {
+    if (selectedFriend?.id) {
+      setPositions([])
+          selectedFriendIdValue.value = selectedFriend?.id;
+
+    }
+
+
+  }, [selectedFriend?.id]);
+
+
+
 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -468,6 +490,9 @@ const ScreenHome = () => {
                           >
                             <View style={{ height: "100%" }}>
                               <SelectedFriendHome
+                              positions={positions}
+                              setPositions={setPositions}
+                              selectedFriendIdValue={selectedFriendIdValue}
                                 paddingHorizontal={PADDING_HORIZONTAL}
                                 userId={user?.id}
                                 primaryColor={lightDarkTheme.primaryText}

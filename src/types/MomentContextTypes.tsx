@@ -12,6 +12,7 @@ export interface Moment {
 
 export type MomentFromBackendType = {
   id: number;
+  friend: number;
   typed_category: string;
   capsule: string;
   created_on: string;

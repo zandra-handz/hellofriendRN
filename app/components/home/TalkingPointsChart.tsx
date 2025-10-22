@@ -19,7 +19,8 @@ import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useLDTheme } from "@/src/context/LDThemeContext"; 
- 
+import useSelectFriend from "@/src/hooks/useSelectFriend";
+
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -27,7 +28,7 @@ type Props = {
 
 const TalkingPointsChart = ({
   // themeAheadOfLoading,
- 
+ selectedFriendIdValue,
   capsuleListCount,
   loadingDash,
   // categoryStartIndices,
@@ -61,7 +62,7 @@ const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
   const {   generateGradientColors } = useMomentSortingFunctions({
     listData: capsuleList,
   });
-
+ 
     const categories = categorySizes;
 
 
@@ -88,9 +89,10 @@ const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
 
   const GAP = 0.01;
 
-  const LABELS_SIZE = 11;
-  const LABELS_DISTANCE_FROM_CENTER = -10;
-  const LABELS_SLICE_END = 10;
+  const LABELS_SIZE = 12;
+  // const LABELS_DISTANCE_FROM_CENTER = -10;
+    const LABELS_DISTANCE_FROM_CENTER = 4;
+  const LABELS_SLICE_END = 20;
   const CENTER_TEXT_SIZE = 34;
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
@@ -181,16 +183,33 @@ const categoryColors = useMemo(() => {
 
   const sortedCategories = useMemo(() => categories?.sortedList || [], [categories?.sortedList]);
 
+
+  // not using friend, could revert back to just the single colors array if performance issues
 const colors = useMemo(() => {
-  if (!categoryColors || sortedCategories.length === 0) return [];
-  console.log('calculating colors')
+  if (!categoryColors || sortedCategories.length === 0) {
+    return { colors: [], colorsReversed: [], friend: null }; // consistent shape
+  }
+
+  console.log('calculating colors', categoryColors);
+
   const userCategorySet = new Set(sortedCategories.map((item) => item.user_category));
-  return categoryColors
+
+  const filteredColors = categoryColors
     .filter((item) => userCategorySet.has(item.user_category))
     .map((item) => item.color);
+
+  // only works if categoryColors has a `friend` field; otherwise remove this line
+  const friend = categoryColors[0].friend ?? null;
+
+  const colorsReversed = filteredColors.slice().reverse()
+
+  return { colors: filteredColors, colorsReversed: colorsReversed, friend };
 }, [categoryColors, sortedCategories]);
 
-const colorsReversed = useMemo(() => colors.slice().reverse(), [colors]);
+
+console.log(colors);
+
+// const colorsReversed = useMemo(() => colors.colors.slice().reverse(), [colors]);
 
   // const colors = useMemo(() => {
  
@@ -258,6 +277,7 @@ const colorsReversed = useMemo(() => colors.slice().reverse(), [colors]);
           {isFocused && (
             <View style={styles.donutWrapper}>
               <Donut 
+              selectedFriendIdValue={selectedFriendIdValue}
                 friendStyle={themeAheadOfLoading}
                 primaryColor={primaryColor}
                 darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
@@ -273,8 +293,8 @@ const colorsReversed = useMemo(() => colors.slice().reverse(), [colors]);
                 labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
                 labelsSliceEnd={LABELS_SLICE_END}
                 data={categories?.sortedList || []}
-                colors={colors}
-                colorsReversed={colorsReversed}
+                colors={colors }
+        
                 centerTextSize={CENTER_TEXT_SIZE}
               />
             </View>

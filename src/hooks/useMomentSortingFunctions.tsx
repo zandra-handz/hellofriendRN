@@ -172,6 +172,7 @@ const calculatePercentage = (
 //this approach allows colors to be consistent between all category lists and existing moments category lists
 
 const generateGradientColors = (data, startColor, endColor) => {
+ 
   const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
   const rgbToHex = (rgb) =>
     '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
@@ -186,11 +187,14 @@ const generateGradientColors = (data, startColor, endColor) => {
     );
     return rgbToHex(interpolated);
   };
- 
 
+  const friend = listData?.[0]?.friend;
+  console.log(`friend`, friend)
+ 
   return data.map((item, index) => ({
     user_category: item.id,
     color: generateColorForIndex(index, data.length),
+    friend: friend, // to match with new friend to guard against animating leaves too early
   }));
 };
 

@@ -33,8 +33,9 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
-  paddingHorizontal,
  
+  paddingHorizontal,
+ selectedFriendIdValue,
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
@@ -231,6 +232,8 @@ console.log('home screen rerendered')
 
              
                   <TalkingPointsChart
+              
+                  selectedFriendIdValue={selectedFriendIdValue}
                     // isLoading={loading}
                     // loadingDash={loadingDash}
                     capsuleListCount={capsuleList.length}

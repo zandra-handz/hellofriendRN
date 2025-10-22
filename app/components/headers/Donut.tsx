@@ -9,11 +9,14 @@ import {
   withDelay,
   runOnJS,
 } from "react-native-reanimated";
-import { calculateLeavesWorklet } from "./UtilLeafCalc";
+
+  import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+
 import DonutChart from "./DonutChart";
 import { useFont } from "@shopify/react-native-skia";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-
+import useSelectFriend from "@/src/hooks/useSelectFriend";
 import {
   useFonts,
   Poppins_400Regular,
@@ -43,6 +46,7 @@ type Props = {
 };
 
 const Donut = ({
+  selectedFriendIdValue,
   friendStyle,
   primaryColor,
   darkerOverlayBackgroundColor,
@@ -55,8 +59,7 @@ const Donut = ({
   radius = 40,
   strokeWidth = 6,
   outerStrokeWidth = 9,
-  colors,
-  colorsReversed,
+  colors, 
   gap = 0.03,
   labelsSize = 8,
   labelsDistanceFromCenter = -17,
@@ -64,7 +67,18 @@ const Donut = ({
   centerTextSize = 26,
 }: Props) => {
   const { capsuleList } = useCapsuleList();
+
   const { selectedFriend } = useSelectedFriend();
+    const [positions, setPositions] = useState<
+    { x: number; y: number; size: number; color: string }[]
+  >([]);
+
+  useEffect(() => {
+    if (selectedFriend?.id) {
+      setPositions([])
+    }
+
+  }, [selectedFriend?.id]);
   // console.log(`colors in donut: `, colors);
   //   console.log(`data in donut: `, data);
   const { calculatePercentage } = useMomentSortingFunctions(data);
@@ -78,8 +92,27 @@ const Donut = ({
   const STROKE_WIDTH = strokeWidth;
   const OUTER_STROKE_WIDTH = outerStrokeWidth;
   const GAP = gap;
-  const n = colors.length;
- 
+  const n = colors?.colors?.length;
+
+
+
+// NEED THIS TO STOP THE 'FLASH' OF OLD SHARED VALUES IN LEAVES WHEN FRIEND CHANGES
+useFocusEffect(
+  useCallback(() => {
+    // Screen gained focus
+    return () => {
+      // Screen lost focus: reset all your shared values
+
+      console.warn('RESETTING LEAF VALUES')
+      totalValue.value = 0;
+      decimalsValue.value = [];
+      labelsValue.value = [];
+      categoryStopsValue.value = [];
+      positionsValue.value = [];
+      lastFlush.value = Date.now();
+    };
+  }, [])
+);
 
   // DONT DELETE
   // const [ colorsSynced, setColorsSynced] = useState(['transparent']);
@@ -87,11 +120,14 @@ const Donut = ({
   const categoryStopsValue = useSharedValue<number[]>([]);
   // console.log("donut rerendered");
 
-  useEffect(() => {
-    if (selectedFriend?.id) {
-      resetLeaves();
-    }
-  }, [selectedFriend?.id]);
+  //   const selectedFriendIdValue = useSharedValue(selectedFriend?.id || null)
+
+  // useEffect(() => {
+  //   if (selectedFriend?.id) {
+      
+  //     selectedFriendIdValue.value = selectedFriend?.id;
+  //   }
+  // }, [selectedFriend?.id]);
 
   const lastFlush = useSharedValue(Date.now());
   // Whenever you want to flush old leaves:
@@ -99,9 +135,10 @@ const Donut = ({
   const resetLeaves = () => {
     lastFlush.value = Date.now();
   };
- 
+
 
   const getPieChartDataMetrics = (data) => {
+
     const total = data.reduce(
       (acc, currentValue) => acc + currentValue.size,
       0
@@ -113,15 +150,13 @@ const Donut = ({
     }));
     const percentages = calculatePercentage(data, total);
 
-    const reverseDecimals = percentages.map(
+    const reverseDecimals = percentages
+      .map((number) => Number(number.toFixed(0)) / 100)
+      .reverse();
+
+    const decimals = percentages.map(
       (number) => Number(number.toFixed(0)) / 100
-    ).reverse();
-
-    const decimals = percentages
-  .map((number) => Number(number.toFixed(0)) / 100)
-  ;
-
-
+    );
     return {
       total,
       labels,
@@ -130,6 +165,9 @@ const Donut = ({
       reverseDecimals,
     };
   };
+
+
+ 
   // console.log("donut rerendered!");
 
   // useEffect(() => {
@@ -148,6 +186,7 @@ const Donut = ({
   const reverseDecimalsValue = useSharedValue([]);
 
   useEffect(() => {
+
     if (!data || data.length === 0) return;
 
     const dataCountList = data.filter((item) => Number(item.size) > 0);
@@ -157,7 +196,7 @@ const Donut = ({
     decimalsValue.value = [];
 
     reverseDecimalsValue.value = [];
-    
+
     labelsValue.value = [];
     categoryStopsValue.value = [];
     // setColorsSynced([]);
@@ -181,44 +220,14 @@ const Donut = ({
     categoryStopsValue.value = categoryCounts;
     // setColorsSynced(colors);
     // setTotalJSSynced(totalJS)
-  }, [data,  colorsReversed, totalJS]); //colors  // colors reversed always happens afyer colors
+  }, [data, colors, totalJS]); //colors  // colors reversed always happens afyer colors
 
   // inside your Donut component
   const positionsValue = useSharedValue<
     { x: number; y: number; size: number; color: string }[]
   >([]);
 
-  // inside your Donut component
 
-  const lastCount = useSharedValue(-1);
-  const scale = useSharedValue(0);
-
-  const categoryTotals = useDerivedValue(() => {
-    if (!categoryStopsValue.value || categoryStopsValue.value.length === 0)
-      return 0;
-    const total = Math.ceil(totalValue.value);
-    for (let i = 0; i < categoryStopsValue.value.length; i++) {
-      if (total <= categoryStopsValue.value[i]) return i + 1;
-    }
-    return categoryStopsValue.value.length;
-  });
-
-  const [positions, setPositions] = useState<
-    { x: number; y: number; size: number; color: string }[]
-  >([]);
-
-  // figure out active category
-  const activeLeafIndex = useDerivedValue(() => {
-    "worklet";
-    if (!categoryStopsValue.value || categoryStopsValue.value.length === 0)
-      return 0;
-
-    const total = Math.ceil(totalValue.value);
-    for (let i = 0; i < categoryStopsValue.value.length; i++) {
-      if (total <= categoryStopsValue.value[i]) return i; // 0-based index
-    }
-    return categoryStopsValue.value.length - 1;
-  });
 
   const totalCategories = useDerivedValue(() => {
     return categoryStopsValue.value?.length ?? 0; // e.g. 7
@@ -228,124 +237,86 @@ const Donut = ({
   const leafCenterX = radius - labelsSize - 40;
   const leafCenterY = radius / 2;
 
-  const minLeafSize = 3; // smallest leaf allowed
-  const maxLeafSize = 6; // largest leaf allowed
-
-  /**
-   * 1️⃣ Static layout positions — fixed for all leaves
-   */
-  const leafPositions = useDerivedValue(() => {
-    "worklet";
-
-    if (!decimalsValue.value || decimalsValue.value.length < 1) return [];
-    console.log(
-      `dec valuesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss`,
-      decimalsValue.value
-    );
-    const n = totalCategories.value; 
-    const arr: { x: number; y: number; size: number; color: string }[] = [];
-
-    // const boxSize = leafRadius * 2;
-    const boxSize = leafRadius * 1;
-    const columns = Math.ceil(Math.sqrt(n - 1));
-    const rows = Math.ceil((n - 1) / columns);
-
-    for (let i = 0; i < n; i++) {
-      const decSize = decimalsValue.value[i] ?? 1;
-
-      
-
-      const minLeafSize = 3;
-      const maxLeafSize = 6;
-      const scaleFactor = 7 / n; // e.g., fewer leaves → scale up, more leaves → scale down
-      // console.log(`scale factor`, scaleFactor)
-      const baseSize =
-        minLeafSize + decSize * (maxLeafSize - minLeafSize) * scaleFactor;
-        // console.log(`BASE SIZE`, baseSize)
-      const variance = 0.2; // 20% random variation
-      let finalSize = baseSize * (1 + (Math.random() * 2 - 1) * variance);
-
-      // 4️⃣ Clamp to ensure min/max
-      finalSize = Math.min(Math.max(finalSize, minLeafSize), maxLeafSize);
-
-      // spread multiplier should probably depend on how many categories there are
-      const spreadMultiplier = 1;
-
-      if (i === 0) {
-        arr.push({
-          x: leafCenterX - finalSize,
-          y: leafCenterY,
-          size: finalSize,
-          color: colorsReversed[i] ?? colorsReversed[0],
-        });
-      } else {
-        const index = i - 1;
-        const col = index % columns;
-        const row = Math.floor(index / columns);
-        const offsetX =
-          ((col + 0.5) / columns - 0.5) * boxSize * spreadMultiplier;
-        const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * spreadMultiplier;
-
-        arr.push({
-          x: leafCenterX + offsetX,
-          y: leafCenterY + offsetY,
-          size: finalSize,
-          color: colorsReversed[i] ?? colorsReversed[0],
-        });
-      }
-    }
-
-    return arr;
-  }, [decimalsValue, colorsReversed, totalCategories]);
-
-  /**
-   * 2️⃣ Dynamic growth animation — how “grown” each leaf is (0–1)
-   */
-  const leafScales = useDerivedValue(() => {
-    "worklet";
-    if (!categoryStopsValue.value || categoryStopsValue.value.length === 0)
-      return [];
-
-    const n = categoryStopsValue.value.length;
-    const scales: number[] = [];
-
-    for (let i = 0; i < n; i++) {
-      const stop = categoryStopsValue.value[i];
-      const prevStop = i === 0 ? 0 : categoryStopsValue.value[i - 1];
-
-      // progress from 0→1 within this stop
-      const progress = Math.min(
-        Math.max((totalValue.value - prevStop) / (stop - prevStop), 0),
-        1
-      );
  
 
-      // easing curve
-      const eased = Easing.out(Easing.cubic)(progress);
+const leafPositions = useDerivedValue(() => {
+  "worklet";
 
-      scales.push(eased);
-    }
+  // Log for debugging
+ 
 
-    return scales;
+  const decimals = decimalsValue.value;
+  if (!decimals || decimals.length < 1) return [];
+
+  const n = totalCategories.value;
+  const arr: { x: number; y: number; size: number; color: string }[] = [];
+
+  const twoPi = Math.PI * 2;
+  const total = decimals.reduce((a, b) => a + b, 0);
+
+  // 1️⃣ Normalize decimals
+  const normalized = decimals.map((d) => d / total);
+
+  // 2️⃣ Weighted mid-angles
+  let cumulative = 0;
+  const midAngles = normalized.map((v) => {
+    const start = cumulative;
+    const end = cumulative + v * twoPi;
+    const mid = start + (end - start) / 2;
+    cumulative = end;
+    return mid;
   });
 
-  /**
-   * 3️⃣ Combine both into one array — animatedLeaves for rendering
-   */
+  for (let i = 0; i < n; i++) {
+    const decSize = decimals[i] ?? 1;
+    const minLeafSize = 2;
+    const maxLeafSize = 6;
+    const scaleFactor = 7 / n;
+    const baseSize =
+      minLeafSize + decSize * (maxLeafSize - minLeafSize) * scaleFactor;
+    const variance = 0.2;
+
+    let finalSize = baseSize * (1 + (Math.random() * 2 - 1) * variance);
+    finalSize = Math.min(Math.max(finalSize, minLeafSize), maxLeafSize);
+
+    if (n === 1) {
+      arr.push({
+        x: leafCenterX - finalSize,
+        y: leafCenterY - finalSize,
+        size: finalSize,
+        color: colors?.colorsReversed?.[i] ?? colors?.colorsReversed?.[0],
+      });
+    } else {
+      const angle = midAngles[i % midAngles.length] + 300;
+      const offset = leafRadius / 2 + finalSize / 2;
+      const offsetX = offset * Math.cos(-angle);
+      const offsetY = offset * Math.sin(-angle);
+
+      arr.push({
+        x: leafCenterX + offsetX,
+        y: leafCenterY + offsetY,
+        size: finalSize,
+        color: colors?.colorsReversed?.[i] ?? colors?.colorsReversed?.[0],
+      });
+    }
+  }
+
+  return arr;
+}, [decimalsValue, colors, totalCategories, selectedFriendIdValue]);
+
+ 
   const animatedLeaves = useDerivedValue(() => {
     "worklet";
     const base = leafPositions.value;
-    const growth = leafScales.value;
-    // console.log('base: ', base )
-    // console.log('growth: ', growth)
-   
+    // const growth = leafScales.value;
 
     if (!base || base.length === 0) return [];
 
     return base.map((leaf, i) => ({
       x: leaf.x,
       y: leaf.y,
-      size: leaf.size * (growth[i] ?? 0.001),
+      size: leaf.size,
+      // size: leaf.size * (growth[i] ?? 0.001),
       color: leaf.color,
     }));
   });
@@ -358,7 +329,23 @@ const Donut = ({
     runOnJS(setPositions)(animatedLeaves.value);
   }, [animatedLeaves]);
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const font = useFont(Poppins_400Regular, centerTextSize);
 
@@ -385,6 +372,9 @@ const Donut = ({
         ]}
       >
         <DonutChart
+
+        
+        
           lastFlush={lastFlush}
           resetLeaves={resetLeaves}
           positionsValue={positionsValue}
@@ -411,7 +401,7 @@ const Donut = ({
           decimalsValue={decimalsValue}
           labelsValue={labelsValue}
           // labelsJS={labelsJS} // using derived value internally
-          colors={colors}
+          colors={colors?.colors}
           labelsSize={labelsSize}
           labelsDistanceFromCenter={labelsDistanceFromCenter}
           labelsSliceEnd={labelsSliceEnd}

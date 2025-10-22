@@ -1011,7 +1011,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
 };
 
 export const fetchMomentsAPI = async (friendId: number) => {
-  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`
@@ -1020,6 +1020,7 @@ export const fetchMomentsAPI = async (friendId: number) => {
     if (response && response.data) {
       const capsules = response.data.map((capsule: MomentFromBackendType) => ({
         id: capsule.id,
+        friend: capsule.friend,
         typedCategory: capsule.typed_category || "Uncategorized",
         capsule: capsule.capsule,
         created: capsule.created_on,
