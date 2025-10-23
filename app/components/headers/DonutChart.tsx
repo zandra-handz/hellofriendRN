@@ -22,6 +22,8 @@ import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/app/styles/StaticColors";
+
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
@@ -52,11 +54,13 @@ type Props = {
 };
 
 const DonutChart = ({
+  animatedLeaves,
   totalJS,
   positionsValue,
   positions,
   primaryColor,
   darkerOverlayBackgroundColor,
+  leavesVisibilityValue,
   onCategoryPress,
   onPlusPress,
   onCenterPress,
@@ -92,6 +96,7 @@ const DonutChart = ({
       zIndex: 4,
     };
   }, [fadeInValue]);
+ 
 
   useEffect(() => {
     if (!totalJS) {
@@ -240,10 +245,14 @@ const DonutChart = ({
             );
           })}
 
+ 
+  
           <LeafPath
+          leavesVisibilityValue={leavesVisibilityValue}
             lastFlush={lastFlush}
             totalJS={totalJS}
-            positionsValue={positionsValue}
+            // positionsValue={positionsValue}
+                   positionsValue={animatedLeaves}
             positions={positions}
             count={targetText}
             totalValue={totalValue}
@@ -255,6 +264,7 @@ const DonutChart = ({
             size={24}
             colors={colors}
           />
+ 
 
           <Text
             x={textX}

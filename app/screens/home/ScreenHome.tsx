@@ -67,60 +67,21 @@ const ScreenHome = () => {
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
 
   // const { upcomingHelloes  } = useUpcomingHelloes();
-  const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
-    useFriendListAndUpcoming();
 
-  const { setUpNextCache } = useUpNextCache({
-    userId: user?.id,
-    friendListAndUpcoming: friendListAndUpcoming,
-  });
 
-  setUpNextCache();
-
-  // logQueryCacheSize(queryClient);
-  const friendList = friendListAndUpcoming?.friends;
-  const friendListLength = friendList?.length || 0;
-  const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
     useFriendStyle();
 
   const { autoSelectFriend } = useAutoSelector();
 
-    const [positions, setPositions] = useState<
-      { x: number; y: number; size: number; color: string }[]
-    >([]);
-  
-
   const { selectedFriend, selectFriend } = useSelectedFriend();
 
   const selectedFriendIdValue = useSharedValue(selectedFriend?.id);
 
-  useEffect(() => {
-    if (selectedFriend?.id) {
-      setPositions([])
-          selectedFriendIdValue.value = selectedFriend?.id;
-
-    }
+ 
 
 
-  }, [selectedFriend?.id]);
-
-
-
-
-  const { hasShareIntent, shareIntent } = useShareIntentContext();
-
-  const { lightDarkTheme } = useLDTheme();
-
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-
-  const { navigateToMomentFocusWithText, navigateToAddImage } =
-    useAppNavigations();
-  const { requestPermission, imageUri, resizeImage } =
-    useImageUploadFunctions();
-
-  useEffect(() => {
+    useEffect(() => {
     console.log("AUTOSELECTING FRIEND");
     // only run if we have an id mismatch
     // console.log("autoselect", autoSelectId);
@@ -139,6 +100,39 @@ const ScreenHome = () => {
       }
     }
   }, [autoSelectFriend]);
+
+
+    const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
+    useFriendListAndUpcoming();
+
+  const { setUpNextCache } = useUpNextCache({
+    userId: user?.id,
+    friendListAndUpcoming: friendListAndUpcoming,
+  });
+
+  setUpNextCache();
+
+
+    // logQueryCacheSize(queryClient);
+  const friendList = friendListAndUpcoming?.friends;
+  const friendListLength = friendList?.length || 0;
+  const upcomingHelloes = friendListAndUpcoming?.upcoming;
+
+
+
+  const { hasShareIntent, shareIntent } = useShareIntentContext();
+
+  const { lightDarkTheme } = useLDTheme();
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+
+  const { navigateToMomentFocusWithText, navigateToAddImage } =
+    useAppNavigations();
+  const { requestPermission, imageUri, resizeImage } =
+    useImageUploadFunctions();
+
+
 
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -280,7 +274,10 @@ const ScreenHome = () => {
       <LocalPeacefulGradientSpinner
         loading={autoSelectFriend?.customFriend === undefined}
       />
-      
+
+      {autoSelectFriend?.customFriend !== undefined && (
+
+
           <SafeViewAndGradientBackground
             friendColorLight={themeAheadOfLoading.lightColor}
             friendColorDark={themeAheadOfLoading.darkColor}
@@ -490,8 +487,7 @@ const ScreenHome = () => {
                           >
                             <View style={{ height: "100%" }}>
                               <SelectedFriendHome
-                              positions={positions}
-                              setPositions={setPositions}
+                        
                               selectedFriendIdValue={selectedFriendIdValue}
                                 paddingHorizontal={PADDING_HORIZONTAL}
                                 userId={user?.id}
@@ -551,6 +547,8 @@ const ScreenHome = () => {
               )}
             </>
           </SafeViewAndGradientBackground>
+                )}
+      
    
     </>
   );

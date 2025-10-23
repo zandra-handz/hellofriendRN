@@ -52,6 +52,7 @@ export const FriendListAndUpcomingProvider = ({ children }) => {
             (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
           );
         data.next = upcomingFriend;
+        console.log(`usssssseeeeeeerr`,data?.user)
         }
         return data || [];
       },

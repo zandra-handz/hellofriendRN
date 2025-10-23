@@ -7,6 +7,8 @@ import React, {
   ReactNode,
 } from "react";
  
+
+import { useAutoSelector } from "./AutoSelectorContext";
 import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
 
 interface FriendStyleContextType {
@@ -18,13 +20,13 @@ interface FriendStyleContextType {
 //FRIENDTINTPRESSABLE unlikely to be resorted to but does have hard code to get TS to stop yelling at me
 
 const FriendStyleContext = createContext<FriendStyleContextType>({
-  themeAheadOfLoading: {
-    darkColor: "#4caf50",
-    lightColor: "#a0f143",
-    fontColor: "#000000",
-    fontColorSecondary: "#000000",
-  },
-  getThemeAheadOfLoading: () => {},
+  // themeAheadOfLoading: {
+  //   darkColor: "#4caf50",
+  //   lightColor: "#a0f143",
+  //   fontColor: "#000000",
+  //   fontColorSecondary: "#000000",
+  // },
+  // getThemeAheadOfLoading: () => {},
 });
 
 
@@ -75,6 +77,7 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
   };
 
   const getThemeAheadOfLoading = (loadingFriend: Friend) => {
+    
     handleSetTheme({
       lightColor: loadingFriend.theme_color_light || "#a0f143",
       darkColor: loadingFriend.theme_color_dark || "#4caf50",

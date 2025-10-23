@@ -8,7 +8,7 @@ import {
 import { Skia } from "@shopify/react-native-skia";
 import { calculateLeavesWorklet } from "./UtilLeafCalc";
 import { LeafInstance } from "./LeafInstance";
-
+ 
 interface LeafPathProps {
   totalJS: number | SharedValue<number>;
   count: ReturnType<typeof useSharedValue>;
@@ -35,11 +35,15 @@ export default function LeafPath({
   colors,
   delayMs = 100, // default delay 100ms
   positionsValue,
+ 
   positions,
+  leavesVisibilityValue,
   
 }: LeafPathProps) {
- 
   
+ useEffect(() => {
+
+ }, []);
  
 
   const leafSvgString = Skia.Path.MakeFromSVGString(
@@ -48,8 +52,8 @@ export default function LeafPath({
  
  
   return (
-    <Group blendMode="multiply">
-      {positions.length > 0 && positions.map((p, i) => (
+    <Group blendMode="multiply"  >
+      { positions.map((p, i) => (
         <LeafInstance
           key={i}
           leafPath={leafSvgString}
@@ -61,7 +65,7 @@ export default function LeafPath({
           // color={colors[i]} [reversed colors]
           color={positions[i].color}
         />
-      ))}
+      ))} 
     </Group>
   );
 }

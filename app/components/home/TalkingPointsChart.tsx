@@ -13,13 +13,15 @@ import { AppState, AppStateStatus } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
 import { useCategories } from "@/src/context/CategoriesContext";
-import SvgIcon from "@/app/styles/SvgIcons"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useLDTheme } from "@/src/context/LDThemeContext"; 
-import useSelectFriend from "@/src/hooks/useSelectFriend";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+ 
+
+import {  generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
 type Props = {
   selectedFriend: boolean;
@@ -27,46 +29,81 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
-  // themeAheadOfLoading,
- selectedFriendIdValue,
-  capsuleListCount,
-  loadingDash,
-  // categoryStartIndices,
-  // categorySizes,
-  // generateGradientColors,
  
-  // primaryColor,
-  // primaryOverlayColor,
-  // darkerOverlayBackgroundColor,
-}: Props) => {
-console.log('loading dash', loadingDash)
+  selectedFriendIdValue,
   
+}: Props) => { 
+
+    console.log("TALKING POINTS COMP RERENDERED");
+
   const { themeAheadOfLoading } = useFriendStyle();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
   const isFocused = useIsFocused();
-const { lightDarkTheme } = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
 
-const primaryColor = lightDarkTheme.primaryText;
-const primaryOverlayColor = lightDarkTheme.primaryOverlayColor;
-const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
-  const { capsuleList, categorySizes } = useCapsuleList();
+  const primaryColor = lightDarkTheme.primaryText;
+  const primaryOverlayColor = lightDarkTheme.primaryOverlayColor;
+  const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
+  const {  capsuleList, categorySizes } = useCapsuleList();
+
+
+  if (!capsuleList.length || !categorySizes.sortedList.length) {
+  return null; // or a loading placeholder
+}
   // const capsuleListCount = capsuleList?.length;
 
- 
+  console.log(`CAPSULES`,capsuleList[0])
+  console.log(`categories`, categorySizes)
 
   // const { categoryStartIndices } = useTalkingPCategorySorting({
   //   listData: capsuleList,
   // });
 
-  const {   generateGradientColors } = useMomentSortingFunctions({
-    listData: capsuleList,
-  });
- 
-    const categories = categorySizes;
+  // const { generateGradientColors } = useMomentSortingFunctions({
+  //   listData: capsuleList,
+  // });
+
+  const capsuleListCount = capsuleList?.length;
+
+  const categoryIds = useMemo(
+  () => userCategories.map(c => c.id), // or c.category_id
+  [userCategories]
+);
+
+const categoryColors = useMemo(() => {
+  if (!categoryIds.length || !themeAheadOfLoading?.lightColor) return [];
+
+  return generateGradientColors(
+    categoryIds, // now only IDs
+    themeAheadOfLoading.lightColor,
+    themeAheadOfLoading.darkColor
+  );
+}, [categoryIds, themeAheadOfLoading?.lightColor, themeAheadOfLoading?.darkColor]);
+
+  const categories = categorySizes;
+
+    const colors = useMemo(() => {
+    if (!categories?.sortedList || categories.sortedList.length === 0) {
+      return { colors: [], colorsReversed: [], friend: null }; // consistent shape
+    } 
+    const userCategorySet = new Set(
+      categories?.sortedList.map((item) => item.user_category)
+    );
+
+    const filteredColors = categoryColors
+      .filter((item) => userCategorySet.has(item.user_category))
+      .map((item) => item.color);
+
+    // only works if categoryColors has a `friend` field; otherwise remove this line
+    const friend = categoryColors[0].friend ?? null; 
+    const colorsReversed = filteredColors.slice().reverse();
+    return { colors: filteredColors, colorsReversed: colorsReversed, friend };
+  }, [categoryColors, categories?.sortedList]);
+
+  console.log(colors);
 
 
- console.log("TALKING POINTS COMP RERENDERED" );
 
   const {
     navigateToMoments,
@@ -76,96 +113,68 @@ const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
   } = useAppNavigations();
   // const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
-
-  const appState = useRef(AppState.currentState);
-
-
+  // const appState = useRef(AppState.currentState);
 
   const HEIGHT = 420;
-
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
-
   const GAP = 0.01;
-
-  const LABELS_SIZE = 12;
-  // const LABELS_DISTANCE_FROM_CENTER = -10;
-    const LABELS_DISTANCE_FROM_CENTER = 4;
+  const LABELS_SIZE = 12; 
+  const LABELS_DISTANCE_FROM_CENTER = 4;
   const LABELS_SLICE_END = 20;
   const CENTER_TEXT_SIZE = 34;
 
-  const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
+  // const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
-  useEffect(() => {
-    if (!capsuleListCount || capsuleListCount < 1) return;
+//   useEffect(() => {
+//     if (!capsuleListCount || capsuleListCount < 1) return;
+// console.log('SORTED TEmP RUNNNNNNNNNNNFD')
+//     console.log("first useeffect");
 
-    console.log("first useeffect");
+//     if (
+//       JSON.stringify(categories.sortedList) !==
+//       JSON.stringify(tempCategoriesSortedList)
+//     ) {
+//       console.log('SEEETTTINGGGGGGTEmP RUNNNNNNNNNNNFD')
+//       setTempCategoriesSortedList(categories.sortedList);
+//     }
+//   }, [capsuleListCount, categories]);
 
-    if (
-      JSON.stringify(categories.sortedList) !==
-      JSON.stringify(tempCategoriesSortedList)
-    ) {
-      setTempCategoriesSortedList(categories.sortedList);
-    }
-  }, [capsuleListCount, categories]);
+ 
 
-
-  // const [ categoryColors, setCategoryColors] = useState([])
 
   // useEffect(() => {
-  //   if (userCategories && userCategories.length > 0 && themeAheadOfLoading?.lightColor) {
-  //  console.log(capsuleList?.[0]?.id)
-  //     setCategoryColors(
-  //       generateGradientColors(
-  //         userCategories,
-  //         themeAheadOfLoading.lightColor,
-  //         themeAheadOfLoading.darkColor
-  //       )
-  //     );
-  //   }
-  // }, [userCategories, themeAheadOfLoading]);
+  //   console.log("APP STATE!");
+  //   const subscription = AppState.addEventListener(
+  //     "change",
+  //     (nextState: AppStateStatus) => {
+  //       console.log("App state changed:", nextState);
 
-const categoryColors = useMemo(() => {
-  if (!userCategories?.length || !themeAheadOfLoading?.lightColor) return [];
+  //       if (
+  //         appState.current.match(/inactive|background/) &&
+  //         nextState === "active"
+  //       ) {
+  //         console.log("App has come to the foreground!");
+  //         if (!capsuleListCount || capsuleListCount < 1) {
+  //           return;
+  //         }
+  //         setTempCategoriesSortedList(categories.sortedList);
+  //       }
 
-  return generateGradientColors(
-    userCategories,
-    themeAheadOfLoading.lightColor,
-    themeAheadOfLoading.darkColor
-  );
-}, [userCategories, themeAheadOfLoading?.lightColor, themeAheadOfLoading?.darkColor]);
+  //       appState.current = nextState;
+  //     }
+  //   );
 
-
-    useEffect(() => {
-    console.log('APP STATE!')
-    const subscription = AppState.addEventListener(
-      "change",
-      (nextState: AppStateStatus) => {
-        console.log("App state changed:", nextState);
-
-        if (
-          appState.current.match(/inactive|background/) &&
-          nextState === "active"
-        ) {
-          console.log("App has come to the foreground!");
-          if (!capsuleListCount || capsuleListCount < 1) {
-            return;
-          }
-          setTempCategoriesSortedList(categories.sortedList);
-        }
-
-        appState.current = nextState;
-      }
-    );
-
-    return () => subscription.remove(); // cleanup
-  }, [capsuleListCount]);
+  //   return () => subscription.remove(); // cleanup
+  // }, [capsuleListCount]);
 
   const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
       if (categoryLabel && categorySizes.categoryStartIndices) {
-        navigateToMomentView({ index: categorySizes.categoryStartIndices[categoryLabel] });
+        navigateToMomentView({
+          index: categorySizes.categoryStartIndices[categoryLabel],
+        });
       }
     },
     [navigateToMomentView, categorySizes.categoryStartIndices]
@@ -179,59 +188,14 @@ const categoryColors = useMemo(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
- 
-
-  const sortedCategories = useMemo(() => categories?.sortedList || [], [categories?.sortedList]);
-
+  // const sortedCategories = useMemo(
+  //   () => categories?.sortedList || [],
+  //   [categories?.sortedList]
+  // );
 
   // not using friend, could revert back to just the single colors array if performance issues
-const colors = useMemo(() => {
-  if (!categoryColors || sortedCategories.length === 0) {
-    return { colors: [], colorsReversed: [], friend: null }; // consistent shape
-  }
 
-  console.log('calculating colors', categoryColors);
-
-  const userCategorySet = new Set(sortedCategories.map((item) => item.user_category));
-
-  const filteredColors = categoryColors
-    .filter((item) => userCategorySet.has(item.user_category))
-    .map((item) => item.color);
-
-  // only works if categoryColors has a `friend` field; otherwise remove this line
-  const friend = categoryColors[0].friend ?? null;
-
-  const colorsReversed = filteredColors.slice().reverse()
-
-  return { colors: filteredColors, colorsReversed: colorsReversed, friend };
-}, [categoryColors, sortedCategories]);
-
-
-console.log(colors);
-
-// const colorsReversed = useMemo(() => colors.colors.slice().reverse(), [colors]);
-
-  // const colors = useMemo(() => {
  
-  //   if (
-  //     !categoryColors ||
-  //     !categories?.sortedList ||
-  //     categories?.sortedList.length < 1
-  //   )
-  //     return [];
-  //  console.log('calculating colors')
-  //   const userCategorySet = new Set(
-  //     categories.sortedList.map((item) => item.user_category)
-  //   );
-  //   return categoryColors
-  //     .filter((item) => userCategorySet.has(item.user_category))
-  //     .map((item) => item.color);
-  // }, [
-  //   categoryColors, 
-    
-  //   categories
-  // ]);
-
   return (
     <>
       <Pressable onPress={navigateToHistory} style={styles.historyContainer}>
@@ -276,8 +240,8 @@ console.log(colors);
 
           {isFocused && (
             <View style={styles.donutWrapper}>
-              <Donut 
-              selectedFriendIdValue={selectedFriendIdValue}
+              <Donut
+                selectedFriendIdValue={selectedFriendIdValue}
                 friendStyle={themeAheadOfLoading}
                 primaryColor={primaryColor}
                 darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
@@ -292,9 +256,12 @@ console.log(colors);
                 labelsSize={LABELS_SIZE}
                 labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
                 labelsSliceEnd={LABELS_SLICE_END}
-                data={categories?.sortedList || []}
-                colors={colors }
-        
+                // data={categories?.sortedList || []}
+                // colors={colors }
+
+                data={[...categories.sortedList]} // new array reference every render
+                colors={[...colors?.colors]}
+                colorsReversed={[...colors?.colorsReversed]}
                 centerTextSize={CENTER_TEXT_SIZE}
               />
             </View>

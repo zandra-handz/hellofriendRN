@@ -16,16 +16,17 @@ import Animated, {
 // import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { AppFontStyles } from "@/app/styles/AppFonts"; 
+// import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
+// import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+// import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
-import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -33,46 +34,32 @@ interface SelectedFriendHomeProps {
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
- 
+
   paddingHorizontal,
- selectedFriendIdValue,
+  selectedFriendIdValue,
   primaryColor,
   primaryBackgroundColor,
   primaryOverlayColor,
-  darkerOverlayBackgroundColor,
+  // darkerOverlayBackgroundColor,
 
   // loadingDash,
   // friendDash,
   selectedFriendId,
-  selectedFriendName, 
+  selectedFriendName,
 }) => {
+  const { loadingDash  } = useFriendDash();
 
-  const { loadingDash, friendDash } = useFriendDash();
+  console.log("selected friend home rerendered");
+  const headerRef = useRef(null); 
 
-    console.log('selected friend home rerendered')
-  const headerRef = useRef(null);
-  const { capsuleList } = useCapsuleList();
- 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
+ 
 
-  const { categoryStartIndices } = useTalkingPCategorySorting({
-    listData: capsuleList,
-  });
-
-
-console.log('home screen rerendered')
-  const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
-    listData: capsuleList,
-  });
-
-
-  // const categorySizesCalled = categorySizes;
-  
   const loading = loadingDash;
-  //const loading = true;
+ 
 
   const handleScroll = (event) => {
     if (!headerRef.current) return;
@@ -96,40 +83,31 @@ console.log('home screen rerendered')
     };
   });
 
-  // const PADDING_HORIZONTAL = 4;
 
-  // const spacerAroundCalendar = 10;
-
-  const SELECTED_FRIEND_CARD_HEIGHT = 120;
-  // const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
+  const SELECTED_FRIEND_CARD_HEIGHT = 120; 
   const SELECTED_FRIEND_CARD_PADDING = 20;
-
-//const ELEMENTS_BACKGROUND = CARD_BACKGROUND;
- const ELEMENTS_BACKGROUND = "transparent";
+ 
+  const ELEMENTS_BACKGROUND = "transparent";
 
   return (
     <View
       style={[
         styles.container,
-        {
-          //marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
+        { 
 
-          paddingHorizontal: paddingHorizontal,
-          // backgroundColor: primaryOverlayColor,
+          paddingHorizontal: paddingHorizontal, 
         },
       ]}
     >
-      <MaterialCommunityIcons
+      <SvgIcon
         name={"leaf"}
         size={1200}
-        color={"#8bc34a"}
-        //  color={friendStyle.lightColor}
+        color={"#8bc34a"} 
 
         style={{
           position: "absolute",
           top: -740,
-          left: -470,
-          //  opacity: 0.3,
+          left: -470, 
           opacity: 0.8,
           transform: [{ rotate: "200deg" }, { scaleX: -1 }],
         }}
@@ -209,8 +187,7 @@ console.log('home screen rerendered')
                     </View>
                   </>
                 )} */}
-
-                {/* {!loadingDash && selectedFriendId && ( */}
+ 
                 <SuggestedHello
                   isLoading={loading}
                   friendId={selectedFriendId}
@@ -219,37 +196,20 @@ console.log('home screen rerendered')
                   primaryBackground={primaryBackgroundColor}
                   welcomeTextStyle={welcomeTextStyle}
                   subWelcomeTextStyle={subWelcomeTextStyle}
-                  friendFutureDate={
-                    friendDash?.future_date_in_words || "No date available"
-                  }
+                  // friendFutureDate={
+                  //   friendDash?.future_date_in_words || "No date available"
+                  // }
                   padding={SELECTED_FRIEND_CARD_PADDING}
                   height={SELECTED_FRIEND_CARD_HEIGHT}
-                  // borderRadius={borderRadius}
+    
                 />
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
-                  {!loadingDash &&  (
-
-             
-                  <TalkingPointsChart
-              
-                  selectedFriendIdValue={selectedFriendIdValue}
-                    // isLoading={loading}
-                    // loadingDash={loadingDash}
-                    capsuleListCount={capsuleList.length}
-                    // categoryStartIndices={categoryStartIndices}
-                    // categorySizes={categorySizes}
-                    // generateGradientColors={generateGradientColors}
-                
-                    // primaryColor={primaryColor}
-                    // primaryBackgroundColor={ELEMENTS_BACKGROUND}
-                    // darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                    // primaryOverlayColor={ELEMENTS_BACKGROUND}
-                    // loadingNewFriend={loadingDash}
-                    // selectedFriendId={selectedFriendId}
-                    // selectedFriendName={selectedFriendName}
-                  
-                  />
+                  {!loadingDash && (
+                    <TalkingPointsChart
+                      selectedFriendIdValue={selectedFriendIdValue}
+            
+                    />
                   )}
                 </View>
 

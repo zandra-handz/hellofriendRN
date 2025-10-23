@@ -5,6 +5,7 @@ import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 
 type Props = {
   friendId: number;
@@ -20,12 +21,12 @@ const SuggestedHello = ({
   primaryOverlayColor,
   primaryBackground,
 
-  friendFutureDate,
+  // friendFutureDate,
   padding,
   height,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
-
+const { friendDash } = useFriendDash();
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
@@ -56,7 +57,7 @@ const SuggestedHello = ({
               },
             ]}
           >
-            {friendId && friendFutureDate ? "Suggested hello" : "None"}
+            {friendId && friendDash?.future_date_in_words ? "Suggested hello" : "None"}
           </Text>
           <Text
             style={[
@@ -71,14 +72,14 @@ const SuggestedHello = ({
               },
             ]}
           >
-            {friendFutureDate}
+            {friendDash?.future_date_in_words}
           </Text>
         </>
       </View>
     );
   }, [
     friendId,
-    friendFutureDate,
+    friendDash?.future_date_in_words,
     welcomeTextStyle,
     subWelcomeTextStyle,
     primaryColor,
