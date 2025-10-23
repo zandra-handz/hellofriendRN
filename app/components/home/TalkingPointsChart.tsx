@@ -47,14 +47,13 @@ const TalkingPointsChart = ({
   const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
   const {  capsuleList, categorySizes } = useCapsuleList();
 
-
-  if (!capsuleList.length || !categorySizes.sortedList.length) {
-  return null; // or a loading placeholder
-}
+//GETTING BUG WITH THIS I THINK
+//   if (!capsuleList.length || !categorySizes.sortedList.length) {
+//   return null; // or a loading placeholder
+// }
   // const capsuleListCount = capsuleList?.length;
 
-  console.log(`CAPSULES`,capsuleList[0])
-  console.log(`categories`, categorySizes)
+ 
 
   // const { categoryStartIndices } = useTalkingPCategorySorting({
   //   listData: capsuleList,
