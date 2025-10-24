@@ -1,13 +1,12 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import useReadableColors from "@/src/hooks/useReadableColors";
 import ColorSwatchesSvg from "../../friends/ColorSwatchesSvg";
 import useUpdateFaveTheme from "@/src/hooks/SelectedFriendCalls/useUpdateFavesTheme";
 import FormFriendColorThemeUpdate from "@/src/forms/FormFriendColorThemeUpdate";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 
 import Toggle from "../../user/Toggle";
@@ -16,13 +15,13 @@ const EditTheme = ({
   primaryColor = "orange",
   lighterOverlayColor = "yellow",
   manualGradientColors,
-  themeAheadOfLoading,
+  themeColors,
   friendList,
   userId,
   friendId,
   manualThemeOn,
 }) => {
-  const { handleSetTheme } = useFriendStyle();
+  const { handleSetTheme } = useSelectedFriend();
 
   const { updateFriendListColorsExcludeSaved } = useUpdateFriendListColors({
     userId: userId,
@@ -175,8 +174,8 @@ const EditTheme = ({
             <Pressable onPress={toggleThemeEdit}>
               <ColorSwatchesSvg
                 onPress={toggleThemeEdit}
-                darkColor={themeAheadOfLoading.darkColor}
-                lightColor={themeAheadOfLoading.lightColor}
+                darkColor={themeColors.darkColor}
+                lightColor={themeColors.lightColor}
               />
             </Pressable>
           )}

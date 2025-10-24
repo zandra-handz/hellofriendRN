@@ -6,8 +6,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -17,7 +16,7 @@ import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 
-import manualGradientColors from "@/app/styles/StaticColors";
+ 
 
 const ScreenMomentView = () => {
   const route = useRoute();
@@ -25,8 +24,7 @@ const ScreenMomentView = () => {
 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { userCategories } = useCategories();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { userCategories } = useCategories(); 
   // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
@@ -42,37 +40,21 @@ const ScreenMomentView = () => {
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
-
-  // useEffect(() => {
-  //   if (
-  //     userCategories?.length > 0 &&
-  //     themeAheadOfLoading?.lightColor &&
-  //     themeAheadOfLoading?.darkColor
-  //   ) {
-  //     setCategoryColorsMap(
-  //       generateGradientColorsMap(
-  //         userCategories,
-  //         themeAheadOfLoading.lightColor,
-  //         themeAheadOfLoading.darkColor
-  //       )
-  //     );
-  //   }
-  // }, [userCategories, themeAheadOfLoading]);
-
+ 
   const categoryColorsMap = useMemo(() => {
     if (
       userCategories?.length > 0 &&
-      themeAheadOfLoading?.lightColor &&
-      themeAheadOfLoading?.darkColor
+      selectedFriend?.lightColor &&
+      selectedFriend?.darkColor
     ) {
       return generateGradientColorsMap(
         userCategories,
-        themeAheadOfLoading.lightColor,
-        themeAheadOfLoading.darkColor
+        selectedFriend.lightColor,
+        selectedFriend.darkColor
       );
     }
     return null;
-  }, [userCategories, themeAheadOfLoading]);
+  }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
   useEffect(() => {
     if (preAddMomentMutation.isSuccess) {
@@ -84,20 +66,20 @@ const ScreenMomentView = () => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
     >
       <View style={StyleSheet.absoluteFillObject}>
         <GradientBackgroundBreathing
-          secondColorSetDark={themeAheadOfLoading.lightColor}
-          secondColorSetLight={themeAheadOfLoading.darkColor}
+          secondColorSetDark={selectedFriend.lightColor}
+          secondColorSetLight={selectedFriend.darkColor}
           // firstColorSetDark={manualGradientColors.lightColor}
-          // firstColorSetLight={themeAheadOfLoading.darkColor}
-          firstColorSetDark={themeAheadOfLoading.lightColor}
-          firstColorSetLight={themeAheadOfLoading.darkColor}
+          // firstColorSetLight={selectedFriend.darkColor}
+          firstColorSetDark={selectedFriend.lightColor}
+          firstColorSetLight={selectedFriend.darkColor}
           // firstColorSetDark={manualGradientColors.lightColor}
           // firstColorSetLight={manualGradientColors.darkColor}
           timeScore={TIME_SCORE}
@@ -111,7 +93,7 @@ const ScreenMomentView = () => {
           name={"leaf"}
           size={1000}
           // color={manualGradientColors.lightColor}
-           color={themeAheadOfLoading.lightColor}
+           color={selectedFriend.lightColor}
           style={{
             // top: -100,
             // left: -100,

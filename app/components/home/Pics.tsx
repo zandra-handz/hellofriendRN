@@ -1,16 +1,16 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";  
+import SvgIcon from "@/app/styles/SvgIcons";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 type Props = {
   userId: number;
   friendId: number;
 };
 
-const Pics = ({
-  isLoading, //loadingDash, NOT images
+const Pics = ({ 
   userId,
   friendId,
   primaryColor,
@@ -22,6 +22,8 @@ const Pics = ({
     friendId: friendId,
   });
   const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
+  const { loadingDash} = useFriendDash();
+  const isLoading = loadingDash;
 
   const PADDING = 20;
   const navigateToImages = () => {
@@ -48,18 +50,19 @@ const Pics = ({
           ]}
         >
           {/* {isLoading && <LoadingBlock loading={true} />} */}
-          {!isLoading && (
+     
             <View
               style={{
                 borderRadius: 20,
                 flexDirection: "row",
-                height: "100%",
+                height: 40,
                 width: "100%",
-                alignItems: "center",
+                alignItems: "center", 
 
                 // marginBottom: outerPadding, // turn back on to add body content to this component
               }}
             >
+                   {!isLoading && (
               <View
                 style={{
                   flexDirection: "row",
@@ -76,10 +79,9 @@ const Pics = ({
                   }
                   style={{ flexDirection: "row" }}
                 >
-                  <MaterialCommunityIcons
-                    //  name="image-edit-outline"
-                    name="image-multiple-outline"
-                    // name="graph"
+                  <SvgIcon 
+                    name="image_multiple_outline"
+               
                     size={20}
                     color={primaryColor}
                     style={{ marginBottom: 0 }}
@@ -135,9 +137,10 @@ const Pics = ({
                   </Pressable>
                 </View>
               </View>
-            </View>
-          )}
+                 )}
 
+            </View>
+       
           {/* <View style={{ width: "100%", height: 10 }}></View>   // turn back on to add body content to this component (??) */}
         </View>
       )}

@@ -5,9 +5,8 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
-import HelloViewPage from "@/app/components/helloes/HelloViewPage"; 
+import HelloViewPage from "@/app/components/helloes/HelloViewPage";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenHelloView = () => {
   const route = useRoute();
@@ -15,19 +14,24 @@ const ScreenHelloView = () => {
   const inPersonFilter = route.params?.inPersonFilter ?? false;
   const { selectedFriend } = useSelectedFriend();
   const { helloesList } = useHelloes();
-  const { lightDarkTheme } = useLDTheme(); 
+  const { lightDarkTheme } = useLDTheme();
 
-  const { themeAheadOfLoading } = useFriendStyle();
-
-  const { trueHelloes, helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useFullHelloes({
-      friendId: selectedFriend?.id,
-      indexNeeded: startingIndex,
-    });
+  const {
+    trueHelloes,
+    helloesListFull,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useFullHelloes({
+    friendId: selectedFriend?.id,
+    indexNeeded: startingIndex,
+  });
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
 
-  const trueHelloesInList = helloesList.filter((hello) => hello.manual_reset === undefined);
+  const trueHelloesInList = helloesList.filter(
+    (hello) => hello.manual_reset === undefined
+  );
 
   // useEffect(() => {
   //   console.log(helloesListData.length);
@@ -54,7 +58,7 @@ const ScreenHelloView = () => {
   const totalHelloesCount = useMemo(() => {
     return inPersonFilter &&
       helloesDataFiltered &&
-      (helloesDataFiltered.length > 0)
+      helloesDataFiltered.length > 0
       ? helloesDataFiltered.length
       : trueHelloesInList && trueHelloesInList.length > 0
         ? trueHelloesInList.length
@@ -62,10 +66,9 @@ const ScreenHelloView = () => {
   }, [inPersonFilter, helloesDataFiltered, trueHelloesInList]);
 
   return (
-    <SafeViewAndGradientBackground 
- 
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+    <SafeViewAndGradientBackground
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
@@ -78,20 +81,16 @@ const ScreenHelloView = () => {
         totalItemCount={totalHelloesCount}
         isFiltered={inPersonFilter}
         initialIndex={currentIndex} // should this be startingIndex?
- 
         data={helloesDataFiltered}
         children={(props) => (
           <HelloViewPage
             welcomeTextStyle={AppFontStyles.welcomeText}
             primaryColor={lightDarkTheme.primaryText}
-         
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             primaryBackground={lightDarkTheme.primaryBackground}
             overlayColor={lightDarkTheme.overlayBackground}
             marginBottom={2}
-                    darkerOverlayColor={
-          lightDarkTheme.darkerOverlayBackground}
-       
+            darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
             {...props}
           />
         )}
@@ -104,7 +103,7 @@ const ScreenHelloView = () => {
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={lightDarkTheme.welcomeText}
-        themeAheadOfLoading={themeAheadOfLoading} 
+ 
       />
     </SafeViewAndGradientBackground>
   );

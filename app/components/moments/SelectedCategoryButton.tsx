@@ -27,7 +27,8 @@ const SelectedCategoryButton = ({
  
   userId,
   userDefaultCategory,
-  themeAheadOfLoading,
+ 
+  themeColors,
   primaryColor,
   primaryBackground,
   lighterOverlayColor, 
@@ -199,7 +200,7 @@ const SelectedCategoryButton = ({
             primaryBackground={primaryBackground}
             subWelcomeTextStyle={subWelcomeTextStyle}
             friendDefaultCategory={friendDefaultCategory}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors} 
             isVisible={detailsModalVisible}
             closeModal={handleCloseModal}
             categoryId={categoryId}

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Keyboard } from "react-native";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
 import LocationAddress from "@/app/components/locations/LocationAddress";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useUser } from "@/src/context/UserContext";
 import {  useLDTheme } from "@/src/context/LDThemeContext";
@@ -47,8 +47,7 @@ const ScreenLocationEdit = () => {
 
   const navigation = useNavigation();
 
-  const { lightDarkTheme } = useLDTheme();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { lightDarkTheme } = useLDTheme(); 
 
   const editedTextRef = useRef(null);
   const editedCategoryRef = useRef(null);
@@ -153,8 +152,8 @@ const ScreenLocationEdit = () => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
@@ -205,7 +204,7 @@ const ScreenLocationEdit = () => {
           <FlatListChangeChoice 
             primaryColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.backgroundColor}
-            themeAheadOfLoading={themeAheadOfLoading}
+            darkColor={selectedFriend.darkColor} 
             horizontal={true}
             choicesArray={parkingScores}
             ref={editedParkingScoreRef}

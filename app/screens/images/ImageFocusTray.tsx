@@ -17,9 +17,8 @@ type Props = {
 };
 
 const ImageFocusTray = ({
-  userId,
-  userDefaultCategory,
-  themeAheadOfLoading,
+ 
+  themeColors,
   primaryColor, 
 }: Props) => {
   const ICON_SIZE = 16;
@@ -56,7 +55,7 @@ const ImageFocusTray = ({
           <View style={{}}>
             <LoadingPage
               loading={true}
-              color={themeAheadOfLoading.darkColor}
+              color={themeColors.darkColor}
               spinnerType="flow"
               spinnerSize={30}
               includeLabel={false}

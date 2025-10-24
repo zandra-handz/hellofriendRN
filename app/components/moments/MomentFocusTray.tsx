@@ -18,7 +18,7 @@ type Props = {
 const MomentFocusTray = ({
   userId,
   userDefaultCategory,
-  themeAheadOfLoading,
+  themeColors,
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
@@ -69,7 +69,7 @@ const MomentFocusTray = ({
           <View style={{}}>
             <LoadingPage
               loading={true}
-              color={themeAheadOfLoading.darkColor}
+              color={themeColors.darkColor}
               spinnerType="flow"
               spinnerSize={30}
               includeLabel={false}
@@ -95,7 +95,7 @@ const MomentFocusTray = ({
                 friendId={friendId}
                 friendName={friendName}
                 userDefaultCategory={userDefaultCategory}
-                themeAheadOfLoading={themeAheadOfLoading}
+                themeColors={themeColors} 
                 primaryColor={primaryColor}
                 lighterOverlayColor={lighterOverlayColor}
                 primaryBackground={primaryBackground}

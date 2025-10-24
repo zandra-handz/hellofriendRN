@@ -40,6 +40,7 @@ import FormatFontSizeIncreaseSvg from "./svgs/format-font-size-increase";
 import GestureSwipeVerticalSvg from "./svgs/gesture-swipe-vertical";
 import HeartSvg from './svgs/heart';
 import HelpCircleSvg from "./svgs/help-circle";
+import ImageMultipleOutlineSvg from "./svgs/image-multiple-outline";
 import InformationOutlineSvg from "./svgs/information-outline";
 import ImageFilterCenterFocusSvg from "./svgs/image-filter-center-focus";
 import LockOutlineSvg from "./svgs/lock-outline";
@@ -48,7 +49,9 @@ import MapMarkerSvg from "./svgs/map-marker";
 import NoteEditOutlineSvg from "./svgs/note-edit-outline";
 import NoteTextSvg from "./svgs/note-text";
 import PaletteSvg from "./svgs/palette";
+import PenSvg from "./svgs/pen";
 import PencilSvg from "./svgs/pencil";
+import PencilOutlineSvg from "./svgs/pencil-outline";
 import PieChartSvg from "./svgs/pie-chart"; // IonIcons
 import PinOutlineSvg from "./svgs/pin-outline";
 import PlusSvg from "./svgs/plus";
@@ -93,7 +96,9 @@ const svgIcons = {
   eye: EyeSvg,
   eye_closed: EyeClosedSvg,
   palette: PaletteSvg,
+  pen: PenSvg,
   pencil: PencilSvg, // hello quick view
+  pencil_outline: PencilOutlineSvg,
   pie_chart: PieChartSvg,
   pin_outline: PinOutlineSvg, // friend header
   plus: PlusSvg,
@@ -110,6 +115,7 @@ const svgIcons = {
   chevron_double_right: ChevronDoubleRightSvg,
   heart: HeartSvg,
   help_circle: HelpCircleSvg, // help button
+  image_multiple_outline: ImageMultipleOutlineSvg,
   image_filter_center_focus: ImageFilterCenterFocusSvg,
   information_outline: InformationOutlineSvg,
   gesture_swipe_vertical: GestureSwipeVerticalSvg,

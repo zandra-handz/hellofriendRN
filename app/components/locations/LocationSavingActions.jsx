@@ -23,7 +23,7 @@ const LocationSavingActions = ({
   handleRemoveFromFaves,
   family = "Poppins-Bold",
   style,
-  themeAheadOfLoading,
+  darkColor,
   primaryColor,
   compact = false,
   noLabel = false,
@@ -110,29 +110,7 @@ const LocationSavingActions = ({
     }
   }, [location, friendId, userId, handleAddToFaves]);
 
-  // const memoizedAddIcon = useMemo(
-  //   () => (
-  //     <MaterialCommunityIcons
-  //       name="plus-circle-outline"
-  //       size={iconSize}
-  //       opacity={fadeOpacity}
-  //       color={primaryColor}
-  //     />
-  //   ),
-  //   [iconSize, fadeOpacity, primaryColor]
-  // );
-
-  // const MemoizedFaveIcon = React.useMemo(
-  //   () => (
-  //     <MaterialCommunityIcons
-  //       name={location?.isFave ? "heart" : "bookmark-plus-outline"}
-  //       size={iconSize}
-  //       color={location?.isFave ? themeAheadOfLoading.darkColor : primaryColor}
-  //       style={{ marginRight: 4 }}
-  //     />
-  //   ),
-  //   [location, iconSize, themeAheadOfLoading.darkColor, primaryColor]
-  // );
+ 
 
   return (
     <View style={styles.container}>
@@ -149,7 +127,7 @@ const LocationSavingActions = ({
             name={location?.isFave ? "heart" : "bookmark-plus-outline"}
             size={iconSize}
             color={
-              location?.isFave ? themeAheadOfLoading.darkColor : primaryColor
+              location?.isFave ?  darkColor : primaryColor
             }
             style={{ marginRight: 4 }}
           />

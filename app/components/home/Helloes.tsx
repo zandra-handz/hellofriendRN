@@ -1,22 +1,24 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useHelloes } from "@/src/context/HelloesContext";
-import LoadingBlock from "../appwide/spinner/LoadingBlock";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 
 type Props = {
   outerPadding: number;
 };
 
-const Helloes = ({
-  isLoading, // loadingDash, NOT helloes
+const Helloes = ({ 
   primaryColor,
   primaryOverlayColor,
   friendId,
 }: Props) => {
   const { helloesList } = useHelloes();
+
+  const { loadingDash} = useFriendDash();
+  const isLoading = loadingDash;
 
 const trueHelloesInList = useMemo(() => {
   return helloesList?.filter((hello) => hello.manual_reset === undefined) ?? [];
@@ -51,18 +53,20 @@ const trueHelloesInList = useMemo(() => {
             loading={true}
             />
           )} */}
-          {!isLoading && (
+       
             <View
               style={{
                 borderRadius: 20,
                 flexDirection: "row",
-                height: "100%",
+              
                 width: "100%",
                 alignItems: "center",
+                    height: 40,
 
                 // marginBottom: outerPadding, // turn back on to add body content to this component
               }}
             >
+                 {!isLoading && (
               <View
                 style={{
                   flexDirection: "row",
@@ -110,8 +114,9 @@ const trueHelloesInList = useMemo(() => {
                   </Text>
                 </Pressable>
               </View>
+                 )}
             </View>
-          )}
+       
         </View>
       )}
     </>

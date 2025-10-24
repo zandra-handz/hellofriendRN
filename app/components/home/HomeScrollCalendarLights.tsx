@@ -5,8 +5,8 @@ import CalendarLights from "../foranimations/CalendarLights";
 
 const HomeScrollCalendarLights = ({
   friendId,
-  primaryColor,
-  themeAheadOfLoading,
+  primaryColor, 
+  themeColors,
   itemColor,
   onMonthPress,
   combinedData,
@@ -26,18 +26,18 @@ const HomeScrollCalendarLights = ({
         helloesList={helloesList}
         friendId={friendId}
         primaryColor={primaryColor}
-        themeAheadOfLoading={themeAheadOfLoading}
+        themeColors={themeColors} 
         onMonthPress={onMonthPress}
         daySquareBorderRadius={20}
         daySquareBorderColor={itemColor}
         combinedData={combinedData}
         opacityMinusAnimation={0.2}
-        animationColor={themeAheadOfLoading.lightColor}
+        animationColor={themeColors.lightColor}
         height={height}
         monthButtonMargin={monthButtonMargin}
       />
     ),
-    [helloesList, themeAheadOfLoading, itemColor]
+    [helloesList, themeColors, itemColor]
   );
 
   return (

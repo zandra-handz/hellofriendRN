@@ -6,7 +6,7 @@ import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import EffortSettingSlider from "../../friends/EffortSettingSlider";
 const EditEffort = ({
   userId,
-  themeAheadOfLoading,
+  themeColors,
   friendId,
   friendEffort,
   primaryColor,
@@ -123,8 +123,8 @@ const EditEffort = ({
             //height={"40%"}
             ref={effortRef}
             friendEffort={effort} // Passing friendEffort state as value
-            sliderColor={themeAheadOfLoading.lightColor}
-            trackColor={themeAheadOfLoading.darkColor}
+            sliderColor={themeColors.lightColor}
+            trackColor={themeColors.darkColor}
             primaryColor={primaryColor}
           />
         </View>

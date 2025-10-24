@@ -24,9 +24,7 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 import useUpdateLockins from "@/src/hooks/useUpdateLockins";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
-
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+ 
 import { useQueryClient } from "@tanstack/react-query";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
@@ -37,12 +35,11 @@ const SelectedFriendFooter = ({
   lightDarkTheme,
   overlayColor,
   dividerStyle,
-
-  // resetTheme,
-  // themeAheadOfLoading,
+  themeColors,
+ 
 }) => {
   const { friendDash } = useFriendDash();
-  const { selectFriend, selectedFriend } = useSelectedFriend();
+  const { selectFriend, setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
   const friendId = selectedFriend?.id;
 
   const { autoSelectFriend } = useAutoSelector();
@@ -52,13 +49,10 @@ const SelectedFriendFooter = ({
   const { updateCustomLockIn, updateNextUpLockIn } = useUpdateLockins({
     updateSettings,
   });
-  // const { selectFriend } = useSelectedFriend();
-  // const { handleDeselectFriend} = useDeselectFriend({resetTheme, selectFriend});
-  const [aboutModalVisible, setAboutModalVisible] = useState(false);
+ 
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
-  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
-    useFriendStyle();
+ 
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
 
@@ -78,9 +72,8 @@ const SelectedFriendFooter = ({
       updateSettings,
       friendId,
       autoSelectFriend,
-      selectFriend,
-      resetTheme,
-      getThemeAheadOfLoading,
+      setToFriend,
+      deselectFriend,
     });
   }, [
     userId,
@@ -88,9 +81,8 @@ const SelectedFriendFooter = ({
     autoSelectFriend,
     updateSettings,
     friendId,
-    selectFriend,
-    resetTheme,
-    getThemeAheadOfLoading,
+    setToFriend,
+    deselectFriend
   ]);
 
   // const addCheckToDeselect = useCallback(() => {
@@ -172,11 +164,11 @@ const SelectedFriendFooter = ({
         friendId={friendId}
         friendName={friendName}
         primaryColor={primaryColor}
-        themeAheadOfLoading={themeAheadOfLoading} 
+        themeColors={themeColors} 
         onPress={() => handleCenterButtonToggle()}
       />
     ),
-    [themeAheadOfLoading, friendId, friendName]
+    [themeColors, friendId, friendName]
   );
 
   const RenderFidgetButton = useCallback(
@@ -203,8 +195,8 @@ const SelectedFriendFooter = ({
   return (
     <GradientBackground
       useFriendColors={!!friendId} 
-      friendColorDark={themeAheadOfLoading.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeColors.darkColor}
+      friendColorLight={themeColors.lightColor}
       additionalStyles={[
         styles.container,
         {
@@ -238,8 +230,7 @@ const SelectedFriendFooter = ({
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderFriendProfileButton
-              themeAheadOfLoading={themeAheadOfLoading}
+            <RenderFriendProfileButton 
             />
           </View>
         </>
@@ -279,7 +270,7 @@ const SelectedFriendFooter = ({
             lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={friendSettingsModalVisible}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors} 
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}
@@ -296,7 +287,7 @@ const SelectedFriendFooter = ({
             lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={colorsModalVisible}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors} 
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}

@@ -5,7 +5,7 @@ import { useLinkBuilder, useRoute } from "@react-navigation/native";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ContentFindMidpoint from "@/app/components/locations/ContentFindMidpoint";
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+ 
 import manualGradientColors  from "@/app/styles/StaticColors";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -17,15 +17,14 @@ const ScreenMidpointLocationSearch = () => {
   const { user } = useUser(); 
 
   const { selectedFriend } = useSelectedFriend();
-  const { lightDarkTheme } = useLDTheme(); 
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { lightDarkTheme } = useLDTheme();  
 
   // console.log(userAddress);
   // console.log(friendAddress);
   return (
     <SafeViewAndGradientBackground 
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
@@ -51,7 +50,7 @@ const ScreenMidpointLocationSearch = () => {
             <ContentFindMidpoint
             userId={user?.id}
               manualGradientColors={manualGradientColors}
-              themeAheadOfLoading={themeAheadOfLoading}
+  
               subWelcomeTextStyle={AppFontStyles.subWelcomeText}
               lightDarkTheme={lightDarkTheme}
               userAddress={userAddress}

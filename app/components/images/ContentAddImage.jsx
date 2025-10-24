@@ -17,14 +17,14 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 const ContentAddImage = ({
   userId,
   friendId,
-  friendName,
-  cardPaddingVertical,
-  themeAheadOfLoading,
+ 
+  cardPaddingVertical, 
+  themeColors,
   primaryColor,
   darkerOverlayColor,
   imageUri,
   escortBarSpacer,
-  backgroundColor,
+ 
 }) => {
   const { resizeImage } = useImageUploadFunctions();
 
@@ -178,7 +178,7 @@ const ContentAddImage = ({
               }}
             >
               <ImageFocusTray
-                themeAheadOfLoading={themeAheadOfLoading}
+              themeColors={themeColors} 
                 primaryColor={primaryColor}
               />
 

@@ -8,14 +8,12 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
  
 import ReloadList from "@/app/components/helloes/ReloadList";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useRoute } from "@react-navigation/native";
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import { useRoute } from "@react-navigation/native"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenReload = () => {
   const route = useRoute();
   const helloId = route.params?.helloId ?? false;
-  const savedMoments = route.params?.items ?? [];
-  const { themeAheadOfLoading } = useFriendStyle();
+  const savedMoments = route.params?.items ?? []; 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
@@ -25,8 +23,8 @@ const ScreenReload = () => {
 
   return (
     <SafeViewAndGradientBackground 
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}

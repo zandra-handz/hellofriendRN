@@ -16,7 +16,7 @@ import { useLocations } from "@/src/context/LocationsContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import AddressesModal from "@/app/components/headers/AddressesModal"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -29,8 +29,7 @@ interface Props {}
 
 const ScreenLocationSearch: React.FC<Props> = ({}) => {
   // const { currentLocationDetails, currentRegion } = useCurrentLocation();
-  const { user } = useUser(); 
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { user } = useUser();  
   const { navigateToLocationEdit } = useAppNavigations();
   const { lightDarkTheme } = useLDTheme();
   const { currentDay } = useLocationDetailFunctions();
@@ -111,7 +110,12 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
             focusedLocation={focusedLocation}
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
-            themeAheadOfLoading={themeAheadOfLoading}
+                        themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }} 
             currentDay={currentDay}
             selectedDay={selectedDay}
             handleSelectedDay={handleSelectedDay}
@@ -220,8 +224,8 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight={"10%"}
@@ -255,7 +259,12 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
             // selectedDay={selectedDay}
             // handleSelectedDay={handleSelectedDay}
             bermudaCoordsDrilledOnce={bermudaCoords}
-            themeAheadOfLoading={themeAheadOfLoading}
+                        themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}  
             primaryColor={lightDarkTheme.primaryText}
             overlayColor={lightDarkTheme.overlayBackground}
             darkerOverlay={lightDarkTheme.darkerOverlayBackground}

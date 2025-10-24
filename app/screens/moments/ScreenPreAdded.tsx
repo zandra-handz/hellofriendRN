@@ -6,7 +6,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import PreAddedList from "@/app/components/moments/PreAddedList";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useUser } from "@/src/context/UserContext";
@@ -16,8 +16,7 @@ import manualGradientColors  from "@/app/styles/StaticColors";
 const ScreenPreAdded = () => {
   const { selectedFriend } = useSelectedFriend();
   const { user } = useUser();
-  const { lightDarkTheme } = useLDTheme();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { loadingDash } = useFriendDash();
   const { preAdded, allCapsulesList } = useCapsuleList();
 
@@ -30,8 +29,8 @@ const ScreenPreAdded = () => {
     <SafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}

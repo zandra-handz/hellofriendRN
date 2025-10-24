@@ -6,7 +6,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import ImageCarouselSlider from "@/app/components/appwide/ImageCarouselSlider";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
 import ImageViewPage from "@/app/components/images/ImageViewPage";
 import { useUser } from "@/src/context/UserContext";
 // import * as FileSystem from "expo-file-system";
@@ -32,45 +32,43 @@ const ScreenImageView = () => {
     friendId: selectedFriend?.id,
   });
 
-  const { themeAheadOfLoading } = useFriendStyle();
-
   // const totalCount = imageList.length;
-const handleShare = async (currentIndex: number) => {
-  const imageItem = imageList[currentIndex];
-  if (!imageItem?.image) {
-    console.error('Error: Image is null or undefined');
-    return;
-  }
-
-  try {
-    // 1️⃣ Create (or ensure) the shared_images directory
-    const shareDir = new Directory(Paths.cache, 'shared_images');
-    if (!shareDir.exists) shareDir.create();
-
-    // 2️⃣ Create the File object
-    const fileName = `${imageItem.title || 'shared_image'}.jpg`;
-    const file = new File(shareDir, fileName);
-
-    // 3️⃣ Delete existing file if present
-    if (file.exists) {
-      file.delete(); // synchronous deletion
-      console.log('Deleted existing file:', file.uri);
+  const handleShare = async (currentIndex: number) => {
+    const imageItem = imageList[currentIndex];
+    if (!imageItem?.image) {
+      console.error("Error: Image is null or undefined");
+      return;
     }
 
-    // 4️⃣ Download the image to the file
-    const output = await File.downloadFileAsync(imageItem.image, file);
+    try {
+      // 1️⃣ Create (or ensure) the shared_images directory
+      const shareDir = new Directory(Paths.cache, "shared_images");
+      if (!shareDir.exists) shareDir.create();
 
-    if (output.exists) {
-      // 5️⃣ Share it
-      await Sharing.shareAsync(output.uri, { mimeType: 'image/jpeg' });
-      console.log('Shared file URI:', output.uri);
-    } else {
-      console.error('Failed to download file for sharing.');
+      // 2️⃣ Create the File object
+      const fileName = `${imageItem.title || "shared_image"}.jpg`;
+      const file = new File(shareDir, fileName);
+
+      // 3️⃣ Delete existing file if present
+      if (file.exists) {
+        file.delete(); // synchronous deletion
+        console.log("Deleted existing file:", file.uri);
+      }
+
+      // 4️⃣ Download the image to the file
+      const output = await File.downloadFileAsync(imageItem.image, file);
+
+      if (output.exists) {
+        // 5️⃣ Share it
+        await Sharing.shareAsync(output.uri, { mimeType: "image/jpeg" });
+        console.log("Shared file URI:", output.uri);
+      } else {
+        console.error("Failed to download file for sharing.");
+      }
+    } catch (error) {
+      console.error("Error sharing image:", error);
     }
-  } catch (error) {
-    console.error('Error sharing image:', error);
-  }
-};
+  };
 
   const handleDelete = (currentItem) => {
     try {
@@ -83,16 +81,15 @@ const handleShare = async (currentIndex: number) => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-           backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
+      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
-          backgroundOverlayHeight=""
-            includeBackgroundOverlay={true}
-  
-            useSolidOverlay={false}
-      useOverlayFade={false}  
+      backgroundOverlayHeight=""
+      includeBackgroundOverlay={true}
+      useSolidOverlay={false}
+      useOverlayFade={false}
       style={{ flex: 1 }}
     >
       <ImageCarouselSlider
@@ -112,7 +109,7 @@ const handleShare = async (currentIndex: number) => {
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={AppFontStyles.welcomeText}
-        themeAheadOfLoading={themeAheadOfLoading}
+ 
       />
     </SafeViewAndGradientBackground>
   );

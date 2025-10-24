@@ -1,7 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 import React, { useState, useMemo, useEffect } from "react";
-import Demo from "@/app/components/headers/SkiaDemo";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import Demo from "@/app/components/headers/SkiaDemo"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -14,8 +13,7 @@ import Cascader from "@/app/fidgets/Cascader";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
-const ScreenFidget = (props: Props) => {
-  const { themeAheadOfLoading } = useFriendStyle();
+const ScreenFidget = (props: Props) => { 
   const { lightDarkTheme } = useLDTheme();
   const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash();
@@ -75,8 +73,8 @@ const ScreenFidget = (props: Props) => {
     <PreAuthSafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight={120}
@@ -105,10 +103,10 @@ const ScreenFidget = (props: Props) => {
       {(spinnerViewing === 2 || spinnerViewing === 5) && (
         <View style={StyleSheet.absoluteFillObject}>
           <GradientBackgroundFidgetOne
-            secondColorSetDark={themeAheadOfLoading.lightColor}
-            secondColorSetLight={themeAheadOfLoading.darkColor}
+            secondColorSetDark={selectedFriend.lightColor}
+            secondColorSetLight={selectedFriend.darkColor}
             firstColorSetDark={manualGradientColors.lightColor}
-            firstColorSetLight={themeAheadOfLoading.darkColor}
+            firstColorSetLight={selectedFriend.darkColor}
             // firstColorSetDark={manualGradientColors.lightColor}
             // firstColorSetLight={manualGradientColors.darkColor}
             timeScore={TIME_SCORE}

@@ -15,10 +15,8 @@ import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
 // import HelloQuickView from "../alerts/HelloQuickView";
 
 const CalendarLights = ({
-  helloesList,
-  friendId,
-  primaryColor,
-  themeAheadOfLoading,
+ 
+  themeColors,
   onMonthPress,
   combinedData,
   daySquareBorderColor = "white",
@@ -30,7 +28,7 @@ const CalendarLights = ({
   const backgroundColor = "transparent"; // use this to give just the calendar tray a background color. borderRadius already set
   const opacityMinusAnimation = 1;
   const flatListRef = useRef(null);
-  const animationColor = themeAheadOfLoading.lightColor;
+  const animationColor = themeColors.lightColor;
 
   useEffect(() => {
     if (flatListRef.current) {

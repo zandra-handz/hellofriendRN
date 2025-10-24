@@ -43,16 +43,16 @@ export function LeafInstance({
 
   // delay between leaves
   // useDerivedValue is too slow
-  useEffect(() => {
-    scale.value = withDelay(
-      index * 120,
-      withTiming((index + 1) * 0.5, {
-        duration: 500,
-        easing: Easing.out(Easing.exp),
-      })
-    );
-  }, []);
-
+useEffect(() => {
+  scale.value = 0; // reset before animation
+  scale.value = withDelay(
+    index * 120,
+    withTiming((index + 1) * 0.5, {
+      duration: 500,
+      easing: Easing.out(Easing.exp),
+    })
+  );
+}, [x, y, size, color]);
 
   
 

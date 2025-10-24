@@ -13,20 +13,13 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-// import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
-// import { useCapsuleList } from "@/src/context/CapsuleListContext";
- 
 import SvgIcon from "@/app/styles/SvgIcons";
-// import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-// import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import SuggestedHello from "./SuggestedHello";
-import { useFriendDash } from "@/src/context/FriendDashContext";
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -36,32 +29,25 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   userId,
 
   paddingHorizontal,
-  selectedFriendIdValue,
   primaryColor,
-  primaryBackgroundColor,
   primaryOverlayColor,
   // darkerOverlayBackgroundColor,
 
-  // loadingDash,
-  // friendDash,
   selectedFriendId,
   selectedFriendName,
-    skiaFontLarge,
+  skiaFontLarge,
   skiaFontSmall,
+  themeColors,
 }) => {
-  const { loadingDash  } = useFriendDash();
-
   console.log("selected friend home rerendered");
-  const headerRef = useRef(null); 
+  const headerRef = useRef(null);
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
- 
 
-  const loading = loadingDash;
- 
+  const MESSAGE_HEADER_HEIGHT = 240;
 
   const handleScroll = (event) => {
     if (!headerRef.current) return;
@@ -85,31 +71,25 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     };
   });
 
-
-  const SELECTED_FRIEND_CARD_HEIGHT = 120; 
-  const SELECTED_FRIEND_CARD_PADDING = 20;
- 
   const ELEMENTS_BACKGROUND = "transparent";
 
   return (
     <View
       style={[
         styles.container,
-        { 
-
-          paddingHorizontal: paddingHorizontal, 
+        {
+          paddingHorizontal: paddingHorizontal,
         },
       ]}
     >
       <SvgIcon
         name={"leaf"}
         size={1200}
-        color={"#8bc34a"} 
-
+        color={"#8bc34a"}
         style={{
           position: "absolute",
           top: -740,
-          left: -470, 
+          left: -470,
           opacity: 0.8,
           transform: [{ rotate: "200deg" }, { scaleX: -1 }],
         }}
@@ -139,8 +119,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   width: "100%",
                   top: 0,
                   height: "auto",
+
                   padding: 6,
+
                   backgroundColor: primaryOverlayColor,
+
                   zIndex: 5000,
                   elevation: 5000,
                 },
@@ -161,13 +144,17 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 alignItems: "center",
               }}
             >
-              <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
+              <View
+                style={{ flex: 1, height: MESSAGE_HEADER_HEIGHT, // EYEBALL
+                   width: "100%" }}
+                ref={headerRef}
+              >
                 <FriendHeaderMessageUI
+                height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
                   userId={userId}
                   friendId={selectedFriendId}
                   cardBackgroundColor={CARD_BACKGROUND}
                   selectedFriendName={`${selectedFriendName}`}
-                  loadingNewFriend={loadingDash}
                   primaryColor={primaryColor}
                   welcomeTextStyle={welcomeTextStyle}
                   backgroundColor={primaryOverlayColor}
@@ -180,47 +167,21 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   flexDirection: "column",
                   flex: 1,
                   width: "100%",
+                 // backgroundColor: "orange",
                 }}
               >
-                {/* {loadingDash && (
-                  <>
-                    <View style={styles.loadingWrapper}>
-                      <LoadingPage loading={true} spinnerType={spinnerStyle} />
-                    </View>
-                  </>
-                )} */}
- 
-                <SuggestedHello
-                  isLoading={loading}
-                  friendId={selectedFriendId}
-                  primaryOverlayColor={CARD_BACKGROUND}
-                  primaryColor={primaryColor}
-                  primaryBackground={primaryBackgroundColor}
-                  welcomeTextStyle={welcomeTextStyle}
-                  subWelcomeTextStyle={subWelcomeTextStyle}
-                  // friendFutureDate={
-                  //   friendDash?.future_date_in_words || "No date available"
-                  // }
-                  padding={SELECTED_FRIEND_CARD_PADDING}
-                  height={SELECTED_FRIEND_CARD_HEIGHT}
-    
-                />
-
                 <View style={{ width: "100%", marginVertical: 3 }}>
-                  {!loadingDash && (
-                    <TalkingPointsChart
-
-                      skiaFontLarge={skiaFontLarge}
-  skiaFontSmall={skiaFontSmall}
-                      selectedFriendIdValue={selectedFriendIdValue}
-            
-                    />
-                  )}
+                  {/* {!loadingDash && ( */}
+                  <TalkingPointsChart
+                    themeColors={themeColors}
+                    skiaFontLarge={skiaFontLarge}
+                    skiaFontSmall={skiaFontSmall}
+                  />
+                  {/* )} */}
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Pics
-                    isLoading={loading}
                     primaryColor={primaryColor}
                     primaryOverlayColor={ELEMENTS_BACKGROUND}
                     userId={userId}
@@ -230,7 +191,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Helloes
-                    isLoading={loading}
                     primaryColor={primaryColor}
                     primaryOverlayColor={ELEMENTS_BACKGROUND}
                     friendId={selectedFriendId}
@@ -252,7 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     padding: 0,
-    minHeight: 190,
+    // minHeight: 190,
     height: "100%",
     alignContent: "center",
 
@@ -263,7 +223,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     flex: 1,
-    flexGrow: 1,
+    // flexGrow: 1,
     height: "100%",
     overflow: "hidden",
     borderWidth: 0,

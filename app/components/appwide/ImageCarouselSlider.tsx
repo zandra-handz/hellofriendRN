@@ -9,9 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import ItemFooter from "../headers/ItemFooter";
-
-import CarouselItemModal from "./carouselItemModal";
-
+ 
 type Props = {
   initialIndex: number;
   data: object[];
@@ -25,8 +23,7 @@ const ImageCarouselSlider = ({
   children: Children,
   onRightPress,
   onRightPressSecondAction,
-  stickToLocation,
-  setStickToLocation,
+ 
 
   // footerData,
   primaryColor,

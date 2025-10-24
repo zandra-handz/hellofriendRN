@@ -40,8 +40,8 @@ const CarouselSliderInfinite = ({
   primaryBackground,
   overlayColor, 
   dividerStyle,
-  welcomeTextStyle,
-  themeAheadOfLoading,
+  welcomeTextStyle, 
+ 
   manualGradientColors,
 }: Props) => {
   const { height, width } = useWindowDimensions();
@@ -214,7 +214,7 @@ const CarouselSliderInfinite = ({
           overlayColor={overlayColor}
           dividerStyle={dividerStyle}
           welcomeTextStyle={welcomeTextStyle}
-          themeAheadOfLoading={themeAheadOfLoading}
+      
         />
 
         {/* )} */}

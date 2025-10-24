@@ -12,16 +12,16 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-  
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+  import SvgIcon from "@/app/styles/SvgIcons"; 
 
 // Forwarding ref to the parent to expose the TextInput value
 const FlatListChangeChoice = forwardRef(
   (
     { 
       primaryColor,
-      backgroundColor,
-      themeAheadOfLoading,
+      backgroundColor, 
+  
+      darkColor,
       title = "title",
       horizontal = true,
       choicesArray,
@@ -82,7 +82,7 @@ const FlatListChangeChoice = forwardRef(
           <Text style={[styles.title, {color: primaryColor}]}>
             {title}
           </Text> 
-          <MaterialCommunityIcons
+          <SvgIcon
           name={'pen'}
           size={30}
           color={'red'}/>
@@ -108,7 +108,7 @@ const FlatListChangeChoice = forwardRef(
                       backgroundColor: backgroundColor,
                       borderColor:
                         item.value === newChoice
-                          ? themeAheadOfLoading.darkColor
+                          ? darkColor
                           : backgroundColor
                     },
                   ]}

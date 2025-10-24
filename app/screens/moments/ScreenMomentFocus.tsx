@@ -9,7 +9,7 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useCategories } from "@/src/context/CategoriesContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
  
 
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
@@ -36,8 +36,7 @@ const ScreenMomentFocus = () => {
   const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash();
   const { capsuleList } = useCapsuleList();
-  const { userCategories } = useCategories();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { userCategories } = useCategories(); 
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
@@ -89,32 +88,32 @@ const ScreenMomentFocus = () => {
   //     setCategoryColorsMap(
   //       generateGradientColorsMap(
   //         userCategories,
-  //         themeAheadOfLoading.lightColor,
-  //         themeAheadOfLoading.darkColor
+  //         selectedFriend.lightColor,
+  //         selectedFriend.darkColor
   //       )
   //     );
   //   }
-  // }, [userCategories, themeAheadOfLoading]);
+  // }, [userCategories, selectedFriend]);
 
   const categoryColorsMap = useMemo(() => {
     if (
       userCategories?.length &&
-      themeAheadOfLoading?.lightColor &&
-      themeAheadOfLoading?.darkColor
+      selectedFriend?.lightColor &&
+      selectedFriend?.darkColor
     ) {
       return generateGradientColorsMap(
         userCategories,
-        themeAheadOfLoading.lightColor,
-        themeAheadOfLoading.darkColor
+        selectedFriend.lightColor,
+        selectedFriend.darkColor
       );
     }
     return null;
-  }, [userCategories, themeAheadOfLoading]);
+  }, [userCategories, selectedFriend]);
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       addColorChangeDelay={true}
@@ -171,7 +170,12 @@ const ScreenMomentFocus = () => {
             primaryBackground={lightDarkTheme.primaryBackground}
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
-            themeAheadOfLoading={themeAheadOfLoading}
+                        themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}  
             friendFaves={friendDash?.friend_faves}
             screenCameFromToParent={screenCameFrom}
             triggerSaveFromLateral={triggerSaveFromLateral}

@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import { useNavigation } from "@react-navigation/native";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
@@ -27,8 +27,7 @@ import manualGradientColors  from "@/app/styles/StaticColors";
 // import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 
-const ScreenRecoverCredentials = () => {
-  const { themeAheadOfLoading } = useFriendStyle();
+const ScreenRecoverCredentials = () => { 
   const { lightDarkTheme } = useLDTheme();
   const { navigateToAuth } = useAppNavigations();
   const [username, setUsername] = useState("");

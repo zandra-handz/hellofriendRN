@@ -1,14 +1,13 @@
 import { View, Pressable, StyleSheet, Dimensions } from "react-native";
-import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useRef, useMemo, useCallback } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import manualGradientColors from "@/app/styles/StaticColors";
-// import { useFriendList } from "@/src/context/FriendListContext";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useRoute } from "@react-navigation/native";
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
@@ -35,7 +34,7 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 import { LinearGradient } from "expo-linear-gradient";
- 
+
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 const ScreenSelectFriend = (
@@ -61,9 +60,8 @@ const ScreenSelectFriend = (
 
   const { user } = useUser();
 
-  const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =
-    useFriendStyle();
-  const { selectedFriend, selectFriend } = useSelectedFriend();
+  const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
+    useSelectedFriend();
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
 
   const toggleLockOnFriend = (id) => {
@@ -80,9 +78,8 @@ const ScreenSelectFriend = (
       updateSettings: updateSettings,
       friendId: selectedFriend?.id,
       autoSelectFriend: autoSelectFriend,
-      selectFriend: selectFriend,
-      resetTheme: resetTheme,
-      getThemeAheadOfLoading: getThemeAheadOfLoading,
+      setToFriend: setToFriend,
+      deselectFriend: deselectFriend,
     });
   }, [
     user?.id,
@@ -91,30 +88,18 @@ const ScreenSelectFriend = (
     updateSettings,
     selectedFriend?.id,
     selectFriend,
-    resetTheme,
-    getThemeAheadOfLoading,
   ]);
 
   const locale = "en-US";
   const { navigateBack, navigateToHome } = useAppNavigations();
- 
-  const handleNavAfterSelect = useCallback(() => { 
+
+  const handleNavAfterSelect = useCallback(() => {
     if (!useNavigateBack) {
- 
       navigateToHome();
-    } else { 
+    } else {
       navigateBack();
     }
   }, [useNavigateBack]);
-
-  
-  // const handleNavAfterSelect = () => {
-  //   if (!useNavigateBack) {
-  //     navigateToHome();
-  //   } else {
-  //     navigateBack();
-  //   }
-  // }
 
   // usememo is not actually doing anything since dependency is a list...
   const alphabFriendList: object[] = useMemo(() => {
@@ -170,10 +155,8 @@ const ScreenSelectFriend = (
 
   const { handleSelectFriend } = useSelectFriend({
     friendList,
-    resetTheme,
-    getThemeAheadOfLoading,
-    selectFriend,
-   // navigateOnSelect: handleNavAfterSelect,
+    setToFriend,
+    // navigateOnSelect: handleNavAfterSelect,
     //   navigateOnSelect: undefined,
   });
 
@@ -259,7 +242,12 @@ const ScreenSelectFriend = (
                 screenDiagonal={screenDiagonal}
                 autoSelectFriend={autoSelectFriend}
                 handleDeselect={handleDeselect}
-                themeAheadOfLoading={themeAheadOfLoading}
+                themeColors={{
+                  lightColor: selectedFriend.lightColor,
+                  darkColor: selectedFriend.darkColor,
+                  fontColor: selectedFriend.fontColor,
+                  fontColorSecondary: selectedFriend.fontColorSecondary,
+                }}
                 friendList={friendList}
                 lightDarkTheme={lightDarkTheme}
                 data={alphabFriendList}

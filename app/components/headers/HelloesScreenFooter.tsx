@@ -23,7 +23,7 @@ const HelloesScreenFooter = ({
   onFilterPress,
   addToModalOpenPress,
   onSearchPress,
-  themeAheadOfLoading, 
+  themeColors,
 }) => { 
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -94,8 +94,8 @@ const HelloesScreenFooter = ({
       useFriendColors={!!friendId}
       // startColor={manualGradientColors.lightColor}
       // endColor={manualGradientColors.darkColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeColors.darkColor}
+      friendColorLight={themeColors.lightColor}
       additionalStyles={[
         styles.container,
         {

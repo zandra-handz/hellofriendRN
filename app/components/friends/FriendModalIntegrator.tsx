@@ -24,6 +24,7 @@ interface FriendModalIntegratorProps {
 }
 
 
+// this is JUST in the welcome message
 
 const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   
@@ -36,8 +37,8 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   iconSize = 22,
   width = "auto",
   // friendId, // trying to just use name, but this is available if needed
-  friendName,
-  themeAheadOfLoading,
+  friendName, 
+  themeColors,
   primaryColor='orange',
 }) => {
   // console.log("FRIEND SELECTOR RERENDERED");
@@ -57,6 +58,10 @@ const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSele
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const DOUBLE_PRESS_DELAY = 300;
+  
+
+  const fontColorSecondary = themeColors.fontColorSecondary;
+  const darkColor = themeColors.darkColor;
 
 
   const handlePress = () => {
@@ -84,7 +89,7 @@ const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSele
           {
             color:
               friendName && !useGenericTextColor
-                ? themeAheadOfLoading.fontColorSecondary
+                ? fontColorSecondary
                 : primaryColor,
 
             zIndex: 2,
@@ -100,7 +105,7 @@ const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSele
     [ 
       defaultLabelStyle,
       friendName,
-      themeAheadOfLoading,
+      fontColorSecondary,
       primaryColor,
     ]
   );
@@ -114,12 +119,12 @@ const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSele
           loadingDash
             ? "transparent"
             : friendName && !useGenericTextColor
-              ? color || themeAheadOfLoading.fontColorSecondary
+              ? color || fontColorSecondary
               : primaryColor
         }
       />
     ),
-    [loadingDash, friendName, themeAheadOfLoading, primaryColor]
+    [loadingDash, friendName, fontColorSecondary, primaryColor]
   );
 
   return (
@@ -152,7 +157,7 @@ const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSele
                 loading={true}
                 spinnerType="flow"
                 spinnerSize={30}
-                color={themeAheadOfLoading.darkColor}
+                color={darkColor}
                 includeLabel={false}
               />
             </View>

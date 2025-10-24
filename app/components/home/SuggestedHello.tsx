@@ -14,8 +14,7 @@ type Props = {
   borderRadius: number;
 };
 
-const SuggestedHello = ({
-  isLoading, // ( = loadingDash )
+const SuggestedHello = ({ 
   friendId,
   primaryColor,
   primaryOverlayColor,
@@ -26,7 +25,7 @@ const SuggestedHello = ({
   height,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
-const { friendDash } = useFriendDash();
+const { friendDash, loadingDash } = useFriendDash();
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
@@ -91,12 +90,12 @@ const { friendDash } = useFriendDash();
     <>
       <View
         style={[styles.container, { 
-          maxHeight: height + 40,
+          height: height - 10,
           padding: padding,
-          backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
+          backgroundColor: primaryOverlayColor,
         }]}
       >
-        {!isLoading && (
+        {!loadingDash && (
           <View style={{ flexDirection: "row" }}>
             <View style={styles.textContainer}>{renderSuggestedHello}</View>
             <View

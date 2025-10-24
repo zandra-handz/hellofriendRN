@@ -1,15 +1,11 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Friendlite } from "../types/FriendTypes";
-import { useFriendStyle } from "../context/FriendStyleContext";
+import { Friendlite } from "../types/FriendTypes"; 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 type Props = {
   // lockInNext: boolean;
   // lockInCustomString: string;
-  friendList: Friendlite[];
-  resetTheme: () => void;
-  getThemeAheadOfLoading: () => void;
-  selectFriend: () => void;
+  friendList: Friendlite[]; 
   navigateOnSuccess?: () => void;
   actionOnFail?: () => void;
 };
@@ -20,8 +16,8 @@ const useSelectFriend = ({
 
   navigateOnSelect,
 }: Props) => {
-  const { selectFriend } = useSelectedFriend();
-  const { getThemeAheadOfLoading } = useFriendStyle();
+  const {  setToFriend } = useSelectedFriend();
+ 
 
   const handleSelectFriend = (friendId) => {
  
@@ -40,8 +36,7 @@ const useSelectFriend = ({
    
         navigateOnSelect();
       }
-      selectFriend(selectedFriend);
-      getThemeAheadOfLoading(selectedFriend);
+      setToFriend({friend: selectedFriend, preConditionsMet: true}); 
     }
   };
 

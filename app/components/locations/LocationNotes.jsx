@@ -13,7 +13,7 @@ const LocationNotes = ({
   location,
   iconSize = 26, 
   openEditModal, 
-  themeAheadOfLoading,
+  lightColor,
   primaryColor,
   compact=false,
   noLabel=false,
@@ -53,7 +53,7 @@ const LocationNotes = ({
     [
       hasNotes,
       iconSize,
-      themeAheadOfLoading.lightColor,
+      lightColor,
       primaryColor,
     ]
   );

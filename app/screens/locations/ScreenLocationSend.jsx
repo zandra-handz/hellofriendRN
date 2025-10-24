@@ -3,12 +3,11 @@ import { Linking, Text, View, Alert } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
-import Dialog from "react-native-dialog";
+ 
 import { useUser } from "@/src/context/UserContext";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useFriendDash } from "@/src/context/FriendDashContext"; 
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
@@ -33,8 +32,7 @@ const ScreenLocationSend = () => {
   const { friendDash } = useFriendDash();
   //weekdayTextData is coming from LocationHoursOfOperation component
   const { lightDarkTheme } = useLDTheme();
-
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
 
   const [messageData, setMessageData] = useState({
@@ -205,8 +203,8 @@ const ScreenLocationSend = () => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
@@ -231,7 +229,12 @@ const ScreenLocationSend = () => {
         handleGetDirections={handleGetDirections}
         handleSendText={handleSendText}
         initiallySelectedDay={selectedDay}
-        themeAheadOfLoading={themeAheadOfLoading}
+                    themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}  
         welcomeTextStyle={AppFontStyles.welcomeText}
         subWelcomeTextStyle={AppFontStyles.subWelcomeText}
         primaryColor={lightDarkTheme.primaryText}

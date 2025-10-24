@@ -5,15 +5,14 @@ import {
   FlatList,
   ListRenderItemInfo,
 } from "react-native";
-import Animated, { SlideOutRight, SlideInDown } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
 import { Vibration } from "react-native";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import { Friend } from "@/src/types/FriendTypes";
-// import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import { Friend } from "@/src/types/FriendTypes"; 
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 
@@ -33,7 +32,7 @@ const FriendListUI = ({
   screenDiagonal,
   handleDeselect,
   autoSelectFriend,
-  themeAheadOfLoading,
+  themeColors,
   friendColors,
   friendList,
   setGradientColors,
@@ -141,7 +140,7 @@ const FriendListUI = ({
               themeTextColor={itemColor}
               backgroundOverlayColor={elementBackgroundColor}
               friendId={friendId}
-              themeAheadOfLoading={themeAheadOfLoading}
+              themeColors={themeColors}
               borderRadius={ITEM_BORDER_RADIUS}
               backgroundColor={CARD_BACKGROUND}
               color={itemColor}
@@ -163,7 +162,7 @@ const FriendListUI = ({
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
-               fontColor={themeAheadOfLoading.fontColor}
+               fontColor={themeColors.fontColor}
             />
           </GlobalPressable>
         )}

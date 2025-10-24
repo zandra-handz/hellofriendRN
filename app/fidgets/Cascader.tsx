@@ -1,17 +1,15 @@
 import { View } from "react-native";
 import React from "react"; 
 import GradientBackground from "../components/appwide/display/GradientBackground";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
   
 import LoadingBlock from "../components/appwide/spinner/LoadingBlock";
 type Props = {};
 
-const Cascader = ({ isInitializing }: Props) => {
+const Cascader = () => {
  
-
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
 
   const { selectedFriend } = useSelectedFriend();
   const marginH = 6;
@@ -35,8 +33,8 @@ const Cascader = ({ isInitializing }: Props) => {
    
           <GradientBackground
             useFriendColors={!!selectedFriend?.id} 
-            friendColorDark={themeAheadOfLoading.darkColor}
-            friendColorLight={themeAheadOfLoading.lightColor}
+            friendColorDark={selectedFriend.darkColor}
+            friendColorLight={selectedFriend.lightColor}
           >
             <View
               style={{

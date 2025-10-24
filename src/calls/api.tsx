@@ -494,6 +494,60 @@ export const fetchFriendList = async () => {
   }
 };
 
+
+export const fetchMomentsAPI = async (friendId: number) => {
+  console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  try {
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/thoughtcapsules/`
+    );
+    //  console.log(response.data);
+    if (response && response.data) {
+      const capsules = response.data.map((capsule: MomentFromBackendType) => ({
+        id: capsule.id,
+        friend: capsule.friend,
+        typedCategory: capsule.typed_category || "Uncategorized",
+        capsule: capsule.capsule,
+        created: capsule.created_on,
+        preAdded: capsule.pre_added_to_hello,
+        user_category: capsule.user_category,
+        user_category_name: capsule.user_category_name || "No category",
+      }));
+      return capsules;
+    } else {
+      // console.log("fetchThoughtCapsules: no capsules added yet");
+      return []; // Return an empty array if no capsules
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchMomentsAPI");
+  }
+};
+
+export const fetchCompletedMomentsAPI = async (friendId: number) => {
+  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  try {
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/thoughtcapsules/completed/`
+    );
+    //  console.log(`COMPLETED MOMENTS!!!!!~~~~~~~~~~~~~~~~~`, response.data);
+    if (response && response.data) {
+      const capsules = response.data.map((capsule: MomentFromBackendType) => ({
+        id: capsule.id,
+        created: capsule.created_on,
+        preAdded: capsule.pre_added_to_hello,
+        user_category: capsule.user_category,
+        user_category_name: capsule.user_category_name || "No category",
+      }));
+      return capsules;
+    } else {
+      // console.log("fetchThoughtCapsules: no capsules added yet");
+      return []; // Return an empty array if no capsules
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchCompleteMomentsAPI");
+  }
+};
+
 export const fetchFriendAddresses = async (friendId: number) => {
   try {
     console.log("fetching friend addresses");
@@ -1010,58 +1064,6 @@ export const fetchUpcomingHelloesAndFriends = async () => {
   }
 };
 
-export const fetchMomentsAPI = async (friendId: number) => {
-  console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
-  try {
-    const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/thoughtcapsules/`
-    );
-    //  console.log(response.data);
-    if (response && response.data) {
-      const capsules = response.data.map((capsule: MomentFromBackendType) => ({
-        id: capsule.id,
-        friend: capsule.friend,
-        typedCategory: capsule.typed_category || "Uncategorized",
-        capsule: capsule.capsule,
-        created: capsule.created_on,
-        preAdded: capsule.pre_added_to_hello,
-        user_category: capsule.user_category,
-        user_category_name: capsule.user_category_name || "No category",
-      }));
-      return capsules;
-    } else {
-      // console.log("fetchThoughtCapsules: no capsules added yet");
-      return []; // Return an empty array if no capsules
-    }
-  } catch (e: unknown) {
-    handleApiError(e, "Error during fetchMomentsAPI");
-  }
-};
-
-export const fetchCompletedMomentsAPI = async (friendId: number) => {
-  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
-  try {
-    const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/thoughtcapsules/completed/`
-    );
-    //  console.log(`COMPLETED MOMENTS!!!!!~~~~~~~~~~~~~~~~~`, response.data);
-    if (response && response.data) {
-      const capsules = response.data.map((capsule: MomentFromBackendType) => ({
-        id: capsule.id,
-        created: capsule.created_on,
-        preAdded: capsule.pre_added_to_hello,
-        user_category: capsule.user_category,
-        user_category_name: capsule.user_category_name || "No category",
-      }));
-      return capsules;
-    } else {
-      // console.log("fetchThoughtCapsules: no capsules added yet");
-      return []; // Return an empty array if no capsules
-    }
-  } catch (e: unknown) {
-    handleApiError(e, "Error during fetchCompleteMomentsAPI");
-  }
-};
 
 export const fetchCategoriesFriendHistoryAPI = async (
   friendId: number,

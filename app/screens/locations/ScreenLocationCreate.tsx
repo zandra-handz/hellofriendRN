@@ -6,16 +6,14 @@ import useCreateLocation from "@/src/hooks/LocationCalls/useCreateLocation";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import ContentAddLocation from "@/app/components/locations/ContentAddLocation";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenLocationCreate = () => {
   const route = useRoute();
   const location = route.params?.location ?? null;
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
-  const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { selectedFriend } = useSelectedFriend(); 
 
   const fontStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.primaryText;
@@ -35,8 +33,8 @@ const ScreenLocationCreate = () => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={themeColors.lightColor}
+      friendColorDark={themeColors.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
@@ -56,7 +54,12 @@ const ScreenLocationCreate = () => {
         
         primaryColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.primaryBackground}
-        themeAheadOfLoading={themeAheadOfLoading}
+                    themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}  
         title={location.title}
         address={location.address}
       />

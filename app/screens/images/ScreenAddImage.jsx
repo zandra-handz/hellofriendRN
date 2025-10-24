@@ -4,7 +4,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useUser } from "@/src/context/UserContext";
 import TopBarLikeMinusWidth from "../moments/TopBarLikeMinusWidth";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import ContentAddImage from "@/app/components/images/ContentAddImage";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -24,8 +24,7 @@ const ScreenAddImage = () => {
     friendId: selectedFriend?.id,
   });
 
-  const { lightDarkTheme } = useLDTheme();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { lightDarkTheme } = useLDTheme(); 
 
   
   const handleSave = async (imageUri, imageTitle, imageCategory) => {
@@ -73,8 +72,8 @@ const ScreenAddImage = () => {
     <SafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       addColorChangeDelay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
@@ -115,7 +114,12 @@ const ScreenAddImage = () => {
           friendName={selectedFriend?.name}
           primaryColor={lightDarkTheme.primaryText}
           darkerOverlayColor={lightDarkTheme.darkerOverlayColor}
-          themeAheadOfLoading={themeAheadOfLoading}
+                      themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}  
           imageUri={imageUri}
           escortBarSpacer={SPACER_BETWEEN_BAR_AND_CARD + CARD_PADDING}
           backgroundColor={lightDarkTheme.primaryBackground}

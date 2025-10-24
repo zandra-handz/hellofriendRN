@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import LocationTravelTimes from "./LocationTravelTimes";
-import LocationUtilityTray from "./LocationUtilityTray";
 
 import LocationSavingActions from "./LocationSavingActions";
 import LocationParking from "./LocationParking";
@@ -30,7 +29,7 @@ const InfoItemLocation = ({
   destinationLocation,
   userLocation,
   friendLocation,
-  themeAheadOfLoading,
+  themeColors,
   onLocationDetailsPress,
   onCloseLocationDetails,
   children,
@@ -108,7 +107,7 @@ const InfoItemLocation = ({
             location={destinationLocation}
             userAddress={userLocation}
             friendAddress={friendLocation}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors}
             primaryColor={primaryColor}
           />
         </View>
@@ -141,7 +140,7 @@ const InfoItemLocation = ({
                 location={destinationLocation}
                 iconSize={ICON_SIZE}
                 fadeOpacity={fadeOpacity}
-                themeAheadOfLoading={themeAheadOfLoading}
+                darkColor={themeColors.darkColor}
                 primaryColor={primaryColor}
                 compact={true}
                 noLabel={true}
@@ -163,7 +162,7 @@ const InfoItemLocation = ({
                 closeEditModal={onCloseLocationDetails}
                 iconSize={ICON_SIZE}
                 fadeOpacity={fadeOpacity}
-                themeAheadOfLoading={themeAheadOfLoading}
+                lightColor={themeColors.lightColor}
                 primaryColor={primaryColor}
                 compact={true}
                 noLabel={true}
@@ -171,20 +170,6 @@ const InfoItemLocation = ({
             </View>
           )}
         </View>
-
-        {/* <LocationUtilityTray
-          themeAheadOfLoading={themeAheadOfLoading}
-          primaryColor={primaryColor}
-          onAddPress={onAddPress}
-          onRemovePress={onRemovePress}
-          iconSize={ICON_SIZE}
-          userId={userId}
-          friendId={friendId}
-          friendName={friendName}
-          location={destinationLocation}
-          openEditModal={onLocationDetailsPress}
-          closeEditModal={onCloseLocationDetails}
-        /> */}
       </View>
 
       {children}

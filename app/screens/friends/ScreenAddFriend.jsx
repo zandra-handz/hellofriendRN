@@ -6,13 +6,12 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors  from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 const ScreenAddFriend = () => {
-  const { lightDarkTheme } = useLDTheme();
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { lightDarkTheme } = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
  
 
@@ -23,8 +22,8 @@ const ScreenAddFriend = () => {
     <SafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}

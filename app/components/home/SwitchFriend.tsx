@@ -1,8 +1,7 @@
 import { View, Text } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react";  
+import SvgIcon from "@/app/styles/SvgIcons";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -20,7 +19,7 @@ type Props = {
 const SwitchFriend = ({
  
   
-  primaryColor,
+  primaryColor = 'orange',
   fontSize = 13,
   editMode = false,
   iconSize = 20,
@@ -28,10 +27,9 @@ const SwitchFriend = ({
   zIndex = 3,
 }: Props) => {
   const { selectedFriend } = useSelectedFriend();
-  const navigation = useNavigation();
+ 
 
   const { navigateToSelectFriend} = useAppNavigations();
-  // const friendModalButtonHeight = 16;
 
   const handleNavigateToFriendSelect = () => {
     if (editMode) {
@@ -39,73 +37,8 @@ const SwitchFriend = ({
     } else {
       return;
     }
-  };
+  }; 
 
-  // const RenderIcon = useCallback(
-  //   () => (
-  //     <GlobalPressable
-  //       zIndex={zIndex}
-  //       style={{
-  //         paddingHorizontal: 0,
-  //         maxWidth: editMode ? maxWidth : maxWidth,
-  //       }}
-  //       onPress={handleNavigateToFriendSelect}
-  //       // style={{ flexDirection: "row" }}
-  //     >
-  //       <View style={{ flexDirection: "row", alignItems: "end" }}>
-  //         {editMode && (
-  //           <View
-  //             style={{
-  //               flexDirection: "column",
-  //               marginRight: 4,
-  //               paddingBottom: 6, // EYEBALL, same as selectedcategorybutton
-  //               justifyContent: "flex-end",
-  //             }}
-  //           >
-  //             <MaterialCommunityIcons
-  //               name={"pencil-outline"}
-  //               size={iconSize}
-  //               style={{ height: iconSize }}
-  //               color={themeStyles.primaryText.color}
-  //             />
-  //           </View>
-  //         )}
-
-  //         <Text
-  //           style={[
-  //             themeStyles.primaryText,
-  //             appFontStyles.subWelcomeText,
-  //             { fontSize: fontSize },
-  //           ]}
-  //         >
-  //           {selectedFriend ? selectedFriend.name : `Pick friend`}
-  //         </Text>
-
-  //         <View
-  //           style={{
-  //             flexDirection: "row",
-  //             marginRight: 4,
-  //             paddingBottom: 6, // EYEBALL
-  //             justifyContent: "flex-end",
-  //           }}
-  //         >
-  //           <MaterialCommunityIcons
-  //             name="account-switch-outline"
-  //             size={18}
-  //             color={themeStyles.primaryText.color}
-  //             style={{ marginLeft: 8 }}
-  //           />
-  //         </View>
-  //       </View>
-  //       {editMode && (
-  //         <View
-  //           style={{ height: 2, backgroundColor: "red", width: "100%" }}
-  //         ></View>
-  //       )}
-  //     </GlobalPressable>
-  //   ),
-  //   [appFontStyles, handleNavigateToFriendSelect, selectedFriend, themeStyles]
-  // );
   return (
     <>
       <GlobalPressable
@@ -127,8 +60,8 @@ const SwitchFriend = ({
                 justifyContent: "flex-end",
               }}
             >
-              <MaterialCommunityIcons
-                name={"pencil-outline"}
+              <SvgIcon
+                name={"pencil_outline"}
                 size={iconSize}
                 style={{ height: iconSize }}
                 color={primaryColor}
@@ -151,22 +84,7 @@ const SwitchFriend = ({
           >
             {selectedFriend ? selectedFriend.name : `Pick friend`}
           </Text>
-
-          {/* <View
-            style={{
-              flexDirection: "row",
-              marginRight: 4,
-              paddingBottom: 6, // EYEBALL
-              justifyContent: "flex-end",
-            }}
-          >
-            <MaterialCommunityIcons
-              name="account-switch-outline"
-              size={18}
-              color={themeStyles.primaryText.color}
-              style={{ marginLeft: 8 }}
-            />
-          </View> */}
+ 
         </View>
         {editMode && (
           <View

@@ -10,10 +10,9 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesList from "@/app/components/helloes/HelloesList";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
-import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes"; 
+import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
@@ -22,14 +21,10 @@ const ScreenHelloes = () => {
   const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
- 
- 
+
   const { flattenHelloes } = useHelloesManips({ helloesData: helloesListFull });
- 
 
   const [helloesData, setHelloesData] = useState(helloesListFull || []);
-
- 
 
   const [flattenHelloesData, setFlattenHelloesData] = useState(
     flattenHelloes || []
@@ -38,7 +33,6 @@ const ScreenHelloes = () => {
   const [triggerScroll, setTriggerScroll] = useState(undefined);
   const [inPersonFilter, setInPersonFilter] = useState(false);
 
-  const { themeAheadOfLoading } = useFriendStyle();
   const toggleHelloesFiltering = (turnOn) => {
     if (turnOn) {
       setHelloesData(
@@ -99,13 +93,17 @@ const ScreenHelloes = () => {
         onFilterPress={toggleHelloesFiltering}
         addToModalOpenPress={handleOpenSearch}
         onSearchPress={handleSearchPress}
-        themeAheadOfLoading={themeAheadOfLoading}
+        themeColors={{
+          lightColor: selectedFriend.lightColor,
+          darkColor: selectedFriend.darkColor,
+          fontColorSecondary: selectedFriend.fontColorSecondary,
+        }}
       />
     );
   }, [
     helloesData,
     flattenHelloes,
-    themeAheadOfLoading,
+    selectedFriend,
     lightDarkTheme,
     toggleHelloesFiltering,
     handleSearchPress,
@@ -114,15 +112,15 @@ const ScreenHelloes = () => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
       useSolidOverlay={false}
-      useOverlayFade={false} 
+      useOverlayFade={false}
       style={{ flex: 1 }}
     >
       <View
@@ -148,9 +146,13 @@ const ScreenHelloes = () => {
         </Text>
       </View>
       <CalendarChart
-        helloesList={helloesList} 
+        helloesList={helloesList}
         friendId={selectedFriend?.id}
-        themeAheadOfLoading={themeAheadOfLoading}
+        themeColors={{
+          lightColor: selectedFriend.lightColor,
+          darkColor: selectedFriend.darkColor,
+          fontColorSecondary: selectedFriend.fontColorSecondary,
+        }}
         lightDarkTheme={lightDarkTheme}
         useBackgroundOverlay={false}
       />

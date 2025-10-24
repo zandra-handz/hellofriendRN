@@ -16,14 +16,15 @@ import {
   Skia,
   Text,
   Group,
-} from "@shopify/react-native-skia"; 
+} from "@shopify/react-native-skia";
 import SvgIcon from "@/app/styles/SvgIcons";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/app/styles/StaticColors";
 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
@@ -56,34 +57,35 @@ type Props = {
 const DonutChart = ({
   animatedLeaves,
   totalJS,
-  positionsValue,
   positions,
-  primaryColor,
-  darkerOverlayBackgroundColor,
  
   onCategoryPress,
+  colorsReversed,
   onPlusPress,
   onCenterPress,
   radius,
   strokeWidth,
   outerStrokeWidth,
-  color,
+
   backgroundColor,
   font,
-  totalValue,
-  categoryStopsValue,
+  totalValue, 
   n,
   gap,
   decimalsValue,
   labelsValue,
- 
+
   colors,
   labelsSize,
   labelsDistanceFromCenter,
   labelsSliceEnd,
 }: Props) => {
+  const { lightDarkTheme } = useLDTheme();
   const array = Array.from({ length: n });
   const innerRadius = radius - outerStrokeWidth / 2;
+  const color = lightDarkTheme.primaryText;
+
+  const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
@@ -95,7 +97,6 @@ const DonutChart = ({
       zIndex: 4,
     };
   }, [fadeInValue]);
- 
 
   useEffect(() => {
     if (!totalJS) {
@@ -176,14 +177,12 @@ const DonutChart = ({
             left: x,
             top: y,
             transform: [
-              { translateX: -textWidth / 1.4},
+              { translateX: -textWidth / 1.4 },
               { translateY: -textHeight / 1 }, // /2
-               ...(pressed ? [{ scale: 0.7 }] : [{ scale: 1 }]),
+              ...(pressed ? [{ scale: 0.7 }] : [{ scale: 1 }]),
             ],
             backgroundColor: pressed ? "#ddd" : "transparent",
             shadowOpacity: pressed ? 0.2 : 0,
-     
-     
           },
         ]}
       >
@@ -195,7 +194,6 @@ const DonutChart = ({
               fontSize: labelsSize,
               backgroundColor: darkerOverlayBackgroundColor,
               paddingVertical: 6,
-                  
             },
           ]}
         >
@@ -216,7 +214,15 @@ const DonutChart = ({
           },
         ]}
       >
+                          <LeafPath 
+          array={array}
+            positions={positions}
+            colorsReversed={colorsReversed}
+       
+   
+          />
         <Group transform={[{ translateX: 0 }, { translateY: 0 }]}>
+
           <Path
             path={path}
             color={backgroundColor}
@@ -244,24 +250,7 @@ const DonutChart = ({
             );
           })}
 
- 
-  
-          <LeafPath  
-            totalJS={totalJS}
-            // positionsValue={positionsValue}
-                   positionsValue={animatedLeaves}
-            positions={positions}
-            count={targetText}
-            totalValue={totalValue}
-            decimals={decimalsValue}
-            categoryStops={categoryStopsValue}
-            centerX={radius - labelsSize - 40} // WEIRD EYEBALL
-            centerY={radius - labelsSize - 40} // WEIRD EYEBALL
-            radius={radius / 4}
-            size={24}
-            colors={colors}
-          />
- 
+
 
           <Text
             x={textX}
@@ -272,6 +261,7 @@ const DonutChart = ({
             opacity={1}
           />
         </Group>
+
       </Canvas>
       <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
         {LabelOverlays}
@@ -326,7 +316,6 @@ const DonutChart = ({
           name={"plus"}
           size={22}
           opacity={1}
-          color={primaryColor}
           color={manualGradientColors.homeDarkColor}
         />
       </Pressable>
@@ -351,7 +340,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     padding: 4,
     borderRadius: 10,
-
   },
   centerWrapper: {
     justifyContent: "center",

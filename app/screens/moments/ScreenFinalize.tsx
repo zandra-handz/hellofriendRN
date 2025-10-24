@@ -10,7 +10,7 @@ import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenFinalize = () => {
@@ -27,7 +27,7 @@ const ScreenFinalize = () => {
   const [categoryNamesOnly, setCategoryNamesOnly] = useState(
     categoryNames.map((c) => c.category)
   );
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
  
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
@@ -47,8 +47,8 @@ const ScreenFinalize = () => {
 
   return (
     <SafeViewAndGradientBackground 
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
       friendId={selectedFriend?.id}

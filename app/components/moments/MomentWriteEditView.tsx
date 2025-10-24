@@ -37,7 +37,7 @@ const MomentWriteEditView = ({
   paddingHorizontal,
   defaultCategory,
   manualGradientColors,
-  themeAheadOfLoading,
+  themeColors,
   capsuleList,
 
   userId,
@@ -385,7 +385,7 @@ const MomentWriteEditView = ({
               <MomentFocusTray 
                 userId={userId}
                 userDefaultCategory={defaultCategory}
-                themeAheadOfLoading={themeAheadOfLoading}
+                themeColors={themeColors} 
                 primaryColor={primaryColor}
                 lighterOverlayColor={lighterOverlayColor}
                 primaryBackground={primaryBackground} 

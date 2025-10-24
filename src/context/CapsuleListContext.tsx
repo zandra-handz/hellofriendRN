@@ -426,7 +426,7 @@ export const CapsuleListProvider = ({ children }: CapsuleListProviderProps) => {
   const { getPreAdded } = useMomentContextFunctions();
 
   // Fetch raw moments
-  const { data } = useQuery<MomentFromBackendType[]>({
+  const { data, isPending, isSuccess } = useQuery<MomentFromBackendType[]>({
     queryKey: ["Moments", user?.id, selectedFriend?.id],
     queryFn: async () => {
       if (!selectedFriend?.id) throw new Error("selectedFriend.id is null");
@@ -515,7 +515,9 @@ export const CapsuleListProvider = ({ children }: CapsuleListProviderProps) => {
     allCapsulesList: sortedCapsuleList.allCapsules,
     preAdded: sortedCapsuleList.preAdded,
     categorySizes: sortedCapsuleList.categorySizes,
-  }), [sortedCapsuleList]);
+    isPending: isPending,
+    isSuccess: isSuccess,
+  }), [sortedCapsuleList, isPending, isSuccess]);
 
   return (
     <CapsuleListContext.Provider value={contextValue}>

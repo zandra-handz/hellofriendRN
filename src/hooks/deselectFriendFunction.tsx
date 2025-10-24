@@ -11,22 +11,19 @@ export const findFriendInList = (id, friendList) => {
 //add hello deselect needs to be handled differently because the nextUpId might change
 export const deselectFriendFunction = async ({
   userId,
-  queryClient,
-  // settings,
+  queryClient, 
   updateSettings,
-  friendId,
-  // upNextId,
-  // autoSelectId,
+  friendId, 
   autoSelectFriend,
-  // friendList,
-  selectFriend,
-  resetTheme,
-  getThemeAheadOfLoading,
+ 
+  setToFriend,
+  deselectFriend,
 }) => {
   if (!updateSettings || !friendId || !autoSelectFriend) {
     return;
   }
 
+  console.log(autoSelectFriend)
   if (
     autoSelectFriend?.customFriend === undefined &&
     autoSelectFriend?.nextFriend === undefined
@@ -38,10 +35,9 @@ export const deselectFriendFunction = async ({
   }
 
   if (autoSelectFriend?.customFriend?.id && autoSelectFriend?.nextFriend?.id) {
-    console.log("TURN CUSTOM OFF", autoSelectFriend);
-    console.log(autoSelectFriend?.nextFriend);
-    selectFriend(autoSelectFriend?.nextFriend);
-    getThemeAheadOfLoading(autoSelectFriend?.nextFriend);
+ 
+    setToFriend({friend: autoSelectFriend?.nextFriend, preConditionsMet: true});
+ 
 
     let autoToNext;
     autoToNext = { lock_in_custom_string: null };
@@ -60,9 +56,9 @@ export const deselectFriendFunction = async ({
     autoSelectFriend?.nextFriend?.id &&
     Number(friendId) === Number(autoSelectFriend?.nextFriend?.id)
   ) {
-    console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
-    selectFriend(null);
-    resetTheme(null);
+    // console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
+    deselectFriend();
+  
 
     let autoOff;
     autoOff = { lock_in_next: false };
@@ -81,13 +77,13 @@ export const deselectFriendFunction = async ({
     autoSelectFriend?.customFriend?.id &&
     Number(friendId) !== Number(autoSelectFriend?.customFriend?.id)
   ) {
-    selectFriend(autoSelectFriend?.customFriend);
-    getThemeAheadOfLoading(autoSelectFriend?.customFriend);
+    setToFriend({friend: autoSelectFriend?.customFriend, preConditionsMet: true});
+ 
 
     return;
   }
 
-  selectFriend(null);
-  resetTheme(null);
+  deselectFriend();
+ 
   return;
 };

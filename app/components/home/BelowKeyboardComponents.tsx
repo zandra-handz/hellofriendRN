@@ -2,13 +2,8 @@ import React from "react";
 import { View } from "react-native";
 import AllHome from "./AllHome";
 import SelectedFriendHome from "./SelectedFriendHome";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import Animated, {
-  SharedValue,
-  FadeInUp,
-  FadeOutDown,
-} from "react-native-reanimated";
+import { useFriendDash } from "@/src/context/FriendDashContext"; 
+ 
 
 interface BelowKeyboardComponentsProps {
   userId: number;

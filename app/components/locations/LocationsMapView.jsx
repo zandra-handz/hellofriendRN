@@ -55,7 +55,8 @@ const LocationsMapView = ({
   handleCategoryPress,
   highlightedCategory,
   bermudaCoordsDrilledOnce,
-  themeAheadOfLoading,
+ 
+  themeColors,
   primaryColor,
   overlayColor,
   darkerOverlay,
@@ -165,7 +166,7 @@ const LocationsMapView = ({
         onPress={handlePress}
         textColor={primaryColor}
         backgroundColor={darkerOverlay}
-        friendColor={themeAheadOfLoading.darkColor}
+        friendColor={themeColors.darkColor}
       />
     ),
     [handlePress, combinedLocationsForList] // NEED TO PASS THIS IN TO GET INDEX TO UPDATE IN PRESS FUNCTION
@@ -699,7 +700,7 @@ const LocationsMapView = ({
           friendName={friendName}
           height={CARD_HEIGHT + CARD_SAFE_VIEW_PADDING}
           safeViewPaddingBottom={CARD_SAFE_VIEW_PADDING}
-          themeAheadOfLoading={themeAheadOfLoading}
+          themeColors={themeColors} 
           absolute={true}
           location={
             focusedLocation?.matchedIndex
@@ -711,7 +712,7 @@ const LocationsMapView = ({
           label={focusedLocation?.title}
           subLabel={focusedLocation?.address}
           primaryColor={primaryColor}
-          labelColor={themeAheadOfLoading.fontColorSecondary}
+          labelColor={themeColors.fontColorSecondary}
           backgroundColor={darkerOverlay}
           onLeftPress={navigateBack}
           onRightPress={handleGoToLocationSendScreen}

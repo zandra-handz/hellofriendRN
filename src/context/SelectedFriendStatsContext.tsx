@@ -10,6 +10,7 @@ import { useUser } from "./UserContext";
 // import { useCategories } from "./CategoriesContext"; 
 import { useSelectedFriend } from "./SelectedFriendContext";
 import { useQuery,   useQueryClient } from "@tanstack/react-query";
+import { useCapsuleList } from "./CapsuleListContext";
 import {  
   fetchCategoriesHistoryCountAPI,
  
@@ -46,6 +47,8 @@ export const SelectedFriendStatsProvider: React.FC<
   // >([]);
   const queryClient = useQueryClient();
 
+  const {isPending } = useCapsuleList(); // forces this to wait till capsules are fetched
+
   const {
     data: selectedFriendStats,
     isLoading,
@@ -58,9 +61,7 @@ export const SelectedFriendStatsProvider: React.FC<
     // queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
     enabled: !!(
      
-      user?.id &&
-    //  !isInitializing && testing removing this
-      selectedFriend && selectedFriend?.id
+      user?.id && selectedFriend?.id && selectedFriend?.isReady && !isInitializing && !isPending
     ),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   }); 

@@ -5,12 +5,12 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
-import TopBarWithAddMoment from "./TopBarWithAddMoment"; 
+import TopBarWithAddMoment from "./TopBarWithAddMoment";
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 import { useCategories } from "@/src/context/CategoriesContext";
 // import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 // import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
@@ -22,7 +22,6 @@ import { useUser } from "@/src/context/UserContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
-import manualGradientColors from "@/app/styles/StaticColors";
 
 const ScreenMoments = () => {
   const route = useRoute();
@@ -58,9 +57,6 @@ const ScreenMoments = () => {
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
 
-  const { themeAheadOfLoading, getThemeAheadOfLoading, resetTheme } =
-    useFriendStyle();
-
   const { loadingDash } = useFriendDash();
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
@@ -68,9 +64,6 @@ const ScreenMoments = () => {
 
   const { handleSelectFriend } = useSelectFriend({
     friendList,
-    resetTheme,
-    getThemeAheadOfLoading,
-    selectFriend,
   });
 
   const handleSelectUpNext = () => {
@@ -100,34 +93,39 @@ const ScreenMoments = () => {
   prefetchFriendAddresses();
 
   useEffect(() => {
-    if (userCategories && userCategories.length > 0) {
+    if (
+      selectedFriend?.lightColor &&
+      selectedFriend?.darkColor &&
+      userCategories &&
+      userCategories.length > 0
+    ) {
       setCategoryColorsMap(
         generateGradientColorsMap(
           userCategories,
-          themeAheadOfLoading.lightColor,
-          themeAheadOfLoading.darkColor
+          selectedFriend.lightColor,
+          selectedFriend.darkColor
         )
       );
     }
-  }, [userCategories, themeAheadOfLoading]);
+  }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={themeAheadOfLoading.lightColor}
-      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight={120}
       style={{ flex: 1 }}
     >
-            <View style={StyleSheet.absoluteFillObject}>
+      <View style={StyleSheet.absoluteFillObject}>
         <GradientBackgroundBreathing
-          secondColorSetDark={themeAheadOfLoading.lightColor}
-          secondColorSetLight={themeAheadOfLoading.darkColor}
+          secondColorSetDark={selectedFriend.lightColor}
+          secondColorSetLight={selectedFriend.darkColor}
           // firstColorSetDark={manualGradientColors.lightColor}
-          // firstColorSetLight={themeAheadOfLoading.darkColor}
-          firstColorSetDark={themeAheadOfLoading.lightColor}
-          firstColorSetLight={themeAheadOfLoading.darkColor}
+          // firstColorSetLight={selectedFriend.darkColor}
+          firstColorSetDark={selectedFriend.lightColor}
+          firstColorSetLight={selectedFriend.darkColor}
           // firstColorSetDark={manualGradientColors.lightColor}
           // firstColorSetLight={manualGradientColors.darkColor}
           timeScore={TIME_SCORE}
@@ -161,7 +159,7 @@ const ScreenMoments = () => {
         }}
       ></View>
       <View style={{ width: "100%", height: 4 }}></View>
- 
+
       {selectedFriend && !loadingDash && (
         <>
           <View style={{ flex: 1 }}>
@@ -178,7 +176,7 @@ const ScreenMoments = () => {
                 // EscortBarMinusWidth
                 navigateBack={navigateBack}
                 // Moment item
-                friendColor={themeAheadOfLoading.darkColor}
+                friendColor={selectedFriend.darkColor}
                 primaryBackgroundColor={lightDarkTheme.primaryBackground}
                 primaryColor={lightDarkTheme.primaryText}
                 primaryOverlayColor={lightDarkTheme.overlayBackground}

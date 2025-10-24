@@ -6,8 +6,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import PrioritySettingSlider from "../../friends/PrioritySettingSlider";
 const EditPriority = ({
-  userId,
-  themeAheadOfLoading,
+  userId, 
+  themeColors,
   friendId,
   friendPriority,
   primaryColor,
@@ -128,8 +128,8 @@ const EditPriority = ({
             //height={"40%"}
             ref={priorityRef}
             friendPriority={priority} // Passing friendEffort state as value
-            sliderColor={themeAheadOfLoading.lightColor}
-            trackColor={themeAheadOfLoading.darkColor}
+            sliderColor={themeColors.lightColor}
+            trackColor={themeColors.darkColor}
             primaryColor={primaryColor}
           />
         </View>

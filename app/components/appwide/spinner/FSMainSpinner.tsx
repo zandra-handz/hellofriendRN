@@ -1,7 +1,6 @@
 import { View } from "react-native";
 import React from "react";
-import GradientBackground from "../display/GradientBackground";
-import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import GradientBackground from "../display/GradientBackground"; 
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import LoadingPage from "./LoadingPage";
@@ -12,10 +11,13 @@ type Props = {};
 const FSMainSpinner = ({ isInitializing }: Props) => {
   // const { isLoading } = useUpcomingHelloes();
   const { isLoading } = useFriendListAndUpcoming();
-
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
 
   const { selectedFriend } = useSelectedFriend();
+
+
+
+  
   const marginH = 6;
   const marginV = 10;
 
@@ -54,8 +56,8 @@ const FSMainSpinner = ({ isInitializing }: Props) => {
             useFriendColors={!!selectedFriend?.id}
             // startColor={"#a0f143"} // manualGradientColors.lightColor
             // endColor={"#4caf50"} // manualGradientColors.darkColor
-            friendColorDark={themeAheadOfLoading.darkColor}
-            friendColorLight={themeAheadOfLoading.lightColor}
+            friendColorDark={selectedFriend.darkColor}
+            friendColorLight={selectedFriend.lightColor}
           >
             <View
               style={{

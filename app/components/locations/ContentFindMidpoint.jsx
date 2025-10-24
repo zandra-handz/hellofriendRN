@@ -9,11 +9,9 @@ import EscortBar from "../moments/EscortBar";
  
 const ContentFindMidpoint = ({
   userId,
-  lightDarkTheme,
-  themeAheadOfLoading,
+  lightDarkTheme, 
   manualGradientColors,
-  subWelcomeTextStyle,
-  welcomeTextStyle,
+  subWelcomeTextStyle, 
   userAddress,
   friendAddress,
 }) => {

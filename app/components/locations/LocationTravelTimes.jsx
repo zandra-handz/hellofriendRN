@@ -21,7 +21,7 @@ const LocationTravelTimes = ({
   userAddress,
   friendAddress,
   iconSize = 20,
-  themeAheadOfLoading,
+  themeColors,
   primaryColor = "orange",
 }) => {
   
@@ -103,20 +103,12 @@ const LocationTravelTimes = ({
           <FontAwesome5
             name="user-clock"
             size={iconSize-5}
-            color={themeAheadOfLoading.lightColor}
+            color={themeColors.lightColor}
           />
-        </View>
-        {/* <View  >
-                    <SimpleLineIcons
-            name="directions"
-            size={iconSize}
-            color={themeAheadOfLoading.lightColor}
-          />
-
-        </View> */}
+        </View> 
       </Pressable>
     ),
-    [themeAheadOfLoading, handlePress]
+    [themeColors, handlePress]
   );
 
   const RenderClockButton = useCallback(
@@ -131,11 +123,11 @@ const LocationTravelTimes = ({
         <SimpleLineIcons
           name={"clock"}
           size={iconSize}
-          color={themeAheadOfLoading.lightColor}
+          color={themeColors.lightColor}
         />
       </Pressable>
     ),
-    [SPACER_MARGIN_AFTER_CLOCK_ICON, iconSize, themeAheadOfLoading, handlePress]
+    [SPACER_MARGIN_AFTER_CLOCK_ICON, iconSize, themeColors, handlePress]
   );
 
   return (
@@ -146,7 +138,7 @@ const LocationTravelTimes = ({
             <View style={styles.loadingFriendProfileButtonWrapper}>
               <LoadingPage
                 loading={true}
-                color={themeAheadOfLoading.darkColor}
+                color={themeColors.darkColor}
                 spinnerType="flow"
                 spinnerSize={20}
                 includeLabel={false}
@@ -189,7 +181,7 @@ const LocationTravelTimes = ({
                       <Text
                         style={[
                           styles.travelTimeText,
-                          { color: themeAheadOfLoading.lightColor },
+                          { color: themeColors.lightColor },
                         ]}
                       >
                         {travelTimeResults?.compare_directions?.friend

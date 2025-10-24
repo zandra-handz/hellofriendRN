@@ -30,7 +30,7 @@ const MonthModal: React.FC<Props> = ({
   primaryColor,
   helloesList,
   manualGradientColors,
-  themeAheadOfLoading,
+  themeColors,
   friendId,
 
   isVisible,
@@ -344,7 +344,8 @@ const MonthModal: React.FC<Props> = ({
                       momentOriginalId={null}
                       index={null}
                       primaryColor={primaryColor}
-                      themeAheadOfLoading={themeAheadOfLoading}
+                      themeColors={themeColors}
+                      themeAheadOfLoading={themeColors}
                     />
                   </View>
                 </Animated.View>

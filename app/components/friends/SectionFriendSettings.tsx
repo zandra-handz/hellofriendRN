@@ -8,8 +8,8 @@ import EditPriority from "../buttons/friends/EditPriority";
 // import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 
 const SectionFriendSettings = ({
-  userId,
-  themeAheadOfLoading,
+  userId, 
+  themeColors,
   friendId,
   friendPhone,
   friendEffort,
@@ -39,7 +39,7 @@ const SectionFriendSettings = ({
       />
       <EditEffort
         userId={userId}
-        themeAheadOfLoading={themeAheadOfLoading}
+        themeColors={themeColors} 
         friendId={friendId}
         friendEffort={friendEffort}
         primaryColor={primaryColor}
@@ -47,7 +47,7 @@ const SectionFriendSettings = ({
       />
       <EditPriority
         userId={userId}
-        themeAheadOfLoading={themeAheadOfLoading}
+         themeColors={themeColors} 
         friendId={friendId}
         friendPriority={friendPriority}
         primaryColor={primaryColor}

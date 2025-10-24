@@ -1,16 +1,12 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, View } from "react-native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { StyleSheet, View } from "react-native"; 
 import UpNext from "./UpNext";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 import manualGradientColors from "@/app/styles/StaticColors";
 import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
-// import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-// import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import useSelectFriend from "@/src/hooks/useSelectFriend"; 
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+ 
+import useSelectFriend from "@/src/hooks/useSelectFriend";  
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
 // Press function is internal
@@ -18,9 +14,7 @@ const AllHome = ({
   // friendId, //if this component is ever not wrapped in checking if friend is selected, will need to handle potential deselects
   // lockInCustomString,
   isLoading,
-  paddingHorizontal,
-  getThemeAheadOfLoading,
-  header = "Up next",
+  paddingHorizontal,  
   height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
@@ -35,15 +29,9 @@ const AllHome = ({
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
-  const { selectFriend } = useSelectedFriend();
-  const { navigateToMoments } = useAppNavigations();
-
-  const { resetTheme } = useFriendStyle();
+ 
   const { handleSelectFriend } = useSelectFriend({
-    friendList,
-    resetTheme,
-    getThemeAheadOfLoading,
-    selectFriend,
+    friendList
   });
 
  

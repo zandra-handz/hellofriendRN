@@ -6,8 +6,7 @@ import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 // import FriendSettingsModal from "./FriendSettingsModal";
-import CategoriesModal from "./CategoriesModal";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import CategoriesModal from "./CategoriesModal"; 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 
@@ -16,8 +15,7 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
  
 import SvgIcon from "@/app/styles/SvgIcons";
 import GradientBackground from "../appwide/display/GradientBackground";
- 
-import { AppFontStyles } from "@/app/styles/AppFonts";
+  
 
 // types
 import { LDTheme } from "@/src/types/LDThemeTypes";
@@ -33,13 +31,13 @@ const HelloFriendFooter = ({
   username,
   lightDarkTheme,
   friendListLength,
+  themeColors,
 }: Props) => {
   const dividerStyle = lightDarkTheme.divider;
 
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { themeAheadOfLoading } = useFriendStyle();
+  
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
@@ -154,11 +152,11 @@ const HelloFriendFooter = ({
         friendId={null}
         friendName={null}
         primaryColor={primaryColor}
-        themeAheadOfLoading={themeAheadOfLoading} 
+        themeColors={themeColors} 
         onPress={() => handleCenterButtonToggle()}
       />
     ),
-    [themeAheadOfLoading]
+    [themeColors]
   );
 
   const RenderAboutAppButton = useCallback(
@@ -183,8 +181,8 @@ const HelloFriendFooter = ({
     <GradientBackground
       useFriendColors={false}
       screenname={"hellofriendfooter"}
-      friendColorDark={themeAheadOfLoading.darkColor}
-      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeColors.darkColor}
+      friendColorLight={themeColors.lightColor}
       additionalStyles={[
         styles.container,
         {
@@ -222,8 +220,7 @@ const HelloFriendFooter = ({
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderFriendProfileButton
-              themeAheadOfLoading={themeAheadOfLoading}
+            <RenderFriendProfileButton 
             />
           </View>
         </>

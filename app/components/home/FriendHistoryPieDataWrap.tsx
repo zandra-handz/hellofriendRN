@@ -27,7 +27,7 @@ const FriendHistoryPieDataWrap = React.memo(
     primaryColor, 
     primaryOverlayColor,
     darkerOverlayBackgroundColor,
-    themeAheadOfLoading,
+    themeColors,
   }: Props) => {
     const { helloesList } = useHelloes();
     // const { friendList } = useFriendList();
@@ -64,7 +64,7 @@ const FriendHistoryPieDataWrap = React.memo(
         "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
 
       const start = hexToRgb(manualGradientColors.darkColor);
-      const end = hexToRgb(themeAheadOfLoading.darkColor);
+      const end = hexToRgb(themeColors.darkColor);
 
       return Array.from({ length: count }, (_, i) => {
         const t = i / Math.max(count - 1, 1);
@@ -76,7 +76,7 @@ const FriendHistoryPieDataWrap = React.memo(
     }, [
       friendHistorySortedList,
       manualGradientColors.darkColor,
-      themeAheadOfLoading.darkColor,
+      themeColors.darkColor,
     ]);
 
     const seriesData = useMemo(() => {
@@ -157,7 +157,7 @@ const FriendHistoryPieDataWrap = React.memo(
             <FriendHistoryModal
               friendId={friendId}
               helloesList={helloesList}
-              themeAheadOfLoading={themeAheadOfLoading}
+                          themeColors={themeColors} 
               darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
               primaryColor={primaryColor}
               primaryOverlayColor={primaryOverlayColor}

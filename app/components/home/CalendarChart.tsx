@@ -15,7 +15,8 @@ const CalendarChart = ({
   helloesList,
   friendId,
   useBackgroundOverlay = true,
-  themeAheadOfLoading,
+ 
+  themeColors,
   lightDarkTheme,
 }: Props) => {
   const reversedHelloesList = Array.isArray(helloesList)
@@ -63,7 +64,7 @@ const CalendarChart = ({
             helloesList={helloesList}
             friendId={friendId}
             primaryColor={primaryColor}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors} 
             onMonthPress={handleMonthPress}
             combinedData={combinedData}
             itemColor={lightDarkTheme.primaryText}
@@ -83,7 +84,7 @@ const CalendarChart = ({
           helloesList={helloesList}
           manualGradientColors={manualGradientColors}
           primaryColor={lightDarkTheme.primaryText}
-          themeAheadOfLoading={themeAheadOfLoading}
+          themeColors={themeColors} 
           isVisible={monthModalVisible}
           monthData={monthData}
           closeModal={() => setMonthModalVisible(false)}

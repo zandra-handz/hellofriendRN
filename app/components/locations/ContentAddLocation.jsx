@@ -10,8 +10,8 @@ import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 
 const ContentAddLocation = ({
   userId,
-  lightDarkTheme,
-  themeAheadOfLoading,
+  lightDarkTheme, 
+  themeColors,
   primaryColor = "orange",
   backgroundColor = "red",
   title,
@@ -144,7 +144,8 @@ const ContentAddLocation = ({
             <FlatListChangeChoice 
               primaryColor={lightDarkTheme.primaryText}
               backgroundColor={lightDarkTheme.backgroundColor}
-              themeAheadOfLoading={themeAheadOfLoading}
+        
+             darkColor={themeColors.darkColor}
               horizontal={true}
               choicesArray={parkingScores}
               ref={parkingScoreRef}

@@ -21,7 +21,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   primaryColor,
   friendId,
   friendName,
-  themeAheadOfLoading,
+  themeColors, 
   paddingHorizontal = 10,
   username = "",
   isNewUser = false,
@@ -90,7 +90,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
                 friendId={friendId}
                 friendName={friendName}
                 primaryColor={primaryColor}
-                themeAheadOfLoading={themeAheadOfLoading}
+                themeColors={themeColors} 
                 iconSize={18} //subWelcomeTextStyle.fontSize + 4
                 customLabel={"Pick friend"}
                 navigationDisabled={true}

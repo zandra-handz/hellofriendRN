@@ -9,20 +9,19 @@ import { updateFriendFavesColorTheme } from "@/src/calls/api"; // Import the upd
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateFriendListColors from "../hooks/useUpdateFriendListColors";
-import { useFriendStyle } from "../context/FriendStyleContext"; 
+ 
 // import tinycolor from "tinycolor2";
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
-  const { user } = useUser();
-  const {  themeAheadOfLoading, handleSetTheme } = useFriendStyle();
+  const { user } = useUser(); 
 
   const { updateFriendListColors } = useUpdateFriendListColors({userId: user?.id, setThemeState: handleSetTheme });
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend,  handleSetTheme } = useSelectedFriend();
   const [darkColor, setDarkColor] = useState(
-    themeAheadOfLoading.darkColor || "#000000"
+    selectedFriend.darkColor || "#000000"
   ); 
   const [lightColor, setLightColor] = useState(
-    themeAheadOfLoading.lightColor || "#FFFFFF"
+    selectedFriend.lightColor || "#FFFFFF"
   );  
 
   const showInHouseSaveButton = false;

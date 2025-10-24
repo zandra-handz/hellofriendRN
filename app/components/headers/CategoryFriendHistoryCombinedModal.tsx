@@ -33,7 +33,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   friendId,
   friendName,
 
-  themeAheadOfLoading,
+  themeColors,
   isVisible,
   closeModal,
   categoryId,
@@ -91,7 +91,8 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
             friendId={friendId}
             momentOriginalId={momentOriginalId}
             index={helloIndex}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors}
+            themeAheadOfLoading={themeColors}
             primaryColor={primaryColor}
           />
         ),

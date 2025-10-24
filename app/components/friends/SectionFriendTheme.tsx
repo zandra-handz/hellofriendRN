@@ -6,7 +6,7 @@ import EditTheme from "../buttons/friends/EditTheme";
 const SectionFriendTheme = ({
   primaryColor,
   lighterOverlayColor,
-  themeAheadOfLoading,
+  themeColors,
   friendList,
   manualGradientColors,
   userId,
@@ -27,7 +27,7 @@ const SectionFriendTheme = ({
         primaryColor={primaryColor}
         lighterOverlayColor={lighterOverlayColor}
         manualGradientColors={manualGradientColors}
-        themeAheadOfLoading={themeAheadOfLoading}
+        themeColors={themeColors} 
         friendList={friendList}
         userId={userId}
         friendId={friendId}

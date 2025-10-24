@@ -45,7 +45,7 @@ import { UserStatsProvider } from "./src/context/UserStatsContext";
 import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
 
-import { FriendStyleProvider } from "./src/context/FriendStyleContext";
+// import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
@@ -134,9 +134,8 @@ export default Sentry.wrap(function App() {
     Poppins_700Bold,
   });
 
-    const skiaFontLarge = useFont(Poppins_400Regular, 34);
+  const skiaFontLarge = useFont(Poppins_400Regular, 34);
   const skiaFontSmall = useFont(Poppins_400Regular, 14);
-
 
   SplashScreen.preventAutoHideAsync();
 
@@ -199,18 +198,18 @@ export default Sentry.wrap(function App() {
 
   const allFontsLoaded = fontsLoaded && skiaFontLarge && skiaFontSmall;
 
-useEffect(() => {
-  if (allFontsLoaded) {
-    console.log("all fonts loaded");
-    SplashScreen.hideAsync();
-  } else {
-    console.log("fonts not loaded yet");
-  }
-}, [allFontsLoaded]);
+  useEffect(() => {
+    if (allFontsLoaded) {
+      console.log("all fonts loaded");
+      SplashScreen.hideAsync();
+    } else {
+      console.log("fonts not loaded yet");
+    }
+  }, [allFontsLoaded]);
 
-if (!allFontsLoaded) {
-  return null; // prevents rendering until everything is ready
-}
+  if (!allFontsLoaded) {
+    return null; // prevents rendering until everything is ready
+  }
 
   return (
     <ShareIntentProvider>
@@ -222,8 +221,8 @@ if (!allFontsLoaded) {
                 <CategoriesProvider>
                   <UserStatsProvider>
                     <SelectedFriendProvider>
-                      <FriendDashProvider>
-                        <CapsuleListProvider>
+                      <CapsuleListProvider>
+                        <FriendDashProvider>
                           <LocationsProvider>
                             <HelloesProvider>
                               <SelectedFriendStatsProvider>
@@ -232,10 +231,10 @@ if (!allFontsLoaded) {
                                     <LDThemeProvider>
                                       <RootSiblingParent>
                                         <DeviceLocationProvider>
-                                          <FriendStyleProvider>
-                                            <Layout   skiaFontLarge={skiaFontLarge}
-  skiaFontSmall={skiaFontSmall}/>
-                                          </FriendStyleProvider>
+                                          <Layout
+                                            skiaFontLarge={skiaFontLarge}
+                                            skiaFontSmall={skiaFontSmall}
+                                          />
                                         </DeviceLocationProvider>
                                       </RootSiblingParent>
                                     </LDThemeProvider>
@@ -244,8 +243,8 @@ if (!allFontsLoaded) {
                               </SelectedFriendStatsProvider>
                             </HelloesProvider>
                           </LocationsProvider>
-                        </CapsuleListProvider>
-                      </FriendDashProvider>
+                        </FriendDashProvider>
+                      </CapsuleListProvider>
                     </SelectedFriendProvider>
                   </UserStatsProvider>
                 </CategoriesProvider>
@@ -378,8 +377,7 @@ const linking = {
   },
 };
 
-export const Layout = ({  skiaFontLarge, 
-  skiaFontSmall}) => {
+export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
   const { user, isInitializing } = useUser();
 
   const { settings } = useUserSettings();
@@ -421,14 +419,23 @@ export const Layout = ({  skiaFontLarge,
             //  && settings?.id
             // user.app_setup_complete || !user.app_setup_complete ? (
             <>
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="hellofriend"
                 component={ScreenHome}
-                  initialParams={{ skiaFontLarge, skiaFontSmall }}
+                initialParams={{ skiaFontLarge, skiaFontSmall }}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
+              <Stack.Screen name="hellofriend" options={{ headerShown: false }}>
+                {(props) => (
+                  <ScreenHome
+                    {...props}
+                    skiaFontLarge={skiaFontLarge}
+                    skiaFontSmall={skiaFontSmall}
+                  />
+                )}
+              </Stack.Screen>
               <Stack.Screen
                 name="MomentFocus"
                 component={ScreenMomentFocus}

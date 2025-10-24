@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import TreeModalBigButtonHistory from "@/app/components/alerts/TreeModalBigButtonHistory";
@@ -14,9 +14,7 @@ type Props = {};
 const ScreenHistory = (props: Props) => {
   const { lightDarkTheme } = useLDTheme();
 
-  const { navigateBack} = useAppNavigations();
-
-  const { themeAheadOfLoading } = useFriendStyle();
+  const { navigateBack } = useAppNavigations();
 
   const { selectedFriend } = useSelectedFriend();
 
@@ -26,8 +24,8 @@ const ScreenHistory = (props: Props) => {
   return (
     <>
       <SafeViewAndGradientBackground
-        friendColorLight={themeAheadOfLoading.lightColor}
-        friendColorDark={themeAheadOfLoading.darkColor}
+        friendColorLight={selectedFriend.lightColor}
+        friendColorDark={selectedFriend.darkColor}
         backgroundOverlayColor={lightDarkTheme.primaryBackground}
         friendId={selectedFriend?.id}
         backgroundOverlayHeight={"120%"}
@@ -55,7 +53,7 @@ const ScreenHistory = (props: Props) => {
         <View
           style={{
             width: "100%",
-        height: 100,
+            height: 100,
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "space-around",
@@ -71,22 +69,33 @@ const ScreenHistory = (props: Props) => {
             }
             welcomeTextStyle={AppFontStyles.welcomeText}
             subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}
             chartBorder={SMALL_CHART_BORDER}
             chartBorderColor={lightDarkTheme.primaryBackground}
             showLabels={false}
             chartRadius={SMALL_CHART_RADIUS}
           />
           <UserHistoryPieDataWrap
-            friendStyle={themeAheadOfLoading}
+            friendStyle={{
+              lightColor: selectedFriend.lightColor,
+              darkColor: selectedFriend.darkColor,
+              fontColor: selectedFriend.fontColor,
+              fontColorSecondary: selectedFriend.fontColorSecondary,
+            }}
             primaryColor={lightDarkTheme.primaryText}
             primaryOverlayColor={lightDarkTheme.primaryOverlay}
-            darkerOverlayBackgroundColor={lightDarkTheme.darkerOverlayBackgroundColor}
+            darkerOverlayBackgroundColor={
+              lightDarkTheme.darkerOverlayBackgroundColor
+            }
             welcomeTextStyle={AppFontStyles.welcomeText}
             subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-        
             chartBorder={SMALL_CHART_BORDER}
-               chartBorderColor={lightDarkTheme.primaryBackground}
+            chartBorderColor={lightDarkTheme.primaryBackground}
             showLabels={false}
             chartRadius={SMALL_CHART_RADIUS}
           />
@@ -95,7 +104,12 @@ const ScreenHistory = (props: Props) => {
         <TreeModalBigButtonHistory
           height={90}
           safeViewPaddingBottom={0}
-          themeAheadOfLoading={themeAheadOfLoading}
+          themeColors={{
+            lightColor: selectedFriend.lightColor,
+            darkColor: selectedFriend.darkColor,
+            fontColor: selectedFriend.fontColor,
+            fontColorSecondary: selectedFriend.fontColorSecondary,
+          }}
           label={"History"}
           subLabel={"Sub label here"}
           labelColor={"hotpink"}

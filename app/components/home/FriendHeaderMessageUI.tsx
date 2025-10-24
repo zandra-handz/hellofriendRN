@@ -1,6 +1,6 @@
 import { StyleSheet, View, Pressable } from "react-native";
-import React, { useCallback, useMemo, useEffect } from "react";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+import React, { useCallback, useMemo, useEffect } from "react"; 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -17,7 +17,7 @@ import { Vibration } from "react-native";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-
+import SuggestedHello from "./SuggestedHello";
 interface FriendHeaderMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
@@ -29,18 +29,18 @@ interface FriendHeaderMessageUIProps {
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
+  height,
   userId,
   friendId,
   primaryColor,
   welcomeTextStyle,
   selectedFriendName = "",
-  loadingNewFriend = false,
   cardBackgroundColor,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
-
-    const isFocused = useSharedValue(false);
-
+  const { loadingDash } = useFriendDash();
+  const loadingNewFriend = loadingDash;
+  const isFocused = useSharedValue(false);
 
   const opacityValue = useSharedValue(0);
   const scaleValue = useSharedValue(0);
@@ -49,11 +49,11 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   const secondScaleValue = useSharedValue(0);
 
   const verticalValue = useSharedValue(0);
-    // ✅ useFocusEffect updates shared value
+  // ✅ useFocusEffect updates shared value
   useFocusEffect(
     useCallback(() => {
       isFocused.value = true;
-      return () => { 
+      return () => {
         isFocused.value = false;
       };
     }, [])
@@ -64,20 +64,19 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     if (isFocused.value) {
       // Runs every time screen focuses
       verticalValue.value = withSpring(0, {
-  stiffness: 400, // default ~100
-  damping: 10,    // default ~10
-  mass: 0.5,      // default 1
-});
+        stiffness: 400, // default ~100
+        damping: 10, // default ~10
+        mass: 0.5, // default 1
+      });
     }
   });
 
-    const animatedVerticalStyle = useAnimatedStyle(() => {
+  const animatedVerticalStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: verticalValue.value }],
       // opacity: opacityValue.value,
     };
   });
-
 
   const animatedPinStyle = useAnimatedStyle(() => {
     return {
@@ -137,9 +136,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   const { navigateToSelectFriend } = useAppNavigations();
 
-    const handleNavigateToSelectFriend = () => {
-    navigateToSelectFriend({useNavigateBack: false})
-
+  const handleNavigateToSelectFriend = () => {
+    navigateToSelectFriend({ useNavigateBack: false });
   };
 
   const toggleLockOnFriend = useCallback(() => {
@@ -157,82 +155,96 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     }
   }, [friendId, autoSelectFriend]);
 
-  const handleOnPress = () => { 
-        verticalValue.value = withSpring(-170, {
-  stiffness: 400,
-  damping: 10,   
-  mass: 0.8,      
-});
-    isFocused.value = false
+  const handleOnPress = () => {
+    verticalValue.value = withSpring(-370, {
+      stiffness: 100,
+      damping: 2,
+      mass: 0.3,
+    });
+    isFocused.value = false;
     handleNavigateToSelectFriend();
   };
 
   const message = `${selectedFriendName}`;
 
-  return (
-    <Animated.View style={animatedVerticalStyle}>
-      
-    <Pressable
-      onPress={handleOnPress}
-      onLongPress={toggleLockOnFriend}
-      style={styles.container}
-    >
-      <View style={styles.innerContainer}>
-        <Animated.View
-          style={[
-            animatedPinStyle,
-            {
-              backgroundColor: manualGradientColors.lightColor,
-            },
-            styles.animatedContainer,
-          ]}
-        >
-          <SvgIcon
-            name={"pin_outline"}
-            size={22} 
-            color={manualGradientColors.homeDarkColor}
-          />
-        </Animated.View>
+  const SELECTED_FRIEND_CARD_HEIGHT = 120;
+  const SELECTED_FRIEND_CARD_PADDING = 20;
+  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
 
-        <Animated.View
-          style={[
-            animatedSecondPinStyle,
-            {
-              backgroundColor: manualGradientColors.lightColor,
-            },
-            styles.animatedContainer,
-          ]}
-        >
-          <SvgIcon
-            name={"calendar_outline"}
-            size={22} 
-            color={manualGradientColors.homeDarkColor}
-          />
-        </Animated.View>
-      </View>
-      <View
-        style={[
-          styles.labelContainer,
-          {
-            backgroundColor: cardBackgroundColor, // semi-transparent background
-          },
-        ]}
+  return (
+    <Animated.View style={[animatedVerticalStyle, { height: height}]}>
+      
+      <Pressable
+        onPress={handleOnPress}
+        onLongPress={toggleLockOnFriend}
+        style={styles.container}
       >
-        <Animated.Text
-          numberOfLines={2}
+        <View style={styles.innerContainer}>
+          <Animated.View
+            style={[
+              animatedPinStyle,
+              {
+                backgroundColor: manualGradientColors.lightColor,
+              },
+              styles.animatedContainer,
+            ]}
+          >
+            <SvgIcon
+              name={"pin_outline"}
+              size={22}
+              color={manualGradientColors.homeDarkColor}
+            />
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              animatedSecondPinStyle,
+              {
+                backgroundColor: manualGradientColors.lightColor,
+              },
+              styles.animatedContainer,
+            ]}
+          >
+            <SvgIcon
+              name={"calendar_outline"}
+              size={22}
+              color={manualGradientColors.homeDarkColor}
+            />
+          </Animated.View>
+        </View>
+        <View
           style={[
-            welcomeTextStyle,
+            styles.labelContainer,
             {
-              color: primaryColor,
+              backgroundColor: cardBackgroundColor, // semi-transparent background
+              alignText: 'center',
+              alignItems: 'center',
+              alignContent: 'center'
             },
-            styles.label,
           ]}
         >
-          {selectedFriendName && !loadingNewFriend && message}
-        </Animated.Text>
-      </View>
-    </Pressable>
-    
+          <Animated.Text
+            numberOfLines={2}
+            style={[
+              welcomeTextStyle,
+              {
+                color: primaryColor,
+              },
+              styles.label,
+            ]}
+          >
+            {selectedFriendName && !loadingNewFriend && message}
+          </Animated.Text>
+        </View>
+      </Pressable>
+
+      <SuggestedHello
+        friendId={friendId}
+        primaryOverlayColor={CARD_BACKGROUND}
+        primaryColor={primaryColor} 
+        padding={SELECTED_FRIEND_CARD_PADDING}
+        height={SELECTED_FRIEND_CARD_HEIGHT}
+      />
     </Animated.View>
   );
 };
@@ -247,8 +259,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     backgroundColor: "transparent",
-    minHeight: 150,
-    height: "auto", 
+    minHeight: 130,
+    height: "auto",
+    maxHeight: 170,
     zIndex: 30000,
   },
   innerContainer: {
@@ -271,19 +284,23 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   labelContainer: {
-    paddingTop: 50,
-    paddingBottom: 30,
+    paddingVertical: 10,
+    paddingTop: 20,
     width: "100%",
     height: "100%",
     flexWrap: "wrap",
     borderRadius: 10,
     justifyContent: "center",
     paddingHorizontal: 20,
+ 
+    
   },
   label: {
-    width: "100%",
+ width: "100%",
     fontSize: 40,
-    lineHeight: 48,
+    lineHeight: 48, 
+ 
+  textAlign: 'center'
   },
 });
 

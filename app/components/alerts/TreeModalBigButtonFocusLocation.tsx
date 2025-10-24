@@ -11,8 +11,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import SvgIcon from "@/app/styles/SvgIcons";
 import InfoItemLocation from "../locations/InfoItemLocation";
-
-import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
+ 
 import { FocusedLocation } from "@/src/types/LocationTypes";
 
 // import HelpButton from "./HelpButton";
@@ -23,8 +22,7 @@ type Props = {
   friendName: string;
   absolute: boolean;
   height: DimensionValue;
-  safeViewPaddingBottom: number;
-  themeAheadOfLoading: ThemeAheadOfLoading;
+  safeViewPaddingBottom: number; 
   location: FocusedLocation;
   label: string;
   subLabel: string;
@@ -44,8 +42,8 @@ const TreeModalBigButtonFocusLocation = ({
   friendId,
   friendName,
   height,
-  safeViewPaddingBottom,
-  themeAheadOfLoading,
+  safeViewPaddingBottom, 
+  themeColors,
   absolute = false,
   location,
   label,
@@ -95,7 +93,7 @@ const TreeModalBigButtonFocusLocation = ({
           destinationLocation={location}
           userLocation={userAddress}
           friendLocation={friendAddress}
-          themeAheadOfLoading={themeAheadOfLoading}
+          themeColors={themeColors} 
           onLocationDetailsPress={openItems}
           onCloseLocationDetails={closeItems}
           // children={
@@ -119,9 +117,9 @@ const TreeModalBigButtonFocusLocation = ({
 
           width: "100%",
           backgroundColor:
-            themeAheadOfLoading === undefined
+            themeColors === undefined
               ? manualGradientColors.lightColor
-              : themeAheadOfLoading.lightColor, //to match friend profile button circle color
+              : themeColors.lightColor, //to match friend profile button circle color
           borderRadius: 10,
         }}
       >

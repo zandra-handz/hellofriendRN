@@ -10,7 +10,8 @@ const FriendProfileButton = ({
   friendId,
   friendName,
   primaryColor = "orange",
-  themeAheadOfLoading,
+ 
+  themeColors,
  
   onPress,
 }) => {
@@ -24,7 +25,7 @@ const FriendProfileButton = ({
       <View
         style={{
           backgroundColor: friendId
-            ? themeAheadOfLoading.lightColor
+            ? themeColors.lightColor
             : manualGradientColors.lightColor,
           borderRadius: 999,
           width: friendId ? circleSize : circleSize + 20,
@@ -62,7 +63,7 @@ const FriendProfileButton = ({
             {
               color:
                 dashLoaded && friendDash && friendId
-                  ? themeAheadOfLoading.fontColorSecondary
+                  ? themeColors.fontColorSecondary
                   : "black",
             },
           ]}
@@ -88,7 +89,7 @@ const FriendProfileButton = ({
         <View style={styles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
             loading={true}
-            color={themeAheadOfLoading.darkColor}
+            color={themeColors.darkColor}
             spinnerType="flow"
             spinnerSize={30}
             includeLabel={false}

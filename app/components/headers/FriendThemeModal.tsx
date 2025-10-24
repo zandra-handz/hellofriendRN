@@ -27,7 +27,7 @@ const FriendThemeModal: React.FC<Props> = ({
   bottomSpacer,
   closeModal,
   lightDarkTheme,
-  themeAheadOfLoading,
+  themeColors
 }) => {
   const { friendListAndUpcoming } = useFriendListAndUpcoming();
   const friendList = friendListAndUpcoming?.friends;
@@ -35,7 +35,7 @@ const FriendThemeModal: React.FC<Props> = ({
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
-      friendTheme={themeAheadOfLoading}
+      friendTheme={themeColors}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
@@ -49,7 +49,7 @@ const FriendThemeModal: React.FC<Props> = ({
         <MaterialCommunityIcons
           name={`wrench`}
           size={50}
-          color={themeAheadOfLoading.fontColorSecondary}
+          color={themeColors.fontColorSecondary}
         />
       }
       buttonTitle={`${friendName}`}
@@ -61,7 +61,7 @@ const FriendThemeModal: React.FC<Props> = ({
                 primaryColor={lightDarkTheme.primaryText}
                 lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
                 manualGradientColors={manualGradientColors}
-                themeAheadOfLoading={themeAheadOfLoading}
+                themeColors={themeColors} 
                 userId={userId}
                 friendId={friendId}
                 friendList={friendList}

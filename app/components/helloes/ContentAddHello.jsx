@@ -25,22 +25,21 @@ import { useNavigation } from "@react-navigation/native";
 import { useLocations } from "@/src/context/LocationsContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import manualGradientColors from "@/app/styles/StaticColors";
+
 import HelloNotesModal from "../headers/HelloNotesModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
-  const navigation = useNavigation();
-  const { resetTheme, getThemeAheadOfLoading } = useFriendStyle();
+  const navigation = useNavigation(); 
   const { autoSelectFriend } = useAutoSelector();
 
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
@@ -59,7 +58,8 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [notesModalVisible, setNotesModalVisible] = useState(false);
   const { navigateBack } = useAppNavigations();
-  const { selectedFriend, selectFriend } = useSelectedFriend();
+  const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
+    useSelectedFriend();
 
   const { friendDash } = useFriendDash();
 
@@ -154,14 +154,17 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
     if (createHelloMutation.isSuccess) {
       showFlashMessage(`Hello saved!`, false, 2000);
       if (autoSelectFriend?.customFriend?.id) {
-        selectFriend(autoSelectFriend.customFriend);
-        getThemeAheadOfLoading(autoSelectFriend.customFriend);
+        setToFriend({
+          friend: autoSelectFriend.customFriend,
+          preConditionsMet: true,
+        });
       } else if (autoSelectFriend?.nextFriend?.id) {
-        selectFriend(autoSelectFriend.nextFriend);
-        getThemeAheadOfLoading(autoSelectFriend.nextFriend);
+        setToFriend({
+          friend: autoSelectFriend.nextFriend,
+          preConditionsMet: true,
+        });
       } else {
-        selectFriend(null);
-        resetTheme(); // MANUAL RESET BECAUSE NEW CHANGES TO GRADIENT BACKGROUND MADE THIS AN ISSUE ?
+        deselectFriend();
       }
 
       setJustDeselectedFriend(true);
@@ -370,7 +373,7 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
           </View>
 
           {!isKeyboardVisible && selectedTypeChoiceText && (
-            <EscortBar  
+            <EscortBar
               primaryColor={primaryColor}
               primaryBackground={backgroundColor}
               forwardFlowOn={false}

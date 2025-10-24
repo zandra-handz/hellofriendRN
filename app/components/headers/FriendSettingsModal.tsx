@@ -9,8 +9,7 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import DeleteFriend from "../friends/DeleteFriend";
 
 import { FriendDashboardData } from "@/src/types/FriendTypes";
-import { LDTheme } from "@/src/types/LDThemeTypes";
-import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
+import { LDTheme } from "@/src/types/LDThemeTypes"; 
 interface Props {
   isVisible: boolean;
   userId: number;
@@ -19,8 +18,7 @@ interface Props {
   friendDash: FriendDashboardData;
   bottomSpacer: number;
   closeModal: () => void;
-  lightDarkTheme: LDTheme;
-  themeAheadOfLoading: ThemeAheadOfLoading;
+  lightDarkTheme: LDTheme; 
   handleDeselectFriend: () => void;
 }
 
@@ -31,16 +29,16 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendName = "",
   friendDash,
   handleDeselectFriend,
+  themeColors,
 
   bottomSpacer,
   closeModal,
-  lightDarkTheme,
-  themeAheadOfLoading,
+  lightDarkTheme, 
 }) => { 
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
-      friendTheme={themeAheadOfLoading}
+      friendTheme={themeColors}
       isVisible={isVisible}
       headerIcon={
         <SvgIcon name={"wrench"} size={30} color={lightDarkTheme.primaryText} />
@@ -50,7 +48,7 @@ const FriendSettingsModal: React.FC<Props> = ({
         <SvgIcon
           name={`wrench`}
           size={50}
-          color={themeAheadOfLoading.fontColorSecondary}
+          color={themeColors.fontColorSecondary}
         />
       }
       buttonTitle={`${friendName}`}
@@ -66,8 +64,8 @@ const FriendSettingsModal: React.FC<Props> = ({
             </View>
             <View style={styles.sectionContainer}>
               <SectionFriendSettings
-                userId={userId}
-                themeAheadOfLoading={themeAheadOfLoading}
+                userId={userId} 
+                themeColors={themeColors}
                 friendId={friendId}
                 friendPhone={friendDash?.suggestion_settings?.phone_number}
                 friendEffort={friendDash?.suggestion_settings?.effort_required}

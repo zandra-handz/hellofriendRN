@@ -3,9 +3,8 @@ import { useUser } from "./UserContext";
 import { fetchFriendDashboard } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
 import { FriendDashboardData } from "../types/FriendTypes";
-
-import { useSelectedFriend } from "./SelectedFriendContext";
-
+ 
+import { useSelectedFriend } from "./SelectedFriendContext"; 
 const FriendDashContext = createContext<FriendDashboardData | undefined>(
   undefined
 );
@@ -30,12 +29,15 @@ export const FriendDashProvider: React.FC<FriendDashProviderProps> = ({
 }) => {
   const { selectedFriend } = useSelectedFriend();
 
+  
+
   const { user, isInitializing } = useUser();
+
+  console.log('FRIEND DASH RERENDEREERRERERERED           RJEFK REK EFLK                   Rr')
 
   const {
     data: friendDash,
-    isLoading,
-    isPending,
+    isLoading, 
     isError,
     isSuccess,
   } = useQuery<FriendDashboardData>({

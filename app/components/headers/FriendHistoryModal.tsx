@@ -30,8 +30,7 @@ const FriendHistoryModal: React.FC<Props> = ({
   darkerOverlayBackgroundColor,
   primaryColor,
   primaryOverlayColor,
-
-  themeAheadOfLoading,
+themeColors, 
   isVisible,
   closeModal,
   friendName,
@@ -69,7 +68,8 @@ const FriendHistoryModal: React.FC<Props> = ({
             data={helloObject}
             momentOriginalId={momentOriginalId}
             index={helloIndex}
-            themeAheadOfLoading={themeAheadOfLoading}
+            themeColors={themeColors}
+            themeAheadOfLoading={themeColors}
             primaryColor={primaryColor}
           />
         ),
