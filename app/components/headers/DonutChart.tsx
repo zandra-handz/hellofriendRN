@@ -60,7 +60,7 @@ const DonutChart = ({
   positions,
   primaryColor,
   darkerOverlayBackgroundColor,
-  leavesVisibilityValue,
+ 
   onCategoryPress,
   onPlusPress,
   onCenterPress,
@@ -76,8 +76,7 @@ const DonutChart = ({
   gap,
   decimalsValue,
   labelsValue,
-  lastFlush,
-  resetLeaves,
+ 
   colors,
   labelsSize,
   labelsDistanceFromCenter,
@@ -247,9 +246,7 @@ const DonutChart = ({
 
  
   
-          <LeafPath
-          leavesVisibilityValue={leavesVisibilityValue}
-            lastFlush={lastFlush}
+          <LeafPath  
             totalJS={totalJS}
             // positionsValue={positionsValue}
                    positionsValue={animatedLeaves}

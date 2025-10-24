@@ -5,6 +5,8 @@ import {
   Poppins_400Regular,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import { useFont } from "@shopify/react-native-skia";
+import { Skia } from "@shopify/react-native-skia";
 import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
@@ -132,6 +134,10 @@ export default Sentry.wrap(function App() {
     Poppins_700Bold,
   });
 
+    const skiaFontLarge = useFont(Poppins_400Regular, 34);
+  const skiaFontSmall = useFont(Poppins_400Regular, 14);
+
+
   SplashScreen.preventAutoHideAsync();
 
   const {
@@ -178,18 +184,33 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      console.log("fonts loaded");
-      SplashScreen.hideAsync();
-    } else {
-      console.log("fonts not loaded");
-    }
-  }, [fontsLoaded]);
+  // useEffect(() => {
+  //   if (fontsLoaded) {
+  //     console.log("fonts loaded");
+  //     SplashScreen.hideAsync();
+  //   } else {
+  //     console.log("fonts not loaded");
+  //   }
+  // }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
+  // if (!fontsLoaded) {
+  //   return null;
+  // }
+
+  const allFontsLoaded = fontsLoaded && skiaFontLarge && skiaFontSmall;
+
+useEffect(() => {
+  if (allFontsLoaded) {
+    console.log("all fonts loaded");
+    SplashScreen.hideAsync();
+  } else {
+    console.log("fonts not loaded yet");
   }
+}, [allFontsLoaded]);
+
+if (!allFontsLoaded) {
+  return null; // prevents rendering until everything is ready
+}
 
   return (
     <ShareIntentProvider>
@@ -212,7 +233,8 @@ export default Sentry.wrap(function App() {
                                       <RootSiblingParent>
                                         <DeviceLocationProvider>
                                           <FriendStyleProvider>
-                                            <Layout />
+                                            <Layout   skiaFontLarge={skiaFontLarge}
+  skiaFontSmall={skiaFontSmall}/>
                                           </FriendStyleProvider>
                                         </DeviceLocationProvider>
                                       </RootSiblingParent>
@@ -356,7 +378,8 @@ const linking = {
   },
 };
 
-export const Layout = () => {
+export const Layout = ({  skiaFontLarge, 
+  skiaFontSmall}) => {
   const { user, isInitializing } = useUser();
 
   const { settings } = useUserSettings();
@@ -401,6 +424,7 @@ export const Layout = () => {
               <Stack.Screen
                 name="hellofriend"
                 component={ScreenHome}
+                  initialParams={{ skiaFontLarge, skiaFontSmall }}
                 options={{
                   headerShown: false,
                 }}

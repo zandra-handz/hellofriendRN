@@ -85,11 +85,11 @@ const FriendTintPressable = ({
     quickPressTimeout.current = setTimeout(() => {
       console.log("This is a long press!");
       clearTimeout(quickPressTimeout.current);
-      quickPressTimeout.current = undefined; // ✅ clear safely
+      quickPressTimeout.current = undefined; 
     }, QUICK_PRESS_THRESHOLD);
 
     setPressed(true);
-    console.log("pressed innnn");
+    // console.log("pressed innnn");
     const { pageX, pageY, locationX, locationY } = event.nativeEvent;
     touchLocationX.value = pageX;
     touchLocationY.value = pageY;
@@ -103,22 +103,14 @@ const FriendTintPressable = ({
     setTimeout(() => {
       setPressed(false);
     }, 100);
-
-    // scale.value = withSpring(0.95, { duration: 100 });
-    // gradientScale.value = withTiming(1.4, { duration: 50 });
-    // transition.value = withTiming(1, { duration: 100 });
-    // onPressIn();
+ 
   };
 
   const [pressed, setPressed] = useState(false);
 
   const handleOnPress = () => {
     setPressed(true);
-    console.log("pressed");
-    // scaleValue.value = withTiming(screenDiagonal + 700, { duration: 80 });
-    // const { pageX, pageY, locationX, locationY } = event.nativeEvent;
-    // touchLocationX.value = pageX;
-    // touchLocationY.value = pageY;
+    // console.log("pressed"); 
 
     visibility.value = withTiming(1, { duration: 160 });
     scaleValue.value = withTiming(

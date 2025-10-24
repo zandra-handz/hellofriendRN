@@ -98,13 +98,11 @@ const ScreenSelectFriend = (
   const locale = "en-US";
   const { navigateBack, navigateToHome } = useAppNavigations();
  
-  const handleNavAfterSelect = useCallback(() => {
-    console.log(JSON.stringify(navigation.getState(), null, 2));
+  const handleNavAfterSelect = useCallback(() => { 
     if (!useNavigateBack) {
-      console.log('will nav home')
+ 
       navigateToHome();
-    } else {
-      console.log('will nav back')
+    } else { 
       navigateBack();
     }
   }, [useNavigateBack]);

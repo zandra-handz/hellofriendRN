@@ -38,7 +38,7 @@ export const calculatePercentage = (
     percentageArray.push(percentage);
   });
 
-  console.log(`percentages: `, percentageArray);
+  console.log(`calculating percentages: `, percentageArray);
 
   return percentageArray;
 };

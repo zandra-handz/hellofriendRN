@@ -60,7 +60,8 @@ import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingCon
 import { useSharedValue } from "react-native-reanimated";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
-const ScreenHome = () => {
+const ScreenHome = ({route}) => {
+    const { skiaFontLarge, skiaFontSmall } = route.params;
   const { user } = useUser();
   const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
@@ -487,6 +488,9 @@ const ScreenHome = () => {
                           >
                             <View style={{ height: "100%" }}>
                               <SelectedFriendHome
+
+                                skiaFontLarge={skiaFontLarge}
+  skiaFontSmall={skiaFontSmall}
                         
                               selectedFriendIdValue={selectedFriendIdValue}
                                 paddingHorizontal={PADDING_HORIZONTAL}

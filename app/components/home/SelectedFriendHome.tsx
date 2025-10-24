@@ -46,6 +46,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   // friendDash,
   selectedFriendId,
   selectedFriendName,
+    skiaFontLarge,
+  skiaFontSmall,
 }) => {
   const { loadingDash  } = useFriendDash();
 
@@ -207,6 +209,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   {!loadingDash && (
                     <TalkingPointsChart
+
+                      skiaFontLarge={skiaFontLarge}
+  skiaFontSmall={skiaFontSmall}
                       selectedFriendIdValue={selectedFriendIdValue}
             
                     />

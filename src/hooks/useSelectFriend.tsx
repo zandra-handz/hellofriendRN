@@ -34,11 +34,10 @@ const useSelectFriend = ({
     );
 
     const selectedFriend = selectedOption || null;
-
-    // console.log(selectedFriend);
+ 
     if (selectedOption) {
       if (navigateOnSelect) {
-        console.log('handle select is navigating')
+   
         navigateOnSelect();
       }
       selectFriend(selectedFriend);

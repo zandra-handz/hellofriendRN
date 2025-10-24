@@ -9,19 +9,25 @@ import React, {
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import Donut from "../headers/Donut";
-import { AppState, AppStateStatus } from "react-native";
+// import { AppState, AppStateStatus } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
 import { useCategories } from "@/src/context/CategoriesContext";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useLDTheme } from "@/src/context/LDThemeContext";
  
 
-import {  generateGradientColors } from "@/src/hooks/GradientColorsUril";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+
+// import { useFont } from "@shopify/react-native-skia";
+import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
+
+// import {
+//   useFonts,
+//   Poppins_400Regular,
+//   Poppins_700Bold,
+// } from "@expo-google-fonts/poppins";
 
 type Props = {
   selectedFriend: boolean;
@@ -29,12 +35,12 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
- 
   selectedFriendIdValue,
-  
-}: Props) => { 
 
-    console.log("TALKING POINTS COMP RERENDERED");
+  skiaFontLarge,
+  skiaFontSmall,
+}: Props) => {
+  console.log("TALKING POINTS COMP RERENDERED");
 
   const { themeAheadOfLoading } = useFriendStyle();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -45,15 +51,16 @@ const TalkingPointsChart = ({
   const primaryColor = lightDarkTheme.primaryText;
   const primaryOverlayColor = lightDarkTheme.primaryOverlayColor;
   const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
-  const {  capsuleList, categorySizes } = useCapsuleList();
+  const { capsuleList, categorySizes } = useCapsuleList();
 
-//GETTING BUG WITH THIS I THINK
-//   if (!capsuleList.length || !categorySizes.sortedList.length) {
-//   return null; // or a loading placeholder
-// }
-  // const capsuleListCount = capsuleList?.length;
-
+  // const CENTER_TEXT_SIZE = 34;
  
+
+  //GETTING BUG WITH THIS I THINK
+  //   if (!capsuleList.length || !categorySizes.sortedList.length) {
+  //   return null; // or a loading placeholder
+  // }
+  // const capsuleListCount = capsuleList?.length;
 
   // const { categoryStartIndices } = useTalkingPCategorySorting({
   //   listData: capsuleList,
@@ -66,26 +73,30 @@ const TalkingPointsChart = ({
   const capsuleListCount = capsuleList?.length;
 
   const categoryIds = useMemo(
-  () => userCategories.map(c => c.id), // or c.category_id
-  [userCategories]
-);
-
-const categoryColors = useMemo(() => {
-  if (!categoryIds.length || !themeAheadOfLoading?.lightColor) return [];
-
-  return generateGradientColors(
-    categoryIds, // now only IDs
-    themeAheadOfLoading.lightColor,
-    themeAheadOfLoading.darkColor
+    () => userCategories.map((c) => c.id), // or c.category_id
+    [userCategories]
   );
-}, [categoryIds, themeAheadOfLoading?.lightColor, themeAheadOfLoading?.darkColor]);
+
+  const categoryColors = useMemo(() => {
+    if (!categoryIds.length || !themeAheadOfLoading?.lightColor) return [];
+
+    return generateGradientColors(
+      categoryIds, // now only IDs
+      themeAheadOfLoading.lightColor,
+      themeAheadOfLoading.darkColor
+    );
+  }, [
+    categoryIds,
+    themeAheadOfLoading?.lightColor,
+    themeAheadOfLoading?.darkColor,
+  ]);
 
   const categories = categorySizes;
 
-    const colors = useMemo(() => {
+  const colors = useMemo(() => {
     if (!categories?.sortedList || categories.sortedList.length === 0) {
       return { colors: [], colorsReversed: [], friend: null }; // consistent shape
-    } 
+    }
     const userCategorySet = new Set(
       categories?.sortedList.map((item) => item.user_category)
     );
@@ -95,14 +106,12 @@ const categoryColors = useMemo(() => {
       .map((item) => item.color);
 
     // only works if categoryColors has a `friend` field; otherwise remove this line
-    const friend = categoryColors[0].friend ?? null; 
+    const friend = categoryColors[0].friend ?? null;
     const colorsReversed = filteredColors.slice().reverse();
     return { colors: filteredColors, colorsReversed: colorsReversed, friend };
   }, [categoryColors, categories?.sortedList]);
 
   console.log(colors);
-
-
 
   const {
     navigateToMoments,
@@ -119,29 +128,25 @@ const categoryColors = useMemo(() => {
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
   const GAP = 0.01;
-  const LABELS_SIZE = 12; 
+  const LABELS_SIZE = 12;
   const LABELS_DISTANCE_FROM_CENTER = 4;
   const LABELS_SLICE_END = 20;
-  const CENTER_TEXT_SIZE = 34;
 
   // const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
-//   useEffect(() => {
-//     if (!capsuleListCount || capsuleListCount < 1) return;
-// console.log('SORTED TEmP RUNNNNNNNNNNNFD')
-//     console.log("first useeffect");
+  //   useEffect(() => {
+  //     if (!capsuleListCount || capsuleListCount < 1) return;
+  // console.log('SORTED TEmP RUNNNNNNNNNNNFD')
+  //     console.log("first useeffect");
 
-//     if (
-//       JSON.stringify(categories.sortedList) !==
-//       JSON.stringify(tempCategoriesSortedList)
-//     ) {
-//       console.log('SEEETTTINGGGGGGTEmP RUNNNNNNNNNNNFD')
-//       setTempCategoriesSortedList(categories.sortedList);
-//     }
-//   }, [capsuleListCount, categories]);
-
- 
-
+  //     if (
+  //       JSON.stringify(categories.sortedList) !==
+  //       JSON.stringify(tempCategoriesSortedList)
+  //     ) {
+  //       console.log('SEEETTTINGGGGGGTEmP RUNNNNNNNNNNNFD')
+  //       setTempCategoriesSortedList(categories.sortedList);
+  //     }
+  //   }, [capsuleListCount, categories]);
 
   // useEffect(() => {
   //   console.log("APP STATE!");
@@ -193,8 +198,8 @@ const categoryColors = useMemo(() => {
   // );
 
   // not using friend, could revert back to just the single colors array if performance issues
-
  
+
   return (
     <>
       <Pressable onPress={navigateToHistory} style={styles.historyContainer}>
@@ -240,6 +245,8 @@ const categoryColors = useMemo(() => {
           {isFocused && (
             <View style={styles.donutWrapper}>
               <Donut
+                font={skiaFontLarge}
+                smallFont={skiaFontSmall}
                 selectedFriendIdValue={selectedFriendIdValue}
                 friendStyle={themeAheadOfLoading}
                 primaryColor={primaryColor}
@@ -261,7 +268,7 @@ const categoryColors = useMemo(() => {
                 data={[...categories.sortedList]} // new array reference every render
                 colors={[...colors?.colors]}
                 colorsReversed={[...colors?.colorsReversed]}
-                centerTextSize={CENTER_TEXT_SIZE}
+                // centerTextSize={CENTER_TEXT_SIZE}
               />
             </View>
           )}
