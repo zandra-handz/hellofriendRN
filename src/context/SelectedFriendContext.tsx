@@ -33,7 +33,7 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
   children,
 }) => {
 
-  console.log('SELECTED FRIEND RERENDERED   !!!!!!!!!!!!!!!!!!!!!!!!             !!!!!!!!!!!!!!!!!!!!!')
+  // console.log('SELECTED FRIEND RERENDERED   !!!!!!!!!!!!!!!!!!!!!!!!             !!!!!!!!!!!!!!!!!!!!!')
   const [selectedFriend, setSelectedFriend] = useState<Friend>({
     isReady: false,
     user: null,
@@ -222,6 +222,36 @@ const handleSetTheme = ({
 
 
   const deselectFriend = () => {
+    setSelectedFriend(
+      {
+        isReady: true,
+      user: null,
+      id: null,
+      name: null,
+      last_name: null,
+      next_meet: null,
+      saved_color_dark: null,
+      saved_color_light: null,
+
+      theme_color_dark: null,
+      theme_color_light: null,
+      theme_color_font: null,
+      theme_color_font_secondary: null,
+      suggestion_settings: null,
+      created_on: null,
+      updated_on: null,
+
+      lightColor: manualGradientColors.lightColor,
+      darkColor: manualGradientColors.darkColor,
+      fontColor: manualGradientColors.homeDarkColor, // ?? TEMP, not sure if right
+      fontColorSecondary: manualGradientColors.homeDarkColor, // ?? TEMP, not sure if right
+    }
+  );
+  };
+
+
+    const resetFriend 
+     = () => {
     setSelectedFriend(
       {
         isReady: true,

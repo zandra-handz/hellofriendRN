@@ -1,13 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Group } from "@shopify/react-native-skia";
-import { useFocusEffect } from "@react-navigation/native";
+import React from "react";
+import { Group } from "@shopify/react-native-skia"; 
 import {
   useSharedValue,
-  useDerivedValue,
-  runOnJS,
+ 
 } from "react-native-reanimated";
-import { Skia } from "@shopify/react-native-skia";
-import { calculateLeavesWorklet } from "./UtilLeafCalc";
+import { Skia } from "@shopify/react-native-skia"; 
 import { LeafInstance } from "./LeafInstance";
 
 interface LeafPathProps {
