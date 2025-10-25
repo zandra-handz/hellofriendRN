@@ -45,6 +45,9 @@ config.resolver = {
 //   },
 // });
 
-module.exports = process.env.NODE_ENV === "production"
-  ? withSentryConfig(config)
-  : config;
+// module.exports = process.env.NODE_ENV === "production"
+//   ? withSentryConfig(config)
+//   : config;
+
+
+module.exports = config;

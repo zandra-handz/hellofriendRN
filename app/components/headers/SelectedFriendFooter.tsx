@@ -39,7 +39,7 @@ const SelectedFriendFooter = ({
  
 }) => {
   const { friendDash } = useFriendDash();
-  const { selectFriend, setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
+  const {  setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
   const friendId = selectedFriend?.id;
 
   const { autoSelectFriend } = useAutoSelector();

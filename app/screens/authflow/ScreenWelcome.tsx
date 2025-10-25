@@ -19,7 +19,15 @@ const ScreenWelcome = () => {
   const { lightDarkTheme } = useLDTheme();
 
   const { user, isInitializing } = useUser();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, resetFriend } = useSelectedFriend();
+
+    useEffect(() => {
+      if (!isInitializing && !user?.id) {
+        console.log('resetting friend')
+        resetFriend();
+      }
+  
+    }, [user?.id, isInitializing]);
 
   const { navigateToNewAccount } = useAppNavigations();
   const navigation = useNavigation<AuthScreenNavigationProp>();

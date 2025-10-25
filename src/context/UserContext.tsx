@@ -6,9 +6,9 @@ import React, {
   useEffect,
 } from "react";
 import * as SecureStore from "expo-secure-store";
-import { useQuery } from "@tanstack/react-query";
-
-import useSignOut from "../hooks/UserCalls/useSignOut";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { signout } from "../calls/helloFriendApiClient";
+// import useSignOut from "../hooks/UserCalls/useSignOut";
 import { getCurrentUser } from "../calls/api";
 // import useSignIn from "../hooks/UserCalls/useSignIn";
 // import useSignUp from "../hooks/UserCalls/useSignUp";
@@ -45,7 +45,9 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const { onSignOut } = useSignOut();
+  // made own for context
+  // const { onSignOut } = useSignOut();
+  const queryClient = useQueryClient();
 
   // const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -59,13 +61,25 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
     enabled: false, // never auto-run
-    retry: 3,  
+    retry: 3,
   });
- 
+
+  const onSignOutContextVersion = async () => {
+    await signout();
+
+    queryClient.resetQueries(["currentUser"], {
+      exact: true,
+      refetchActive: false,
+    });
+
+    queryClient.removeQueries({ exact: false }); // removes all queries
+    queryClient.cancelQueries();
+  };
 
   useEffect(() => {
     if (isError) {
-      onSignOut();
+      onSignOutContextVersion();
+      // onSignOut();
     }
   }, [isError]);
 
@@ -73,14 +87,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     (async () => {
       const storedToken = await SecureStore.getItemAsync("accessToken");
       if (storedToken) {
-        await refetch(); 
+        await refetch();
       } else {
-        onSignOut();
+        // onSignOut();
+        onSignOutContextVersion();
       }
     })();
   }, []);
 
- 
   const contextValue = useMemo(
     () => ({
       user,

@@ -5,8 +5,7 @@ import { signout } from '@/src/calls/api';
 
 import {  useQueryClient  } from "@tanstack/react-query";
 
-type Props = {}
-
+ 
 const useSignOut = ( ) => { 
    const queryClient = useQueryClient();
 

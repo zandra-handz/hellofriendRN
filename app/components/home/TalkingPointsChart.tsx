@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useCallback, useMemo, useEffect } from "react";
+import React, { useCallback, useMemo, useRef, useEffect } from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import Donut from "../headers/Donut";
@@ -8,8 +8,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
 import { useCategories } from "@/src/context/CategoriesContext";
 import SvgIcon from "@/app/styles/SvgIcons";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
+import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
@@ -25,7 +24,7 @@ const TalkingPointsChart = ({
   skiaFontSmall,
 }: Props) => {
   console.log("TALKING POINTS COMP RERENDERED");
-
+ 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { userCategories } = useCategories();
 
@@ -33,50 +32,75 @@ const TalkingPointsChart = ({
 
   const primaryColor = lightDarkTheme.primaryText;
   const primaryOverlayColor = lightDarkTheme.primaryOverlayColor; 
-  const { capsuleList, categorySizes, isPending } = useCapsuleList();
+  const { capsuleList, categorySizes, capsuleCategorySet, isPending } = useCapsuleList();
 
   const capsuleListCount = capsuleList?.length;
 
+  // STABLE BECAUSE USER CATEGORIES IS NOW STABLE  ? ?
   const categoryIds = useMemo(
     () => userCategories.map((c) => c.id), // or c.category_id
     [userCategories]
   );
+  // STABLE BECAUSE USER CATEGORIES IS NOW STABLE  ? ?
+const categoryColors = useMemo(() => {
+  if (!categoryIds.length || !themeColors?.lightColor) return [];
 
-  const categoryColors = useMemo(() => {
-    if (!categoryIds.length || !themeColors?.lightColor) return [];
+  return generateGradientColors(
+    categoryIds,
+    themeColors.lightColor,
+    themeColors.darkColor
+  );
+}, [categoryIds, themeColors?.lightColor, themeColors?.darkColor]);
 
-    return generateGradientColors(
-      categoryIds, // now only IDs
-      themeColors.lightColor,
-      themeColors.darkColor
-    );
-  }, [categoryIds, themeColors?.lightColor, themeColors?.darkColor]);
+ 
 
-  const categories = categorySizes;
+  // const colors = useMemo(() => {
+  //   console.log("colors usememo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  //   if (
+  //     !capsuleCategorySet ||
+  //     capsuleCategorySet.length === 0 ||
+  //     isPending
+  //   ) {
+  //     console.log("colors usememo returning null, pending: ", isPending);
+  //     return { colors: [], colorsReversed: [], friend: null }; // consistent shape
+  //   }
+ 
 
-  const colors = useMemo(() => {
-    console.log("colors usememo");
-    if (
-      !categories?.sortedList ||
-      categories.sortedList.length === 0 ||
-      isPending
-    ) {
-      console.log("colors usememo returning null");
-      return { colors: [], colorsReversed: [], friend: null }; // consistent shape
-    }
-    const userCategorySet = new Set(
-      categories?.sortedList.map((item) => item.user_category)
-    );
+  //   const filteredColors = categoryColors
+  //     .filter((item) => capsuleCategorySet.has(item.user_category))
+  //     .map((item) => item.color);
 
-    const filteredColors = categoryColors
-      .filter((item) => userCategorySet.has(item.user_category))
-      .map((item) => item.color);
+  //   // only works if categoryColors has a `friend` field; otherwise remove this line
+  //   const friend = categoryColors[0].friend ?? null;
+  //   const colorsReversed = filteredColors.slice().reverse();
+  //   return { colors: filteredColors, colorsReversed: colorsReversed, friend };
+  // }, [categoryColors, capsuleCategorySet, isPending]);
 
-    // only works if categoryColors has a `friend` field; otherwise remove this line
-    const friend = categoryColors[0].friend ?? null;
-    const colorsReversed = filteredColors.slice().reverse();
-    return { colors: filteredColors, colorsReversed: colorsReversed, friend };
-  }, [categoryColors, categories?.sortedList, isPending]);
+
+  const colorsRef = useRef<{ colors: string[]; colorsReversed: string[]; friend: any }>({
+  colors: [],
+  colorsReversed: [],
+  friend: null,
+});
+
+// Only update colorsRef if we have data and are not pending
+if (capsuleCategorySet?.size && !isPending && categoryColors?.length) {
+  const filteredColors = categoryColors
+    .filter((item) => capsuleCategorySet.has(item.user_category))
+    .map((item) => item.color);
+
+  const friend = categoryColors[0]?.friend ?? null;
+
+  colorsRef.current = {
+    colors: filteredColors,
+    colorsReversed: filteredColors.slice().reverse(),
+    friend,
+  };
+}
+
+// Use the persistent value
+const colors = colorsRef.current;
+
 
  
 
@@ -119,8 +143,8 @@ const TalkingPointsChart = ({
   }, [navigateToMomentFocus]);
 
   const memoizedData = useMemo(
-    () => categories.sortedList,
-    [categories.sortedList]
+    () => categorySizes.sortedList,
+    [categorySizes.sortedList]
   );
   const memoizedColors = useMemo(() => colors?.colors, [colors?.colors]);
   const memoizedColorsReversed = useMemo(
@@ -175,6 +199,7 @@ const TalkingPointsChart = ({
           {isFocused && colors?.colors?.length > 0 && (
             <View style={styles.donutWrapper}>
               <Donut
+              // remounts component on friend change
                 font={skiaFontLarge}
                 smallFont={skiaFontSmall}
                 themeColors={themeColors}

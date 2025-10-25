@@ -9,13 +9,13 @@ import UserSettingsModal from "./UserSettingsModal.";
 import CategoriesModal from "./CategoriesModal"; 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
  
 import SvgIcon from "@/app/styles/SvgIcons";
 import GradientBackground from "../appwide/display/GradientBackground";
-  
+import { resetFriend } from "@/src/hooks/SelectFriendUtils";
 
 // types
 import { LDTheme } from "@/src/types/LDThemeTypes";
@@ -36,6 +36,7 @@ const HelloFriendFooter = ({
   const dividerStyle = lightDarkTheme.divider;
 
   const { onSignOut } = useSignOut();
+  const { selectFriend } = useSelectedFriend();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
   const [aboutModalVisible, setAboutModalVisible] = useState(false);

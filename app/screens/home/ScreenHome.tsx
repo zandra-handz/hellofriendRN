@@ -57,6 +57,8 @@ import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingCon
 
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
+
+ 
  
 
 const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
@@ -71,7 +73,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
   const { autoSelectFriend } = useAutoSelector();
 
-  const { selectedFriend,  setToAutoFriend } =
+  const { selectedFriend, setToAutoFriend } =
     useSelectedFriend();
 
  
@@ -85,22 +87,22 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
       !selectedFriend?.id
     ) { 
       if (autoSelectFriend.customFriend?.id) {
-        setToAutoFriend({
+        setToAutoFriend({  
           friend: autoSelectFriend.customFriend,
 
           preConditionsMet: autoSelectFriend.customFriend !== undefined,
         });
       } else if (autoSelectFriend.nextFriend?.id) {
-        setToAutoFriend({
+        setToAutoFriend({ 
           friend: autoSelectFriend.nextFriend?.id,
 
           preConditionsMet: autoSelectFriend.nextFriend !== undefined,
         });
       } else {
-        setToAutoFriend({ friend: { id: null }, preConditionsMet: true });
+        setToAutoFriend({   friend: { id: null }, preConditionsMet: true });
       }
     }
-  }, [autoSelectFriend]);
+  }, [autoSelectFriend ]);
 
   const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming();

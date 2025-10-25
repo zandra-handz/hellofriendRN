@@ -1,83 +1,14 @@
-import React, { createContext, useState, useContext, useEffect, useMemo } from "react";
-import { Friend } from "../types/FriendTypes";
 import manualGradientColors from "@/app/styles/StaticColors";
 
-// import { useUser } from "./UserContext";
 
-interface SelectedFriendType {
-  selectedFriend: Friend | null;
-  deselectFriend: () => void;
-  selectFriend: (friend: Friend | null) => void; //setting as null will deselect, hence why it's allowed (was already an established approach)
-}
 
-const SelectedFriendContext = createContext<SelectedFriendType | undefined>(
-  undefined
-);
 
-export const useSelectedFriend = () => {
-  const context = useContext(SelectedFriendContext);
+// USING CONTEXT VERSION INSEAD
+export function setToAutoFriend({ selectFriend, friend, preConditionsMet })  {
 
-  if (!context) {
-    throw new Error(
-      "useSelectedFriend must be used within a SelectedFriendProvider"
-    );
-  }
-  return context;
-};
 
-interface SelectedFriendProviderProps {
-  children: React.ReactNode;
-}
 
-export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
-  children,
-}) => {
-
-  // const { user, isInitializing } = useUser();
-
-  console.log('FRIENDS RERENDERED')
-
-  // moved to welcome screen
-  // useEffect(() => {
-  //   if (!isInitializing && !user?.id) {
-  //     console.log('resetting friend')
-  //     resetFriend();
-  //   }
-
-  // }, [user?.id, isInitializing]);
-  // console.log('SELECTED FRIEND RERENDERED   !!!!!!!!!!!!!!!!!!!!!!!!             !!!!!!!!!!!!!!!!!!!!!')
-  const [selectedFriend, setSelectedFriend] = useState<Friend>({
-    isReady: false,
-    user: null,
-    id: null,
-    name: null,
-    last_name: null,
-    next_meet: null,
-    saved_color_dark: null,
-    saved_color_light: null,
-
-    theme_color_dark: null,
-    theme_color_light: null,
-    theme_color_font: null,
-    theme_color_font_secondary: null,
-    suggestion_settings: null,
-    created_on: null,
-    updated_on: null,
-
-    lightColor: manualGradientColors.lightColor,
-    darkColor: manualGradientColors.darkColor,
-    fontColor: manualGradientColors.homeDarkColor, // ?? TEMP, not sure if right
-    fontColorSecondary: manualGradientColors.homeDarkColor, // ?? TEMP, not sure if right
-  });
-
-  const selectFriend = (friend: Friend) => {
-    setSelectedFriend(friend);
-    console.log("FRIEND: ", friend);
-    console.log("selecting friend in context");
-  };
-
-  const setToAutoFriend = ({ friend, preConditionsMet }) => {
-    console.log("FRIEND PASSED TO AUTO: ", friend);
+  console.log("FRIEND PASSED TO AUTO: ", friend);
     if (!preConditionsMet) {
       const notReady = {
         id: null,
@@ -139,7 +70,9 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     selectFriend(fromAuto);
   };
 
-  const setToFriend = ({ friend, preConditionsMet }) => {
+
+  // USING CONTEXT VERSION INSTEAD
+  export function setToFriend({ selectFriend, friend, preConditionsMet }) {
     if (!preConditionsMet || !friend?.id) {
       const notReady = {
         id: null,
@@ -180,20 +113,22 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     selectFriend(fromFriendlist);
   };
 
-  type handleSetThemeProps = {
-    lightColor: string;
-    darkColor: string;
-    fontColor: string;
-    fontColorSecondary: string;
-  };
 
-  const handleSetTheme = ({
+
+//    type handleSetThemeProps = {
+//     lightColor: string;
+//     darkColor: string;
+//     fontColor: string;
+//     fontColorSecondary: string;
+//   };
+
+  export function handleSetTheme({
+    selectFriend,
     lightColor,
     darkColor,
     fontColor,
-    fontColorSecondary,
-  }: handleSetThemeProps) => {
-    setSelectedFriend((prev) => ({
+    fontColorSecondary}) {
+    selectedFriend((prev) => ({
       ...prev,
       lightColor,
       darkColor,
@@ -202,8 +137,8 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     }));
   };
 
-  const deselectFriend = () => {
-    setSelectedFriend({
+export function deselectFriend({selectFriend}){
+    selectFriend({
       isReady: true,
       user: null,
       id: null,
@@ -229,8 +164,8 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
   };
 
   // for logging out
-  const resetFriend = () => {
-    setSelectedFriend({
+export function resetFriend({selectFriend}) {
+    selectFriend({
       isReady: false,
       user: null,
       id: null,
@@ -255,30 +190,3 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     });
   };
 
-  const contextValue = useMemo(
-    () => ({
-      selectedFriend,
-      selectFriend,
-      deselectFriend,
-      setToFriend,
-      setToAutoFriend,
-      handleSetTheme,
-      resetFriend,
-    }),
-    [
-      selectedFriend,
-      selectFriend,
-      deselectFriend,
-      setToFriend,
-      setToAutoFriend,
-      handleSetTheme,
-      resetFriend,
-    ]
-  );
-
-  return (
-    <SelectedFriendContext.Provider value={contextValue}>
-      {children}
-    </SelectedFriendContext.Provider>
-  );
-};

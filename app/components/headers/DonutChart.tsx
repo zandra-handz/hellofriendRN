@@ -22,7 +22,7 @@ import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import LeafPath from "./LeafPath";
 import manualGradientColors from "@/app/styles/StaticColors";
-
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 
 // import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -58,7 +58,7 @@ const DonutChart = ({
   animatedLeaves,
   totalJS,
   positions,
- 
+
   onCategoryPress,
   colorsReversed,
   onPlusPress,
@@ -69,7 +69,7 @@ const DonutChart = ({
 
   backgroundColor,
   font,
-  totalValue, 
+  totalValue,
   n,
   gap,
   decimalsValue,
@@ -84,7 +84,7 @@ const DonutChart = ({
   const array = Array.from({ length: n });
   const innerRadius = radius - outerStrokeWidth / 2;
   const color = lightDarkTheme.primaryText;
-
+  // const { selectedFriend } = useSelectedFriend();
   const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
 
   const [labelsJS, setLabelsJS] = useState([]);
@@ -214,15 +214,12 @@ const DonutChart = ({
           },
         ]}
       >
-                          <LeafPath 
-          array={array}
-            positions={positions}
-            colorsReversed={colorsReversed}
-       
-   
-          />
+        <LeafPath
+          // key={selectedFriend?.id ?? "no-friend"}
+          positions={positions}
+          colorsReversed={colorsReversed}
+        />
         <Group transform={[{ translateX: 0 }, { translateY: 0 }]}>
-
           <Path
             path={path}
             color={backgroundColor}
@@ -238,6 +235,7 @@ const DonutChart = ({
             return (
               <React.Fragment key={index}>
                 <DonutPath
+                  // key={selectedFriend?.id ?? "no-friend"}
                   radius={radius}
                   strokeWidth={strokeWidth}
                   outerStrokeWidth={outerStrokeWidth}
@@ -250,8 +248,6 @@ const DonutChart = ({
             );
           })}
 
-
-
           <Text
             x={textX}
             y={300}
@@ -261,7 +257,6 @@ const DonutChart = ({
             opacity={1}
           />
         </Group>
-
       </Canvas>
       <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
         {LabelOverlays}

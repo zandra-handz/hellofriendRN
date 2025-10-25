@@ -1,62 +1,69 @@
-// NOT CURRENTLY IN USE BUT AVAILABLE IF NEED TO SEPARATE CATEGORIES FRM SETTNIGS! (comment out on backend too)
-
-import React, { createContext, useContext, useMemo, ReactNode } from "react";
+import React, { createContext, useContext, useMemo, ReactNode, useRef } from "react";
 import { useUser } from "./UserContext"; 
-import { useQuery  } from "@tanstack/react-query";
-import {   getUserCategories } from "../calls/api";
+import { useQuery } from "@tanstack/react-query";
+import { getUserCategories } from "../calls/api";
+import isEqual from "lodash.isequal";
 
-interface Categories {
-  //   id: number | null;
-  //   user: number | null;
-  //   expo_push_token: string | null;
-  //   high_contrast_mode: boolean;
-  //   interests: string | null;
-  //   language_preference: string | null;
-  //   large_text: boolean;
-  //   manual_dark_mode: boolean;
-  //   receive_notifications: boolean;
-  //   screen_reader: boolean;
+// Define the type for a single category
+export interface CategoryType {
+  id: number;
+  name: string;
+  // add other fields here if needed
 }
 
-interface CategoriesContextType {}
+// Context type
+interface CategoriesContextType {
+  userCategories: CategoryType[];
+  isLoading: boolean;
+  isSuccess: boolean;
+}
 
-const CategoriesContext = createContext<Categories | undefined>(undefined);
+// Create context
+const CategoriesContext = createContext<CategoriesContextType | undefined>(undefined);
 
+// Hook to use the context
 export const useCategories = (): CategoriesContextType => {
   const context = useContext(CategoriesContext);
   if (!context) {
     throw new Error(
-      "useCategories must be used within a UserCategoriesProvider"
+      "useCategories must be used within a CategoriesProvider"
     );
   }
   return context;
 };
 
+// Provider props
 interface CategoriesProviderProps {
   children: ReactNode;
 }
 
-export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
-  children,
-}) => {
+export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({ children }) => {
   const { user, isInitializing } = useUser(); 
- 
-  const {
-    data: userCategories,
 
-    isSuccess,
-  } = useQuery({
+  const prevCategoriesRef = useRef<CategoryType[]>([]);
+
+  const { data, isLoading, isSuccess } = useQuery({
     queryKey: ["categories", user?.id],
-    queryFn: () => getUserCategories(user?.id),
-    enabled: !!(user?.id && !isInitializing), // testing removing this  && !isInitializing),
+    queryFn: () => getUserCategories(user?.id!),
+    enabled: !!(user?.id && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
+  // Ensure stable reference: only update if actual content changed
+  const userCategories = useMemo(() => {
+    if (!data) return [];
+    if (isEqual(prevCategoriesRef.current, data)) return prevCategoriesRef.current;
+    prevCategoriesRef.current = data;
+    return data;
+  }, [data]);
+
   const contextValue = useMemo(
-    () => ({ 
+    () => ({
       userCategories,
+      isLoading,
+      isSuccess,
     }),
-    [userCategories]
+    [userCategories, isLoading, isSuccess]
   );
 
   return (
