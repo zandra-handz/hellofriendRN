@@ -32,7 +32,7 @@ type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
-  onPlusPress: () => void;
+  // onPlusPress: () => void;
   radius: number;
   strokeWidth: number;
   outerStrokeWidth: number;
@@ -61,7 +61,7 @@ const DonutChart = ({
 
   onCategoryPress,
   colorsReversed,
-  onPlusPress,
+  // onPlusPress,
   onCenterPress,
   radius,
   strokeWidth,
@@ -280,7 +280,7 @@ const DonutChart = ({
         color={primaryColor}
         size={24}/>
       </Pressable> */}
-      {onPlusPress && onCenterPress && (
+      {  onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <SvgIcon
             name={"leaf"}
@@ -296,7 +296,7 @@ const DonutChart = ({
           />
         </View>
       )}
-      <Pressable
+      {/* <Pressable
         onPress={onPlusPress}
         hitSlop={60}
         style={[
@@ -313,7 +313,7 @@ const DonutChart = ({
           opacity={1}
           color={manualGradientColors.homeDarkColor}
         />
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 };
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     width: 34,
     height: 34,
-    padding: 0,
+ 
     alignItems: "center",
     justifyContent: "center",
     opacity: 1,

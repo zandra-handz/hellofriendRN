@@ -223,9 +223,9 @@ export default Sentry.wrap(function App() {
                     <SelectedFriendProvider>
                       <CapsuleListProvider>
                         <FriendDashProvider>
-                          <LocationsProvider>
-                            <HelloesProvider>
-                              <SelectedFriendStatsProvider>
+                          <SelectedFriendStatsProvider>
+                            <LocationsProvider>
+                              <HelloesProvider>
                                 <GestureHandlerRootView style={{ flex: 1 }}>
                                   <SafeAreaProvider>
                                     <LDThemeProvider>
@@ -240,9 +240,9 @@ export default Sentry.wrap(function App() {
                                     </LDThemeProvider>
                                   </SafeAreaProvider>
                                 </GestureHandlerRootView>
-                              </SelectedFriendStatsProvider>
-                            </HelloesProvider>
-                          </LocationsProvider>
+                              </HelloesProvider>
+                            </LocationsProvider>
+                          </SelectedFriendStatsProvider>
                         </FriendDashProvider>
                       </CapsuleListProvider>
                     </SelectedFriendProvider>

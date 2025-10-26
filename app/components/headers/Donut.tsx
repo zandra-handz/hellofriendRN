@@ -17,7 +17,7 @@ type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
-  onPlusPress: () => void;
+  // onPlusPress: () => void;
   data: string[];
   radius: number;
   strokeWidth: number;
@@ -39,7 +39,7 @@ const Donut = ({
   darkerOverlayBackgroundColor,
   onCategoryPress,
   onCategoryLongPress,
-  onPlusPress,
+  // onPlusPress,
   onCenterPress,
   totalJS,
   data,
@@ -272,7 +272,7 @@ const Donut = ({
           darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
           onCategoryPress={onCategoryPress}
           onCategoryLongPress={onCategoryLongPress}
-          onPlusPress={onPlusPress}
+          // onPlusPress={onPlusPress}
           onCenterPress={onCenterPress}
           radius={RADIUS}
           strokeWidth={STROKE_WIDTH}

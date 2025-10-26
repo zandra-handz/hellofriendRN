@@ -18,7 +18,8 @@ const GradientBackgroundFidgetOne = ({
   secondColorSetDark,
   secondColorSetLight,
   direction = "original", //horizontal, vertical, original
-  timeScore = 100,
+  timeScore = 100, 
+  borderRadius=0,
   daysSince,
 }: Props) => {
   // const [changeColors, setChangeColors] = useState(false);
@@ -57,6 +58,7 @@ const GradientBackgroundFidgetOne = ({
 
   return (
     <GradientBackgroundForFidget
+    borderRadius={borderRadius}
       additionalStyles={style}
       children={children}
       switchColorSet={false} // change colors

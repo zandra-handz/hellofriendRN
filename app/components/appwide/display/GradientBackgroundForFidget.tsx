@@ -41,6 +41,8 @@ const GradientBackgroundForFidget: React.FC<
   secondSetDirection = [0, 1, 1, 0],
   additionalStyles,
   children,
+  borderRadius=0,
+  
 }) => {
 
  
@@ -101,18 +103,19 @@ const GradientBackgroundForFidget: React.FC<
   }));
 
   return (
-    <Animated.View style={[styles.container, additionalStyles]}>
+    <Animated.View style={[styles.container, additionalStyles, {borderRadius: borderRadius}]}>
       <LinearGradient
+
         colors={previousColors}
         start={{ x: direction[0], y: direction[1] }}
         end={{ x: direction[2], y: direction[3] }}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill, {borderRadius: borderRadius}]}
       />
       <AnimatedLinearGradient
         colors={currentColors}
         start={{ x: direction[4], y: direction[5] }}
         end={{ x: direction[6], y: direction[7] }}
-        style={[StyleSheet.absoluteFill, animatedStyle]}
+        style={[StyleSheet.absoluteFill, animatedStyle, {borderRadius: borderRadius}]}
       />
       {children}
     </Animated.View>
@@ -122,7 +125,7 @@ const GradientBackgroundForFidget: React.FC<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: "100%", 
   },
 });
 

@@ -1,31 +1,25 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native";  
+import { useNavigation } from "@react-navigation/native";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import { useFriendDash } from "@/src/context/FriendDashContext";
+
 type Props = {
   userId: number;
   friendId: number;
+  primaryColor: string;
+  primaryOverlayColor: string;
 };
 
-const Pics = ({ 
-  userId,
-  friendId,
-  primaryColor,
-  primaryOverlayColor,
-}: Props) => {
+const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
   const navigation = useNavigation();
-  const { imageList } = useImages({
-    userId: userId,
-    friendId: friendId,
-  });
+  const { imageList } = useImages({ userId, friendId });
   const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
-  const { loadingDash} = useFriendDash();
+  const { loadingDash } = useFriendDash();
   const isLoading = loadingDash;
 
-  const PADDING = 20;
   const navigateToImages = () => {
     navigation.navigate("ImageView", { startingIndex: 0 });
   };
@@ -35,41 +29,15 @@ const Pics = ({
       {friendId && (
         <View
           style={[
+            styles.outerContainer,
             {
-              overflow: "hidden",
-              height: 60,
-              flexShrink: 1,
-              width: "100%",
-              padding: PADDING,
-              flexDirection: "row",
-              alignItems: "center",
-              //   paddingBottom: 10,
-              backgroundColor: isLoading ? 'transparent' : primaryOverlayColor,
-              borderRadius: 16, // the others are at 20 as of 7/7/25, this one is too short to look like it matches when it is also at 20
+              backgroundColor: isLoading ? "transparent" : primaryOverlayColor, // dynamic
             },
           ]}
         >
-          {/* {isLoading && <LoadingBlock loading={true} />} */}
-     
-            <View
-              style={{
-                borderRadius: 20,
-                flexDirection: "row",
-                height: 40,
-                width: "100%",
-                alignItems: "center", 
-
-                // marginBottom: outerPadding, // turn back on to add body content to this component
-              }}
-            >
-                   {!isLoading && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: "100%",
-                  justifyContent: "space-between",
-                }}
-              >
+          <View style={styles.innerContainer}>
+            {!isLoading && (
+              <View style={styles.rowSpaceBetween}>
                 <Pressable
                   hitSlop={10}
                   onPress={
@@ -77,59 +45,48 @@ const Pics = ({
                       ? navigateToImages
                       : () => {}
                   }
-                  style={{ flexDirection: "row" }}
+                  style={styles.row}
                 >
-                  <SvgIcon 
+                  <SvgIcon
                     name="image_multiple_outline"
-               
                     size={20}
-                    color={primaryColor}
-                    style={{ marginBottom: 0 }}
+                    color={primaryColor} // dynamic
+                    style={styles.icon}
                   />
                   <Text
                     style={[
-                      {
-                        color: primaryColor,
-                        marginLeft: 6,
-                        marginRight: 12,
-                        fontWeight: "bold",
-                      },
+                      styles.titleText,
+                      { color: primaryColor }, // dynamic
                     ]}
                   >
                     Pics ({imageList && imageList.length})
                   </Text>
                 </Pressable>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+
+                <View style={styles.rightButtonGroup}>
                   <Pressable hitSlop={10} onPress={handleCaptureImage}>
                     <Text
                       style={[
-                        {
-                          color: primaryColor,
-                          fontWeight: "bold",
-                          fontSize: 13,
-                        },
+                        styles.actionText,
+                        { color: primaryColor }, // dynamic
                       ]}
                     >
                       Camera
                     </Text>
                   </Pressable>
+
                   <View
-                    style={{
-                      width: 1,
-                      height: "100%",
-                      opacity: 0.7,
-                      marginHorizontal: 10,
-                      backgroundColor: primaryColor,
-                    }}
-                  ></View>
+                    style={[
+                      styles.divider,
+                      { backgroundColor: primaryColor }, // dynamic
+                    ]}
+                  />
+
                   <Pressable hitSlop={10} onPress={handleSelectImage}>
                     <Text
                       style={[
-                        {
-                          color: primaryColor,
-                          fontWeight: "bold",
-                          fontSize: 13,
-                        },
+                        styles.actionText,
+                        { color: primaryColor }, // dynamic
                       ]}
                     >
                       Upload
@@ -137,15 +94,63 @@ const Pics = ({
                   </Pressable>
                 </View>
               </View>
-                 )}
-
-            </View>
-       
-          {/* <View style={{ width: "100%", height: 10 }}></View>   // turn back on to add body content to this component (??) */}
+            )}
+          </View>
         </View>
       )}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  outerContainer: {
+    overflow: "hidden",
+    height: 30,
+    flexShrink: 1,
+    width: "100%",
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 16,
+  },
+  innerContainer: {
+    borderRadius: 20,
+    flexDirection: "row",
+    height: 40,
+    width: "100%",
+    alignItems: "center",
+  },
+  row: {
+    flexDirection: "row",
+  },
+  rowSpaceBetween: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  icon: {
+    marginBottom: 0,
+  },
+  titleText: {
+    marginLeft: 15, 
+    fontSize: 13,
+    fontWeight: 'bold',
+    // fontWeight: "bold",
+  },
+  rightButtonGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  actionText: {
+    fontWeight: "bold",
+    fontSize: 13,
+  },
+  divider: {
+    width: 1,
+    height: "100%",
+    opacity: 0.7,
+    marginHorizontal: 10,
+  },
+});
 
 export default Pics;

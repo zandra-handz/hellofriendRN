@@ -46,45 +46,7 @@ export const HelloesProvider = ({ children }) => {
     enabled: !!(user?.id && selectedFriend?.id), // testing removing !isInitializing
     staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
   });
-
  
- // NOT SURE IF THIS GOT MOVED SOMEWHERE ELSE, BC NO COMPONENT IS USING THIS RIGHT NOW
-  // const flattenHelloes = useMemo(() => {
-  //   if (helloesList) {
-  //     return helloesList.flatMap((hello) => {
-  //       const pastCapsules = hello.thought_capsules_shared || [];
-  //       return pastCapsules.length > 0
-  //         ? pastCapsules.map((capsule) => ({
-  //             id: hello.id,
-  //             date: hello.date,
-  //             type: hello.type,
-  //             typedLocation: hello.typed_location,
-  //             locationName: hello.location_name,
-  //             location: hello.location,
-  //             additionalNotes: hello.additional_notes || "", // Keep existing additional notes
-
-  //             capsuleId: capsule.id,
-  //             capsule: capsule.capsule,
-  //             typedCategory: capsule.user_category_name,
-  //           }))
-  //         : [
-  //             {
-  //               id: hello.id,
-  //               date: hello.date,
-  //               type: hello.type,
-  //               typedLocation: hello.typed_location,
-  //               locationName: hello.location_name,
-  //               location: hello.location,
-  //               additionalNotes: hello.additional_notes || "", // Keep existing additional notes
-  //               capsuleId: null,
-  //               capsule: null,
-  //               typedCategory: null,
-  //             },
-  //           ];
-  //     });
-  //   }
-  // }, [helloesList]); 
-
   const memoizedValue = useMemo(
     () => ({
       helloesList,

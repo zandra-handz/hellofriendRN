@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   leaf: {
     position: "absolute",
-    top: -740,
+    top: -750,
     left: -470,
     opacity: 0.5,
     transform: [{ rotate: "200deg" }, { scaleX: -1 }],

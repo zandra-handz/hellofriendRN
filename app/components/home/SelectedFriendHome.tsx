@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 
 import {
   Text,
@@ -12,14 +12,15 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-
+import WriteButton from "./WriteButton";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
+import manualGradientColors from "@/app/styles/StaticColors";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -41,6 +42,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 }) => {
   console.log("selected friend home rerendered");
   const headerRef = useRef(null);
+
+  const { navigateToMomentFocus } = useAppNavigations();
+  const handleNavigateToCreateNew = useCallback(() => {
+    navigateToMomentFocus({ screenCameFrom: 1 });
+  }, [navigateToMomentFocus]);
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -74,136 +80,142 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const ELEMENTS_BACKGROUND = "transparent";
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingHorizontal: paddingHorizontal,
-        },
-      ]}
-    >
-      <SvgIcon
-        name={"leaf"}
-        size={1200}
-        color={"#8bc34a"}
-        style={{
-          position: "absolute",
-          top: -740,
-          left: -470,
-          opacity: 0.8,
-          transform: [{ rotate: "200deg" }, { scaleX: -1 }],
-        }}
-      />
+    <> 
       <View
-        style={{
-          zIndex: 30000,
-
-          height: "100%",
-          width: "100%",
-        }}
+        style={[
+          styles.container,
+          {
+            paddingHorizontal: paddingHorizontal,
+          },
+        ]}
       >
-        <View style={styles.containerOverScrollView}>
-          <View
-            style={{
-              flex: 1,
-              width: "100%",
-              alignItems: "center",
-              paddingBottom: 0,
-            }}
-          >
-            <Animated.View
-              style={[
-                smallHeaderAnimationStyle,
-                {
-                  position: "absolute",
-                  width: "100%",
-                  top: 0,
-                  height: "auto",
 
-                  padding: 6,
+        <SvgIcon
+          name={"leaf"}
+          size={1200}
+          color={"#8bc34a"}
+          style={{
+            position: "absolute",
+            top: -750, // 740
+            left: -470,
+            opacity: 0.8,
+            transform: [{ rotate: "200deg" }, { scaleX: -1 }],
+          }}
+        />
+        <View
+          style={{
+            zIndex: 30000,
 
-                  backgroundColor: primaryOverlayColor,
-
-                  zIndex: 5000,
-                  elevation: 5000,
-                },
-              ]}
-            >
-              <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
-                {selectedFriendName}
-              </Text>
-            </Animated.View>
-
-            <ScrollView
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-              style={{ width: "100%" }}
-              contentContainerStyle={{
-                paddingHorizontal: 0,
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          <View style={styles.containerOverScrollView}>
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
                 alignItems: "center",
+                paddingBottom: 0,
               }}
             >
-              <View
-                style={{ flex: 1, height: MESSAGE_HEADER_HEIGHT, // EYEBALL
-                   width: "100%" }}
-                ref={headerRef}
-              >
-                <FriendHeaderMessageUI
-                height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
-                  userId={userId}
-                  friendId={selectedFriendId}
-                  cardBackgroundColor={CARD_BACKGROUND}
-                  selectedFriendName={`${selectedFriendName}`}
-                  primaryColor={primaryColor}
-                  welcomeTextStyle={welcomeTextStyle}
-                  backgroundColor={primaryOverlayColor}
-                  onPress={() => console.log("nada!")}
-                />
-              </View>
+              <Animated.View
+                style={[
+                  smallHeaderAnimationStyle,
+                  {
+                    position: "absolute",
+                    width: "100%",
+                    top: 0,
+                    height: "auto",
 
-              <View
-                style={{
-                  flexDirection: "column",
-                  flex: 1,
-                  width: "100%",
-                 // backgroundColor: "orange",
+                    padding: 6,
+
+                    backgroundColor: primaryOverlayColor,
+
+                    zIndex: 5000,
+                    elevation: 5000,
+                  },
+                ]}
+              >
+                <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+                  {selectedFriendName}
+                </Text>
+              </Animated.View>
+
+              <ScrollView
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+                style={{ width: "100%" }}
+                contentContainerStyle={{
+                  paddingHorizontal: 0,
+                  alignItems: "center",
                 }}
               >
-                <View style={{ width: "100%", marginVertical: 3 }}>
-                  {/* {!loadingDash && ( */}
-                  <TalkingPointsChart
-                    themeColors={themeColors}
-                    skiaFontLarge={skiaFontLarge}
-                    skiaFontSmall={skiaFontSmall}
-                  />
-                  {/* )} */}
-                </View>
-
-                <View style={{ width: "100%", marginVertical: 3 }}>
-                  <Pics
-                    primaryColor={primaryColor}
-                    primaryOverlayColor={ELEMENTS_BACKGROUND}
+                <View
+                  style={{
+                    flex: 1,
+                    height: MESSAGE_HEADER_HEIGHT, // EYEBALL
+                    width: "100%",
+                  }}
+                  ref={headerRef}
+                >
+                  <FriendHeaderMessageUI
+                    height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
                     userId={userId}
                     friendId={selectedFriendId}
-                  />
-                </View>
-
-                <View style={{ width: "100%", marginVertical: 3 }}>
-                  <Helloes
+                    cardBackgroundColor={CARD_BACKGROUND}
+                    selectedFriendName={`${selectedFriendName}`}
                     primaryColor={primaryColor}
-                    primaryOverlayColor={ELEMENTS_BACKGROUND}
-                    friendId={selectedFriendId}
+                    welcomeTextStyle={welcomeTextStyle}
+                    backgroundColor={primaryOverlayColor}
+                    onPress={() => console.log("nada!")}
                   />
                 </View>
 
-                <View style={{ width: "100%", height: 130 }}></View>
-              </View>
-            </ScrollView>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    flex: 1,
+                    width: "100%",
+                    // backgroundColor: "orange",
+                  }}
+                >
+                  <View style={{ width: "100%", marginTop: 3 }}>
+                    {/* {!loadingDash && ( */}
+                    <TalkingPointsChart
+                      themeColors={themeColors}
+                      skiaFontLarge={skiaFontLarge}
+                      skiaFontSmall={skiaFontSmall}
+                    />
+                    {/* )} */}
+                  </View>
+
+                  <View style={{ width: "100%", marginBottom: 6 }}>
+                    <Pics
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={ELEMENTS_BACKGROUND}
+                      userId={userId}
+                      friendId={selectedFriendId}
+                    />
+                  </View>
+
+                  <View style={{ width: "100%", marginVertical: 4 }}>
+                    <Helloes
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={ELEMENTS_BACKGROUND}
+                      friendId={selectedFriendId}
+                    />
+                  </View>
+
+                  <View style={{ width: "100%", height: 130 }}></View>
+                </View>
+              </ScrollView>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 
@@ -214,9 +226,10 @@ const styles = StyleSheet.create({
     padding: 0,
     // minHeight: 190,
     height: "100%",
-    alignContent: "center",
 
-    alignItems: "center",
+    // alignContent: "center",
+
+    // alignItems: "center",
     justifyContent: "space-between",
   },
   containerOverScrollView: {
@@ -224,7 +237,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
     // flexGrow: 1,
-    height: "100%",
+    // height: "100%",
     overflow: "hidden",
     borderWidth: 0,
     borderColor: "black",

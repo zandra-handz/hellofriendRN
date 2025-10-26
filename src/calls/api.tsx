@@ -1469,7 +1469,7 @@ export const fetchFriendImagesByCategory = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/images/by-category/`
     );
-    console.log("API GET CALL fetchFriendImagesByCategory");
+    console.log("API GET CALL fetchFriendImagesByCategory", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendImagesByCategory");

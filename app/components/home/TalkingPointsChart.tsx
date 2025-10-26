@@ -11,7 +11,7 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
-
+ 
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -52,29 +52,7 @@ const categoryColors = useMemo(() => {
   );
 }, [categoryIds, themeColors?.lightColor, themeColors?.darkColor]);
 
- 
-
-  // const colors = useMemo(() => {
-  //   console.log("colors usememo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  //   if (
-  //     !capsuleCategorySet ||
-  //     capsuleCategorySet.length === 0 ||
-  //     isPending
-  //   ) {
-  //     console.log("colors usememo returning null, pending: ", isPending);
-  //     return { colors: [], colorsReversed: [], friend: null }; // consistent shape
-  //   }
- 
-
-  //   const filteredColors = categoryColors
-  //     .filter((item) => capsuleCategorySet.has(item.user_category))
-  //     .map((item) => item.color);
-
-  //   // only works if categoryColors has a `friend` field; otherwise remove this line
-  //   const friend = categoryColors[0].friend ?? null;
-  //   const colorsReversed = filteredColors.slice().reverse();
-  //   return { colors: filteredColors, colorsReversed: colorsReversed, friend };
-  // }, [categoryColors, capsuleCategorySet, isPending]);
+  
 
 
   const colorsRef = useRef<{ colors: string[]; colorsReversed: string[]; friend: any }>({
@@ -106,15 +84,14 @@ const colors = colorsRef.current;
 
   const {
     navigateToMoments,
-    navigateToMomentView,
-    navigateToMomentFocus,
+    navigateToMomentView, 
     navigateToHistory,
   } = useAppNavigations();
   // const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
   // const appState = useRef(AppState.currentState);
 
-  const HEIGHT = 420;
+  const HEIGHT = 408;
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
@@ -138,9 +115,9 @@ const colors = colorsRef.current;
     navigateToMoments({ scrollTo: null });
   }, [navigateToMoments]);
 
-  const handleNavigateToCreateNew = useCallback(() => {
-    navigateToMomentFocus({ screenCameFrom: 1 });
-  }, [navigateToMomentFocus]);
+  // const handleNavigateToCreateNew = useCallback(() => {
+  //   navigateToMomentFocus({ screenCameFrom: 1 });
+  // }, [navigateToMomentFocus]);
 
   const memoizedData = useMemo(
     () => categorySizes.sortedList,
@@ -177,6 +154,7 @@ const colors = colorsRef.current;
             height: HEIGHT,
             minHeight: HEIGHT,
             backgroundColor: primaryOverlayColor,
+        
           },
         ]}
       >
@@ -185,8 +163,10 @@ const colors = colorsRef.current;
             <Text
               style={[
                 {
-                  fontSize: subWelcomeTextStyle.fontSize + 3,
-
+                  fontSize: subWelcomeTextStyle.fontSize + 5,
+                 
+                  paddingLeft: 10,
+                  fontWeight: 'bold',
                   color: primaryColor,
                   opacity: 0.9,
                 },
@@ -198,15 +178,14 @@ const colors = colorsRef.current;
 
           {isFocused && colors?.colors?.length > 0 && (
             <View style={styles.donutWrapper}>
-              <Donut
-              // remounts component on friend change
+              <Donut 
                 font={skiaFontLarge}
                 smallFont={skiaFontSmall}
                 themeColors={themeColors}
                 iconColor={themeColors.lightColor}
                 onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
-                onPlusPress={handleNavigateToCreateNew}
+             
                 totalJS={capsuleListCount}
                 radius={CHART_RADIUS}
                 strokeWidth={CHART_STROKE_WIDTH}
@@ -237,13 +216,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     flexGrow: 1,
     flex: 1,
-    padding: 20, // PADDING
-    paddingBottom: 20,
+    padding: 10, // PADDING
+
+    paddingVertical: 20,
     borderRadius: 20,
   },
   historyContainer: {
-    height: 30,
-    paddingHorizontal: 20, // PADDING
+    height: 20,
+    paddingHorizontal: 10, // PADDING
     position: "absolute",
     zIndex: 20000,
     elevation: 20000,
@@ -252,13 +232,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     flexDirection: "row",
+    
   },
   labelContainer: {
     borderRadius: 20,
+    height: 26,
+  
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
+ 
   },
   historyLabelWrapper: {
     fontFamily: "Poppins-Regular",
