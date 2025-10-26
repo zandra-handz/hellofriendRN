@@ -55,23 +55,29 @@ const styles = StyleSheet.create({
     position: "absolute",
    
     right: 10,
+    right: 12,
     zIndex: 99999,
     elevation: 99999,
   },
   container: {
-    height: 70,
-    width: 70,
+    height: 40,
+    width: 40,
  
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
 
        // ✅ Drop shadow (iOS + Android)
-    shadowColor: "#000",
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 5,
+    // elevation: 8,
+       shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowRadius: 3,
+    elevation: 7,
   },
 });
 
