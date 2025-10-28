@@ -1,5 +1,5 @@
-import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-
+// import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import InfoItem from "./InfoItem";
@@ -56,7 +56,9 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   // const { friendList } = useFriendList();
   const { friendListAndUpcoming} = useFriendListAndUpcoming();
   const friendList = friendListAndUpcoming?.friends;
-  const { selectedFriendStats } = useSelectedFriendStats();
+  const { selectedFriendStats } = useSelectedFriendStats({
+    userId: userId, friendId: friendId, friendIsReady: true, enabled: true
+  });
 
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
 

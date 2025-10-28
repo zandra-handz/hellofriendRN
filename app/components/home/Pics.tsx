@@ -15,9 +15,10 @@ type Props = {
 
 const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
   const navigation = useNavigation();
-  const { imageList } = useImages({ userId, friendId });
+    const { loadingDash } = useFriendDash();
+  const { imageList } = useImages({ userId: userId, friendId: friendId, enabled: !loadingDash});
   const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
-  const { loadingDash } = useFriendDash();
+
   const isLoading = loadingDash;
 
   const navigateToImages = () => {

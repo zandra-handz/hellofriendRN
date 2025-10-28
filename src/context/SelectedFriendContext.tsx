@@ -72,8 +72,8 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
 
   const selectFriend = (friend: Friend) => {
     setSelectedFriend(friend);
-    console.log("FRIEND: ", friend);
-    console.log("selecting friend in context");
+    // console.log("FRIEND: ", friend);
+    // console.log("selecting friend in context");
   };
 
   const setToAutoFriend = ({ friend, preConditionsMet }) => {
@@ -180,19 +180,19 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     selectFriend(fromFriendlist);
   };
 
-  type handleSetThemeProps = {
-    lightColor: string;
-    darkColor: string;
-    fontColor: string;
-    fontColorSecondary: string;
-  };
+  // type handleSetThemeProps = {
+  //   lightColor: string;
+  //   darkColor: string;
+  //   fontColor: string;
+  //   fontColorSecondary: string;
+  // };
 
   const handleSetTheme = ({
     lightColor,
     darkColor,
     fontColor,
     fontColorSecondary,
-  }: handleSetThemeProps) => {
+  } ) => {
     setSelectedFriend((prev) => ({
       ...prev,
       lightColor,

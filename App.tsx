@@ -40,7 +40,7 @@ import {
   useUserSettings,
 } from "./src/context/UserSettingsContext";
 
-import { UserStatsProvider } from "./src/context/UserStatsContext";
+// import { UserStatsProvider } from "./src/context/UserStatsContext";
 
 import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomingContext";
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
@@ -54,7 +54,7 @@ import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 import { FriendDashProvider } from "./src/context/FriendDashContext";
-import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
+// import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import * as Notifications from "expo-notifications";
@@ -219,11 +219,11 @@ export default Sentry.wrap(function App() {
             <FriendListAndUpcomingProvider>
               <AutoSelectorProvider>
                 <CategoriesProvider>
-                  <UserStatsProvider>
+                  {/* <UserStatsProvider> */}
                     <SelectedFriendProvider>
                       <CapsuleListProvider>
                         <FriendDashProvider>
-                          <SelectedFriendStatsProvider>
+                          {/* <SelectedFriendStatsProvider> */}
                             <LocationsProvider>
                               <HelloesProvider>
                                 <GestureHandlerRootView style={{ flex: 1 }}>
@@ -242,11 +242,11 @@ export default Sentry.wrap(function App() {
                                 </GestureHandlerRootView>
                               </HelloesProvider>
                             </LocationsProvider>
-                          </SelectedFriendStatsProvider>
+                          {/* </SelectedFriendStatsProvider> */}
                         </FriendDashProvider>
                       </CapsuleListProvider>
                     </SelectedFriendProvider>
-                  </UserStatsProvider>
+                  {/* </UserStatsProvider> */}
                 </CategoriesProvider>
               </AutoSelectorProvider>
             </FriendListAndUpcomingProvider>

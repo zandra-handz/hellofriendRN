@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import TreeModalBigButtonHistory from "@/app/components/alerts/TreeModalBigButtonHistory";
@@ -12,6 +12,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 type Props = {};
 
 const ScreenHistory = (props: Props) => {
+  const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
 
   const { navigateBack } = useAppNavigations();
@@ -60,6 +61,7 @@ const ScreenHistory = (props: Props) => {
           }}
         >
           <FriendHistoryPieDataWrap
+            userId={user?.id}
             friendId={selectedFriend?.id}
             selectedFriendName={selectedFriend?.name}
             primaryColor={lightDarkTheme.primaryText}
@@ -81,6 +83,7 @@ const ScreenHistory = (props: Props) => {
             chartRadius={SMALL_CHART_RADIUS}
           />
           <UserHistoryPieDataWrap
+            userId={user?.id}
             friendStyle={{
               lightColor: selectedFriend.lightColor,
               darkColor: selectedFriend.darkColor,

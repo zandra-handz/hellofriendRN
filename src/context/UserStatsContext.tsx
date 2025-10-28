@@ -50,6 +50,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   } = useQuery({
     queryKey: ["userStats", user?.id],
     queryFn: () => fetchCategoriesHistoryCountAPI({returnNonZeroesOnly: true}), //return non-empty categories only
+    
     enabled: !!user?.id && settingsLoaded, // testing removing this && !isInitializing,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   

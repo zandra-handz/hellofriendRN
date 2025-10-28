@@ -25,6 +25,7 @@ const ScreenImageView = () => {
   const { imageList } = useImages({
     userId: user?.id,
     friendId: selectedFriend?.id,
+    enabled: true
   });
 
   const { deleteImage, deleteImageMutation } = useDeleteImage({

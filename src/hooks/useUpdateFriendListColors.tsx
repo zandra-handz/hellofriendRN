@@ -1,7 +1,8 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-
+import { Friend } from "../types/FriendTypes";
+ 
 type Props = {
   userId: number;
   setThemeState: () => void;

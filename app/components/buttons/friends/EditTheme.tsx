@@ -22,6 +22,7 @@ const EditTheme = ({
   manualThemeOn,
 }) => {
   const { handleSetTheme } = useSelectedFriend();
+  console.log(handleSetTheme)
 
   const { updateFriendListColorsExcludeSaved } = useUpdateFriendListColors({
     userId: userId,

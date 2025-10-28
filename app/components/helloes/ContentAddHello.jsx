@@ -20,7 +20,7 @@ import PickHelloLoc from "./PickHelloLoc";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import PickHelloType from "./PickHelloType";
-import { useUserStats } from "@/src/context/UserStatsContext";
+// import { useUserStats } from "@/src/context/UserStatsContext";
 import { useNavigation } from "@react-navigation/native";
 import { useLocations } from "@/src/context/LocationsContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -32,7 +32,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
- 
+ import useUserStats from "@/src/hooks/useUserStats";
 
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
@@ -46,7 +46,7 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
     userId: userId,
   });
   const { preAdded, allCapsulesList } = useCapsuleList();
-  const { refetchUserStats } = useUserStats();
+  const { refetchUserStats } = useUserStats({userId: userId, isInitializing: false, enabled: true});
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
   );

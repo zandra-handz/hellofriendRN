@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import React, { useCallback, useState, useEffect, useMemo } from "react";
-import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+// import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
 import { useHelloes } from "@/src/context/HelloesContext";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
@@ -17,6 +18,7 @@ type Props = {
 };
 const FriendHistoryPieDataWrap = React.memo(
   ({
+    userId,
     friendId,
     chartRadius = 90,
     chartBorder = 6,
@@ -31,7 +33,9 @@ const FriendHistoryPieDataWrap = React.memo(
   }: Props) => {
     const { helloesList } = useHelloes();
     // const { friendList } = useFriendList();
-    const { selectedFriendStats } = useSelectedFriendStats();
+     const { selectedFriendStats } = useSelectedFriendStats({
+    userId: userId, friendId: friendId, friendIsReady: true, enabled: true
+  });
      const [largeFriendChartVisible, setLargeFriendChartVisible] =
       useState(false);
 

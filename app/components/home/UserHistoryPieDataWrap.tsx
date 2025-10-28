@@ -1,7 +1,8 @@
 import { View } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useUserStats } from "@/src/context/UserStatsContext";
+// import { useUserStats } from "@/src/context/UserStatsContext";
+import useUserStats from "@/src/hooks/useUserStats";
 import UserHistoryModal from "../headers/UserHistoryModal";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
  import manualGradientColors from "@/app/styles/StaticColors";
@@ -16,7 +17,7 @@ type Props = {
 };
 
 const UserHistoryPieDataWrap = ({
- 
+ userId,
   friendStyle,
   chartRadius = 90,
   chartBorder = 6,
@@ -29,7 +30,7 @@ const UserHistoryPieDataWrap = ({
   welcomeTextStyle,
   subWelcomeTextStyle,
 }: Props) => {
-  const { stats } = useUserStats();
+  const { stats } = useUserStats({userId: userId, isInitializing: false, enabled: true});
  
   const [largeUserChartVisible, setLargeUserChartVisible] = useState(false);
 

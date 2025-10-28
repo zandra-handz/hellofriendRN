@@ -14,9 +14,9 @@ import useUpdateFriendListColors from "../hooks/useUpdateFriendListColors";
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const { user } = useUser(); 
-
-  const { updateFriendListColors } = useUpdateFriendListColors({userId: user?.id, setThemeState: handleSetTheme });
   const { selectedFriend,  handleSetTheme } = useSelectedFriend();
+  const { updateFriendListColors } = useUpdateFriendListColors({userId: user?.id, setThemeState: handleSetTheme });
+
   const [darkColor, setDarkColor] = useState(
     selectedFriend.darkColor || "#000000"
   ); 

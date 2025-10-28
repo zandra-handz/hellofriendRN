@@ -68,7 +68,7 @@ export const SelectedFriendStatsProvider: React.FC<
 
 
 const refetchFriendStats = () => {
-     if ( user?.id  && !isInitializing && selectedFriend) {
+     if ( user?.id  && !isInitializing && selectedFriend?.id) {
     queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
   }
 
@@ -76,7 +76,7 @@ const refetchFriendStats = () => {
 
 
 const invalidateFriendStats = () => {
-     if (user?.id && !isInitializing && selectedFriend) {
+     if (user?.id && !isInitializing && selectedFriend?.id) {
     queryClient.invalidateQueries(["selectedFriendStats", user.id, selectedFriend.id]);
   }
 
