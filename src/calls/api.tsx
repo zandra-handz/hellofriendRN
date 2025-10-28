@@ -791,6 +791,8 @@ export const fetchFriendDashboard = async (friendId: number) => {
 
     console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
+    console.log(response.data[0])
+
     return response.data[0] || null;
   } catch (error) {
     // const endTime = Date.now(); // TIMER END FOR ERROR CASE TOO

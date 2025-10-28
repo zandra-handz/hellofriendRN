@@ -1,44 +1,53 @@
 import { StyleSheet, View, Pressable } from "react-native";
-import React, { useCallback, useMemo, useEffect } from "react"; 
+import React, { useCallback, useMemo, useEffect } from "react";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   withTiming,
+  withDelay,
   withSequence,
   useAnimatedStyle,
   useSharedValue,
   useDerivedValue,
-  withSpring,
-} from "react-native-reanimated";
+  useAnimatedReaction,
+} from "react-native-reanimated"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SuggestedHello from "./SuggestedHello";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
 interface FriendHeaderMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
   backgroundColor: string;
-  selectedFriendName: string;
+  // selectedFriendName: string;
   loadingNewFriend: boolean;
   // isKeyboardVisible: boolean; // indirect condition to change message to friend picker
   onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
+  friendId,
+  selectedFriendName,
+  friendDarkColor,
   height,
   userId,
-  friendId,
   primaryColor,
   welcomeTextStyle,
-  selectedFriendName = "",
-  cardBackgroundColor,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
-  const { loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash();
+
+ 
+  // const { capsuleList } = useCapsuleList();
+
+  // const capsuleListLength = capsuleList?.length;
+
+
   const loadingNewFriend = loadingDash;
   const isFocused = useSharedValue(false);
 
@@ -48,7 +57,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   const secondOpacityValue = useSharedValue(0);
   const secondScaleValue = useSharedValue(0);
 
-  const verticalValue = useSharedValue(0);
+  // const verticalValue = useSharedValue(0);
   // ✅ useFocusEffect updates shared value
   useFocusEffect(
     useCallback(() => {
@@ -60,23 +69,48 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   );
 
   // ✅ useDerivedValue declared at top level
-  useDerivedValue(() => {
-    if (isFocused.value) {
-      // Runs every time screen focuses
-      verticalValue.value = withSpring(0, {
-        stiffness: 400, // default ~100
-        damping: 10, // default ~10
-        mass: 0.5, // default 1
-      });
-    }
-  });
+  // useDerivedValue(() => {
+  //   if (isFocused.value) {
+  //     // Runs every time screen focuses
+  //     verticalValue.value = withSpring(0, {
+  //       stiffness: 400, // default ~100
+  //       damping: 10, // default ~10
+  //       mass: 0.5, // default 1
+  //     });
+  //   }
+  // });
 
-  const animatedVerticalStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: verticalValue.value }],
-      // opacity: opacityValue.value,
-    };
-  });
+  // const animatedVerticalStyle = useAnimatedStyle(() => {
+  //   return {
+  //     transform: [{ translateY: verticalValue.value }],
+  //     // opacity: opacityValue.value,
+  //   };
+  // });
+
+//   const opacity = useSharedValue(0);
+//   const scale = useSharedValue(0);
+// useAnimatedReaction(
+//   () => isFocused.value, // watch shared value
+//   (focused, prevFocused) => {
+//     if (focused && !loadingDash) {
+//       // fade + scale in with delay
+//       opacity.value = withDelay(capsuleListLength * 80, withTiming(1, { duration: 1000 }));
+//       scale.value = withDelay(capsuleListLength * 80, withTiming(1, { duration: 400 }));
+//     } else {
+//       // fade + scale out
+//       opacity.value = withTiming(0, { duration: 2000 });
+//       scale.value = withTiming(0, { duration: 1000 });
+//     }
+//   },
+//   [loadingDash] // this is JS state, so it goes in deps
+// );
+
+  // const animatedOpacityStyle = useAnimatedStyle(() => {
+  //   return {
+  //      transform: [{ scale: scale.value }],
+  //   //  opacity: opacity.value,
+  //   };
+  // });
 
   const animatedPinStyle = useAnimatedStyle(() => {
     return {
@@ -95,12 +129,12 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   const isLockedOn = useMemo(() => {
     // console.log("use memoooooooooooooooooooooo");
     return friendId === autoSelectFriend?.customFriend?.id;
-  }, [friendId, autoSelectFriend]);
+  }, [friendId, autoSelectFriend?.customFriend?.id]);
 
   const isUpNext = useMemo(() => {
     // console.log("use memoooooooooooooooooooooo");
     return friendId === autoSelectFriend?.nextFriend?.id;
-  }, [friendId, autoSelectFriend]);
+  }, [friendId, autoSelectFriend?.nextFriend?.id]);
 
   useEffect(() => {
     if (isLockedOn) {
@@ -141,7 +175,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   };
 
   const toggleLockOnFriend = useCallback(() => {
-    if (!friendId || !autoSelectFriend) {
+    if (!friendId) {
       return;
     }
     if (friendId === autoSelectFriend?.customFriend?.id) {
@@ -153,99 +187,124 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
       Vibration.vibrate(100);
       showFlashMessage(`${selectedFriendName} pinned!`, false, 1000);
     }
-  }, [friendId, autoSelectFriend]);
+  }, [
+    friendId,
+    selectedFriendName,
+    autoSelectFriend?.customFriend?.id,
+  ]);
 
   const handleOnPress = () => {
-    verticalValue.value = withSpring(-370, {
-      stiffness: 100,
-      damping: 2,
-      mass: 0.3,
-    });
+    // verticalValue.value = withSpring(-370, {
+    //   stiffness: 100,
+    //   damping: 2,
+    //   mass: 0.3,
+    // });
     isFocused.value = false;
     handleNavigateToSelectFriend();
   };
 
-  const message = `${selectedFriendName}`;
-
   const SELECTED_FRIEND_CARD_HEIGHT = 120;
   const SELECTED_FRIEND_CARD_PADDING = 20;
-  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
+  const CARD_BACKGROUND = "rgba(0,0,0,0.83)";
 
   return (
-    <Animated.View style={[animatedVerticalStyle, { height: height}]}>
-      
-      <Pressable
-        onPress={handleOnPress}
-        onLongPress={toggleLockOnFriend}
-        style={styles.container}
-      >
-        <View style={styles.innerContainer}>
-          <Animated.View
-            style={[
-              animatedPinStyle,
-              {
-                backgroundColor: manualGradientColors.lightColor,
-              },
-              styles.animatedContainer,
-            ]}
-          >
-            <SvgIcon
-              name={"pin_outline"}
-              size={22}
-              color={manualGradientColors.homeDarkColor}
-            />
-          </Animated.View>
-
-          <Animated.View
-            style={[
-              animatedSecondPinStyle,
-              {
-                backgroundColor: manualGradientColors.lightColor,
-              },
-              styles.animatedContainer,
-            ]}
-          >
-            <SvgIcon
-              name={"calendar_outline"}
-              size={22}
-              color={manualGradientColors.homeDarkColor}
-            />
-          </Animated.View>
-        </View>
-        <View
-          style={[
-            styles.labelContainer,
-            {
-              backgroundColor: cardBackgroundColor, // semi-transparent background
-              alignText: 'center',
-              alignItems: 'center',
-              alignContent: 'center'
-            },
-          ]}
+    <>
+      <View style={[{ height: height }]}>
+        <Pressable
+          onPress={handleOnPress}
+          onLongPress={toggleLockOnFriend}
+          style={styles.container}
         >
-          <Animated.Text
-            numberOfLines={2}
+          <View style={styles.innerContainer}>
+            <Animated.View
+              style={[
+                animatedPinStyle,
+                {
+                  backgroundColor: manualGradientColors.lightColor,
+                },
+                styles.animatedContainer,
+              ]}
+            >
+              <SvgIcon
+                name={"pin_outline"}
+                size={22}
+                color={manualGradientColors.homeDarkColor}
+              />
+            </Animated.View>
+
+            <Animated.View
+              style={[
+                animatedSecondPinStyle,
+                {
+                  backgroundColor: manualGradientColors.lightColor,
+                },
+                styles.animatedContainer,
+              ]}
+            >
+              <SvgIcon
+                name={"calendar_outline"}
+                size={22}
+                color={manualGradientColors.homeDarkColor}
+              />
+            </Animated.View>
+          </View>
+          <View
             style={[
-              welcomeTextStyle,
+              styles.labelContainer,
               {
-                color: primaryColor,
+                // backgroundColor: cardBackgroundColor, // semi-transparent background
+
+                alignItems: "center",
+                alignContent: "center",
               },
-              styles.label,
             ]}
           >
-            {selectedFriendName && !loadingNewFriend && message}
-          </Animated.Text>
-        </View>
-      </Pressable>
+            {loadingDash && (
+              <View style={styles.loadingWrapper}>
+                <LoadingPage
+                  loading={true}
+                  color={friendDarkColor}
+                  spinnerType="flow"
+                  spinnerSize={30}
+                  includeLabel={false}
+                />
+              </View>
+            )}
 
-      <SuggestedHello
-        friendId={friendId}
-        primaryOverlayColor={CARD_BACKGROUND}
-        primaryColor={primaryColor} 
-        padding={SELECTED_FRIEND_CARD_PADDING}
-        height={SELECTED_FRIEND_CARD_HEIGHT}
-      />
-    </Animated.View>
+            {!loadingDash && (
+              <Animated.Text
+                numberOfLines={2}
+                style={[
+                  welcomeTextStyle,
+                  {
+                    color: primaryColor,
+                
+                  },
+                  styles.label,
+                ]}
+              >
+                {friendId &&
+                  !loadingNewFriend &&
+                  selectedFriendName}
+              </Animated.Text>
+            )}
+          </View>
+        </Pressable>
+
+        {/* <Animated.View style={animatedOpacityStyle}> */}
+          <SuggestedHello
+            friendDash={friendDash}
+            loadingDash={loadingDash}
+            futureDateInWords={friendDash?.future_date_in_words}
+            futureDate={friendDash?.date}
+            primaryOverlayColor={CARD_BACKGROUND}
+            primaryColor={primaryColor}
+            padding={SELECTED_FRIEND_CARD_PADDING}
+            height={SELECTED_FRIEND_CARD_HEIGHT}
+          />
+        {/* </Animated.View> */}
+      </View>
+    </>
   );
 };
 
@@ -259,9 +318,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     backgroundColor: "transparent",
-    minHeight: 130,
-    height: "auto",
-    maxHeight: 170,
+    marginBottom: 24,
     zIndex: 30000,
   },
   innerContainer: {
@@ -284,7 +341,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   labelContainer: {
-    paddingVertical: 10,
+    paddingVertical: 0,
     paddingTop: 20,
     width: "100%",
     height: "100%",
@@ -292,16 +349,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     paddingHorizontal: 20,
- 
-    
+    // backgroundColor: "pink",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    height: 100,
   },
+
   label: {
- width: "100%",
-    fontSize: 40,
-    lineHeight: 48, 
- 
-  textAlign: 'center'
+    width: "100%",
+    fontSize: 37,
+    
+    lineHeight: 38,
+
+    textAlign: "center",
+  },
+  loadingWrapper: {
+    flex: 0.4,
+    paddingRight: 0,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    alignContent: "flex-start",
   },
 });
 
-export default FriendHeaderMessageUI;
+export default React.memo(FriendHeaderMessageUI);

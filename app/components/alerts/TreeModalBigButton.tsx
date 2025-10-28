@@ -19,15 +19,8 @@ const TreeModalBigButton = ({
   label,
   labelColor,
 }: Props) => {
-  const flattenedLabelStyle = StyleSheet.flatten([
-    styles.labelText,
-    { color: labelColor },
-  ]);
-  const flattenedSubLabelStyle = StyleSheet.flatten([
-    styles.subLabelText,
-    { color: manualGradientColors.darkHomeColor },
-  ]);
-
+ 
+ 
   return (
     <GlobalPressable
       onPress={onClose != undefined ? onClose : undefined}
@@ -43,8 +36,14 @@ const TreeModalBigButton = ({
         </View>
       )}
       <View style={styles.labelContainer}>
-        <Text style={flattenedLabelStyle}>{label}</Text>
-        <Text style={flattenedSubLabelStyle}>Close</Text>
+        <Text style={    [
+    styles.labelText,
+    { color: labelColor },
+  ]}>{label}</Text>
+        <Text style={    [
+    styles.subLabelText,
+    { color: manualGradientColors.darkHomeColor },
+  ]}>Close</Text>
         <SvgIcon
           name={`chevron_down`}
           size={17}

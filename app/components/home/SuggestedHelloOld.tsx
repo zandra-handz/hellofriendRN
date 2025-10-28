@@ -7,32 +7,30 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 
-import {   formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
-
 type Props = {
+  friendId: number;
   padding: number;
   height: number;
   borderRadius: number;
 };
 
-const SuggestedHello = ({
-  futureDateInWords,
-futureDate,
+const SuggestedHelloOld = ({ 
+  friendId,
   primaryColor,
   primaryOverlayColor,
   primaryBackground,
-  loadingDash,
 
   // friendFutureDate,
   padding,
   height,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
+const { friendDash, loadingDash } = useFriendDash();
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
- 
+
   const openModal = () => {
     setOptionsModalVisible(true);
   };
@@ -40,69 +38,92 @@ futureDate,
   const closeModal = () => {
     setOptionsModalVisible(false);
   };
-console.log(futureDate)
-
-const helloDate = useMemo(() => {
-  return formatDayOfWeekAbbrevMonth(futureDate);
-}, [futureDate]);
 
   const renderSuggestedHello = useMemo(() => {
     return (
-      <View style={{ width: "100%", alignItems: "center" }}>
+      <View>
         <>
           <Text
             style={[
-              styles.titleText,
               {
-                color: primaryColor,
                 fontFamily: "Poppins-Regular",
                 fontSize: subWelcomeTextStyle.fontSize,
+                fontWeight: "bold",
+                lineHeight: 20,
+
+                color: primaryColor,
+                opacity: 0.9,
               },
             ]}
           >
-            {helloDate ? "Say hi on" : "None"}
+            {friendId && friendDash?.future_date_in_words ? "Suggested hello" : "None"}
           </Text>
           <Text
             style={[
-              styles.futureDateText,
               {
+                // alignSelf: 'center',
                 color: primaryColor,
+                lineHeight: 32,
+                fontSize: welcomeTextStyle.fontSize - 12,
 
-                fontSize: welcomeTextStyle.fontSize - 14,
+                opacity: 0.9,
+                paddingRight: 8, // EYEBALL
               },
             ]}
           >
-            {helloDate}
+            {friendDash?.future_date_in_words}
           </Text>
         </>
       </View>
     );
-  }, [futureDateInWords, primaryColor]);
+  }, [
+    friendId,
+    friendDash?.future_date_in_words,
+    welcomeTextStyle,
+    subWelcomeTextStyle,
+    primaryColor,
+    manualGradientColors,
+    styles,
+  ]);
 
   return (
-   <View style={{width: '100%', alignItems: 'center', justifyContent: 'center', height: 86}}>
+    <>
       <View
-        style={[
-          styles.container,
-          {
-            // height: height - 10,
-            padding: padding,
-            backgroundColor: primaryOverlayColor,
-          
-          },
-        ]}
+        style={[styles.container, { 
+          height: height - 10,
+          padding: padding,
+          backgroundColor: primaryOverlayColor,
+        }]}
       >
         {!loadingDash && (
-          <View style={{ flexDirection: "row", width: '100%'  }}>
+          <View style={{ flexDirection: "row" }}>
             <View style={styles.textContainer}>{renderSuggestedHello}</View>
-            <View style={styles.geckoButtonWrapper}>
+            <View
+              style={{ 
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "center",
+                width: 60,
+              }}
+            >
               <GeckoGoButton
+           
                 onSinglePress={openModal}
                 onDoublePress={navigateToFinalize}
               />
             </View>
           </View>
         )}
+
+        <View
+          style={{
+            borderRadius: 20,
+            width: "100%",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        ></View>
       </View>
       {optionsModalVisible && (
         <View>
@@ -117,30 +138,22 @@ const helloDate = useMemo(() => {
           />
         </View>
       )}
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     marginVertical: 4,
-   // minHeight: 96, // EYEBALL
-height: '100%',
-    // flexShrink: 1,
+    minHeight: 96, // EYEBALL
+
+    flexShrink: 1,
     alignItems: "center",
     flexDirection: "row",
     overflow: "hidden",
     justifyContent: "space-between",
     width: "100%",
-    width: '92%',
-    // borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
-    borderRadius: 999,
-  
+    borderRadius: 10,
   },
   textContainer: {
     zIndex: 5,
@@ -153,28 +166,6 @@ height: '100%',
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  titleText: {
-    fontWeight: "bold",
-    lineHeight: 20,
-
-    opacity: 0.9,
-  },
-  futureDateText: {
-    lineHeight: 32,
-    opacity: 0.9,
-    paddingRight: 8, // EYEBALL
-  },
-  geckoButtonWrapper: {
- //   flex: 1, 
-    flexDirection: "column",
-    justifyContent: "center",
-    width: 60,
-    position: 'absolute',
-    height: '100%',
-
-    right: 0,
-    zIndex: 9000,
-  },
 });
 
-export default SuggestedHello;
+export default SuggestedHelloOld;

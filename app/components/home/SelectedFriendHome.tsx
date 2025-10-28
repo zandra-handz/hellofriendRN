@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef } from "react";
 
 import {
   Text,
@@ -13,14 +13,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-import WriteButton from "./WriteButton";
+
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import manualGradientColors from "@/app/styles/StaticColors";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -42,11 +40,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 }) => {
   console.log("selected friend home rerendered");
   const headerRef = useRef(null);
-
-  const { navigateToMomentFocus } = useAppNavigations();
-  const handleNavigateToCreateNew = useCallback(() => {
-    navigateToMomentFocus({ screenCameFrom: 1 });
-  }, [navigateToMomentFocus]);
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -71,16 +64,34 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
   const smallHeaderVisibility = useSharedValue(0);
 
+ 
+
   const smallHeaderAnimationStyle = useAnimatedStyle(() => {
     return {
       opacity: smallHeaderVisibility.value,
     };
   });
 
+
+const crescentMoonAnimationStyle = useAnimatedStyle(() => {
+  return {
+    opacity: 1 - smallHeaderVisibility.value, // inverse of small header visibility
+  };
+});
   const ELEMENTS_BACKGROUND = "transparent";
 
   return (
-    <> 
+    <>
+      <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
+        <SvgIcon
+          name={"moon_waning_crescent"}
+          size={1000}
+          color={CARD_BACKGROUND}
+          //color={primaryColor}
+          // color={"red"}
+          style={[styles.crescentMoon]}
+        />
+      </Animated.View>
       <View
         style={[
           styles.container,
@@ -89,7 +100,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           },
         ]}
       >
-
         <SvgIcon
           name={"leaf"}
           size={1200}
@@ -166,6 +176,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     friendId={selectedFriendId}
                     cardBackgroundColor={CARD_BACKGROUND}
                     selectedFriendName={`${selectedFriendName}`}
+                    friendDarkColor={themeColors.darkColor}
                     primaryColor={primaryColor}
                     welcomeTextStyle={welcomeTextStyle}
                     backgroundColor={primaryOverlayColor}
@@ -208,7 +219,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     />
                   </View>
 
-                  <View style={{ width: "100%", height: 130 }}></View>
+                  <View style={{ width: "100%", height: 330 }}></View>
                 </View>
               </ScrollView>
             </View>
@@ -241,6 +252,18 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 0,
     borderColor: "black",
+  },
+  crescentMoon: {
+    position: "absolute",
+    top: -190,
+    left: -293,
+    zIndex: 1, // put on top of leaf
+    // opacity: 0.5,
+    transform: [{ rotate: "270deg" }, { scaleX: -1 }],
+    shadowColor: "#000",
+  },
+  moonWrapper: {
+    zIndex: 1,
   },
   textContainer: {
     zIndex: 5,

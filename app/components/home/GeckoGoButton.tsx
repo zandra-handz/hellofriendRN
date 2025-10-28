@@ -10,44 +10,38 @@ import { Vibration } from "react-native";
 
 type Props = {
   onSinglePress: () => void;
-  onDoublePress: () => void; 
+  onDoublePress: () => void;
 };
 
-const GeckoGoButton = ({
-  onSinglePress,
-  onDoublePress,
- 
- 
-}: Props) => {
+const GeckoGoButton = ({ onSinglePress, onDoublePress }: Props) => {
   // const { handleDoublePress } = useDoublePress({
   //   onSinglePress: onSinglePress,
   //   onDoublePress: onDoublePress,
 
   // });
 
-
-
   const onLongPressVibrate = () => {
     Vibration.vibrate(100);
     onDoublePress();
   };
 
-  const flattenedContainerStyle = StyleSheet.flatten(        [styles.container, { 
-
-        backgroundColor: manualGradientColors.lightColor,
-      }]
-    )
-
-  
+  const flattenedContainerStyle = StyleSheet.flatten([
+    styles.container,
+    {
+      backgroundColor: manualGradientColors.lightColor,
+    },
+  ]);
 
   return (
-    <GlobalPressable 
+    <GlobalPressable
       onLongPress={onLongPressVibrate}
       onPress={onSinglePress}
-      style={   [styles.container, { 
-
-        backgroundColor: manualGradientColors.lightColor,
-      }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: manualGradientColors.lightColor,
+        },
+      ]}
     >
       <View style={styles.geckoRotateContainer}>
         <GeckoSolidSvg
@@ -59,13 +53,11 @@ const GeckoGoButton = ({
       </View>
       <View style={styles.geckoLabelContainer}>
         <Text
-          style={
-            {
+          style={{
             color: manualGradientColors.homeDarkColor,
             fontSize: 18,
             fontWeight: "bold",
-          }
-        }
+          }}
         >
           GO{" "}
         </Text>
@@ -81,17 +73,16 @@ const GeckoGoButton = ({
 
 const styles = StyleSheet.create({
   container: {
-            padding: 10,
+ 
 
-        justifyContent: "center",
-        borderRadius: 10,
-        padding: 0,
-        width: 60,
-        minWidth: 60,
-        height: 60,
+    justifyContent: "center",
+    borderRadius: 10,
+    padding: 0,
+    width: 60,
+    minWidth: 60,
+    height: 60,
 
-        overflow: "hidden",
-
+    overflow: "hidden",
   },
   geckoRotateContainer: {
     position: "absolute",

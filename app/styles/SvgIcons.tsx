@@ -46,6 +46,7 @@ import ImageFilterCenterFocusSvg from "./svgs/image-filter-center-focus";
 import LockOutlineSvg from "./svgs/lock-outline";
 import LogoutSvg from "./svgs/logout";
 import MapMarkerSvg from "./svgs/map-marker";
+import MoonWaningCrescentSvg from "./svgs/moon-waning-crescent";
 import NoteEditOutlineSvg from "./svgs/note-edit-outline";
 import NoteTextSvg from "./svgs/note-text";
 import PaletteSvg from "./svgs/palette";
@@ -120,6 +121,7 @@ const svgIcons = {
   information_outline: InformationOutlineSvg,
   gesture_swipe_vertical: GestureSwipeVerticalSvg,
   check_circle: CheckCircleSvg,
+  moon_waning_crescent: MoonWaningCrescentSvg,
   map_marker: MapMarkerSvg,
   note_edit_outline: NoteEditOutlineSvg, // location notes
   note_text: NoteTextSvg, // location notes

@@ -46,12 +46,19 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   }, [message, isKeyboardVisible]);
 
   return (
+    <>
+    <SvgIcon
+    name={'moon_waning_crescent'}
+    size={1000}
+    color={backgroundColor}
+    style={styles.crescentMoon}
+    />
     <AnimatedPressable
       onPress={onPress}
       layout={SlideInLeft}
       style={[
         {
-          backgroundColor: isKeyboardVisible ? "transparent" : backgroundColor,
+        backgroundColor: isKeyboardVisible ? "transparent" : backgroundColor,
           borderBottomLeftRadius: borderBottomLeftRadius,
           borderBottomRightRadius: borderBottomRightRadius,
           paddingHorizontal: paddingHorizontal,
@@ -75,9 +82,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
               paddingTop: isKeyboardVisible ? 0 : 40,
               color: primaryColor,
 
-              backgroundColor: isKeyboardVisible
-                ? "transparent"
-                : "rgba(0,0,0,0.8)", // semi-transparent background
+              // backgroundColor: isKeyboardVisible
+              //   ? "transparent"
+              //   : "rgba(0,0,0,0.8)", // semi-transparent background
             },
           ]}
         >
@@ -101,6 +108,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
         </Animated.Text>
       </>
     </AnimatedPressable>
+    </>
   );
 };
 
@@ -118,6 +126,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     backgroundColor: "transparent",
+  },
+    crescentMoon: {
+    position: "absolute",
+    top: -190,
+    left: -293,
+    // opacity: 0.5,
+    transform: [{ rotate: "270deg" }, { scaleX: -1 }],
+           shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 7,
   },
   leaf: {
     position: "absolute",
