@@ -10,14 +10,15 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 const ScreenAddFriend = () => {
   const { lightDarkTheme } = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
  
-
+  const { user } = useUser();
     const { friendListAndUpcoming} = useFriendListAndUpcoming();
   const friendList = friendListAndUpcoming?.friends;
-  const { user } = useUser();
+
   return (
     <SafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}

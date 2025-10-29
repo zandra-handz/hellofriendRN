@@ -7,8 +7,8 @@ import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
 import { useUser } from "@/src/context/UserContext";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// import { useFriendDash } from "@/src/context/FriendDashContext"; 
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext"; 
+ 
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
@@ -30,7 +30,7 @@ const ScreenLocationSend = () => {
     enabled: true,
   });
   const { selectedFriend } = useSelectedFriend();
-  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
+  const { friendDash } = useFriendDash();
   //weekdayTextData is coming from LocationHoursOfOperation component
   const { lightDarkTheme } = useLDTheme();
  

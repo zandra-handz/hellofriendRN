@@ -4,8 +4,8 @@ import { View, Text, StyleSheet } from "react-native";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
-import useFriendDash from "@/src/hooks/useFriendDash";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
+ 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import manualGradientColors from "@/app/styles/StaticColors";
 const FriendProfileButton = ({
   userId,
@@ -17,7 +17,7 @@ const FriendProfileButton = ({
  
   onPress,
 }) => {
-  const { dashLoaded, loadingDash, friendDash } = useFriendDash({userId: userId, friendId: friendId});
+  const { dashLoaded, loadingDash, friendDash } = useFriendDash( );
 
   const circleSize = 27;
   const iconSize = 28;

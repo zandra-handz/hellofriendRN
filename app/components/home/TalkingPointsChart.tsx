@@ -6,8 +6,8 @@ import Donut from "../headers/Donut";
 // import { AppState, AppStateStatus } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import useCategories from "@/src/hooks/useCategories";
+import { useCategories } from "@/src/context/CategoriesContext";
+ 
 import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
-  userId,
+ 
   themeColors,
 
   skiaFontLarge,
@@ -29,7 +29,7 @@ const TalkingPointsChart = ({
   console.log("TALKING POINTS COMP RERENDERED");
  
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { userCategories } = useCategories({userId: userId});
+  const { userCategories } = useCategories();
 
   const { lightDarkTheme } = useLDTheme();
 

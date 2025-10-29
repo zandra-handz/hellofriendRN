@@ -1,6 +1,6 @@
-import { fetchCategoriesHistoryCountAPI } from "@/src/calls/api";
+
 import React, { useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchFriendDashboard } from "@/src/calls/api";
 import { FriendDashboardData } from "../types/FriendTypes";
 
@@ -20,7 +20,7 @@ const useFriendDash = ({
   // friendIsReady,
   enabled,
 }: Props) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const {
     data: friendDash,

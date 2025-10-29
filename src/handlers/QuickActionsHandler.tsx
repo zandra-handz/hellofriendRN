@@ -1,7 +1,9 @@
 import { useEffect  } from "react";
 import * as QuickActions from "expo-quick-actions"; 
 import { useUserSettings } from "../context/UserSettingsContext";
+ 
 import { useFriendListAndUpcoming } from "../context/FriendListAndUpcomingContext";
+ 
  
 
 // imports from Layout in App.tsx

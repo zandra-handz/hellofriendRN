@@ -4,8 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useImages from "@/src/hooks/ImageCalls/useImages";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+ 
 
 type Props = {
   userId: number;
@@ -16,7 +16,7 @@ type Props = {
 
 const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
   const navigation = useNavigation();
-    const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
+    const { loadingDash } = useFriendDash();
   const { imageList } = useImages({ userId: userId, friendId: friendId, enabled: !loadingDash});
   const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 

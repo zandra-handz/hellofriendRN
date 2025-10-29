@@ -7,8 +7,8 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import useCategories from "@/src/hooks/useCategories";
+import { useCategories } from "@/src/context/CategoriesContext";
+// import useCategories from "@/src/hooks/useCategories";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 type Props = {
   userChangedCategory: boolean;
@@ -47,7 +47,7 @@ const SelectedCategoryButton = ({
   editMode=true, 
   iconSize = 20,
 }: Props) => {
-  const { userCategories } = useCategories({userId: userId});
+  const { userCategories } = useCategories();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const welcomeTextStyle = AppFontStyles.welcomeText;

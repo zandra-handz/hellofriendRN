@@ -136,7 +136,7 @@ const UserHistoryPieDataWrap = ({
       {largeUserChartVisible && (
         <View>
           <UserHistoryModal
-      
+          userId={userId}
             seriesData={seriesData}
             isVisible={largeUserChartVisible}
             closeModal={handleCloseLargeUserChart}

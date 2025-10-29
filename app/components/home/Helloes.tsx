@@ -5,8 +5,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 // import { useHelloes } from "@/src/context/HelloesContext";
 import useHelloes from "@/src/hooks/useHelloes";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 
 type Props = {
   primaryColor: string;
@@ -16,7 +16,7 @@ type Props = {
 
 const Helloes = ({ primaryColor, primaryOverlayColor, userId, friendId }: Props) => {
   const { helloesList } = useHelloes({userId: userId, friendId: friendId});
-  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
+  const { loadingDash } = useFriendDash();
   const isLoading = loadingDash;
 
   const trueHelloesInList = useMemo(() => {

@@ -18,8 +18,10 @@ interface Props {
 }
 
 const UserHistoryModal: React.FC<Props> = ({
+  userId,
   isVisible,
   closeModal,
+
 
   listData,
   radius = 180, //default instead of multiplying the radius of the preview
@@ -90,6 +92,7 @@ const UserHistoryModal: React.FC<Props> = ({
                 }}
               >
                 <UserCategoryHistoryList
+                userId={userId}
            
                   categoryId={viewCategoryId}
                   primaryColor={primaryColor}

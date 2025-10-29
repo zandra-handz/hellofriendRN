@@ -160,6 +160,7 @@ const FriendHistoryPieDataWrap = React.memo(
         {largeFriendChartVisible && (
           <View>
             <FriendHistoryModal
+            userId={userId}
               friendId={friendId}
               helloesList={helloesList}
                           themeColors={themeColors} 

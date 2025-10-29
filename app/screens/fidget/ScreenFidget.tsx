@@ -1,7 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 import React, { useState, useMemo, useEffect } from "react";
-import Demo from "@/app/components/headers/SkiaDemo"; 
-import { useUser } from "@/src/context/UserContext";
+import Demo from "@/app/components/headers/SkiaDemo";  
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -9,17 +8,17 @@ import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScree
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 import Cascader from "@/app/fidgets/Cascader";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
 const ScreenFidget = (props: Props) => { 
-  const { user } = useUser();
+ 
   const { lightDarkTheme } = useLDTheme();
   const { selectedFriend } = useSelectedFriend();
-  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
+  const { friendDash } = useFriendDash();
 
   const options = [1, 2, 3, 4, 5, 6];
 

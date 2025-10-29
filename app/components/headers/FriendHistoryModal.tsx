@@ -24,6 +24,7 @@ interface Props {
 }
 
 const FriendHistoryModal: React.FC<Props> = ({
+  userId,
   friendId,
 
   helloesList,
@@ -145,6 +146,7 @@ themeColors,
                   }}
                 >
                   <CategoryFriendHistoryList
+                  userId={userId}
                     friendId={friendId}
                     helloesList={helloesList}
                     categoryId={viewCategoryId}

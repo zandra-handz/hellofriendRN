@@ -216,28 +216,32 @@ export default Sentry.wrap(function App() {
       <QueryClientProvider client={queryClient}>
         <UserProvider>
           <UserSettingsProvider>
-            <FriendListAndUpcomingProvider>
-              <AutoSelectorProvider>
-                <SelectedFriendProvider>
-                  <CapsuleListProvider>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                      <SafeAreaProvider>
-                        <LDThemeProvider>
-                          <RootSiblingParent>
-                            <DeviceLocationProvider>
-                              <Layout
-                                skiaFontLarge={skiaFontLarge}
-                                skiaFontSmall={skiaFontSmall}
-                              />
-                            </DeviceLocationProvider>
-                          </RootSiblingParent>
-                        </LDThemeProvider>
-                      </SafeAreaProvider>
-                    </GestureHandlerRootView>
-                  </CapsuleListProvider>
-                </SelectedFriendProvider>
-              </AutoSelectorProvider>
-            </FriendListAndUpcomingProvider>
+            <CategoriesProvider>
+              <FriendListAndUpcomingProvider>
+                <AutoSelectorProvider>
+                  <SelectedFriendProvider>
+                    <CapsuleListProvider>
+                      <FriendDashProvider>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                          <SafeAreaProvider>
+                            <LDThemeProvider>
+                              <RootSiblingParent>
+                                <DeviceLocationProvider>
+                                  <Layout
+                                    skiaFontLarge={skiaFontLarge}
+                                    skiaFontSmall={skiaFontSmall}
+                                  />
+                                </DeviceLocationProvider>
+                              </RootSiblingParent>
+                            </LDThemeProvider>
+                          </SafeAreaProvider>
+                        </GestureHandlerRootView>
+                      </FriendDashProvider>
+                    </CapsuleListProvider>
+                  </SelectedFriendProvider>
+                </AutoSelectorProvider>
+              </FriendListAndUpcomingProvider>
+            </CategoriesProvider>
           </UserSettingsProvider>
         </UserProvider>
       </QueryClientProvider>

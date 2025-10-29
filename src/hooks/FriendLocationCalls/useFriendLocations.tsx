@@ -14,9 +14,11 @@ const useFriendLocations = ({
 }: Props) => {
 
 
-  console.log('useFriendLocations');
 
-  console.log(locationList.map((location) => location?.id));
+
+  // console.log('useFriendLocations');
+
+  // console.log(locationList.map((location) => location?.id));
 
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
@@ -44,6 +46,13 @@ const useFriendLocations = ({
   };
 
   const [faveLocations, nonFaveLocations] = useMemo(() => {
+
+    console.log('running fave/non fave locations');
+
+    if (!locationList || !inPersonHelloes || !friendFaveIds) {
+      console.log('returning empty fave/non fave')
+         return [[], []];
+    }
  
     if (locationList?.length && inPersonHelloes?.length) {
       return makeSplitLists(

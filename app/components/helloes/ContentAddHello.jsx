@@ -18,8 +18,8 @@ import HelloNotes from "./HelloNotes";
 import PickHelloDate from "./PickHelloDate";
 import PickHelloLoc from "./PickHelloLoc";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 import PickHelloType from "./PickHelloType";
 // import { useUserStats } from "@/src/context/UserStatsContext";
 import { useNavigation } from "@react-navigation/native";
@@ -63,7 +63,7 @@ const ContentAddHello = ({ userId,  primaryColor, backgroundColor }) => {
   const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
     useSelectedFriend();
 
-  const { friendDash } = useFriendDash({userId: userId, friendId: selectedFriend?.id});
+  const { friendDash } = useFriendDash();
 
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);

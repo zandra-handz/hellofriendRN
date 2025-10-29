@@ -48,12 +48,25 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
   return (
     <>
-    <SvgIcon
+    {/* <SvgIcon
     name={'moon_waning_crescent'}
     size={1000}
     color={backgroundColor}
     style={styles.crescentMoon}
-    />
+    /> */}
+            <View
+              style={[
+                {
+                  height: 275,
+                  width: "100%",
+                  top: -100,
+                  alignSelf: "center",
+                  position: "absolute",
+                  backgroundColor: backgroundColor,
+                },
+              ]}
+            ></View>
+    
     <AnimatedPressable
       onPress={onPress}
       layout={SlideInLeft}

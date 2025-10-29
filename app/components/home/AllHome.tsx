@@ -9,10 +9,12 @@ import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
 import useSelectFriend from "@/src/hooks/useSelectFriend";  
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
+
 // Press function is internal
 const AllHome = ({
   // friendId, //if this component is ever not wrapped in checking if friend is selected, will need to handle potential deselects
   // lockInCustomString,
+  userId,
   isLoading,
   paddingHorizontal,  
   height = "100%",
@@ -25,12 +27,16 @@ const AllHome = ({
 }) => {
   // const { friendList } = useFriendList();
   // const { upcomingHelloes } = useUpcomingHelloes();
+
   const { friendListAndUpcoming} = useFriendListAndUpcoming();
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
+
+
  
   const { handleSelectFriend } = useSelectFriend({
+    userId,
     friendList
   });
 

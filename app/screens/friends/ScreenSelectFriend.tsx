@@ -14,12 +14,13 @@ import { useUser } from "@/src/context/UserContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
+import SafeViewAndGradientBackgroundStatic from "@/app/components/appwide/format/SafeViewAndGradBackgroundStatic";
 import SvgIcon from "@/app/styles/SvgIcons";
-import { useNavigation } from "@react-navigation/native";
- 
+
 import Animated, {
   // withTiming,
   // withSpring,
@@ -43,7 +44,7 @@ const ScreenSelectFriend = (
     // navigationDisabled = false
   }
 ) => {
-  const navigation = useNavigation();
+  const { user } = useUser();
   const route = useRoute();
   const useNavigateBack = route?.params?.useNavigateBack ?? false;
   const { lightDarkTheme } = useLDTheme();
@@ -59,11 +60,16 @@ const ScreenSelectFriend = (
 
   const friendColors = useSharedValue(["#4caf50", "#a0f143"]);
 
-  const { user } = useUser();
-
   const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
     useSelectedFriend();
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
+
+  const themeColors = useMemo(() => ({
+  lightColor: selectedFriend?.lightColor,
+  darkColor: selectedFriend?.darkColor,
+  fontColor: selectedFriend?.fontColor,
+  fontColorSecondary: selectedFriend?.fontColorSecondary,
+}), [selectedFriend?.id]);
 
   const toggleLockOnFriend = (id) => {
     // if (id !== selectedFriend?.id) {
@@ -103,22 +109,24 @@ const ScreenSelectFriend = (
   }, [useNavigateBack]);
 
   // usememo is not actually doing anything since dependency is a list...
-  const alphabFriendList: object[] = useMemo(() => {
-    if (!friendList || !(friendList?.length > 0)) {
-      return [];
-    }
-    const summaryOfSorted = friendList
-      .slice()
-      .sort((a, b) =>
-        a.name.localeCompare(b.name, locale, { sensitivity: "case" })
-      );
+  // const alphabFriendList: object[] = useMemo(() => {
+  //   if (!friendList || !(friendList?.length > 0)) {
+  //     return [];
+  //   }
+  //   const summaryOfSorted = friendList
+  //     .slice()
+  //     .sort((a, b) =>
+  //       a.name.localeCompare(b.name, locale, { sensitivity: "case" })
+  //     );
 
-    if (!summaryOfSorted || !(summaryOfSorted.length > 0)) {
-      return [];
-    }
+  //   if (!summaryOfSorted || !(summaryOfSorted.length > 0)) {
+  //     return [];
+  //   }
 
-    return summaryOfSorted;
-  }, [friendList]);
+  //   console.log('sorted friends')
+
+  //   return summaryOfSorted;
+  // }, [friendList]);
 
   const [gradientColors, setGradientColors] = useState<
     [ColorValue, ColorValue]
@@ -126,18 +134,10 @@ const ScreenSelectFriend = (
   const screenDiagonal = Math.sqrt(screenWidth ** 2 + screenHeight ** 2);
 
   const scale = useSharedValue(0);
+ 
 
-  // const animatedGradientProps = useAnimatedProps(() => ({
-  //   colors: friendColors.value.length >= 2
-  //     ? (friendColors.value as [ColorValue, ColorValue])
-  //     : ['#4caf50', '#a0f143'], // fallback
-  // })) as any; // ✅ cast to any to satisfy TS
-
-  const animatedCircleStyle = useAnimatedStyle(() => {
-    // calculate size: either initial or full screen
-    const size = scale.value; // scale.value could be initial 50 -> full screen
-
-    // adjust position so the circle expands from touch point
+  const animatedCircleStyle = useAnimatedStyle(() => { 
+    const size = scale.value;  
     const left = touchLocationX.value - size / 2;
     const top = touchLocationY.value - size / 2;
 
@@ -155,33 +155,26 @@ const ScreenSelectFriend = (
   }, [scale, visibility, touchLocationX, touchLocationY]);
 
   const { handleSelectFriend } = useSelectFriend({
-    friendList,
-    setToFriend,
+    userId: user?.id,
+    friendList: friendList,
+
     // navigateOnSelect: handleNavAfterSelect,
     //   navigateOnSelect: undefined,
   });
 
-  const flattenedTopBarStyle = StyleSheet.flatten([
-    {
-      backgroundColor: lightDarkTheme.primaryBackground,
-    },
-    styles.topBar,
-  ]);
-
+ 
   const direction = [0, 0, 1, 0];
 
   return (
     <>
-      <SafeViewAndGradientBackground
+      <SafeViewAndGradientBackgroundStatic
         friendColorLight={manualGradientColors.lightColor}
         friendColorDark={manualGradientColors.darkColor}
         backgroundOverlayColor={lightDarkTheme.primaryBackground}
         friendId={false}
         backgroundOverlayHeight={"15%"}
-        addColorChangeDelay={true}
-        forceFullOpacity={true}
-        useSolidOverlay={false}
-        useOverlayFade={false}
+      
+        useSolidOverlay={false} 
         includeBackgroundOverlay={true}
         backgroundTransparentOverlayColor={lightDarkTheme.primaryBackground}
         backgroundOverlayBottomRadius={0}
@@ -196,11 +189,8 @@ const ScreenSelectFriend = (
                 position: "absolute",
                 overflow: "hidden",
                 borderRadius: 999,
-
-                width: 10,
-                height: 10,
-                //  zIndex: 40000,
-                backgroundColor: "red",
+                width: 0,
+                height: 0,  
               },
             ]}
           >
@@ -212,7 +202,14 @@ const ScreenSelectFriend = (
               style={[StyleSheet.absoluteFill]}
             />
           </Animated.View>
-          <View style={flattenedTopBarStyle}>
+          <View
+            style={[
+              {
+                backgroundColor: lightDarkTheme.primaryBackground,
+              },
+              styles.topBar,
+            ]}
+          >
             <Pressable
               hitSlop={30}
               onPress={navigateBack}
@@ -232,7 +229,7 @@ const ScreenSelectFriend = (
             />
           </View>
           <View style={styles.friendsListWrapper}>
-            {alphabFriendList && (
+           
               <FriendListUI
                 touchLocationX={touchLocationX}
                 touchLocationY={touchLocationY}
@@ -243,25 +240,26 @@ const ScreenSelectFriend = (
                 screenDiagonal={screenDiagonal}
                 autoSelectFriend={autoSelectFriend}
                 handleDeselect={handleDeselect}
-                themeColors={{
-                  lightColor: selectedFriend.lightColor,
-                  darkColor: selectedFriend.darkColor,
-                  fontColor: selectedFriend.fontColor,
-                  fontColorSecondary: selectedFriend.fontColorSecondary,
-                }}
+                themeColors={themeColors}
+                // themeColors={{
+                //   lightColor: selectedFriend.lightColor,
+                //   darkColor: selectedFriend.darkColor,
+                //   fontColor: selectedFriend.fontColor,
+                //   fontColorSecondary: selectedFriend.fontColorSecondary,
+                // }}
                 friendList={friendList}
                 lightDarkTheme={lightDarkTheme}
-                data={alphabFriendList}
+                data={friendList}
                 friendId={selectedFriend ? selectedFriend?.id : null}
                 onPress={handleSelectFriend}
                 handleNavAfterSelect={handleNavAfterSelect}
                 useNavigateBack={!!useNavigateBack}
                 onLongPress={toggleLockOnFriend}
               />
-            )}
+          
           </View>
         </View>
-      </SafeViewAndGradientBackground>
+      </SafeViewAndGradientBackgroundStatic>
     </>
   );
 };

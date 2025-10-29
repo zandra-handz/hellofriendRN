@@ -1059,7 +1059,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
     const response = await helloFriendApiClient.get(
       "/friends/upcoming/friends-included/"
     );
-    // console.error(`NEW ENDPOINT`, response.data, )
+  console.error(`NEW ENDPOINT`, response.data )
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
@@ -1268,7 +1268,7 @@ export const updateMultMomentsAPI = async (
       ),
     };
 
-    console.log("updateThoughtCapsules payload data: ", capsuleData);
+    console.log("updateThoughtCapsules paya data: ", capsuleData);
 
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsules/batch-update/`,
@@ -1471,7 +1471,7 @@ export const fetchFriendImagesByCategory = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/images/by-category/`
     );
-    console.log("API GET CALL fetchFriendImagesByCategory", response.data);
+    console.log("API GET CALL fetchFriendImagesByCategory");
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendImagesByCategory");

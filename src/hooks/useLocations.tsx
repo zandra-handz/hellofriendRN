@@ -1,6 +1,5 @@
-import { fetchCategoriesHistoryCountAPI } from "@/src/calls/api";
 import React, { useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery  } from "@tanstack/react-query";
 import { fetchAllLocations } from "@/src/calls/api";
 
 type Props = {
@@ -16,7 +15,7 @@ const useLocations = ({
 
   enabled = true,  
 }: Props) => {
-  const queryClient = useQueryClient();
+ 
 
   const { data: locationList, isSuccess } = useQuery({
     queryKey: ["locationList", userId],

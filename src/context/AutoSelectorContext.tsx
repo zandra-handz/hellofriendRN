@@ -4,9 +4,9 @@ import React, { createContext, useContext, useMemo, ReactNode } from "react";
 import { useUserSettings } from "./UserSettingsContext";
 
 // import { findFriendInList } from "../hooks/deselectFriendFunction";
-import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
+ import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
 
-import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
+ 
 
 interface AutoSelectorContextType {}
 
@@ -26,6 +26,7 @@ interface AutoSelectorProviderProps {
 export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   children,
 }) => {
+ 
   const { friendListAndUpcoming } = useFriendListAndUpcoming();
   const { settings } = useUserSettings();
 

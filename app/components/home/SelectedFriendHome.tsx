@@ -19,6 +19,9 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -48,6 +51,20 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
   const MESSAGE_HEADER_HEIGHT = 240;
 
+  // const scrollRef = useRef<ScrollView | null>(null);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // This runs when screen gains focus (you can do nothing here)
+
+  //     return () => {
+  //       // This runs when screen loses focus
+  //       if (scrollRef.current) {
+  //         scrollRef.current.scrollTo({ y: 0, animated: true });
+  //       }
+  //     };
+  //   }, [])
+  // );
   const handleScroll = (event) => {
     if (!headerRef.current) return;
 
@@ -64,33 +81,53 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
   const smallHeaderVisibility = useSharedValue(0);
 
- 
-
   const smallHeaderAnimationStyle = useAnimatedStyle(() => {
     return {
       opacity: smallHeaderVisibility.value,
     };
   });
 
-
-const crescentMoonAnimationStyle = useAnimatedStyle(() => {
-  return {
-    opacity: 1 - smallHeaderVisibility.value, // inverse of small header visibility
-  };
-});
+  const crescentMoonAnimationStyle = useAnimatedStyle(() => {
+    return {
+      opacity: 1 - smallHeaderVisibility.value, // inverse of small header visibility
+    };
+  });
   const ELEMENTS_BACKGROUND = "transparent";
 
   return (
     <>
-      <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
+      {/* <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
         <SvgIcon
           name={"moon_waning_crescent"}
-          size={1000}
+          size={1200}
           color={CARD_BACKGROUND}
           //color={primaryColor}
           // color={"red"}
           style={[styles.crescentMoon]}
         />
+      </Animated.View> */}
+
+      <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
+        <View
+          style={[
+            {
+              height: 275,
+              width: "100%",
+              top: -100,
+              alignSelf: "center",
+              position: "absolute",
+              backgroundColor: CARD_BACKGROUND,
+            },
+          ]}
+        ></View>
+        {/* <SvgIcon
+          name={"moon_waning_crescent"}
+          size={1200}
+          color={CARD_BACKGROUND}
+          //color={primaryColor}
+          // color={"red"}
+          style={[styles.crescentMoon]}
+        /> */}
       </Animated.View>
       <View
         style={[
@@ -153,6 +190,7 @@ const crescentMoonAnimationStyle = useAnimatedStyle(() => {
               </Animated.View>
 
               <ScrollView
+                // ref={scrollRef}
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 showsVerticalScrollIndicator={false}
@@ -195,7 +233,7 @@ const crescentMoonAnimationStyle = useAnimatedStyle(() => {
                   <View style={{ width: "100%", marginTop: 3 }}>
                     {/* {!loadingDash && ( */}
                     <TalkingPointsChart
-                    userId={userId}
+                      userId={userId}
                       themeColors={themeColors}
                       skiaFontLarge={skiaFontLarge}
                       skiaFontSmall={skiaFontSmall}
@@ -214,7 +252,7 @@ const crescentMoonAnimationStyle = useAnimatedStyle(() => {
 
                   <View style={{ width: "100%", marginVertical: 4 }}>
                     <Helloes
-                    userId={userId}
+                      userId={userId}
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
                       friendId={selectedFriendId}
@@ -237,8 +275,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     padding: 0,
- 
-    height: "100%", 
+
+    height: "100%",
     justifyContent: "space-between",
   },
   containerOverScrollView: {
@@ -253,8 +291,8 @@ const styles = StyleSheet.create({
   },
   crescentMoon: {
     position: "absolute",
-    top: -190,
-    left: -293,
+    top: -254,
+    left: -393,
     zIndex: 1, // put on top of leaf
     // opacity: 0.5,
     transform: [{ rotate: "270deg" }, { scaleX: -1 }],

@@ -5,15 +5,13 @@ import React from "react";
 import LoadingPage from "./LoadingPage"; 
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 //  import useSignIn from "@/src/hooks/UserCalls/useSignIn";
-
-//  import { useUser } from "@/src/context/UserContext";
-
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+//  import { useUser } from "@/src/context/UserContext"; 
 type Props = {
   isInitializing: boolean;
 };
 
-const PeacefulGradientSpinner = ({ isInitializing }: Props) => {
+const PeacefulGradientSpinner = ({   isInitializing }: Props) => {
  
   const  {  loadingSettings } = useUserSettings();
  

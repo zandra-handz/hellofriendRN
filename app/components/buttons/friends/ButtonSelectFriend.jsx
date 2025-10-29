@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const ButtonSelectFriend = ({
-  disabled = false,
+ 
   friend,
   backgroundColor,
   borderRadius,
@@ -10,14 +10,7 @@ const ButtonSelectFriend = ({
   height = 70,
   fontColor,
 }) => {
-  const flattenedBackgroundColorStyle = StyleSheet.flatten([
-    {
-      backgroundColor: !disabled ? backgroundColor : "transparent",
-      borderRadius,
  
-    },
-    styles.inner,
-  ]);
 
   return (
     <View
@@ -26,16 +19,23 @@ const ButtonSelectFriend = ({
           borderRadius,
           height,
           borderColor: fontColor,
+          backgroundColor: backgroundColor,
         },
         styles.row,
       ]}
     >
-      <View style={flattenedBackgroundColorStyle}>
+      <View style={    [
+    { 
+      borderRadius,
+ 
+    },
+    styles.inner,
+  ]}>
         <Text
           numberOfLines={1}
           style={[
             styles.name,
-            { color, fontSize: friend.name.length < 14 ? 15 : 12 },
+            { color, fontSize: friend.name.length < 14 ? 14 : 13 },
           ]}
         >
           {friend.name}
@@ -69,9 +69,10 @@ const styles = StyleSheet.create({
   },
   name: {
     alignSelf: "center",
-    fontFamily: "Poppins-Regular",
-    fontWeight: "bold",
+   // fontFamily: "Poppins-Regular",
+  fontWeight: "bold",
     justifyContent: 'center',
+ 
   
   },
   iconContainer: {

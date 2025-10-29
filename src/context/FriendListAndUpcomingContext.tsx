@@ -40,23 +40,35 @@ export const FriendListAndUpcomingProvider = ({ children }) => {
       staleTime: 1000 * 60 * 20, // 20 minutes
   
       // use useUpNextCache in tandem to set query cache, will not cause this component to rerender unless it it setting something different 
-      select: (data) => {
-        if (isError) {
-          return [];
-        }
-   
-  
-        if (data.upcoming?.length && data.friends?.length) {
-          let upcomingFriend;
-          upcomingFriend = data.friends.find(
-            (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
-          );
-        data.next = upcomingFriend;
-        console.log(`usssssseeeeeeerr`,data?.user)
-        }
-        return data || [];
-      },
-    });
+    select: (data) => {
+      if (isError) return [];
+
+      let nextFriend = null;
+
+      // find next upcoming friend
+      if (data.upcoming?.length && data.friends?.length) {
+        nextFriend = data.friends.find(
+          (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
+        );
+      }
+
+      // alphabetize friends list
+      const locale = "en"; // or whatever you need
+      const sortedFriends =
+        data.friends
+          ?.slice()
+          .sort((a, b) =>
+            a.name.localeCompare(b.name, locale, { sensitivity: "case" })
+          ) || [];
+
+      // return new object, immutable
+      return {
+        ...data,
+        friends: sortedFriends,
+        next: nextFriend,
+      };
+    },
+  });
 
 // DONT DELETE, THIS IS FOR SETTING THE CACHE FOR NEXT IN CONTEXT IF WANT TO DOWN THE LINE
 //     useEffect(() => {

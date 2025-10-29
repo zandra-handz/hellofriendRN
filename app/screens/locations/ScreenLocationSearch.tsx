@@ -15,29 +15,53 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 // import { useLocations } from "@/src/context/LocationsContext";
 import useLocations from "@/src/hooks/useLocations";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
-import AddressesModal from "@/app/components/headers/AddressesModal"; 
- 
+import { useFriendDash } from "@/src/context/FriendDashContext";
+
+import AddressesModal from "@/app/components/headers/AddressesModal";
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useHelloes } from "@/src/context/HelloesContext";
 import useHelloes from "@/src/hooks/useHelloes";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 // import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
- 
+
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import DescriptionView from "@/app/components/alerts/DescriptionView"; 
+import DescriptionView from "@/app/components/alerts/DescriptionView";
 interface Props {}
 
 const ScreenLocationSearch: React.FC<Props> = ({}) => {
   // const { currentLocationDetails, currentRegion } = useCurrentLocation();
-  const { user } = useUser();  
-  
+  const { user } = useUser();
+
   const { selectedFriend } = useSelectedFriend();
+
+  const { friendDash } = useFriendDash();
+  const { locationList } = useLocations({
+    userId: user?.id,
+    isInitializing: false,
+  });
+  const { helloesList } = useHelloes({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
+
+
+
+    const friendFaveIds = useMemo(
+    () => friendDash?.friend_faves?.locations,
+    [friendDash]
+  );
+
+  const inPersonHelloes = useMemo(() => {
+    return helloesList?.filter((hello) => hello.type === "in person") || [];
+  }, [helloesList]);
+
+
+
   const { navigateToLocationEdit } = useAppNavigations();
   const { lightDarkTheme } = useLDTheme();
-  const { currentDay } = useLocationDetailFunctions();
+
   const [quickView, setQuickView] = useState(null);
   const nullQuickView = () => {
     setQuickView(null);
@@ -48,6 +72,7 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
     setDescriptionView(null);
   };
 
+  const { currentDay } = useLocationDetailFunctions();
   const selectedDay = useRef({ index: null, day: "" });
 
   // not sure if so great
@@ -68,7 +93,7 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
       }
     }
   };
- 
+
   const handleNavigateToLocationEdit = (data) => {
     if (data == undefined) {
       return;
@@ -115,12 +140,12 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
             focusedLocation={focusedLocation}
             primaryColor={lightDarkTheme.primaryText}
             primaryBackground={lightDarkTheme.primaryBackground}
-                        themeColors={{
+            themeColors={{
               lightColor: selectedFriend.lightColor,
               darkColor: selectedFriend.darkColor,
               fontColor: selectedFriend.fontColor,
               fontColorSecondary: selectedFriend.fontColorSecondary,
-            }} 
+            }}
             currentDay={currentDay}
             selectedDay={selectedDay}
             handleSelectedDay={handleSelectedDay}
@@ -151,22 +176,8 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
     );
   }, [descriptionView, nullDescriptionView]);
 
-  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
-
-  const friendFaveIds = useMemo(
-    () => friendDash?.friend_faves?.locations,
-    [friendDash]
-  );
-
-  const { locationList } = useLocations({userId: user?.id, isInitializing: false});
-  const { helloesList } = useHelloes({userId: user?.id, friendId: selectedFriend?.id});
-
-  const inPersonHelloes = useMemo(() => {
-    return helloesList?.filter((hello) => hello.type === "in person") || [];
-  }, [helloesList]);
 
 
-  const [highlightedCategory, setHighlightedCategory] = useState(null);
   const { faveLocations, nonFaveLocations } = useFriendLocations({
     inPersonHelloes: inPersonHelloes,
     locationList: locationList,
@@ -178,6 +189,8 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
     nonFaveLocations,
     combinedLocations: [...(faveLocations || []), ...(nonFaveLocations || [])],
   };
+
+  const [highlightedCategory, setHighlightedCategory] = useState(null);
 
   // categories list, reactive to combinedLocations changes
   const categories = useMemo(() => {
@@ -263,12 +276,12 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
             // selectedDay={selectedDay}
             // handleSelectedDay={handleSelectedDay}
             bermudaCoordsDrilledOnce={bermudaCoords}
-                        themeColors={{
+            themeColors={{
               lightColor: selectedFriend.lightColor,
               darkColor: selectedFriend.darkColor,
               fontColor: selectedFriend.fontColor,
               fontColorSecondary: selectedFriend.fontColorSecondary,
-            }}  
+            }}
             primaryColor={lightDarkTheme.primaryText}
             overlayColor={lightDarkTheme.overlayBackground}
             darkerOverlay={lightDarkTheme.darkerOverlayBackground}
@@ -298,8 +311,6 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
             />
           </View>
         )}
-
-  
       </>
     </SafeViewAndGradientBackground>
   );

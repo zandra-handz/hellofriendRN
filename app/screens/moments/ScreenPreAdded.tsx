@@ -4,8 +4,8 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 import PreAddedList from "@/app/components/moments/PreAddedList";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -18,10 +18,7 @@ const ScreenPreAdded = () => {
   const { selectedFriend } = useSelectedFriend();
 
   const { lightDarkTheme } = useLDTheme();
-  const { loadingDash } = useFriendDash({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
+  const { loadingDash } = useFriendDash();
   const { preAdded, allCapsulesList } = useCapsuleList();
 
   const { handlePreAddMoment } = usePreAddMoment({

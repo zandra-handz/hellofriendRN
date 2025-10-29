@@ -10,6 +10,10 @@ const useUpNextCache = ({ userId, friendListAndUpcoming }: Props) => {
   const queryClient = useQueryClient();
 
   const setUpNextCache = () => {
+
+    if (!friendListAndUpcoming?.length) {
+      return;
+    }
       if (friendListAndUpcoming?.upcoming?.length && friendListAndUpcoming?.friends?.length && userId) {
     const upcomingFriend = friendListAndUpcoming?.friends.find(
       (friend) => Number(friend.id) === Number(friendListAndUpcoming?.upcoming[0]?.friend?.id)

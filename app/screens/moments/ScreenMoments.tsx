@@ -4,19 +4,20 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 import TopBarWithAddMoment from "./TopBarWithAddMoment";
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import useCategories from "@/src/hooks/useCategories";
+import { useCategories } from "@/src/context/CategoriesContext";
+// import useCategories from "@/src/hooks/useCategories";
 // import { useFriendList } from "@/src/context/FriendListContext";
 
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 // import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 // import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
@@ -52,20 +53,21 @@ const ScreenMoments = () => {
     listData: capsuleList,
   });
 
-  const { userCategories } = useCategories({userId: user?.id});
+  const { userCategories } = useCategories();
   // const { friendList } = useFriendList();
 
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
 
-  const { loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
+  const { loadingDash } = useFriendDash();
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const { handleSelectFriend } = useSelectFriend({
-    friendList,
+    userId: user?.id,
+    friendList: friendList,
   });
 
   const handleSelectUpNext = () => {

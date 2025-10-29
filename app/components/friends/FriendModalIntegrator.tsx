@@ -2,8 +2,8 @@ import React, { useCallback, useState, useRef } from "react";
 import { View, Text, Pressable, DimensionValue } from "react-native";
 
  
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
  import { AppFontStyles } from "@/app/styles/AppFonts";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -45,7 +45,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
 }) => {
   // console.log("FRIEND SELECTOR RERENDERED");
   
-  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId}); 
+  const { loadingDash } = useFriendDash(); 
 
   const { navigateToAddFriend, navigateToSelectFriend} = useAppNavigations();
 

@@ -5,10 +5,10 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import useCategories from "@/src/hooks/useCategories";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+// import useFriendDash from "@/src/hooks/useFriendDash";
+import { useCategories } from "@/src/context/CategoriesContext";
+// import useCategories from "@/src/hooks/useCategories";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
@@ -36,9 +36,9 @@ const ScreenMomentFocus = () => {
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
   const { selectedFriend } = useSelectedFriend();
-  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
+  const { friendDash } = useFriendDash();
   const { capsuleList } = useCapsuleList();
-  const { userCategories } = useCategories({userId: user?.id}); 
+  const { userCategories } = useCategories(); 
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });

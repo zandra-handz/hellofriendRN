@@ -56,15 +56,15 @@ const Donut = ({
   font,
   smallFont,
 }: Props) => {
-  console.log("DONUT RERENDERED");
+  // console.log("DONUT RERENDERED");
 
   // const font = useFont(Poppins_400Regular, centerTextSize);
   // const smallFont = useFont(Poppins_400Regular, 14);
 
-  console.log("DONUT:", data[0]);
-  console.log("DONUT:", colors[0]);
-  console.log("DONUT:", colorsReversed[0]);
-  console.log(totalJS);
+  // console.log("DONUT:", data[0]);
+  // console.log("DONUT:", colors[0]);
+  // console.log("DONUT:", colorsReversed[0]);
+  // console.log(totalJS);
 
   const [positions, setPositions] = useState<
     { x: number; y: number; size: number; color: string }[]
@@ -78,8 +78,8 @@ const Donut = ({
   // NEED THIS TO STOP THE 'FLASH' OF OLD SHARED VALUES IN LEAVES WHEN FRIEND CHANGES
   useFocusEffect(
     useCallback(() => {
-      console.log("setting values to 0");
-      console.warn("RESETTING LEAF VALUES");
+      // console.log("setting values to 0");
+      // console.warn("RESETTING LEAF VALUES");
 
       totalValue.value = 0;
       decimalsValue.value = [];
@@ -89,7 +89,7 @@ const Donut = ({
       setPositions([]);
 
       return () => {
-        console.warn("RESETTING LEAF VALUES");
+        // console.warn("RESETTING LEAF VALUES");
         totalValue.value = 0;
         decimalsValue.value = [];
         labelsValue.value = [];
@@ -109,7 +109,8 @@ const Donut = ({
 
 
   const getPieChartDataMetrics = (data) => {
-    console.log("(INSIDE SERIES DATA) GETTING PIE CHART DATA METRICS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    // console.log("(INSIDE SERIES DATA) GETTING PIE CHART DATA METRICS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+ 
     const total = data.reduce(
       (acc, currentValue) => acc + currentValue.size,
       0
@@ -140,7 +141,7 @@ const Donut = ({
     const dataCountList = data.filter((item) => Number(item.size) > 0);
     if (dataCountList.length === 0) return;
 
-      console.log("GETTING SERIES DATA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      // console.log("GETTING SERIES DATA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     totalValue.value = 0;
     decimalsValue.value = [];

@@ -9,6 +9,8 @@ import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
 import manualGradientColors  from "@/app/styles/StaticColors";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 // import { useFriendList } from "@/src/context/FriendListContext";
 // import { useHelloes } from "@/src/context/HelloesContext";
@@ -266,6 +268,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
                 />
               </View>
               <CategoryFriendHistoryList
+              userId={userId}
                 friendId={friendId}
                 categoryId={categoryId}
                 friendList={friendList}

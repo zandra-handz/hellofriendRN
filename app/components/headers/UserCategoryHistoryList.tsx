@@ -4,6 +4,7 @@ import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const UserCategoryHistoryList = ({
+  userId,
   categoryId,
   primaryColor = "orange",
 }: Props) => {

@@ -11,10 +11,11 @@ import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-
+import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
 //  import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 
 type Props = {
   categoryId: number;
@@ -23,6 +24,7 @@ type Props = {
 };
 
 const CategoryFriendHistoryList = ({
+  userId,
   friendId,
   categoryId,
 

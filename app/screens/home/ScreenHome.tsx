@@ -48,6 +48,7 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
 
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
@@ -70,6 +71,9 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
 
   useEffect(() => {
+
+    // does not need friendlist, autoselect friend object has the same data
+    // friendist currently getting called async/around the same time but separately
     console.log("AUTOSELECTING FRIEND");
 
     if (
@@ -416,6 +420,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                             >
                               <View style={{ height: "100%" }}>
                                 <AllHome
+                                userId={user?.id}
                                   friendId={selectedFriend?.id}
                                   lockInCustomString={
                                     settings?.lock_in_custom_string
