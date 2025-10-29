@@ -1,8 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Moment } from "../types/MomentContextTypes";
-
-import { useCategories } from "../context/CategoriesContext";
+ 
 
 type Props = {
   listData: Moment[] | [];
@@ -10,7 +9,7 @@ type Props = {
 };
 
 const useMomentSortingFunctions = ({ listData} : Props) => {
-const { userCategories} = useCategories();
+ 
 
 const categorySizes = () => {
 

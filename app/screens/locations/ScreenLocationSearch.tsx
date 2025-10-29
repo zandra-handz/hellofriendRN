@@ -12,13 +12,16 @@ import LocationQuickView from "@/app/components/alerts/LocationQuickView";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useLocations } from "@/src/context/LocationsContext";
+// import { useLocations } from "@/src/context/LocationsContext";
+import useLocations from "@/src/hooks/useLocations";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import AddressesModal from "@/app/components/headers/AddressesModal"; 
  
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useHelloes } from "@/src/context/HelloesContext";
+// import { useHelloes } from "@/src/context/HelloesContext";
+import useHelloes from "@/src/hooks/useHelloes";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 // import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
@@ -30,6 +33,8 @@ interface Props {}
 const ScreenLocationSearch: React.FC<Props> = ({}) => {
   // const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const { user } = useUser();  
+  
+  const { selectedFriend } = useSelectedFriend();
   const { navigateToLocationEdit } = useAppNavigations();
   const { lightDarkTheme } = useLDTheme();
   const { currentDay } = useLocationDetailFunctions();
@@ -146,21 +151,20 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
     );
   }, [descriptionView, nullDescriptionView]);
 
-  const { friendDash } = useFriendDash();
+  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
 
   const friendFaveIds = useMemo(
     () => friendDash?.friend_faves?.locations,
     [friendDash]
   );
 
-  const { locationList } = useLocations();
-  const { helloesList } = useHelloes();
+  const { locationList } = useLocations({userId: user?.id, isInitializing: false});
+  const { helloesList } = useHelloes({userId: user?.id, friendId: selectedFriend?.id});
 
   const inPersonHelloes = useMemo(() => {
     return helloesList?.filter((hello) => hello.type === "in person") || [];
   }, [helloesList]);
 
-  const { selectedFriend } = useSelectedFriend();
 
   const [highlightedCategory, setHighlightedCategory] = useState(null);
   const { faveLocations, nonFaveLocations } = useFriendLocations({

@@ -3,9 +3,9 @@ import React from "react";
 import SwitchFriend from "@/app/components/home/SwitchFriend";
 import { AppFontStyles } from "@/app/styles/AppFonts";
  
-import { useFriendDash } from "@/src/context/FriendDashContext";
- ;
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+ 
+// import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 type Props = {
   updateExistingMoment: boolean;
   paddingTop: number;
@@ -17,6 +17,8 @@ type Props = {
 };
 
 const ImageFocusTray = ({
+  // userId,
+  // friendId,
  
   themeColors,
   primaryColor, 
@@ -24,7 +26,7 @@ const ImageFocusTray = ({
   const ICON_SIZE = 16;
 
   const FONT_SIZE = 12;
-  const { loadingDash } = useFriendDash(); 
+  // const { loadingDash } = useFriendDash(); 
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   return (
@@ -51,7 +53,7 @@ const ImageFocusTray = ({
           justifyContent: "flex-end",
         }}
       >
-        {loadingDash && (
+        {/* {loadingDash && (
           <View style={{}}>
             <LoadingPage
               loading={true}
@@ -61,9 +63,9 @@ const ImageFocusTray = ({
               includeLabel={false}
             />
           </View>
-        )}
+        )} */}
 
-        {!loadingDash && (
+        {/* {!loadingDash && ( */}
           <>
             <View style={{ paddingRight: 30 }}>
               <SwitchFriend
@@ -77,7 +79,7 @@ const ImageFocusTray = ({
             </View>
  
           </>
-        )}
+        {/* )} */}
       </View>
     </View>
   );

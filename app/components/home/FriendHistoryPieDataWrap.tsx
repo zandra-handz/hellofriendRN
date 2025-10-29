@@ -2,7 +2,8 @@ import { View } from "react-native";
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 // import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
-import { useHelloes } from "@/src/context/HelloesContext";
+// import { useHelloes } from "@/src/context/HelloesContext";
+import useHelloes from "@/src/hooks/useHelloes";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
@@ -31,7 +32,7 @@ const FriendHistoryPieDataWrap = React.memo(
     darkerOverlayBackgroundColor,
     themeColors,
   }: Props) => {
-    const { helloesList } = useHelloes();
+    const { helloesList } = useHelloes({ userId: userId, friendId: friendId});
     // const { friendList } = useFriendList();
      const { selectedFriendStats } = useSelectedFriendStats({
     userId: userId, friendId: friendId, friendIsReady: true, enabled: true

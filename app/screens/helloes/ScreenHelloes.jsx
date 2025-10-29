@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { View, Text } from "react-native";
-import { useHelloes } from "@/src/context/HelloesContext";
+// import { useHelloes } from "@/src/context/HelloesContext";
+import useHelloes from "@/src/hooks/useHelloes";
 import useHelloesManips from "@/src/hooks/HelloesFunctions/useHelloesManips";
 import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
-
+import { useUser } from "@/src/context/UserContext";
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesList from "@/app/components/helloes/HelloesList";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
@@ -15,10 +16,11 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 const ScreenHelloes = () => {
   const navigation = useNavigation();
+  const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
-  const { helloesList } = useHelloes();
+  const { helloesList } = useHelloes({userId: user?.id, friendId: selectedFriend?.id});
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
 

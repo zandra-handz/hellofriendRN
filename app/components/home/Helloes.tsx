@@ -3,8 +3,10 @@ import React, { useMemo } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useHelloes } from "@/src/context/HelloesContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useHelloes } from "@/src/context/HelloesContext";
+import useHelloes from "@/src/hooks/useHelloes";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 
 type Props = {
   primaryColor: string;
@@ -12,9 +14,9 @@ type Props = {
   friendId: string;
 };
 
-const Helloes = ({ primaryColor, primaryOverlayColor, friendId }: Props) => {
-  const { helloesList } = useHelloes();
-  const { loadingDash } = useFriendDash();
+const Helloes = ({ primaryColor, primaryOverlayColor, userId, friendId }: Props) => {
+  const { helloesList } = useHelloes({userId: userId, friendId: friendId});
+  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
   const isLoading = loadingDash;
 
   const trueHelloesInList = useMemo(() => {

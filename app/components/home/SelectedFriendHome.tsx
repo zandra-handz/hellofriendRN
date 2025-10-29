@@ -195,6 +195,7 @@ const crescentMoonAnimationStyle = useAnimatedStyle(() => {
                   <View style={{ width: "100%", marginTop: 3 }}>
                     {/* {!loadingDash && ( */}
                     <TalkingPointsChart
+                    userId={userId}
                       themeColors={themeColors}
                       skiaFontLarge={skiaFontLarge}
                       skiaFontSmall={skiaFontSmall}
@@ -213,6 +214,7 @@ const crescentMoonAnimationStyle = useAnimatedStyle(() => {
 
                   <View style={{ width: "100%", marginVertical: 4 }}>
                     <Helloes
+                    userId={userId}
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
                       friendId={selectedFriendId}
@@ -235,12 +237,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     padding: 0,
-    // minHeight: 190,
-    height: "100%",
-
-    // alignContent: "center",
-
-    // alignItems: "center",
+ 
+    height: "100%", 
     justifyContent: "space-between",
   },
   containerOverScrollView: {

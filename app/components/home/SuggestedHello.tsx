@@ -4,8 +4,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 
 import {   formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
 

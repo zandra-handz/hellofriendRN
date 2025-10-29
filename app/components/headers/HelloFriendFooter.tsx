@@ -150,6 +150,7 @@ const HelloFriendFooter = ({
   const RenderFriendProfileButton = useCallback(
     () => (
       <FriendProfileButton
+      userId={userId}
         friendId={null}
         friendName={null}
         primaryColor={primaryColor}

@@ -18,6 +18,7 @@ interface WelcomeMessageUIProps {
 }
 
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
+  userId,
   primaryColor,
   friendId,
   friendName,
@@ -92,6 +93,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           <View style={styles.wrapper}>
             {!isKeyboardVisible && (
               <FriendModalIntegrator
+              userId={userId}
+              friendId={friendId}
+
                 includeLabel={true}
                 height={"100%"}
                 friendId={friendId}

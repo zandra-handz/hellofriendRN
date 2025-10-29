@@ -46,8 +46,8 @@ import { FriendListAndUpcomingProvider } from "./src/context/FriendListAndUpcomi
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
 
 // import { FriendStyleProvider } from "./src/context/FriendStyleContext";
-import { HelloesProvider } from "./src/context/HelloesContext";
-import { LocationsProvider } from "./src/context/LocationsContext";
+// import { HelloesProvider } from "./src/context/HelloesContext";
+// import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 
 import { CategoriesProvider } from "./src/context/CategoriesContext";
@@ -218,36 +218,24 @@ export default Sentry.wrap(function App() {
           <UserSettingsProvider>
             <FriendListAndUpcomingProvider>
               <AutoSelectorProvider>
-                <CategoriesProvider>
-                  {/* <UserStatsProvider> */}
-                    <SelectedFriendProvider>
-                      <CapsuleListProvider>
-                        <FriendDashProvider>
-                          {/* <SelectedFriendStatsProvider> */}
-                            <LocationsProvider>
-                              <HelloesProvider>
-                                <GestureHandlerRootView style={{ flex: 1 }}>
-                                  <SafeAreaProvider>
-                                    <LDThemeProvider>
-                                      <RootSiblingParent>
-                                        <DeviceLocationProvider>
-                                          <Layout
-                                            skiaFontLarge={skiaFontLarge}
-                                            skiaFontSmall={skiaFontSmall}
-                                          />
-                                        </DeviceLocationProvider>
-                                      </RootSiblingParent>
-                                    </LDThemeProvider>
-                                  </SafeAreaProvider>
-                                </GestureHandlerRootView>
-                              </HelloesProvider>
-                            </LocationsProvider>
-                          {/* </SelectedFriendStatsProvider> */}
-                        </FriendDashProvider>
-                      </CapsuleListProvider>
-                    </SelectedFriendProvider>
-                  {/* </UserStatsProvider> */}
-                </CategoriesProvider>
+                <SelectedFriendProvider>
+                  <CapsuleListProvider>
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                      <SafeAreaProvider>
+                        <LDThemeProvider>
+                          <RootSiblingParent>
+                            <DeviceLocationProvider>
+                              <Layout
+                                skiaFontLarge={skiaFontLarge}
+                                skiaFontSmall={skiaFontSmall}
+                              />
+                            </DeviceLocationProvider>
+                          </RootSiblingParent>
+                        </LDThemeProvider>
+                      </SafeAreaProvider>
+                    </GestureHandlerRootView>
+                  </CapsuleListProvider>
+                </SelectedFriendProvider>
               </AutoSelectorProvider>
             </FriendListAndUpcomingProvider>
           </UserSettingsProvider>

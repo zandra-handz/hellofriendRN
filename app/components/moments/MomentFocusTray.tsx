@@ -3,7 +3,8 @@ import React from "react";
 import SwitchFriend from "../home/SwitchFriend";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SelectedCategoryButton from "./SelectedCategoryButton";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 type Props = {
   updateExistingMoment: boolean;
@@ -37,7 +38,7 @@ const MomentFocusTray = ({
   const ICON_SIZE = 16;
 
   const FONT_SIZE = 12;
-  const { loadingDash } = useFriendDash();
+  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const welcomeTextStyle = AppFontStyles.welcomeText;

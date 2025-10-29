@@ -3,13 +3,15 @@ import { View, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
-import { useCategories } from "@/src/context/CategoriesContext";
+// import { useCategories } from "@/src/context/CategoriesContext";
+import useCategories from "@/src/hooks/useCategories";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
@@ -24,7 +26,7 @@ const ScreenMomentView = () => {
 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { userCategories } = useCategories(); 
+  const { userCategories } = useCategories({userId: user?.id}); 
   // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
@@ -34,7 +36,7 @@ const ScreenMomentView = () => {
     friendId: selectedFriend?.id,
   });
 
-  const { friendDash, loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
 
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
   const { generateGradientColorsMap } = useMomentSortingFunctions({

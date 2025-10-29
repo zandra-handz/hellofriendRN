@@ -2,7 +2,9 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useHelloes } from "@/src/context/HelloesContext";
+// import { useHelloes } from "@/src/context/HelloesContext";
+import { useUser } from "@/src/context/UserContext";
+import useHelloes from "@/src/hooks/useHelloes";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage";
@@ -12,8 +14,9 @@ const ScreenHelloView = () => {
   const route = useRoute();
   const startingIndex = route.params?.startingIndex ?? 0;
   const inPersonFilter = route.params?.inPersonFilter ?? false;
+  const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { helloesList } = useHelloes();
+  const { helloesList } = useHelloes({userId: user?.id, friendId: selectedFriend?.id});
   const { lightDarkTheme } = useLDTheme();
 
   const {

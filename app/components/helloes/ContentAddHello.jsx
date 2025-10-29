@@ -18,11 +18,13 @@ import HelloNotes from "./HelloNotes";
 import PickHelloDate from "./PickHelloDate";
 import PickHelloLoc from "./PickHelloLoc";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import PickHelloType from "./PickHelloType";
 // import { useUserStats } from "@/src/context/UserStatsContext";
 import { useNavigation } from "@react-navigation/native";
-import { useLocations } from "@/src/context/LocationsContext";
+// import { useLocations } from "@/src/context/LocationsContext";
+import useLocations from "@/src/hooks/useLocations";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
@@ -38,7 +40,7 @@ import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
-const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
+const ContentAddHello = ({ userId,  primaryColor, backgroundColor }) => {
   const navigation = useNavigation(); 
   const { autoSelectFriend } = useAutoSelector();
 
@@ -61,7 +63,7 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
   const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
     useSelectedFriend();
 
-  const { friendDash } = useFriendDash();
+  const { friendDash } = useFriendDash({userId: userId, friendId: selectedFriend?.id});
 
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -85,7 +87,7 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
 
   const editedTextRef = useRef(null);
 
-  const { locationList, locationListIsSuccess } = useLocations();
+  const { locationList, locationListIsSuccess } = useLocations({userId: userId, isInitializing: false});
 
   useFocusEffect(
     useCallback(() => {

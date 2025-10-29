@@ -433,6 +433,7 @@ const MomentWriteEditView = ({
         </View>
 
         <CategoryCreator
+        userId={userId}
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
           manualGradientColors={manualGradientColors}

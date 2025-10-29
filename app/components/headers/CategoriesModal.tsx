@@ -6,7 +6,8 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import HelperMessage from "../alerts/HelperMessage"; 
 import InfoItem from "./InfoItem";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { useCategories } from "@/src/context/CategoriesContext";
+// import { useCategories } from "@/src/context/CategoriesContext";
+import useCategories from "@/src/hooks/useCategories";
 import { ColorValue } from "react-native";
 interface Props {
   userId: number;
@@ -28,7 +29,7 @@ const CategoriesModal: React.FC<Props> = ({
   bottomSpacer = 60,
 }) => {
 
-  const { userCategories} = useCategories();
+  const { userCategories} = useCategories({userId: userId});
   const [helperMessage, setHelperMessage] = useState<null | {
     text: string;
     error: boolean;

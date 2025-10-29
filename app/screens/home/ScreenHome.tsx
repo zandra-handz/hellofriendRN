@@ -338,6 +338,8 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                             {friendListLength > 0 && (
                               <>
                                 <WelcomeMessageUI
+                                userId={user?.id}
+                              
                                   paddingHorizontal={PADDING_HORIZONTAL}
                                   primaryColor={lightDarkTheme.primaryText}
                                   welcomeTextStyle={welcomeTextStyle}
@@ -402,11 +404,8 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
                         {!isKeyboardVisible &&
                           !selectedFriend?.id &&
-                          // && !loadingDash
                           friendListLength > 0 && ( // loadingDash internally spins the components between friend selects
                             <View
-                              // entering={FadeInUp}
-                              // exiting={FadeOutDown}
                               style={[
                                 {
                                   alignItems: "center",
@@ -445,39 +444,36 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                           )}
 
                         {selectedFriend?.id && (
-                          
-
-                            <SelectedFriendHome
-                              skiaFontLarge={skiaFontLarge}
-                              skiaFontSmall={skiaFontSmall}
-                              paddingHorizontal={PADDING_HORIZONTAL}
-                              userId={user?.id}
-                              primaryColor={lightDarkTheme.primaryText}
-                              primaryOverlayColor={
-                                lightDarkTheme.overlayBackground
-                              }
-                              themeColors={{
-                                lightColor: selectedFriend.lightColor,
-                                darkColor: selectedFriend.darkColor,
-                                fontColorSecondary:
-                                  selectedFriend.fontColorSecondary,
-                              }}
-                              selectedFriendId={selectedFriend?.id}
-                              selectedFriendName={selectedFriend?.name}
-                            />
-                       
+                          <SelectedFriendHome
+                            skiaFontLarge={skiaFontLarge}
+                            skiaFontSmall={skiaFontSmall}
+                            paddingHorizontal={PADDING_HORIZONTAL}
+                            userId={user?.id}
+                            primaryColor={lightDarkTheme.primaryText}
+                            primaryOverlayColor={
+                              lightDarkTheme.overlayBackground
+                            }
+                            themeColors={{
+                              lightColor: selectedFriend.lightColor,
+                              darkColor: selectedFriend.darkColor,
+                              fontColorSecondary:
+                                selectedFriend.fontColorSecondary,
+                            }}
+                            selectedFriendId={selectedFriend?.id}
+                            selectedFriendName={selectedFriend?.name}
+                          />
                         )}
                       </View>
                     )}
                 </KeyboardAvoidingView>
-                   {selectedFriend?.id && (
-                <WriteButton
-                  onPress={handleNavigateToCreateNew}
-                  backgroundColor={manualGradientColors.lightColor}
-                  iconColor={manualGradientColors.homeDarkColor}
-                  spaceFromBottom={98}
-                />
-                   )}
+                {selectedFriend?.id && (
+                  <WriteButton
+                    onPress={handleNavigateToCreateNew}
+                    backgroundColor={manualGradientColors.lightColor}
+                    iconColor={manualGradientColors.homeDarkColor}
+                    spaceFromBottom={98}
+                  />
+                )}
               </>
               {!selectedFriend?.id && (
                 <HelloFriendFooter

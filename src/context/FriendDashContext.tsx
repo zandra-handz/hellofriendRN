@@ -33,8 +33,7 @@ export const FriendDashProvider: React.FC<FriendDashProviderProps> = ({
 
   const { user, isInitializing } = useUser();
 
-  console.log('FRIEND DASH RERENDEREERRERERERED           RJEFK REK EFLK                   Rr')
-
+ 
   const {
     data: friendDash,
     isLoading, 

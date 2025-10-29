@@ -2,7 +2,8 @@ import React from "react";
 import { View } from "react-native";
 import AllHome from "./AllHome";
 import SelectedFriendHome from "./SelectedFriendHome";
-import { useFriendDash } from "@/src/context/FriendDashContext"; 
+// import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import useFriendDash from "@/src/hooks/useFriendDash";
  
 
 interface BelowKeyboardComponentsProps {
@@ -32,7 +33,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   friendListLength,
   onPress,
 }) => {
-  const { friendDash, loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash({userId: userId, friendId: friendId});
 
 
   console.log('below keyboard rerendered', lockInCustomString)
