@@ -172,6 +172,7 @@ const ScreenMomentFocus = () => {
             primaryBackground={lightDarkTheme.primaryBackground}
             lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
             darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
+            darkGlassBackground={lightDarkTheme.darkGlassBackground}
                         themeColors={{
               lightColor: selectedFriend.lightColor,
               darkColor: selectedFriend.darkColor,

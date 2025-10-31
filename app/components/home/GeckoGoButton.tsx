@@ -25,13 +25,7 @@ const GeckoGoButton = ({ onSinglePress, onDoublePress }: Props) => {
     onDoublePress();
   };
 
-  const flattenedContainerStyle = StyleSheet.flatten([
-    styles.container,
-    {
-      backgroundColor: manualGradientColors.lightColor,
-    },
-  ]);
-
+ 
   return (
     <GlobalPressable
       onLongPress={onLongPressVibrate}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, {  useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUpcomingHelloesAndFriends } from "@/src/calls/api";
 
@@ -34,16 +34,15 @@ const useFriendListAndUpcoming = ({
       if (isError) return [];
 
       let nextFriend = null;
-
-      // find next upcoming friend
+ 
       if (data.upcoming?.length && data.friends?.length) {
         nextFriend = data.friends.find(
           (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
         );
       }
 
-      // alphabetize friends list
-      const locale = "en"; // or whatever you need
+   
+      const locale = "en";  
       const sortedFriends =
         data.friends
           ?.slice()
@@ -51,7 +50,7 @@ const useFriendListAndUpcoming = ({
             a.name.localeCompare(b.name, locale, { sensitivity: "case" })
           ) || [];
 
-      // return new object, immutable
+  
       return {
         ...data,
         friends: sortedFriends,

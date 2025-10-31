@@ -35,6 +35,7 @@ const MomentViewPage: React.FC<Props> = ({
   textColor,
   darkerOverlayColor,
   lighterOverlayColor,
+  darkGlassBackground,
   item,
   index,
   width,
@@ -199,7 +200,7 @@ const MomentViewPage: React.FC<Props> = ({
               zIndex: 1,
               overflow: "hidden",
               // backgroundColor: darkerOverlayColor,
-              backgroundColor: CARD_BACKGROUND,
+              backgroundColor: darkGlassBackground,
             },
           ]}
         >

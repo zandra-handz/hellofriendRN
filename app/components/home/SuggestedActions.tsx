@@ -4,9 +4,9 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts"; 
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
-import {   formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
 
 type Props = {
   padding: number;
@@ -14,14 +14,13 @@ type Props = {
   borderRadius: number;
 };
 
-const SuggestedHello = ({
+const SuggestedActions = ({
   futureDateInWords,
-futureDate,
+  futureDate,
   primaryColor,
   primaryOverlayColor,
   primaryBackground,
   loadingDash,
-  darkerGlassBackground,
 
   // friendFutureDate,
   padding,
@@ -32,7 +31,7 @@ futureDate,
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
- 
+
   const openModal = () => {
     setOptionsModalVisible(true);
   };
@@ -40,11 +39,11 @@ futureDate,
   const closeModal = () => {
     setOptionsModalVisible(false);
   };
-console.log(futureDate)
+  console.log(futureDate);
 
-const helloDate = useMemo(() => {
-  return formatDayOfWeekAbbrevMonth(futureDate);
-}, [futureDate]);
+  const helloDate = useMemo(() => {
+    return formatDayOfWeekAbbrevMonth(futureDate);
+  }, [futureDate]);
 
   const renderSuggestedHello = useMemo(() => {
     return (
@@ -80,20 +79,26 @@ const helloDate = useMemo(() => {
   }, [futureDateInWords, primaryColor]);
 
   return (
-   <View style={{width: '100%', alignItems: 'center', justifyContent: 'center', height: 86}}>
+    <View
+      style={{
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        height: 86,
+      }}
+    >
       <View
         style={[
           styles.container,
           {
             // height: height - 10,
             padding: padding,
-            backgroundColor: darkerGlassBackground,
-          
+            backgroundColor: primaryOverlayColor,
           },
         ]}
       >
         {!loadingDash && (
-          <View style={{ flexDirection: "row", width: '100%'  }}>
+          <View style={{ flexDirection: "row", width: "100%" }}>
             <View style={styles.textContainer}>{renderSuggestedHello}</View>
             <View style={styles.geckoButtonWrapper}>
               <GeckoGoButton
@@ -108,7 +113,7 @@ const helloDate = useMemo(() => {
         <View>
           <GoOptionsModal
             primaryColor={primaryColor}
-            backgroundColor={'red'}
+            backgroundColor={primaryOverlayColor}
             modalBackgroundColor={primaryBackground}
             manualGradientColors={manualGradientColors}
             subWelcomeTextStyle={subWelcomeTextStyle}
@@ -124,15 +129,15 @@ const helloDate = useMemo(() => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 4,
-   // minHeight: 96, // EYEBALL
-height: '100%',
+    // minHeight: 96, // EYEBALL
+    height: "100%",
     // flexShrink: 1,
     alignItems: "center",
     flexDirection: "row",
     overflow: "hidden",
     justifyContent: "space-between",
     width: "100%",
-    width: '92%',
+    width: "92%",
     // borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -140,7 +145,6 @@ height: '100%',
     shadowRadius: 5,
     elevation: 8,
     borderRadius: 999,
-  
   },
   textContainer: {
     zIndex: 5,
@@ -165,16 +169,16 @@ height: '100%',
     paddingRight: 8, // EYEBALL
   },
   geckoButtonWrapper: {
- //   flex: 1, 
+    //   flex: 1,
     flexDirection: "column",
     justifyContent: "center",
     width: 60,
-    position: 'absolute',
-    height: '100%',
+    position: "absolute",
+    height: "100%",
 
     right: 0,
     zIndex: 9000,
   },
 });
 
-export default SuggestedHello;
+export default SuggestedActions;

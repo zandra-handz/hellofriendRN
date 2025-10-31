@@ -111,6 +111,7 @@ const CarouselSliderMoments = ({
         lighterOverlayColor={
           lightDarkTheme.lighterOverlayBackground 
         } 
+        darkGlassBackground={lightDarkTheme.darkGlassBackground}
         userId={userId}
         friendId={friendId}
         categoryColorsMap={categoryColorsMap}

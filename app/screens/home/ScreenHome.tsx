@@ -48,7 +48,6 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
 
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
@@ -71,32 +70,37 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
 
   useEffect(() => {
-
     // does not need friendlist, autoselect friend object has the same data
     // friendist currently getting called async/around the same time but separately
     console.log("AUTOSELECTING FRIEND");
+    console.log(`next f`, autoSelectFriend?.customFriend);
+    console.log(selectedFriend);
 
     if (
       // !selectedFriend?.id &&
       // && !loadingSettings
-      autoSelectFriend?.customFriend?.id !== undefined &&
+      autoSelectFriend?.customFriend?.id !== "pending" &&
+      // autoSelectFriend?.customFriend?.id !== undefined &&
       !selectedFriend?.id
     ) {
       if (autoSelectFriend.customFriend?.id) {
         setToAutoFriend({
           friend: autoSelectFriend.customFriend,
-
-          preConditionsMet: autoSelectFriend.customFriend !== undefined,
+          preConditionsMet: autoSelectFriend.customFriend !== "pending",
+          // preConditionsMet: autoSelectFriend.customFriend !== undefined,
         });
       } else if (autoSelectFriend.nextFriend?.id) {
         setToAutoFriend({
           friend: autoSelectFriend.nextFriend?.id,
 
-          preConditionsMet: autoSelectFriend.nextFriend !== undefined,
+          // preConditionsMet: autoSelectFriend.nextFriend !== undefined,
+              preConditionsMet: autoSelectFriend.nextFriend !== 'pending',
         });
       } else {
         setToAutoFriend({ friend: { id: null }, preConditionsMet: true });
       }
+    } else {
+      console.log("already set");
     }
   }, [autoSelectFriend]);
 
@@ -266,12 +270,15 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
     <>
       <LocalPeacefulGradientSpinner
         loading={
-          autoSelectFriend?.customFriend === undefined ||
+          // autoSelectFriend?.customFriend === undefined ||
+          autoSelectFriend?.customFriend === "pending" ||
           !selectedFriend?.isReady
         }
       />
 
-      {autoSelectFriend?.customFriend !== undefined &&
+      {/* {autoSelectFriend?.customFriend !== undefined && */}
+
+      {autoSelectFriend?.customFriend !== "pending" &&
         selectedFriend?.isReady && (
           <SafeViewAndGradientBackground
             friendColorLight={selectedFriend.lightColor}
@@ -342,8 +349,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                             {friendListLength > 0 && (
                               <>
                                 <WelcomeMessageUI
-                                userId={user?.id}
-                              
+                                  userId={user?.id}
                                   paddingHorizontal={PADDING_HORIZONTAL}
                                   primaryColor={lightDarkTheme.primaryText}
                                   welcomeTextStyle={welcomeTextStyle}
@@ -420,7 +426,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                             >
                               <View style={{ height: "100%" }}>
                                 <AllHome
-                                userId={user?.id}
+                                  userId={user?.id}
                                   friendId={selectedFriend?.id}
                                   lockInCustomString={
                                     settings?.lock_in_custom_string
@@ -450,6 +456,12 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
                         {selectedFriend?.id && (
                           <SelectedFriendHome
+                            darkGlassBackground={
+                              lightDarkTheme.darkGlassBackground
+                            }
+                            darkerGlassBackground={
+                              lightDarkTheme.darkerGlassBackground
+                            }
                             skiaFontLarge={skiaFontLarge}
                             skiaFontSmall={skiaFontSmall}
                             paddingHorizontal={PADDING_HORIZONTAL}

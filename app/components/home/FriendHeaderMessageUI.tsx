@@ -38,6 +38,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   height,
   userId,
   primaryColor,
+  darkGlassBackground,
+  darkerGlassBackground,
   welcomeTextStyle,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
@@ -299,6 +301,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             futureDateInWords={friendDash?.future_date_in_words}
             futureDate={friendDash?.date}
             primaryOverlayColor={CARD_BACKGROUND}
+            darkerGlassBackground={darkerGlassBackground}
             primaryColor={primaryColor}
             padding={SELECTED_FRIEND_CARD_PADDING}
             height={SELECTED_FRIEND_CARD_HEIGHT}

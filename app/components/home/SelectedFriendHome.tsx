@@ -19,8 +19,8 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+// import { useFocusEffect } from "@react-navigation/native";
+// import { useCallback } from "react";
 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -33,6 +33,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   paddingHorizontal,
   primaryColor,
   primaryOverlayColor,
+  darkGlassBackground,
+  darkerGlassBackground,
   // darkerOverlayBackgroundColor,
 
   selectedFriendId,
@@ -116,7 +118,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               top: -100,
               alignSelf: "center",
               position: "absolute",
-              backgroundColor: CARD_BACKGROUND,
+              backgroundColor: darkGlassBackground,
             },
           ]}
         ></View>
@@ -213,6 +215,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     userId={userId}
                     friendId={selectedFriendId}
                     cardBackgroundColor={CARD_BACKGROUND}
+                    darkGlassBackground={darkGlassBackground}
+                    darkerGlassBackground={darkerGlassBackground}
+
                     selectedFriendName={`${selectedFriendName}`}
                     friendDarkColor={themeColors.darkColor}
                     primaryColor={primaryColor}

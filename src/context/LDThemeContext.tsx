@@ -86,6 +86,8 @@ export const lightTheme = {
   primaryBackground: "#ffffff",
   darkerBackground: "#ccc",
   darkestBackground: "#ccc",
+darkGlassBackground:  "rgba(240, 240, 255, 0.8)",   // soft frosty white
+darkerGlassBackground: "rgba(230, 230, 245, 0.83)", // slightly deeper frost
   dangerZoneText: "#B22222",
  
   toggleButtonColor: "#ccc",
@@ -113,6 +115,8 @@ export const darkTheme = {
   signInButton: "#ebebeb",
   darkerBackground: "#2B2B2B",
   darkestBackground: "#242424",
+  darkGlassBackground:  "rgba(0,0,0,0.8)",
+  darkerGlassBackground: "rgba(0,0,0,0.83)",
   dangerZoneText: "#B22222",
   borderColor: "#121212",
   toggleButtonColor: "#ccc",

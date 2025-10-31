@@ -175,7 +175,7 @@ const colors = colorsRef.current;
                 },
               ]}
             >
-              Ideas
+              Topics
             </Text>
           </View>
 

@@ -4,7 +4,7 @@ import {
   Pressable,
   FlatList,
   ListRenderItemInfo,
-} from "react-native"; 
+} from "react-native";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
 import { Vibration } from "react-native";
@@ -44,8 +44,10 @@ const FriendListUI = ({
   onLongPress,
 }: FriendListUIProps) => {
   const itemColor = lightDarkTheme.primaryText;
-  const elementBackgroundColor = lightDarkTheme.overlayBackground;
-  const primaryBackground = lightDarkTheme.primaryBackground;
+ const elementBackgroundColor = lightDarkTheme.overlayBackground;
+ // const elementBackgroundColor = lightDarkTheme.darkGlassBackground;
+  // const primaryBackground = lightDarkTheme.primaryBackground;
+  const backgroundColor = lightDarkTheme.darkGlassBackground;
 
   const { navigateToAddFriend } = useAppNavigations();
 
@@ -64,8 +66,7 @@ const FriendListUI = ({
 
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
-      < View 
-      >
+      <View>
         <View style={styles.itemContainer}>
           {autoSelectFriend?.customFriend?.id === item.id && (
             <View
@@ -126,7 +127,7 @@ const FriendListUI = ({
               friendId={friendId}
               themeColors={themeColors}
               borderRadius={ITEM_BORDER_RADIUS}
-              backgroundColor={CARD_BACKGROUND}
+              backgroundColor={backgroundColor}
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
@@ -140,7 +141,6 @@ const FriendListUI = ({
             style={styles.friendContainer}
           >
             <ButtonSelectFriend
-          
               borderRadius={ITEM_BORDER_RADIUS}
               backgroundColor={elementBackgroundColor}
               color={itemColor}
@@ -156,7 +156,7 @@ const FriendListUI = ({
             onPress={navigateToAddFriend}
             style={[
               {
-                backgroundColor: primaryBackground,
+                backgroundColor: backgroundColor,
                 borderRadius: ITEM_BORDER_RADIUS,
 
                 height: ITEM_HEIGHT,
@@ -167,7 +167,7 @@ const FriendListUI = ({
             <SvgIcon name={"account_plus"} size={26} color={itemColor} />
           </Pressable>
         )}
-      </ View>
+      </View>
     ),
     [onPress, itemColor, elementBackgroundColor, autoSelectFriend]
   );
@@ -196,12 +196,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     height: "100%",
-   
 
     flexDirection: "column",
   },
   itemInnerContainer: {
- 
     padding: 4,
     zIndex: 2,
     borderRadius: 999,
@@ -216,7 +214,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-   // borderRadius: 10,
+    // borderRadius: 10,
   },
   pressedStyle: {
     opacity: 0.2,
@@ -225,8 +223,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-  
-    
   },
   animatedViewContainer: {
     flex: 1,
@@ -234,7 +230,7 @@ const styles = StyleSheet.create({
     minWidth: 2,
     height: "100%",
     width: "100%",
-    alignItems: "center", 
+    alignItems: "center",
   },
 });
 

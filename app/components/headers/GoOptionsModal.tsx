@@ -15,7 +15,7 @@ type Props = {
 const GoOptionsModal = ({
   isVisible,
   primaryColor,
-  //backgroundColor,
+  backgroundColor,
   modalBackgroundColor,
   closeModal,
 }: Props) => {
@@ -29,7 +29,7 @@ const GoOptionsModal = ({
 
   const BUTTON_PADDING = 4;
   const BUTTON_COLOR = manualGradientColors.lightColor;
-  const backgroundColor = manualGradientColors.homeDarkColor;
+  // const backgroundColor = manualGradientColors.homeDarkColor;
 
   const handleNavToMoments = () => {
     closeModal();

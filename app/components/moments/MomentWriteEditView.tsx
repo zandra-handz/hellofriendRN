@@ -39,7 +39,7 @@ const MomentWriteEditView = ({
   manualGradientColors,
   themeColors,
   capsuleList,
-
+darkGlassBackground,
   userId,
   screenCameFromToParent,
   momentText,
@@ -68,10 +68,9 @@ const MomentWriteEditView = ({
     userId: userId,
     friendId: friendId,
   });
-  const { navigateBack, navigateToMoments, navigateToMomentView } =
+  const { navigateBack, navigateToMomentView } =
     useAppNavigations();
-
-  const CARD_BACKGROUND = "rgba(0,0,0,0.8)"; // same as in selected friend home
+ 
   const TOPPER_PADDING_TOP = 0;
  
   const welcomeTextStyle = AppFontStyles.welcomeText; 
@@ -379,7 +378,7 @@ const MomentWriteEditView = ({
                 zIndex: 1,
                 overflow: "hidden",
                 backgroundColor: darkerOverlayColor,
-                backgroundColor: CARD_BACKGROUND,
+                backgroundColor:darkGlassBackground,
               }}
             >
               <MomentFocusTray 

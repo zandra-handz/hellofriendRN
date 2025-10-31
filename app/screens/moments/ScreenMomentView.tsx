@@ -7,7 +7,6 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 // import useFriendDash from "@/src/hooks/useFriendDash";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -17,16 +16,14 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
-
- 
-
+import SvgIcon from "@/app/styles/SvgIcons";
 const ScreenMomentView = () => {
   const route = useRoute();
   const currentIndex = route.params?.index ?? null;
 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { userCategories } = useCategories(); 
+  const { userCategories } = useCategories();
   // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
@@ -42,7 +39,7 @@ const ScreenMomentView = () => {
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
- 
+
   const categoryColorsMap = useMemo(() => {
     if (
       userCategories?.length > 0 &&
@@ -77,42 +74,31 @@ const ScreenMomentView = () => {
       <View style={StyleSheet.absoluteFillObject}>
         <GradientBackgroundBreathing
           secondColorSetDark={selectedFriend.lightColor}
-          secondColorSetLight={selectedFriend.darkColor}
-          // firstColorSetDark={manualGradientColors.lightColor}
-          // firstColorSetLight={selectedFriend.darkColor}
+          secondColorSetLight={selectedFriend.darkColor} 
           firstColorSetDark={selectedFriend.lightColor}
-          firstColorSetLight={selectedFriend.darkColor}
-          // firstColorSetDark={manualGradientColors.lightColor}
-          // firstColorSetLight={manualGradientColors.darkColor}
+          firstColorSetLight={selectedFriend.darkColor} 
           timeScore={TIME_SCORE}
           speed={3000}
           style={{ flexDirection: "column", justifyContent: "flex-end" }}
           direction={"vertical"}
         ></GradientBackgroundBreathing>
       </View>
-      <View style={{ position: "absolute", top: -200, left: -300 }}>
-        <MaterialCommunityIcons
+      <View style={{ position: "absolute", top: -170, left: -300 }}>
+        <SvgIcon
           name={"leaf"}
-          size={1000}
-          // color={manualGradientColors.lightColor}
-           color={selectedFriend.lightColor}
-          style={{
-            // top: -100,
-            // left: -100,
+          size={1000} 
+          color={selectedFriend.lightColor}
+          style={{ 
             flexDirection: "row",
             justifyContent: "flex-start",
-            zindex: 4000,
-            // flex: 1,
+            zindex: 4000, 
             position: "absolute",
-            // top: -340,
-            // left: -310,
-            opacity: 0.6,
-            // transform: [{ rotate: "0deg" }, { scaleX: 1 }],
+            opacity: 0.6, 
           }}
         />
       </View>
 
-      {selectedFriend && !loadingDash && capsuleList && categoryColorsMap && (
+      {selectedFriend?.id && !loadingDash && capsuleList?.length && categoryColorsMap && (
         <CarouselSliderMoments
           lightDarkTheme={lightDarkTheme}
           userId={user?.id}

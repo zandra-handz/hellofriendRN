@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState, useMemo, useRef } from "react";
-import { Pressable, View, StyleSheet } from "react-native";
+import { Pressable, View  } from "react-native";
  
 import Animated, {
   useSharedValue,

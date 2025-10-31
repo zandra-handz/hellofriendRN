@@ -52,7 +52,7 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
 
 const autoSelectFriend = useMemo(() => {
   // if data isn’t ready yet, return undefined
-  if (!settings?.id || !friendListAndUpcoming?.user) return { customFriend: undefined, nextFriend: undefined };
+  if (!settings?.id || !friendListAndUpcoming?.user) return { customFriend: 'pending', nextFriend: 'pending' };
 
   const customFriend = settings.lock_in_custom_string
     ? friendListAndUpcoming.friends.find(
