@@ -150,44 +150,68 @@ const ContentAddHello = ({ userId,  primaryColor, backgroundColor }) => {
     ]);
   };
 
-  const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
+  // const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
 
   useEffect(() => {
+
+    if (!createHelloMutation?.isSuccess) {
+      return;
+    }
     if (createHelloMutation.isSuccess) {
       showFlashMessage(`Hello saved!`, false, 2000);
+      console.log(autoSelectFriend)
       if (autoSelectFriend?.customFriend?.id && autoSelectFriend?.customFriend?.id !== -1) {
         setToFriend({
           friend: autoSelectFriend.customFriend,
           preConditionsMet: true,
         });
+      refetchUpcomingHelloes();
+      refetchUserStats();
+
+       navigateToMainScreen();
+
+            // setJustDeselectedFriend(true);
+        //  navigateToMainScreen();
       } else if (autoSelectFriend?.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1) {
         setToFriend({
           friend: autoSelectFriend.nextFriend,
           preConditionsMet: true,
         });
-      } else {
-        deselectFriend();
-      }
-
-      setJustDeselectedFriend(true);
-      navigateToMainScreen();
-    }
-  }, [createHelloMutation.isSuccess, autoSelectFriend]);
-
-  useEffect(() => {
-    if (
-      // justDeselectedFriend
-      // &&
-      selectedFriend === null
-    ) {
-      refetchUpcomingHelloes();
+              refetchUpcomingHelloes();
       refetchUserStats();
 
-      navigateToMainScreen();
+       navigateToMainScreen();
+            // setJustDeselectedFriend(true);
+        //  navigateToMainScreen();
+        } else if (autoSelectFriend?.nextFriend?.id && autoSelectFriend?.nextFriend?.id === -1) {
+        deselectFriend();
+              refetchUpcomingHelloes();
+      refetchUserStats();
 
-      setJustDeselectedFriend(false); // reset the flag
+       navigateToMainScreen();
+            // setJustDeselectedFriend(true);
+        //  navigateToMainScreen();
+      }
+
+ 
+ 
     }
-  }, [justDeselectedFriend, selectedFriend]);
+  }, [createHelloMutation.isSuccess, autoSelectFriend?.customFriend?.id, autoSelectFriend?.nextFriend?.id]);
+
+  // useEffect(() => {
+  //   if (
+  //     justDeselectedFriend
+  //     // &&
+  //     // selectedFriend?.id === null
+  //   ) {
+  //     refetchUpcomingHelloes();
+  //     refetchUserStats();
+
+  //      navigateToMainScreen();
+
+  //     setJustDeselectedFriend(false); // reset the flag
+  //   }
+  // }, [justDeselectedFriend, selectedFriend?.id]);
 
   const toggleDeleteMoments = () => {
     setDeleteMoments(!deleteMoments);

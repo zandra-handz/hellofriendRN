@@ -8,6 +8,7 @@ type Props = {
 
 const useUpNextCache = ({ userId, friendListAndUpcoming }: Props) => {
   const queryClient = useQueryClient();
+ 
 
   const setUpNextCache = () => {
 

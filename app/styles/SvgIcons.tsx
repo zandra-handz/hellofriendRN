@@ -53,6 +53,7 @@ import NoteTextSvg from "./svgs/note-text";
 import PaletteSvg from "./svgs/palette";
 import PenSvg from "./svgs/pen";
 import PencilSvg from "./svgs/pencil";
+import PencilCircleSvg from "./svgs/pencil-circle";
 import PencilOutlineSvg from "./svgs/pencil-outline";
 import PieChartSvg from "./svgs/pie-chart"; // IonIcons
 import PinOutlineSvg from "./svgs/pin-outline";
@@ -102,6 +103,7 @@ const svgIcons = {
   palette: PaletteSvg,
   pen: PenSvg,
   pencil: PencilSvg, // hello quick view
+  pencil_circle: PencilCircleSvg,
   pencil_outline: PencilOutlineSvg,
   pie_chart: PieChartSvg,
   pin_outline: PinOutlineSvg, // friend header

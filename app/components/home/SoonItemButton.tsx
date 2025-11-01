@@ -1,13 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
-import {
-  View,
-  Text, 
-  StyleSheet,
-  DimensionValue,
-} from "react-native"; 
+import { View, Text, StyleSheet, DimensionValue } from "react-native";
 import UpcomingFriendPressable from "../appwide/button/UpcomingFriendPressable";
- 
- 
+import SvgIcon from "@/app/styles/SvgIcons";
+
 interface SoonItemButtonProps {
   width: DimensionValue;
   date: string;
@@ -23,18 +18,20 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   width = "100%",
   date = "Tuesday, January 10",
   friendName = "N/A",
+  friendCapsuleCount = "missing",
   friendId,
   onPress = () => console.log("Soon Item button single press"),
   onDoublePress = () => console.log("Soon Item button dounle press"),
   disabled = false,
   textColor = "white",
-  friendList, 
+  friendList,
   darkerOverlayColor,
- 
+
   overlayColor = "hotpink",
 }) => {
   const lastPress = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
  
 
   const DOUBLE_PRESS_DELAY = 300;
@@ -61,15 +58,12 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
     lastPress.current = now;
   };
 
-  const [fontColor, setFontColor] = useState(
-    textColor
-  );
+  const [fontColor, setFontColor] = useState(textColor);
 
   useEffect(() => {
     if (textColor) {
-      setFontColor(textColor)
+      setFontColor(textColor);
     }
-
   }, [textColor]);
 
   const handleChangeTextColor = () => {
@@ -107,9 +101,8 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
             width: width,
             alignItems: "center",
             borderWidth: 2,
-            borderColor: 'transparent',
+            borderColor: "transparent",
             backgroundColor: darkerOverlayColor,
-       
           },
         ]}
       >
@@ -119,12 +112,24 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
             width: "100%",
             height: "100%",
             alignItems: "center",
-          
-            padding: 10, 
+
+            padding: 10,
           }}
         >
           <View style={[styles.calendarContainer]}>
             <Text style={[styles.text, { color: fontColor }]}> {date}</Text>
+          </View>
+          <View style={{alignItems: 'center'}}>
+            <SvgIcon
+              name={"leaf"}
+              color={fontColor}
+              size={30}
+              style={{ position: 'absolute', bottom: -3, right: 20, width: '100%', zIndex: 4000, opacity: 0.5 }}
+            />
+            <Text style={[styles.text, { color: fontColor }]}>
+              {friendCapsuleCount}
+              {"  |   "}
+            </Text>
           </View>
           <Text style={[styles.text, { color: fontColor }]}>{friendName}</Text>
         </View>
@@ -138,10 +143,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     height: 50,
-    
+
     width: "100%",
     // padding: 10,
-borderRadius: 4,
+    borderRadius: 4,
     overflow: "hidden",
   },
   blurOverlay: {

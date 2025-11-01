@@ -1,11 +1,18 @@
 import { View, Pressable, StyleSheet } from "react-native";
-import React, { useMemo } from "react";
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
-import Animated, { SlideInUp } from "react-native-reanimated";
+import React, { useEffect, useMemo } from "react";
+import Animated, {
+ 
+  useSharedValue,
+  withTiming,
+  withDelay,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import SuggestedActions from "./SuggestedActions";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SvgIcon from "@/app/styles/SvgIcons";
+import MFeatureWriteButton from "./MFeatureWriteButton";
+
 interface WelcomeMessageUIProps {
   username: string;
   isNewUser: boolean; // in parent: {new Date(user?.user?.created_on).toDateString() === new Date().toDateString()
@@ -18,12 +25,8 @@ interface WelcomeMessageUIProps {
 }
 
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
-  userId,
   primaryColor,
   primaryBackground,
-  friendId,
-  friendName,
-  themeColors,
   paddingHorizontal = 10,
   darkerGlassBackground,
   username = "",
@@ -35,11 +38,51 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   onPress = () => {},
 }) => {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+  const scaleValue = useSharedValue(1);
+  const opacityValue = useSharedValue(1);
+
+  const fadeLength = 300;
+
+  useEffect(() => {
+    if (isKeyboardVisible) {
+      opacityValue.value = withTiming(0, { duration: fadeLength });
+      scaleValue.value = withDelay(
+        200,
+        withTiming(0, { duration: fadeLength })
+      );
+    } else {
+      opacityValue.value = withTiming(1, { duration: 100 });
+      scaleValue.value = withDelay(0, withTiming(1, { duration: 100 }));
+    }
+  }, [isKeyboardVisible]);
+
+  const animatedScaleStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleValue.value }],
+    };
+  });
+
+  const animatedFadeStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacityValue.value,
+    };
+  });
+
+
+    const oppositeFadeStyle = useAnimatedStyle(() => {
+    return {
+      opacity: 1 - opacityValue.value,
+    };
+  });
+
   // const SELECTED_FRIEND_CARD_PADDING = 20;
   const SELECTED_FRIEND_CARD_PADDING = 30;
-  const message = isNewUser
-    ? `Hi ${username}! Welcome to hellofriend!`
-    : `Welcome back ${username}!`;
+  // const message = isNewUser
+  //   ? `Hi ${username}! Welcome to hellofriend!`
+  //   : `Welcome back ${username}!`;
+
+  const message = "";
 
   const conditionalMessage = useMemo(() => {
     if (isKeyboardVisible) {
@@ -51,21 +94,19 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
   return (
     <>
-    {!isKeyboardVisible && (
-
-      <View
-        style={[styles.absoluteColorSquareContainer,
-          { 
+      <Animated.View
+        style={[
+          // animatedScaleStyle,
+          styles.absoluteColorSquareContainer,
+          {
             backgroundColor: darkerGlassBackground,
           },
         ]}
-      ></View>
-            
-    )}
+      ></Animated.View>
 
       <AnimatedPressable
         onPress={onPress}
-        layout={SlideInUp}
+        // layout={SlideInUp}
         style={[
           {
             backgroundColor: isKeyboardVisible
@@ -79,34 +120,51 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           styles.container,
         ]}
       >
-        {!isKeyboardVisible && (
-          <View style={{ width: "100%", alignItems: "center" }}>
-            <SvgIcon name={"leaf"} color={primaryColor} size={100} />
-          </View>
-        )}
         <SvgIcon
           name={"leaf"}
           size={1200}
           color={manualGradientColors.homeDarkColor}
           style={styles.leaf}
         />
+
         <>
           <Animated.Text
             style={[
+              oppositeFadeStyle,
               AppFontStyles.welcomeText,
               styles.label,
               {
-                paddingTop: isKeyboardVisible ? 0 : 40,
+                paddingTop: isKeyboardVisible ? 20 : 40,
                 color: primaryColor,
               },
             ]}
           >
             {conditionalMessage}
-            <View style={styles.wrapper}></View>
           </Animated.Text>
         </>
-        {!isKeyboardVisible && (
-          <View style={{ width: "100%", position: "absolute", bottom: -46 }}>
+
+        <Animated.View style={[animatedFadeStyle, { width: "100%" }]}>
+          <View
+            style={{
+              width: "100%",
+              alignItems: "center",
+              height: 130,
+              marginBottom: 6,
+              paddingTop: 10,
+              justifyContent: "center",
+              // backgroundColor: "orange",
+            }}
+          >
+            <MFeatureWriteButton
+              onPress={onPress}
+              leafColor={primaryColor}
+              fontColor={primaryColor}
+            />
+
+            {/* <SvgIcon name={"leaf"} color={primaryColor} size={100} /> */}
+          </View>
+
+          <View style={[{ width: "100%" }]}>
             <SuggestedActions
               darkerGlassBackground={darkerGlassBackground}
               primaryColor={primaryColor}
@@ -114,7 +172,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
               padding={SELECTED_FRIEND_CARD_PADDING}
             />
           </View>
-        )}
+        </Animated.View>
+        {/* )} */}
       </AnimatedPressable>
     </>
   );
@@ -137,14 +196,14 @@ const styles = StyleSheet.create({
   },
   absoluteColorSquareContainer: {
     // height: 275,
-        height: 700,
+    height: 700,
     width: "140%",
     width: 700,
     top: -406,
     alignSelf: "center",
     position: "absolute",
     opacity: 1,
-        shadowColor: "#000",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -160,6 +219,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "200deg" }, { scaleX: -1 }],
   },
   label: {
+    position: "absolute",
     borderRadius: 8,
     paddingHorizontal: 20,
     zindex: 400000,

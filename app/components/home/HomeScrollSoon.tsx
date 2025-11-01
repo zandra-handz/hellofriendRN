@@ -99,6 +99,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           height={"100%"}
           friendName={item.friend.name}
           friendId={item.friend.id}
+          friendCapsuleCount={item.capsule_count}
           date={item.future_date_in_words}
           width={"100%"}
           onPress={() => handlePress(item)}

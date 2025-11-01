@@ -34,7 +34,9 @@ const useFriendListAndUpcoming = ({
       if (isError) return [];
 
       let nextFriend = null;
- 
+      let upcomingWithSummaries = []; 
+
+      // find next upcoming friend
       if (data.upcoming?.length && data.friends?.length) {
         nextFriend = data.friends.find(
           (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
@@ -42,7 +44,34 @@ const useFriendListAndUpcoming = ({
       }
 
    
-      const locale = "en";  
+      // find next upcoming friend
+      if (data.upcoming?.length && data.friends?.length && data.capsule_summaries?.length) {
+        const capsuleMap = {};
+
+        data.capsule_summaries.forEach(cs => {
+          capsuleMap[cs.id] = cs;
+        })
+
+         upcomingWithSummaries = data.upcoming.map(upcoming => {
+          const friendId = upcoming.friend.id;
+          const capsuleSummary = capsuleMap[friendId] || null;
+
+          return {
+            ...upcoming, 
+            capsule_summary: capsuleSummary?.capsule_summary || [],
+            capsule_count: capsuleSummary?.capsule_count || 0
+          };
+        })
+
+
+        console.log(data.upcoming)
+
+        console.log(`capsule map`, upcomingWithSummaries)
+        
+      }
+
+      // alphabetize friends list
+      const locale = "en"; // or whatever you need
       const sortedFriends =
         data.friends
           ?.slice()
@@ -50,9 +79,10 @@ const useFriendListAndUpcoming = ({
             a.name.localeCompare(b.name, locale, { sensitivity: "case" })
           ) || [];
 
-  
+ 
       return {
         ...data,
+         upcoming: upcomingWithSummaries,
         friends: sortedFriends,
         next: nextFriend,
       };
@@ -91,7 +121,6 @@ const useFriendListAndUpcoming = ({
     friendListAndUpcomingIsFetching: isFetching,
     friendListAndUpcomingIsSuccess: isSuccess,
     upNext,
-
     isLoading,
   };
 };

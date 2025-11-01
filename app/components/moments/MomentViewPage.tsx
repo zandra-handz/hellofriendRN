@@ -156,6 +156,7 @@ const MomentViewPage: React.FC<Props> = ({
       const momentData = {
         friend: friendId,
         id: item.id,
+        user_category_name: item.user_category_name,
       };
 
       handleDeleteMoment(momentData);

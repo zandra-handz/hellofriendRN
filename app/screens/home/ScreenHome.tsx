@@ -119,8 +119,10 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   // logQueryCacheSize(queryClient);
   const friendList = friendListAndUpcoming?.friends;
   const friendListLength = friendList?.length || 0;
+  console.log('friend list',friendListLength)
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
+ 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
   const { lightDarkTheme } = useLDTheme();
@@ -316,9 +318,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
             backgroundOverlayBottomRadius={0}
             style={{ flex: 1 }}
           >
-            {/* {((settings?.lock_in_next === false &&
-          settings?.lock_in_custom_string === null) || 
-          selectedFriend?.id) && ( */}
+ 
             <>
               {!friendListAndUpcomingIsSuccess && ( // isLoading is in FS Spinner
                 <View
@@ -343,7 +343,8 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                   behavior={Platform.OS === "ios" ? "padding" : "height"}
                   style={[{ flex: 1 }]}
                 >
-                  {friendListAndUpcomingIsSuccess &&
+                  {
+                  friendListAndUpcomingIsSuccess &&
                     settings?.id &&
                     upcomingHelloes?.length &&
                     user?.id && ( //&& !isLoading  is in FSSpinner

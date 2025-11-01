@@ -1059,7 +1059,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
     const response = await helloFriendApiClient.get(
       "/friends/upcoming/friends-included/"
     );
-  console.error(`NEW ENDPOINT`, response.data )
+  // console.error(`NEW ENDPOINT`, response.data )
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
@@ -1082,7 +1082,7 @@ export const fetchCategoriesFriendHistoryAPI = async (
       `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}&friend_id=${friendId}`
     );
 
-    console.log(`FRIEND HISTORY`, response.data);
+    // console.log(`FRIEND HISTORY`, response.data);
 
     if (response && response.data) {
       return response.data;

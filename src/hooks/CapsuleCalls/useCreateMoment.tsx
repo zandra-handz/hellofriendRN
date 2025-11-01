@@ -3,6 +3,8 @@ import React, { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveMomentAPI } from "@/src/calls/api";
 
+import useUpdateUpcomingItemCache from "../useUpdateUpcomingItemCache";
+
 type Props = {
   userId: number;
   friendId: number;
@@ -12,6 +14,8 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
   const timeoutRef = useRef(null);
 
   const queryClient = useQueryClient();
+
+  const { addToUpcomingCapsuleSummary} = useUpdateUpcomingItemCache({userId: userId})
 
   const handleCreateMoment = async (momentData) => { 
  
@@ -56,6 +60,8 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
         ["Moments", userId, friendId],
         (old) => (old ? [formattedMoment, ...old] : [formattedMoment])
       );
+
+      addToUpcomingCapsuleSummary({friend_id: friendId, category_name: formattedMoment.user_category_name  })
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

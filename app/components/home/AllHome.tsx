@@ -28,10 +28,13 @@ const AllHome = ({
   // const { friendList } = useFriendList();
   // const { upcomingHelloes } = useUpcomingHelloes();
 
-  const { friendListAndUpcoming} = useFriendListAndUpcoming();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming();
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
+  const capsuleSummaries = friendListAndUpcoming?.capsule_summaries
+
+  console.log(capsuleSummaries)
 
 
  
