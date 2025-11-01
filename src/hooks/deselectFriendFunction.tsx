@@ -23,10 +23,10 @@ export const deselectFriendFunction = async ({
     return;
   }
 
-  console.log(autoSelectFriend)
+ 
   if (
-    autoSelectFriend?.customFriend === undefined &&
-    autoSelectFriend?.nextFriend === undefined
+    autoSelectFriend?.customFriend === 'pending' ||
+    autoSelectFriend?.nextFriend === 'pending'
   ) {
     console.log("autos not ready yet...");
     // selectFriend(null);
@@ -34,7 +34,7 @@ export const deselectFriendFunction = async ({
     return;
   }
 
-  if (autoSelectFriend?.customFriend?.id && autoSelectFriend?.nextFriend?.id) {
+  if (autoSelectFriend?.customFriend?.id && autoSelectFriend.customFriend?.id !== -1 && autoSelectFriend.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1) {
  
     setToFriend({friend: autoSelectFriend?.nextFriend, preConditionsMet: true});
  
@@ -53,7 +53,7 @@ export const deselectFriendFunction = async ({
   }
 
   if (
-    autoSelectFriend?.nextFriend?.id &&
+    autoSelectFriend?.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1 &&
     Number(friendId) === Number(autoSelectFriend?.nextFriend?.id)
   ) {
     // console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
@@ -74,7 +74,7 @@ export const deselectFriendFunction = async ({
   }
 
   if (
-    autoSelectFriend?.customFriend?.id &&
+    autoSelectFriend?.customFriend?.id && autoSelectFriend?.customFriend?.id !== -1 &&
     Number(friendId) !== Number(autoSelectFriend?.customFriend?.id)
   ) {
     setToFriend({friend: autoSelectFriend?.customFriend, preConditionsMet: true});

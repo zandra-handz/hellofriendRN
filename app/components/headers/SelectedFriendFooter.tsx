@@ -47,9 +47,9 @@ const SelectedFriendFooter = ({
   const { navigateToFidget } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
-  const { updateCustomLockIn, updateNextUpLockIn } = useUpdateLockins({
-    updateSettings,
-  });
+  // const { updateCustomLockIn, updateNextUpLockIn } = useUpdateLockins({
+  //   updateSettings,
+  // });
  
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);

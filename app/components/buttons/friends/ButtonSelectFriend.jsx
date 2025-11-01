@@ -35,7 +35,7 @@ const ButtonSelectFriend = ({
           numberOfLines={1}
           style={[
             styles.name,
-            { color, fontSize: friend.name.length < 14 ? 14 : 13 },
+            {color, fontSize: friend.name.length < 14 ? 14 : 13 },
           ]}
         >
           {friend.name}

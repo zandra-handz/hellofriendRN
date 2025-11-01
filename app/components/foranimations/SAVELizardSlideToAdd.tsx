@@ -11,7 +11,7 @@
 // import DragRightThickOutlineSvg from "@/app/assets/svgs/drag-right-thick-outline.svg";
 // import LizardHandsHorizontal from "../appwide/logo/LizardHandsHorizontal";
 
-// const SlideToAdd = ({
+// const LizardSlideToAdd = ({
 //   onPress,
 //   sliderText = "Label",
 //   sliderTextSize = 14,
@@ -372,4 +372,4 @@
 //   },
 // });
 
-// export default SlideToAdd;
+// export default LizardSlideToAdd;

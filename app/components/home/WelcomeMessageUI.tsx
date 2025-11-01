@@ -1,8 +1,8 @@
 import { View, Pressable, StyleSheet } from "react-native";
 import React, { useMemo } from "react";
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
-import Animated, { SlideInLeft } from "react-native-reanimated";
-
+import Animated, { SlideInUp } from "react-native-reanimated";
+import SuggestedActions from "./SuggestedActions";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -20,10 +20,12 @@ interface WelcomeMessageUIProps {
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   userId,
   primaryColor,
+  primaryBackground,
   friendId,
   friendName,
-  themeColors, 
+  themeColors,
   paddingHorizontal = 10,
+  darkerGlassBackground,
   username = "",
   isNewUser = false,
   borderBottomRightRadius = 10,
@@ -33,7 +35,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   onPress = () => {},
 }) => {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
+  // const SELECTED_FRIEND_CARD_PADDING = 20;
+  const SELECTED_FRIEND_CARD_PADDING = 30;
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
     : `Welcome back ${username}!`;
@@ -48,83 +51,71 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
   return (
     <>
-    {/* <SvgIcon
-    name={'moon_waning_crescent'}
-    size={1000}
-    color={backgroundColor}
-    style={styles.crescentMoon}
-    /> */}
-            <View
-              style={[
-                {
-                  height: 275,
-                  width: "100%",
-                  top: -100,
-                  alignSelf: "center",
-                  position: "absolute",
-                  backgroundColor: backgroundColor,
-                },
-              ]}
-            ></View>
-    
-    <AnimatedPressable
-      onPress={onPress}
-      layout={SlideInLeft}
-      style={[
-        {
-        backgroundColor: isKeyboardVisible ? "transparent" : backgroundColor,
-          borderBottomLeftRadius: borderBottomLeftRadius,
-          borderBottomRightRadius: borderBottomRightRadius,
-          paddingHorizontal: paddingHorizontal,
-          height: isKeyboardVisible ? 80 : 200,
-        },
-        styles.container,
-      ]}
-    >
-      <SvgIcon
-        name={"leaf"}
-        size={1200} 
-        color={manualGradientColors.homeDarkColor}
-        style={styles.leaf}
-      />
-      <>
-        <Animated.Text
-          style={[
-            AppFontStyles.welcomeText,
-            styles.label,
-            {
-              paddingTop: isKeyboardVisible ? 0 : 40,
-              color: primaryColor,
+    {!isKeyboardVisible && (
 
-              // backgroundColor: isKeyboardVisible
-              //   ? "transparent"
-              //   : "rgba(0,0,0,0.8)", // semi-transparent background
-            },
-          ]}
-        >
-          {conditionalMessage}{" "}
-          <View style={styles.wrapper}>
-            {!isKeyboardVisible && (
-              <FriendModalIntegrator
-              userId={userId}
-              friendId={friendId}
+      <View
+        style={[styles.absoluteColorSquareContainer,
+          { 
+            backgroundColor: darkerGlassBackground,
+          },
+        ]}
+      ></View>
+            
+    )}
 
-                includeLabel={true}
-                height={"100%"}
-                friendId={friendId}
-                friendName={friendName}
-                primaryColor={primaryColor}
-                themeColors={themeColors} 
-                iconSize={18} //subWelcomeTextStyle.fontSize + 4
-                customLabel={"Pick friend"}
-                navigationDisabled={true}
-                useGenericTextColor={true}
-              />
-            )}
+      <AnimatedPressable
+        onPress={onPress}
+        layout={SlideInUp}
+        style={[
+          {
+            backgroundColor: isKeyboardVisible
+              ? "transparent"
+              : backgroundColor,
+            borderBottomLeftRadius: borderBottomLeftRadius,
+            borderBottomRightRadius: borderBottomRightRadius,
+            paddingHorizontal: paddingHorizontal,
+            height: isKeyboardVisible ? 80 : 200,
+          },
+          styles.container,
+        ]}
+      >
+        {!isKeyboardVisible && (
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <SvgIcon name={"leaf"} color={primaryColor} size={100} />
           </View>
-        </Animated.Text>
-      </>
-    </AnimatedPressable>
+        )}
+        <SvgIcon
+          name={"leaf"}
+          size={1200}
+          color={manualGradientColors.homeDarkColor}
+          style={styles.leaf}
+        />
+        <>
+          <Animated.Text
+            style={[
+              AppFontStyles.welcomeText,
+              styles.label,
+              {
+                paddingTop: isKeyboardVisible ? 0 : 40,
+                color: primaryColor,
+              },
+            ]}
+          >
+            {conditionalMessage}
+            <View style={styles.wrapper}></View>
+          </Animated.Text>
+        </>
+        {!isKeyboardVisible && (
+          <View style={{ width: "100%", position: "absolute", bottom: -46 }}>
+            <SuggestedActions
+              darkerGlassBackground={darkerGlassBackground}
+              primaryColor={primaryColor}
+              primaryBackground={primaryBackground}
+              padding={SELECTED_FRIEND_CARD_PADDING}
+            />
+          </View>
+        )}
+      </AnimatedPressable>
     </>
   );
 };
@@ -144,18 +135,23 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "transparent",
   },
-    crescentMoon: {
+  absoluteColorSquareContainer: {
+    // height: 275,
+        height: 700,
+    width: "140%",
+    width: 700,
+    top: -406,
+    alignSelf: "center",
     position: "absolute",
-    top: -190,
-    left: -293,
-    // opacity: 0.5,
-    transform: [{ rotate: "270deg" }, { scaleX: -1 }],
-           shadowColor: "#000",
+    opacity: 1,
+        shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 7,
+    shadowRadius: 5,
+    elevation: 8,
+    borderRadius: 999,
   },
+
   leaf: {
     position: "absolute",
     top: -750,

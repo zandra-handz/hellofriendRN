@@ -2,37 +2,35 @@ import { View, Text, StyleSheet } from "react-native";
 import React, { useMemo, useState } from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
-import GeckoGoButton from "./GeckoGoButton";
-import manualGradientColors from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts"; 
-
-import {   formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
+import GeckoGoButton from "./GeckoGoButton"; 
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
 
 type Props = {
   padding: number;
-  height: number;
+ 
   borderRadius: number;
+  darkerGlassBackground: string;
+  futureDate: string;
+  primaryColor: string;
+  primaryBackground: string;
+  loadingDash: boolean;
 };
 
 const SuggestedHello = ({
-  futureDateInWords,
-futureDate,
+  futureDate,
   primaryColor,
-  primaryOverlayColor,
   primaryBackground,
   loadingDash,
   darkerGlassBackground,
-
-  // friendFutureDate,
   padding,
-  height,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
- 
+
   const openModal = () => {
     setOptionsModalVisible(true);
   };
@@ -40,11 +38,10 @@ futureDate,
   const closeModal = () => {
     setOptionsModalVisible(false);
   };
-console.log(futureDate)
 
-const helloDate = useMemo(() => {
-  return formatDayOfWeekAbbrevMonth(futureDate);
-}, [futureDate]);
+  const helloDate = useMemo(() => {
+    return formatDayOfWeekAbbrevMonth(futureDate);
+  }, [futureDate]);
 
   const renderSuggestedHello = useMemo(() => {
     return (
@@ -77,10 +74,17 @@ const helloDate = useMemo(() => {
         </>
       </View>
     );
-  }, [futureDateInWords, primaryColor]);
+  }, [helloDate, primaryColor]);
 
   return (
-   <View style={{width: '100%', alignItems: 'center', justifyContent: 'center', height: 86}}>
+    <View
+      style={{
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        height: 86,
+      }}
+    >
       <View
         style={[
           styles.container,
@@ -88,12 +92,11 @@ const helloDate = useMemo(() => {
             // height: height - 10,
             padding: padding,
             backgroundColor: darkerGlassBackground,
-          
           },
         ]}
       >
         {!loadingDash && (
-          <View style={{ flexDirection: "row", width: '100%'  }}>
+          <View style={{ flexDirection: "row", width: "100%" }}>
             <View style={styles.textContainer}>{renderSuggestedHello}</View>
             <View style={styles.geckoButtonWrapper}>
               <GeckoGoButton
@@ -108,10 +111,8 @@ const helloDate = useMemo(() => {
         <View>
           <GoOptionsModal
             primaryColor={primaryColor}
-            backgroundColor={'red'}
+            backgroundColor={"red"}
             modalBackgroundColor={primaryBackground}
-            manualGradientColors={manualGradientColors}
-            subWelcomeTextStyle={subWelcomeTextStyle}
             isVisible={optionsModalVisible}
             closeModal={closeModal}
           />
@@ -124,23 +125,19 @@ const helloDate = useMemo(() => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 4,
-   // minHeight: 96, // EYEBALL
-height: '100%',
-    // flexShrink: 1,
+    height: "100%",
     alignItems: "center",
     flexDirection: "row",
     overflow: "hidden",
     justifyContent: "space-between",
-    width: "100%",
-    width: '92%',
-    // borderRadius: 10,
+    // width: "100%",
+    width: "92%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 8,
     borderRadius: 999,
-  
   },
   textContainer: {
     zIndex: 5,
@@ -165,12 +162,12 @@ height: '100%',
     paddingRight: 8, // EYEBALL
   },
   geckoButtonWrapper: {
- //   flex: 1, 
+    //   flex: 1,
     flexDirection: "column",
     justifyContent: "center",
     width: 60,
-    position: 'absolute',
-    height: '100%',
+    position: "absolute",
+    height: "100%",
 
     right: 0,
     zIndex: 9000,

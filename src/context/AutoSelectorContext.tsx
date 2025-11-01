@@ -51,22 +51,32 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   // }, [settings, friendListAndUpcoming]);
 
 const autoSelectFriend = useMemo(() => {
-  // if data isn’t ready yet, return undefined
-  if (!settings?.id || !friendListAndUpcoming?.user) return { customFriend: 'pending', nextFriend: 'pending' };
+  // Data not ready yet
+  if (!settings?.id || !friendListAndUpcoming?.user) {
+    return {
+      customFriend: 'pending',
+      nextFriend: 'pending',
+    };
+  }
 
+  // Checked but not found → return sentinel { id: -1 }
   const customFriend = settings.lock_in_custom_string
     ? friendListAndUpcoming.friends.find(
         (friend) => friend.id === Number(settings.lock_in_custom_string)
-      ) ?? null // return null if not found
-    : null;
+      ) ?? { id: -1, name: null }
+    : { id: -1, name: null };
 
   const nextFriend = settings.lock_in_next
-    ? friendListAndUpcoming.next ?? null // return null if not set
-    : null;
+    ? friendListAndUpcoming.next ?? { id: -1, name: null }
+    : { id: -1, name: null };
 
   return { customFriend, nextFriend };
-}, [settings?.id, settings?.lock_in_next, settings?.lock_in_custom_string, friendListAndUpcoming?.user]);
-
+}, [
+  settings?.id,
+  settings?.lock_in_next,
+  settings?.lock_in_custom_string,
+  friendListAndUpcoming?.user,
+]);
 
   const contextValue = useMemo(
     () => ({

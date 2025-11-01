@@ -155,12 +155,12 @@ const ContentAddHello = ({ userId,  primaryColor, backgroundColor }) => {
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       showFlashMessage(`Hello saved!`, false, 2000);
-      if (autoSelectFriend?.customFriend?.id) {
+      if (autoSelectFriend?.customFriend?.id && autoSelectFriend?.customFriend?.id !== -1) {
         setToFriend({
           friend: autoSelectFriend.customFriend,
           preConditionsMet: true,
         });
-      } else if (autoSelectFriend?.nextFriend?.id) {
+      } else if (autoSelectFriend?.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1) {
         setToFriend({
           friend: autoSelectFriend.nextFriend,
           preConditionsMet: true,

@@ -192,7 +192,7 @@ const MomentViewPage: React.FC<Props> = ({
             {
               padding: 20,
               borderRadius: 40,
-              borderRadius: 12,
+             // borderRadius: 12,
               flexDirection: "column",
               justifyContent: "flex-start",
               flex: 1,

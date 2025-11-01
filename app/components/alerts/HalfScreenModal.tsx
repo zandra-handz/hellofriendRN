@@ -18,6 +18,8 @@ interface Props {
   questionText: string;
   children: React.ReactElement;
   borderRadius?: number;
+  primaryColor: string;
+  backgroundColor: string;
   contentPadding?: number;
   onClose: () => void;
 }

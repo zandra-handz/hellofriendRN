@@ -122,13 +122,13 @@ const FriendListUI = ({
             onLongPress={() => handleLongPress(item.id)}
           >
             <ButtonSelectFriend
-              themeTextColor={itemColor}
+              themeTextColor={lightDarkTheme.primaryText}
               backgroundOverlayColor={elementBackgroundColor}
               friendId={friendId}
               themeColors={themeColors}
               borderRadius={ITEM_BORDER_RADIUS}
               backgroundColor={backgroundColor}
-              color={itemColor}
+              color={lightDarkTheme.primaryText}
               friend={item}
               height={ITEM_HEIGHT}
             />
@@ -169,7 +169,7 @@ const FriendListUI = ({
         )}
       </View>
     ),
-    [onPress, itemColor, elementBackgroundColor, autoSelectFriend]
+    [onPress, itemColor, themeColors?.fontColor, elementBackgroundColor, autoSelectFriend]
   );
 
   const extractItemKey = (item: FriendListItem, index: number) =>

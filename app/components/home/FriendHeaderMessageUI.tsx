@@ -7,12 +7,12 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   withTiming,
-  withDelay,
+  // withDelay,
   withSequence,
   useAnimatedStyle,
   useSharedValue,
-  useDerivedValue,
-  useAnimatedReaction,
+  // useDerivedValue,
+  // useAnimatedReaction,
 } from "react-native-reanimated"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
@@ -38,18 +38,14 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   height,
   userId,
   primaryColor,
-  darkGlassBackground,
+ primaryBackground,
   darkerGlassBackground,
   welcomeTextStyle,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
   const { friendDash, loadingDash } = useFriendDash();
 
- 
-  // const { capsuleList } = useCapsuleList();
-
-  // const capsuleListLength = capsuleList?.length;
-
+  
 
   const loadingNewFriend = loadingDash;
   const isFocused = useSharedValue(false);
@@ -59,9 +55,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   const secondOpacityValue = useSharedValue(0);
   const secondScaleValue = useSharedValue(0);
-
-  // const verticalValue = useSharedValue(0);
-  // ✅ useFocusEffect updates shared value
+ 
   useFocusEffect(
     useCallback(() => {
       isFocused.value = true;
@@ -205,10 +199,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     isFocused.value = false;
     handleNavigateToSelectFriend();
   };
-
-  const SELECTED_FRIEND_CARD_HEIGHT = 120;
-  const SELECTED_FRIEND_CARD_PADDING = 20;
-  const CARD_BACKGROUND = "rgba(0,0,0,0.83)";
+ 
+  const SELECTED_FRIEND_CARD_PADDING = 20; 
 
   return (
     <>
@@ -296,15 +288,13 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
         {/* <Animated.View style={animatedOpacityStyle}> */}
           <SuggestedHello
-            friendDash={friendDash}
-            loadingDash={loadingDash}
-            futureDateInWords={friendDash?.future_date_in_words}
-            futureDate={friendDash?.date}
-            primaryOverlayColor={CARD_BACKGROUND}
+            loadingDash={loadingDash} 
+            futureDate={friendDash?.date} 
             darkerGlassBackground={darkerGlassBackground}
             primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
             padding={SELECTED_FRIEND_CARD_PADDING}
-            height={SELECTED_FRIEND_CARD_HEIGHT}
+       
           />
         {/* </Animated.View> */}
       </View>

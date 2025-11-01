@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text, 
@@ -6,6 +6,7 @@ import {
   DimensionValue,
 } from "react-native"; 
 import UpcomingFriendPressable from "../appwide/button/UpcomingFriendPressable";
+ 
  
 interface SoonItemButtonProps {
   width: DimensionValue;
@@ -29,11 +30,12 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   textColor = "white",
   friendList, 
   darkerOverlayColor,
-  primaryColor,
+ 
   overlayColor = "hotpink",
 }) => {
   const lastPress = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+ 
 
   const DOUBLE_PRESS_DELAY = 300;
 
@@ -62,6 +64,13 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   const [fontColor, setFontColor] = useState(
     textColor
   );
+
+  useEffect(() => {
+    if (textColor) {
+      setFontColor(textColor)
+    }
+
+  }, [textColor]);
 
   const handleChangeTextColor = () => {
     if (textColor) {

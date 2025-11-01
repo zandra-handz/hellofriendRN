@@ -92,15 +92,15 @@ const FriendHeaderMessageUIOld: React.FC<FriendHeaderMessageUIProps> = ({
     };
   });
 
-  const isLockedOn = useMemo(() => {
-    // console.log("use memoooooooooooooooooooooo");
-    return friendId === autoSelectFriend?.customFriend?.id;
-  }, [friendId, autoSelectFriend]);
+const isLockedOn = useMemo(() => {
+  const id = autoSelectFriend?.customFriend?.id;
+  return id && id !== -1 ? friendId === id : false;
+}, [friendId, autoSelectFriend]);
 
-  const isUpNext = useMemo(() => {
-    // console.log("use memoooooooooooooooooooooo");
-    return friendId === autoSelectFriend?.nextFriend?.id;
-  }, [friendId, autoSelectFriend]);
+const isUpNext = useMemo(() => {
+  const id = autoSelectFriend?.nextFriend?.id;
+  return id && id !== -1 ? friendId === id : false;
+}, [friendId, autoSelectFriend]);
 
   useEffect(() => {
     if (isLockedOn) {

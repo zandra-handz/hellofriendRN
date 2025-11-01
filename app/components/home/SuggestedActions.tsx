@@ -1,13 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { useMemo, useState } from "react";
+import { View, StyleSheet } from "react-native";
+import React, { useState } from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import GoOptionsModal from "../headers/GoOptionsModal";
-import GeckoGoButton from "./GeckoGoButton";
+ 
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-
-import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
-
+import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+import ActionButton from "./ActionButton";  
 type Props = {
   padding: number;
   height: number;
@@ -15,118 +13,72 @@ type Props = {
 };
 
 const SuggestedActions = ({
-  futureDateInWords,
-  futureDate,
+  darkerGlassBackground,
+
   primaryColor,
   primaryOverlayColor,
   primaryBackground,
-  loadingDash,
 
-  // friendFutureDate,
   padding,
-  height,
 }: Props) => {
-  const { navigateToFinalize } = useAppNavigations();
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const { navigateToAddFriend, navigateToSelectFriend} = useAppNavigations();
 
-  const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+  const handleNavigateToSelectFriend = () => {
+    navigateToSelectFriend({useNavigateBack: false})
 
-  const openModal = () => {
-    setOptionsModalVisible(true);
   };
 
-  const closeModal = () => {
-    setOptionsModalVisible(false);
-  };
-  console.log(futureDate);
-
-  const helloDate = useMemo(() => {
-    return formatDayOfWeekAbbrevMonth(futureDate);
-  }, [futureDate]);
-
-  const renderSuggestedHello = useMemo(() => {
-    return (
-      <View style={{ width: "100%", alignItems: "center" }}>
-        <>
-          <Text
-            style={[
-              styles.titleText,
-              {
-                color: primaryColor,
-                fontFamily: "Poppins-Regular",
-                fontSize: subWelcomeTextStyle.fontSize,
-              },
-            ]}
-          >
-            {helloDate ? "Say hi on" : "None"}
-          </Text>
-          <Text
-            style={[
-              styles.futureDateText,
-              {
-                color: primaryColor,
-
-                fontSize: welcomeTextStyle.fontSize - 14,
-              },
-            ]}
-          >
-            {helloDate}
-          </Text>
-        </>
-      </View>
-    );
-  }, [futureDateInWords, primaryColor]);
+  const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
   return (
-    <View
-      style={{
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        height: 86,
-      }}
-    >
+    <View style={styles.outerContainer}>
       <View
         style={[
           styles.container,
           {
-            // height: height - 10,
             padding: padding,
-            backgroundColor: primaryOverlayColor,
+            backgroundColor: darkerGlassBackground,
+            flexDirection: "row",
+            justifyContent: "space-between",
           },
         ]}
       >
-        {!loadingDash && (
-          <View style={{ flexDirection: "row", width: "100%" }}>
-            <View style={styles.textContainer}>{renderSuggestedHello}</View>
-            <View style={styles.geckoButtonWrapper}>
-              <GeckoGoButton
-                onSinglePress={openModal}
-                onDoublePress={navigateToFinalize}
-              />
-            </View>
-          </View>
-        )}
+        <ActionButton
+          onPress={handleSelectImage}
+          backgroundColor={manualGradientColors.lightColor}
+          iconColor={manualGradientColors.homeDarkColor}
+          labelColor={primaryColor}
+          iconName={'upload_outline'}
+          label={"Upload"}
+        />
+        <ActionButton
+          onPress={handleCaptureImage}
+          backgroundColor={manualGradientColors.lightColor}
+          iconColor={manualGradientColors.homeDarkColor}
+          labelColor={primaryColor}
+          iconName={'camera_outline'}
+          label={"Pic"}
+        />
+        <ActionButton
+          onPress={handleNavigateToSelectFriend}
+          backgroundColor={manualGradientColors.lightColor}
+          iconColor={manualGradientColors.homeDarkColor}
+          labelColor={primaryColor}
+          iconName={"account_switch_outline"}
+          label={"Friends"}
+        />
       </View>
-      {optionsModalVisible && (
-        <View>
-          <GoOptionsModal
-            primaryColor={primaryColor}
-            backgroundColor={primaryOverlayColor}
-            modalBackgroundColor={primaryBackground}
-            manualGradientColors={manualGradientColors}
-            subWelcomeTextStyle={subWelcomeTextStyle}
-            isVisible={optionsModalVisible}
-            closeModal={closeModal}
-          />
-        </View>
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 110,
+  },
   container: {
     marginVertical: 4,
     // minHeight: 96, // EYEBALL
@@ -138,6 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     width: "92%",
+    width: "80%",
     // borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },

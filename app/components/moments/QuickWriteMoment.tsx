@@ -1,7 +1,6 @@
 //Derivative of TextEditBox
 import React, {
   useCallback,
-  useState,
   useEffect,
   useRef,
   useImperativeHandle,
@@ -56,7 +55,6 @@ const QuickWriteMoment = forwardRef(
       primaryColor,
       onPress,
       primaryBackgroundColor,
-      primaryOverlayColor,
       isKeyboardVisible,
 
       value,
@@ -66,7 +64,6 @@ const QuickWriteMoment = forwardRef(
     const opacityValue = useSharedValue(0);
 
     const scaleValue = useSharedValue(1);
- 
 
     useEffect(() => {
       if (isKeyboardVisible) {
@@ -121,7 +118,6 @@ const QuickWriteMoment = forwardRef(
     const handleFocusText = () => {
       ref.current.focus();
     };
- 
 
     const lastCharScale = useSharedValue(1);
 
@@ -161,13 +157,9 @@ const QuickWriteMoment = forwardRef(
               width: "100%",
               height: multiline ? "100%" : 30,
               paddingLeft: 18,
-              // backgroundColor: "orange",
               paddingTop: multiline ? 0 : 0,
 
               borderRadius: 0,
-              // backgroundColor: multiline
-              //   ? primaryBackgroundColor
-              //   : "transparent",
             },
           ]}
         >
@@ -175,8 +167,6 @@ const QuickWriteMoment = forwardRef(
             <View
               style={{
                 position: "absolute",
-                // top: 60,
-                // backgroundColor: "orange",
                 width: "100%",
                 height: 50,
               }}
@@ -196,111 +186,7 @@ const QuickWriteMoment = forwardRef(
                       opacity: multiline ? 0.5 : 1,
                     }}
                   >
-                    <Pressable
-                      hitSlop={30}
-                      zIndex={4000}
-                      onPress={handleFocusText}
-                      style={{
-                        height: addIconSize,
-                        width: addIconSize,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: addIconSize / 2,
-                        borderWidth: 1,
-                        borderColor: buttonColor,
-                      }}
-                    >
-                      <SvgIcon name="plus" color={buttonColor} size={20} />
-                    </Pressable>
-                    <Text
-                      style={[
-                        styles.helperText,
-
-                        { color: buttonColor, fontFamily: "Poppins-Regular" },
-                      ]}
-                    >
-                      {"  "}Idea
-                    </Text>
-
-                    {!multiline && (
-                      <Pressable
-                        onPress={handleCaptureImage}
-                        style={{
-                          flexDirection: "row",
-                          marginLeft: 30,
-                          zIndex: 6000,
-                          flexDirection: "row",
-                          zIndex: 4000,
-                          height: 30,
-                          width: "auto",
-                          alignItems: "center",
-                          opacity: multiline ? 0 : 0.9,
-                        }}
-                      >
-                        <View
-                          style={{
-                            height: addIconSize,
-                            width: addIconSize,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderRadius: addIconSize / 2,
-                            borderWidth: 1,
-                            borderColor: buttonColor,
-                          }}
-                        >
-                          <SvgIcon name="plus" color={buttonColor} size={20} />
-                        </View>
-                        <Text
-                          style={[
-                            styles.helperText,
-
-                            {
-                              color: buttonColor,
-                              fontFamily: "Poppins-Regular",
-                            },
-                          ]}
-                        >
-                          {"  "}Pic
-                        </Text>
-                      </Pressable>
-                    )}
-                    {!multiline && (
-                      <Pressable
-                        onPress={handleSelectImage}
-                        style={[
-                          styles.selectImageButton,
-                          {
-                            opacity: multiline ? 0 : 0.9,
-                          },
-                        ]}
-                      >
-                        <View
-                          style={{
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderWidth: 1,
-                            height: addIconSize,
-                            width: addIconSize,
-                            borderRadius: addIconSize / 2,
-
-                            borderColor: buttonColor,
-                          }}
-                        >
-                          <SvgIcon name="plus" color={buttonColor} size={20} />
-                        </View>
-                        <Text
-                          style={[
-                            styles.helperText,
-                            {
-                              color: buttonColor,
-                              fontFamily: "Poppins-Regular",
-                            },
-                          ]}
-                        >
-                          {"  "}Upload
-                        </Text>
-                      </Pressable>
-                    )}
+                 
                   </View>
                 </>
               )}

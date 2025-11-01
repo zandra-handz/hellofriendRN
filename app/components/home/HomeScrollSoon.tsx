@@ -9,6 +9,7 @@ import Animated, {
 import manualGradientColors from "@/app/styles/StaticColors";
 import SoonItemButton from "./SoonItemButton";
 import { useNavigation } from "@react-navigation/native";
+ 
 
 interface HomeScrollSoonProps {
   startAtIndex: number;
@@ -35,6 +36,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   borderColor = "transparent",
 }) => {
   const navigation = useNavigation();
+ 
 
   const itemColor = primaryColor;
   const elementBackgroundColor = overlayColor;
@@ -87,7 +89,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         }}
       >
         <SoonItemButton
-          textColor={itemColor}
+          textColor={primaryColor}
           backgroundColor={elementBackgroundColor}
           darkerOverlayColor={darkerOverlayColor}
           lighterOverlayColor={lighterOverlayColor}
@@ -107,6 +109,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
     ),
     [
       handlePress,
+      primaryColor,
       lighterOverlayColor,
       darkerOverlayColor,
       itemColor,

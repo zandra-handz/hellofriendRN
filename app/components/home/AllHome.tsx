@@ -8,7 +8,7 @@ import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
  
 import useSelectFriend from "@/src/hooks/useSelectFriend";  
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-
+ 
 
 // Press function is internal
 const AllHome = ({
@@ -88,6 +88,7 @@ const AllHome = ({
               height: 400,
             }}
           >
+          
             <HomeScrollSoon
               lighterOverlayColor={lighterOverlayColor}
               darkerOverlayColor={darkerOverlayColor}
@@ -133,12 +134,14 @@ const styles = StyleSheet.create({
 
     width: "100%",
     padding: 0,
+    marginTop: 40,
     minHeight: 190,
     alignContent: "center",
     borderWidth: 0,
     alignItems: "center",
     justifyContent: "space-between",
     overflow: "hidden",
+    // backgroundColor: 'red',
   },
 });
 

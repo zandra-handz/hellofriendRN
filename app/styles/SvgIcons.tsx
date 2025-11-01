@@ -23,6 +23,7 @@ import DeleteSvg from "./svgs/delete";
 import LeafSvg from "./svgs/leaf";
 import CalendarClockSvg from "./svgs/calendar-clock";
 import CalendarSvg from "./svgs/calendar";
+import CameraOutlineSvg from "./svgs/camera-outline";
 import CancelSvg from "./svgs/cancel";
 import CarSvg from "./svgs/car";
 import CarCogSvg from "./svgs/car-cog";
@@ -68,6 +69,7 @@ import TimerSvg from "./svgs/timer";
 import TimerSyncSvg from "./svgs/timer-sync";
 import TreeSvg from "./svgs/tree";
 import ThemeLightDarkSvg from "./svgs/theme-light-dark";
+import UploadOutlineSvg from "./svgs/upload-outline";
 import WrenchSvg from "./svgs/wrench";
 import VolumeHighSvg from "./svgs/volume-high";
 // Import your SVGs here
@@ -89,6 +91,7 @@ const svgIcons = {
   leaf: LeafSvg, // welcome message
   calendar: CalendarSvg, // hello quick view
   calendar_clock: CalendarClockSvg,
+  camera_outline: CameraOutlineSvg,
   cancel: CancelSvg,
   check: CheckSvg,
   close_outline: CloseOutlineSvg,
@@ -135,6 +138,7 @@ const svgIcons = {
   timer: TimerSvg,
   timer_sync: TimerSyncSvg,
   tree: TreeSvg,
+  upload_outline: UploadOutlineSvg,
   format_font_size_increase: FormatFontSizeIncreaseSvg,
   wrench: WrenchSvg,
   volume_high: VolumeHighSvg,

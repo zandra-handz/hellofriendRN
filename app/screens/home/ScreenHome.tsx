@@ -1,5 +1,11 @@
 //import * as Sentry from "@sentry/react-native";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   View,
   Alert,
@@ -73,28 +79,24 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
     // does not need friendlist, autoselect friend object has the same data
     // friendist currently getting called async/around the same time but separately
     console.log("AUTOSELECTING FRIEND");
-    console.log(`next f`, autoSelectFriend?.customFriend);
-    console.log(selectedFriend);
+   
 
-    if (
-      // !selectedFriend?.id &&
-      // && !loadingSettings
-      autoSelectFriend?.customFriend?.id !== "pending" &&
-      // autoSelectFriend?.customFriend?.id !== undefined &&
+    if ( 
+      autoSelectFriend?.customFriend !== "pending" && 
       !selectedFriend?.id
     ) {
-      if (autoSelectFriend.customFriend?.id) {
+      if (autoSelectFriend.customFriend?.id && autoSelectFriend.customFriend?.id !== -1) {
         setToAutoFriend({
           friend: autoSelectFriend.customFriend,
           preConditionsMet: autoSelectFriend.customFriend !== "pending",
-          // preConditionsMet: autoSelectFriend.customFriend !== undefined,
+
         });
-      } else if (autoSelectFriend.nextFriend?.id) {
+      } else if (autoSelectFriend.nextFriend?.id && autoSelectFriend.nextFriend?.id !== -1) {
         setToAutoFriend({
           friend: autoSelectFriend.nextFriend?.id,
 
           // preConditionsMet: autoSelectFriend.nextFriend !== undefined,
-              preConditionsMet: autoSelectFriend.nextFriend !== 'pending',
+          preConditionsMet: autoSelectFriend.nextFriend !== "pending",
         });
       } else {
         setToAutoFriend({ friend: { id: null }, preConditionsMet: true });
@@ -124,7 +126,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { lightDarkTheme } = useLDTheme();
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  // const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const { navigateToMomentFocusWithText, navigateToAddImage } =
     useAppNavigations();
@@ -266,11 +268,24 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
     }
   };
 
+  const themeColors = useMemo(
+    () => ({
+      lightColor: selectedFriend?.lightColor,
+      darkColor: selectedFriend?.darkColor,
+      fontColorSecondary: selectedFriend?.fontColorSecondary,
+    }),
+    [
+      selectedFriend?.lightColor,
+      selectedFriend?.darkColor,
+      selectedFriend?.fontColorSecondary,
+    ]
+  );
+
   return (
     <>
       <LocalPeacefulGradientSpinner
         loading={
-          // autoSelectFriend?.customFriend === undefined ||
+            autoSelectFriend?.nextFriend === "pending" ||
           autoSelectFriend?.customFriend === "pending" ||
           !selectedFriend?.isReady
         }
@@ -279,6 +294,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
       {/* {autoSelectFriend?.customFriend !== undefined && */}
 
       {autoSelectFriend?.customFriend !== "pending" &&
+      autoSelectFriend?.nextFriend !== "pending" &&
         selectedFriend?.isReady && (
           <SafeViewAndGradientBackground
             friendColorLight={selectedFriend.lightColor}
@@ -350,20 +366,19 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                               <>
                                 <WelcomeMessageUI
                                   userId={user?.id}
+                                  darkerGlassBackground={
+                                    lightDarkTheme.darkerGlassBackground
+                                  }
                                   paddingHorizontal={PADDING_HORIZONTAL}
                                   primaryColor={lightDarkTheme.primaryText}
-                                  welcomeTextStyle={welcomeTextStyle}
-                                  subWelcomeTextStyle={subWelcomeTextStyle}
+                                  primaryBackground={
+                                    lightDarkTheme.primaryBackground
+                                  }
                                   username={user?.username}
                                   isNewUser={isNewUser}
                                   friendId={selectedFriend?.id}
                                   friendName={selectedFriend?.name}
-                                  themeColors={{
-                                    lightColor: selectedFriend.lightColor,
-                                    darkColor: selectedFriend.darkColor,
-                                    fontColorSecondary:
-                                      selectedFriend.fontColorSecondary,
-                                  }}
+                                  themeColors={themeColors}
                                   backgroundColor={
                                     lightDarkTheme.primaryBackground
                                   }
@@ -456,6 +471,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
                         {selectedFriend?.id && (
                           <SelectedFriendHome
+                            primaryBackground={lightDarkTheme.primaryBackground}
                             darkGlassBackground={
                               lightDarkTheme.darkGlassBackground
                             }
@@ -470,12 +486,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                             primaryOverlayColor={
                               lightDarkTheme.overlayBackground
                             }
-                            themeColors={{
-                              lightColor: selectedFriend.lightColor,
-                              darkColor: selectedFriend.darkColor,
-                              fontColorSecondary:
-                                selectedFriend.fontColorSecondary,
-                            }}
+                            themeColors={themeColors}
                             selectedFriendId={selectedFriend?.id}
                             selectedFriendName={selectedFriend?.name}
                           />
@@ -499,12 +510,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                   settings={settings}
                   friendId={selectedFriend?.id}
                   friendName={selectedFriend?.name}
-                  themeColors={{
-                    lightColor: selectedFriend.lightColor,
-                    darkColor: selectedFriend.darkColor,
-                    fontColor: selectedFriend.fontColor,
-                    fontColorSecondary: selectedFriend.fontColorSecondary,
-                  }}
+                  themeColors={themeColors}
                   // friendDash={friendDash}
                   lightDarkTheme={lightDarkTheme}
                   friendListLength={friendListLength}
@@ -522,12 +528,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                   friendName={selectedFriend?.name}
                   lightDarkTheme={lightDarkTheme}
                   overlayColor={lightDarkTheme.overlayBackground}
-                  themeColors={{
-                    lightColor: selectedFriend.lightColor,
-                    darkColor: selectedFriend.darkColor,
-                    fontColor: selectedFriend.fontColor,
-                    fontColorSecondary: selectedFriend.fontColorSecondary,
-                  }}
+                  themeColors={themeColors}
                 />
               )}
             </>
@@ -554,6 +555,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     flexDirection: "column",
+  },
+  allHomeWrapper: {
+    alignItems: "center",
+    flex: 1,
+    width: "100%",
   },
 });
 

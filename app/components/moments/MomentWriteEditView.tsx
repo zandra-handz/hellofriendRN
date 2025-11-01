@@ -1,22 +1,17 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import {
-  View, 
-  Keyboard,
-  TouchableWithoutFeedback,
-  Alert,
-} from "react-native";
+import { View, Keyboard, TouchableWithoutFeedback, Alert } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
-import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import MomentFocusTray from "./MomentFocusTray"; 
+import MomentFocusTray from "./MomentFocusTray";
 type Props = {
   screenCameFromToParent: number;
   momentText: string;
@@ -39,7 +34,7 @@ const MomentWriteEditView = ({
   manualGradientColors,
   themeColors,
   capsuleList,
-darkGlassBackground,
+  darkGlassBackground,
   userId,
   screenCameFromToParent,
   momentText,
@@ -68,14 +63,13 @@ darkGlassBackground,
     userId: userId,
     friendId: friendId,
   });
-  const { navigateBack, navigateToMomentView } =
-    useAppNavigations();
- 
+  const { navigateBack, navigateToMomentView } = useAppNavigations();
+
   const TOPPER_PADDING_TOP = 0;
- 
-  const welcomeTextStyle = AppFontStyles.welcomeText; 
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const momentTextRef = useRef(null); 
+  const momentTextRef = useRef(null);
   const [triggerReFocus, setTriggerReFocus] = useState<number>(0); //can set 0 to deFocus if needed
   const [momentTextToSave, setMomentTestToSave] = useState(momentText);
   const [userChangedCategory, setUserChangedCategory] =
@@ -87,10 +81,8 @@ darkGlassBackground,
     }
   };
 
-
   useFocusEffect(
     useCallback(() => {
-
       if (
         momentText &&
         !userChangedCategory
@@ -105,7 +97,6 @@ darkGlassBackground,
       // }
     }, [momentText])
   );
-
 
   const INNER_PADDING_HORIZONTAL = 20;
 
@@ -122,11 +113,11 @@ darkGlassBackground,
   // );
 
   useEffect(() => {
-  if (friendId) {
-    console.log("callback triggering refocus");
-    handleTriggerRefocus();
-  }
-}, [friendId]);
+    if (friendId) {
+      console.log("callback triggering refocus");
+      handleTriggerRefocus();
+    }
+  }, [friendId]);
   // useEffect(() => {
   //   if (!catCreatorVisible) {
   //     setTriggerReFocus(Date.now());
@@ -140,15 +131,13 @@ darkGlassBackground,
   // }, [friendId]);
 
   const handleTriggerRefocus = () => {
-    console.log('handletrifgger refocus');
+    console.log("handletrifgger refocus");
     setTriggerReFocus(Date.now());
   };
-
 
   const handleCloseCatCreator = () => {
     closeCatCreator();
     handleTriggerRefocus();
-
   };
 
   // useEffect(() => {
@@ -268,7 +257,7 @@ darkGlassBackground,
             // capsule: momentTextRef.current.getText(),
             capsule: momentTextToSave,
           };
-              showFlashMessage("Changes saved!", false, 1000);
+          showFlashMessage("Changes saved!", false, 1000);
           await handleEditMoment(existingMomentObject?.id, editData);
         }
       }
@@ -285,11 +274,11 @@ darkGlassBackground,
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
-      if ((screenCameFromToParent === 1) && momentTextToSave) {
+      if (screenCameFromToParent === 1 && momentTextToSave) {
         updateMomentText(""); //clear saved text, ONLY after save is confirmed
-       console.log('triggering refocus because mutation');
+        console.log("triggering refocus because mutation");
         setTriggerReFocus(Date.now());
-          setTriggerReFocus(null);
+        setTriggerReFocus(null);
         return;
       } else {
         navigateBack();
@@ -337,7 +326,7 @@ darkGlassBackground,
         alignItems: "center",
         flex: 1,
         width: "100%",
-     
+
         //padding: 4,
       }}
       onPress={() => {}}
@@ -345,7 +334,8 @@ darkGlassBackground,
       <View style={{ flex: 1 }}>
         <View
           style={[
-            {   paddingHorizontal: paddingHorizontal,
+            {
+              paddingHorizontal: paddingHorizontal,
 
               paddingVertical: cardPaddingVertical, // Padding needs to be on this view for some reason
               width: "100%",
@@ -369,7 +359,8 @@ darkGlassBackground,
               style={{
                 padding: 10,
                 paddingHorizontal: INNER_PADDING_HORIZONTAL,
-                borderRadius: 10,
+                //  borderRadius: 10,
+                borderRadius: 40,
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 width: "100%",
@@ -378,18 +369,17 @@ darkGlassBackground,
                 zIndex: 1,
                 overflow: "hidden",
                 backgroundColor: darkerOverlayColor,
-                backgroundColor:darkGlassBackground,
+                backgroundColor: darkGlassBackground,
               }}
             >
-              <MomentFocusTray 
+              <MomentFocusTray
                 userId={userId}
                 userDefaultCategory={defaultCategory}
-                themeColors={themeColors} 
+                themeColors={themeColors}
                 primaryColor={primaryColor}
                 lighterOverlayColor={lighterOverlayColor}
-                primaryBackground={primaryBackground} 
-              
-                capsuleList={capsuleList} 
+                primaryBackground={primaryBackground}
+                capsuleList={capsuleList}
                 paddingTop={TOPPER_PADDING_TOP}
                 friendDefaultCategory={
                   friendFaves?.friend_default_category || null
@@ -432,7 +422,7 @@ darkGlassBackground,
         </View>
 
         <CategoryCreator
-        userId={userId}
+          userId={userId}
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
           manualGradientColors={manualGradientColors}

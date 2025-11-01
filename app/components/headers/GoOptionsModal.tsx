@@ -10,6 +10,9 @@ import BouncyEntrance from "./BouncyEntrance";
 type Props = {
   isVisible: boolean;
   closeModal: () => void;
+  primaryColor: string;
+  backgroundColor: string;
+  modalBackgroundColor: string;
 };
 
 const GoOptionsModal = ({

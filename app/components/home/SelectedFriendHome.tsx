@@ -36,7 +36,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   darkGlassBackground,
   darkerGlassBackground,
   // darkerOverlayBackgroundColor,
-
+primaryBackground,
   selectedFriendId,
   selectedFriendName,
   skiaFontLarge,
@@ -211,6 +211,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   ref={headerRef}
                 >
                   <FriendHeaderMessageUI
+                  primaryBackground={primaryBackground}
                     height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
                     userId={userId}
                     friendId={selectedFriendId}
