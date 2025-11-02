@@ -56,6 +56,7 @@ import PencilSvg from "./svgs/pencil";
 import PencilCircleSvg from "./svgs/pencil-circle";
 import PencilOutlineSvg from "./svgs/pencil-outline";
 import PieChartSvg from "./svgs/pie-chart"; // IonIcons
+import PinSvg from "./svgs/pin";
 import PinOutlineSvg from "./svgs/pin-outline";
 import PlusSvg from "./svgs/plus";
 import PlusCircleSvg from "./svgs/plus-circle";
@@ -106,6 +107,7 @@ const svgIcons = {
   pencil_circle: PencilCircleSvg,
   pencil_outline: PencilOutlineSvg,
   pie_chart: PieChartSvg,
+  pin: PinSvg,
   pin_outline: PinOutlineSvg, // friend header
   plus: PlusSvg,
   plus_circle: PlusCircleSvg,

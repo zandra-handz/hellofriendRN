@@ -61,8 +61,7 @@ const FriendListUI = ({
   const ITEM_BORDER_RADIUS = 10;
 
   const selectedId = friendId; //can be null
-
-  const CARD_BACKGROUND = "rgba(0,0,0,0.9)";
+ 
 
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (

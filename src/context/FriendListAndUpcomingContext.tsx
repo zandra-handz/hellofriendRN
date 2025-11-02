@@ -106,11 +106,11 @@ export const FriendListAndUpcomingProvider = ({ children }) => {
   //   }
   // }, [isSuccess, data, queryClient, user?.id]);
 
-  // useEffect(() => {
-  //   if (isError) {
-  //     onSignOut();
-  //   }
-  // }, [isError]);
+  useEffect(() => {
+    if (isError) {
+      onSignOut();
+    }
+  }, [isError]);
 
   const upNext = useMemo(() => {
     return friendListAndUpcoming?.next; // not sure if this is ready to go yet

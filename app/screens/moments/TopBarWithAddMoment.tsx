@@ -26,7 +26,7 @@ const TopBarWithAddMoment = ({ textColor, backgroundColor }) => {
             alignItems: "center",
             justifyContent: "center",
             // justifyContent: 'space-between',
-            borderRadius: 10,
+            borderRadius: 999,
             marginVertical: 10,
           },
         ]}

@@ -1,11 +1,14 @@
-import { View } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import SwitchFriend from "../home/SwitchFriend";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SelectedCategoryButton from "./SelectedCategoryButton";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import LoadingPage from "../appwide/spinner/LoadingPage";
+import ActionAndBack from "./ActionAndBack";
+import SvgIcon from "@/app/styles/SvgIcons";
+
 type Props = {
   updateExistingMoment: boolean;
   paddingTop: number;
@@ -19,11 +22,12 @@ type Props = {
 const MomentFocusTray = ({
   userId,
   userDefaultCategory,
+  handleSave,
   themeColors,
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
-
+  navigateBack,
   capsuleList,
 
   updateExistingMoment,
@@ -38,34 +42,22 @@ const MomentFocusTray = ({
   const ICON_SIZE = 16;
 
   const FONT_SIZE = 12;
-  const { loadingDash } = useFriendDash();
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   return (
-    <View
-      style={{
-        width: "100%",
-        height: 40,
-
-        //  position: "absolute",
-
-        // top: paddingTop,
-        paddingRight: 20,
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        alignItems: "center",
-      }}
-    >
+    <View style={styles.container}>
       <View
-        style={{
-          width: "100%",
-          flexDirection: "row",
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
+        style={styles.innerContainer}
       >
+        <Pressable
+          hitSlop={10}
+          style={styles.backButtonWrapper}
+          onPress={navigateBack}
+        >
+          <SvgIcon name={"chevron_left"} size={20} color={primaryColor} />
+        </Pressable>
+
         {loadingDash && (
           <View style={{}}>
             <LoadingPage
@@ -80,7 +72,7 @@ const MomentFocusTray = ({
 
         {!loadingDash && (
           <>
-            <View style={{ paddingRight: 30 }}>
+            <View style={{ paddingRight: 0 }}>
               <SwitchFriend
                 primaryColor={primaryColor}
                 welcomeTextStyle={welcomeTextStyle}
@@ -90,13 +82,13 @@ const MomentFocusTray = ({
                 iconSize={ICON_SIZE}
               />
             </View>
-            <View style={{ maxWidth: "50%" }}>
+            <View style={{ maxWidth: "25%" }}>
               <SelectedCategoryButton
                 userId={userId}
                 friendId={friendId}
                 friendName={friendName}
                 userDefaultCategory={userDefaultCategory}
-                themeColors={themeColors} 
+                themeColors={themeColors}
                 primaryColor={primaryColor}
                 lighterOverlayColor={lighterOverlayColor}
                 primaryBackground={primaryBackground}
@@ -113,9 +105,40 @@ const MomentFocusTray = ({
             </View>
           </>
         )}
+        <View style={styles.saveButtonWrapper}>
+          <ActionAndBack onPress={handleSave} />
+        </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  innerContainer: {
+    width: "100%",
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  saveButtonWrapper: {
+    paddingHorizontal: 10,
+  },
+  backButtonWrapper: {
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    padding: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default MomentFocusTray;

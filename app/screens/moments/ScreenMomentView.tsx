@@ -3,8 +3,8 @@ import { View, StyleSheet } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+//import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
@@ -33,7 +33,7 @@ const ScreenMomentView = () => {
     friendId: selectedFriend?.id,
   });
 
-  const { friendDash, loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
 
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
   const { generateGradientColorsMap } = useMomentSortingFunctions({

@@ -6,7 +6,7 @@ import {
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 import { useFont } from "@shopify/react-native-skia";
-import { Skia } from "@shopify/react-native-skia";
+// import { Skia } from "@shopify/react-native-skia";
 import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
@@ -53,7 +53,7 @@ import { LDThemeProvider } from "./src/context/LDThemeContext";
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
-import { FriendDashProvider } from "./src/context/FriendDashContext";
+// import { FriendDashProvider } from "./src/context/FriendDashContext";
 // import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -221,7 +221,7 @@ export default Sentry.wrap(function App() {
                 <AutoSelectorProvider>
                   <SelectedFriendProvider>
                     <CapsuleListProvider>
-                      <FriendDashProvider>
+                      {/* <FriendDashProvider> */}
                         <GestureHandlerRootView style={{ flex: 1 }}>
                           <SafeAreaProvider>
                             <LDThemeProvider>
@@ -236,7 +236,7 @@ export default Sentry.wrap(function App() {
                             </LDThemeProvider>
                           </SafeAreaProvider>
                         </GestureHandlerRootView>
-                      </FriendDashProvider>
+                      {/* </FriendDashProvider> */}
                     </CapsuleListProvider>
                   </SelectedFriendProvider>
                 </AutoSelectorProvider>

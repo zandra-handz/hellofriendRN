@@ -4,8 +4,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+//import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import TopBarWithAddMoment from "./TopBarWithAddMoment";
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
@@ -60,7 +60,7 @@ const ScreenMoments = () => {
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
 
-  const { loadingDash } = useFriendDash();
+  const { loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);

@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 999,
     marginVertical: 10,
   },
   topBarButton: {

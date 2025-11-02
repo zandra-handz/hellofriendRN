@@ -1,0 +1,103 @@
+{
+  "React Native Test Button": {
+    "scope": "javascript,typescript,typescriptreact,javascriptreact",
+    "prefix": "rnbt",
+    "body": [
+      "import React from 'react';",
+      "import { Pressable, Text, StyleSheet } from 'react-native';",
+      "",
+      "export default function ${1:TestButton}({ onPress }) {",
+      "  return (",
+      "    <Pressable onPress={onPress} style={styles.button}>",
+      "      <Text style={styles.label}>${2:Press Me}</Text>",
+      "    </Pressable>",
+      "  );",
+      "}",
+      "",
+      "const styles = StyleSheet.create({",
+      "  button: {",
+      "    backgroundColor: '${3:skyblue}',",
+      "    paddingVertical: 10,",
+      "    paddingHorizontal: 20,",
+      "    borderRadius: 8,",
+      "    alignItems: 'center',",
+      "  },",
+      "  label: {",
+      "    color: '${4:white}',",
+      "    fontWeight: 'bold',",
+      "    fontSize: 16,",
+      "  }",
+      "});",
+      "$0"
+    ],
+    "description": "Creates a simple React Native Pressable button component."
+  },
+
+  "React Native Test Pressable": {
+    "scope": "javascript,typescript,typescriptreact,javascriptreact",
+    "prefix": "rnabox",
+    "body": [
+ 
+  
+      "    <Pressable",
+      "        style={{width: 40, height: 40, backgroundColor: 'red'}}", 
+      "    >", 
+      "    </Pressable>",
+    
+      "$0"
+    ],
+    "description": "Creates a simple animated Reanimated box component."
+  }
+,
+  "React Native StyleSheet": {
+    "scope": "javascript,typescript,typescriptreact,javascriptreact",
+    "prefix": "ss",
+    "body": [
+ 
+  
+    "const styles = StyleSheet.create({",
+    "  container: {flex: 1, width: '100%'},",
+    "  innerContainer: {flexDirection: 'column'},",
+    "  rowContainer: {flexDirection: 'row'},",
+    "  labelWrapper: {},",
+    "  label: {},",
+
+
+    "});",
+      "$0"
+    ],
+    "description": "Creates StyleSheet template"
+  },
+    "SVG Icon": {
+    "scope": "javascript,typescript,typescriptreact,javascriptreact",
+    "prefix": "svb",
+"body": [
+      "<Pressable",
+      "  onPress={() => console.log(\"no onPress action passed to template svg button\")}",
+      "  style={{width: 50, height: 50, borderRadius: 999, backgroundColor: 'red'}}",
+      ">",
+      "  <SvgIcon",
+      "    name={\"chevron_down\"}",
+      "    color={'orange'}", 
+      "    size={16}",
+      "    style={{",  
+      "    }}",
+      "  />",
+      "</Pressable>",
+      "$0"
+    ],
+    "description": "Creates SvgIcon.tsx implementation"
+  },
+      "useMemo": {
+    "scope": "javascript,typescript,typescriptreact,javascriptreact",
+    "prefix": "m",
+  "body": [
+      "const VARIABLE = useMemo(() => {",
+      
+      "},[]);",
+  
+      "$0"
+    ],
+    "description": "Creates SvgIcon.tsx implementation"
+  }
+}

@@ -1,7 +1,7 @@
 import { StyleSheet, View, Pressable } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -43,7 +43,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   welcomeTextStyle,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
-  const { friendDash, loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash({userId: userId, friendId: friendId});
 
   
 

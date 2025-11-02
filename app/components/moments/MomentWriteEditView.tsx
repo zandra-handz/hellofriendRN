@@ -1,5 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { View, Keyboard, TouchableWithoutFeedback, Alert } from "react-native";
+import { useMemo, useState, useRef, useEffect, useCallback } from "react";
+import {
+  View,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
+  Pressable,
+} from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
@@ -12,13 +18,17 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import MomentFocusTray from "./MomentFocusTray";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+
+import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+
 type Props = {
   screenCameFromToParent: number;
   momentText: string;
   catCreatorVisible: boolean;
   closeCatCreator: () => void;
   openCatCreator: () => void;
-  categoryColorsMap: object;
   updateExistingMoment: boolean;
   existingMomentObject?: Moment;
   triggerSaveFromLateral: boolean;
@@ -31,9 +41,8 @@ type Props = {
 const MomentWriteEditView = ({
   paddingHorizontal,
   defaultCategory,
-  manualGradientColors,
   themeColors,
-  capsuleList,
+
   darkGlassBackground,
   userId,
   screenCameFromToParent,
@@ -42,14 +51,12 @@ const MomentWriteEditView = ({
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
-  darkerOverlayColor,
   openCatCreator,
   closeCatCreator,
-  categoryColorsMap,
   updateExistingMoment,
   existingMomentObject,
   triggerSaveFromLateral,
-  escortBarSpacer,
+
   cardPaddingVertical = 10, // controls padding around the shaded card
   friendId,
   friendName,
@@ -64,6 +71,19 @@ const MomentWriteEditView = ({
     friendId: friendId,
   });
   const { navigateBack, navigateToMomentView } = useAppNavigations();
+
+  const { capsuleList } = useCapsuleList();
+
+  const yTranslateValue = useSharedValue(-460);
+
+  const handleOpenCat = () => {
+    yTranslateValue.value = withTiming(0, { duration: 200 });
+    Keyboard.dismiss();
+  };
+
+  const handleCloseCat = () => {
+    yTranslateValue.value = withTiming(-460, { duration: 100 });
+  };
 
   const TOPPER_PADDING_TOP = 0;
 
@@ -83,34 +103,11 @@ const MomentWriteEditView = ({
 
   useFocusEffect(
     useCallback(() => {
-      if (
-        momentText &&
-        !userChangedCategory
-        // && momentTextRef &&
-        // momentTextRef.current
-      ) {
+      if (momentText && !userChangedCategory) {
         setMomentTestToSave(momentText);
-        // momentTextRef.current.setText(momentText);
       }
-      // else {
-      //   console.error("NOT RESETTING", momentText, userChangedCategory);
-      // }
     }, [momentText])
   );
-
-  const INNER_PADDING_HORIZONTAL = 20;
-
-  // console.log('MOMENT WRITE VIEW SCREEN RENDERED');
-  //   useFocusEffect(
-  //   useCallback(() => {
-
-  //     if ( friendId
-  //     )  {
-  //       console.log('callback triggering refocus');
-  //       handleTriggerRefocus();
-  //     }
-  //   }, [friendId])
-  // );
 
   useEffect(() => {
     if (friendId) {
@@ -118,39 +115,21 @@ const MomentWriteEditView = ({
       handleTriggerRefocus();
     }
   }, [friendId]);
-  // useEffect(() => {
-  //   if (!catCreatorVisible) {
-  //     setTriggerReFocus(Date.now());
-  //   }
-  // }, [catCreatorVisible]);
-
-  // useEffect(() => {
-  //   if (!catCreatorVisible && friendId) {
-  //     setTriggerReFocus(Date.now());
-  //   }
-  // }, [friendId]);
 
   const handleTriggerRefocus = () => {
-    console.log("handletrifgger refocus");
+    // console.log("handletrifgger refocus");
     setTriggerReFocus(Date.now());
   };
 
   const handleCloseCatCreator = () => {
+
+    handleCloseCat();
     closeCatCreator();
     handleTriggerRefocus();
   };
 
-  // useEffect(() => {
-  //   if (momentText) {
-  //     updateMomentText(momentText);
-  //   }
-  // }, [momentText]);
-
   const updateMomentText = (text) => {
     setMomentTestToSave(text);
-    // if (momentTextRef && momentTextRef.current) {
-    //   momentTextRef.current.setText(text);
-    // }
   };
 
   useEffect(() => {
@@ -178,13 +157,6 @@ const MomentWriteEditView = ({
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (updateExistingMoment && existingMomentObject) {
-  //     setSelectedCategory(existingMomentObject.user_category_name);
-  //     setSelectedUserCategory(Number(existingMomentObject.user_category));
-  //   }
-  // }, [updateExistingMoment, existingMomentObject]);
-
   const [selectedCategory, setSelectedCategory] = useState(
     existingMomentObject?.user_category_name ?? ""
   );
@@ -208,8 +180,6 @@ const MomentWriteEditView = ({
       ]);
       return;
     }
-    // if (momentTextRef && momentTextRef.current) {
-    // const textLength = momentTextRef.current.getText().length;
     const textLength = momentTextToSave.length;
 
     if (!textLength) {
@@ -266,11 +236,6 @@ const MomentWriteEditView = ({
     }
     // }
   };
-  useEffect(() => {
-    if (catCreatorVisible) {
-      Keyboard.dismiss();
-    }
-  }, [catCreatorVisible]);
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
@@ -302,7 +267,7 @@ const MomentWriteEditView = ({
   //this needs to go to the new index instead if it has a new index
   //EDIT not working anymore /was always kinda broken? fix
   useEffect(() => {
-    if (editMomentMutation.isSuccess && capsuleList) {
+    if (editMomentMutation.isSuccess && capsuleList?.length) {
       console.log(
         "useeffect for navving after edit triggered and code will be used"
       );
@@ -332,11 +297,30 @@ const MomentWriteEditView = ({
       onPress={() => {}}
     >
       <View style={{ flex: 1 }}>
+        <CategoryCreator
+          userId={userId}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          manualGradientColors={manualGradientColors}
+          capsuleList={capsuleList}
+          friendLightColor={themeColors?.lightColor}
+          friendDarkColor={themeColors?.darkColor}
+          freezeCategory={userChangedCategory}
+          friendDefaultCategory={friendFaves?.friend_default_category || null}
+          isVisible={catCreatorVisible}
+          onPress={handleUserCategorySelect}
+          addToOnPress={handleUserChangedCategoryState}
+          onSave={handleSave}
+          updatingExisting={updateExistingMoment}
+          existingId={Number(existingMomentObject?.user_category) || null}
+          onClose={handleCloseCatCreator}
+          yTranslateValue={yTranslateValue}
+        />
+
         <View
           style={[
             {
               paddingHorizontal: paddingHorizontal,
-
               paddingVertical: cardPaddingVertical, // Padding needs to be on this view for some reason
               width: "100%",
               flex: 1,
@@ -357,21 +341,18 @@ const MomentWriteEditView = ({
           >
             <View
               style={{
-                padding: 10,
-                paddingHorizontal: INNER_PADDING_HORIZONTAL,
-                //  borderRadius: 10,
+                // padding: 10,
+                // paddingHorizontal: INNER_PADDING_HORIZONTAL,
                 borderRadius: 40,
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 width: "100%",
                 flex: 1,
-                marginBottom: escortBarSpacer,
                 zIndex: 1,
                 overflow: "hidden",
-                backgroundColor: darkerOverlayColor,
                 backgroundColor: darkGlassBackground,
               }}
-            >
+            > 
               <MomentFocusTray
                 userId={userId}
                 userDefaultCategory={defaultCategory}
@@ -380,13 +361,16 @@ const MomentWriteEditView = ({
                 lighterOverlayColor={lighterOverlayColor}
                 primaryBackground={primaryBackground}
                 capsuleList={capsuleList}
+                navigateBack={navigateBack}
+                handleSave={handleSave}
                 paddingTop={TOPPER_PADDING_TOP}
                 friendDefaultCategory={
                   friendFaves?.friend_default_category || null
                 }
                 updateExistingMoment={updateExistingMoment}
                 freezeCategory={userChangedCategory}
-                onPress={openCatCreator}
+
+                onPress={handleOpenCat}
                 label={selectedCategory}
                 categoryId={selectedUserCategory}
                 friendId={friendId}
@@ -407,37 +391,21 @@ const MomentWriteEditView = ({
                 </View>
               )}
               {!createMomentMutation.isPending && (
-                <TextMomentBox
-                  ref={momentTextRef}
-                  value={momentTextToSave}
-                  onTextChange={updateMomentText}
-                  triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
-                  isKeyboardVisible={isKeyboardVisible}
-                  welcomeTextStyle={welcomeTextStyle}
-                  primaryColor={primaryColor}
-                />
+                <View style={{ padding: 10 }}>
+                  <TextMomentBox
+                    ref={momentTextRef}
+                    value={momentTextToSave}
+                    onTextChange={updateMomentText}
+                    triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
+                    isKeyboardVisible={isKeyboardVisible}
+                    welcomeTextStyle={welcomeTextStyle}
+                    primaryColor={primaryColor}
+                  />
+                </View>
               )}
             </View>
           </View>
         </View>
-
-        <CategoryCreator
-          userId={userId}
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-          manualGradientColors={manualGradientColors}
-          capsuleList={capsuleList}
-          freezeCategory={userChangedCategory}
-          friendDefaultCategory={friendFaves?.friend_default_category || null}
-          isVisible={catCreatorVisible}
-          onPress={handleUserCategorySelect}
-          addToOnPress={handleUserChangedCategoryState}
-          onSave={handleSave}
-          updatingExisting={updateExistingMoment}
-          existingId={Number(existingMomentObject?.user_category) || null}
-          onClose={handleCloseCatCreator}
-          categoryColorsMap={categoryColorsMap}
-        />
       </View>
     </TouchableWithoutFeedback>
   );

@@ -2,14 +2,14 @@ import React, { useCallback, useState, useRef } from "react";
 import { View, Text, Pressable, DimensionValue } from "react-native";
 
  
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
  import { AppFontStyles } from "@/app/styles/AppFonts";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useNavigation } from "@react-navigation/native";
-import useDoublePress from "../buttons/useDoublePress";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+ 
+import useDoublePress from "../buttons/useDoublePress"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 
 interface FriendModalIntegratorProps {
   addToPress: () => void;
@@ -45,7 +45,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
 }) => {
   // console.log("FRIEND SELECTOR RERENDERED");
   
-  const { loadingDash } = useFriendDash(); 
+  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId}); 
 
   const { navigateToAddFriend, navigateToSelectFriend} = useAppNavigations();
 
@@ -113,8 +113,8 @@ const { handleDoublePress} = useDoublePress({onSinglePress: handleNavigateToSele
 
   const RenderIcon = useCallback(
     () => (
-      <MaterialCommunityIcons
-        name="account-switch-outline"
+      <SvgIcon
+        name="account_switch_outline"
         size={iconSize}
         color={
           loadingDash

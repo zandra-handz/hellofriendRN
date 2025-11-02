@@ -3,17 +3,12 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet, Pressable } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  SlideInUp,
-  SlideOutUp,
-  SlideInDown,
-  SlideOutDown,
-} from "react-native-reanimated"; 
-import { MaterialIcons } from "@expo/vector-icons";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import AddNewCategory from "../headers/AddNewCategory";
- import { useCategories } from "@/src/context/CategoriesContext";
-//  import useCategories from "@/src/hooks/useCategories";
+import { useCategories } from "@/src/context/CategoriesContext";
+import SvgIcon from "@/app/styles/SvgIcons";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 
@@ -32,30 +27,48 @@ type Props = {
   selectedId: number;
 };
 const CategoryCreator = ({
-  userId,
   primaryColor,
   primaryBackground,
-  manualGradientColors,
   freezeCategory,
   friendDefaultCategory,
-  capsuleList, 
-
-  isVisible,
+  friendLightColor,
+  friendDarkColor,
+  capsuleList,
+ 
   onPress,
   addToOnPress,
   updatingExisting,
   existingId,
-  categoryColorsMap,
-  onClose,
-}: Props) => { 
 
-  const {
-    categorySizes, 
-  } = useMomentSortingFunctions({
+  yTranslateValue,
+
+  onClose,
+}: Props) => {
+ 
+
+  const animatedYTranslateStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: yTranslateValue.value }],
+    };
+  });
+
+  const { userCategories } = useCategories();
+
+  const { categorySizes } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
-  const { userCategories} = useCategories();
+  const categoryColorsMap = useMemo(() => {
+    if (userCategories?.length && friendLightColor && friendDarkColor) {
+      return generateGradientColorsMap(
+        userCategories,
+        friendLightColor,
+        friendDarkColor
+      );
+    }
+    return null;
+  }, [userCategories, friendLightColor, friendDarkColor]);
+
   const [selectedId, setSelectedId] = useState(null);
   const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>(
     []
@@ -138,15 +151,14 @@ const CategoryCreator = ({
     }
 
     if (friendDefaultCategory && userCategories && userCategories.length > 0) {
-      console.log(`friend default:`, friendDefaultCategory);
+ 
       const friendDefault = friendDefaultCategory;
       const name = userCategories.find(
         (category) => category.id === friendDefault
-      );
-      // console.log(name);
+      ); 
 
       if (name) {
-        console.warn("SETTTINGGGGGGGGGG");
+        // console.warn("SETTTINGGGGGGGGGG");
 
         onPress({ name: name.name, id: name.id });
         setSelectedId(name.id);
@@ -189,8 +201,8 @@ const CategoryCreator = ({
                 style={[styles.buttonWrapper, { marginRight: 10 }]}
               >
                 <CategoryButtonForCreator
-                primaryColor={primaryColor}
-                manualGradientColors={manualGradientColors}
+                  primaryColor={primaryColor}
+                  manualGradientColors={manualGradientColors}
                   height={"auto"}
                   selectedId={selectedId}
                   label={name}
@@ -215,58 +227,50 @@ const CategoryCreator = ({
 
   return (
     <>
-      {categoryColorsMap && isVisible && (
-        <Animated.View
-          entering={SlideInUp}
-          exiting={SlideOutUp}
-          style={[
-            styles.categoryNavigatorContainer,
-            {
-              paddingHorizontal: HORIZONTAL_PADDING,
-              backgroundColor: 
-                primaryBackground,
-            },
-          ]}
-        >
-          <AddNewCategory
-                 primaryColor={primaryColor}
-        primaryBackground={primaryBackground}
-            manualGradientColors={manualGradientColors}
-            addToOnPress={handleSelectCreated}
-          />
-          {userCategories && (
-            <View
-              showsVerticalScrollIndicator={false}
-              style={[styles.scrollContainer]}
-            >
-              {renderedButtons}
-            </View>
-          )}
-          <Pressable
-            onPress={onClose}
-            style={{
-              width: "100%",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-
-              height: 30,
-              paddingBottom: 10,
-            }}
+      <Animated.View
+        style={[
+          animatedYTranslateStyle,
+          styles.categoryNavigatorContainer,
+          {
+            paddingHorizontal: HORIZONTAL_PADDING,
+            backgroundColor: primaryBackground,
+          
+            paddingTop: 60, //IMPORTANT, this is for status bar clearing since this component appears outside of safe view
+          },
+        ]}
+      >
+        <AddNewCategory
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          manualGradientColors={manualGradientColors}
+          addToOnPress={handleSelectCreated}
+        />
+        {userCategories && categoryColorsMap && (
+          <View
+            showsVerticalScrollIndicator={false}
+            style={[styles.scrollContainer]}
           >
-            <MaterialIcons
-              name={"keyboard-arrow-down"}
-              color={primaryColor}
-              color={manualGradientColors.homeDarkColor}
-              size={16}
-              style={{
-                backgroundColor: manualGradientColors.lightColor,
-                borderRadius: 999,
-              }}
-            />
-          </Pressable>
-        </Animated.View>
-      )}
+            {renderedButtons}
+          </View>
+        )}
+        sv
+        <Pressable
+          onPress={onClose}
+          style={styles.bottomButtonContainer}
+        >
+          <SvgIcon
+            name={"chevron_down"}
+            color={primaryColor}
+            color={manualGradientColors.homeDarkColor}
+            size={16}
+            style={{
+              backgroundColor: manualGradientColors.lightColor,
+              borderRadius: 999,
+            }}
+          />
+        </Pressable>
+      
+      </Animated.View>
     </>
   );
 };
@@ -312,6 +316,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // backgroundColor: "teal",
     marginBottom: 10,
+  },
+  bottomButtonContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 30,
+    paddingBottom: 10,
+    backgroundColor: "orange",
   },
 });
 

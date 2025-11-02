@@ -15,8 +15,8 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 // import { useLocations } from "@/src/context/LocationsContext";
 import useLocations from "@/src/hooks/useLocations";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import AddressesModal from "@/app/components/headers/AddressesModal";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -36,7 +36,7 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
 
   const { selectedFriend } = useSelectedFriend();
 
-  const { friendDash } = useFriendDash();
+  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
   const { locationList } = useLocations({
     userId: user?.id,
     isInitializing: false,
@@ -127,10 +127,9 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
       });
     }
   };
-
-  //focusedLocation is in LocationsMapView
+ 
   const handleViewLocation = (focusedLocation) => {
-    console.log("handledViewLocation pressed!!");
+    // console.log("handledViewLocation pressed!!");
     if (focusedLocation != undefined) {
       setQuickView({
         topBarText: `Location: ${focusedLocation.title}   |   ${focusedLocation.address}`,
@@ -191,8 +190,7 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
   };
 
   const [highlightedCategory, setHighlightedCategory] = useState(null);
-
-  // categories list, reactive to combinedLocations changes
+ 
   const categories = useMemo(() => {
     return Array.from(
       new Set(

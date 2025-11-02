@@ -1,6 +1,7 @@
 import { StyleSheet, View, Pressable } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -38,7 +39,7 @@ const FriendHeaderMessageUIOld: React.FC<FriendHeaderMessageUIProps> = ({
   cardBackgroundColor,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
-  const { loadingDash } = useFriendDash();
+  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
   const loadingNewFriend = loadingDash;
   const isFocused = useSharedValue(false);
 

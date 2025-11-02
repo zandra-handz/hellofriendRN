@@ -4,12 +4,13 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useUser } from "@/src/context/UserContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import ReloadList from "@/app/components/helloes/ReloadList";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useRoute } from "@react-navigation/native"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import { UserInterfaceIdiom } from "expo-constants";
 const ScreenReload = () => {
   const route = useRoute();
   const helloId = route.params?.helloId ?? false;
@@ -17,7 +18,7 @@ const ScreenReload = () => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
-  const { friendDash, loadingDash } = useFriendDash();
+  const { friendDash, loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
   const { lightDarkTheme } = useLDTheme(); 
  
 

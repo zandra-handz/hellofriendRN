@@ -1,11 +1,10 @@
-import { TouchableOpacity, StyleSheet  } from "react-native";
-import React, {  useEffect } from "react";  
+import {  Pressable, StyleSheet } from "react-native";
+import React, { useMemo, useEffect } from "react";
 import Animated, { SharedValue } from "react-native-reanimated";
- 
+import manualGradientColors from "@/app/styles/StaticColors";
 import {
   useAnimatedStyle,
   useSharedValue,
-  useAnimatedReaction,
   withRepeat,
   interpolateColor,
   withTiming,
@@ -27,53 +26,72 @@ type Props = {
 };
 
 const CategoryButtonForCreator = ({
-  primaryColor,
-  manualGradientColors,
+  primaryColor, 
   label,
   itemId,
   onPress,
   selectedId,
   height = 30,
-  pulseDuration = 2000,
+  pulseDuration = 1000,
   highlightColor = "#ccc",
 }: Props) => {
- 
-  const AnimatedTouchableOpacity =
-    Animated.createAnimatedComponent(TouchableOpacity);
- 
-  const progress = useSharedValue(0);
-  const translateYx2 = useSharedValue(0);
-  const startColor = useSharedValue("transparent");
-  const endColor = useSharedValue("red");
-  const textColor = useSharedValue(primaryColor);
+  const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable);
 
- 
+  const progress = useSharedValue(0); 
+  const startColor = useSharedValue("transparent");
+  const endColor = useSharedValue("red"); 
+
+
+const textColor = useMemo(() => {
+  if (!selectedId || !itemId) {
+    return primaryColor
+  }
+  if (Number(selectedId) === Number(itemId)) {
+    return manualGradientColors.homeDarkColor
+  } else {
+    return primaryColor
+  }
+},[primaryColor, selectedId, itemId]);
+
+
   useEffect(() => {
     if (!selectedId || !itemId) {
       return;
-    } 
+    }
     const isSelected = Number(selectedId) === Number(itemId);
-            if (isSelected) { 
-          startColor.value = highlightColor; 
-          endColor.value = primaryColor || "red";
-          textColor.value = manualGradientColors.homeDarkColor;
+    if (isSelected) {
+      startColor.value = highlightColor;
+      endColor.value = primaryColor || "red";
+      // textColor.value = manualGradientColors.homeDarkColor;
 
-          progress.value = withRepeat(
-            withTiming(1, { duration: pulseDuration }),
-            -1,
-            true
-          );
-        } else {
-          progress.value = withTiming(0, { duration: 200 });
-          translateYx2.value = withTiming(0, { duration: 200 });
-          startColor.value = "transparent";
-          endColor.value = "transparent"; 
-          textColor.value = primaryColor;
-        }
-
-
-
+      progress.value = withRepeat(
+        withTiming(1, { duration: pulseDuration }),
+        -1,
+        true
+      );
+    } else {
+      progress.value = withTiming(0, { duration: 200 }); 
+      startColor.value = "transparent";
+      endColor.value = "transparent"; 
+    }
   }, [selectedId, itemId]);
+
+  const scaleValue = useSharedValue(1);
+  const handleOnPressIn = () => {
+    console.log("pressin");
+    scaleValue.value = withTiming(0.75, { duration: 100 });
+  };
+
+  const handleOnPressOut = () => {
+    console.log("press out");
+    scaleValue.value = withTiming(1, { duration: 0 });
+  };
+
+  const handleOnPress = () => {
+    console.log('on press')
+    onPress(label); 
+       scaleValue.value = withTiming(1, { duration: 0 });
+  };
 
   const animatedCardsStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -83,41 +101,41 @@ const CategoryButtonForCreator = ({
     );
 
     return {
-      backgroundColor,
-      color: textColor.value,
-      transform: [{ translateY: translateYx2.value }],
+      backgroundColor, 
+      borderWidth: 1,
+      borderColor: backgroundColor,
+      transform: [ 
+        { scale: scaleValue.value },
+      ],
     };
   });
-
+ 
   return (
     <AnimatedTouchableOpacity
       style={[
         animatedCardsStyle,
         styles.categoryButton,
+
         {
-          width: "auto",
-          padding: 10, 
           height: height,
         },
       ]}
-      onPress={() => {
-        onPress(label);
+      onPress={handleOnPress}
+      onPressIn={() => {
+        handleOnPressIn();
+      }}
+      onPressOut={() => {
+        handleOnPressOut();
       }}
     >
       <Animated.Text
         numberOfLines={1}
         style={[
-          animatedCardsStyle,
-       
+     
+          styles.label,
+
           {
-            color: primaryColor, 
-            fontSize: 14,
-            fontFamily: "Poppins-Bold",
-            fontWeight: "bold", 
-            height: "100%",
-            alignSelf: "center",
-            borderRadius: 999,
-            padding: 2,
+            color:textColor,
           },
         ]}
       >
@@ -127,24 +145,31 @@ const CategoryButtonForCreator = ({
   );
 };
 
-
 const styles = StyleSheet.create({
-    categoryButton: {
-      // borderBottomWidth: 0.8,
-      borderWidth: StyleSheet.hairlineWidth,
-      alignText: "left",
-      alignContent: "center",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "row",
-      paddingVertical: 2,
-      paddingHorizontal: 10,
-     
-      borderRadius: 16,
-      // marginBottom: "3%",
-      height: "auto",
-    },
+  categoryButton: { 
+    width: "auto",
+    padding: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignText: "left",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingVertical: 2,
+    paddingHorizontal: 10,
 
+    borderRadius: 16, 
+    height: "auto",
+  },
+  label: {
+    fontSize: 14,
+    fontFamily: "Poppins-Bold",
+    fontWeight: "bold",
+    height: "100%",
+    alignSelf: "center",
+    borderRadius: 999,
+    padding: 2,
+  },
 });
 
 export default CategoryButtonForCreator;

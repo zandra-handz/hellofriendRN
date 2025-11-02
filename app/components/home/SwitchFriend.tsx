@@ -69,21 +69,26 @@ const SwitchFriend = ({
             </View>
           )}
 
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={[
-              AppFontStyles.welcomeText,
-              {
-                zIndex: 2,
-                color: primaryColor,
-                fontSize: fontSize,
-                maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
-              },
-            ]}
-          >
-            {selectedFriend ? selectedFriend.name : `Pick friend`}
-          </Text>
+<Text
+  numberOfLines={1}
+  ellipsizeMode="tail"
+  style={[
+    AppFontStyles.welcomeText,
+    {
+      zIndex: 2,
+      color: primaryColor,
+      fontSize: fontSize,
+      maxWidth: editMode ? maxWidth : maxWidth,
+    },
+  ]}
+>
+  {selectedFriend?.name
+    ? selectedFriend.name.length > 12
+      ? `${selectedFriend.name.slice(0, 12)}...`
+      : selectedFriend.name
+    : "Pick friend"}
+</Text>
+
  
         </View>
         {editMode && (

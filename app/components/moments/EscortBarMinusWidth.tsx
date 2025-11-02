@@ -36,7 +36,7 @@ const EscortBarMinusWidth = ({
 
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: 10,
+            borderRadius: 22,
             // backgroundColor: "orange",
 
           //  marginVertical: 10,
@@ -88,7 +88,7 @@ const EscortBarMinusWidth = ({
             bottom: 0,
             left: 0,
             right: 0,
-            borderRadius: 10,
+            borderRadius: 999,
             backgroundColor: backgroundColor,
             zIndex: 0,
             marginLeft: 106,

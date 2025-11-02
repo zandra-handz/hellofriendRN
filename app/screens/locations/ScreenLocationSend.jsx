@@ -7,8 +7,8 @@ import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
 import { useUser } from "@/src/context/UserContext";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendDash } from "@/src/context/FriendDashContext"; 
- 
+// import { useFriendDash } from "@/src/context/FriendDashContext"; 
+import useFriendDash from "@/src/hooks/useFriendDash";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useFetchAdditionalDetails from "@/src/hooks/LocationCalls/useFetchAdditionalDetails";
@@ -30,7 +30,7 @@ const ScreenLocationSend = () => {
     enabled: true,
   });
   const { selectedFriend } = useSelectedFriend();
-  const { friendDash } = useFriendDash();
+  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
   //weekdayTextData is coming from LocationHoursOfOperation component
   const { lightDarkTheme } = useLDTheme();
  
@@ -204,8 +204,8 @@ const ScreenLocationSend = () => {
 
   return (
     <SafeViewAndGradientBackground
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
+      friendColorLight={selectedFriend?.lightColor}
+      friendColorDark={selectedFriend?.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
@@ -231,10 +231,10 @@ const ScreenLocationSend = () => {
         handleSendText={handleSendText}
         initiallySelectedDay={selectedDay}
                     themeColors={{
-              lightColor: selectedFriend.lightColor,
-              darkColor: selectedFriend.darkColor,
-              fontColor: selectedFriend.fontColor,
-              fontColorSecondary: selectedFriend.fontColorSecondary,
+              lightColor: selectedFriend?.lightColor,
+              darkColor: selectedFriend?.darkColor,
+              fontColor: selectedFriend?.fontColor,
+              fontColorSecondary: selectedFriend?.fontColorSecondary,
             }}  
         welcomeTextStyle={AppFontStyles.welcomeText}
         subWelcomeTextStyle={AppFontStyles.subWelcomeText}

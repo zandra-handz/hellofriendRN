@@ -20,7 +20,8 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import GradientBackground from "../appwide/display/GradientBackground";
  
 
-import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+import useFriendDash from "@/src/hooks/useFriendDash";
 import useUpdateLockins from "@/src/hooks/useUpdateLockins";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
@@ -42,7 +43,7 @@ const SelectedFriendFooter = ({
   const {  setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
 
   const friendId = selectedFriend?.id;
-    const { friendDash } = useFriendDash();
+    const { friendDash } = useFriendDash({userId: userId, friendId: friendId});
   const { autoSelectFriend } = useAutoSelector();
   const { navigateToFidget } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });

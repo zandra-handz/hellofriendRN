@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
 
-    borderRadius: 10,
+    borderRadius: 999,
   },
   backButton: {
     height: "100%",

@@ -6,12 +6,11 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useState, useEffect, useRef, useMemo } from "react"; 
-import {  MaterialIcons } from "@expo/vector-icons";
-import Animated, { SlideInLeft } from "react-native-reanimated"; 
- 
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import Animated, { SlideInLeft } from "react-native-reanimated";
+
 import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
- 
+import SvgIcon from "@/app/styles/SvgIcons";
 import FlashMessage from "../alerts/FlashMessage";
 
 type Props = {
@@ -28,7 +27,7 @@ type Props = {
 };
 
 const AddNewCategory = ({
-  primaryColor='orange',
+  primaryColor = "orange",
   primaryBackground,
   manualGradientColors,
   userId,
@@ -36,10 +35,10 @@ const AddNewCategory = ({
   height = 60,
   fontStyle = 1,
   addToOnPress,
-}: Props) => { 
+}: Props) => {
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
- 
+
   const ENTER_MESSAGE_WIDTH = 60;
 
   const [flashMessage, setFlashMessage] = useState<null | {
@@ -48,14 +47,10 @@ const AddNewCategory = ({
     duration: number;
   }>(null);
 
- 
-
-
-    const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory({userId: userId});
+  const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory(
+    { userId: userId }
+  );
   const [inputActive, setInputActive] = useState(false);
-
- 
- 
 
   useEffect(() => {
     if (inputActive && newCategoryRef.current) {
@@ -71,7 +66,6 @@ const AddNewCategory = ({
       }, 50);
     }
   }, [inputActive]);
- 
 
   useEffect(() => {
     if (createNewCategoryMutation.isSuccess) {
@@ -119,12 +113,7 @@ const AddNewCategory = ({
       return;
     }
 
-    // if (inputActive) {
-
-    //   clearInput();
-    // } else {
-    //   handleRefocus();
-    // }
+ 
     setInputActive((prev) => !prev);
   };
 
@@ -133,9 +122,7 @@ const AddNewCategory = ({
   };
 
   const handleCreateCategory = async () => {
-    // if (!newCategoryRef?.current?.value) {
-    //   return;
-    // }
+ 
 
     if (!newCategory.trim()) return;
 
@@ -143,10 +130,9 @@ const AddNewCategory = ({
       text: `Added!`,
       error: false,
       duration: 1000,
-    }); 
+    });
     try {
       const updatedData = await createNewCategory({
- 
         name: newCategory,
       });
 
@@ -165,9 +151,7 @@ const AddNewCategory = ({
   };
 
   const handleUpdateNewCategoryText = (text: string) => {
- 
     setNewCategory(text);
- 
   };
 
   return (
@@ -184,17 +168,12 @@ const AddNewCategory = ({
         <View
           style={{
             flexDirection: "row",
-            width: "100%",
-            // backgroundColor: "pink",
-            padding: 10,
-            height: "auto",
+            width: "100%", 
+            padding: 10, 
           }}
         >
           <Text
-            style={[
-          
-              { color: primaryColor, fontSize: 13, fontWeight: "bold" },
-            ]}
+            style={[{ color: primaryColor, fontSize: 13, fontWeight: "bold" }]}
           >
             max amount of categories
           </Text>
@@ -215,9 +194,9 @@ const AddNewCategory = ({
               : "transparent",
           }}
         >
-          <MaterialIcons
-            name={!inputActive ? "add" : "keyboard-backspace"}
-            color={primaryColor}
+          <SvgIcon
+            name={!inputActive ? "plus" : "chevron_left"}
+            // color={primaryColor}
             color={manualGradientColors.homeDarkColor}
             size={16}
             style={{
@@ -228,21 +207,16 @@ const AddNewCategory = ({
 
           {!inputActive && remaining && (
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: 18,
-                width: 200,
-                height: "100%",
-              }}
+              style={styles.addNewWrapper}
             >
               <Text
-                style={[ 
+                style={[
                   {
                     color: primaryColor,
-                    fontSize: fontStyle === 2 ? 18 : 15,
-                    fontWeight: fontStyle === 2 ? "regular" : "bold",
-                    fontFamily: fontStyle === 2 ? "Poppins-Regular" : undefined,
+                    // fontSize: fontStyle === 2 ? 18 : 15,
+                    fontWeight: 'bold',
+                    // fontWeight: fontStyle === 2 ? "regular" : "bold",
+                    // fontFamily: fontStyle === 2 ? "Poppins-Regular" : undefined,
                   },
                 ]}
               >
@@ -264,24 +238,14 @@ const AddNewCategory = ({
             >
               <TextInput
                 ref={newCategoryRef}
-                style={[ 
+                style={[ styles.textInput,
                   {
-                    color: primaryColor,
-                    fontFamily: "Poppins-Regular",
-                    fontSize: 14,
-                    lineHeight: 14,
-                    borderWidth: StyleSheet.hairlineWidth,
-                    borderColor: primaryColor,
-                    borderRadius: fontStyle === 2 ? 20 : 0,
-                    width: "100%",
-                    flex: 1,
-
-                    flexDirection: "row",
-                    alignItems: "center",
-                    alignContents: "center",
-                    paddingLeft: 12,
                     paddingRight: ENTER_MESSAGE_WIDTH + 12, // space for enter message
                     backgroundColor: primaryBackground,
+                    color: primaryColor,
+                    borderWidth: StyleSheet.hairlineWidth, 
+                    borderColor: primaryColor,
+                    borderRadius: fontStyle === 2 ? 20 : 0,
                   },
                 ]}
                 autoFocus={true}
@@ -311,7 +275,7 @@ const AddNewCategory = ({
                     }}
                   >
                     <Text
-                      style={[ 
+                      style={[
                         {
                           color: primaryColor,
                           opacity: 0.6,
@@ -333,5 +297,30 @@ const AddNewCategory = ({
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, width: "100%" },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+  textInput: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 14,
+    lineHeight: 14,
+    width: "100%",
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center", 
+    paddingLeft: 12,
+  },
+  addNewWrapper: {
+                    flexDirection: "row",
+                alignItems: "center",
+                paddingHorizontal: 18,
+                width: 200,
+                height: "100%",
+  }
+});
 
 export default AddNewCategory;

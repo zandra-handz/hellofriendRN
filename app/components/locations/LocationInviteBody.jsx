@@ -13,13 +13,12 @@ const LocationInviteBody = ({
   currentDay, 
   handleSetUserMessage,
   handleDaySelect,
- 
+ themeColors,
   additionalDetails,
   location,
   handleGetDirections,
 
-  initiallySelectedDay,
-  themeAheadOfLoading,
+  initiallySelectedDay, 
   welcomeTextStyle,
   subWelcomeTextStyle,
   primaryColor,
@@ -129,7 +128,7 @@ const LocationInviteBody = ({
           {additionalDetails && additionalDetails.hours && messageData && (
             <>
               <HoursSelector
-                buttonHightlightColor={themeAheadOfLoading.lightColor}
+                buttonHightlightColor={themeColor.lightColor}
                 currentDay={currentDay}
                 onDaySelect={handleDaySelect}
                 daysHrsData={additionalDetails?.hours?.weekday_text}
@@ -148,7 +147,7 @@ const LocationInviteBody = ({
               borderWidth: StyleSheet.hairlineWidth,
               padding: 10,
               borderRadius: 10,
-              borderColor: themeAheadOfLoading.lightColor,
+              borderColor: themeColors.lightColor,
               width: "100%",
               
             }}

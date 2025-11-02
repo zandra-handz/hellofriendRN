@@ -54,8 +54,7 @@ const TopBarLikeMinusWidth = ({
             position: "absolute",
             width: "100%",
             alignItems: "center",
-            flexDirection: "row",
-            //  backgroundColor: "red",
+            flexDirection: "row", 
             height: "100%",
           }}
         >
@@ -64,16 +63,13 @@ const TopBarLikeMinusWidth = ({
             style={{
               alignItems: "center",
               position: "absolute",
-              width: "100%",
-              // backgroundColor: "orange",
+              width: "100%", 
               justifyContent: "center",
             }}
           >
             <SvgIcon
               name={"chevron_up"}
-              size={16}
-              //   color={manualGradientColors.homeDarkColor}
-              // color={themeStyles.primaryText.color}
+              size={16} 
               color={"transparent"}
               style={{
                 position: "absolute",
@@ -97,13 +93,10 @@ const TopBarLikeMinusWidth = ({
             hitSlop={10}
             style={{
               borderRadius: 999,
-              padding: 4,
-              //backgroundColor:
-              // themeStyles.overlayBackgroundColor.backgroundColor,
+              padding: 4, 
               alignItems: "center",
               justifyContent: "center",
-            }}
-            //   onPress={navigateBack}
+            }} 
             onPress={navigateBack}
           >
             <SvgIcon
