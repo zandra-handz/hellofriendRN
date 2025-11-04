@@ -28,8 +28,7 @@ const CarouselSliderMoments = ({
   children: Children,
   onRightPress,
   onRightPressSecondAction,
-  friendNumber,
-  // footerData,
+  friendNumber, 
 
 }: Props) => {
   const { height, width } = useWindowDimensions();

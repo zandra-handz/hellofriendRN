@@ -20,6 +20,7 @@ import BookmarkSvg from "./svgs/bookmark";
 import EyeSvg from "./svgs/eye";
 import EyeClosedSvg from "./svgs/eye-closed";
 import DeleteSvg from "./svgs/delete";
+import HandPointingRightSvg from "./svgs/hand-pointing-right";
 import LeafSvg from "./svgs/leaf";
 import CalendarClockSvg from "./svgs/calendar-clock";
 import CalendarSvg from "./svgs/calendar";
@@ -98,9 +99,10 @@ const svgIcons = {
   check: CheckSvg,
   close_outline: CloseOutlineSvg,
   compare: CompareSvg,
-  comment_search_outline: CommentSearchOutlineSvg,
+  comment_search_outline: CommentSearchOutlineSvg, 
   eye: EyeSvg,
   eye_closed: EyeClosedSvg,
+  hand_pointing_right: HandPointingRightSvg,
   palette: PaletteSvg,
   pen: PenSvg,
   pencil: PencilSvg, // hello quick view

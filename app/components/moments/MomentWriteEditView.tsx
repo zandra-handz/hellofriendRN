@@ -1,12 +1,13 @@
-import { useMemo, useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
-  Pressable,
+  StyleSheet,
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
 import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
@@ -109,20 +110,24 @@ const MomentWriteEditView = ({
     }, [momentText])
   );
 
-  useEffect(() => {
-    if (friendId) {
-      console.log("callback triggering refocus");
-      handleTriggerRefocus();
-    }
-  }, [friendId]);
-
   const handleTriggerRefocus = () => {
     // console.log("handletrifgger refocus");
     setTriggerReFocus(Date.now());
   };
 
-  const handleCloseCatCreator = () => {
+  // friendId didn't work to bring keyboard up after selecting friend so am using this instead
+  useFocusEffect(
+    useCallback(() => {
+      handleTriggerRefocus();
+      console.log("trigger refocus");
 
+      return () => {
+        console.log("Screen is unfocused");
+      };
+    }, [])
+  );
+
+  const handleCloseCatCreator = () => {
     handleCloseCat();
     closeCatCreator();
     handleTriggerRefocus();
@@ -285,17 +290,7 @@ const MomentWriteEditView = ({
 
   // keep this consistent with MomentViewPage
   return (
-    <TouchableWithoutFeedback
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
-        width: "100%",
-
-        //padding: 4,
-      }}
-      onPress={() => {}}
-    >
+    <TouchableWithoutFeedback style={styles.container} onPress={() => {}}>
       <View style={{ flex: 1 }}>
         <CategoryCreator
           userId={userId}
@@ -327,32 +322,12 @@ const MomentWriteEditView = ({
             },
           ]}
         >
-          <View
-            style={[
-              {
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                flex: 1,
-                flexGrow: 1,
-                width: "100%",
-                zIndex: 1,
-              },
-            ]}
-          >
+          <View style={styles.innerContainer}>
             <View
-              style={{
-                // padding: 10,
-                // paddingHorizontal: INNER_PADDING_HORIZONTAL,
-                borderRadius: 40,
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                width: "100%",
-                flex: 1,
-                zIndex: 1,
-                overflow: "hidden",
+              style={[styles.card, { 
                 backgroundColor: darkGlassBackground,
-              }}
-            > 
+              }]}
+            >
               <MomentFocusTray
                 userId={userId}
                 userDefaultCategory={defaultCategory}
@@ -369,7 +344,6 @@ const MomentWriteEditView = ({
                 }
                 updateExistingMoment={updateExistingMoment}
                 freezeCategory={userChangedCategory}
-
                 onPress={handleOpenCat}
                 label={selectedCategory}
                 categoryId={selectedUserCategory}
@@ -410,5 +384,34 @@ const MomentWriteEditView = ({
     </TouchableWithoutFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    width: "100%",
+  },
+  innerContainer: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    flex: 1,
+    flexGrow: 1,
+    width: "100%",
+    zIndex: 1,
+  },
+  card: {
+    borderRadius: 40,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    width: "100%",
+    flex: 1,
+    zIndex: 1,
+    overflow: "hidden",
+  },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default MomentWriteEditView;

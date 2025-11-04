@@ -61,8 +61,7 @@ const textColor = useMemo(() => {
     const isSelected = Number(selectedId) === Number(itemId);
     if (isSelected) {
       startColor.value = highlightColor;
-      endColor.value = primaryColor || "red";
-      // textColor.value = manualGradientColors.homeDarkColor;
+      endColor.value = primaryColor || "red"; 
 
       progress.value = withRepeat(
         withTiming(1, { duration: pulseDuration }),
@@ -101,8 +100,8 @@ const textColor = useMemo(() => {
     );
 
     return {
-      backgroundColor, 
-      borderWidth: 1,
+      // backgroundColor, 
+      borderWidth: 2,
       borderColor: backgroundColor,
       transform: [ 
         { scale: scaleValue.value },

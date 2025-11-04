@@ -2,10 +2,7 @@ import { View } from "react-native";
 import React from "react"; 
 import SwitchFriend from "@/app/components/home/SwitchFriend";
 import { AppFontStyles } from "@/app/styles/AppFonts";
- 
-// import { useFriendDash } from "@/src/context/FriendDashContext";
- 
-// import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+  
 type Props = {
   updateExistingMoment: boolean;
   paddingTop: number;
@@ -17,10 +14,9 @@ type Props = {
 };
 
 const ImageFocusTray = ({
-  // userId,
-  // friendId,
  
-  themeColors,
+ lighterOverlayColor,
+ friendName,
   primaryColor, 
 }: Props) => {
   const ICON_SIZE = 16;
@@ -69,6 +65,8 @@ const ImageFocusTray = ({
           <>
             <View style={{ paddingRight: 30 }}>
               <SwitchFriend
+              lighterOverlayColor={lighterOverlayColor}
+              nameLabel={friendName}
                 primaryColor={primaryColor}
                 welcomeTextStyle={welcomeTextStyle}
                 maxWidth={"100%"}

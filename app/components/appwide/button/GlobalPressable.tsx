@@ -84,9 +84,11 @@ const GlobalPressable = ({
       <Animated.View
         onLayout={onLayout}
         style={[
-          style,
+          // style,
           animatedStyle,
           {
+            flex: 1,
+            width: '100%',
             justifyContent: "center",
             alignItems: "center",
           },

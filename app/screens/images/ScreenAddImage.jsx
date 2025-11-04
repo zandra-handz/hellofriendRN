@@ -114,6 +114,7 @@ const ScreenAddImage = () => {
           friendName={selectedFriend?.name}
           primaryColor={lightDarkTheme.primaryText}
           darkerOverlayColor={lightDarkTheme.darkerOverlayColor}
+          lighterOverlayColor={lightDarkTheme.lighterOverlayColor}
                       themeColors={{
               lightColor: selectedFriend.lightColor,
               darkColor: selectedFriend.darkColor,

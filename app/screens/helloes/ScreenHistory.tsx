@@ -25,8 +25,8 @@ const ScreenHistory = (props: Props) => {
   return (
     <>
       <SafeViewAndGradientBackground
-        friendColorLight={selectedFriend.lightColor}
-        friendColorDark={selectedFriend.darkColor}
+        friendColorLight={selectedFriend?.lightColor}
+        friendColorDark={selectedFriend?.darkColor}
         backgroundOverlayColor={lightDarkTheme.primaryBackground}
         friendId={selectedFriend?.id}
         backgroundOverlayHeight={"120%"}
@@ -52,13 +52,7 @@ const ScreenHistory = (props: Props) => {
         </View>
 
         <View
-          style={{
-            width: "100%",
-            height: 100,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "space-around",
-          }}
+          style={styles.outerPieWrapper}
         >
           <FriendHistoryPieDataWrap
             userId={user?.id}
@@ -135,6 +129,13 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     height: "auto",
     marginVertical: 0,
+  },
+  outerPieWrapper: {
+    width: "100%",
+    height: 100,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
 });
 

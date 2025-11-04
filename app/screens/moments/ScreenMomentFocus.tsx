@@ -1,5 +1,4 @@
-import React, { useState, useEffect  } from "react";
-import {   Keyboard } from "react-native";
+import React, { useState, useEffect  } from "react"; 
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
@@ -88,8 +87,6 @@ const ScreenMomentFocus = () => {
       includeBackgroundOverlay={catCreatorVisible}
       styles={{ flex: 1 }}
     >
-  
-
     
         <Animated.View 
           style={{

@@ -1,4 +1,4 @@
-// import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+ 
 import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -9,11 +9,10 @@ import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
 import manualGradientColors  from "@/app/styles/StaticColors";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
  
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-// import { useFriendList } from "@/src/context/FriendListContext";
-// import { useHelloes } from "@/src/context/HelloesContext";
+ 
 import useHelloes from "@/src/hooks/useHelloes";
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

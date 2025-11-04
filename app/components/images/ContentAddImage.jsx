@@ -17,11 +17,13 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 const ContentAddImage = ({
   userId,
   friendId,
+  friendName,
  
   cardPaddingVertical, 
   themeColors,
   primaryColor,
   darkerOverlayColor,
+  lighterOverlayColor,
   imageUri,
   escortBarSpacer,
  
@@ -34,7 +36,7 @@ const ContentAddImage = ({
   
   const INNER_PADDING_HORIZONTAL = 20;
 
-  const TOPPER_PADDING_TOP = 0;
+ 
 
   const [imageTitle, setImageTitle] = useState("");
   const [imageCategory, setImageCategory] = useState("Misc");
@@ -178,6 +180,8 @@ const ContentAddImage = ({
               }}
             >
               <ImageFocusTray
+              lighterOverlayColor={lighterOverlayColor}
+              friendName={friendName}
               themeColors={themeColors} 
                 primaryColor={primaryColor}
               />

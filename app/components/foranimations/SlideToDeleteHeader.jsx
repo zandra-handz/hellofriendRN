@@ -7,13 +7,13 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native"; 
-import DragRightThickOutlineSvg from "@/app/assets/svgs/drag-right-thick-outline.svg";
-
+ 
+import SvgIcon from "@/app/styles/SvgIcons";
 const SlideToDeleteHeader = ({
   paddingHorizontal=6,
   onPress,
   itemToDelete,
-  sliderText = "DELETE?",
+  sliderText = "Delete?",
   sliderTextColor = 'black',
   sliderColor = "red",
   targetIcon: TargetIcon,
@@ -113,9 +113,9 @@ const SlideToDeleteHeader = ({
           </Text>
 
           <View style={{ paddingHorizontal: 10}}>
-            <DragRightThickOutlineSvg
-              height={18}
-              width={18}
+            <SvgIcon
+            name={"hand_pointing_right"}
+            size={22} 
               color={isDragging ? "white" : sliderTextColor}
             />
           </View>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   sliderText: {
     fontSize: 12,
-    fontWeight: "bold",
+   // fontWeight: "bold",
   },
   iconContainer: {
     position: "absolute",

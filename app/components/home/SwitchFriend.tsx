@@ -1,10 +1,8 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React from "react";  
-import SvgIcon from "@/app/styles/SvgIcons";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import React from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { AppFontStyles } from "@/app/styles/AppFonts";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   fontSize: number;
@@ -17,88 +15,85 @@ type Props = {
 
 //similar to topbar but has its own spinner instead of centering based on parent component
 const SwitchFriend = ({
- 
-  
-  primaryColor = 'orange',
+  nameLabel = "",
+  primaryColor = "orange",
+  lighterOverlayColor = 'red',
   fontSize = 13,
   editMode = false,
-  iconSize = 20,
   maxWidth = 100,
   zIndex = 3,
 }: Props) => {
-  const { selectedFriend } = useSelectedFriend();
+  const { navigateToSelectFriend } = useAppNavigations();
  
-
-  const { navigateToSelectFriend} = useAppNavigations();
 
   const handleNavigateToFriendSelect = () => {
     if (editMode) {
-      navigateToSelectFriend({useNavigateBack: true})
+      navigateToSelectFriend({ useNavigateBack: true });
     } else {
       return;
     }
-  }; 
+  };
 
   return (
     <>
       <GlobalPressable
         zIndex={zIndex}
-        style={{
-          paddingHorizontal: 0,
-          maxWidth: editMode ? maxWidth : maxWidth,
-        }}
+        style={[styles.container, { borderColor: lighterOverlayColor }]}
         onPress={handleNavigateToFriendSelect}
-        // style={{ flexDirection: "row" }}
       >
-        <View style={{ flexDirection: "row" }}>
-          {editMode && (
-            <View
-              style={{
-                flexDirection: "column",
-                marginRight: 4,
-                paddingBottom: 6, // EYEBALL, same as selectedcategorybutton
-                justifyContent: "flex-end",
-              }}
-            >
-              <SvgIcon
-                name={"pencil_outline"}
-                size={iconSize}
-                style={{ height: iconSize }}
-                color={primaryColor}
-              />
-            </View>
-          )}
-
-<Text
-  numberOfLines={1}
-  ellipsizeMode="tail"
-  style={[
-    AppFontStyles.welcomeText,
-    {
-      zIndex: 2,
-      color: primaryColor,
-      fontSize: fontSize,
-      maxWidth: editMode ? maxWidth : maxWidth,
-    },
-  ]}
->
-  {selectedFriend?.name
-    ? selectedFriend.name.length > 12
-      ? `${selectedFriend.name.slice(0, 12)}...`
-      : selectedFriend.name
-    : "Pick friend"}
-</Text>
-
- 
-        </View>
-        {editMode && (
+        <View>
           <View
-            style={{ height: 2, backgroundColor: "red", width: "100%" }}
-          ></View>
-        )}
+            style={styles.topRowWrapper}
+          > <SvgIcon name={'account'} size={10} color={primaryColor} /></View>
+
+          <View style={{ flexDirection: "row" }}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[
+                {
+                  zIndex: 2,
+                  color: primaryColor,
+                  fontSize: fontSize,
+                  maxWidth: editMode ? maxWidth : maxWidth,
+                },
+              ]}
+            >
+              {nameLabel
+                ? nameLabel.length > 12
+                  ? `${nameLabel.slice(0, 12)}...`
+                  : nameLabel
+                : "Pick friend"}
+            </Text>
+          </View>
+        </View>
       </GlobalPressable>
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 8,
+    paddingHorizontal: 18,
+    paddingTop: 3,
+    height: 40,
+    borderWidth: 0.8,
+    borderRadius: 999,
+    width: "100%",
+    flexDirection: "column",
+  },
+    topRowWrapper: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    width: "100%",
+    height: 10,
+    flex: 1.
+  },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default SwitchFriend;

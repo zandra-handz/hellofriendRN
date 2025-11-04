@@ -1,11 +1,17 @@
-import { View, Text, DimensionValue, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  DimensionValue,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { AppFontStyles } from "@/app/styles/AppFonts";
- 
+
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   SharedValue,
@@ -75,15 +81,7 @@ const MomentViewPage: React.FC<Props> = ({
     return (
       <GlobalPressable
         onPress={toggleUtilityTray}
-        style={{
-          padding: 4,
-          paddingHorizontal: 2,
-          width: 'auto',
-
-          alignItems: "center",
-          //  backgroundColor: darkerOverlayColor,
-          borderRadius: 999,
-        }}
+        style={styles.trayTogglerContainer}
       >
         <SvgIcon
           name={!utilityTrayVisible ? "eye" : "eye_closed"}
@@ -119,9 +117,7 @@ const MomentViewPage: React.FC<Props> = ({
   }));
 
   const renderTrashIcon = () => {
-    return (
-      <SvgIcon name={"delete"} size={20} color={textColor} />
-    );
+    return <SvgIcon name={"delete"} size={20} color={textColor} />;
   };
 
   const handleEditMoment = () => {
@@ -150,8 +146,7 @@ const MomentViewPage: React.FC<Props> = ({
     }
   };
 
-  const handleDelete = (item) => {
-    // console.log("handle delete moment in navigator triggered: ", item);
+  const handleDelete = (item) => { 
     try {
       const momentData = {
         friend: friendId,
@@ -168,14 +163,9 @@ const MomentViewPage: React.FC<Props> = ({
   return (
     <Animated.View
       style={[
+        styles.container,
         cardScaleAnimation,
         {
-          gap: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "transparent",
-          padding: 6,
-          borderWidth: 0,
           width: width,
         },
       ]}
@@ -190,36 +180,15 @@ const MomentViewPage: React.FC<Props> = ({
       >
         <View
           style={[
+            styles.innerContainer,
             {
-              padding: 20,
-              borderRadius: 40,
-             // borderRadius: 12,
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              flex: 1,
               marginBottom: marginBottom,
-              zIndex: 1,
-              overflow: "hidden",
-              // backgroundColor: darkerOverlayColor,
+
               backgroundColor: darkGlassBackground,
             },
           ]}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              //  height: 30,
-              height: "auto",
-              flexGrow: 1,
-              flexWrap: "wrap",
-              alignItems: "top",
-              paddingTop: 6, // WEIRD EYEBALLIN
-              justifyContent: "space-between",
-              //  flex: 1,
-              width: "100%",
-            }}
-          > 
-
+          <View style={styles.categoryHeaderContainer}>
             <Text
               style={[
                 welcomeTextStyle,
@@ -247,63 +216,34 @@ const MomentViewPage: React.FC<Props> = ({
                 {item.capsule}
               </Text>
             </ScrollView>
-            <View
-              style={{
-                width: "100%",
-                height: "auto",
-                // backgroundColor: "orange",
-                justifyContent: "center",
-                position: "absolute",
-                flexDirection: "column",
-                bottom: 0,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  right: 0,
-                  bottom: 10,
-                }}
-              >
+            <View style={styles.bottomUtilitiesContainer}>
+              <View style={styles.trayTogglerWrapper}>
                 {renderTrayToggler()}
               </View>
 
               {utilityTrayVisible && (
                 <>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginBottom: 20,
-                      justifyContent: "flex-end",
-                    }}
-                  >
+                  <View style={styles.saveButtonWrapper}>
                     <GlobalPressable
-                    onPress={saveToHello}
-                      style={{
-                        padding: 2,
-                        borderRadius: 999,
-                        backgroundColor: manualGradientColors.lightColor,
-                      }}
+                      onPress={saveToHello}
+                      style={[
+                        styles.saveButtonStyle,
+                        {
+                          backgroundColor: manualGradientColors.lightColor,
+                        },
+                      ]}
                     >
                       <SvgIcon
-                        name={"plus_circle"} 
+                        name={"plus_circle"}
                         size={20}
                         color={lighterOverlayColor}
                         color={manualGradientColors.darkColor}
                       />
                     </GlobalPressable>
                   </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginBottom: 12,
-                      justifyContent: "flex-end",
-                    }}
-                  >
+                  <View style={styles.editButtonWrapper}>
                     <GlobalPressable
-                    // onPress={handleEditMoment}
-                         onPress={handleEditMoment}
+                      onPress={handleEditMoment}
                       style={{
                         padding: 2,
                         borderRadius: 999,
@@ -312,16 +252,16 @@ const MomentViewPage: React.FC<Props> = ({
                       }}
                     >
                       <SvgIcon
-                        name={"pencil"} 
+                        name={"pencil"}
                         size={20}
                         color={lighterOverlayColor}
                         color={categoryColor}
                       />
                     </GlobalPressable>
                   </View>
-                  <View style={{ flexDirection: "row", height: 40 }}>
+                  <View style={styles.deleteSliderWrapper}>
                     <SlideToDeleteHeader
-                    paddingHorizontal={6}
+                      paddingHorizontal={6}
                       itemToDelete={item}
                       onPress={handleDelete}
                       sliderWidth={"100%"}
@@ -334,16 +274,80 @@ const MomentViewPage: React.FC<Props> = ({
             </View>
           </View>
         </View>
-        {/* <SlideToDeleteHeader
-          itemToDelete={item}
-          onPress={handleDelete}
-          sliderWidth={"100%"}
-          targetIcon={TrashOutlineSvg}
-          sliderTextColor={textColor}
-        /> */}
       </View>
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    padding: 6,
+    borderWidth: 0,
+  },
+  innerContainer: {
+    padding: 20,
+    borderRadius: 40,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    flex: 1,
+    zIndex: 1,
+    overflow: "hidden",
+  },
+  bottomUtilitiesContainer: {
+    width: "100%",
+    height: "auto",
+    justifyContent: "center",
+    position: "absolute",
+    flexDirection: "column",
+    bottom: 0,
+  },
+  categoryHeaderContainer: {
+    flexDirection: "row",
+    flexGrow: 1,
+    flexWrap: "wrap",
+    alignItems: "top",
+    paddingTop: 6, // WEIRD EYEBALLIN
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  trayTogglerWrapper: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    right: 0,
+    bottom: 10,
+  },
+  trayTogglerContainer: {
+    padding: 4,
+    paddingHorizontal: 2,
+    width: "auto",
+    alignItems: "center",
+    borderRadius: 999,
+  },
+  editButtonWrapper: {
+    flexDirection: "row",
+    marginBottom: 12,
+    justifyContent: "flex-end",
+  },
+  saveButtonWrapper: {
+    flexDirection: "row",
+    marginBottom: 20,
+    justifyContent: "flex-end",
+  },
+  saveButtonStyle: {
+    padding: 2,
+    borderRadius: 999,
+  },
+  deleteSliderWrapper: {
+    flexDirection: "row",
+    height: 40,
+  },
+
+  labelWrapper: {},
+  label: {},
+});
 
 export default MomentViewPage;

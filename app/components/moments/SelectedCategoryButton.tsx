@@ -1,8 +1,8 @@
-import { View, Text } from "react-native";
-import React, { useEffect, useState, useRef  } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
- 
+
 import SvgIcon from "@/app/styles/SvgIcons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
@@ -12,7 +12,7 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 type Props = {
   userChangedCategory: boolean;
- 
+
   categoryId: number;
   freezeCategory: RefObject<boolean>;
   label: string;
@@ -20,23 +20,22 @@ type Props = {
   fontSizeEditMode: number;
   onPress: () => void;
   editMode: boolean;
- 
+
   iconSize: number;
 };
 
 const SelectedCategoryButton = ({
- 
   userId,
   userDefaultCategory,
- 
+
   themeColors,
   primaryColor,
   primaryBackground,
-  lighterOverlayColor, 
+  lighterOverlayColor,
   friendId,
   friendName,
   friendDefaultCategory,
- 
+
   categoryId,
   freezeCategory,
 
@@ -44,13 +43,12 @@ const SelectedCategoryButton = ({
   fontSize = 24,
   fontSizeEditMode = 16,
   onPress,
-  editMode=true, 
-  iconSize = 20,
+  editMode = true,
+ 
 }: Props) => {
   const { userCategories } = useCategories();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const welcomeTextStyle = AppFontStyles.welcomeText;
   const { handleUpdateDefaultCategory, updateFriendDefaultCategoryMutation } =
     useUpdateDefaultCategory({ userId: userId, friendId: friendId });
 
@@ -86,7 +84,7 @@ const SelectedCategoryButton = ({
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
-   
+
       handleMakeFriendDefault();
       showFlashMessage(`Category pinned!`, false, 1000);
       setLastPress(null);
@@ -106,88 +104,48 @@ const SelectedCategoryButton = ({
     setDetailsModalVisible(true);
   };
 
-
-    const handleCloseModal = () => {
+  const handleCloseModal = () => {
     setDetailsModalVisible(false);
-
   };
 
   return (
     <>
       <GlobalPressable
         zIndex={3}
-        style={{
-          paddingHorizontal: 0,
-          width: '100%',
-        }}
+        style={[styles.container, { borderColor: lighterOverlayColor}]}
         onPress={handleOnPress}
         onLongPress={handleLongPress}
       >
-        <View style={{ flexDirection: "row" }}>
-          {editMode && (
-            <View
-              style={{
-                flexDirection: "column",
-
-                marginRight: 4,
-                paddingBottom: 6, // EYEBALL
-                justifyContent: "flex-end",
-              }}
-            >
-              <SvgIcon
-                name={"pencil"}
-                size={iconSize}
-                style={{ height: iconSize }}
-                color={primaryColor}
-              />
-            </View>
-          )}
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={[
-              welcomeTextStyle,
-              {
-                zIndex: 2,
-                color: primaryColor,
-                fontSize: editMode ? fontSizeEditMode : fontSize,
-                width: '100%'
-              },
-            ]}
-          >
-            {label ? label : `Pick category`}
-          </Text>
+        <View>
           <View
-            style={{
-              flexDirection: "row",
-              marginRight: 4,
-              paddingBottom: 6, // EYEBALL
-              justifyContent: "flex-end",
-            }}
+            style={styles.topRowWrapper}
           >
             {isFriendDefault && (
-              <SvgIcon
-                name={"star"}
-                size={16}
-                style={{ height: 20 }}
-                color={primaryColor}
-              />
+              <SvgIcon name={"star"} size={12} color={primaryColor} />
             )}
             {isFrozen && (
-              <SvgIcon
-                name={"pin"}
-                size={16}
-                style={{ height: 20 }}
-                color={primaryColor}
-              />
+              <SvgIcon name={"pin"} size={12} color={primaryColor} />
             )}
           </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[
+                // welcomeTextStyle,
+                {
+                  zIndex: 2,
+                  color: primaryColor,
+                  fontSize: editMode ? fontSizeEditMode : fontSize,
+                  width: "100%",
+                },
+              ]}
+            >
+              {label ? label : `Pick category`}
+            </Text>
+            
+          </View>
         </View>
-        {editMode && (
-          <View
-            style={{ height: 2, backgroundColor: "red", width: "100%" }}
-          ></View>
-        )}
       </GlobalPressable>
       {detailsModalVisible && (
         <View>
@@ -201,18 +159,42 @@ const SelectedCategoryButton = ({
             primaryBackground={primaryBackground}
             subWelcomeTextStyle={subWelcomeTextStyle}
             friendDefaultCategory={friendDefaultCategory}
-            themeColors={themeColors} 
+            themeColors={themeColors}
             isVisible={detailsModalVisible}
             closeModal={handleCloseModal}
             categoryId={categoryId}
             userCategories={userCategories}
-      
           />
         </View>
       )}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 8,
+    paddingHorizontal: 18,
+    paddingTop: 3,
+    // flex: 1,
+    height: 40,
+
+    borderWidth: 0.8,
+    borderRadius: 999,
+    width: "100%",
+    flexDirection: "column",
+  },
+  topRowWrapper: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    width: "100%",
+    height: 10,
+  },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 //export default SelectedCategoryButton;
 

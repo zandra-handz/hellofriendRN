@@ -1,37 +1,28 @@
-import { Pressable } from "react-native";
-import React from "react"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import manualGradientColors  from "@/app/styles/StaticColors";
+import { Pressable, StyleSheet } from "react-native";
+import React from "react";
+import SvgIcon from "@/app/styles/SvgIcons";
+import manualGradientColors from "@/app/styles/StaticColors";
 interface Colors {
   lightColor: string;
   homeDarkColor: string;
 }
 
-type Props = { 
+type Props = {
   onPress: () => void;
-  iconName?: string;
+  iconName?: string; 
+  rounded: boolean;
 };
 
-const ActionAndBack = ({
- 
-  onPress,
-  iconName = "check",
-}: Props) => {
+const ActionAndBack = ({ onPress, iconName = "check", rounded=false }: Props) => {
   return (
     <Pressable
-      style={{
-        width: "auto",
-        height: 38,
-        paddingHorizontal: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 5,
-
+      style={[ styles.container, { 
         backgroundColor: manualGradientColors.lightColor,
-      }}
+        borderRadius: rounded? 999 : 5, // remove conditional check if we can make all of them rounded
+      }]}
       onPress={onPress}
     >
-      <MaterialCommunityIcons
+      <SvgIcon
         name={`${iconName}`}
         size={25}
         color={manualGradientColors.homeDarkColor}
@@ -39,5 +30,20 @@ const ActionAndBack = ({
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "auto",
+    height: 38,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
+  },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default ActionAndBack;

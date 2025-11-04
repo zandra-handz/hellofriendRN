@@ -201,8 +201,7 @@ const CategoryCreator = ({
                 style={[styles.buttonWrapper, { marginRight: 10 }]}
               >
                 <CategoryButtonForCreator
-                  primaryColor={primaryColor}
-                  manualGradientColors={manualGradientColors}
+                  primaryColor={primaryColor} 
                   height={"auto"}
                   selectedId={selectedId}
                   label={name}
@@ -281,8 +280,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingVertical: 0,
     paddingHorizontal: 4,
-  },
-  //brought down from global context
+  }, 
 
   categoryNavigatorContainer: {
     position: "absolute",

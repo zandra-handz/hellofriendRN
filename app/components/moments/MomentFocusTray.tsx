@@ -17,6 +17,10 @@ type Props = {
   label: string;
   categoryId: number;
   friendId: number;
+  friendName: string;
+  userId: number;
+  userDefaultCategory: number;
+
 };
 
 const MomentFocusTray = ({
@@ -29,6 +33,7 @@ const MomentFocusTray = ({
   lighterOverlayColor,
   navigateBack,
   capsuleList,
+ 
 
   updateExistingMoment,
   freezeCategory,
@@ -72,8 +77,10 @@ const MomentFocusTray = ({
 
         {!loadingDash && (
           <>
-            <View style={{ paddingRight: 0 }}>
+          <View style={{ maxWidth: "80%" }}>
               <SwitchFriend
+              lighterOverlayColor={lighterOverlayColor}
+              nameLabel={friendName}
                 primaryColor={primaryColor}
                 welcomeTextStyle={welcomeTextStyle}
                 maxWidth={"100%"}
@@ -82,7 +89,7 @@ const MomentFocusTray = ({
                 iconSize={ICON_SIZE}
               />
             </View>
-            <View style={{ maxWidth: "25%" }}>
+            <View style={{ maxWidth: "35%", flexShrink: 1 }}>
               <SelectedCategoryButton
                 userId={userId}
                 friendId={friendId}
@@ -106,7 +113,7 @@ const MomentFocusTray = ({
           </>
         )}
         <View style={styles.saveButtonWrapper}>
-          <ActionAndBack onPress={handleSave} />
+          <ActionAndBack onPress={handleSave} rounded={true} />
         </View>
       </View>
     </View>
@@ -121,6 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     paddingHorizontal: 10,
+    marginVertical: 10,
   },
   innerContainer: {
     width: "100%",
