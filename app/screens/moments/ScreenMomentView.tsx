@@ -9,51 +9,69 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
-import { useCategories } from "@/src/context/CategoriesContext";
+// import { useCategories } from "@/src/context/CategoriesContext";
 // import useCategories from "@/src/hooks/useCategories";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+// import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 import SvgIcon from "@/app/styles/SvgIcons";
+// import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
+import { useCategoryColors } from "@/src/context/CategoryColorsContext";
+
 const ScreenMomentView = () => {
   const route = useRoute();
   const currentIndex = route.params?.index ?? null;
 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const { userCategories } = useCategories();
+  // const { userCategories } = useCategories();
   // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
+  const { categoryColors, handleSetCategoryColors} = useCategoryColors();
 
   const { preAddMomentMutation } = usePreAddMoment({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
 
-  const { friendDash, loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
-
-  const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
-  const { generateGradientColorsMap } = useMomentSortingFunctions({
-    listData: capsuleList,
+  const { friendDash, loadingDash } = useFriendDash({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
   });
 
-  const categoryColorsMap = useMemo(() => {
-    if (
-      userCategories?.length > 0 &&
-      selectedFriend?.lightColor &&
-      selectedFriend?.darkColor
-    ) {
-      return generateGradientColorsMap(
-        userCategories,
-        selectedFriend.lightColor,
-        selectedFriend.darkColor
-      );
-    }
-    return null;
-  }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
+  const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
+
+  
+const categoryColorsMap = useMemo(() => {
+  if (!categoryColors || !Array.isArray(categoryColors)) {
+    // fallback to empty object if data is not ready
+    return {};
+  }
+
+  return Object.fromEntries(
+    categoryColors.map(({ user_category, color }) => [user_category, color])
+  );
+}, [categoryColors]);
+
+ 
+
+  // const categoryColorsMap = useMemo(() => {
+  //   if (
+  //     userCategories?.length > 0 &&
+  //     selectedFriend?.lightColor &&
+  //     selectedFriend?.darkColor
+  //   ) {
+  //     return generateGradientColorsMap(
+  //       userCategories,
+  //       selectedFriend.lightColor,
+  //       selectedFriend.darkColor
+  //     );
+  //   }
+  //   return null;
+  // }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
   useEffect(() => {
     if (preAddMomentMutation.isSuccess) {
@@ -74,44 +92,64 @@ const ScreenMomentView = () => {
       <View style={StyleSheet.absoluteFillObject}>
         <GradientBackgroundBreathing
           secondColorSetDark={selectedFriend.lightColor}
-          secondColorSetLight={selectedFriend.darkColor} 
+          secondColorSetLight={selectedFriend.darkColor}
           firstColorSetDark={selectedFriend.lightColor}
-          firstColorSetLight={selectedFriend.darkColor} 
+          firstColorSetLight={selectedFriend.darkColor}
           timeScore={TIME_SCORE}
           speed={3000}
-          style={{ flexDirection: "column", justifyContent: "flex-end" }}
+          style={styles.gradientBreathingStyle}
           direction={"vertical"}
         ></GradientBackgroundBreathing>
       </View>
-      <View style={{ position: "absolute", top: -170, left: -300 }}>
+      <View style={styles.leafWrapper}>
         <SvgIcon
           name={"leaf"}
-          size={1000} 
+          size={1000}
           color={selectedFriend.lightColor}
-          style={{ 
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            zindex: 4000, 
-            position: "absolute",
-            opacity: 0.6, 
-          }}
+          style={styles.leaf}
         />
       </View>
 
-      {selectedFriend?.id && !loadingDash && capsuleList?.length && categoryColorsMap && (
-        <CarouselSliderMoments
-          lightDarkTheme={lightDarkTheme}
-          userId={user?.id}
-          friendId={selectedFriend?.id}
-          initialIndex={currentIndex}
-          categoryColorsMap={categoryColorsMap}
-          data={capsuleList}
-          children={MomentViewPage}
-          friendNumber={phoneNumber}
-        />
-      )}
+      {selectedFriend?.id &&
+        !loadingDash &&
+        capsuleList?.length &&
+        categoryColorsMap && (
+          <CarouselSliderMoments
+            lightDarkTheme={lightDarkTheme}
+            userId={user?.id}
+            friendId={selectedFriend?.id}
+            initialIndex={currentIndex}
+            categoryColorsMap={categoryColorsMap}
+            data={capsuleList}
+            children={MomentViewPage}
+            friendNumber={phoneNumber}
+          />
+        )}
     </SafeViewAndGradientBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  gradientBreathingStyle: {
+    flexDirection: "column",
+    justifyContent: "flex-end",
+  },
+  leafWrapper: {
+    position: "absolute",
+    top: -170,
+    left: -300,
+  },
+  leaf: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    zindex: 4000,
+    position: "absolute",
+    opacity: 0.6,
+  },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default ScreenMomentView;

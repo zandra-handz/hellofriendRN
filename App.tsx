@@ -55,6 +55,7 @@ import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 // import { FriendDashProvider } from "./src/context/FriendDashContext";
 // import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
+import { CategoryColorsProvider } from "./src/context/CategoryColorsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import * as Notifications from "expo-notifications";
@@ -222,9 +223,10 @@ export default Sentry.wrap(function App() {
                   <SelectedFriendProvider>
                     <CapsuleListProvider>
                       {/* <FriendDashProvider> */}
-                        <GestureHandlerRootView style={{ flex: 1 }}>
-                          <SafeAreaProvider>
-                            <LDThemeProvider>
+                      <GestureHandlerRootView style={{ flex: 1 }}>
+                        <SafeAreaProvider>
+                          <LDThemeProvider>
+                            <CategoryColorsProvider>
                               <RootSiblingParent>
                                 <DeviceLocationProvider>
                                   <Layout
@@ -233,9 +235,10 @@ export default Sentry.wrap(function App() {
                                   />
                                 </DeviceLocationProvider>
                               </RootSiblingParent>
-                            </LDThemeProvider>
-                          </SafeAreaProvider>
-                        </GestureHandlerRootView>
+                            </CategoryColorsProvider>
+                          </LDThemeProvider>
+                        </SafeAreaProvider>
+                      </GestureHandlerRootView>
                       {/* </FriendDashProvider> */}
                     </CapsuleListProvider>
                   </SelectedFriendProvider>

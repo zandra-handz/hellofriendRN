@@ -34,7 +34,7 @@ type Props = {
 };
 
 const Donut = ({
-  iconColor,
+  iconColor, 
 
   darkerOverlayBackgroundColor,
   onCategoryPress,
@@ -266,7 +266,7 @@ const Donut = ({
         ]}
       >
         <DonutChart
-          // animatedLeaves={animatedLeaves}
+          // animatedLeaves={animatedLeaves} 
           animatedLeaves={leafPositionsCombined}
           positions={positions}
           totalJS={totalJS}

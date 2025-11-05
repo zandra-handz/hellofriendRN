@@ -11,6 +11,7 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
+import { useCategoryColors } from "@/src/context/CategoryColorsContext";
 
 type Props = {
   userId: number;
@@ -34,7 +35,7 @@ const CategoryCreator = ({
   friendLightColor,
   friendDarkColor,
   capsuleList,
- 
+
   onPress,
   addToOnPress,
   updatingExisting,
@@ -44,7 +45,21 @@ const CategoryCreator = ({
 
   onClose,
 }: Props) => {
- 
+  const { categoryColors, handleSetCategoryColors } = useCategoryColors();
+
+
+    
+  const categoryColorsMap = useMemo(() => {
+    if (!categoryColors || !Array.isArray(categoryColors)) {
+      // fallback to empty object if data is not ready
+      return {};
+    }
+  
+    return Object.fromEntries(
+      categoryColors.map(({ user_category, color }) => [user_category, color])
+    );
+  }, [categoryColors]);
+  
 
   const animatedYTranslateStyle = useAnimatedStyle(() => {
     return {
@@ -58,16 +73,16 @@ const CategoryCreator = ({
     listData: capsuleList,
   });
 
-  const categoryColorsMap = useMemo(() => {
-    if (userCategories?.length && friendLightColor && friendDarkColor) {
-      return generateGradientColorsMap(
-        userCategories,
-        friendLightColor,
-        friendDarkColor
-      );
-    }
-    return null;
-  }, [userCategories, friendLightColor, friendDarkColor]);
+  // const categoryColorsMap = useMemo(() => {
+  //   if (userCategories?.length && friendLightColor && friendDarkColor) {
+  //     return generateGradientColorsMap(
+  //       userCategories,
+  //       friendLightColor,
+  //       friendDarkColor
+  //     );
+  //   }
+  //   return null;
+  // }, [userCategories, friendLightColor, friendDarkColor]);
 
   const [selectedId, setSelectedId] = useState(null);
   const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>(
@@ -151,11 +166,10 @@ const CategoryCreator = ({
     }
 
     if (friendDefaultCategory && userCategories && userCategories.length > 0) {
- 
       const friendDefault = friendDefaultCategory;
       const name = userCategories.find(
         (category) => category.id === friendDefault
-      ); 
+      );
 
       if (name) {
         // console.warn("SETTTINGGGGGGGGGG");
@@ -201,7 +215,7 @@ const CategoryCreator = ({
                 style={[styles.buttonWrapper, { marginRight: 10 }]}
               >
                 <CategoryButtonForCreator
-                  primaryColor={primaryColor} 
+                  primaryColor={primaryColor}
                   height={"auto"}
                   selectedId={selectedId}
                   label={name}
@@ -233,7 +247,7 @@ const CategoryCreator = ({
           {
             paddingHorizontal: HORIZONTAL_PADDING,
             backgroundColor: primaryBackground,
-          
+
             paddingTop: 60, //IMPORTANT, this is for status bar clearing since this component appears outside of safe view
           },
         ]}
@@ -253,10 +267,7 @@ const CategoryCreator = ({
           </View>
         )}
         sv
-        <Pressable
-          onPress={onClose}
-          style={styles.bottomButtonContainer}
-        >
+        <Pressable onPress={onClose} style={styles.bottomButtonContainer}>
           <SvgIcon
             name={"chevron_down"}
             color={primaryColor}
@@ -268,7 +279,6 @@ const CategoryCreator = ({
             }}
           />
         </Pressable>
-      
       </Animated.View>
     </>
   );
@@ -280,7 +290,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingVertical: 0,
     paddingHorizontal: 4,
-  }, 
+  },
 
   categoryNavigatorContainer: {
     position: "absolute",

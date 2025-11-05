@@ -61,13 +61,13 @@ const MomentViewPage: React.FC<Props> = ({
   });
   const navigation = useNavigation();
   const welcomeTextStyle = AppFontStyles.welcomeText;
-  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
+  // const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
 
   const [utilityTrayVisible, setUtilityTrayVisible] = useState(false);
 
-  const openUtilityTray = () => {
-    setUtilityTrayVisible(true);
-  };
+  // const openUtilityTray = () => {
+  //   setUtilityTrayVisible(true);
+  // };
 
   const closeUtilityTray = () => {
     setUtilityTrayVisible(false);

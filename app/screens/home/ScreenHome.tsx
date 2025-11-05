@@ -38,7 +38,7 @@ import { useShareIntentContext } from "expo-share-intent";
 import { File } from "expo-file-system";
 
 // import { useFocusEffect } from "@react-navigation/native";
-
+import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 // app components
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
@@ -47,16 +47,18 @@ import AllHome from "@/app/components/home/AllHome";
 import SelectedFriendHome from "@/app/components/home/SelectedFriendHome";
 // import TopBarHome from "@/app/components/home/TopBarHome";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
-
+import { useCategoryColors } from "@/src/context/CategoryColorsContext";
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-
+import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
+ 
+import { useCategories } from "@/src/context/CategoriesContext";
 import WriteButton from "@/app/components/home/WriteButton";
 
 const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
@@ -72,8 +74,34 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [navigateToMomentFocus]);
 
   const { autoSelectFriend } = useAutoSelector();
+  const { userCategories} = useCategories();
+
+
 
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
+    const { categoryColors, handleSetCategoryColors} = useCategoryColors();
+
+
+    const categoryIds = useMemo(
+      () => userCategories.map((c) => c.id), // or c.category_id
+      [userCategories]
+    );
+    
+
+  useEffect(() => {
+  if (
+    userCategories?.length > 0 &&
+    selectedFriend?.lightColor &&
+    selectedFriend?.darkColor
+  ) {
+    const array = generateGradientColors(
+      categoryIds,
+      selectedFriend.lightColor,
+      selectedFriend.darkColor
+    );
+    handleSetCategoryColors(array);
+  }
+}, [categoryIds, selectedFriend]);
 
   useEffect(() => {
     // does not need friendlist, autoselect friend object has the same data
@@ -479,6 +507,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                             darkerGlassBackground={
                               lightDarkTheme.darkerGlassBackground
                             }
+                            categoryColorsArray={categoryColors}
                             skiaFontLarge={skiaFontLarge}
                             skiaFontSmall={skiaFontSmall}
                             paddingHorizontal={PADDING_HORIZONTAL}

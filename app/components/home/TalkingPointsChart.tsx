@@ -6,13 +6,12 @@ import Donut from "../headers/Donut";
 // import { AppState, AppStateStatus } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
-import { useCategories } from "@/src/context/CategoriesContext";
- 
+// import { useCategories } from "@/src/context/CategoriesContext";
 import SvgIcon from "@/app/styles/SvgIcons";
-import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
- 
+// import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
+
 type Props = {
   userId: number;
   selectedFriend: boolean;
@@ -20,76 +19,93 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
- 
   themeColors,
-
+  categoryColors,
   skiaFontLarge,
   skiaFontSmall,
 }: Props) => {
   console.log("TALKING POINTS COMP RERENDERED");
- 
+// const { userCategories} = useCategories();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { userCategories } = useCategories();
+  // const { userCategories } = useCategories();
 
   const { lightDarkTheme } = useLDTheme();
 
   const primaryColor = lightDarkTheme.primaryText;
-  const primaryOverlayColor = lightDarkTheme.primaryOverlayColor; 
-  const { capsuleList, categorySizes, capsuleCategorySet, isPending } = useCapsuleList();
+  const primaryOverlayColor = lightDarkTheme.primaryOverlayColor;
+  const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
+    useCapsuleList();
 
   const capsuleListCount = capsuleList?.length;
 
   // STABLE BECAUSE USER CATEGORIES IS NOW STABLE  ? ?
-  const categoryIds = useMemo(
-    () => userCategories.map((c) => c.id), // or c.category_id
-    [userCategories]
-  );
+  // const categoryIds = useMemo(
+  //   () => userCategories.map((c) => c.id), // or c.category_id
+  //   [userCategories]
+  // );
+
   // STABLE BECAUSE USER CATEGORIES IS NOW STABLE  ? ?
-const categoryColors = useMemo(() => {
-  if (!categoryIds.length || !themeColors?.lightColor) return [];
+  // const categoryColors = useMemo(() => {
+  //   if (!categoryIds.length || !themeColors?.lightColor) return [];
 
-  return generateGradientColors(
-    categoryIds,
-    themeColors.lightColor,
-    themeColors.darkColor
-  );
-}, [categoryIds, themeColors?.lightColor, themeColors?.darkColor]);
-
-  
-
-
-  const colorsRef = useRef<{ colors: string[]; colorsReversed: string[]; friend: any }>({
-  colors: [],
-  colorsReversed: [],
-  friend: null,
-});
-
-// Only update colorsRef if we have data and are not pending
-if (capsuleCategorySet?.size && !isPending && categoryColors?.length) {
-  const filteredColors = categoryColors
-    .filter((item) => capsuleCategorySet.has(item.user_category))
-    .map((item) => item.color);
-
-  const friend = categoryColors[0]?.friend ?? null;
-
-  colorsRef.current = {
-    colors: filteredColors,
-    colorsReversed: filteredColors.slice().reverse(),
-    friend,
-  };
-}
-
-// Use the persistent value
-const colors = colorsRef.current;
-
+  //   return generateGradientColors(
+  //     categoryIds,
+  //     themeColors.lightColor,
+  //     themeColors.darkColor
+  //   );
+  // }, [categoryIds, themeColors?.lightColor, themeColors?.darkColor]);
 
  
 
-  const {
-    navigateToMoments,
-    navigateToMomentView, 
-    navigateToHistory,
-  } = useAppNavigations();
+  // const categoryColors = useMemo(() => {
+  //   return Object.entries(categoryColorsMap).map(([user_category, color]) => ({
+  //     user_category: Number(user_category),
+  //     color,
+  //   }));
+  // }, [categoryColorsMap]);
+
+
+// const categoryColors = useMemo(() => {
+//   console.log("Calculating categoryColors from categoryColorsMap:", categoryColorsMap);
+
+//   if (!categoryColorsMap) return [];
+//   return Object.entries(categoryColorsMap).map(([user_category, color]) => ({
+//     user_category: Number(user_category),
+//     color,
+//   }));
+// }, [categoryColorsMap]);
+
+
+  const colorsRef = useRef<{
+    colors: string[];
+    colorsReversed: string[];
+    friend: any;
+  }>({
+    colors: [],
+    colorsReversed: [],
+    friend: null,
+  });
+
+  // Only update colorsRef if we have data and are not pending
+  if (capsuleCategorySet?.size && !isPending && categoryColors?.length) {
+    const filteredColors = categoryColors
+      .filter((item) => capsuleCategorySet.has(item.user_category))
+      .map((item) => item.color);
+
+    const friend = categoryColors[0]?.friend ?? null;
+
+    colorsRef.current = {
+      colors: filteredColors,
+      colorsReversed: filteredColors.slice().reverse(),
+      friend,
+    };
+  }
+
+  // Use the persistent value
+  const colors = colorsRef.current;
+
+  const { navigateToMoments, navigateToMomentView, navigateToHistory } =
+    useAppNavigations();
   // const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
   // const appState = useRef(AppState.currentState);
@@ -157,7 +173,6 @@ const colors = colorsRef.current;
             height: HEIGHT,
             minHeight: HEIGHT,
             backgroundColor: primaryOverlayColor,
-        
           },
         ]}
       >
@@ -167,9 +182,9 @@ const colors = colorsRef.current;
               style={[
                 {
                   fontSize: subWelcomeTextStyle.fontSize + 5,
-                 
+
                   paddingLeft: 10,
-                  fontWeight: 'bold',
+                  fontWeight: "bold",
                   color: primaryColor,
                   opacity: 0.9,
                 },
@@ -181,14 +196,13 @@ const colors = colorsRef.current;
 
           {isFocused && colors?.colors?.length > 0 && (
             <View style={styles.donutWrapper}>
-              <Donut 
+              <Donut
                 font={skiaFontLarge}
                 smallFont={skiaFontSmall}
                 themeColors={themeColors}
                 iconColor={themeColors.lightColor}
                 onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
-             
                 totalJS={capsuleListCount}
                 radius={CHART_RADIUS}
                 strokeWidth={CHART_STROKE_WIDTH}
@@ -235,17 +249,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     flexDirection: "row",
-    
   },
   labelContainer: {
     borderRadius: 20,
     height: 26,
-  
+
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
- 
   },
   historyLabelWrapper: {
     fontFamily: "Poppins-Regular",

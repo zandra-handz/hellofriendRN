@@ -55,10 +55,9 @@ type Props = {
 };
 
 const DonutChart = ({
-  animatedLeaves,
+ 
   totalJS,
-  positions,
-
+  positions, 
   onCategoryPress,
   colorsReversed,
   // onPlusPress,

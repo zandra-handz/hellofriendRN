@@ -35,6 +35,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   primaryOverlayColor,
   darkGlassBackground,
   darkerGlassBackground,
+  categoryColorsArray,
   // darkerOverlayBackgroundColor,
 primaryBackground,
   selectedFriendId,
@@ -241,6 +242,7 @@ primaryBackground,
                     <TalkingPointsChart
                       userId={userId}
                       themeColors={themeColors}
+                      categoryColors={categoryColorsArray}
                       skiaFontLarge={skiaFontLarge}
                       skiaFontSmall={skiaFontSmall}
                     />
