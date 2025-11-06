@@ -101,6 +101,18 @@
     "description": "Creates SvgIcon.tsx implementation"
   },
 
+      "useAnimatedStyle": {
+    "scope": "javascript,typescript,typescriptreact,javascriptreact",
+    "prefix": "useA",
+"body": [
+      "const animatedFillStyle = useAnimatedStyle(() => ({",
+      "   })) ",
+      "$0"
+    ],
+    "description": "Creates SvgIcon.tsx implementation"
+  },
+    
+
 
   "React Context Provider Template": {
     "scope": "javascript,typescript,typescriptreact,javascriptreact",

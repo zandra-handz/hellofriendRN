@@ -20,8 +20,7 @@ import {
 import SvgIcon from "@/app/styles/SvgIcons";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
-import LeafPath from "./LeafPath";
-import manualGradientColors from "@/app/styles/StaticColors";
+import LeafPath from "./LeafPath"; 
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 

@@ -1,15 +1,15 @@
 import React, { ReactNode, useEffect, useState, useMemo, useRef } from "react";
-import { Pressable, View  } from "react-native";
- 
+import { Pressable, View, StyleSheet } from "react-native";
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-  withDelay, 
+  withDelay,
   runOnJS,
 } from "react-native-reanimated";
- 
+
 type Props = {
   onPress: () => void;
   friendId: number;
@@ -37,17 +37,14 @@ const FriendTintPressable = ({
   style,
   friendId,
   children,
- 
 }: Props) => {
   const quickPressTimeout = useRef(null);
-  const QUICK_PRESS_THRESHOLD = 140; // ms 
+  const QUICK_PRESS_THRESHOLD = 140; // ms
 
-  const scale = useSharedValue(1); 
+  const scale = useSharedValue(1);
   const friendColors = friendList.find(
     (friend) => Number(friendId) === Number(friend.id)
   );
-
- 
 
   useEffect(() => {
     return () => {
@@ -58,37 +55,39 @@ const FriendTintPressable = ({
     };
   }, []);
 
- const handleOnPressIn = (event) => {
-  scale.value = withSpring(0.65, { stiffness: 500, damping: 30, mass: 0.5 });
+  const handleOnPressIn = (event) => {
+    scale.value = withSpring(0.65, { stiffness: 500, damping: 30, mass: 0.5 });
 
-  // Clear any previous timeout (safety)
-  if (quickPressTimeout.current) {
-    clearTimeout(quickPressTimeout.current);
-  }
+    // Clear any previous timeout (safety)
+    if (quickPressTimeout.current) {
+      clearTimeout(quickPressTimeout.current);
+    }
 
-  quickPressTimeout.current = setTimeout(() => {
-    // long press logic
-    clearTimeout(quickPressTimeout.current);
-    quickPressTimeout.current = undefined;
-  }, QUICK_PRESS_THRESHOLD);
+    quickPressTimeout.current = setTimeout(() => {
+      // long press logic
+      clearTimeout(quickPressTimeout.current);
+      quickPressTimeout.current = undefined;
+    }, QUICK_PRESS_THRESHOLD);
 
-  setPressed(true);
-  const { pageX, pageY } = event.nativeEvent;
-  touchLocationX.value = pageX;
-  touchLocationY.value = pageY;
-  visibility.value = withTiming(1, { duration: 160 });
-  scaleValue.value = withTiming(screenDiagonal + 900, { duration: 300 });
+    setPressed(true);
+    const { pageX, pageY } = event.nativeEvent;
+    touchLocationX.value = pageX;
+    touchLocationY.value = pageY;
+    visibility.value = withTiming(1, { duration: 160 });
+    scaleValue.value = withTiming(screenDiagonal + 900, { duration: 300 });
 
-  setGradientColors([friendColors.theme_color_dark, friendColors.theme_color_light]);
+    setGradientColors([
+      friendColors.theme_color_dark,
+      friendColors.theme_color_light,
+    ]);
 
-  setTimeout(() => setPressed(false), 100);
-};
-
+    setTimeout(() => setPressed(false), 100);
+  };
 
   const [pressed, setPressed] = useState(false);
 
   const handleOnPress = () => {
-    setPressed(true); 
+    setPressed(true);
     onPress(); // feels better/smoother here
 
     visibility.value = withTiming(1, { duration: 180 });
@@ -104,23 +103,22 @@ const FriendTintPressable = ({
     );
     // scaleValue.value = withTiming(screenDiagonal + 900, { duration: 160})
   };
-const handleOnPressOut = () => {
-  scale.value = withSpring(1, { stiffness: 600, damping: 30, mass: 0.5 });
+  const handleOnPressOut = () => {
+    scale.value = withSpring(1, { stiffness: 600, damping: 30, mass: 0.5 });
 
-  if (quickPressTimeout.current) {
-    // quick press detected → fire onPress
-    clearTimeout(quickPressTimeout.current);
-    quickPressTimeout.current = undefined;
-    handleOnPress();
-  } else if (!pressed) {
-    visibility.value = withTiming(0, { duration: 300 });
-    scaleValue.value = withTiming(0, { duration: 300 });
-  } else {
-    visibility.value = withDelay(300, withTiming(0, { duration: 300 }));
-    scaleValue.value = withDelay(300, withTiming(0, { duration: 1000 }));
-  }
-};
-
+    if (quickPressTimeout.current) {
+      // quick press detected → fire onPress
+      clearTimeout(quickPressTimeout.current);
+      quickPressTimeout.current = undefined;
+      handleOnPress();
+    } else if (!pressed) {
+      visibility.value = withTiming(0, { duration: 300 });
+      scaleValue.value = withTiming(0, { duration: 300 });
+    } else {
+      visibility.value = withDelay(300, withTiming(0, { duration: 300 }));
+      scaleValue.value = withDelay(300, withTiming(0, { duration: 1000 }));
+    }
+  };
 
   const animatedButtonStyle = useAnimatedStyle(() => {
     return {
@@ -132,12 +130,7 @@ const handleOnPressOut = () => {
     <View
       style={[
         style,
-        {
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 50000,
-        },
+        styles.container
       ]}
     >
       <Pressable
@@ -151,5 +144,14 @@ const handleOnPressOut = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 50000,
+  }, 
+});
 
 export default FriendTintPressable;

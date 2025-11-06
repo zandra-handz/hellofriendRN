@@ -11,6 +11,8 @@ import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { AppFontStyles } from "@/app/styles/AppFonts";
+// import LiquidGlassExp from "../appwide/button/LiquidGlassExp";
+import GlobalHoldPressable from "../appwide/button/GlobalHoldPressable";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
@@ -131,6 +133,10 @@ const MomentViewPage: React.FC<Props> = ({
     closeUtilityTray();
   };
 
+  const handleEmptyPress = () => {
+    console.log('please remove me! MomentViewPage')
+  };
+
   const saveToHello = async () => {
     if (!friendId || !item?.id) {
       return;
@@ -146,7 +152,7 @@ const MomentViewPage: React.FC<Props> = ({
     }
   };
 
-  const handleDelete = (item) => { 
+  const handleDelete = (item) => {
     try {
       const momentData = {
         friend: friendId,
@@ -177,7 +183,7 @@ const MomentViewPage: React.FC<Props> = ({
             height: "100%",
           },
         ]}
-      >
+      > 
         <View
           style={[
             styles.innerContainer,
@@ -190,12 +196,14 @@ const MomentViewPage: React.FC<Props> = ({
         >
           <View style={styles.categoryHeaderContainer}>
             <Text
+            numberOfLines={1}
               style={[
                 welcomeTextStyle,
                 {
                   color: textColor,
                   fontSize: 24,
                   paddingRight: 80,
+
                 },
               ]}
             >
@@ -221,26 +229,35 @@ const MomentViewPage: React.FC<Props> = ({
                 {renderTrayToggler()}
               </View>
 
+
+
+              <GlobalHoldPressable
+                // onPress={handleEmptyPress}
+                onLongPress={saveToHello}
+                style={[
+                  styles.saveButtonStyle,
+                  {
+                    borderColor: manualGradientColors.lightColor,
+                    borderColor: lighterOverlayColor,
+                    borderWidth: .8,
+                    height: 40,
+                    overflow: 'hidden',
+                  
+                    // backgroundColor: manualGradientColors.lightColor,
+                  },
+                ]}
+              >
+                <SvgIcon
+                  name={"plus_circle"}
+                  size={20}
+                  color={lighterOverlayColor}
+                  color={manualGradientColors.darkColor}
+                />
+              </GlobalHoldPressable>
+
               {utilityTrayVisible && (
                 <>
-                  <View style={styles.saveButtonWrapper}>
-                    <GlobalPressable
-                      onPress={saveToHello}
-                      style={[
-                        styles.saveButtonStyle,
-                        {
-                          backgroundColor: manualGradientColors.lightColor,
-                        },
-                      ]}
-                    >
-                      <SvgIcon
-                        name={"plus_circle"}
-                        size={20}
-                        color={lighterOverlayColor}
-                        color={manualGradientColors.darkColor}
-                      />
-                    </GlobalPressable>
-                  </View>
+                  <View style={styles.saveButtonWrapper}></View>
                   <View style={styles.editButtonWrapper}>
                     <GlobalPressable
                       onPress={handleEditMoment}

@@ -13,6 +13,7 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import SvgIcon from "@/app/styles/SvgIcons";
 import MFeatureWriteButton from "./MFeatureWriteButton";
 
+
 interface WelcomeMessageUIProps {
   username: string;
   isNewUser: boolean; // in parent: {new Date(user?.user?.created_on).toDateString() === new Date().toDateString()

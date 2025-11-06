@@ -14,7 +14,7 @@ import { useUser } from "@/src/context/UserContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
+
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
@@ -64,12 +64,15 @@ const ScreenSelectFriend = (
     useSelectedFriend();
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
 
-  const themeColors = useMemo(() => ({
-  lightColor: selectedFriend?.lightColor,
-  darkColor: selectedFriend?.darkColor,
-  fontColor: selectedFriend?.fontColor,
-  fontColorSecondary: selectedFriend?.fontColorSecondary,
-}), [selectedFriend?.id]);
+  const themeColors = useMemo(
+    () => ({
+      lightColor: selectedFriend?.lightColor,
+      darkColor: selectedFriend?.darkColor,
+      fontColor: selectedFriend?.fontColor,
+      fontColorSecondary: selectedFriend?.fontColorSecondary,
+    }),
+    [selectedFriend?.id]
+  );
 
   const toggleLockOnFriend = (id) => {
     // if (id !== selectedFriend?.id) {
@@ -134,10 +137,9 @@ const ScreenSelectFriend = (
   const screenDiagonal = Math.sqrt(screenWidth ** 2 + screenHeight ** 2);
 
   const scale = useSharedValue(0);
- 
 
-  const animatedCircleStyle = useAnimatedStyle(() => { 
-    const size = scale.value;  
+  const animatedCircleStyle = useAnimatedStyle(() => {
+    const size = scale.value;
     const left = touchLocationX.value - size / 2;
     const top = touchLocationY.value - size / 2;
 
@@ -162,7 +164,6 @@ const ScreenSelectFriend = (
     //   navigateOnSelect: undefined,
   });
 
- 
   const direction = [0, 0, 1, 0];
 
   return (
@@ -173,8 +174,7 @@ const ScreenSelectFriend = (
         backgroundOverlayColor={lightDarkTheme.primaryBackground}
         friendId={false}
         backgroundOverlayHeight={"15%"}
-      
-        useSolidOverlay={false} 
+        useSolidOverlay={false}
         includeBackgroundOverlay={true}
         backgroundTransparentOverlayColor={lightDarkTheme.primaryBackground}
         backgroundOverlayBottomRadius={0}
@@ -190,7 +190,7 @@ const ScreenSelectFriend = (
                 overflow: "hidden",
                 borderRadius: 999,
                 width: 0,
-                height: 0,  
+                height: 0,
               },
             ]}
           >
@@ -229,34 +229,32 @@ const ScreenSelectFriend = (
             />
           </View>
           <View style={styles.friendsListWrapper}>
-           
-              <FriendListUI
-                touchLocationX={touchLocationX}
-                touchLocationY={touchLocationY}
-                friendColors={friendColors}
-                visibility={visibility}
-                scale={scale}
-                setGradientColors={setGradientColors}
-                screenDiagonal={screenDiagonal}
-                autoSelectFriend={autoSelectFriend}
-                handleDeselect={handleDeselect}
-                themeColors={themeColors}
-                // themeColors={{
-                //   lightColor: selectedFriend.lightColor,
-                //   darkColor: selectedFriend.darkColor,
-                //   fontColor: selectedFriend.fontColor,
-                //   fontColorSecondary: selectedFriend.fontColorSecondary,
-                // }}
-                friendList={friendList}
-                lightDarkTheme={lightDarkTheme}
-                data={friendList}
-                friendId={selectedFriend ? selectedFriend?.id : null}
-                onPress={handleSelectFriend}
-                handleNavAfterSelect={handleNavAfterSelect}
-                useNavigateBack={!!useNavigateBack}
-                onLongPress={toggleLockOnFriend}
-              />
-          
+            <FriendListUI
+              touchLocationX={touchLocationX}
+              touchLocationY={touchLocationY}
+              friendColors={friendColors}
+              visibility={visibility}
+              scale={scale}
+              setGradientColors={setGradientColors}
+              screenDiagonal={screenDiagonal}
+              autoSelectFriend={autoSelectFriend}
+              handleDeselect={handleDeselect}
+              themeColors={themeColors}
+              // themeColors={{
+              //   lightColor: selectedFriend.lightColor,
+              //   darkColor: selectedFriend.darkColor,
+              //   fontColor: selectedFriend.fontColor,
+              //   fontColorSecondary: selectedFriend.fontColorSecondary,
+              // }}
+              friendList={friendList}
+              lightDarkTheme={lightDarkTheme}
+              data={friendList}
+              friendId={selectedFriend ? selectedFriend?.id : null}
+              onPress={handleSelectFriend}
+              handleNavAfterSelect={handleNavAfterSelect}
+              useNavigateBack={!!useNavigateBack}
+              onLongPress={toggleLockOnFriend}
+            />
           </View>
         </View>
       </SafeViewAndGradientBackgroundStatic>
