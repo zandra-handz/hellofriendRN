@@ -10,8 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-// import LiquidGlassExp from "../appwide/button/LiquidGlassExp";
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import GlobalHoldPressable from "../appwide/button/GlobalHoldPressable";
 
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -184,6 +183,7 @@ const MomentViewPage: React.FC<Props> = ({
           },
         ]}
       > 
+ 
         <View
           style={[
             styles.innerContainer,

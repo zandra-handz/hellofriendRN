@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useUser } from "@/src/context/UserContext";
 import Cascader from "@/app/fidgets/Cascader";
+import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
+import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
@@ -103,7 +105,7 @@ const ScreenFidget = (props: Props) => {
         </View>
       )}
 
-      {(spinnerViewing === 2 || spinnerViewing === 5) && (
+      {(spinnerViewing === 2 ) && (
         <View style={StyleSheet.absoluteFillObject}>
           <GradientBackgroundFidgetOne
             secondColorSetDark={selectedFriend.lightColor}
@@ -119,6 +121,14 @@ const ScreenFidget = (props: Props) => {
           ></GradientBackgroundFidgetOne>
         </View>
       )}
+
+
+            {( spinnerViewing === 5) && (
+        <PlainSafeView style={StyleSheet.absoluteFillObject}>
+          <LiquidGlassExp/>
+        </PlainSafeView>
+      )}
+
 
       {(spinnerViewing === 3 || spinnerViewing === 6) && (
         <View style={StyleSheet.absoluteFillObject}>
