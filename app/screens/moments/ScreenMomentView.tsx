@@ -32,10 +32,24 @@ const ScreenMomentView = () => {
   const { capsuleList } = useCapsuleList();
   const { categoryColors, handleSetCategoryColors} = useCategoryColors();
 
-  const { preAddMomentMutation } = usePreAddMoment({
+  const { handlePreAddMoment, preAddMomentMutation } = usePreAddMoment({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
+
+  
+  //   useEffect(() => {
+  //   if (preAddMomentMutation.isSuccess) {
+  //     console.log('use effect~~~~~~~~~~~~!')
+  //     showFlashMessage(`Moment added!`, false, 1000);
+  //   }
+  // }, [preAddMomentMutation.isSuccess]);
+
+      useEffect(() => {
+    if (preAddMomentMutation.isError) { 
+      showFlashMessage(`Could not add moment`, true, 1000);
+    }
+  }, [preAddMomentMutation.isError]);
 
   const { friendDash, loadingDash } = useFriendDash({
     userId: user?.id,
@@ -56,28 +70,19 @@ const categoryColorsMap = useMemo(() => {
   );
 }, [categoryColors]);
 
- 
+  
 
-  // const categoryColorsMap = useMemo(() => {
-  //   if (
-  //     userCategories?.length > 0 &&
-  //     selectedFriend?.lightColor &&
-  //     selectedFriend?.darkColor
-  //   ) {
-  //     return generateGradientColorsMap(
-  //       userCategories,
-  //       selectedFriend.lightColor,
-  //       selectedFriend.darkColor
-  //     );
-  //   }
-  //   return null;
-  // }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
-  useEffect(() => {
-    if (preAddMomentMutation.isSuccess) {
-      showFlashMessage(`Success!`, false, 1000);
-    }
-  }, [preAddMomentMutation.isSuccess]);
+
+
+  const saveToHello = ({friendId, capsuleId, isPreAdded}) => {
+   showFlashMessage(`Moment added!`, false, 1000);
+   handlePreAddMoment({friendId, capsuleId, isPreAdded})
+
+
+  };
+
+
 
   const TIME_SCORE = 100;
 
@@ -121,6 +126,7 @@ const categoryColorsMap = useMemo(() => {
             initialIndex={currentIndex}
             categoryColorsMap={categoryColorsMap}
             data={capsuleList}
+            handlePreAddMoment={saveToHello}
             children={MomentViewPage}
             friendNumber={phoneNumber}
           />

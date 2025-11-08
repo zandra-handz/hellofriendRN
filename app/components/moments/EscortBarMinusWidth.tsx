@@ -1,9 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-
-import { MaterialIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 
 type Props = {
@@ -20,8 +18,8 @@ const EscortBarMinusWidth = ({
   label = "categories",
 }: Props) => {
   return (
-    <Animated.View
-      style={{   height: 50  }}
+    <View
+      style={{ height: 50  }}
       // entering={SlideInDown}
       // exiting={SlideOutDown}
     >
@@ -32,14 +30,16 @@ const EscortBarMinusWidth = ({
             paddingHorizontal: 0,
             flexDirection: "row",
             width: "100%",
-            height: 50,
-
+            //height: 50,
+            flex: 1,
+            // backgroundColor: 'pink',
             alignItems: "center",
             justifyContent: "center",
             borderRadius: 22,
+            
             // backgroundColor: "orange",
 
-          //  marginVertical: 10,
+            //  marginVertical: 10,
           },
         ]}
       >
@@ -51,10 +51,9 @@ const EscortBarMinusWidth = ({
             //    bottom: 0,
             //  top: 0,
             flex: 1,
-            height: "100%",
-            // backgroundColor: "red",
+            height: "100%", 
 
-            height: 50,
+           // height: 50,
             alignItems: "center",
             flexDirection: "column",
             justifyContent: "center",
@@ -73,23 +72,21 @@ const EscortBarMinusWidth = ({
             //   onPress={navigateBack}
             onPress={navigateBack}
           >
-            <MaterialIcons
-              name={"keyboard-arrow-left"}
-              size={20}
-              color={primaryColor}
-            />
+            <SvgIcon name={"chevron_left"} size={20} color={primaryColor} />
           </Pressable>
         </View>
 
         <View
           style={{
             position: "absolute",
-            top: 0,
-            bottom: 0,
+            // top: 0,
+            // bottom: 0,
             left: 0,
             right: 0,
             borderRadius: 999,
             backgroundColor: backgroundColor,
+            height: '100%',
+
             zIndex: 0,
             marginLeft: 106,
           }}
@@ -105,8 +102,8 @@ const EscortBarMinusWidth = ({
           }}
         >
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <MaterialIcons
-              name={"keyboard-arrow-up"}
+            <SvgIcon
+              name={"chevron_up"}
               size={16}
               //  color={homeDarkColor}
               color={primaryColor}
@@ -126,7 +123,7 @@ const EscortBarMinusWidth = ({
           </View>
         </View>
       </GlobalPressable>
-    </Animated.View>
+    </View>
   );
 };
 

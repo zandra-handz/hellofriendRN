@@ -23,7 +23,7 @@ const GeckoToHelloButton = ( ) => {
         paddingHorizontal: 10,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: 5,
+        borderRadius: 999,
 
         backgroundColor: manualGradientColors.lightColor,
       }}

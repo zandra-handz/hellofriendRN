@@ -12,7 +12,7 @@ import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import GlobalHoldPressable from "../appwide/button/GlobalHoldPressable";
-
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   SharedValue,
@@ -51,11 +51,12 @@ const MomentViewPage: React.FC<Props> = ({
   categoryColorsMap,
   currentIndexValue,
   cardScaleValue,
+  handlePreAddMoment,
 }) => {
-  const { handlePreAddMoment } = usePreAddMoment({
-    userId: userId,
-    friendId: friendId,
-  });
+  // const { handlePreAddMoment, preAddMomentMutation } = usePreAddMoment({
+  //   userId: userId,
+  //   friendId: friendId,
+  // });
   const { handleDeleteMoment, deleteMomentMutation } = useDeleteMoment({
     userId: userId,
     friendId: friendId,
@@ -95,6 +96,9 @@ const MomentViewPage: React.FC<Props> = ({
 
   const [currentIndex, setCurrentIndex] = useState();
 
+
+
+
   if (!item || !categoryColorsMap || !item.user_category) {
     return null; // or a fallback component
   }
@@ -111,7 +115,7 @@ const MomentViewPage: React.FC<Props> = ({
       }
     },
     []
-  );
+  ); 
 
   const cardScaleAnimation = useAnimatedStyle(() => ({
     transform: [{ scale: cardScaleValue.value }],
@@ -231,9 +235,8 @@ const MomentViewPage: React.FC<Props> = ({
 
 
 
-              <GlobalHoldPressable
-                // onPress={handleEmptyPress}
-                onLongPress={saveToHello}
+              <GlobalHoldPressable 
+                onPress={saveToHello}
                 style={[
                   styles.saveButtonStyle,
                   {

@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text } from "react-native";
 import React, { useState, useMemo, useEffect } from "react";
 import Demo from "@/app/components/headers/SkiaDemo";  
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -10,6 +10,7 @@ import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetO
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
+import ShaderTestOne from "@/app/components/appwide/button/ShaderTestOne";
 import { useUser } from "@/src/context/UserContext";
 import Cascader from "@/app/fidgets/Cascader";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
@@ -69,9 +70,13 @@ const ScreenFidget = (props: Props) => {
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
-  useEffect(() => {
-    console.log(`spinner viewing: `, spinnerViewing);
-  }, [spinnerViewing]);
+ 
+ 
+ 
+
+  // useEffect(() => {
+  //   console.log(`spinner viewing: `, spinnerViewing);
+  // }, [spinnerViewing]);
 
   return (
     // <SafeViewAndGradientBackground
@@ -105,7 +110,7 @@ const ScreenFidget = (props: Props) => {
         </View>
       )}
 
-      {(spinnerViewing === 2 ) && (
+      {/* {(spinnerViewing === 2 ) && (
         <View style={StyleSheet.absoluteFillObject}>
           <GradientBackgroundFidgetOne
             secondColorSetDark={selectedFriend.lightColor}
@@ -120,21 +125,27 @@ const ScreenFidget = (props: Props) => {
             direction={TIME_SCORE > 40 ? "vertical" : "original"}
           ></GradientBackgroundFidgetOne>
         </View>
+      )} */}
+
+
+            {( spinnerViewing === 2  || spinnerViewing === 5 || spinnerViewing === 3 || spinnerViewing === 6) && (
+        < View 
+         style={StyleSheet.absoluteFillObject}  
+        >
+
+          {/* <LiquidGlassExp/> */}
+          <ShaderTestOne color1={selectedFriend?.lightColor} color2={selectedFriend?.darkColor}/>
+      
+      
+        </ View>
       )}
 
 
-            {( spinnerViewing === 5) && (
-        <PlainSafeView style={StyleSheet.absoluteFillObject}>
-          <LiquidGlassExp/>
-        </PlainSafeView>
-      )}
-
-
-      {(spinnerViewing === 3 || spinnerViewing === 6) && (
+      {/* {(spinnerViewing === 3 || spinnerViewing === 6) && (
         <View style={StyleSheet.absoluteFillObject}>
           <Cascader />
         </View>
-      )}
+      )} */}
 
       <SafeAreaView>
         {(spinnerViewing === 2 || spinnerViewing === 5) && (
@@ -155,6 +166,10 @@ const ScreenFidget = (props: Props) => {
             </Text>
           </View>
         )}
+ 
+  */}
+      
+      
         <EscortBarFidgetScreen
           style={{ paddingHorizontal: 10 }}
           primaryColor={lightDarkTheme.primaryText}

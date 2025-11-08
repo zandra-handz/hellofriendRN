@@ -18,7 +18,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 
 type Props = {
   onPress?: () => void;
-  onLongPress?: () => void;
+ 
   hitSlop?: number;
   zIndex?: number;
   style?: StyleProp<ViewStyle>;
@@ -27,7 +27,7 @@ type Props = {
 
 const GlobalHoldPressable = ({
   onPress = () => console.log("nothing here"),
-  onLongPress,
+ 
   hitSlop = 10,
   zIndex = 1,
   style,
@@ -37,7 +37,7 @@ const GlobalHoldPressable = ({
 
   const isPressed = useSharedValue(false);
 
-  const HOLD_DURATION = 1000;
+  const HOLD_DURATION = 400;
   const COMPLETE_THRESHOLD = 0.98;
 
   const pressProgress = useSharedValue(0);
@@ -65,6 +65,9 @@ const GlobalHoldPressable = ({
     if (pressProgress.value < COMPLETE_THRESHOLD) {
       isPressed.value = false;
       pressProgress.value = withTiming(0, { duration: 300 });
+    } else if (pressProgress.value >= COMPLETE_THRESHOLD){
+      pressProgress.value = withTiming(0, { duration: 0})
+      
     }
   };
 
@@ -110,6 +113,7 @@ const GlobalHoldPressable = ({
           {
             flex: 1,
             justifyContent: "flex-start",
+            borderRadius: 999,
             backgroundColor: manualGradientColors.lightColor,
           },
         ]}

@@ -6,7 +6,7 @@ import { Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-const LiquidGlassExp = () => {
+const LiquidGlassExp = ({prop}) => {
   const [time, setTime] = useState(0);
 
   // ✅ Create shader safely

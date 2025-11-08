@@ -22,6 +22,7 @@ const CarouselSliderMoments = ({
   friendId, 
   initialIndex,
   lightDarkTheme, 
+  handlePreAddMoment,
   data,
   categoryColorsMap,
   useButtons = true,
@@ -103,6 +104,7 @@ const CarouselSliderMoments = ({
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
 
       <Children
+      handlePreAddMoment={handlePreAddMoment}
         textColor={lightDarkTheme.primaryText}
         darkerOverlayColor={
           lightDarkTheme.darkerOverlayBackground 
