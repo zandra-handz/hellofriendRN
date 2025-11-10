@@ -9,14 +9,15 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
  
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 const ScreenAddFriend = () => {
   const { lightDarkTheme } = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
  
   const { user } = useUser();
-    const { friendListAndUpcoming} = useFriendListAndUpcoming();
+    const { friendListAndUpcoming} = useFriendListAndUpcoming({userId: user?.id});
   const friendList = friendListAndUpcoming?.friends;
 
   return (

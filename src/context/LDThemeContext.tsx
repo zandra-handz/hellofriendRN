@@ -9,7 +9,8 @@ import React, {
 
 //import { updateUserAccessibilitySettings } from "../calls/api";
 import { useColorScheme } from "react-native";
-import { useUserSettings } from "./UserSettingsContext";
+// import { useUserSettings } from "./UserSettingsContext";
+import useUserSettings from "../hooks/useUserSettings";
 
 const LDThemeContext = createContext();
 

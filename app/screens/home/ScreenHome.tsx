@@ -20,7 +20,8 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+// import { useUserSettings } from "@/src/context/UserSettingsContext";
+import useUserSettings from "@/src/hooks/useUserSettings";
 import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -53,12 +54,14 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
 import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
- 
-import { useCategories } from "@/src/context/CategoriesContext";
+import useCategories from "@/src/hooks/useCategories";
+// import { useCategories } from "@/src/context/CategoriesContext";
 import WriteButton from "@/app/components/home/WriteButton";
 
 const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
@@ -74,7 +77,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [navigateToMomentFocus]);
 
   const { autoSelectFriend } = useAutoSelector();
-  const { userCategories} = useCategories();
+  const { userCategories} = useCategories({userId: user?.id});
 
 
 
@@ -135,7 +138,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [autoSelectFriend]);
 
   const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
-    useFriendListAndUpcoming();
+    useFriendListAndUpcoming({userId: user?.id});
 
   const { setUpNextCache } = useUpNextCache({
     userId: user?.id,

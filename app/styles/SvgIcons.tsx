@@ -67,6 +67,7 @@ import SendSvg from "./svgs/send";
 import SendCircleOutlineSvg from "./svgs/send-circle-outline";
 import SettingsSuggestSvg from "./svgs/settings_suggest";
 import StarSvg from "./svgs/star";
+import TextSearchSvg from "./svgs/text-search";
 import TextShadowSvg from "./svgs/text-shadow";
 import TimerSvg from "./svgs/timer";
 import TimerSyncSvg from "./svgs/timer-sync";
@@ -140,6 +141,7 @@ const svgIcons = {
   settings_suggest: SettingsSuggestSvg,
   star: StarSvg,
   theme_light_dark: ThemeLightDarkSvg,
+  text_search: TextSearchSvg,
   text_shadow: TextShadowSvg,
   timer: TimerSvg,
   timer_sync: TimerSyncSvg,

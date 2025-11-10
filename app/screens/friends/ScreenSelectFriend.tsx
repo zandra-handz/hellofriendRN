@@ -13,8 +13,9 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useUser } from "@/src/context/UserContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
@@ -50,7 +51,7 @@ const ScreenSelectFriend = (
   const { lightDarkTheme } = useLDTheme();
   const { autoSelectFriend } = useAutoSelector();
 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: user?.id});
   const friendList = friendListAndUpcoming?.friends;
   const queryClient = useQueryClient();
   // 🔹 Shared values for circle position

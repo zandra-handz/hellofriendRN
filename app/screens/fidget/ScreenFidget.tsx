@@ -1,10 +1,10 @@
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import React, { useState, useMemo, useEffect } from "react";
-import Demo from "@/app/components/headers/SkiaDemo";  
+import Demo from "@/app/components/headers/SkiaDemo";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/app/styles/StaticColors";
-import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen"; 
+import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,17 +12,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import ShaderTestOne from "@/app/components/appwide/button/ShaderTestOne";
 import { useUser } from "@/src/context/UserContext";
+import SpinnerOne from "@/app/components/appwide/button/SpinnerOne";
+import SpinnerTwo from "@/app/components/appwide/button/SpinnerTwo";
 import Cascader from "@/app/fidgets/Cascader";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
-const ScreenFidget = (props: Props) => { 
- const { user } = useUser();
+const ScreenFidget = (props: Props) => {
+  const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { selectedFriend } = useSelectedFriend();
-  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
+  const { friendDash } = useFriendDash({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
 
   const options = [1, 2, 3, 4, 5, 6];
 
@@ -69,10 +74,6 @@ const ScreenFidget = (props: Props) => {
   }, [friendDash]);
 
   const DAYS_SINCE = friendDash?.days_since || 0;
-
- 
- 
- 
 
   // useEffect(() => {
   //   console.log(`spinner viewing: `, spinnerViewing);
@@ -127,19 +128,28 @@ const ScreenFidget = (props: Props) => {
         </View>
       )} */}
 
-
-            {( spinnerViewing === 2  || spinnerViewing === 5 || spinnerViewing === 3 || spinnerViewing === 6) && (
-        < View 
-         style={StyleSheet.absoluteFillObject}  
-        >
-
-          {/* <LiquidGlassExp/> */}
-          <ShaderTestOne color1={selectedFriend?.lightColor} color2={selectedFriend?.darkColor}/>
-      
-      
-        </ View>
+      {(spinnerViewing === 2 ||
+    
+        spinnerViewing === 6) && (
+        <View style={StyleSheet.absoluteFill}>
+          <SpinnerTwo
+            color1={selectedFriend?.lightColor}
+            color2={selectedFriend?.darkColor}
+          />
+        </View>
       )}
 
+
+            {( 
+        spinnerViewing === 5 ||
+        spinnerViewing === 3  ) && (
+        <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
+          <SpinnerOne
+            color1={selectedFriend?.lightColor}
+            color2={selectedFriend?.darkColor}
+          />
+        </View>
+      )}
 
       {/* {(spinnerViewing === 3 || spinnerViewing === 6) && (
         <View style={StyleSheet.absoluteFillObject}>
@@ -166,10 +176,7 @@ const ScreenFidget = (props: Props) => {
             </Text>
           </View>
         )}
- 
-  */}
-      
-      
+
         <EscortBarFidgetScreen
           style={{ paddingHorizontal: 10 }}
           primaryColor={lightDarkTheme.primaryText}

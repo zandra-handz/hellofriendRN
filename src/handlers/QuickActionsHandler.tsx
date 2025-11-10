@@ -1,17 +1,19 @@
 import { useEffect  } from "react";
 import * as QuickActions from "expo-quick-actions"; 
-import { useUserSettings } from "../context/UserSettingsContext";
+// import { useUserSettings } from "../context/UserSettingsContext";
  
-import { useFriendListAndUpcoming } from "../context/FriendListAndUpcomingContext";
+import { useUser } from "../context/UserContext";
+ import useUserSettings from "../hooks/useUserSettings";
+// import { useFriendListAndUpcoming } from "../context/FriendListAndUpcomingContext";
  
- 
+import useFriendListAndUpcoming from "../hooks/usefriendListAndUpcoming";
 
 // imports from Layout in App.tsx
 export default function QuickActionsHandler({ navigationRef }) {
- 
+ const { user} = useUser();
   const { settings } = useUserSettings();
 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: user?.id});
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 

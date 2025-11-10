@@ -9,7 +9,8 @@ import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+// import { useUserSettings } from "@/src/context/UserSettingsContext";
+import useUserSettings from "@/src/hooks/useUserSettings";
 import { LDTheme } from "@/src/types/LDThemeTypes";
 interface Props {
   userId: number;

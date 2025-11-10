@@ -11,8 +11,9 @@ import CatDescriptEditable from "./CatDescriptEditable";
 import manualGradientColors  from "@/app/styles/StaticColors";
  
  
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
  
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import useHelloes from "@/src/hooks/useHelloes";
 import { View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -35,6 +36,8 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   friendId,
   friendName,
 
+ 
+
   themeColors,
   isVisible,
   closeModal,
@@ -56,7 +59,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { helloesList } = useHelloes({userId: userId, friendId: friendId});
   // const { friendList } = useFriendList();
-  const { friendListAndUpcoming} = useFriendListAndUpcoming();
+  const { friendListAndUpcoming} = useFriendListAndUpcoming({userId: userId});
   const friendList = friendListAndUpcoming?.friends;
   const { selectedFriendStats } = useSelectedFriendStats({
     userId: userId, friendId: friendId, friendIsReady: true, enabled: true

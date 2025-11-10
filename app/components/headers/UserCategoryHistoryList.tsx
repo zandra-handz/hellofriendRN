@@ -3,8 +3,9 @@ import React, { useCallback, useMemo } from "react";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 // import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
  
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
 
 type Props = {
@@ -25,7 +26,7 @@ const UserCategoryHistoryList = ({
     fetchNextPage,
     hasNextPage,
   } = useCategoryHistoryLookup({ categoryId: categoryId });
-  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
   const friendList = friendListAndUpcoming?.friends;
 
   const formatCapsuleCreationDate = (createdOn) => {

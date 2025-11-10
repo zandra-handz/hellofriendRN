@@ -9,15 +9,16 @@ import useFriendDash from "@/src/hooks/useFriendDash";
 import TopBarWithAddMoment from "./TopBarWithAddMoment";
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
-import { useCategories } from "@/src/context/CategoriesContext";
-// import useCategories from "@/src/hooks/useCategories";
+// import { useCategories } from "@/src/context/CategoriesContext";
+import useCategories from "@/src/hooks/useCategories";
 // import { useFriendList } from "@/src/context/FriendListContext";
 
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 // import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
@@ -46,14 +47,14 @@ const ScreenMoments = () => {
   const { navigateToMomentView, navigateBack } = useAppNavigations();
   const TIME_SCORE = 100;
 
-  const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming();
+  const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming({userId: user?.id});
 
   // const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
-  const { userCategories } = useCategories();
+  const { userCategories } = useCategories({userId: user?.id});
   // const { friendList } = useFriendList();
 
   const friendList = friendListAndUpcoming?.friends;

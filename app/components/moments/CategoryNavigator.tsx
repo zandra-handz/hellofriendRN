@@ -9,6 +9,8 @@ import Animated, {
 } from "react-native-reanimated";
 import CategoryButton from "./CategoryButton";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+
+import SvgIcon from "@/app/styles/SvgIcons";
 import SearchModal from "../headers/SearchModal";
 import manualGradientColors  from "@/app/styles/StaticColors";
 import { SharedValue } from "react-native-reanimated";
@@ -40,6 +42,8 @@ const CategoryNavigator = ({
     opacity: visibilityValue.value,
   }));
 
+
+  const CONTAINER_HEIGHT = 240;
   // const iconSize = 26; HARD CODED
 
   const memoizedSearchIcon = useMemo(
@@ -57,8 +61,8 @@ const CategoryNavigator = ({
           opacity: pressed ? 0.6 : 1,
         })}
       >
-        <MaterialCommunityIcons
-          name={"text-search"}
+        <SvgIcon
+          name={"text_search"}
           size={26}
           color={primaryColor}
           style={{}}
@@ -107,6 +111,7 @@ const CategoryNavigator = ({
             styles.momentsScreenPrimarySpacing,
             {
               backgroundColor: backgroundColor,
+              height: CONTAINER_HEIGHT,
             },
             visibilityStyle,
           ]}
@@ -120,14 +125,15 @@ const CategoryNavigator = ({
               alignItems: "center",
               // position: "absolute",
               // top: -20,
-              height: 30,
-              paddingTop: 5,
+              //height: 30,
+              paddingTop: 10,
+              height: 50, //NOT same height as arrow up in category creator 11/09/2025
               // backgroundColor: "red",
               // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
             }}
           >
-            <MaterialIcons
-              name={"keyboard-arrow-down"}
+            <SvgIcon
+              name={"chevron_down"}
               color={primaryColor}
               color={manualGradientColors.homeDarkColor}
               size={16}
@@ -179,19 +185,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -24, //20
     paddingTop: 0,
-    zIndex: 5,
-    height: "auto",
-    height: 200,
+    zIndex: 5, 
+  
     // width: "74%",
     width: "100%",
     selfAlign: "center",
   },
   scrollContainer: {
-    maxHeight: 130,
+    maxHeight: 136,
     marginTop: 0,
     borderRadius: 10,
     padding: 10,
-    paddingTop: 10,
+    paddingTop: 0,
   },
   buttonRow: {
     flexWrap: "wrap",

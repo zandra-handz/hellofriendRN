@@ -11,7 +11,9 @@ import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
+
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
 //  import { useFriendList } from "@/src/context/FriendListContext";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
@@ -34,7 +36,7 @@ const CategoryFriendHistoryList = ({
   onViewHelloPress,
 }: Props) => {
   //  const { friendList } = useFriendList();
-  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
 
   const friendList = friendListAndUpcoming?.friends;
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);

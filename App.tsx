@@ -35,10 +35,12 @@ import { Alert, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
-import {
-  UserSettingsProvider,
-  useUserSettings,
-} from "./src/context/UserSettingsContext";
+// import {
+//   UserSettingsProvider,
+//   useUserSettings,
+// } from "./src/context/UserSettingsContext";
+
+import useUserSettings from "./src/hooks/useUserSettings";
 
 // import { UserStatsProvider } from "./src/context/UserStatsContext";
 
@@ -216,36 +218,28 @@ export default Sentry.wrap(function App() {
     <ShareIntentProvider>
       <QueryClientProvider client={queryClient}>
         <UserProvider>
-          <UserSettingsProvider>
-            <CategoriesProvider>
-              <FriendListAndUpcomingProvider>
-                <AutoSelectorProvider>
-                  <SelectedFriendProvider>
-                    <CapsuleListProvider>
-                      {/* <FriendDashProvider> */}
-                      <GestureHandlerRootView style={{ flex: 1 }}>
-                        <SafeAreaProvider>
-                          <LDThemeProvider>
-                            <CategoryColorsProvider>
-                              <RootSiblingParent>
-                                <DeviceLocationProvider>
-                                  <Layout
-                                    skiaFontLarge={skiaFontLarge}
-                                    skiaFontSmall={skiaFontSmall}
-                                  />
-                                </DeviceLocationProvider>
-                              </RootSiblingParent>
-                            </CategoryColorsProvider>
-                          </LDThemeProvider>
-                        </SafeAreaProvider>
-                      </GestureHandlerRootView>
-                      {/* </FriendDashProvider> */}
-                    </CapsuleListProvider>
-                  </SelectedFriendProvider>
-                </AutoSelectorProvider>
-              </FriendListAndUpcomingProvider>
-            </CategoriesProvider>
-          </UserSettingsProvider>
+          <AutoSelectorProvider>
+            <SelectedFriendProvider>
+              <CapsuleListProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <SafeAreaProvider>
+                    <LDThemeProvider>
+                      <CategoryColorsProvider>
+                        <RootSiblingParent>
+                          <DeviceLocationProvider>
+                            <Layout
+                              skiaFontLarge={skiaFontLarge}
+                              skiaFontSmall={skiaFontSmall}
+                            />
+                          </DeviceLocationProvider>
+                        </RootSiblingParent>
+                      </CategoryColorsProvider>
+                    </LDThemeProvider>
+                  </SafeAreaProvider>
+                </GestureHandlerRootView>
+              </CapsuleListProvider>
+            </SelectedFriendProvider>
+          </AutoSelectorProvider>
         </UserProvider>
       </QueryClientProvider>
     </ShareIntentProvider>
@@ -404,8 +398,9 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
       >
         <Stack.Navigator
           screenOptions={{
-            headerShown: true,
-            headerMode: "screen",
+            // headerShown: true,
+            // headerMode: "screen",
+
             contentContainerStyle: { flexGrow: 1 },
             cardStyle: { backgroundColor: "#000002" },
           }}

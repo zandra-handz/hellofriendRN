@@ -114,8 +114,8 @@ const GoOptionsModal = ({
                 >
                   <GlobalPressable
                     onPress={handleNavToMoments}
-                    style={[
-                      styles.text,
+         style={[
+                      styles.button,
                       {
                         padding: BUTTON_PADDING,
                         backgroundColor: BUTTON_COLOR,

@@ -7,7 +7,8 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import AddNewCategory from "../headers/AddNewCategory";
-import { useCategories } from "@/src/context/CategoriesContext";
+// import { useCategories } from "@/src/context/CategoriesContext";
+import useCategories from "@/src/hooks/useCategories";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
@@ -28,6 +29,7 @@ type Props = {
   selectedId: number;
 };
 const CategoryCreator = ({
+  userId,
   primaryColor,
   primaryBackground,
   freezeCategory,
@@ -67,7 +69,7 @@ const CategoryCreator = ({
     };
   });
 
-  const { userCategories } = useCategories();
+  const { userCategories } = useCategories({userId: userId});
 
   const { categorySizes } = useMomentSortingFunctions({
     listData: capsuleList,
@@ -330,9 +332,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    height: 30,
-    paddingBottom: 10,
-    backgroundColor: "orange",
+    height: 70,
+    paddingBottom: 10, 
   },
 });
 

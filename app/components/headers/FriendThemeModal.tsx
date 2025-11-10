@@ -4,8 +4,9 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionFriendTheme from "../friends/SectionFriendTheme";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
  
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 
@@ -30,7 +31,7 @@ const FriendThemeModal: React.FC<Props> = ({
   lightDarkTheme,
   themeColors
 }) => {
-  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
   const friendList = friendListAndUpcoming?.friends;
 
   return (

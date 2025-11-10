@@ -3,11 +3,14 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react";  
 import LoadingPage from "./LoadingPage"; 
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+// import { useUserSettings } from "@/src/context/UserSettingsContext";
+import useUserSettings from "@/src/hooks/useUserSettings";
 //  import useSignIn from "@/src/hooks/UserCalls/useSignIn";
- 
-import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-//  import { useUser } from "@/src/context/UserContext"; 
+ import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
+// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+
+
+ import { useUser } from "@/src/context/UserContext"; 
 type Props = {
   isInitializing: boolean;
 };
@@ -15,9 +18,9 @@ type Props = {
 const PeacefulGradientSpinner = ({   isInitializing }: Props) => {
  
   const  { loadingSettings } = useUserSettings();
- 
+ const { user} = useUser();
 
-  const { isLoading} = useFriendListAndUpcoming();
+  const { isLoading} = useFriendListAndUpcoming({userId: user?.id});
  
  
   return (

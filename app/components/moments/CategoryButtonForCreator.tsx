@@ -1,4 +1,4 @@
-import {  Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import React, { useMemo, useEffect } from "react";
 import Animated, { SharedValue } from "react-native-reanimated";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -26,7 +26,7 @@ type Props = {
 };
 
 const CategoryButtonForCreator = ({
-  primaryColor, 
+  primaryColor,
   label,
   itemId,
   onPress,
@@ -37,22 +37,32 @@ const CategoryButtonForCreator = ({
 }: Props) => {
   const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable);
 
-  const progress = useSharedValue(0); 
+  const progress = useSharedValue(0);
   const startColor = useSharedValue("transparent");
-  const endColor = useSharedValue("red"); 
+  const endColor = useSharedValue("red");
+
+  // const textColor = useMemo(() => {
+  //   if (!selectedId || !itemId) {
+  //     return primaryColor
+  //   }
+  //   if (Number(selectedId) === Number(itemId)) {
+  //     return manualGradientColors.homeDarkColor
+  //   } else {
+  //     return primaryColor
+  //   }
+  // },[primaryColor, selectedId, itemId]);
 
 
-const textColor = useMemo(() => {
-  if (!selectedId || !itemId) {
-    return primaryColor
-  }
-  if (Number(selectedId) === Number(itemId)) {
-    return manualGradientColors.homeDarkColor
-  } else {
-    return primaryColor
-  }
-},[primaryColor, selectedId, itemId]);
+  const borderColor = useMemo(() => {
+    if ( Number(selectedId) === Number(itemId)) {
+      return highlightColor;
+    } else {
+      return 'transparent'
+    }
+  },[selectedId, itemId]);
+  
 
+  const textColor = primaryColor;
 
   useEffect(() => {
     if (!selectedId || !itemId) {
@@ -61,7 +71,7 @@ const textColor = useMemo(() => {
     const isSelected = Number(selectedId) === Number(itemId);
     if (isSelected) {
       startColor.value = highlightColor;
-      endColor.value = primaryColor || "red"; 
+      endColor.value = primaryColor || "red";
 
       progress.value = withRepeat(
         withTiming(1, { duration: pulseDuration }),
@@ -69,9 +79,9 @@ const textColor = useMemo(() => {
         true
       );
     } else {
-      progress.value = withTiming(0, { duration: 200 }); 
+      progress.value = withTiming(0, { duration: 200 });
       startColor.value = "transparent";
-      endColor.value = "transparent"; 
+      endColor.value = "transparent";
     }
   }, [selectedId, itemId]);
 
@@ -87,36 +97,38 @@ const textColor = useMemo(() => {
   };
 
   const handleOnPress = () => {
-    console.log('on press')
-    onPress(label); 
-       scaleValue.value = withTiming(1, { duration: 0 });
+    console.log("on press");
+    onPress(label);
+    scaleValue.value = withTiming(1, { duration: 0 });
   };
 
-  const animatedCardsStyle = useAnimatedStyle(() => {
-    const backgroundColor = interpolateColor(
-      progress.value,
-      [0, 1],
-      [startColor.value, endColor.value]
-    );
+  // const animatedCardsStyle = useAnimatedStyle(() => {
+  //   const backgroundColor = interpolateColor(
+  //     progress.value,
+  //     [0, 1],
+  //     [startColor.value, endColor.value]
+  //   );
 
-    return {
-      // backgroundColor, 
-      borderWidth: 2,
-      borderColor: backgroundColor,
-      transform: [ 
-        { scale: scaleValue.value },
-      ],
-    };
-  });
- 
+  //   return {
+  //     // backgroundColor,
+  //     borderWidth: 2,
+  //     borderColor: backgroundColor,
+  //     transform: [
+  //       { scale: scaleValue.value },
+  //     ],
+  //   };
+  // });
+
   return (
     <AnimatedTouchableOpacity
       style={[
-        animatedCardsStyle,
+        // animatedCardsStyle,
         styles.categoryButton,
 
         {
           height: height,
+          borderWidth: 2,
+          borderColor: borderColor,
         },
       ]}
       onPress={handleOnPress}
@@ -130,11 +142,10 @@ const textColor = useMemo(() => {
       <Animated.Text
         numberOfLines={1}
         style={[
-     
           styles.label,
 
           {
-            color:textColor,
+            color: textColor,
           },
         ]}
       >
@@ -145,7 +156,7 @@ const textColor = useMemo(() => {
 };
 
 const styles = StyleSheet.create({
-  categoryButton: { 
+  categoryButton: {
     width: "auto",
     padding: 10,
     borderWidth: StyleSheet.hairlineWidth,
@@ -157,7 +168,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 10,
 
-    borderRadius: 16, 
+    borderRadius: 16,
     height: "auto",
   },
   label: {

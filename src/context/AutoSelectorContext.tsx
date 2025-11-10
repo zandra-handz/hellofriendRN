@@ -1,13 +1,14 @@
 import { View, Text } from "react-native";
 import React, { createContext, useContext, useMemo, ReactNode } from "react";
 
-import { useUserSettings } from "./UserSettingsContext";
+// import { useUserSettings } from "./UserSettingsContext";
+import useUserSettings from "../hooks/useUserSettings";
 
 // import { findFriendInList } from "../hooks/deselectFriendFunction";
- import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
+//  import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
 
- 
-
+ import useFriendListAndUpcoming from "../hooks/usefriendListAndUpcoming";
+import { useUser } from "./UserContext";
 interface AutoSelectorContextType {}
 
 //HARD CODE LIGHT DARK COLOR LOCATION:
@@ -26,8 +27,8 @@ interface AutoSelectorProviderProps {
 export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   children,
 }) => {
- 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming();
+ const { user } = useUser();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: user?.id});
   const { settings } = useUserSettings();
 
   // if (!upcomingHelloes?.length || !settings || !friendList?.length) {

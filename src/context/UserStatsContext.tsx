@@ -7,7 +7,8 @@ import React, {
   useState,
 } from "react"; 
 import { useUser } from "./UserContext"; 
-import { useUserSettings } from "./UserSettingsContext";
+// import { useUserSettings } from "./UserSettingsContext";
+import useUserSettings from "../hooks/useUserSettings";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   

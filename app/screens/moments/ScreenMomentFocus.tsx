@@ -3,7 +3,8 @@ import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+// import { useUserSettings } from "@/src/context/UserSettingsContext";
+import useUserSettings from "@/src/hooks/useUserSettings";
 //import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash"; 
   

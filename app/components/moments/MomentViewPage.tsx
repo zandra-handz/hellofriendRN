@@ -210,8 +210,7 @@ const MomentViewPage: React.FC<Props> = ({
 
                 },
               ]}
-            >
-              {" "}
+            > 
               {item.user_category_name}
             </Text>
           </View>
@@ -223,8 +222,7 @@ const MomentViewPage: React.FC<Props> = ({
                   welcomeTextStyle,
                   { color: textColor, fontSize: 15, lineHeight: 24 },
                 ]}
-              >
-                {" "}
+              > 
                 {item.capsule}
               </Text>
             </ScrollView>

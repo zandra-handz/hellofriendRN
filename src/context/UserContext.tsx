@@ -45,11 +45,8 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  // made own for context
-  // const { onSignOut } = useSignOut();
-  const queryClient = useQueryClient();
-
-  // const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+ 
+  const queryClient = useQueryClient(); 
 
   const {
     data: user,

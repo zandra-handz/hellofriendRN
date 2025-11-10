@@ -6,7 +6,7 @@ import {
 
 import { useUser } from "./UserContext";
 
-import { UserSettings, UserSettingsContextType } from "../types/UserSettingsTypes";
+import {  UserSettingsContextType } from "../types/UserSettingsTypes";
 
  
 
