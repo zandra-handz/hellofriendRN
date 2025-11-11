@@ -6,7 +6,8 @@ import React, {
   useRef,
 } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import LocationsMapView from "@/app/components/locations/LocationsMapView";
 import LocationQuickView from "@/app/components/alerts/LocationQuickView";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";

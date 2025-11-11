@@ -11,10 +11,13 @@ type Props = {
 const useSignIn = ({ refetchUser }: Props) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+ 
+
   const signinMutation = useMutation({
     mutationFn: signinWithoutRefresh,
     onSuccess: () => {
-      refetchUser();
+     refetchUser();
+  
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -37,6 +40,8 @@ const useSignIn = ({ refetchUser }: Props) => {
   });
 
   const onSignIn = useCallback((username: string, password: string) => {
+
+    console.log('signing in!')
   signinMutation.mutate({ username, password }, {
     onError: (error) => {
       console.error("Sign in error", error);

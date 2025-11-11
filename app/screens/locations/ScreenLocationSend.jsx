@@ -4,7 +4,8 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
  
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useFriendDash } from "@/src/context/FriendDashContext"; 

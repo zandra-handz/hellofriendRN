@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors  from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";

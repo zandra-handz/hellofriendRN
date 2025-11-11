@@ -9,8 +9,8 @@ import useUserSettings from "@/src/hooks/useUserSettings";
  import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
-
- import { useUser } from "@/src/context/UserContext"; 
+import useUser from "@/src/hooks/useUser";
+//  import { useUser } from "@/src/context/UserContext"; 
 type Props = {
   isInitializing: boolean;
 };

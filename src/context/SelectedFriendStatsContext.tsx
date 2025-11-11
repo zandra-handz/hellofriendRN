@@ -1,101 +1,101 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  ReactNode,
-  useState,
-} from "react";
-import { useUser } from "./UserContext";
-// import { useCategories } from "./CategoriesContext"; 
-import { useSelectedFriend } from "./SelectedFriendContext";
-import { useQuery,   useQueryClient } from "@tanstack/react-query";
-import { useCapsuleList } from "./CapsuleListContext";
-import {  
-  fetchCategoriesHistoryCountAPI,
+// import React, {
+//   createContext,
+//   useContext,
+//   useEffect,
+//   useMemo,
+//   ReactNode,
+//   useState,
+// } from "react";
+// import { useUser } from "./UserContext";
+// // import { useCategories } from "./CategoriesContext"; 
+// import { useSelectedFriend } from "./SelectedFriendContext";
+// import { useQuery,   useQueryClient } from "@tanstack/react-query";
+// import { useCapsuleList } from "./CapsuleListContext";
+// import {  
+//   fetchCategoriesHistoryCountAPI,
  
-} from "../calls/api";
+// } from "../calls/api";
 
-interface SelectedFriendStatsContextType {}
+// interface SelectedFriendStatsContextType {}
 
-const SelectedFriendStatsContext = createContext<
-  SelectedFriendStatsContextType | undefined
->(undefined);
+// const SelectedFriendStatsContext = createContext<
+//   SelectedFriendStatsContextType | undefined
+// >(undefined);
 
-export const useSelectedFriendStats = (): SelectedFriendStatsContextType => {
-  const context = useContext(SelectedFriendStatsContext);
-  if (!context) {
-    throw new Error(
-      "useSelectedFriendStats must be used within a UserSettingsProvider"
-    );
-  }
-  return context;
-};
+// export const useSelectedFriendStats = (): SelectedFriendStatsContextType => {
+//   const context = useContext(SelectedFriendStatsContext);
+//   if (!context) {
+//     throw new Error(
+//       "useSelectedFriendStats must be used within a UserSettingsProvider"
+//     );
+//   }
+//   return context;
+// };
 
-interface SelectedFriendStatsProviderProps {
-  children: ReactNode;
-}
+// interface SelectedFriendStatsProviderProps {
+//   children: ReactNode;
+// }
 
-export const SelectedFriendStatsProvider: React.FC<
-  SelectedFriendStatsProviderProps
-> = ({ children }) => {
-  const { user, isInitializing } = useUser(); 
-  const { selectedFriend } = useSelectedFriend(); 
+// export const SelectedFriendStatsProvider: React.FC<
+//   SelectedFriendStatsProviderProps
+// > = ({ children }) => {
+//   const { user, isInitializing } = useUser(); 
+//   const { selectedFriend } = useSelectedFriend(); 
 
-  // const [selectedFriendStats, setSelectedFriendStats] = useState<
-  //   Record<string, any>
-  // >([]);
-  const queryClient = useQueryClient();
+//   // const [selectedFriendStats, setSelectedFriendStats] = useState<
+//   //   Record<string, any>
+//   // >([]);
+//   const queryClient = useQueryClient();
 
-  const {isPending } = useCapsuleList(); // forces this to wait till capsules are fetched
+//   const {isPending } = useCapsuleList(); // forces this to wait till capsules are fetched
 
-  const {
-    data: selectedFriendStats,
-    isLoading,
-    isFetching,
-    isSuccess,
-    isError,
-  } = useQuery({
-    queryKey: ["selectedFriendStats", user?.id, selectedFriend?.id],
-      queryFn: () => fetchCategoriesHistoryCountAPI({friendId: selectedFriend?.id, returnNonZeroesOnly: true}),
-    // queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
-    enabled: !!(
+//   const {
+//     data: selectedFriendStats,
+//     isLoading,
+//     isFetching,
+//     isSuccess,
+//     isError,
+//   } = useQuery({
+//     queryKey: ["selectedFriendStats", user?.id, selectedFriend?.id],
+//       queryFn: () => fetchCategoriesHistoryCountAPI({friendId: selectedFriend?.id, returnNonZeroesOnly: true}),
+//     // queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
+//     enabled: !!(
      
-      user?.id && selectedFriend?.id && selectedFriend?.isReady && !isInitializing && !isPending
-    ),
-    staleTime: 1000 * 60 * 60 * 10, // 10 hours
-  }); 
+//       user?.id && selectedFriend?.id && selectedFriend?.isReady && !isInitializing && !isPending
+//     ),
+//     staleTime: 1000 * 60 * 60 * 10, // 10 hours
+//   }); 
 
 
-const refetchFriendStats = () => {
-     if ( user?.id  && !isInitializing && selectedFriend?.id) {
-    queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
-  }
+// const refetchFriendStats = () => {
+//      if ( user?.id  && !isInitializing && selectedFriend?.id) {
+//     queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
+//   }
 
-};
-
-
-const invalidateFriendStats = () => {
-     if (user?.id && !isInitializing && selectedFriend?.id) {
-    queryClient.invalidateQueries(["selectedFriendStats", user.id, selectedFriend.id]);
-  }
-
-};
+// };
 
 
+// const invalidateFriendStats = () => {
+//      if (user?.id && !isInitializing && selectedFriend?.id) {
+//     queryClient.invalidateQueries(["selectedFriendStats", user.id, selectedFriend.id]);
+//   }
 
-  const contextValue = useMemo(
-    () => ({
-      selectedFriendStats,
-      refetchFriendStats,
-      invalidateFriendStats,
-    }),
-    [selectedFriendStats, refetchFriendStats, invalidateFriendStats]
-  );
+// };
 
-  return (
-    <SelectedFriendStatsContext.Provider value={contextValue}>
-      {children}
-    </SelectedFriendStatsContext.Provider>
-  );
-};
+
+
+//   const contextValue = useMemo(
+//     () => ({
+//       selectedFriendStats,
+//       refetchFriendStats,
+//       invalidateFriendStats,
+//     }),
+//     [selectedFriendStats, refetchFriendStats, invalidateFriendStats]
+//   );
+
+//   return (
+//     <SelectedFriendStatsContext.Provider value={contextValue}>
+//       {children}
+//     </SelectedFriendStatsContext.Provider>
+//   );
+// };

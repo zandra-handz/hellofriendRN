@@ -11,7 +11,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
  
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenFinalize = () => {
   const { allCapsulesList, capsuleList, preAdded } = useCapsuleList();

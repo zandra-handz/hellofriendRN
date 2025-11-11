@@ -8,7 +8,8 @@ import ImageCarouselSlider from "@/app/components/appwide/ImageCarouselSlider";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import ImageViewPage from "@/app/components/images/ImageViewPage";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 // import * as FileSystem from "expo-file-system";
 import { File, Directory, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";

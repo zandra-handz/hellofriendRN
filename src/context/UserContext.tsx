@@ -16,13 +16,8 @@ import { User } from "../types/UserContextTypes";
 
 interface UserContextType {
   user: User | null;
-  refetch: () => void;
-  isAuthenticated: boolean;
-  isInitializing: boolean;
-  userAppSettings: Record<string, any | null>;
-  userNotificationSettings: Record<string, any>;
-
-  handleDeleteUserAccount: () => void;
+  refetch: () => void; 
+  isInitializing: boolean; 
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

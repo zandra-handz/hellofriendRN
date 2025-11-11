@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 
 import SignInButton from "@/app/components/user/SignInButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";

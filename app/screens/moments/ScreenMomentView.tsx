@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 //import { useFriendDash } from "@/src/context/FriendDashContext";

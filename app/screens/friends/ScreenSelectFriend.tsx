@@ -10,7 +10,8 @@ import { useRoute } from "@react-navigation/native";
 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";

@@ -8,7 +8,8 @@ import useUserSettings from "../hooks/useUserSettings";
 //  import { useFriendListAndUpcoming } from "./FriendListAndUpcomingContext";
 
  import useFriendListAndUpcoming from "../hooks/usefriendListAndUpcoming";
-import { useUser } from "./UserContext";
+// import { useUser } from "./UserContext";
+// import useUser from "../hooks/useUser";
 interface AutoSelectorContextType {}
 
 //HARD CODE LIGHT DARK COLOR LOCATION:
@@ -20,15 +21,18 @@ export const useAutoSelector = (): AutoSelectorContextType =>
   useContext(AutoSelectorContext);
 
 interface AutoSelectorProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  userId?: number; // or whatever type your user object is
+  settings?: object;
 }
-
 // I don't think gradient safe view stuff is being used but leaving it in uncommented for a bit
 export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   children,
+  userId,
+  // settings,
 }) => {
- const { user } = useUser();
-  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: user?.id});
+//  const { user } = useUser();
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
   const { settings } = useUserSettings();
 
   // if (!upcomingHelloes?.length || !settings || !friendList?.length) {

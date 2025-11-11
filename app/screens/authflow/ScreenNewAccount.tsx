@@ -14,7 +14,8 @@ import {
   ScrollView,
 } from "react-native"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import manualGradientColors  from "@/app/styles/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
@@ -27,6 +28,7 @@ import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 
 import { useLDTheme } from "@/src/context/LDThemeContext";
+
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";

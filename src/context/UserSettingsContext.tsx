@@ -4,7 +4,8 @@ import {
   getUserSettings,
 } from "../calls/api";
 
-import { useUser } from "./UserContext";
+// import { useUser } from "./UserContext";
+import useUser from "../hooks/useUser";
 
 import {  UserSettingsContextType } from "../types/UserSettingsTypes";
 

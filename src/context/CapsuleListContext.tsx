@@ -9,7 +9,8 @@ import React, {
 import { useSelectedFriend } from "./SelectedFriendContext";
 import { fetchMomentsAPI } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
-import { useUser } from "./UserContext";
+// import { useUser } from "./UserContext";
+// import useUser from "../hooks/useUser";
 import { MomentFromBackendType } from "../types/MomentContextTypes";
 import useMomentContextFunctions from "../hooks/useMomentContextFunctions";
 
@@ -57,19 +58,19 @@ type CapsuleListProviderProps = {
   children: ReactNode;
 };
 
-export const CapsuleListProvider = ({ children }: CapsuleListProviderProps) => {
+export const CapsuleListProvider = ({ children, userId, isInitializing }: CapsuleListProviderProps) => {
   const { selectedFriend } = useSelectedFriend();
-  const { user, isInitializing } = useUser();
+  // const { user, isInitializing } = useUser();
   const { getPreAdded } = useMomentContextFunctions();
 
   // Fetch raw moments
   const { data, isPending, isSuccess } = useQuery<MomentFromBackendType[]>({
-    queryKey: ["Moments", user?.id, selectedFriend?.id],
+    queryKey: ["Moments", userId, selectedFriend?.id],
     queryFn: async () => {
       if (!selectedFriend?.id) throw new Error("selectedFriend.id is null");
       return fetchMomentsAPI(selectedFriend.id);
     },
-    enabled: !!(selectedFriend?.id && user?.id && !isInitializing),
+    enabled: !!(selectedFriend?.id && userId && !isInitializing),
     staleTime: 1000 * 60 * 120, // 2 hours
   });
 

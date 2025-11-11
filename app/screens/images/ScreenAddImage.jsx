@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import TopBarLikeMinusWidth from "../moments/TopBarLikeMinusWidth";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  

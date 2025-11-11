@@ -1,8 +1,9 @@
 // this is my first time using prefetches so I am building as hook first just for my own sake to keep track of
 // where I'm doing them
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "../context/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
+// import { useUser } from "../context/UserContext";
+import useUser from "./useUser";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { fetchUserAddresses, fetchFriendAddresses } from "@/src/calls/api";
 

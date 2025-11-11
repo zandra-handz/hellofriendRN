@@ -9,7 +9,8 @@ import useFriendDash from "@/src/hooks/useFriendDash";
 import PreAddedList from "@/app/components/moments/PreAddedList";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/app/styles/StaticColors";

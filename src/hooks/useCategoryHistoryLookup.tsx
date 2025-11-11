@@ -1,4 +1,5 @@
-import { useUser } from "../context/UserContext";
+// import { useUser } from "../context/UserContext";
+import useUser from "./useUser";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { fetchCapsulesHistoryAPI } from "../calls/api";

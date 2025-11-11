@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useLinkBuilder, useRoute } from "@react-navigation/native";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ContentFindMidpoint from "@/app/components/locations/ContentFindMidpoint";
  

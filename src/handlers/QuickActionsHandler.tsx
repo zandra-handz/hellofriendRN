@@ -2,7 +2,8 @@ import { useEffect  } from "react";
 import * as QuickActions from "expo-quick-actions"; 
 // import { useUserSettings } from "../context/UserSettingsContext";
  
-import { useUser } from "../context/UserContext";
+// import { useUser } from "../context/UserContext";
+import useUser from "../hooks/useUser";
  import useUserSettings from "../hooks/useUserSettings";
 // import { useFriendListAndUpcoming } from "../context/FriendListAndUpcomingContext";
  

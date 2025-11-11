@@ -6,7 +6,8 @@ import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice"
 import LocationAddress from "@/app/components/locations/LocationAddress";
  
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import {  useLDTheme } from "@/src/context/LDThemeContext";
  
 import useDeleteLocation from "@/src/hooks/LocationCalls/useDeleteLocation";

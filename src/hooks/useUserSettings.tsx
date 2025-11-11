@@ -1,7 +1,8 @@
  
 import { useQuery } from "@tanstack/react-query";
  
-import { useUser } from "../context/UserContext";
+// import { useUser } from "../context/UserContext";
+import useUser from "./useUser";
 import { getUserSettings } from "@/src/calls/api";
 export interface CategoryType {
   id: number;

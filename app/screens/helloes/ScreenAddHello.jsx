@@ -2,7 +2,8 @@ import React from "react";
 import ContentAddHello from "@/app/components/helloes/ContentAddHello";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
  
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext"; 
 // import { AppFontStyles } from "@/app/styles/AppFonts";
  

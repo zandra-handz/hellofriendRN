@@ -3,7 +3,9 @@ import { View, Text } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
+
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import ReloadList from "@/app/components/helloes/ReloadList";

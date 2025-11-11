@@ -6,8 +6,12 @@ import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
 
 // app context
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+
 import { useLDTheme } from "@/src/context/LDThemeContext";
+
+// app hooks
+import useUser from "@/src/hooks/useUser";
 
 //app sibling
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -30,12 +34,13 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
  
 
-const ScreenAuth = () => {
-  const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
+// const ScreenAuth = () => {
+  const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
+  // const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const usernameEntered = route.params?.usernameEntered ?? false;
 
   const { refetch } = useUser();
-  const { onSignIn, signinMutation } = useSignIn({ refetchUser: refetch });
+  const { onSignIn, signinMutation } = useSignIn({ refetchUser: onAuthSuccess });
 
   const { navigateToNewAccount, navigateToRecoverCredentials } =
     useAppNavigations();
@@ -51,7 +56,7 @@ const ScreenAuth = () => {
 
   const placeholderTextColor = manualGradientColors.homeDarkColor;
 
-  console.log("screen auth rerendered");
+  // console.log("screen auth rerendered");
 
   const INPUTS_GAP = 4;
   const DELAY_BEFORE_FOCUS = 300;

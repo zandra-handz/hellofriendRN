@@ -10,7 +10,8 @@ import useFriendDash from "@/src/hooks/useFriendDash";
   
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
+import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext"; 
 import Animated, { 
 } from "react-native-reanimated"; 

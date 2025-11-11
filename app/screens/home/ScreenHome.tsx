@@ -16,7 +16,7 @@ import {
 } from "react-native";
 
 // app state
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
@@ -31,6 +31,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 // import { logQueryCacheSize } from "@/src/utils/logQueryCacheSize";
 
 // app hooks
+import useUser from "@/src/hooks/useUser";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
