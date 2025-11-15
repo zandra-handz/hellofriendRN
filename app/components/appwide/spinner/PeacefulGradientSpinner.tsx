@@ -4,23 +4,22 @@ import { View, StyleSheet } from "react-native";
 import React from "react";  
 import LoadingPage from "./LoadingPage"; 
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
-import useUserSettings from "@/src/hooks/useUserSettings";
+ 
 //  import useSignIn from "@/src/hooks/UserCalls/useSignIn";
  import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-
-import useUser from "@/src/hooks/useUser";
+ 
 //  import { useUser } from "@/src/context/UserContext"; 
 type Props = {
   isInitializing: boolean;
 };
 
-const PeacefulGradientSpinner = ({   isInitializing }: Props) => {
+const PeacefulGradientSpinner = ({ userId,  isInitializing, loadingSettings }: Props) => {
  
-  const  { loadingSettings } = useUserSettings();
- const { user} = useUser();
+ 
+//  const { loadingSettings } = useUserSettings();
 
-  const { isLoading} = useFriendListAndUpcoming({userId: user?.id});
+  const { isLoading} = useFriendListAndUpcoming({userId: userId});
  
  
   return (

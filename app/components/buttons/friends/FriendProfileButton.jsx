@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import LoadingPage from "../../appwide/spinner/LoadingPage";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
 import useFriendDash from "@/src/hooks/useFriendDash";
 // import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -12,12 +12,15 @@ const FriendProfileButton = ({
   friendId,
   friendName,
   primaryColor = "orange",
- 
+
   themeColors,
- 
+
   onPress,
 }) => {
-  const { dashLoaded, loadingDash, friendDash } = useFriendDash({userId: userId, friendId: friendId} );
+  const { dashLoaded, loadingDash, friendDash } = useFriendDash({
+    userId: userId,
+    friendId: friendId,
+  });
 
   const circleSize = 27;
   const iconSize = 28;
@@ -38,21 +41,8 @@ const FriendProfileButton = ({
         }}
       >
         {!friendId && !loadingDash && (
-          <View
-            style={{
-              flex: 1,
-              position: "absolute",
-              right: 0,
-              left: 0,
-              alignItems: "center",
-              justifyContent: "center",
-              flexGrow: 1,
-              top: 0,
-              bottom: 0,
-              // backgroundColor: "pink",
-            }}
-          >
-            <MaterialCommunityIcons
+          <View style={styles.treeWrapper}>
+            <SvgIcon
               name={"tree"}
               size={45}
               color={manualGradientColors.homeDarkColor}
@@ -78,15 +68,7 @@ const FriendProfileButton = ({
   };
 
   return (
-    <View
-      style={{
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        alignContent: "center",
-        flexDirection: "row",
-      }}
-    >
+    <View style={styles.container}>
       {loadingDash && (
         <View style={styles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
@@ -108,16 +90,11 @@ const FriendProfileButton = ({
           <View>
             {renderProfileIcon()}
             <View
-              style={{
-                position: "absolute",
-                top: -13,
-                right: 13,
-                zIndex: 1000,
-              }}
+              style={styles.timerWrapper}
             >
               {friendId && (
-                <MaterialIcons
-                  name="display-settings"
+                <SvgIcon
+                  name="timer_cog"
                   size={iconSize - 2}
                   color={primaryColor}
                 />
@@ -131,6 +108,30 @@ const FriendProfileButton = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "center",
+    flexDirection: "row",
+  },
+  treeWrapper: {
+    flex: 1,
+    position: "absolute",
+    right: 0,
+    left: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    flexGrow: 1,
+    top: 0,
+    bottom: 0,
+  },
+  timerWrapper: {
+    position: "absolute",
+    top: -13,
+    right: 13,
+    zIndex: 1000,
+  },
   loadingFriendProfileButtonWrapper: {
     flex: 0.4,
     paddingRight: 0,

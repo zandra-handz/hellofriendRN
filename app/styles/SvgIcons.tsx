@@ -70,6 +70,7 @@ import StarSvg from "./svgs/star";
 import TextSearchSvg from "./svgs/text-search";
 import TextShadowSvg from "./svgs/text-shadow";
 import TimerSvg from "./svgs/timer";
+import TimerCogSvg from "./svgs/timer-cog";
 import TimerSyncSvg from "./svgs/timer-sync";
 import TreeSvg from "./svgs/tree";
 import ThemeLightDarkSvg from "./svgs/theme-light-dark";
@@ -144,6 +145,7 @@ const svgIcons = {
   text_search: TextSearchSvg,
   text_shadow: TextShadowSvg,
   timer: TimerSvg,
+  timer_cog: TimerCogSvg,
   timer_sync: TimerSyncSvg,
   tree: TreeSvg,
   upload_outline: UploadOutlineSvg,

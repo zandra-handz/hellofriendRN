@@ -29,11 +29,11 @@ interface AutoSelectorProviderProps {
 export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
   children,
   userId,
-  // settings,
+  settings,
 }) => {
 //  const { user } = useUser();
   const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
-  const { settings } = useUserSettings();
+  // const { settings } = useUserSettings();
 
   // if (!upcomingHelloes?.length || !settings || !friendList?.length) {
   //     return;

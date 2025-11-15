@@ -16,6 +16,7 @@ const useUpdateSettings = ({ userId }: Props) => {
 onSuccess: (serverData, variables) => {
   // variables.setting = the object you passed in (the delta)
   const updates = variables.setting;
+  console.log('updating settings!');
 
   queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
     if (!oldData) return serverData; // if no cache, fallback to server response

@@ -34,6 +34,7 @@ import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 // import { UserProvider, useUser } from "./src/context/UserContext";
 import { UserProvider } from "./src/context/UserContext";
 // import {
@@ -42,6 +43,7 @@ import { UserProvider } from "./src/context/UserContext";
 // } from "./src/context/UserSettingsContext";
 
 import useUserSettings from "./src/hooks/useUserSettings";
+import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
 
 // import { UserStatsProvider } from "./src/context/UserStatsContext";
 
@@ -218,13 +220,10 @@ export default Sentry.wrap(function App() {
   return (
     <ShareIntentProvider>
       <QueryClientProvider client={queryClient}>
-        {/* <UserProvider> */}
-        {/* <AutoSelectorProvider> */}
-        <SelectedFriendProvider>
-          {/* <CapsuleListProvider> */}
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaProvider>
-              <LDThemeProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <LDThemeProvider>
+              <SelectedFriendProvider>
                 <CategoryColorsProvider>
                   <RootSiblingParent>
                     <DeviceLocationProvider>
@@ -235,13 +234,10 @@ export default Sentry.wrap(function App() {
                     </DeviceLocationProvider>
                   </RootSiblingParent>
                 </CategoryColorsProvider>
-              </LDThemeProvider>
-            </SafeAreaProvider>
-          </GestureHandlerRootView>
-          {/* </CapsuleListProvider> */}
-        </SelectedFriendProvider>
-        {/* </AutoSelectorProvider> */}
-        {/* </UserProvider> */}
+              </SelectedFriendProvider>
+            </LDThemeProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
       </QueryClientProvider>
     </ShareIntentProvider>
   );
@@ -370,7 +366,7 @@ const linking = {
 export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
   const { user, isInitializing, refetch } = useUser();
 
-  const { settings } = useUserSettings();
+  const { settings, loadingSettings } = useTopLevelUserSettings({userId: user?.id, isInitializing: isInitializing});
 
   const receiveNotifications =
     settings?.receive_notifications === true
@@ -389,19 +385,19 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
   useNotificationsRegistration({ receiveNotifications, expoPushToken });
 
   if (isInitializing) {
-    return <PeacefulGradientSpinner isInitializing />;
+    return <PeacefulGradientSpinner isInitializing={isInitializing} />;
   }
 
   return (
     // need settings in one of the contexts for it change across app
     // hence need it in autoseledct (??) for right now
     //  <AutoSelectorProvider userId={user?.id} settings={settings}>
-    <AutoSelectorProvider userId={user?.id}>
+    <AutoSelectorProvider userId={user?.id} settings={settings}>
       <CapsuleListProvider userId={user?.id} isInitializing={isInitializing}>
         <NavigationContainer ref={navigationRef} linking={linking}>
-          <PeacefulGradientSpinner isInitializing={isInitializing} />
+          <PeacefulGradientSpinner userId={user?.id} isInitializing={isInitializing} />
           <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
-          <QuickActionsHandler navigationRef={navigationRef} />
+          <QuickActionsHandler userId={user?.id} settings={settings} navigationRef={navigationRef} />
           <TopLevelNavigationHandler
             userId={user?.id}
             isInitializing={isInitializing}

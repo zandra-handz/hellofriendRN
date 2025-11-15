@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
-import useUser from "./useUser";
+// import useUser from "./useUser";
 import { getUserSettings } from "@/src/calls/api";
 
-const useUserSettings = () => {
-  const { user, isInitializing } = useUser();
+const useTopLevelUserSettings = ({userId, isInitializing}) => {
+//   const { user, isInitializing } = useUser();
 
   const {
     data: settings,
     isLoading: loadingSettings,
     isSuccess: settingsLoaded,
   } = useQuery({
-    queryKey: ["userSettings", user?.id],
+    queryKey: ["userSettings", userId],
     queryFn: () => getUserSettings(),
-    enabled: !!user?.id && !isInitializing, //testing removing this
+    enabled: !!userId && !isInitializing, //testing removing this
     retry: 3,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
@@ -25,4 +25,4 @@ const useUserSettings = () => {
   };
 };
 
-export default useUserSettings;
+export default useTopLevelUserSettings;
