@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, View } from "react-native"; 
+import { StyleSheet, View } from "react-native";
 import UpNext from "./UpNext";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 import manualGradientColors from "@/app/styles/StaticColors";
 import Animated, { FadeIn, SlideOutRight } from "react-native-reanimated";
- 
-import useSelectFriend from "@/src/hooks/useSelectFriend";  
+
+import useSelectFriend from "@/src/hooks/useSelectFriend";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
+
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // Press function is internal
 const AllHome = ({
@@ -16,7 +16,6 @@ const AllHome = ({
   // lockInCustomString,
   userId,
   isLoading,
-  paddingHorizontal,  
   height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
@@ -28,22 +27,21 @@ const AllHome = ({
   // const { friendList } = useFriendList();
   // const { upcomingHelloes } = useUpcomingHelloes();
 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({
+    userId: userId,
+  });
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
-  const capsuleSummaries = friendListAndUpcoming?.capsule_summaries
+  // const capsuleSummaries = friendListAndUpcoming?.capsule_summaries
 
-  console.log(capsuleSummaries)
+  // console.log(capsuleSummaries)
 
-
- 
   const { handleSelectFriend } = useSelectFriend({
     userId,
-    friendList
+    friendList,
   });
 
- 
   // const upcomingId = useMemo(() => {
   //   if (!upcomingHelloes?.[0]) {
   //     return;
@@ -52,10 +50,8 @@ const AllHome = ({
   // }, [upcomingHelloes]);
 
   const onPress = () => {
-   
-    handleSelectFriend(upcomingId); 
+    handleSelectFriend(upcomingId);
   };
- 
 
   return (
     <View
@@ -69,29 +65,12 @@ const AllHome = ({
       ]}
     >
       {upcomingHelloes && ( //used tp be isLoading
-        <View
-          style={{
-            height: "100%",
-            width: "100%",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            overflow: "hidden",
-            padding: paddingHorizontal,
-          }}
-        >
+        <View style={styles.upNextWrapper}>
           <UpNext upcomingHelloes={upcomingHelloes} onPress={onPress} />
 
           <View
-            //  entering={SlideInDown}
-            // exiting={SlideOutDown}
-            style={{
-              zIndex: 3,
-              flex: 1,
-              width: "100%",
-              height: 400,
-            }}
+            style={styles.soonWrapper}
           >
-          
             <HomeScrollSoon
               lighterOverlayColor={lighterOverlayColor}
               darkerOverlayColor={darkerOverlayColor}
@@ -106,18 +85,12 @@ const AllHome = ({
               borderRadius={10}
               borderColor="black"
             />
-          </View>
-          {/* </Animated.View> */}
+          </View> 
 
           <Animated.View
             entering={FadeIn}
             exiting={SlideOutRight}
-            style={{
-              position: "absolute",
-              right: -56,
-              top: 0,
-              transform: [{ rotate: "180deg" }],
-            }}
+            style={styles.geckoTransformer}
           >
             <GeckoSvg
               color={manualGradientColors.homeDarkColor}
@@ -146,6 +119,25 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     // backgroundColor: 'red',
   },
+  upNextWrapper: {
+    height: "100%",
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    overflow: "hidden",
+  },
+  soonWrapper: {
+    zIndex: 3,
+    flex: 1,
+    width: "100%",
+    height: 400,
+  },
+  geckoTransformer: {
+          position: "absolute",
+              right: -56,
+              top: 0,
+              transform: [{ rotate: "180deg" }],
+  }
 });
 
 export default AllHome;

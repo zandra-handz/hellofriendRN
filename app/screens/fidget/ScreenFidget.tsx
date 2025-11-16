@@ -15,9 +15,11 @@ import ShaderTestOne from "@/app/components/appwide/button/ShaderTestOne";
 import useUser from "@/src/hooks/useUser";
 import SpinnerOne from "@/app/components/appwide/button/SpinnerOne";
 import SpinnerTwo from "@/app/components/appwide/button/SpinnerTwo";
+import SpinnerThree from "@/app/components/appwide/button/SpinnerThree";
 import Cascader from "@/app/fidgets/Cascader";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
+
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
@@ -97,7 +99,7 @@ const ScreenFidget = (props: Props) => {
         // padding: 10, //consider this approach for all screens if possible
       }}
     >
-      {(spinnerViewing === 1 || spinnerViewing === 4) && (
+      {/* {(spinnerViewing === 1 || spinnerViewing === 4) && (
         <View
           style={{
             //  backgroundColor: "pink",
@@ -110,7 +112,7 @@ const ScreenFidget = (props: Props) => {
             <Demo text={""} />
           </View>
         </View>
-      )}
+      )} */}
 
       {/* {(spinnerViewing === 2 ) && (
         <View style={StyleSheet.absoluteFillObject}>
@@ -129,9 +131,7 @@ const ScreenFidget = (props: Props) => {
         </View>
       )} */}
 
-      {(spinnerViewing === 2 ||
-    
-        spinnerViewing === 6) && (
+      {(spinnerViewing === 2 || spinnerViewing === 4 ) && (
         <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
           <SpinnerTwo
             color1={selectedFriend?.lightColor}
@@ -140,6 +140,17 @@ const ScreenFidget = (props: Props) => {
         </View>
       )}
 
+
+      {( 
+    
+        spinnerViewing === 6 || spinnerViewing === 1) && (
+        <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
+          <SpinnerThree
+            color1={selectedFriend?.lightColor}
+            color2={selectedFriend?.darkColor}
+          />
+        </View>
+      )}
 
             {( 
         spinnerViewing === 5 ||
@@ -184,7 +195,7 @@ const ScreenFidget = (props: Props) => {
           primaryBackground={lightDarkTheme.primaryBackground}
           onPress={handleNextOption}
           label={"Try a different spinner"}
-          forwardFlowOn={false}
+   
         />
       </SafeAreaView>
     </PreAuthSafeViewAndGradientBackground>

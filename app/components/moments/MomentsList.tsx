@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, ViewToken, Pressable } from "react-native";
+import { View, ViewToken, Pressable, StyleSheet } from "react-native";
 import GeckoToHelloButton from "./GeckoToHelloButton";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBarMinusWidth from "./EscortBarMinusWidth";
@@ -22,11 +22,8 @@ import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
   withTiming,
-  FadeOut,
-  FadeIn,
-  withSpring,
-  SlideInRight,
-  SlideOutRight,
+ 
+  withSpring, 
 } from "react-native-reanimated";
 
 const MomentsList = ({
@@ -86,7 +83,7 @@ const MomentsList = ({
     useState(false);
 
   const scrollToMoment = (moment) => {
-    console.log('scroll to moment: ', moment)
+    console.log("scroll to moment: ", moment);
     if (moment.uniqueIndex !== undefined) {
       flatListRef.current?.scrollToOffset({
         offset: COMBINED_HEIGHT * moment.uniqueIndex,
@@ -184,46 +181,45 @@ const MomentsList = ({
   );
 
   const scrollY = useSharedValue(0);
-const pullCount = useSharedValue(0); // track number of pulls
+  const pullCount = useSharedValue(0); // track number of pulls
 
-const scrollHandler = useAnimatedScrollHandler({
-  onScroll: (event) => {
-    const y = event.contentOffset.y;
-    scrollY.value = y;
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      const y = event.contentOffset.y;
+      scrollY.value = y;
 
-    if (y < 10) {
-      // only trigger categoryNavVisibility if user has pulled twice
-      if (pullCount.value >= 2) {
-        categoryNavVisibility.value = withTiming(1);
+      if (y < 10) {
+        // only trigger categoryNavVisibility if user has pulled twice
+        if (pullCount.value >= 2) {
+          categoryNavVisibility.value = withTiming(1);
+        }
+      } else {
+        categoryNavVisibility.value = withTiming(1, { duration: 1000 });
       }
-    } else {
-      categoryNavVisibility.value = withTiming(1, { duration: 1000 });
-    }
-  },
-  onBeginDrag: (event) => {
-    if (listVisibility.value < 1) {
-      listVisibility.value = withSpring(1);
-    }
-  },
-  onEndDrag: (event) => {
-    if (event.contentOffset.y <= 0) {
-      pullCount.value += 1; // increment pull count when pulled to top
-
-      if (pullCount.value >= 2) {
-        listVisibility.value = withSpring(0);
-        // reset counter so it doesn’t keep firing
-        pullCount.value = 0;
+    },
+    onBeginDrag: (event) => {
+      if (listVisibility.value < 1) {
+        listVisibility.value = withSpring(1);
       }
-    }
+    },
+    onEndDrag: (event) => {
+      if (event.contentOffset.y <= 0) {
+        pullCount.value += 1; // increment pull count when pulled to top
 
-    categoryNavVisibility.value = withTiming(1, { duration: 3000 });
-  },
-});
+        if (pullCount.value >= 2) {
+          listVisibility.value = withSpring(0);
+          // reset counter so it doesn’t keep firing
+          pullCount.value = 0;
+        }
+      }
 
+      categoryNavVisibility.value = withTiming(1, { duration: 3000 });
+    },
+  });
 
-const handleCloseCategoryNav = () => {
-  setCategoryNavigatorVisible(false);
-}
+  const handleCloseCategoryNav = () => {
+    setCategoryNavigatorVisible(false);
+  };
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <Pressable
@@ -275,17 +271,8 @@ const handleCloseCategoryNav = () => {
   };
 
   return (
-    <View style={{ width: "100%", flex: 1, zIndex: 1, elevation: 1 }}>
-      <View
-        style={{
-          position: "absolute",
-          flexDirection: "row",
-          width: "100%",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          paddingHorizontal: 10,
-        }}
-      >
+    <View style={styles.outerContainer}>
+      <View style={styles.swipeDownContainer}>
         <SwipeDown
           label={`Undo`}
           flipLabel={`Back`}
@@ -295,13 +282,9 @@ const handleCloseCategoryNav = () => {
         />
       </View>
       {!categoryNavigatorVisible && (
-        <Animated.View
-          exiting={FadeOut}
-          entering={FadeIn}
-          style={{ flex: 1, position: "absolute", bottom: 0 }}
-        >
+        <View style={styles.geckoWrapper}>
           <LargeCornerLizard color={darkerOverlayColor} />
-        </Animated.View>
+        </View>
       )}
 
       <MomentsAdded
@@ -312,20 +295,8 @@ const handleCloseCategoryNav = () => {
         preAdded={preAdded}
         visibilityValue={listVisibility}
       />
-      <View
-        style={{
-          alignContent: "center",
-          alignSelf: "center",
-          width: "100%",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "87%",
-        }}
-      >
-        <Animated.View
-          style={{ flex: 1, alignItems: "center" }}
-          entering={SlideInRight.duration(300).springify(300)}
-        >
+      <View style={styles.flatlistOuterWrapper}>
+        <View style={styles.flatlistWrapper}>
           <Animated.FlatList
             fadingEdgeLength={0}
             itemLayoutAnimation={JumpingTransition}
@@ -362,12 +333,12 @@ const handleCloseCategoryNav = () => {
             decelerationRate="normal"
             keyboardDismissMode="on-drag"
           />
-        </Animated.View>
+          {/* </Animated.View> */}
+        </View>
       </View>
 
       <>
-        {
-        categoryNavigatorVisible &&
+        {categoryNavigatorVisible &&
           categoryColorsMap &&
           Object.keys(categoryColorsMap).length > 0 && (
             <CategoryNavigator
@@ -382,39 +353,17 @@ const handleCloseCategoryNav = () => {
               categoryColorsMap={categoryColorsMap}
             />
           )}
-        <View
-          style={{
-            position: "absolute",
-            bottom: 10,
-            width: "100%",
-            // backgroundColor: 'orange',
-            paddingHorizontal: 10,
-          }}
-        >
+        <View style={styles.bottomBarContainer}>
           {!categoryNavigatorVisible && (
-            <Animated.View
-              exiting={SlideOutRight}
-              // entering={SlideInRight}
-              style={{
-                flexDirection: "row",
-                position: "absolute",
-                bottom: 6,
-                     right: 18,
-                zIndex: 50000,
-                height: 38,
-                width: 60,
-           
-                justifyContent: "flex-end",
-              }}
-            >
+            <View style={styles.geckoToHelloButtonContainer}>
               <GeckoToHelloButton />
-            </Animated.View>
+            </View>
           )}
 
           {!categoryNavigatorVisible && (
             <>
-            <MomentSearcher onSearchPress={scrollToMoment} />
-           
+              <MomentSearcher onSearchPress={scrollToMoment} />
+
               <EscortBarMinusWidth
                 backgroundColor={primaryBackgroundColor}
                 overlayColor={primaryOverlayColor}
@@ -422,14 +371,62 @@ const handleCloseCategoryNav = () => {
                 navigateBack={navigateBack}
                 onPress={() => setCategoryNavigatorVisible(true)}
               />
-              
             </>
-         
           )}
         </View>
       </>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  outerContainer: {
+    width: "100%",
+    flex: 1,
+    zIndex: 1,
+    elevation: 1,
+  },
+  swipeDownContainer: {
+    position: "absolute",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  geckoWrapper: {
+    flex: 1,
+    position: "absolute",
+    bottom: 0,
+  },
+  flatlistOuterWrapper: {
+    alignContent: "center",
+    alignSelf: "center",
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "87%",
+  },
+  flatlistWrapper: {
+    flex: 1,
+    alignItems: "center",
+  },
+  bottomBarContainer: {
+    position: "absolute",
+    bottom: 10,
+    width: "100%",
+    paddingHorizontal: 10,
+  },
+  geckoToHelloButtonContainer: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: 6,
+    right: 18,
+    zIndex: 50000,
+    height: 38,
+    width: 60,
+    justifyContent: "flex-end",
+  }
+});
 
 export default MomentsList;

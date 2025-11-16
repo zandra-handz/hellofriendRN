@@ -4,7 +4,7 @@ import Animated from "react-native-reanimated";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import ToNextButton from "./ToNextButton";
+ 
 import ActionAndBack from "./ActionAndBack";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -22,7 +22,7 @@ const EscortBarFidgetScreen = ({
   onPress,
   label = "Save and Continue",
   iconName = "keyboard-arrow-left",
-  forwardFlowOn = true,
+ 
   style,
   primaryColor,
   primaryBackground,
@@ -46,7 +46,7 @@ const EscortBarFidgetScreen = ({
             width: "100%",
             alignItems: "center",
             justifyContent: "space-between",
-            borderRadius: 10,
+            borderRadius: 999,
             backgroundColor: primaryBackground,
           },
         ]}
@@ -86,10 +86,9 @@ const EscortBarFidgetScreen = ({
               {label}
             </Text>
 
-            {forwardFlowOn && <ToNextButton onPress={onPress} />}
-            {!forwardFlowOn && (
-              <ActionAndBack onPress={onPress} iconName={"refresh"} />
-            )}
+         
+              <ActionAndBack onPress={onPress} iconName={"refresh"} rounded={true} />
+        
           </View>
         </View>
       </GlobalPressable>

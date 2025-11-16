@@ -52,15 +52,15 @@ import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import { useCategoryColors } from "@/src/context/CategoryColorsContext";
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+// import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
-import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
-import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+// import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
+// import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
+// import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import useCategories from "@/src/hooks/useCategories";
 // import { useCategories } from "@/src/context/CategoriesContext";
 import WriteButton from "@/app/components/home/WriteButton";
@@ -321,7 +321,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
         loading={
             autoSelectFriend?.nextFriend === "pending" ||
           autoSelectFriend?.customFriend === "pending" ||
-          !selectedFriend?.isReady
+          !selectedFriend?.isReady || !friendListAndUpcomingIsSuccess
         }
       />
 
@@ -329,7 +329,9 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
       {autoSelectFriend?.customFriend !== "pending" &&
       autoSelectFriend?.nextFriend !== "pending" &&
-        selectedFriend?.isReady && (
+        selectedFriend?.isReady && 
+        friendListAndUpcomingIsSuccess &&
+         (
           <SafeViewAndGradientBackground
             friendColorLight={selectedFriend.lightColor}
             friendColorDark={selectedFriend.darkColor}
@@ -352,7 +354,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
           >
  
             <>
-              {!friendListAndUpcomingIsSuccess && ( // isLoading is in FS Spinner
+              {/* {!friendListAndUpcomingIsSuccess && ( // isLoading is in FS Spinner
                 <View
                   style={[
                     styles.loadingContainer,
@@ -368,7 +370,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                     color={manualGradientColors.homeDarkColor}
                   />
                 </View>
-              )}
+              )} */}
 
               <>
                 <KeyboardAvoidingView
@@ -376,7 +378,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                   style={[{ flex: 1 }]}
                 >
                   {
-                  friendListAndUpcomingIsSuccess &&
+                  // friendListAndUpcomingIsSuccess &&
                     settings?.id &&
                     upcomingHelloes?.length &&
                     user?.id && ( //&& !isLoading  is in FSSpinner
@@ -464,22 +466,15 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                           !selectedFriend?.id &&
                           friendListLength > 0 && ( // loadingDash internally spins the components between friend selects
                             <View
-                              style={[
-                                {
-                                  alignItems: "center",
-                                  flex: 1,
-                                  width: "100%",
-                                },
-                              ]}
+                              style={styles.allHomeWrapper}
                             >
-                              <View style={{ height: "100%" }}>
+                              <View style={{ height: "100%", paddingHorizontal: PADDING_HORIZONTAL }}>
                                 <AllHome
                                   userId={user?.id}
                                   friendId={selectedFriend?.id}
                                   lockInCustomString={
                                     settings?.lock_in_custom_string
                                   }
-                                  paddingHorizontal={PADDING_HORIZONTAL}
                                   lighterOverlayColor={
                                     lightDarkTheme.lighterOverlayBackground
                                   }

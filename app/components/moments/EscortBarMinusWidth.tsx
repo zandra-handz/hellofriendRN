@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -18,58 +18,17 @@ const EscortBarMinusWidth = ({
   label = "categories",
 }: Props) => {
   return (
-    <View
-      style={{ height: 50  }}
-      // entering={SlideInDown}
-      // exiting={SlideOutDown}
-    >
-      <GlobalPressable
-        onPress={onPress}
-        style={[
-          {
-            paddingHorizontal: 0,
-            flexDirection: "row",
-            width: "100%",
-            //height: 50,
-            flex: 1,
-            // backgroundColor: 'pink',
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 22,
-            
-            // backgroundColor: "orange",
-
-            //  marginVertical: 10,
-          },
-        ]}
-      >
-        <View
-          style={{
-            width: "auto",
-            left: 0, // should match padding on right
-            position: "absolute",
-            //    bottom: 0,
-            //  top: 0,
-            flex: 1,
-            height: "100%", 
-
-           // height: 50,
-            alignItems: "center",
-            flexDirection: "column",
-            justifyContent: "center",
-            zIndex: 50000,
-          }}
-        >
+    <View style={{ height: 50 }}>
+      <GlobalPressable onPress={onPress} style={styles.container}>
+        <View style={styles.innerContainer}>
           <Pressable
             hitSlop={10}
-            style={{
-              borderRadius: 999,
-              padding: 4,
-              backgroundColor: overlayColor,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            //   onPress={navigateBack}
+            style={[
+              styles.pressableContainer,
+              {
+                backgroundColor: overlayColor,
+              },
+            ]}
             onPress={navigateBack}
           >
             <SvgIcon name={"chevron_left"} size={20} color={primaryColor} />
@@ -77,35 +36,18 @@ const EscortBarMinusWidth = ({
         </View>
 
         <View
-          style={{
-            position: "absolute",
-            // top: 0,
-            // bottom: 0,
-            left: 0,
-            right: 0,
-            borderRadius: 999,
-            backgroundColor: backgroundColor,
-            height: '100%',
-
-            zIndex: 0,
-            marginLeft: 106,
-          }}
+          style={[
+            styles.heightView,
+            {
+              backgroundColor: backgroundColor,
+            },
+          ]}
         ></View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            borderRadius: 0,
-            borderTopLeftRadius: 20,
-            borderBottomLeftRadius: 20,
-            padding: 0,
-          }}
-        >
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View style={styles.innerInnerContainer}>
+          <View style={styles.chevronUpWrapper}>
             <SvgIcon
               name={"chevron_up"}
               size={16}
-              //  color={homeDarkColor}
               color={primaryColor}
               style={{
                 position: "absolute",
@@ -126,5 +68,57 @@ const EscortBarMinusWidth = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 22,
+  },
+  innerContainer: {
+    width: "auto",
+    left: 0, // should match padding on right
+    position: "absolute",
+    flex: 1,
+    height: "100%",
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    zIndex: 50000,
+  },
+  pressableContainer: {
+    borderRadius: 999,
+    padding: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heightView: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    borderRadius: 999,
+    height: "100%",
+    zIndex: 0,
+    marginLeft: 106,
+  },
+  innerInnerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    borderRadius: 0,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    padding: 0,
+  },
+  chevronUpWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default EscortBarMinusWidth;

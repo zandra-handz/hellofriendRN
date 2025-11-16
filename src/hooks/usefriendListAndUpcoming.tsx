@@ -26,10 +26,11 @@ const useFriendListAndUpcoming = ({
     queryFn: () => fetchUpcomingHelloesAndFriends(),
     enabled: !!userId && !isInitializing, //removed isInitializing to test
     retry: 4,
-    staleTime: 1000 * 60 * 20, // 20 minutes
+    staleTime: 1000 * 60 * 60 * 1, // 1 hr //need time check?
+    // staleTime: 1000 * 60 * 240, // minutes
 
     // use useUpNextCache in tandem to set query cache, will not cause this component to rerender unless it it setting something different
-    staleTime: 1000 * 60 * 20, // 20 minutes
+ 
     select: (data) => {
       if (isError) return [];
 
@@ -46,6 +47,7 @@ const useFriendListAndUpcoming = ({
    
       // find next upcoming friend
       if (data.upcoming?.length && data.friends?.length && data.capsule_summaries?.length) {
+        // console.log(`CAPSULE SUMMMMMSSSSS`,data?.capsule_summaries)
         const capsuleMap = {};
 
         data.capsule_summaries.forEach(cs => {
@@ -64,9 +66,9 @@ const useFriendListAndUpcoming = ({
         })
 
 
-        console.log(data.upcoming)
+        // console.log(data.capsule_summary)
 
-        console.log(`capsule map`, upcomingWithSummaries)
+        // console.log(`capsule map`, data.capsule_summary)
         
       }
 

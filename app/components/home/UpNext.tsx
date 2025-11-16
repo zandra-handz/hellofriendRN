@@ -40,7 +40,7 @@ const UpNext = ({ upcomingHelloes, onPress }: Props) => {
         </Text>
 
         <Text
-          numberOfLines={2}
+          numberOfLines={1}
           style={[
             welcomeTextStyle,
             {
