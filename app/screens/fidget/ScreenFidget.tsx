@@ -132,7 +132,7 @@ const ScreenFidget = (props: Props) => {
       {(spinnerViewing === 2 ||
     
         spinnerViewing === 6) && (
-        <View style={StyleSheet.absoluteFill}>
+        <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
           <SpinnerTwo
             color1={selectedFriend?.lightColor}
             color2={selectedFriend?.darkColor}

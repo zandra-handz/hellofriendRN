@@ -37,7 +37,7 @@ half4 main(vec2 fragCoord) {
     vec2 offset = uv - vec2(0.0);
     float TWO_PI = 6.28318530718;
    
-    float d2 = length(offset);
+    float d2 = dot(offset, offset)*4.;
   
     float angle = (atan(offset.y, offset.x)); 
     float speed = 6.0;        
