@@ -16,6 +16,7 @@ import useUser from "@/src/hooks/useUser";
 import SpinnerOne from "@/app/components/appwide/button/SpinnerOne";
 import SpinnerTwo from "@/app/components/appwide/button/SpinnerTwo";
 import SpinnerThree from "@/app/components/appwide/button/SpinnerThree";
+import SpinnerFour from "@/app/components/appwide/button/SpinnerFour";
 import Cascader from "@/app/fidgets/Cascader";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
@@ -131,8 +132,13 @@ const ScreenFidget = (props: Props) => {
         </View>
       )} */}
 
-      {(spinnerViewing === 2 || spinnerViewing === 4 ) && (
-        <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
+      {spinnerViewing === 4 && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
+        >
           <SpinnerTwo
             color1={selectedFriend?.lightColor}
             color2={selectedFriend?.darkColor}
@@ -140,11 +146,27 @@ const ScreenFidget = (props: Props) => {
         </View>
       )}
 
+      {(spinnerViewing === 2 || spinnerViewing === 5) && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
+        >
+          <SpinnerFour
+            color1={selectedFriend?.lightColor}
+            color2={selectedFriend?.darkColor}
+          />
+        </View>
+      )}
 
-      {( 
-    
-        spinnerViewing === 6 || spinnerViewing === 1) && (
-        <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
+      {(spinnerViewing === 6 || spinnerViewing === 1) && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
+        >
           <SpinnerThree
             color1={selectedFriend?.lightColor}
             color2={selectedFriend?.darkColor}
@@ -152,10 +174,13 @@ const ScreenFidget = (props: Props) => {
         </View>
       )}
 
-            {( 
-        spinnerViewing === 5 ||
-        spinnerViewing === 3  ) && (
-        <View style={[StyleSheet.absoluteFill, {backgroundColor: lightDarkTheme?.primaryBackground}]}>
+      {spinnerViewing === 3 && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
+        >
           <SpinnerOne
             color1={selectedFriend?.lightColor}
             color2={selectedFriend?.darkColor}
@@ -172,13 +197,7 @@ const ScreenFidget = (props: Props) => {
       <SafeAreaView>
         {(spinnerViewing === 2 || spinnerViewing === 5) && (
           <View
-            style={{
-              width: "100%",
-              height: "auto",
-              padding: 10,
-              paddingHorizontal: 20,
-              flexDirection: "column",
-            }}
+            style={styles.statsWrapper}
           >
             <Text style={[welcomeTextStyle, { color: primaryColor }]}>
               Health score: {TIME_SCORE}%
@@ -195,11 +214,20 @@ const ScreenFidget = (props: Props) => {
           primaryBackground={lightDarkTheme.primaryBackground}
           onPress={handleNextOption}
           label={"Try a different spinner"}
-   
         />
       </SafeAreaView>
     </PreAuthSafeViewAndGradientBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  statsWrapper: {
+    width: "100%",
+    height: "auto",
+    padding: 10,
+    paddingHorizontal: 20,
+    flexDirection: "column",
+  },
+});
 
 export default ScreenFidget;
