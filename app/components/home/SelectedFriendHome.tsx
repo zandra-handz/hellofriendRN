@@ -19,6 +19,7 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
+import { lightFormat } from "date-fns";
 // import { useFocusEffect } from "@react-navigation/native";
 // import { useCallback } from "react";
 
@@ -35,6 +36,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   primaryOverlayColor,
   darkGlassBackground,
   darkerGlassBackground,
+  darkerOverlayBackgroundColor,
   categoryColorsArray,
   // darkerOverlayBackgroundColor,
 primaryBackground,
@@ -241,6 +243,9 @@ primaryBackground,
                     {/* {!loadingDash && ( */}
                     <TalkingPointsChart
                       userId={userId}
+                      textColor={primaryColor}
+                      overlayColor={primaryOverlayColor}
+                      darkerOverlayBackgroundColor={darkerGlassBackground}
                       themeColors={themeColors}
                       categoryColors={categoryColorsArray}
                       skiaFontLarge={skiaFontLarge}

@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import {   Pressable, Animated, StyleSheet, Easing } from "react-native";
  import manualGradientColors from "@/app/styles/StaticColors";
-import { useLDTheme } from "@/src/context/LDThemeContext";
+ 
 
 
 type Props = {
   value: boolean;
+  textColor: string;
+  backgroundColor: string;
   onToggle: () => void;
 }
 
-const ToggleButton = ({ value, onToggle }: Props) => {
-  const { lightDarkTheme } = useLDTheme();
+const ToggleButton = ({ value, textColor='oragne', backgroundColor='hotpink', onToggle }: Props) => {
+ 
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
  
 
@@ -47,7 +49,7 @@ const ToggleButton = ({ value, onToggle }: Props) => {
         {
           backgroundColor: value
             ? manualGradientColors.lightColor
-            : lightDarkTheme.primaryText,
+            : textColor,
         },
       ]}
       onPress={() => {
@@ -58,7 +60,7 @@ const ToggleButton = ({ value, onToggle }: Props) => {
         style={[
           styles.circle,
           animatedStyle,
-          { backgroundColor: lightDarkTheme.primaryBackground },
+          { backgroundColor: backgroundColor },
         ]}
       />
     </Pressable>

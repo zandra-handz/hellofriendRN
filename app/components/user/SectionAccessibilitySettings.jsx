@@ -1,24 +1,24 @@
 import React, { useMemo, useEffect } from "react";
 import { View, Alert } from "react-native";
 import Toggle from "./Toggle";
-import manualGradientColors from "@/app/styles/StaticColors"; 
+import manualGradientColors from "@/app/styles/StaticColors";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
-  const { updateSettingsMutation, updateSettings } = useUpdateSettings({ userId: userId });
+const SectionAccessibilitySettings = ({ userId, primaryColor, settings, backgroundColor='red' }) => {
+  const { updateSettingsMutation, updateSettings } = useUpdateSettings({
+    userId: userId,
+  });
 
   const manualTheme = useMemo(() => {
     if (!settings) return false;
     return settings.manual_dark_mode !== null;
   }, [settings]);
 
-
   useEffect(() => {
     if (updateSettingsMutation.isSuccess) {
-      showFlashMessage('Success!', false, 1000); // modal covers this, need different approach
+      showFlashMessage("Success!", false, 1000); // modal covers this, need different approach
     }
-
   }, [updateSettingsMutation.isSuccess]);
 
   // const updateSetting = async (setting) => {
@@ -43,7 +43,9 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
   };
 
   const updateSimplifyAppForFocus = () => {
-    updateSettings({ simplify_app_for_focus: !settings.simplify_app_for_focus });
+    updateSettings({
+      simplify_app_for_focus: !settings.simplify_app_for_focus,
+    });
   };
 
   const updateReceiveNotifications = () => {
@@ -94,63 +96,56 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
       }}
     >
       <Toggle
+        backgroundColor={backgroundColor}
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Manual theme"
         icon={
-          <SvgIcon
-            name={"theme_light_dark"}
-            size={20}
-            color={primaryColor}
-          />
+          <SvgIcon name={"theme_light_dark"} size={20} color={primaryColor} />
         }
         value={manualTheme}
         onPress={toggleManualTheme}
       />
       {manualTheme && (
         <Toggle
+          backgroundColor={backgroundColor}
           manualGradientColors={manualGradientColors}
           primaryColor={primaryColor}
           label="Light/Dark"
-          icon={
-            <SvgIcon
-              name={"compare"}
-              size={20}
-              color={primaryColor}
-            />
-          }
+          icon={<SvgIcon name={"compare"} size={20} color={primaryColor} />}
           value={settings.manual_dark_mode === true}
           onPress={updateLightDark}
         />
       )}
 
       <Toggle
+        backgroundColor={backgroundColor}
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="High Contrast Mode"
-        icon={
-          <SvgIcon
-            name={"text_shadow"}
-            size={20}
-            color={primaryColor}
-          />
-        }
+        icon={<SvgIcon name={"text_shadow"} size={20} color={primaryColor} />}
         value={settings.high_contrast_mode}
         onPress={updateHighContrastMode}
       />
 
       <Toggle
+        backgroundColor={backgroundColor}
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Large Text"
         icon={
-          <SvgIcon name={"format_font_size_increase"} size={20} color={primaryColor} />
+          <SvgIcon
+            name={"format_font_size_increase"}
+            size={20}
+            color={primaryColor}
+          />
         }
         value={settings.large_text}
         onPress={updateLargeText}
       />
 
       <Toggle
+        backgroundColor={backgroundColor}
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Simplify App For Focus"
@@ -166,27 +161,21 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings }) => {
       />
 
       <Toggle
+        backgroundColor={backgroundColor}
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Receive Notifications"
-        icon={
-          <SvgIcon
-            name={"bell"}
-            size={20}
-            color={primaryColor}
-          />
-        }
+        icon={<SvgIcon name={"bell"} size={20} color={primaryColor} />}
         value={settings.receive_notifications}
         onPress={updateReceiveNotifications}
       />
 
       <Toggle
+        backgroundColor={backgroundColor}
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         label="Screen Reader"
-        icon={
-          <SvgIcon name={"volume_high"} size={20} color={primaryColor} />
-        }
+        icon={<SvgIcon name={"volume_high"} size={20} color={primaryColor} />}
         value={settings.screen_reader}
         onPress={toggleScreenReader}
       />

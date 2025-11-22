@@ -163,6 +163,9 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
         {descriptionView && (
           <DescriptionView
             topBarText={descriptionView.topBarText}
+            backgroundColor={lightDarkTheme.primaryBackground}
+            textColor={lightDarkTheme.primaryText}
+          
             isInsideModal={false}
             message={descriptionView.message}
             view={descriptionView.view}

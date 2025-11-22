@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView";  
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLDTheme } from "@/src/context/LDThemeContext";
+ 
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import manualGradientColors  from "@/app/styles/StaticColors";
@@ -18,6 +18,9 @@ const DescriptionView = ({
  
   view,
   isInsideModal = false,
+   
+  textColor,
+  backgroundColor,
   topBarText = `Help mode`,
   update = false, 
   bottom,
@@ -39,8 +42,7 @@ const DescriptionView = ({
   const scale = useSharedValue(0);
   const translateX = useSharedValue(-600);
 
-  const fade = useSharedValue(1);
-  const { lightDarkTheme } = useLDTheme(); 
+  const fade = useSharedValue(1); 
 
   useEffect(() => {
     fade.value = 1;
@@ -133,7 +135,7 @@ const DescriptionView = ({
           {
             bottom: bottom,
             height: height,
-            backgroundColor: lightDarkTheme.primaryBackground,
+            backgroundColor: backgroundColor,
             borderRadius: 20,
             marginTop: 0,
           },
@@ -148,7 +150,7 @@ const DescriptionView = ({
           <Text
             style={[
               AppFontStyles.subWelcomeText,
-              { color: lightDarkTheme.primaryText },
+              { color: textColor },
             ]}
           >
             update
@@ -174,7 +176,7 @@ const DescriptionView = ({
           <Text
             style={[
               {
-                color: lightDarkTheme.primaryText,
+                color: textColor,
                 fontFamily: "Poppins-Bold",
                 fontSize: 13,
                 marginRight: 5,
@@ -208,7 +210,7 @@ const DescriptionView = ({
           <Text
             style={[
               {
-                color: lightDarkTheme.primaryText,
+                color: textColor,
                 fontFamily: "Poppins-Bold",
                 fontSize: 13,
                 marginRight: 5,

@@ -19,6 +19,7 @@ const SectionFriendManagerSettings = ({
   userId,
   settings,
   primaryColor, 
+  backgroundColor='red',
 }: Props) => {
   const { updateSettings } = useUpdateSettings({
     userId: userId,
@@ -38,6 +39,7 @@ const SectionFriendManagerSettings = ({
       style={styles.container}
     >
       <Toggle
+      backgroundColor={backgroundColor}
         primaryColor={primaryColor}
         label="Autoselect Next Friend"
         icon={

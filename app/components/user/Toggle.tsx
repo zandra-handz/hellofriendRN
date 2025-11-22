@@ -7,14 +7,16 @@ interface Props {
   icon: React.ReactElement;
   value: boolean;
   onPress: () => void;
-  primaryColor: ColorValue;
+  primaryColor: string;
 }
 
 const Toggle: React.FC<Props> = ({
   label,
   icon,
   value,
-  primaryColor,
+  primaryColor='orange',
+  backgroundColor='red',
+
   onPress,
 }) => {
   return (
@@ -29,7 +31,7 @@ const Toggle: React.FC<Props> = ({
         )}
         <Text style={[styles.label, { color: primaryColor }]}>{label}</Text>
       </View>
-      <ToggleButton value={value} onToggle={onPress} />
+      <ToggleButton textColor={primaryColor} backgroundColor={backgroundColor} value={value} onToggle={onPress} />
     </View>
   );
 };

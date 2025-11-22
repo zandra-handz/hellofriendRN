@@ -22,7 +22,7 @@ import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import LeafPath from "./LeafPath"; 
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useLDTheme } from "@/src/context/LDThemeContext";
+ 
 
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -64,7 +64,7 @@ const DonutChart = ({
   radius,
   strokeWidth,
   outerStrokeWidth,
-
+darkerOverlayBackgroundColor,
   backgroundColor,
   font,
   totalValue,
@@ -72,18 +72,18 @@ const DonutChart = ({
   gap,
   decimalsValue,
   labelsValue,
+  color,
 
   colors,
   labelsSize,
   labelsDistanceFromCenter,
   labelsSliceEnd,
 }: Props) => {
-  const { lightDarkTheme } = useLDTheme();
+  // const { lightDarkTheme } = useLDTheme();
   const array = Array.from({ length: n });
   const innerRadius = radius - outerStrokeWidth / 2;
-  const color = lightDarkTheme.primaryText;
-  // const { selectedFriend } = useSelectedFriend();
-  const darkerOverlayBackgroundColor = lightDarkTheme.darkerOverlayBackground;
+  // const color = lightDarkTheme.primaryText;
+  // const { selectedFriend } = useSelectedFriend(); 
 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);

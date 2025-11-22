@@ -11,8 +11,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 
 import DonutChart from "./DonutChart";
-import { calculatePercentage } from "@/src/hooks/GradientColorsUril";
-
+import { calculatePercentage } from "@/src/hooks/GradientColorsUril"; 
 type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
@@ -46,6 +45,7 @@ const Donut = ({
   radius = 40,
   strokeWidth = 6,
   outerStrokeWidth = 9,
+  color,
   colors,
   colorsReversed,
   gap = 0.03,
@@ -267,6 +267,7 @@ const Donut = ({
       >
         <DonutChart
           // animatedLeaves={animatedLeaves} 
+      color={color}
           animatedLeaves={leafPositionsCombined}
           positions={positions}
           totalJS={totalJS}

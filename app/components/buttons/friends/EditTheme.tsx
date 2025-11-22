@@ -13,6 +13,7 @@ import Toggle from "../../user/Toggle";
 
 const EditTheme = ({
   primaryColor = "orange",
+  backgroundColor,
   lighterOverlayColor = "yellow",
   manualGradientColors,
   themeColors,
@@ -22,7 +23,7 @@ const EditTheme = ({
   manualThemeOn,
 }) => {
   const { handleSetTheme } = useSelectedFriend();
-  console.log(handleSetTheme)
+  // console.log(handleSetTheme)
 
   const { updateFriendListColorsExcludeSaved } = useUpdateFriendListColors({
     userId: userId,
@@ -138,6 +139,7 @@ const EditTheme = ({
       <Toggle
         manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
+        backgroundColor={backgroundColor}
         label="Manual theme"
         icon={
           <MaterialCommunityIcons

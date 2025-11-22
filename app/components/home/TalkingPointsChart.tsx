@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useCallback, useMemo, useRef, useEffect } from "react";
+import React, { useCallback, useMemo, useRef  } from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
 import Donut from "../headers/Donut";
@@ -9,7 +9,7 @@ import { useIsFocused } from "@react-navigation/native";
 // import { useCategories } from "@/src/context/CategoriesContext";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useLDTheme } from "@/src/context/LDThemeContext";
+ 
 // import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
 type Props = {
@@ -21,18 +21,17 @@ type Props = {
 const TalkingPointsChart = ({
   themeColors,
   categoryColors,
+  textColor,
+  overlayColor,
   skiaFontLarge,
   skiaFontSmall,
+  darkerOverlayBackgroundColor,
 }: Props) => {
   console.log("TALKING POINTS COMP RERENDERED");
 // const { userCategories} = useCategories();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   // const { userCategories } = useCategories();
-
-  const { lightDarkTheme } = useLDTheme();
-
-  const primaryColor = lightDarkTheme.primaryText;
-  const primaryOverlayColor = lightDarkTheme.primaryOverlayColor;
+ 
   const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
     useCapsuleList();
 
@@ -153,12 +152,12 @@ const TalkingPointsChart = ({
   return (
     <>
       <Pressable onPress={navigateToHistory} style={styles.historyContainer}>
-        <SvgIcon name={"pie_chart"} size={30} color={primaryColor} />
+        <SvgIcon name={"pie_chart"} size={30} color={textColor} />
         <Text
           style={[
             styles.historyLabelWrapper,
             {
-              color: primaryColor,
+              color: textColor,
             },
           ]}
         >
@@ -172,7 +171,7 @@ const TalkingPointsChart = ({
           {
             height: HEIGHT,
             minHeight: HEIGHT,
-            backgroundColor: primaryOverlayColor,
+           // backgroundColor: overlayColor,
           },
         ]}
       >
@@ -185,7 +184,7 @@ const TalkingPointsChart = ({
 
                   paddingLeft: 10,
                   fontWeight: "bold",
-                  color: primaryColor,
+                  color: textColor,
                   opacity: 0.9,
                 },
               ]}
@@ -214,6 +213,8 @@ const TalkingPointsChart = ({
                 // data={[...categories.sortedList]} // new array reference every render
                 // colors={[...colors?.colors]}
                 // colorsReversed={[...colors?.colorsReversed]}
+                color={textColor}
+                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
 
                 data={memoizedData}
                 colors={memoizedColors}

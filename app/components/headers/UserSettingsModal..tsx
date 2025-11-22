@@ -57,6 +57,7 @@ const UserSettingsModal: React.FC<Props> = ({
 
           <View style={styles.sectionContainer}>
             <SectionAccessibilitySettings 
+            backgroundColor={lightDarkTheme.primaryBackground}
               userId={userId}
               primaryColor={lightDarkTheme.primaryText}
               settings={settings}
@@ -64,6 +65,7 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
           <View style={styles.sectionContainer}>
             <SectionFriendManagerSettings
+                 backgroundColor={lightDarkTheme.primaryBackground}
               userId={userId}
               settings={settings}
               primaryColor={lightDarkTheme.primaryText}

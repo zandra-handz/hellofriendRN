@@ -61,6 +61,7 @@ const FriendThemeModal: React.FC<Props> = ({
             <View style={styles.headerContainer}>
               <SectionFriendTheme
                 primaryColor={lightDarkTheme.primaryText}
+                     backgroundColor={lightDarkTheme.primaryBackground}
                 lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
                 manualGradientColors={manualGradientColors}
                 themeColors={themeColors} 
