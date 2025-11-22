@@ -60,7 +60,7 @@ const ScreenMoments = () => {
 
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
-  const upcomingId = friendListAndUpcoming?.next?.id;
+  // const upcomingId = friendListAndUpcoming?.next?.id;
 
   const { loadingDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
 
@@ -197,5 +197,14 @@ const ScreenMoments = () => {
     </SafeViewAndGradientBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {flex: 1, width: '100%'},
+  innerContainer: {flexDirection: 'column'},
+  rowContainer: {flexDirection: 'row'},
+  labelWrapper: {},
+  label: {},
+});
+
 
 export default ScreenMoments;

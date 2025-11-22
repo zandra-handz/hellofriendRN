@@ -7,18 +7,18 @@ import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 // import FriendSettingsModal from "./FriendSettingsModal";
 import CategoriesModal from "./CategoriesModal"; 
+import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import useSignOut from "@/src/hooks/UserCalls/useSignOut";
-import FriendProfileButton from "../buttons/friends/FriendProfileButton";
+import useSignOut from "@/src/hooks/UserCalls/useSignOut"; 
  
-import SvgIcon from "@/app/styles/SvgIcons";
-import GradientBackground from "../appwide/display/GradientBackground";
-import { resetFriend } from "@/src/hooks/SelectFriendUtils";
+import SvgIcon from "@/app/styles/SvgIcons"; 
+ 
 
 // types
 import { LDTheme } from "@/src/types/LDThemeTypes";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 type Props = {
   userId: number;
@@ -48,15 +48,15 @@ const HelloFriendFooter = ({
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
-  const footerPaddingBottom = 20;
-  const footerIconSize = 28;
+  const footerPaddingBottom = 12;
+  const footerIconSize = 24;
 
   const primaryColor = lightDarkTheme.primaryText;
-  const primaryBackground = lightDarkTheme.primaryBackground;
-  const overlayColor =
-    friendListLength > 0
-      ? lightDarkTheme.overlayBackground
-      : lightDarkTheme.primaryBackground;
+  // const primaryBackground = lightDarkTheme.primaryBackground;
+  // const overlayColor =
+  //   friendListLength > 0
+  //     ? lightDarkTheme.overlayBackground
+  //     : lightDarkTheme.primaryBackground;
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -147,14 +147,10 @@ const HelloFriendFooter = ({
     // }
   };
 
-  const RenderFriendProfileButton = useCallback(
+  const RenderCategoryButton = useCallback(
     () => (
-      <FriendProfileButton
-      userId={userId}
-        friendId={null}
-        friendName={null}
-        primaryColor={primaryColor}
-        themeColors={themeColors} 
+      <CategoryFooterButton
+      
         onPress={() => handleCenterButtonToggle()}
       />
     ),
@@ -180,7 +176,11 @@ const HelloFriendFooter = ({
   );
 
   return (
-    <GradientBackground
+
+    <View style={[styles.container, {backgroundColor: manualGradientColors.homeLightColor,    height: footerHeight,
+          paddingBottom: footerPaddingBottom,
+          opacity: 0.94}]}>
+    {/* <GradientBackground
       useFriendColors={false}
       screenname={"hellofriendfooter"}
       friendColorDark={themeColors.darkColor}
@@ -193,24 +193,21 @@ const HelloFriendFooter = ({
           opacity: 0.94,
         },
       ]}
-    >
+    > */}
       <View
         style={[
           styles.container,
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: overlayColor,
+            backgroundColor: manualGradientColors.homeLightColor,
           },
         ]}
       >
         <View style={styles.section}>
           <RenderSignOutButton />
         </View>
-        {/* <View style={styles.section}>
-            <ButtonData />
-          </View>
-       */}
+      
 
         <View style={[styles.divider, dividerStyle]} />
         <>
@@ -222,7 +219,7 @@ const HelloFriendFooter = ({
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderFriendProfileButton 
+            <RenderCategoryButton
             />
           </View>
         </>
@@ -286,8 +283,8 @@ const HelloFriendFooter = ({
             closeModal={() => setReportModalVisible(false)}
           />
         </View>
-      )}
-    </GradientBackground>
+      )} 
+    </View>
   );
 };
 

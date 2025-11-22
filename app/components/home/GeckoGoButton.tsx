@@ -1,10 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-// import useDoublePress from "../buttons/useDoublePress";
 import manualGradientColors from "@/app/styles/StaticColors";
-
-import SvgIcon from "@/app/styles/SvgIcons";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import { Vibration } from "react-native";
 
@@ -14,18 +11,11 @@ type Props = {
 };
 
 const GeckoGoButton = ({ onSinglePress, onDoublePress }: Props) => {
-  // const { handleDoublePress } = useDoublePress({
-  //   onSinglePress: onSinglePress,
-  //   onDoublePress: onDoublePress,
-
-  // });
-
   const onLongPressVibrate = () => {
     Vibration.vibrate(100);
     onDoublePress();
   };
 
- 
   return (
     <GlobalPressable
       onLongPress={onLongPressVibrate}
@@ -39,8 +29,8 @@ const GeckoGoButton = ({ onSinglePress, onDoublePress }: Props) => {
     >
       <View style={styles.geckoRotateContainer}>
         <GeckoSolidSvg
-          width={144}
-          height={144}
+          width={158}
+          height={158}
           color={manualGradientColors.homeDarkColor}
           style={{ opacity: 1 }}
         />
@@ -49,17 +39,12 @@ const GeckoGoButton = ({ onSinglePress, onDoublePress }: Props) => {
         <Text
           style={{
             color: manualGradientColors.homeDarkColor,
-            fontSize: 18,
+            fontSize: 22,
             fontWeight: "bold",
           }}
         >
           GO{" "}
         </Text>
-        <SvgIcon
-          name={"arrow_right"}
-          size={20}
-          color={manualGradientColors.homeDarkColor}
-        />
       </View>
     </GlobalPressable>
   );
@@ -67,31 +52,26 @@ const GeckoGoButton = ({ onSinglePress, onDoublePress }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
- 
-
     justifyContent: "center",
-    borderRadius: 10,
-    padding: 0,
-    width: 60,
-    minWidth: 60,
-    height: 60,
-
+    borderRadius: 999,
+    width: 70,
+    height: 68,
     overflow: "hidden",
   },
   geckoRotateContainer: {
     position: "absolute",
     opacity: 0.9,
-    top: -62,
-    right: 6,
+    top: -68,
+    right: 10,
     transform: [{ rotate: "90deg" }],
   },
   geckoLabelContainer: {
-    bottom: 0,
+    bottom: 3,
     position: "absolute",
     alignItems: "center",
     flexDirection: "row",
     width: "100%",
-    left: 6,
+    left: 20,
   },
 });
 

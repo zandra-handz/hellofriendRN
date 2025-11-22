@@ -60,6 +60,7 @@ import PieChartSvg from "./svgs/pie-chart"; // IonIcons
 import PinSvg from "./svgs/pin";
 import PinOutlineSvg from "./svgs/pin-outline";
 import PlusSvg from "./svgs/plus";
+import PulseSvg from "./svgs/pulse";
 import PlusCircleSvg from "./svgs/plus-circle";
 import RefreshSvg from "./svgs/refresh";
 import CalendarOutlineSvg from "./svgs/calendar-outline";
@@ -138,6 +139,7 @@ const svgIcons = {
   note_text: NoteTextSvg, // location notes
   car: CarSvg,
   car_cog: CarCogSvg,
+  pulse: PulseSvg,
   refresh: RefreshSvg,
   settings_suggest: SettingsSuggestSvg,
   star: StarSvg,

@@ -2,13 +2,13 @@ import { View, Text, StyleSheet } from "react-native";
 import React, { useMemo, useState } from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
-import GeckoGoButton from "./GeckoGoButton"; 
+import GeckoGoButton from "./GeckoGoButton";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
 
 type Props = {
   padding: number;
- 
+
   borderRadius: number;
   darkerGlassBackground: string;
   futureDate: string;
@@ -50,10 +50,9 @@ const SuggestedHello = ({
           <Text
             style={[
               styles.titleText,
+              // subWelcomeTextStyle,
               {
                 color: primaryColor,
-                fontFamily: "Poppins-Regular",
-                fontSize: subWelcomeTextStyle.fontSize,
               },
             ]}
           >
@@ -64,7 +63,6 @@ const SuggestedHello = ({
               styles.futureDateText,
               {
                 color: primaryColor,
-
                 fontSize: welcomeTextStyle.fontSize - 14,
               },
             ]}
@@ -78,18 +76,12 @@ const SuggestedHello = ({
 
   return (
     <View
-      style={{
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        height: 86,
-      }}
+      style={styles.outerContainer}
     >
       <View
         style={[
           styles.container,
-          {
-            // height: height - 10,
+          { 
             padding: padding,
             backgroundColor: darkerGlassBackground,
           },
@@ -123,6 +115,12 @@ const SuggestedHello = ({
 };
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 86,
+  },
   container: {
     marginVertical: 4,
     height: "100%",
@@ -153,8 +151,8 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: "bold",
     lineHeight: 20,
-
-    opacity: 0.9,
+    opacity: 0.8,
+    fontSize: 16,
   },
   futureDateText: {
     lineHeight: 32,
@@ -162,14 +160,12 @@ const styles = StyleSheet.create({
     paddingRight: 8, // EYEBALL
   },
   geckoButtonWrapper: {
-    //   flex: 1,
     flexDirection: "column",
     justifyContent: "center",
     width: 60,
     position: "absolute",
     height: "100%",
-
-    right: 0,
+    right: 0, // need this
     zIndex: 9000,
   },
 });

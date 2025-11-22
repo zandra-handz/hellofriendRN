@@ -48,7 +48,7 @@ const UserSettingsModal: React.FC<Props> = ({
         <SvgIcon
           name={`wrench`}
           size={50}
-          color={manualGradientColors.darkHomeColor}
+          color={manualGradientColors.homeDarkColor}
         />
       }
       children={

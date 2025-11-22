@@ -32,7 +32,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const endColor = manualGradientColors.darkColor;
 
   const direction = useMemo(() => {
-    if (useFriendColors) return [0, 0, 1, 0];
+    // if (useFriendColors) return [0, 0, 1, 0];
+      if (useFriendColors) return [0, 0, 0, 1];
     return [0, 1, 1, 0];
   }, [useFriendColors]);
 
@@ -76,7 +77,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const flattenMainStyle = StyleSheet.flatten([styles.container, additionalStyles])
 
   return (
-    // <Animated.View style={flattenMainStyle}>
+ 
         <View style={flattenMainStyle}> 
       <LinearGradient
         colors={previousColors}
@@ -91,8 +92,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         style={[StyleSheet.absoluteFill, animatedStyle]}
       />
       {children}
-      </View>
-    // </Animated.View>
+      </View> 
   );
 };
 

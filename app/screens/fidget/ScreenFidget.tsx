@@ -146,7 +146,7 @@ const ScreenFidget = (props: Props) => {
         </View>
       )}
 
-      {(spinnerViewing === 2 || spinnerViewing === 5) && (
+      {(spinnerViewing === 2) && (
         <View
           style={[
             StyleSheet.absoluteFill,
@@ -154,6 +154,21 @@ const ScreenFidget = (props: Props) => {
           ]}
         >
           <SpinnerFour
+            color1={selectedFriend?.lightColor}
+            color2={selectedFriend?.darkColor}
+          />
+        </View>
+      )}
+
+
+            {spinnerViewing === 5 && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: 'transparent' },
+          ]}
+        >
+          <SpinnerOne
             color1={selectedFriend?.lightColor}
             color2={selectedFriend?.darkColor}
           />

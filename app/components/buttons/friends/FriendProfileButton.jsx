@@ -1,67 +1,47 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import LoadingPage from "../../appwide/spinner/LoadingPage";
 import SvgIcon from "@/app/styles/SvgIcons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
 import useFriendDash from "@/src/hooks/useFriendDash";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
 import manualGradientColors from "@/app/styles/StaticColors";
 const FriendProfileButton = ({
   userId,
-  friendId,
-  friendName,
-  primaryColor = "orange",
-
-  themeColors,
-
+  friendId, 
+  themeColors, 
   onPress,
 }) => {
-  const { dashLoaded, loadingDash, friendDash } = useFriendDash({
+  const { loadingDash } = useFriendDash({
     userId: userId,
     friendId: friendId,
   });
 
   const circleSize = 27;
-  const iconSize = 28;
+  // const iconSize = 28;
 
   const renderProfileIcon = () => {
     return (
       <View
         style={{
-          backgroundColor: friendId
-            ? themeColors.lightColor
-            : manualGradientColors.lightColor,
+          backgroundColor: themeColors.lightColor,
           borderRadius: 999,
-          width: friendId ? circleSize : circleSize + 20,
-          height: friendId ? circleSize : circleSize + 20,
+          width: circleSize + 20,
+          height: circleSize + 20,
           alignItems: "center",
           justifyContent: "center",
           alignSelf: "center",
         }}
       >
-        {!friendId && !loadingDash && (
+        {friendId && !loadingDash && (
           <View style={styles.treeWrapper}>
             <SvgIcon
-              name={"tree"}
+              name={"account"}
               size={45}
               color={manualGradientColors.homeDarkColor}
             />
           </View>
         )}
-        <Text
-          style={[
-            styles.friendProfileButtonText,
-            {
-              color:
-                dashLoaded && friendDash && friendId
-                  ? themeColors.fontColorSecondary
-                  : "black",
-            },
-          ]}
-        >
-          {friendId && dashLoaded && friendName && friendName.charAt(0)}
-        </Text>
       </View>
     );
     // }
@@ -82,25 +62,8 @@ const FriendProfileButton = ({
       )}
 
       {!loadingDash && (
-        <GlobalPressable
-          onPress={onPress}
-          // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
-          style={{}}
-        >
-          <View>
-            {renderProfileIcon()}
-            <View
-              style={styles.timerWrapper}
-            >
-              {friendId && (
-                <SvgIcon
-                  name="timer_cog"
-                  size={iconSize - 2}
-                  color={primaryColor}
-                />
-              )}
-            </View>
-          </View>
+        <GlobalPressable onPress={onPress} style={{}}>
+          <View>{renderProfileIcon()}</View>
         </GlobalPressable>
       )}
     </View>

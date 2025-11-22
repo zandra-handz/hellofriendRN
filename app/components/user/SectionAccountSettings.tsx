@@ -21,11 +21,13 @@ const SectionAccountSettings = ({ primaryColor }: Props) => {
       />
 
       <NoToggle
+         primaryColor={primaryColor}
         label="Password"
         icon={<SvgIcon name={"lock_outline"} size={20} color={primaryColor} />}
         onPress={() => console.log("nothing here yet")}
       />
       <NoToggle
+         primaryColor={primaryColor}
         label="Delete Account"
         icon={<SvgIcon name={"delete"} size={20} color={primaryColor} />}
         onPress={() => console.log("nothing here yet")}

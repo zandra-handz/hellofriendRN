@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
-import { DimensionValue, View, ViewStyle, StyleSheet } from "react-native";
+import { DimensionValue,   ViewStyle, StyleSheet } from "react-native";
  
 import { SafeAreaView } from "react-native-safe-area-context";
 import GradientBackground from "../display/GradientBackground";
@@ -11,46 +11,30 @@ import Animated, {
 
 type Props = {
   children: ReactElement;
-  style?: ViewStyle;
-  includeBackgroundOverlay: boolean;
+  style?: ViewStyle; 
   useOverlay: boolean;
   primaryBackground: boolean;
-  backgroundOverlayHeight: DimensionValue;
-  backgroundOverlayBottomRadius: number;
+  backgroundOverlayHeight: DimensionValue; 
   header?: React.ComponentType;
 };
 
-const SafeViewAndGradientBackground = ({
-  children,
-  style,
-  screenname = "No screen name provided", //for debugging only
+const SafeViewHome = ({
+  children, 
   friendColorLight = "white",
   friendColorDark = "red",
   backgroundOverlayColor,
   friendId,
-
-  forceFullOpacity = false,
-  // startColor,
-  // endColor,
+  
   backgroundTransparentOverlayColor,
-  addColorChangeDelay = false,
-  includeBackgroundOverlay = false,
-  useSolidOverlay = false,
-  useOverlayFade = false,
-  backgroundOverlayHeight = "100%",
-  backgroundOverlayBottomRadius = 0,
-}: Props) => {
-  // const insets = useSafeAreaInsets();
-
-  // const route = useRoute();
-  console.log(`safe area vuew rerendered on ${screenname}`);
-  const opacityValue = useSharedValue(useOverlayFade ? 0 : 1); 
+ 
+  useSolidOverlay = false, 
+  backgroundOverlayHeight = "100%", 
+}: Props) => { 
+  const opacityValue = useSharedValue(0);
 
   useEffect(() => {
     if (useSolidOverlay) { 
       opacityValue.value = withTiming(0, { duration: 300 });
-    } else if (forceFullOpacity) {
-      opacityValue.value = withTiming(1, { duration: 0 });
     } else if (friendId) {
       opacityValue.value = withTiming(0.46, { duration: 300 });
     } else {
@@ -64,42 +48,21 @@ const SafeViewAndGradientBackground = ({
     opacity: opacityValue.value,
   }));
 
-  const [showColorOverlay, setShowColorOverlay] = useState(
-    includeBackgroundOverlay
-  );
-
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    if (addColorChangeDelay && includeBackgroundOverlay) {
-      // console.error(
-      //   `${screenname} add color change delay or include background overlay triggered thus`
-      // );
-      timeoutId = setTimeout(() => {
-        setShowColorOverlay(true);
-      }, 100);
-    } else {
-      setShowColorOverlay(includeBackgroundOverlay);
-    }
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [includeBackgroundOverlay, addColorChangeDelay]);
+ 
 
   const useFriendColors = useMemo(() => friendId, [friendId]);
 
   return (
     <GradientBackground
       useFriendColors={useFriendColors}
-      screenname={screenname}
-      additionalStyles={[style]}
+      screenname={'home'}
+      additionalStyles={{flex:1}}
       friendColorDark={friendColorLight}
       friendColorLight={friendColorDark}
     >
       <SafeAreaView style={styles.safeAreaStyle}>
         <>
-          {showColorOverlay && (
+         
             <Animated.View
               style={[
                 fadeStyle,
@@ -109,13 +72,11 @@ const SafeViewAndGradientBackground = ({
                   backgroundColor: !useSolidOverlay
                     ? backgroundOverlayColor
                     : backgroundTransparentOverlayColor,
-
-                  borderBottomLeftRadius: backgroundOverlayBottomRadius,
-                  borderBottomRightRadius: backgroundOverlayBottomRadius,
+ 
                 },
               ]}
             ></Animated.View>
-          )}
+       
 
           {children}
         </>
@@ -140,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SafeViewAndGradientBackground;
+export default SafeViewHome;

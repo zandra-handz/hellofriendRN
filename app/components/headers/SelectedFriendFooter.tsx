@@ -1,10 +1,10 @@
-import React, {   useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 
 import { Fontisto } from "@expo/vector-icons";
 
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// app components 
+// app components
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
@@ -14,18 +14,15 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import FriendThemeModal from "./FriendThemeModal";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
- 
- 
-import SvgIcon from "@/app/styles/SvgIcons";
-import GradientBackground from "../appwide/display/GradientBackground";
- 
+
+import SvgIcon from "@/app/styles/SvgIcons"; 
 
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
- 
+
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
- 
+
 import { useQueryClient } from "@tanstack/react-query";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
@@ -34,34 +31,29 @@ const SelectedFriendFooter = ({
   friendName,
 
   lightDarkTheme,
-  overlayColor,
+  
   dividerStyle,
   themeColors,
- 
 }) => {
-
-  const {  setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
+  const { setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
 
   const friendId = selectedFriend?.id;
-    const { friendDash } = useFriendDash({userId: userId, friendId: friendId});
+  const { friendDash } = useFriendDash({ userId: userId, friendId: friendId });
   const { autoSelectFriend } = useAutoSelector();
   const { navigateToFidget } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
-  // const { updateCustomLockIn, updateNextUpLockIn } = useUpdateLockins({
-  //   updateSettings,
-  // });
- 
+
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
- 
+
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
-  const footerPaddingBottom = 20;
-  const footerIconSize = 28;
+  const footerPaddingBottom = 12;
+  const footerIconSize = 24;
 
   const primaryColor = lightDarkTheme.primaryText;
 
@@ -84,7 +76,7 @@ const SelectedFriendFooter = ({
     updateSettings,
     friendId,
     setToFriend,
-    deselectFriend
+    deselectFriend,
   ]);
 
   // const addCheckToDeselect = useCallback(() => {
@@ -108,8 +100,7 @@ const SelectedFriendFooter = ({
         // label="Deselect"
         label="Back"
         icon={
-          <SvgIcon
-            // name={"keyboard-backspace"}
+          <SvgIcon 
             name={"account_arrow_left_outline"}
             size={footerIconSize}
             color={primaryColor}
@@ -163,11 +154,11 @@ const SelectedFriendFooter = ({
   const RenderFriendProfileButton = useCallback(
     () => (
       <FriendProfileButton
-      userId={userId}
+        userId={userId}
         friendId={friendId}
         friendName={friendName}
         primaryColor={primaryColor}
-        themeColors={themeColors} 
+        themeColors={themeColors}
         onPress={() => handleCenterButtonToggle()}
       />
     ),
@@ -180,10 +171,8 @@ const SelectedFriendFooter = ({
         primaryColor={primaryColor}
         label="Visual"
         icon={
-          <Fontisto
-            name={"spinner-fidget"}
-            name={"heartbeat-alt"}
-            // name={"heartbeat"}
+          <SvgIcon 
+            name={"pulse"} 
             size={footerIconSize}
             color={primaryColor}
           />
@@ -196,13 +185,11 @@ const SelectedFriendFooter = ({
   );
 
   return (
-    <GradientBackground
-      useFriendColors={!!friendId} 
-      friendColorDark={themeColors.darkColor}
-      friendColorLight={themeColors.lightColor}
-      additionalStyles={[
+    <View
+      style={[
         styles.container,
         {
+          backgroundColor: lightDarkTheme.darkerOverlayBackground,
           height: footerHeight,
           paddingBottom: footerPaddingBottom,
           opacity: 0.94,
@@ -215,7 +202,7 @@ const SelectedFriendFooter = ({
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: overlayColor,
+            // backgroundColor: overlayColor,
           },
         ]}
       >
@@ -233,8 +220,7 @@ const SelectedFriendFooter = ({
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderFriendProfileButton 
-            />
+            <RenderFriendProfileButton />
           </View>
         </>
 
@@ -273,7 +259,7 @@ const SelectedFriendFooter = ({
             lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={friendSettingsModalVisible}
-            themeColors={themeColors} 
+            themeColors={themeColors}
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}
@@ -290,7 +276,7 @@ const SelectedFriendFooter = ({
             lightDarkTheme={lightDarkTheme}
             userId={userId}
             isVisible={colorsModalVisible}
-            themeColors={themeColors} 
+            themeColors={themeColors}
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}
@@ -299,7 +285,7 @@ const SelectedFriendFooter = ({
           />
         </View>
       )}
-    </GradientBackground>
+    </View>
   );
 };
 
@@ -308,6 +294,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     position: "absolute",
+    // borderTopRightRadius: 20,
+    // borderTopLeftRadius: 20,
+    borderRadius: 999,
     bottom: 0,
     zIndex: 50000,
   },
@@ -318,7 +307,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   divider: {
-    marginVertical: 10,
+    marginVertical: 10, 
   },
 });
 

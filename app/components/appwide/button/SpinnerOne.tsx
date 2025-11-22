@@ -23,51 +23,76 @@ const SpinnerOne = ({ color1, color2 }) => {
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
-  const source = Skia.RuntimeEffect.Make(`
-    uniform float u_time;
-    uniform vec2 u_resolution;
- 
+ const source = Skia.RuntimeEffect.Make(`
+uniform vec2 u_resolution;
+uniform float u_time;
 
-    
-half4 main(vec2 fragCoord) {
-  // Normalize pixel coords to range [-1, 1], centered on screen
-  vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
+vec3 startColor = vec3(${color1Converted});
+vec3 endColor = vec3(${color2Converted});
 
- 
-    vec2 offset = uv - vec2(0.0);
-    float TWO_PI = 6.28318530718;
-   
-    float d2 = dot(offset, offset)*4.;
-  
-    float angle = (atan(offset.y, offset.x)); 
-    float speed = 6.0;        
-    float rotation = mod(u_time * speed, TWO_PI);
-    angle = mod(angle - rotation + TWO_PI, TWO_PI); //NUMBER MUST BE TWO_PI SPECIFICALLY. The masking logic expects angles in [0, 2π] for a full circle.  
-    float radius = 0.03;
-    float thickness = 0.005;
-    float ringThickness = smoothstep(radius - thickness, radius, d2) 
-                     - smoothstep(radius, radius + thickness, d2);
-    float arcSize = 5. *  abs(sin(u_time * 2.0)); 
-
-    float t =  arcSize; // 0 at start, 1 at end
-
-      vec3 color1 = vec3(${color1Converted});
-  vec3 color2 = vec3(${color2Converted});
-    vec3 angularColor = mix(color1, color2, arcSize / 5.3);
-    float radialMask = smoothstep(radius - thickness, radius, d2)
-                    - smoothstep(radius, radius + thickness, d2);
-    float edge = 0.1; //  arc ends
-    float angularMask = smoothstep(0.0, edge, angle) * (1.0 - smoothstep(arcSize - edge, arcSize, angle));
-     
-    // float mask = radialMask * angularMask;
-    float mask = angularMask;
-    return vec4(angularColor * mask, mask);
-
- 
+// === helpers ===
+float tzb_circleTrueSDF(vec2 _uv, float r){
+  return length(_uv) - r;
 }
- 
-      
-  `);
+
+float tzb_sMin(float a, float b, float k){
+  float h = clamp(.5 + (.5*(b-a/k)), 0., 1.);
+  return mix(b, a, h) - k*h*(1. - h);
+}
+
+vec3 tzb_sMinMask(float _tzb_sMin, vec3 _color){
+  float mask = smoothstep(0.0, 0.002, _tzb_sMin);
+  return mask * _color;
+}
+
+vec2 tzb_zeroZeroCenter(vec2 uv) {
+  return uv - 0.5;
+}
+
+vec2 tzb_select(vec2 _uv, vec2 _slice){
+  return _uv - _slice;
+}
+
+mat2 tzb_rotate2d(float angle){
+  return mat2(cos(angle), -sin(angle),
+              sin(angle),  cos(angle));
+}
+
+// === main ===
+half4 main(vec2 fragCoord) {
+  vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
+//  uv = tzb_zeroZeroCenter(uv);
+ // uv.x *= u_resolution.x / u_resolution.y;
+
+  float t1 = sin(u_time*4.0);
+  float t2 = cos(u_time*4.0);
+  float t3 = sin(u_time*4.0);
+
+  uv = tzb_rotate2d(u_time * 9.0 + t1) * uv;
+  vec2 uvTwo = tzb_rotate2d(0.1 + t3) * uv;
+  vec2 uvThree = tzb_rotate2d(1.0 + t2) * uvTwo;
+
+  float scale = 4.5; // smaller shapes
+uv *= scale;
+uvTwo *= scale;
+uvThree *= scale;
+
+  vec2 uvCircleOne = tzb_select(uv, vec2(0.1, 0.2));
+  vec2 uvCircleTwo = tzb_select(uvTwo, vec2(0.1, 0.2));
+  vec2 uvCircleThree = tzb_select(uvThree, vec2(0.1, 0.2));
+
+  float circle = tzb_circleTrueSDF(uvCircleOne, 0.05);
+  float circleTwo = tzb_circleTrueSDF(uvCircleTwo, 0.05);
+  float circleThree = tzb_circleTrueSDF(uvCircleThree, 0.05);
+  
+
+  float merged = tzb_sMin(tzb_sMin(circle, circleTwo, 0.04), circleThree, 0.03);
+  vec3 mask = tzb_sMinMask(-merged, startColor);
+
+  return half4(mask, -merged);
+}
+`);
+
 
   if (!source) {
     console.error("❌ Shader failed to compile");

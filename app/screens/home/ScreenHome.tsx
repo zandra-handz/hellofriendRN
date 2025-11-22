@@ -43,6 +43,7 @@ import { File } from "expo-file-system";
 import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 // app components
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import SafeViewHome from "@/app/components/appwide/format/SafeViewHome";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import AllHome from "@/app/components/home/AllHome";
@@ -78,52 +79,49 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [navigateToMomentFocus]);
 
   const { autoSelectFriend } = useAutoSelector();
-  const { userCategories} = useCategories({userId: user?.id});
-
-
+  const { userCategories } = useCategories({ userId: user?.id });
 
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
-    const { categoryColors, handleSetCategoryColors} = useCategoryColors();
+  const { categoryColors, handleSetCategoryColors } = useCategoryColors();
 
-
-    const categoryIds = useMemo(
-      () => userCategories.map((c) => c.id), // or c.category_id
-      [userCategories]
-    );
-    
+  const categoryIds = useMemo(
+    () => userCategories.map((c) => c.id), // or c.category_id
+    [userCategories]
+  );
 
   useEffect(() => {
-  if (
-    userCategories?.length > 0 &&
-    selectedFriend?.lightColor &&
-    selectedFriend?.darkColor
-  ) {
-    const array = generateGradientColors(
-      categoryIds,
-      selectedFriend.lightColor,
-      selectedFriend.darkColor
-    );
-    handleSetCategoryColors(array);
-  }
-}, [categoryIds, selectedFriend]);
+    if (
+      userCategories?.length > 0 &&
+      selectedFriend?.lightColor &&
+      selectedFriend?.darkColor
+    ) {
+      const array = generateGradientColors(
+        categoryIds,
+        selectedFriend.lightColor,
+        selectedFriend.darkColor
+      );
+      handleSetCategoryColors(array);
+    }
+  }, [categoryIds, selectedFriend]);
 
   useEffect(() => {
     // does not need friendlist, autoselect friend object has the same data
     // friendist currently getting called async/around the same time but separately
     console.log("AUTOSELECTING FRIEND");
-   
 
-    if ( 
-      autoSelectFriend?.customFriend !== "pending" && 
-      !selectedFriend?.id
-    ) {
-      if (autoSelectFriend.customFriend?.id && autoSelectFriend.customFriend?.id !== -1) {
+    if (autoSelectFriend?.customFriend !== "pending" && !selectedFriend?.id) {
+      if (
+        autoSelectFriend.customFriend?.id &&
+        autoSelectFriend.customFriend?.id !== -1
+      ) {
         setToAutoFriend({
           friend: autoSelectFriend.customFriend,
           preConditionsMet: autoSelectFriend.customFriend !== "pending",
-
         });
-      } else if (autoSelectFriend.nextFriend?.id && autoSelectFriend.nextFriend?.id !== -1) {
+      } else if (
+        autoSelectFriend.nextFriend?.id &&
+        autoSelectFriend.nextFriend?.id !== -1
+      ) {
         setToAutoFriend({
           friend: autoSelectFriend.nextFriend?.id,
 
@@ -139,7 +137,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [autoSelectFriend]);
 
   const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
-    useFriendListAndUpcoming({userId: user?.id});
+    useFriendListAndUpcoming({ userId: user?.id });
 
   const { setUpNextCache } = useUpNextCache({
     userId: user?.id,
@@ -151,10 +149,9 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   // logQueryCacheSize(queryClient);
   const friendList = friendListAndUpcoming?.friends;
   const friendListLength = friendList?.length || 0;
-  console.log('friend list',friendListLength)
+  // console.log("friend list", friendListLength);
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
- 
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
   const { lightDarkTheme } = useLDTheme();
@@ -166,8 +163,6 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
     useAppNavigations();
   const { requestPermission, imageUri, resizeImage } =
     useImageUploadFunctions();
-
-  const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [newMomentText, setNewMomentText] = useState();
@@ -282,8 +277,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   };
 
   const clearNewMomentText = () => {
-    setNewMomentText("");
-    setShowMomentScreenButton(false);
+    setNewMomentText(""); 
   };
 
   const navigateToAddMomentScreen = useCallback(() => {
@@ -319,23 +313,20 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
     <>
       <LocalPeacefulGradientSpinner
         loading={
-            autoSelectFriend?.nextFriend === "pending" ||
+          autoSelectFriend?.nextFriend === "pending" ||
           autoSelectFriend?.customFriend === "pending" ||
-          !selectedFriend?.isReady || !friendListAndUpcomingIsSuccess
+          !selectedFriend?.isReady ||
+          !friendListAndUpcomingIsSuccess
         }
       />
 
-      {/* {autoSelectFriend?.customFriend !== undefined && */}
-
       {autoSelectFriend?.customFriend !== "pending" &&
-      autoSelectFriend?.nextFriend !== "pending" &&
-        selectedFriend?.isReady && 
-        friendListAndUpcomingIsSuccess &&
-         (
-          <SafeViewAndGradientBackground
+        autoSelectFriend?.nextFriend !== "pending" &&
+        selectedFriend?.isReady &&
+        friendListAndUpcomingIsSuccess && (
+          <SafeViewHome
             friendColorLight={selectedFriend.lightColor}
             friendColorDark={selectedFriend.darkColor}
-            screenname={`home`}
             backgroundOverlayColor={
               friendListLength > 0
                 ? lightDarkTheme.primaryBackground
@@ -346,182 +337,165 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
               selectedFriend?.id ? "" : isKeyboardVisible ? "100%" : ""
             }
             useSolidOverlay={selectedFriend?.id ? false : !isKeyboardVisible}
-            useOverlayFade={true}
-            includeBackgroundOverlay={true}
             backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
             backgroundOverlayBottomRadius={0}
-            style={{ flex: 1 }}
           >
- 
             <>
-              {/* {!friendListAndUpcomingIsSuccess && ( // isLoading is in FS Spinner
-                <View
-                  style={[
-                    styles.loadingContainer,
-                    {
-                      backgroundColor: manualGradientColors.lightColor,
-                    },
-                  ]}
-                >
-                  <LoadingPage
-                    loading={true}
-                    spinnerType="circle"
-                    spinnerSize={40}
-                    color={manualGradientColors.homeDarkColor}
-                  />
-                </View>
-              )} */}
-
               <>
                 <KeyboardAvoidingView
                   behavior={Platform.OS === "ios" ? "padding" : "height"}
                   style={[{ flex: 1 }]}
                 >
                   {
-                  // friendListAndUpcomingIsSuccess &&
+                    // friendListAndUpcomingIsSuccess &&
                     settings?.id &&
-                    upcomingHelloes?.length &&
-                    user?.id && ( //&& !isLoading  is in FSSpinner
-                      <View style={styles.mainContainer}>
-                        {!selectedFriend?.id && (
-                          <>
-                            {friendListLength < 1 && (
-                              <NoFriendsMessageUI
-                                backgroundColor={
-                                  lightDarkTheme.overlayBackground
-                                }
-                                primaryColor={lightDarkTheme.primaryText}
-                                welcomeTextStyle={welcomeTextStyle}
-                                username={user?.username || ""}
-                                userCreatedOn={userCreatedOn || ""}
-                              />
-                            )}
-
-                            {friendListLength > 0 && (
-                              <>
-                                <WelcomeMessageUI
-                                  userId={user?.id}
-                                  darkerGlassBackground={
-                                    lightDarkTheme.darkerGlassBackground
-                                  }
-                                  paddingHorizontal={PADDING_HORIZONTAL}
-                                  primaryColor={lightDarkTheme.primaryText}
-                                  primaryBackground={
-                                    lightDarkTheme.primaryBackground
-                                  }
-                                  username={user?.username}
-                                  isNewUser={isNewUser}
-                                  friendId={selectedFriend?.id}
-                                  friendName={selectedFriend?.name}
-                                  themeColors={themeColors}
+                      upcomingHelloes?.length &&
+                      user?.id && ( //&& !isLoading  is in FSSpinner
+                        <View style={styles.mainContainer}>
+                          {!selectedFriend?.id && (
+                            <>
+                              {friendListLength < 1 && (
+                                <NoFriendsMessageUI
                                   backgroundColor={
-                                    lightDarkTheme.primaryBackground
-                                  }
-                                  borderBottomLeftRadius={0}
-                                  borderBottomRightRadius={0}
-                                  // isKeyboardVisible={isKeyboardVisible}
-                                  onPress={handleFocusPress}
-                                  isKeyboardVisible={isKeyboardVisible}
-                                />
-
-                                <QuickWriteMoment
-                                  focusMode={settings?.simplify_app_for_focus}
-                                  primaryColor={lightDarkTheme.primaryText}
-                                  primaryBackgroundColor={
-                                    lightDarkTheme.primaryBackground
-                                  }
-                                  primaryOverlayColor={
                                     lightDarkTheme.overlayBackground
                                   }
-                                  darkerOverlayBackgroundColor={
-                                    lightDarkTheme.darkerOverlayBackground
-                                  }
-                                  width={"100%"}
-                                  height={"100%"}
-                                  ref={newMomentTextRef}
-                                  value={newMomentText}
-                                  title={"Add a new moment?"}
-                                  iconColor={lightDarkTheme.primaryText}
-                                  mountingText={""}
-                                  onTextChange={updateNewMomentTextString}
-                                  onPress={navigateToAddMomentScreen}
-                                  multiline={isKeyboardVisible}
-                                  isKeyboardVisible={isKeyboardVisible}
-                                />
-                                <KeyboardCoasters
                                   primaryColor={lightDarkTheme.primaryText}
-                                  isKeyboardVisible={isKeyboardVisible}
-                                  isFriendSelected={!!selectedFriend?.id}
-                                  showMomentScreenButton={
-                                    !!newMomentText?.length
-                                  }
-                                  onPress={navigateToAddMomentScreen}
+                                  welcomeTextStyle={welcomeTextStyle}
+                                  username={user?.username || ""}
+                                  userCreatedOn={userCreatedOn || ""}
                                 />
-                              </>
-                            )}
-                          </>
-                        )}
+                              )}
 
-                        {!isKeyboardVisible &&
-                          !selectedFriend?.id &&
-                          friendListLength > 0 && ( // loadingDash internally spins the components between friend selects
-                            <View
-                              style={styles.allHomeWrapper}
-                            >
-                              <View style={{ height: "100%", paddingHorizontal: PADDING_HORIZONTAL }}>
-                                <AllHome
-                                  userId={user?.id}
-                                  friendId={selectedFriend?.id}
-                                  lockInCustomString={
-                                    settings?.lock_in_custom_string
-                                  }
-                                  lighterOverlayColor={
-                                    lightDarkTheme.lighterOverlayBackground
-                                  }
-                                  darkerOverlayColor={
-                                    lightDarkTheme.darkerOverlayBackground
-                                  }
-                                  isLoading={isLoading}
-                                  onPress={navigateToAddMomentScreen}
-                                  borderRadius={10}
-                                  height={"100%"}
-                                  primaryColor={lightDarkTheme.primaryText}
-                                  overlayColor={
-                                    lightDarkTheme.overlayBackground
-                                  }
-                                  primaryBackground={
-                                    lightDarkTheme?.primaryBackground
-                                  }
-                                />
-                              </View>
-                            </View>
+                              {friendListLength > 0 && (
+                                <>
+                                  <WelcomeMessageUI
+                                    userId={user?.id}
+                                    darkerGlassBackground={
+                                      lightDarkTheme.darkerGlassBackground
+                                    }
+                                    paddingHorizontal={PADDING_HORIZONTAL}
+                                    primaryColor={lightDarkTheme.primaryText}
+                                    primaryBackground={
+                                      lightDarkTheme.primaryBackground
+                                    }
+                                    username={user?.username}
+                                    isNewUser={isNewUser}
+                                    friendId={selectedFriend?.id}
+                                    friendName={selectedFriend?.name}
+                                    themeColors={themeColors}
+                                    backgroundColor={
+                                      lightDarkTheme.primaryBackground
+                                    }
+                                    borderBottomLeftRadius={0}
+                                    borderBottomRightRadius={0} 
+                                    onPress={handleFocusPress}
+                                    isKeyboardVisible={isKeyboardVisible}
+                                  />
+
+                                  <QuickWriteMoment
+                                    focusMode={settings?.simplify_app_for_focus}
+                                    primaryColor={lightDarkTheme.primaryText}
+                                    primaryBackgroundColor={
+                                      lightDarkTheme.primaryBackground
+                                    }
+                                    primaryOverlayColor={
+                                      lightDarkTheme.overlayBackground
+                                    }
+                                    darkerOverlayBackgroundColor={
+                                      lightDarkTheme.darkerOverlayBackground
+                                    }
+                                    width={"100%"}
+                                    height={"100%"}
+                                    ref={newMomentTextRef}
+                                    value={newMomentText}
+                                    title={"Add a new moment?"}
+                                    iconColor={lightDarkTheme.primaryText}
+                                    mountingText={""}
+                                    onTextChange={updateNewMomentTextString}
+                                    onPress={navigateToAddMomentScreen}
+                                    multiline={isKeyboardVisible}
+                                    isKeyboardVisible={isKeyboardVisible}
+                                  />
+                                  <KeyboardCoasters
+                                    primaryColor={lightDarkTheme.primaryText}
+                                    isKeyboardVisible={isKeyboardVisible}
+                                    isFriendSelected={!!selectedFriend?.id}
+                                    showMomentScreenButton={
+                                      !!newMomentText?.length
+                                    }
+                                    onPress={navigateToAddMomentScreen}
+                                  />
+                                </>
+                              )}
+                            </>
                           )}
 
-                        {selectedFriend?.id && (
-                          <SelectedFriendHome
-                            primaryBackground={lightDarkTheme.primaryBackground}
-                            darkGlassBackground={
-                              lightDarkTheme.darkGlassBackground
-                            }
-                            darkerGlassBackground={
-                              lightDarkTheme.darkerGlassBackground
-                            }
-                            categoryColorsArray={categoryColors}
-                            skiaFontLarge={skiaFontLarge}
-                            skiaFontSmall={skiaFontSmall}
-                            paddingHorizontal={PADDING_HORIZONTAL}
-                            userId={user?.id}
-                            primaryColor={lightDarkTheme.primaryText}
-                            primaryOverlayColor={
-                              lightDarkTheme.overlayBackground
-                            }
-                            themeColors={themeColors}
-                            selectedFriendId={selectedFriend?.id}
-                            selectedFriendName={selectedFriend?.name}
-                          />
-                        )}
-                      </View>
-                    )}
+                          {!isKeyboardVisible &&
+                            !selectedFriend?.id &&
+                            friendListLength > 0 && ( // loadingDash internally spins the components between friend selects
+                              <View style={styles.allHomeWrapper}>
+                                <View
+                                  style={{
+                                    height: "100%",
+                                    paddingHorizontal: PADDING_HORIZONTAL,
+                                  }}
+                                >
+                                  <AllHome
+                                    userId={user?.id}
+                                    friendId={selectedFriend?.id}
+                                    lockInCustomString={
+                                      settings?.lock_in_custom_string
+                                    }
+                                    lighterOverlayColor={
+                                      lightDarkTheme.lighterOverlayBackground
+                                    }
+                                    darkerOverlayColor={
+                                      lightDarkTheme.darkerOverlayBackground
+                                    }
+                                    isLoading={isLoading}
+                                    onPress={navigateToAddMomentScreen}
+                                    borderRadius={10}
+                                    height={"100%"}
+                                    primaryColor={lightDarkTheme.primaryText}
+                                    overlayColor={
+                                      lightDarkTheme.overlayBackground
+                                    }
+                                    primaryBackground={
+                                      lightDarkTheme?.primaryBackground
+                                    }
+                                  />
+                                </View>
+                              </View>
+                            )}
+
+                          {selectedFriend?.id && (
+                            <SelectedFriendHome
+                              primaryBackground={
+                                lightDarkTheme.primaryBackground
+                              }
+                              darkGlassBackground={
+                                lightDarkTheme.darkGlassBackground
+                              }
+                              darkerGlassBackground={
+                                lightDarkTheme.darkerGlassBackground
+                              }
+                              categoryColorsArray={categoryColors}
+                              skiaFontLarge={skiaFontLarge}
+                              skiaFontSmall={skiaFontSmall}
+                              paddingHorizontal={PADDING_HORIZONTAL}
+                              userId={user?.id}
+                              primaryColor={lightDarkTheme.primaryText}
+                              primaryOverlayColor={
+                                lightDarkTheme.overlayBackground
+                              }
+                              themeColors={themeColors}
+                              selectedFriendId={selectedFriend?.id}
+                              selectedFriendName={selectedFriend?.name}
+                            />
+                          )}
+                        </View>
+                      )
+                  }
                 </KeyboardAvoidingView>
                 {selectedFriend?.id && (
                   <WriteButton
@@ -539,8 +513,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                   settings={settings}
                   friendId={selectedFriend?.id}
                   friendName={selectedFriend?.name}
-                  themeColors={themeColors}
-                  // friendDash={friendDash}
+                  themeColors={themeColors} 
                   lightDarkTheme={lightDarkTheme}
                   friendListLength={friendListLength}
                   overlayColor={
@@ -561,7 +534,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                 />
               )}
             </>
-          </SafeViewAndGradientBackground>
+          </SafeViewHome>
         )}
     </>
   );
