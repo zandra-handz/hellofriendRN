@@ -27,12 +27,8 @@ const SpinnerFour = ({ color1, color2 }) => {
     uniform float u_time;
     uniform vec2 u_resolution;
 
-     float TWO_PI = 6.28318530718;
-
-     
-    vec3 startColor = vec3(${color1Converted});
-      vec3 endColor = vec3(${color2Converted});
-
+    float TWO_PI = 6.28318530718;
+ 
   
 
  float distFCircle(vec2 uv, float radius, float soul) {

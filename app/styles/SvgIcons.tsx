@@ -38,6 +38,7 @@ import ChevronDoubleLeftSvg from "./svgs/chevron-double-left";
 import CloseOutlineSvg from "./svgs/close-outline"; //IonIcons
 import CommentSearchOutlineSvg from "./svgs/comment-search-outline";
 import CompareSvg from "./svgs/compare";
+import DrawPenSvg from "./svgs/draw-pen";
 import FormatFontSizeIncreaseSvg from "./svgs/format-font-size-increase";
 import GestureSwipeVerticalSvg from "./svgs/gesture-swipe-vertical";
 import HeartSvg from './svgs/heart';
@@ -53,6 +54,7 @@ import NoteEditOutlineSvg from "./svgs/note-edit-outline";
 import NoteTextSvg from "./svgs/note-text";
 import PaletteSvg from "./svgs/palette";
 import PenSvg from "./svgs/pen";
+import PenPlusSvg from "./svgs/pen-plus";
 import PencilSvg from "./svgs/pencil";
 import PencilCircleSvg from "./svgs/pencil-circle";
 import PencilOutlineSvg from "./svgs/pencil-outline";
@@ -93,6 +95,7 @@ const svgIcons = {
   bell: BellSvg,
   bug: BugSvg,
   bug_outline: BugOutlineSvg,
+  draw_pen: DrawPenSvg,
   delete: DeleteSvg,
   leaf: LeafSvg, // welcome message
   calendar: CalendarSvg, // hello quick view
@@ -139,6 +142,7 @@ const svgIcons = {
   note_text: NoteTextSvg, // location notes
   car: CarSvg,
   car_cog: CarCogSvg,
+  pen_plus: PenPlusSvg,
   pulse: PulseSvg,
   refresh: RefreshSvg,
   settings_suggest: SettingsSuggestSvg,

@@ -23,14 +23,17 @@ const SafeViewHome = ({
   friendColorLight = "white",
   friendColorDark = "red",
   backgroundOverlayColor,
-  friendId,
-  
+  friendId, 
   backgroundTransparentOverlayColor,
- 
   useSolidOverlay = false, 
   backgroundOverlayHeight = "100%", 
 }: Props) => { 
   const opacityValue = useSharedValue(0);
+
+
+  console.log('SAFE VIEW RERENDERED');
+  //rerenders twice when returning to home screen from selected friend
+  //haven't debugged yet
 
   useEffect(() => {
     if (useSolidOverlay) { 

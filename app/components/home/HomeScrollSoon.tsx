@@ -1,15 +1,13 @@
 import { StyleSheet, Text, View, DimensionValue } from "react-native";
 import React, { useCallback } from "react";
-import Animated, {
-  // SlideInDown,
-  // SlideOutDown,
-  // FadeIn,
-  // FadeOut,
-} from "react-native-reanimated";
+import Animated from // SlideInDown,
+// SlideOutDown,
+// FadeIn,
+// FadeOut,
+"react-native-reanimated";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SoonItemButton from "./SoonItemButton";
 import { useNavigation } from "@react-navigation/native";
- 
 
 interface HomeScrollSoonProps {
   startAtIndex: number;
@@ -22,12 +20,12 @@ interface HomeScrollSoonProps {
 //single press will select friend but remain on home screen, double press will select friend and take user directly to moments screen
 const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   upcomingHelloes,
-  isLoading, 
+  isLoading,
   friendList,
   primaryColor = "orange",
   overlayColor,
   darkerOverlayColor,
-  lighterOverlayColor, 
+  lighterOverlayColor,
   handleSelectFriend,
   startAtIndex = 1,
   height,
@@ -36,7 +34,6 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   borderColor = "transparent",
 }) => {
   const navigation = useNavigation();
- 
 
   const itemColor = primaryColor;
   const elementBackgroundColor = overlayColor;
@@ -48,9 +45,9 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       navigation.navigate("Moments");
     },
     [
-      // friendList, 
-      handleSelectFriend, 
-      navigation
+      // friendList,
+      handleSelectFriend,
+      navigation,
     ]
   );
 
@@ -68,25 +65,16 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
     },
     [
       // friendList,
-      //  getThemeAheadOfLoading, 
-       handleSelectFriend, 
+      //  getThemeAheadOfLoading,
+      handleSelectFriend,
       //  navigation
-      ]
-
+    ]
   );
 
   const renderListItem = useCallback(
-    ({ item, index }) => (
-      // <Animated.View
-      // entering={FadeIn}
-      // exiting={FadeOut}
+    ({ item, index }) => ( 
       <View
-        style={{
-          marginBottom: 2,
-          height: 50,
-          width: "100%",
-          flexDirection: "row",
-        }}
+        style={styles.listItemContainer}
       >
         <SoonItemButton
           textColor={primaryColor}
@@ -94,18 +82,16 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           darkerOverlayColor={darkerOverlayColor}
           lighterOverlayColor={lighterOverlayColor}
           friendList={friendList}
-          overlayColor={overlayColor}
-          manualGradientColors={manualGradientColors}
+          overlayColor={overlayColor} 
           height={"100%"}
           friendName={item.friend.name}
           friendId={item.friend.id}
           friendCapsuleCount={item.capsule_count}
-          date={item.future_date_in_words}
+          date={item.date}
           width={"100%"}
           onPress={() => handlePress(item)}
           onDoublePress={() => handleDoublePress(item)}
-        />
-        {/* </Animated.View> */}
+        /> 
       </View>
     ),
     [
@@ -239,6 +225,12 @@ const styles = StyleSheet.create({
     width: "100%",
     // backgroundColor: 'pink',
     alignItems: "center",
+  },
+  listItemContainer: {
+    marginBottom: 2,
+    height: 50,
+    width: "100%",
+    flexDirection: "row",
   },
 });
 

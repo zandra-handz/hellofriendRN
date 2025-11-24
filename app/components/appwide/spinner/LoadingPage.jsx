@@ -1,5 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Text  } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
+import SpinnerOne from "../button/SpinnerOne";
 import {
   Flow,
   Swing,
@@ -11,7 +12,7 @@ import {
   Pulse,
   Wander,
   Wave,
-} from "react-native-animated-spinkit"; 
+} from "react-native-animated-spinkit";
 
 const spinners = {
   circle: Circle,
@@ -30,19 +31,19 @@ const LoadingPage = ({
   loading,
   includeLabel = false,
   label = "",
-  labelColor = "white", 
+  labelColor = "white",
   spinnerSize = 90,
   color = "limegreen",
-  spinnerType = "wander", 
-}) => { 
- 
+  spinnerType = "wander",
+}) => {
   if (!loading) return null;
+
+ 
 
   const Spinner = spinners[spinnerType] || Circle;
 
   return (
     <View style={styles.container}>
-   
       {loading && (
         <>
           {includeLabel && (
@@ -53,7 +54,13 @@ const LoadingPage = ({
             </View>
           )}
           <View style={styles.spinnerContainer}>
-            <Spinner size={spinnerSize} color={color} />
+            {spinnerType === "chase" && color && (
+              <SpinnerOne color1={color} color2={color} />
+            )}
+
+            {spinnerType !== "chase" && (
+              <Spinner size={spinnerSize} color={color} />
+            )}
           </View>
         </>
       )}
@@ -68,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "transparent",
   },
-  textContainer: { 
+  textContainer: {
     marginBottom: 30,
     justifyContent: "center",
     alignItems: "center",
@@ -80,7 +87,7 @@ const styles = StyleSheet.create({
   loadingTextBold: {
     fontSize: 20,
     fontFamily: "Poppins-Regular",
-    textAlign: "center", 
+    textAlign: "center",
   },
 });
 

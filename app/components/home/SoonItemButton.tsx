@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import { View, Text, StyleSheet, DimensionValue } from "react-native";
 import UpcomingFriendPressable from "../appwide/button/UpcomingFriendPressable";
 import SvgIcon from "@/app/styles/SvgIcons";
-
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
 interface SoonItemButtonProps {
   width: DimensionValue;
   date: string;
@@ -32,7 +32,9 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   const lastPress = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
- 
+  const helloDate = useMemo(() => {
+    return formatDayOfWeekAbbrevMonth(date);
+  }, [date]);
 
   const DOUBLE_PRESS_DELAY = 300;
 
@@ -95,36 +97,26 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
     >
       <View
         style={[
-          styles.container,
+          styles.innerContainer,
           {
-            flex: 1,
             width: width,
-            alignItems: "center",
-            borderWidth: 2,
-            borderColor: "transparent",
             backgroundColor: darkerOverlayColor,
           },
         ]}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            height: "100%",
-            alignItems: "center",
-
-            padding: 10,
-          }}
-        >
+        <View style={styles.innerInnerContainer}>
           <View style={[styles.calendarContainer]}>
-            <Text style={[styles.text, { color: fontColor }]}> {date}</Text>
+            <Text style={[styles.text, { color: fontColor }]}>
+              {" "}
+              {helloDate}
+            </Text>
           </View>
-          <View style={{alignItems: 'center'}}>
+          <View style={{ alignItems: "center" }}>
             <SvgIcon
               name={"leaf"}
               color={fontColor}
               size={30}
-              style={{ position: 'absolute', bottom: -3, right: 20, width: '100%', zIndex: 4000, opacity: 0.5 }}
+              style={styles.leaf}
             />
             <Text style={[styles.text, { color: fontColor }]}>
               {friendCapsuleCount}
@@ -143,11 +135,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     height: 50,
-
     width: "100%",
     // padding: 10,
-    borderRadius: 4,
+    borderRadius: 999,
     overflow: "hidden",
+  },
+  innerContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    height: 50,
+    width: "100%",
+    // padding: 10,
+    borderRadius: 999,
+    overflow: "hidden",
+    flex: 1,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  innerInnerContainer: {
+    flexDirection: "row",
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    padding: 10,
+    paddingRight: 20,
   },
   blurOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -170,6 +181,14 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     flexShrink: 1,
+  },
+  leaf: {
+    position: "absolute",
+    bottom: -3,
+    right: 20,
+    width: "100%",
+    zIndex: 4000,
+    opacity: 0.5,
   },
 });
 

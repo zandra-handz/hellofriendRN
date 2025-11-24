@@ -36,7 +36,10 @@ const WriteButton = ({
           borderRadius={999}
           style={{ alignItems: "center", justifyContent: "center" }}
         >
-          <SvgIcon name={"plus"} color={iconColor} size={30} />
+          <SvgIcon 
+          name={"draw_pen"} 
+          //   name={"pen_plus"} 
+          color={iconColor} size={40} />
         </GradientBackgroundFidgetOne>
       </GlobalPressable>
     </View>
@@ -52,24 +55,24 @@ const styles = StyleSheet.create({
     elevation: 99999,
   },
   container: {
-    height: 40,
-    width: 40,
+    height: 60,
+    width: 60,
 
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
 
     // ✅ Drop shadow (iOS + Android)
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowOpacity: 0.3,
-    // shadowRadius: 5,
-    // elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 7,
+    shadowRadius: 5,
+    elevation: 8,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 3,
+    // elevation: 7,
   },
 });
 

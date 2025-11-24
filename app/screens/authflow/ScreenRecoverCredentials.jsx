@@ -153,12 +153,12 @@ const ScreenRecoverCredentials = () => {
             left: 0,
           }}
         >
-          <LoadingPage
+          {/* <LoadingPage
             loading={true}
             spinnerType="circle"
             spinnerSize={40}
             color={"yellow"}
-          />
+          /> */}
         </View>
       )}
 

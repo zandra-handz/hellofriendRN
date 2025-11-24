@@ -26,8 +26,7 @@ const SuggestedHello = ({
   padding,
 }: Props) => {
   const { navigateToFinalize } = useAppNavigations();
-  const welcomeTextStyle = AppFontStyles.welcomeText;
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const welcomeTextStyle = AppFontStyles.welcomeText; 
 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 

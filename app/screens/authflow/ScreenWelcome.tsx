@@ -83,7 +83,7 @@ const ScreenWelcome = () => {
           style={styles.container}
         >
           <>
-            {(!confirmedUserNotSignedIn || user?.id) && (
+            {/* {(!confirmedUserNotSignedIn || user?.id) && (
               <LoadingPage
                 loading={true}
                 includeLabel={true}
@@ -93,7 +93,7 @@ const ScreenWelcome = () => {
                 color={"red"}
                 labelColor={manualGradientColors.homeDarkColor}
               />
-            )}
+            )} */}
             {confirmedUserNotSignedIn && !user?.id && (
               <>
                 <View style={styles.logoContainer}>

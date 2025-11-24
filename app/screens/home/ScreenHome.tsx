@@ -502,7 +502,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
                     onPress={handleNavigateToCreateNew}
                     backgroundColor={manualGradientColors.lightColor}
                     iconColor={manualGradientColors.homeDarkColor}
-                    spaceFromBottom={98}
+                    spaceFromBottom={100}
                   />
                 )}
               </>

@@ -27,7 +27,7 @@ const LocalPeacefulGradientSpinner = ({ loading, label}: Props) => {
             <GradientBackgroundFidgetOne
               firstColorSetDark={manualGradientColors.darkColor}
               firstColorSetLight={manualGradientColors.lightColor}
-              speed={600}
+              speed={8000}
               secondColorSetDark={manualGradientColors.darkColor}
               secondColorSetLight={manualGradientColors.lightColor}
               //  direction="horizontal"
@@ -37,7 +37,7 @@ const LocalPeacefulGradientSpinner = ({ loading, label}: Props) => {
                 label={label}
                 includeLabel={true}
                 labelColor={manualGradientColors.homeDarkColor}
-                color={manualGradientColors.homeDarkColor}
+                color={manualGradientColors.lightColor}
                 //  color={'transparent'}
                 spinnerType={"chase"}
                 spinnerSize={40}

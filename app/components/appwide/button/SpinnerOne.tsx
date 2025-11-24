@@ -23,74 +23,118 @@ const SpinnerOne = ({ color1, color2 }) => {
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
+
+
+  
  const source = Skia.RuntimeEffect.Make(`
-uniform vec2 u_resolution;
-uniform float u_time;
-
-vec3 startColor = vec3(${color1Converted});
-vec3 endColor = vec3(${color2Converted});
-
-// === helpers ===
 float tzb_circleTrueSDF(vec2 _uv, float r){
-  return length(_uv) - r;
+  return length(_uv) - r; // the distance minus the circle cut off
 }
-
+ 
 float tzb_sMin(float a, float b, float k){
-  float h = clamp(.5 + (.5*(b-a/k)), 0., 1.);
-  return mix(b, a, h) - k*h*(1. - h);
+  float h = clamp(.5 + (.5*(b-a/k)), 0., 1. );
+                      // creates parabolic curve
+  return mix(b, a, h) - k*h*(1. - h);   // 1. - value inverts the value
+
+
 }
 
 vec3 tzb_sMinMask(float _tzb_sMin, vec3 _color){
-  float mask = smoothstep(0.0, 0.002, _tzb_sMin);
+  float mask = smoothstep(.0,.002, _tzb_sMin);
   return mask * _color;
-}
 
+} 
 vec2 tzb_zeroZeroCenter(vec2 uv) {
-  return uv - 0.5;
+  return uv -= .5;
 }
-
+ 
+ 
 vec2 tzb_select(vec2 _uv, vec2 _slice){
-  return _uv - _slice;
+  return _uv -= _slice;
 }
 
+vec2 tzb_deselect(vec2 _uv, vec2 _slice){
+  return _uv += _slice;
+}
+
+ 
+
+// must multiply with coords
 mat2 tzb_rotate2d(float angle){
   return mat2(cos(angle), -sin(angle),
               sin(angle),  cos(angle));
 }
+ 
+ vec3 tzb_radialGradient(float circleDF, vec3 colorOne, vec3 colorTwo, float radius){
+  float mask = smoothstep(radius, .0, circleDF);
+  return mix(colorOne, colorTwo, mask);
+}
 
-// === main ===
+uniform vec2 u_resolution;
+uniform float u_time;
+
+float PI = 3.14159265359;
+float TWO_PI = 6.28318530718;
+ 
 half4 main(vec2 fragCoord) {
-  vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
-//  uv = tzb_zeroZeroCenter(uv);
- // uv.x *= u_resolution.x / u_resolution.y;
+    vec3 startColor = vec3(${color1Converted});
+    vec3 endColor   = vec3(${color2Converted});
 
-  float t1 = sin(u_time*4.0);
-  float t2 = cos(u_time*4.0);
-  float t3 = sin(u_time*4.0);
+   vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
+
+ 
+ 
+  float t1 = sin(u_time*4.); // slower oscillation
+  float t2 = cos(u_time*4.); // faster oscillation
+  float t3 = sin(u_time*4.); // faster oscillation
+
+
+  float circleOneSize = .04;
+  float circleTwoSize = .04;
+  float circleThreeSize = .03;
+
+  vec2 circleOneSlice = vec2(.1,.1);
+  vec2 circleTwoSlice = vec2(.1,.1);
+  vec2 circleThreeSlice = vec2(.1,.1);
+
+
+  float smoothFactorOneTwo = .02;
+  float smoothFactorThree = .03;
+  
 
   uv = tzb_rotate2d(u_time * 9.0 + t1) * uv;
-  vec2 uvTwo = tzb_rotate2d(0.1 + t3) * uv;
-  vec2 uvThree = tzb_rotate2d(1.0 + t2) * uvTwo;
+  vec2 uvTwo = tzb_rotate2d( .1 + t3) * uv;
+  vec2 uvThree = tzb_rotate2d( 1. + t2) * uvTwo;
+ 
 
-  float scale = 4.5; // smaller shapes
+// for RNSkia
+float scale = 4; // smaller shapes
 uv *= scale;
 uvTwo *= scale;
 uvThree *= scale;
+// end RNSkia
 
-  vec2 uvCircleOne = tzb_select(uv, vec2(0.1, 0.2));
-  vec2 uvCircleTwo = tzb_select(uvTwo, vec2(0.1, 0.2));
-  vec2 uvCircleThree = tzb_select(uvThree, vec2(0.1, 0.2));
-
-  float circle = tzb_circleTrueSDF(uvCircleOne, 0.05);
-  float circleTwo = tzb_circleTrueSDF(uvCircleTwo, 0.05);
-  float circleThree = tzb_circleTrueSDF(uvCircleThree, 0.05);
+  vec2 uvCircleOne = tzb_select(uv, circleOneSlice);
+  vec2 uvCircleTwo = tzb_select(uvTwo,circleTwoSlice);
+  vec2 uvCircleThree = tzb_select(uvThree, circleThreeSlice);
+ 
   
+  float circle = tzb_circleTrueSDF(uvCircleOne, circleOneSize);
+  float circleTwo = tzb_circleTrueSDF(uvCircleTwo, circleTwoSize);
+  float circleThree = tzb_circleTrueSDF(uvCircleThree, circleThreeSize);
 
-  float merged = tzb_sMin(tzb_sMin(circle, circleTwo, 0.04), circleThree, 0.03);
-  vec3 mask = tzb_sMinMask(-merged, startColor);
+  vec3 circleOneColor = tzb_radialGradient(circleThree, startColor, startColor, .5);
 
-  return half4(mask, -merged);
-}
+  
+  float merged = tzb_sMin(tzb_sMin(circle, circleTwo, smoothFactorOneTwo), circleThree, smoothFactorThree);
+  vec3 mask = tzb_sMinMask(-merged, circleOneColor);
+
+float alpha = smoothstep(0.0, 0.002, -merged); // alpha based on merged SDF
+vec3 color = tzb_sMinMask(-merged, circleOneColor); // RGB only
+
+return vec4(color, alpha);
+ }
+ 
 `);
 
 
@@ -125,6 +169,10 @@ uvThree *= scale;
     justifyContent: "center",
   }}
 >
+
+  {color1Converted && color2Converted && (
+    
+
       <Canvas
         style={{
           width,
@@ -138,6 +186,7 @@ uvThree *= scale;
           <Shader source={source} uniforms={uniforms} />
         </Rect>
       </Canvas>
+        )}
      </View>
   );
 };
