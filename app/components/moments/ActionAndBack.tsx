@@ -13,12 +13,12 @@ type Props = {
   rounded: boolean;
 };
 
-const ActionAndBack = ({ onPress, iconName = "check", rounded=false }: Props) => {
+const ActionAndBack = ({ onPress, iconName = "check" }: Props) => {
   return (
     <Pressable
       style={[ styles.container, { 
         backgroundColor: manualGradientColors.lightColor,
-        borderRadius: rounded? 999 : 5, // remove conditional check if we can make all of them rounded
+        borderRadius: 999, // remove conditional check if we can make all of them rounded
       }]}
       onPress={onPress}
     >

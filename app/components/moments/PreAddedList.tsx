@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, { useState } from "react";
 
 import { FlashList } from "@shopify/flash-list";
@@ -10,13 +10,13 @@ import EscortBar from "./EscortBar";
 const PreAddedList = ({
   updateCapsule,
   preAdded,
-  allCapsulesList, 
+  allCapsulesList,
   friendId,
-  manualGradientColors, 
+  manualGradientColors,
   primaryColor,
   primaryBackground,
 }) => {
-  const ITEM_HEIGHT = 70; 
+  const ITEM_HEIGHT = 70;
   const [selectedMoments, setSelectedMoments] = useState([]);
 
   const { navigateToMoments } = useAppNavigations();
@@ -41,7 +41,7 @@ const PreAddedList = ({
 
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
-  ); 
+  );
 
   const handleRestore = () => {
     if (!friendId) {
@@ -88,49 +88,29 @@ const PreAddedList = ({
 
   return (
     <>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 10,
-          paddingHorizontal: 10,
-        }}
-      >
-        <Text style={[AppFontStyles.welcomeText, { color: primaryColor, fontSize: 22 }]}>
+      <View style={styles.topBarContainer}>
+        <Text
+          style={[
+            AppFontStyles.welcomeText,
+            { color: primaryColor, fontSize: 22 },
+          ]}
+        >
           Undo add
         </Text>
-        <View
-          style={{ height: "100%", alignItems: "center", flexDirection: "row" }}
-        >
-          <Pressable
-            onPress={handleSelectAll}
-            style={{
-              height: "100%",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
+        <View style={styles.pressableContainer}>
+          <Pressable onPress={handleSelectAll} style={styles.pressable}>
             <Text
-              style={[
-                { color: primaryColor, fontSize: 12, fontWeight: "bold" },
+              style={[styles.labels,
+                { color: primaryColor },
               ]}
             >
               Select all
             </Text>
           </Pressable>
-          <Pressable
-            onPress={handleDeSelectAll}
-            style={{
-              height: "100%",
-              alignItems: "center",
-              marginLeft: 20,
-              flexDirection: "row",
-            }}
-          >
+          <Pressable onPress={handleDeSelectAll} style={styles.resetPressable}>
             <Text
-              style={[
-                { color: primaryColor, fontSize: 12, fontWeight: "bold" },
+              style={[styles.labels,
+                { color: primaryColor},
               ]}
             >
               Reset
@@ -138,8 +118,8 @@ const PreAddedList = ({
           </Pressable>
         </View>
       </View>
-      <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <FlashList   
+      <View style={styles.listContainer}>
+        <FlashList
           data={filterOutNonAdded}
           estimatedItemSize={90}
           renderItem={renderListItem}
@@ -149,17 +129,59 @@ const PreAddedList = ({
           ListFooterComponent={() => <View style={{ height: 100 }} />}
         />
       </View>
-      <EscortBar
-        manualGradientColors={manualGradientColors}
-        subWelcomeTextStyle={AppFontStyles.welcomeText}
-        primaryColor={primaryColor}
-        primaryBackground={primaryBackground}
-        forwardFlowOn={false}
-        label={"Restore Selected"}
-        onPress={handleRestore}
-      />
+      <View style={styles.footerContainer}>
+        <EscortBar
+          manualGradientColors={manualGradientColors}
+          subWelcomeTextStyle={AppFontStyles.welcomeText}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          forwardFlowOn={false}
+          label={"Restore Selected"}
+          onPress={handleRestore}
+        />
+      </View>
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  topBarContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  pressableContainer: {
+    height: "100%",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  pressable: {
+    height: "100%",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  resetPressable: {
+    height: "100%",
+    alignItems: "center",
+    marginLeft: 20,
+    flexDirection: "row",
+  },
+  labels: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  listContainer: {
+    width: "100%",
+    flex: 1,
+  },
+  footerContainer: {
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    
+  },
+});
 
 export default PreAddedList;

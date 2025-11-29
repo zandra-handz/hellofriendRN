@@ -1,9 +1,10 @@
 import { View, Pressable, StyleSheet, Dimensions } from "react-native";
-import React, { useState,   useMemo, useCallback } from "react";
+import React, { useState, useRef, useMemo, useCallback } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
+import manualGradientColors from "@/app/styles/StaticColors";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
-import { SafeAreaView } from "react-native-safe-area-context"; 
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useRoute } from "@react-navigation/native";
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
 
@@ -19,9 +20,7 @@ import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-// import SafeViewAndGradientBackgroundStatic from "@/app/components/appwide/format/SafeViewAndGradBackgroundStatic";
-
-
+import SafeViewAndGradientBackgroundStatic from "@/app/components/appwide/format/SafeViewAndGradBackgroundStatic";
 import SvgIcon from "@/app/styles/SvgIcons";
 
 import Animated, {
@@ -42,7 +41,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
-const ScreenSelectFriend = (
+const ScreenSelectFriendOld = (
   {
     // navigationDisabled = false
   }
@@ -53,9 +52,7 @@ const ScreenSelectFriend = (
   const { lightDarkTheme } = useLDTheme();
   const { autoSelectFriend } = useAutoSelector();
 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming({
-    userId: user?.id,
-  });
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: user?.id});
   const friendList = friendListAndUpcoming?.friends;
   const queryClient = useQueryClient();
   // 🔹 Shared values for circle position
@@ -168,25 +165,39 @@ const ScreenSelectFriend = (
     // navigateOnSelect: handleNavAfterSelect,
     //   navigateOnSelect: undefined,
   });
-// old
-  // const direction = [0, 0, 1, 0];
-  
-  //vertical to match other screens
-  const direction = [0, 0, 0, 1];
+
+  const direction = [0, 0, 1, 0];
 
   return (
     <>
-      <SafeAreaView
-        style={{
-          flex: 1, 
-          backgroundColor: lightDarkTheme.primaryBackground,
-        }}
+      <SafeViewAndGradientBackgroundStatic
+        friendColorLight={manualGradientColors.lightColor}
+        friendColorDark={manualGradientColors.darkColor}
+        backgroundOverlayColor={lightDarkTheme.primaryBackground}
+        friendId={false}
+        backgroundOverlayHeight={"15%"}
+        useSolidOverlay={false}
+        includeBackgroundOverlay={true}
+        backgroundTransparentOverlayColor={lightDarkTheme.primaryBackground}
+        backgroundOverlayBottomRadius={0}
+        style={{ flex: 1 }}
       >
         <View style={styles.safeViewContainer}>
           <Animated.View
-            style={[animatedCircleStyle, styles.animatedCircleContainer]}
+            style={[
+              animatedCircleStyle,
+              ,
+              {
+                position: "absolute",
+                overflow: "hidden",
+                borderRadius: 999,
+                width: 0,
+                height: 0,
+              },
+            ]}
           >
             <AnimatedLinearGradient
+              //  animatedProps={animatedGradientProps }
               colors={gradientColors}
               start={{ x: direction[0], y: direction[1] }}
               end={{ x: direction[2], y: direction[3] }}
@@ -231,6 +242,12 @@ const ScreenSelectFriend = (
               autoSelectFriend={autoSelectFriend}
               handleDeselect={handleDeselect}
               themeColors={themeColors}
+              // themeColors={{
+              //   lightColor: selectedFriend.lightColor,
+              //   darkColor: selectedFriend.darkColor,
+              //   fontColor: selectedFriend.fontColor,
+              //   fontColorSecondary: selectedFriend.fontColorSecondary,
+              // }}
               friendList={friendList}
               lightDarkTheme={lightDarkTheme}
               data={friendList}
@@ -242,7 +259,7 @@ const ScreenSelectFriend = (
             />
           </View>
         </View>
-      </SafeAreaView>
+      </SafeViewAndGradientBackgroundStatic>
     </>
   );
 };
@@ -251,13 +268,6 @@ const styles = StyleSheet.create({
   safeViewContainer: {
     paddingHorizontal: 10,
     flex: 1,
-  },
-  animatedCircleContainer: {
-    position: "absolute",
-    overflow: "hidden",
-    borderRadius: 999,
-    width: 0,
-    height: 0,
   },
   topBar: {
     paddingHorizontal: 20,
@@ -281,4 +291,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScreenSelectFriend;
+export default ScreenSelectFriendOld;

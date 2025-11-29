@@ -47,7 +47,8 @@ const FriendListUI = ({
  const elementBackgroundColor = lightDarkTheme.overlayBackground;
  // const elementBackgroundColor = lightDarkTheme.darkGlassBackground;
   // const primaryBackground = lightDarkTheme.primaryBackground;
-  const backgroundColor = lightDarkTheme.darkGlassBackground;
+  // const backgroundColor = lightDarkTheme.darkGlassBackground;
+ const backgroundColor = lightDarkTheme.primaryBackground;
 
   const { navigateToAddFriend } = useAppNavigations();
 
@@ -58,7 +59,7 @@ const FriendListUI = ({
 
   const ITEM_HEIGHT = 46;
 
-  const ITEM_BORDER_RADIUS = 10;
+  const ITEM_BORDER_RADIUS = 999;
 
   const selectedId = friendId; //can be null
  
@@ -103,7 +104,9 @@ const FriendListUI = ({
         </View>
 
         {item && "id" in item && item.id !== selectedId && (
+          <>
           <FriendTintPressable
+          dividerColor={lightDarkTheme.primaryColor}
             touchLocationX={touchLocationX}
             touchLocationY={touchLocationY}
             visibility={visibility}
@@ -131,7 +134,13 @@ const FriendListUI = ({
               friend={item}
               height={ITEM_HEIGHT}
             />
+         
           </FriendTintPressable>
+             <View style={[styles.divider,
+             {backgroundColor: lightDarkTheme.primaryText}]}>
+
+            </View>
+            </>
         )}
 
         {item && "id" in item && item.id === selectedId && (
@@ -194,8 +203,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     position: "absolute",
     right: 0,
-    height: "100%",
-
+    height: "100%", 
     flexDirection: "column",
   },
   itemInnerContainer: {
@@ -214,6 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     // borderRadius: 10,
+   
   },
   pressedStyle: {
     opacity: 0.2,
@@ -222,6 +231,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
+ 
   },
   animatedViewContainer: {
     flex: 1,
@@ -231,6 +241,13 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
+  divider: {
+    width: '100%',
+    height: 1,
+    opacity: .1,
+    marginVertical: 4,
+   
+  }
 });
 
 export default FriendListUI;

@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, Alert } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import ImageCarouselSlider from "@/app/components/appwide/ImageCarouselSlider";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -26,7 +25,7 @@ const ScreenImageView = () => {
   const { imageList } = useImages({
     userId: user?.id,
     friendId: selectedFriend?.id,
-    enabled: true
+    enabled: true,
   });
 
   const { deleteImage, deleteImageMutation } = useDeleteImage({
@@ -82,17 +81,16 @@ const ScreenImageView = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={false}
-      useOverlayFade={false}
-      style={{ flex: 1 }}
+      style={[
+        {
+          flex: 1,
+        },
+      ]}
     >
       <ImageCarouselSlider
         initialIndex={startingIndex}
@@ -111,9 +109,8 @@ const ScreenImageView = () => {
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={AppFontStyles.welcomeText}
- 
       />
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

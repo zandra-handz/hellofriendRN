@@ -41,8 +41,7 @@ import { File } from "expo-file-system";
 
 // import { useFocusEffect } from "@react-navigation/native";
 import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
-// app components
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+// app components 
 import SafeViewHome from "@/app/components/appwide/format/SafeViewHome";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
@@ -312,7 +311,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   return (
     <>
       <LocalPeacefulGradientSpinner
-        loading={
+        loading={ 
           autoSelectFriend?.nextFriend === "pending" ||
           autoSelectFriend?.customFriend === "pending" ||
           !selectedFriend?.isReady ||

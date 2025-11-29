@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 const ButtonSelectFriend = ({
- 
   friend,
   backgroundColor,
   borderRadius,
@@ -10,8 +10,6 @@ const ButtonSelectFriend = ({
   height = 70,
   fontColor,
 }) => {
- 
-
   return (
     <View
       style={[
@@ -24,18 +22,21 @@ const ButtonSelectFriend = ({
         styles.row,
       ]}
     >
-      <View style={    [
-    { 
-      borderRadius,
- 
-    },
-    styles.inner,
-  ]}>
+      <View
+        style={[
+          {
+            borderRadius,
+          },
+          styles.inner,
+        ]}
+      >
         <Text
           numberOfLines={1}
           style={[
             styles.name,
-            {color, fontSize: friend.name.length < 14 ? 14 : 13 },
+
+            { color, fontSize: friend.name.length < 14 ? 17 : 16 },
+            AppFontStyles.subWelcomeText,
           ]}
         >
           {friend.name}
@@ -49,9 +50,9 @@ const styles = StyleSheet.create({
   row: {
     flex: 1,
     flexDirection: "row",
-    selfAlign: 'center',
-    justifyContent: "center", 
- 
+    selfAlign: "center",
+    justifyContent: "center",
+
     textAlign: "center",
     borderWidth: 0,
     overflow: "hidden",
@@ -61,19 +62,17 @@ const styles = StyleSheet.create({
   inner: {
     width: "auto",
     paddingHorizontal: 14,
- alignContent: 'center',
+    alignContent: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    textAlign: 'center', 
+    textAlign: "center",
   },
   name: {
     alignSelf: "center",
-   // fontFamily: "Poppins-Regular",
-  fontWeight: "bold",
-    justifyContent: 'center',
- 
-  
+    // fontFamily: "Poppins-Regular",
+    // fontWeight: "bold",
+    justifyContent: "center",
   },
   iconContainer: {
     paddingBottom: 6,

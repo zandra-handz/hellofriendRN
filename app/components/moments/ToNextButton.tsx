@@ -1,30 +1,21 @@
-import { Pressable } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import React from "react";
-import manualGradientColors  from "@/app/styles/StaticColors"; 
+import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 
-interface Colors {
-  lightColor: string;
-  homeDarkColor: string;
-}
-
-type Props = { 
+type Props = {
   onPress: () => void;
 };
 
-const ToNextButton = ({   onPress }: Props) => {
+const ToNextButton = ({ onPress }: Props) => {
   return (
     <Pressable
-      style={{
-        width: "auto",
-        height: 38,
-        paddingHorizontal: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 5,
-
-        backgroundColor: manualGradientColors.lightColor,
-      }}
+      style={[
+        styles.container,
+        {
+          backgroundColor: manualGradientColors.lightColor,
+        },
+      ]}
       onPress={onPress}
     >
       <SvgIcon
@@ -35,5 +26,16 @@ const ToNextButton = ({   onPress }: Props) => {
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "auto",
+    height: 38,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 999,
+  }, 
+});
 
 export default ToNextButton;

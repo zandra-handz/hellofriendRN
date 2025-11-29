@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+ 
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 //import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -28,21 +28,20 @@ const ScreenPreAdded = () => {
   });
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={true}
-      style={{ flex: 1 }}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
       {selectedFriend && !loadingDash && (
-        <View style={{ flex: 1, padding: 10 }}>
+        <View style={{ flex: 1}}>
           {preAdded && (
             <PreAddedList
               manualGradientColors={manualGradientColors}
@@ -56,7 +55,7 @@ const ScreenPreAdded = () => {
           )}
         </View>
       )}
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

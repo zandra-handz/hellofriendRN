@@ -1,14 +1,16 @@
-import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
+// DON'T REMOVE YET
+// import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react";
 import LoadingPage from "./LoadingPage";
+import { LinearGradient } from "react-native-svg";
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
 
 //  import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
+
 type Props = {
   isInitializing: boolean;
 };
@@ -17,8 +19,8 @@ const PeacefulGradientSpinner = ({
   userId,
   isInitializing,
   loadingSettings,
-}: Props) => { 
-
+}: Props) => {
+  const vertDirection = [[0, 0, 0, 1]];
   const { isLoading } = useFriendListAndUpcoming({ userId: userId });
 
   return (
@@ -26,25 +28,35 @@ const PeacefulGradientSpinner = ({
       {(isInitializing || isLoading || loadingSettings) && (
         <View style={styles.container}>
           <View style={[StyleSheet.absoluteFillObject, {}]}>
-            <GradientBackgroundFidgetOne
+          {/* <GradientBackgroundFidgetOne
               firstColorSetDark={manualGradientColors.darkColor}
               firstColorSetLight={manualGradientColors.lightColor}
               speed={8000}
               secondColorSetDark={manualGradientColors.darkColor}
               secondColorSetLight={manualGradientColors.lightColor}
               //  direction="horizontal"
-            >
-              <LoadingPage
-                loading={true}
-                label={"loading Hellofriend"}
-                includeLabel={true}
-                labelColor={manualGradientColors.lightColor}
-                color={manualGradientColors.lightColor}
-                //  color={'transparent'}
-                spinnerType={"chase"}
-                spinnerSize={40}
-              />
-            </GradientBackgroundFidgetOne>
+            > */}
+
+          <LinearGradient
+            colors={[
+              manualGradientColors.darkColor,
+              manualGradientColors.lightColor,
+            ]} // or could just do dark dark?
+            start={{ x: vertDirection[0], y: vertDirection[1] }}
+            end={{ x: vertDirection[2], y: vertDirection[3] }}
+            style={[StyleSheet.absoluteFill]}
+          />
+          <LoadingPage
+            loading={true}
+            label={"loading Hellofriend"}
+            includeLabel={true}
+            labelColor={manualGradientColors.lightColor}
+            color={manualGradientColors.lightColor}
+            //  color={'transparent'}
+            spinnerType={"chase"}
+            spinnerSize={40}
+          />
+          {/* </GradientBackgroundFidgetOne> */}
           </View>
         </View>
       )}

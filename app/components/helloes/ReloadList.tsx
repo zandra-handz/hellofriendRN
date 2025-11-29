@@ -1,16 +1,14 @@
-import { View, Alert, FlatList } from "react-native";
+import { View, Alert } from "react-native";
 import React, { useCallback, useState } from "react";
-import { FlashList } from "@shopify/flash-list";
-import { useNavigation } from "@react-navigation/native";
-import manualGradientColors  from "@/app/styles/StaticColors";
+import { FlashList } from "@shopify/flash-list"; 
+import manualGradientColors from "@/app/styles/StaticColors";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
-import { AppFontStyles } from "@/app/styles/AppFonts";
 import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-
-const ReloadList = ({  
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+const ReloadList = ({
   primaryColor,
   primaryBackground,
   capsuleList,
@@ -23,9 +21,8 @@ const ReloadList = ({
   // const BOTTOM_MARGIN = 4;
   // const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
-  const navigation = useNavigation(); 
-
-
+  
+  const { navigateBack } = useAppNavigations();
 
   const { handleCreateMoment } = useCreateMoment({
     userId: userId,
@@ -78,7 +75,8 @@ const ReloadList = ({
 
       handleCreateMoment(momentData);
     });
-    navigation.navigate("Moments", { scrollTo: null });
+    navigateBack();
+    // navigation.navigate("Moments", { scrollTo: null });
   };
 
   const handleCheckboxChange = (item) => {
@@ -116,13 +114,10 @@ const ReloadList = ({
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `reload-${index}`;
 
- 
-
   return (
     <>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <FlashList  
-      
+        <FlashList
           data={items}
           // data={hello.pastCapsules}
           extraData={selectedMoments} //NEED THIS FOR SOME REASON
@@ -139,7 +134,7 @@ const ReloadList = ({
         />
       </View>
       <EscortBar
-        manualGradientColors={manualGradientColors} 
+        manualGradientColors={manualGradientColors}
         primaryColor={primaryColor}
         primaryBackground={primaryBackground}
         forwardFlowOn={false}

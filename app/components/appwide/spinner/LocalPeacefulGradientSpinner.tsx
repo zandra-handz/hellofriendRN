@@ -1,48 +1,57 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-// app components
-import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
+// app components - DON'T REMOVE YET
+// import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
 
 // static
 import manualGradientColors from "@/app/styles/StaticColors";
 
-
-import LoadingPage from "./LoadingPage"; 
+import { LinearGradient } from "expo-linear-gradient";
+import LoadingPage from "./LoadingPage";
 type Props = {
   loading: boolean;
   label?: string;
 };
 
-const LocalPeacefulGradientSpinner = ({ loading, label}: Props) => {
- 
+const LocalPeacefulGradientSpinner = ({ loading, label }: Props) => {
+  const vertDirection = [[0, 0, 0, 1]];
 
   return (
     <>
       {loading && (
-        <View
-          style={styles.container}
-        >
+        <View style={styles.container}>
           <View style={StyleSheet.absoluteFillObject}>
-            <GradientBackgroundFidgetOne
+            <LinearGradient
+              colors={[
+                manualGradientColors.darkColor,
+                manualGradientColors.lightColor,
+              ]} // or could just do dark dark?
+              start={{ x: vertDirection[0], y: vertDirection[1] }}
+              end={{ x: vertDirection[2], y: vertDirection[3] }}
+              style={[StyleSheet.absoluteFill]}
+            />
+
+            {/* <GradientBackgroundFidgetOne
               firstColorSetDark={manualGradientColors.darkColor}
               firstColorSetLight={manualGradientColors.lightColor}
               speed={8000}
               secondColorSetDark={manualGradientColors.darkColor}
               secondColorSetLight={manualGradientColors.lightColor}
               //  direction="horizontal"
-            >
-              <LoadingPage
-                loading={true}
-                label={label}
-                includeLabel={true}
-                labelColor={manualGradientColors.homeDarkColor}
-                color={manualGradientColors.lightColor}
-                //  color={'transparent'}
-                spinnerType={"chase"}
-                spinnerSize={40}
-              />
-            </GradientBackgroundFidgetOne>
+            > */}
+            <LoadingPage
+              loading={true}
+              label={label}
+              includeLabel={true}
+              labelColor={manualGradientColors.homeDarkColor}
+              color={manualGradientColors.lightColor}
+              //  color={'transparent'}
+              spinnerType={"chase"}
+              spinnerSize={40}
+            />
+            {/* </LinearGradient> */}
+            {/* </GradientBackgroundFidgetOne> */}
           </View>
         </View>
       )}

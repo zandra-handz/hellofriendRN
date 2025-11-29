@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { View } from 'react-native';
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 // import { useHelloes } from "@/src/context/HelloesContext";
 import useUser from "@/src/hooks/useUser";
 // import { useUser } from "@/src/context/UserContext";
@@ -70,6 +72,16 @@ const ScreenHelloView = () => {
   }, [inPersonFilter, helloesDataFiltered, trueHelloesInList]);
 
   return (
+      <SafeAreaView
+        style={{
+          flex: 1, 
+          backgroundColor: lightDarkTheme.primaryBackground,
+        }}
+      >
+
+
+
+{/* 
     <SafeViewAndGradientBackground
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
@@ -80,7 +92,7 @@ const ScreenHelloView = () => {
       includeBackgroundOverlay={true}
       useSolidOverlay={true}
       style={{ flex: 1 }}
-    >
+    > */}
       <CarouselSliderInfinite
         totalItemCount={totalHelloesCount}
         isFiltered={inPersonFilter}
@@ -109,7 +121,8 @@ const ScreenHelloView = () => {
         welcomeTextStyle={lightDarkTheme.welcomeText}
  
       />
-    </SafeViewAndGradientBackground>
+    {/* </SafeViewAndGradientBackground> */}
+    </SafeAreaView>
   );
 };
 

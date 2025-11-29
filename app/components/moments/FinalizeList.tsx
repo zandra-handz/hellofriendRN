@@ -1,18 +1,13 @@
-import {
-  View,
-  Text, 
-  Pressable,
-  FlatList,
-} from "react-native";
+import { View, Text, Pressable, FlatList, StyleSheet } from "react-native";
 import React, { useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 
-import { CheckBox } from "react-native-elements"; 
+import { CheckBox } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
 import { Moment } from "@/src/types/MomentContextTypes";
-import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
+import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment"; 
 
 interface FinalizeListProps {
   data: [];
@@ -45,7 +40,6 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     userId: userId,
     friendId: friendId,
   });
- 
 
   const handleCategoryFilterPress = (category: string) => {
     const filtered = data.filter(
@@ -149,8 +143,6 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     },
     [selectedMoments, manualGradientColors]
   );
- 
- 
 
   const handleUpdateMoments = () => {
     if (!friendId) {
@@ -192,21 +184,14 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `finalize-${index}`;
 
- 
-
   const renderCategoryButton = ({ item, index }) => {
     return (
       <View style={{ marginHorizontal: CATEGORY_MARGIN }}>
         <Pressable
           onPress={() => handleCategoryFilterPress(item)}
-          style={{
-            width: "auto",
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          style={styles.categoryPressable}
         >
-          <Text style={{color: primaryColor}}># {item}</Text>
+          <Text style={{ color: primaryColor }}># {item}</Text>
         </Pressable>
       </View>
     );
@@ -214,9 +199,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
 
   return (
     <>
-      <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
-        <View style={{ width: "100%", height: 40 }}>
-        
+      <View style={styles.container}>
+        <View style={styles.catBarContainer}>
           <FlatList
             horizontal
             data={categories}
@@ -224,16 +208,10 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
             ListHeaderComponent={
               <Pressable
                 onPress={() => handleShowAllCategoriesPress()}
-                style={{
-                  width: "auto",
-                  paddingLeft: 10,
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                style={styles.categoryPressable}
               >
                 <Text
-                  style={[ 
+                  style={[
                     { color: primaryColor, fontSize: 13, fontWeight: "bold" },
                   ]}
                 >
@@ -243,28 +221,54 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
             }
           />
         </View>
-
-        <FlashList   
-          data={visibleCategories}
-          extraData={selectedMoments}
-          estimatedItemSize={90}
-          renderItem={renderListItem}
-          keyExtractor={extractItemKey}
- 
-          removeClippedSubviews={true}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={() => <View style={{ height: 100 }} />}
-        />
+        <View style={styles.listContainer}>
+          <FlashList
+            data={visibleCategories}
+            extraData={selectedMoments}
+            estimatedItemSize={90}
+            renderItem={renderListItem}
+            keyExtractor={extractItemKey}
+            removeClippedSubviews={true}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={() => <View style={{ height: 100 }} />}
+          />
+        </View>
+        <View style={styles.footerContainer}>
+          <EscortBar
+            manualGradientColors={manualGradientColors}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+            onPress={handleUpdateMoments}
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+          />
+        </View>
       </View>
-      <EscortBar
-        manualGradientColors={manualGradientColors}
-        subWelcomeTextStyle={subWelcomeTextStyle}
-        onPress={handleUpdateMoments}
-        primaryColor={primaryColor}
-        primaryBackground={primaryBackground}
-      />
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, width: "100%" },
+  catBarContainer: {
+    width: "100%",
+    height: 40,
+  },
+  categoryPressable: {
+    width: "auto",
+    paddingLeft: 10,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listContainer: {
+    width: "100%",
+    flex: 1,
+  },
+  footerContainer: {
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+  },
+});
 
 export default FinalizeList;

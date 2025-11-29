@@ -1,16 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { View, Text } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import manualGradientColors  from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts"; 
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
- 
+
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -28,8 +27,7 @@ const ScreenFinalize = () => {
   const [categoryNamesOnly, setCategoryNamesOnly] = useState(
     categoryNames.map((c) => c.category)
   );
- 
- 
+
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
   useFocusEffect(
@@ -47,55 +45,38 @@ const ScreenFinalize = () => {
   );
 
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
- 
-          useSolidOverlay={false}
-      useOverlayFade={false} 
-      style={{ flex: 1 }}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
-      {selectedFriend?.id && (
-        <View
-          style={[ 
-            {
-              flex: 1, 
-              padding: 10, 
-            },
-          ]}
-        >
-          <Text
-            style={[
-              AppFontStyles.welcomeText,
-              { color: lightDarkTheme.primaryText, fontSize: 22 },
-            ]}
-          >
-            Finalize ideas shared
-          </Text>
-          {/* {preAdded &&
-            uniqueCategories?.length > 0 &&
-            categoryNamesOnly &&
-            categoryNamesOnly !== undefined && ( */}
-              <FinalizeList
-                manualGradientColors={manualGradientColors}
-                subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-                primaryColor={lightDarkTheme.primaryText}
-                primaryBackground={lightDarkTheme.primaryBackground}
-                userId={user?.id}
-                friendId={selectedFriend?.id}
-                data={allCapsulesList}
-                preSelected={preAdded}
-                categories={categoryNamesOnly}
-              />
-            {/* )} */}
-        </View>
-      )}
-    </SafeViewAndGradientBackground>
+      <Text
+        style={[
+          AppFontStyles.welcomeText,
+          { color: lightDarkTheme.primaryText, fontSize: 22 },
+        ]}
+      >
+        Finalize ideas shared
+      </Text> 
+      <FinalizeList
+        manualGradientColors={manualGradientColors}
+        subWelcomeTextStyle={AppFontStyles.subWelcomeText}
+        primaryColor={lightDarkTheme.primaryText}
+        primaryBackground={lightDarkTheme.primaryBackground}
+        userId={user?.id}
+        friendId={selectedFriend?.id}
+        data={allCapsulesList}
+        preSelected={preAdded}
+        categories={categoryNamesOnly}
+      />
+    </SafeViewFriendStatic>
   );
 };
 

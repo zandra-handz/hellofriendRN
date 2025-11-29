@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import { View, Text, StyleSheet } from "react-native";
+ 
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useUser } from "@/src/context/UserContext";
@@ -12,7 +13,7 @@ import ReloadList from "@/app/components/helloes/ReloadList";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { useRoute } from "@react-navigation/native"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { UserInterfaceIdiom } from "expo-constants";
+ 
 const ScreenReload = () => {
   const route = useRoute();
   const helloId = route.params?.helloId ?? false;
@@ -25,19 +26,15 @@ const ScreenReload = () => {
  
 
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={true}
-      style={{ flex: 1 }}
+      style={styles.container}
     >
       {selectedFriend && !loadingDash && (
-        <View style={{ flex: 1, padding: 10 }}>
+        <View style={{ flex: 1 }}>
           <Text
             style={[
               AppFontStyles.welcomeText,
@@ -62,8 +59,13 @@ const ScreenReload = () => {
           )}
         </View>
       )}
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {flex: 1, padding: 10}
+});
+
 
 export default ScreenReload;

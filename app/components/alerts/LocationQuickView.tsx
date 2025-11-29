@@ -12,8 +12,7 @@ import LocationAddress from "../locations/LocationAddress";
 import LocationNumber from "../locations/LocationNumber";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { FocusedLocation } from "@/src/types/LocationTypes";
-
-import LoadingBlock from "../appwide/spinner/LoadingBlock";
+ 
 type Props = {
   userId: number;
   focusedLocation: FocusedLocation;

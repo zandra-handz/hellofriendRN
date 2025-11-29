@@ -23,7 +23,7 @@ type Props = {
 const FriendTintPressable = ({
   touchLocationX,
   touchLocationY,
-  friendList,
+  friendList, 
 
   screenDiagonal,
   visibility,
@@ -77,8 +77,8 @@ const FriendTintPressable = ({
     scaleValue.value = withTiming(screenDiagonal + 900, { duration: 300 });
 
     setGradientColors([
-      friendColors.theme_color_dark,
       friendColors.theme_color_light,
+      friendColors.theme_color_dark,
     ]);
 
     setTimeout(() => setPressed(false), 100);
@@ -141,6 +141,7 @@ const FriendTintPressable = ({
       >
         <Animated.View style={animatedButtonStyle}>{children}</Animated.View>
       </Pressable>
+      {/* <View style={[styles.divider, {backgroundColor: dividerColor}]}></View> */}
     </View>
   );
 };
@@ -150,8 +151,13 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 50000,
+    zIndex: 50000, 
   }, 
+  divider: {
+    width: '100%',
+    opacity: .3, 
+    height: 1,
+  }
 });
 
 export default FriendTintPressable;
