@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import { useLinkBuilder, useRoute } from "@react-navigation/native";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
@@ -23,16 +24,17 @@ const ScreenMidpointLocationSearch = () => {
   // console.log(userAddress);
   // console.log(friendAddress);
   return (
-    <SafeViewAndGradientBackground 
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={true}
-      style={{ flex: 1 }}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
       <View style={{ flex: 1, padding: 10 }}>
         <Text
@@ -59,7 +61,7 @@ const ScreenMidpointLocationSearch = () => {
             />
           )}
       </View>
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

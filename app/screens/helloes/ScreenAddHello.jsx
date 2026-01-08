@@ -1,11 +1,9 @@
 import React from "react";
 import ContentAddHello from "@/app/components/helloes/ContentAddHello";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
-// import { useUser } from "@/src/context/UserContext";
+
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import useUser from "@/src/hooks/useUser";
-import { useLDTheme } from "@/src/context/LDThemeContext"; 
-// import { AppFontStyles } from "@/app/styles/AppFonts";
+import { useLDTheme } from "@/src/context/LDThemeContext";  
  
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
@@ -15,18 +13,17 @@ const ScreenAddHello = () => {
   const { selectedFriend } = useSelectedFriend(); 
 
   return (
-    <SafeViewAndGradientBackground
- 
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-            useOverlayFade={false}  
-      useSolidOverlay={false}
-      styles={[{ flex: 1 }]}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
       <ContentAddHello
         userId={user?.id}
@@ -34,7 +31,7 @@ const ScreenAddHello = () => {
         backgroundColor={lightDarkTheme.overlayBackground}
      
       />
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

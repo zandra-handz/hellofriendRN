@@ -19,9 +19,8 @@ import EscortBar from "@/app/components/moments/EscortBar";
 // import { LinearGradient } from "expo-linear-gradient";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+ 
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 const ScreenLocationEdit = () => {
   const route = useRoute();
   const location = route.params?.location ?? null;
@@ -152,17 +151,17 @@ const ScreenLocationEdit = () => {
   const flattenedHeaderStyle = [fontStyle, { color: primaryColor }];
 
   return (
-    <SafeViewAndGradientBackground
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useOverlayFade={false}
-      useSolidOverlay={false}
-      styles={[{ flex: 1 }]}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
       <View style={styles.headerWrapper}>
         <Text style={flattenedHeaderStyle}>Edit location</Text>
@@ -224,7 +223,7 @@ const ScreenLocationEdit = () => {
           onPress={handleSubmit}
         />
       )}
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

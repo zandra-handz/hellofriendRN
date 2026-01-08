@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
-
+import Demo from "@/app/components/headers/SkiaDemo";
+import PChainSkia from "@/app/assets/shader_animations/PChainSkia";
 import SignInButton from "@/app/components/user/SignInButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
@@ -18,17 +19,15 @@ import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/forma
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 const ScreenWelcome = () => {
   const { lightDarkTheme } = useLDTheme();
-
   const { user, isInitializing } = useUser();
   const { selectedFriend, resetFriend } = useSelectedFriend();
 
-    useEffect(() => {
-      if (!isInitializing && !user?.id) {
-        console.log('resetting friend')
-        resetFriend();
-      }
-  
-    }, [user?.id, isInitializing]);
+  useEffect(() => {
+    if (!isInitializing && !user?.id) {
+      console.log("resetting friend");
+      resetFriend();
+    }
+  }, [user?.id, isInitializing]);
 
   const { navigateToNewAccount } = useAppNavigations();
   const navigation = useNavigation<AuthScreenNavigationProp>();
@@ -71,31 +70,33 @@ const ScreenWelcome = () => {
       <GradientBackground
         useFriendColors={false}
         friendColorLight={null}
-        friendColorDark={null} 
-
+        friendColorDark={null}
         additionalStyles={{
           ...StyleSheet.absoluteFillObject,
 
           alignItems: "center",
         }}
       >
-        <View
-          style={styles.container}
-        >
+        <View style={styles.container}>
+                          <View
+                  style={[     StyleSheet.absoluteFill, {
+                    //  backgroundColor: "pink",
+               
+                  }]}
+                >
+                
+                    {/* <Demo text={""} /> */}
+
+                    <PChainSkia
+                      color1={manualGradientColors.lightColor}
+                      color2={manualGradientColors.darkColor}
+                    /> 
+                </View>
           <>
-            {/* {(!confirmedUserNotSignedIn || user?.id) && (
-              <LoadingPage
-                loading={true}
-                includeLabel={true}
-                label="loading user..."
-                spinnerType="circle"
-                spinnerSize={40}
-                color={"red"}
-                labelColor={manualGradientColors.homeDarkColor}
-              />
-            )} */}
             {confirmedUserNotSignedIn && !user?.id && (
               <>
+
+
                 <View style={styles.logoContainer}>
                   <LogoSmaller />
                 </View>

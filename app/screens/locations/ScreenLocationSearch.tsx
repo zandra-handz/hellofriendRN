@@ -12,7 +12,9 @@ import LocationsMapView from "@/app/components/locations/LocationsMapView";
 import LocationQuickView from "@/app/components/alerts/LocationQuickView";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
+// import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+
 // import { useLocations } from "@/src/context/LocationsContext";
 import useLocations from "@/src/hooks/useLocations";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
@@ -242,21 +244,19 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
   };
 
   return (
-    <SafeViewAndGradientBackground
+        <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight={"10%"}
-      addColorChangeDelay={true}
-      forceFullOpacity={true}
-      useSolidOverlay={false}
-      useOverlayFade={false}
-      includeBackgroundOverlay={true}
-      backgroundTransparentOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundOverlayBottomRadius={0}
-      style={{ flex: 1 }}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
+ 
       {handleRenderDescriptionView()}
       <>
         <View style={styles.mapContainer}>
@@ -314,7 +314,7 @@ const ScreenLocationSearch: React.FC<Props> = ({}) => {
           </View>
         )}
       </>
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

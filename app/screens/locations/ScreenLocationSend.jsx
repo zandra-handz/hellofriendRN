@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { Linking, Text, View, Alert } from "react-native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import { Linking, Text  } from "react-native";
+ 
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
  
@@ -204,12 +205,17 @@ const ScreenLocationSend = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground
-      friendColorLight={selectedFriend?.lightColor}
-      friendColorDark={selectedFriend?.darkColor}
+    <SafeViewFriendStatic
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      style={{ flex: 1 }}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
       {inputNumberVisible && (
         <AddPhoneNumber
@@ -250,7 +256,7 @@ const ScreenLocationSend = () => {
         primaryBackground={lightDarkTheme.primaryBackground}
         welcomeTextStyle={AppFontStyles.welcomeText}
       />
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 

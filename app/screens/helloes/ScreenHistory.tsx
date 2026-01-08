@@ -5,6 +5,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import TreeModalBigButtonHistory from "@/app/components/alerts/TreeModalBigButtonHistory";
 import FriendHistoryPieDataWrap from "@/app/components/home/FriendHistoryPieDataWrap";

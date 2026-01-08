@@ -33,17 +33,31 @@ const ScreenFidget = (props: Props) => {
     friendId: selectedFriend?.id,
   });
 
+
+
   const options = [1, 2, 3, 4, 5, 6];
+const mod = (n, m) => {
+  return ((n % m) + m) % m;
+};
+
 
   const pickRandom = options[Math.floor(Math.random() * options.length)];
 
-  const [spinnerViewing, setSpinnerViewing] = useState(pickRandom);
+
+
+ 
+
+  const [spinnerViewing, setSpinnerViewing] = useState(0);
 
   const handleNextOption = () => {
-    const randomPick = Math.floor(Math.random() * options.length);
+
+
+    
+    // const randomPick = Math.floor(Math.random() * options.length);
+   const next = mod(spinnerViewing + 1, 6);
     // console.log(randomPick);
-    const spinnerPicked = options[randomPick];
-    setSpinnerViewing(spinnerPicked);
+    // const spinnerPicked = options[randomPick];
+    setSpinnerViewing(next);
   };
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
@@ -100,7 +114,7 @@ const ScreenFidget = (props: Props) => {
         // padding: 10, //consider this approach for all screens if possible
       }}
     >
-      {/* {(spinnerViewing === 1 || spinnerViewing === 4) && (
+    {(spinnerViewing === 1 ) && (
         <View
           style={{
             //  backgroundColor: "pink",
@@ -113,7 +127,7 @@ const ScreenFidget = (props: Props) => {
             <Demo text={""} />
           </View>
         </View>
-      )} */}
+      )} 
 
       {/* {(spinnerViewing === 2 ) && (
         <View style={StyleSheet.absoluteFillObject}>
@@ -184,7 +198,7 @@ const ScreenFidget = (props: Props) => {
           />
         </View>
       )}
-      {spinnerViewing === 1 && (
+      {/* {spinnerViewing === 1 && (
         <View
           style={[
             StyleSheet.absoluteFill,
@@ -196,7 +210,7 @@ const ScreenFidget = (props: Props) => {
             color2={selectedFriend?.darkColor}
           />
         </View>
-      )}
+      )} */}
 
       {spinnerViewing === 3 && (
         <View
@@ -222,6 +236,12 @@ const ScreenFidget = (props: Props) => {
             </Text>
           </View>
         )}
+
+                 <View style={styles.statsWrapper}>
+            <Text style={[welcomeTextStyle, { color: primaryColor }]}>
+              SPINNER: {spinnerViewing}
+            </Text> 
+          </View>
 
         <EscortBarFidgetScreen
           style={{ paddingHorizontal: 10 }}

@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 // import { useHelloes } from "@/src/context/HelloesContext";
 import useHelloes from "@/src/hooks/useHelloes";
 import useHelloesManips from "@/src/hooks/HelloesFunctions/useHelloesManips";
 import { useNavigation } from "@react-navigation/native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
 // import { useUser } from "@/src/context/UserContext";
@@ -21,7 +22,10 @@ const ScreenHelloes = () => {
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
-  const { helloesList } = useHelloes({userId: user?.id, friendId: selectedFriend?.id});
+  const { helloesList } = useHelloes({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
 
@@ -114,30 +118,14 @@ const ScreenHelloes = () => {
   ]);
 
   return (
-    <SafeViewAndGradientBackground
+    <SafeViewFriendStatic
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={false}
-      useOverlayFade={false}
-      style={{ flex: 1 }}
+      style={styles.container}
     >
-      <View
-        style={{
-          paddingHorizontal: 12,
-          paddingVertical: 10,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          borderRadius: 30,
-          height: "auto",
-          marginVertical: 0,
-        }}
-      >
+      <View style={styles.headerContainer}>
         <Text
           numberOfLines={2}
           style={[
@@ -181,8 +169,26 @@ const ScreenHelloes = () => {
         </>
       )}
       {RenderHelloesScreenFooter()}
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 10 },
+  headerContainer: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    borderRadius: 30,
+    height: "auto",
+    marginVertical: 0,
+  },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default ScreenHelloes;

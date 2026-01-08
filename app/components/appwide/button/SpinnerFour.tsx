@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Canvas, Rect, Shader } from "@shopify/react-native-skia";
+import { Canvas, Rect, Shader  } from "@shopify/react-native-skia";
 import { Skia } from "@shopify/react-native-skia";
 import { Dimensions, View, StyleSheet } from "react-native";
+import { useFrameCallback } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 

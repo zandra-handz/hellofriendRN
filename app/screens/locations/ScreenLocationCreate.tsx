@@ -5,7 +5,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import useUser from "@/src/hooks/useUser";
 import useCreateLocation from "@/src/hooks/LocationCalls/useCreateLocation";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+ 
+import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import ContentAddLocation from "@/app/components/locations/ContentAddLocation";
 import { AppFontStyles } from "@/app/styles/AppFonts"; 
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -33,17 +34,17 @@ const ScreenLocationCreate = () => {
   }, [createLocationMutation]);
 
   return (
-    <SafeViewAndGradientBackground
-      friendColorLight={themeColors.lightColor}
-      friendColorDark={themeColors.darkColor}
+    <SafeViewFriendStatic
+      friendColorLight={selectedFriend.lightColor}
+      friendColorDark={selectedFriend.darkColor}
+      useOverlay={true}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useOverlayFade={false}
-      useSolidOverlay={false}
-      styles={[{ flex: 1 }]}
+      style={[
+        {
+          flex: 1,
+          padding: 10,
+        },
+      ]}
     >
       <View style={styles.headerWrapper}>
         <Text style={flattenedHeaderStyle}>Add location</Text>
@@ -64,7 +65,7 @@ const ScreenLocationCreate = () => {
         title={location.title}
         address={location.address}
       />
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendStatic>
   );
 };
 
