@@ -171,9 +171,7 @@ export default class Spine {
     this.debugs[0] = [spineCenterLines.tStart[0], spineCenterLines.tStart[1]];
     this.debugs[1] = [spineCenterLines.tEnd[0], spineCenterLines.tEnd[1]];
 
-    // uses local motion class that gets this data from global motion
-    // const allFirstAngleData = this.subMotion.allFirstAngleData;// this.motion.allFrontStepsData
-
+ 
     this.centerFlanks = getStartAndEndPoints(
       this.center,
       spineCenterLines.tEnd,
@@ -183,15 +181,7 @@ export default class Spine {
 
     this.debugs[2] = this.centerFlanks[0];
     this.debugs[3] = this.centerFlanks[1];
-
-    // replace with direct motion.Props
-    // const frontStepLines = {
-    //   angle: this.motion.frontStepssAngle,
-    //   end: this.motion.frontStepsSLine[1],
-    //   center: this.motion.frontStepsTCenter,
-    //   distanceApart: this.motion.frontSteps_tDistanceApart,
-    // };
-
+ 
     const intersection = intersectLines(
       [spineCenterLines.tStart, spineCenterLines.tEnd],
       spineCenterLines.tAngle,
@@ -254,31 +244,12 @@ export default class Spine {
     // Put snout first so in ascending order like joints are
     this.unchainedJoints = [snout, head];
   }
-
-//   updateDebugsUniforms() {
-//     this.gl.setSingleUniform(`${this.u_center_prefix}`, this.center);
-//     this.gl.setSingleUniform(
-//       `${this.u_intersection_prefix}`,
-//       this.intersectionPoint
-//     );
-//     this.gl.setArrayOfUniforms(this.u_debug_prefix, this.debugs);
-//     this.gl.setArrayOfUniforms(this.u_motion_debug_prefix, this.motion_debugs);
-//   }
-
-//   updateUniforms() {
-//     this.gl.setArrayOfUniforms(this.u_prefix, this.joints);
-//     this.gl.setArrayOfUniforms(this.u_unchained_prefix, this.unchainedJoints);
-//   }
-
+ 
   update(leadPoint_lead) {
     // this.updateLeadPoint();
-    this.updateMotionFirstAngle();
-    // console.log(`${this.u_debug_prefix}, ${this.subMotion.curveAngle}`)
+    this.updateMotionFirstAngle(); 
 
-    solveFirst(
-      // this.cursor,
-      // this.lead,
-      // this.leadPoint.lead,
+    solveFirst( 
       leadPoint_lead,
       this.first,
       this.jointRadii[0],
@@ -310,57 +281,5 @@ export default class Spine {
     // this.updateUniforms();
     // this.updateDebugsUniforms();
   }
-
-  // LOGGING
-  logSpineData(name = `Spine Segment Data`, limitRange, full = false) {
-    let start = 0;
-    let end = this.joints.length - 1;
-    let totalLength = 0;
-
-    // Optional range handling (start / end, inclusive)
-    if (Array.isArray(limitRange) && limitRange.length === 2) {
-      start = Math.max(0, limitRange[0]);
-      end = Math.min(this.joints.length - 1, limitRange[1]);
-    }
-
-    console.group(`Spine Class Debug | ${name} [${start} → ${end}]`);
-
-    for (let i = start; i <= end; i++) {
-      const joint = this.joints[i];
-      const radius = this.jointRadii[i];
-
-      totalLength += radius;
-
-      if (full) {
-        console.log(`${this.u_prefix}[${i}]`, {
-          position: [joint[0], joint[1]],
-          radius,
-          angle: joint.angle,
-          secondaryAngle: joint.secondaryAngle ?? null,
-          thirdAngle: joint.thirdAngle ?? null,
-          angleDiff: joint.angleDiff,
-          globalAngle: joint.globalAngle,
-          direction: joint.direction,
-          index: joint.index,
-        });
-      } else {
-        console.log(`${this.u_prefix}[${i}]`, {
-          radius,
-          angle: joint.angle,
-          secondaryAngle: joint.secondaryAngle ?? null,
-          thirdAngle: joint.thirdAngle ?? null,
-          // angleDiff: joint.angleDiff,
-          // globalAngle: joint.globalAngle,
-          direction: joint.direction,
-          index: joint.index,
-        });
-      }
-    }
-
-    // console.log("Total spine length (sum of radii):", totalLength);
-
-    console.groupEnd();
-
-    return totalLength;
-  }
+ 
 }

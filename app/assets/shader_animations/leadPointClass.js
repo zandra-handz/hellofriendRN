@@ -100,6 +100,8 @@ updateLeadPointSmooth(path, dt = 1) {
 
 
     update(path){  // use mouse.user_pointer or a soul
+
+      // console.log(`PATH`, path);
      
         this.updateLeadPointSmooth(path);  
     }

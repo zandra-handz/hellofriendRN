@@ -622,7 +622,7 @@ export function solveFingers(stepTarget, fingers, fingerLen, is1, manualAdj) {
   gapCenterAngle += is1 ? sideOffset : -sideOffset;
 
   // Gap for the arm/wrist (adjustable)
-  const gapAngle = (2 * Math.PI) / 2.9; // <------ lower to shrink arc of fingers
+  const gapAngle = (2 * Math.PI) / 1.7; // <------ lower to shrink arc of fingers
 
   const fanStart = gapCenterAngle + gapAngle / 2;
   const fanEnd = gapCenterAngle + 2 * Math.PI - gapAngle / 2;

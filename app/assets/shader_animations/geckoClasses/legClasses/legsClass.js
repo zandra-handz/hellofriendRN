@@ -121,7 +121,7 @@ export default class Legs {
     ];
 
     this.fingerLen = fingerLen;
-    this.fingerAngleOffset = 5;
+    this.fingerAngleOffset = 7;
 
     this.stepTargets = [
       [0.5, 0.5],

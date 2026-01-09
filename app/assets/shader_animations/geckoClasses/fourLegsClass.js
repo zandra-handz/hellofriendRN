@@ -5,9 +5,9 @@ import FollowerLegs from "./legClasses/followerLegsClass.js";
 
 let backUpLegLen = 0.05;
 let backLowLegLen = 0.02;
-let backFingerLen = .01;
+let backFingerLen = .026;
 
-let fingerLen = .01;
+let fingerLen = .026;
 
 export default class FourLegs {
   constructor(
