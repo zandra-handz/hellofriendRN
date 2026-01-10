@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Soul from "./soulClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 
@@ -22,27 +23,20 @@ import { useFrameCallback } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
-type Props = { color1: string; color2: string };
- 
+type Props = {
+  color1: string;
+  color2: string;
+  startingCoord: number[];
+  restPoint: number[];
+  scale: number;
+  reset?: number | null;
+};
 
 // steps to painting a Skia canvas!
 //
 
-function packVec2Uniform(points, flatArray, num) {
-  for (let i = 0; i < num; i++) {
-    if (points[i]) {
-      flatArray[i * 2 + 0] = points[i][0];
-      flatArray[i * 2 + 1] = points[i][1];
-    } else {
-      flatArray[i * 2 + 0] = 0;
-      flatArray[i * 2 + 1] = 0;
-    }
-  }
-}
-
 function packVec2Uniform_withRecenter(points, flatArray, num) {
   for (let i = 0; i < num; i++) {
- 
     if (points[i]) {
       flatArray[i * 2 + 0] = points[i][0] - 0.5;
       flatArray[i * 2 + 1] = points[i][1] - 0.5;
@@ -52,19 +46,6 @@ function packVec2Uniform_withRecenter(points, flatArray, num) {
     }
   }
 }
-
-// function packVec2Uniform(points, flatArray) {
-//   const max = flatArray.length / 2; // number of vec2 slots
-//   for (let i = 0; i < max; i++) {
-//     if (points[i]) {
-//       flatArray[i * 2 + 0] = points[i][0];
-//       flatArray[i * 2 + 1] = points[i][1];
-//     } else {
-//       flatArray[i * 2 + 0] = 0;
-//       flatArray[i * 2 + 1] = 0;
-//     }
-//   }
-// }
 
 const hexToVec3 = (hex) => {
   // Remove '#' if present
@@ -76,77 +57,55 @@ const hexToVec3 = (hex) => {
   return `${r.toFixed(4)}, ${g.toFixed(4)}, ${b.toFixed(4)}`;
 };
 
+const PChainSkia = ({
+  color1,
+  color2,
+  startingCoord,
+  restPoint,
+  scale = 1,
+  reset=0,
+}: Props) => {
+  const userPointSV = useSharedValue(restPoint); 
 
-
-const PChainSkia = ({ color1, color2 }: Props) => {
-
-//   const userPoint = useRef<[number, number]>([0.5, 0.5]);
-
-// const logPoint = (x: number, y: number) => {
-//   console.log("SCREEN px:", { x, y });
-// };
-//   const gesture = Gesture.Pan()
-//   .onBegin((e) => {
-//     userPoint.current = [
-//       e.x / width,
-//       e.y / height,
-      
-//     ];
-//       runOnJS(logPoint)(e.x, e.y);
-//   })
-//   .onUpdate((e) => {
-//     userPoint.current = [
-//       e.x / width,
-//       e.y / height,
-//     ];
-//       runOnJS(logPoint)(e.x, e.y);
-//   });
-
-
-
-
-
-  const userPointSV = useSharedValue([ 0.5, 0.5 ]);
-
-  const gesture = Gesture.Pan()
-  .onUpdate((e) => {
-    userPointSV.value = [e.x / width,
-     e.y / height];
+  const gesture = Gesture.Pan().onUpdate((e) => {
+    userPointSV.value = [e.x / width, e.y / height];
   });
-
 
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
 
-  const soul = useRef(new Soul([0.5, 0.5], 0.22));
-  const leadPoint = useRef(new Mover());
-  const gecko = useRef(new Gecko());
+  const soul = useRef(new Soul(restPoint, .02));
+  const leadPoint = useRef(new Mover(startingCoord));
+  const gecko = useRef(new Gecko(startingCoord, 0.06));
 
   const source = Skia.RuntimeEffect.Make(`
-         vec3 startColor = vec3(${color1Converted});
-      vec3 endColor = vec3(${color2Converted});
-  
- 
-uniform float u_time;
-uniform vec2 u_resolution;
-uniform vec2 u_soul;
-uniform vec2 u_lead;
-uniform vec2 u_joints[15];
-uniform vec2 u_tail[13];
-uniform vec2 u_snout;
-uniform vec2 u_head;
-uniform vec2 u_steps[4];
-uniform vec2 u_elbows[4];
-uniform vec2 u_shoulders[4];
-uniform vec2 u_muscles[8];
-uniform vec2 u_fingers[20];
+    vec3 startColor = vec3(${color1Converted});
+    vec3 endColor = vec3(${color2Converted});
 
-float TWO_PI = 6.28318530718;
+    uniform float u_scale;
+    uniform float u_time;
+    uniform vec2 u_resolution;
+    uniform vec2 u_soul;
+    uniform vec2 u_lead;
+    uniform vec2 u_joints[15];
+    uniform vec2 u_head;
+    uniform vec2 u_snout;
+    uniform vec2 u_hint;
+    uniform vec2 u_tail[13];
+
  
-float distFCircle(vec2 uv, vec2 center, float radius) {
-  return length(uv - center) - radius;
-}
+    uniform vec2 u_steps[4];
+    uniform vec2 u_elbows[4];
+    uniform vec2 u_shoulders[4];
+    uniform vec2 u_muscles[8];
+    uniform vec2 u_fingers[20];
+
+    float TWO_PI = 6.28318530718;
+    
+    float distFCircle(vec2 uv, vec2 center, float radius) {
+      return length(uv - center) - radius;
+    }
 
  
 float smoothMin(float a, float b, float k) {
@@ -165,11 +124,13 @@ float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
 
 half4 main(vec2 fragCoord) {
     vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
+    uv /= u_scale;
     uv = uv - vec2(0.0);
 
     // Convert positions to centered UV space
     vec2 soulUV = u_soul - 0.5;
     vec2 leadUV = u_lead - 0.5;
+    vec2 hintUV = u_hint - .5;
     vec2 snoutUV = u_snout - 0.5;
     vec2 headUV = u_head - 0.5;
 
@@ -185,14 +146,18 @@ half4 main(vec2 fragCoord) {
     float soulMask = step(distance(uv, soulUV), 0.008);
     color += vec3(0.0, 1.0, 0.0) * soulMask;
     alpha = max(alpha, soulMask);
-
-    // Spine joints with smoothMin blending
-
+ 
     float circleSizeDiv = .8; // adjust if needed
 
 
+
+    float hintMask = step(distance(uv, hintUV), .008);
+    vec3 hintDot = startColor * hintMask;
+  
+
+
     float armThickness = 0.005; 
-    float backArmThickness = .009;
+    float backArmThickness = .007;
     float fingerThickness = 0.0025; 
     
     // in tail
@@ -210,7 +175,7 @@ half4 main(vec2 fragCoord) {
     float stepRadius = .007; 
     float lowerMuscleRadius = .001;
     float upperMuscleRadius = 0.005; // or whatever radius you want
-    float backMuscleBlend = .003;
+    float backMuscleBlend = .03; // ultimate controller of how much of back upper leg muscle to add
     float backUpperMuscleRadius = .86;
   
 
@@ -287,8 +252,6 @@ half4 main(vec2 fragCoord) {
     float bodySDF = smoothMin(circleMerge, tailCircleMerge, spineTailBlend);
 
 
-
-
     // ARMS /////////////////////////////////////////////////////////////////////////////////
 
     float arm0Upper = lineSegmentSDF(uv, u_joints[2], u_elbows[0]);   
@@ -325,10 +288,10 @@ half4 main(vec2 fragCoord) {
     bodySDF = smoothMin(bodySDF, musclesSDF3 , muscleBlend ); 
 
     // BACK MUSCLES
-    float musclesSDF4 = distFCircle(uv - .5, u_muscles[4], lowerMuscleRadius);
-    float musclesSDF5  = distFCircle(uv - .5, u_muscles[5], upperMuscleRadius );
-    float musclesSDF6 = distFCircle(uv - .5, u_muscles[6], lowerMuscleRadius);
-    float musclesSDF7  = distFCircle(uv - .5, u_muscles[7], upperMuscleRadius );
+    float musclesSDF4 = distFCircle(uv, u_muscles[4], lowerMuscleRadius);
+    float musclesSDF5  = distFCircle(uv, u_muscles[5], upperMuscleRadius );
+    float musclesSDF6 = distFCircle(uv, u_muscles[6], lowerMuscleRadius);
+    float musclesSDF7  = distFCircle(uv, u_muscles[7], upperMuscleRadius );
 
     // not using these two
     // bodySDF = smoothMin(bodySDF, musclesSDF4 , muscleBlend );
@@ -449,19 +412,12 @@ half4 main(vec2 fragCoord) {
       bodySDF = smoothMin(bodySDF, fingerSDF16, fingerBlend);
       bodySDF = smoothMin(bodySDF, fingerSDF17, fingerBlend);
       bodySDF = smoothMin(bodySDF, fingerSDF18, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF19, fingerBlend);
-
-
-
-
-
-
-
-
+      bodySDF = smoothMin(bodySDF, fingerSDF19, fingerBlend); 
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
     float bodyMask = smoothstep(0.0, 0.002, -bodySDF);
+
     vec3 body = endColor * bodyMask;
 
 
@@ -472,47 +428,13 @@ half4 main(vec2 fragCoord) {
     vec3 spine = startColor * spineMask;
     color += vec3(0.0, 0.0, 1.0) * bodyMask;
     alpha = max(alpha, bodyMask);
-
-    // Tail dots (yellow)
-    // for (int i = 0; i < 13; i++) {
-    //     vec2 tailUV = u_tail[i] - 0.5;
-    //     float tailMask = step(distance(uv, tailUV), 0.008);
-    //     color += vec3(1.0, 1.0, 0.0) * tailMask;
-    //     alpha = max(alpha, tailMask);
-    // }
-
-    // Snout and head
-    // color += vec3(1.0, 0.0, 1.0) * step(distance(uv, snoutUV), 0.008);
-    // alpha = max(alpha, step(distance(uv, snoutUV), 0.008));
-
+ 
+ 
     // color += vec3(0.0, 1.0, 1.0) * step(distance(uv, headUV), 0.008);
     // alpha = max(alpha, step(distance(uv, headUV), 0.008));
-
-    // Steps
-    // for (int i = 0; i < 4; i++) {
-    //     vec2 stepUV = u_steps[i] - 0.5;
-    //     float stepMask = step(distance(uv, stepUV), 0.01);
-    //     color += vec3(1.0, 0.0, 1.0) * stepMask;
-    //     alpha = max(alpha, stepMask);
-    // }
-
-    // Elbows
-    // for (int i = 0; i < 4; i++) {
-    //     vec2 elbowUV = u_elbows[i] - 0.5;
-    //     float elbowMask = step(distance(uv, elbowUV), 0.004);
-    //     color += vec3(1.0, 0.0, 1.0) * elbowMask;
-    //     alpha = max(alpha, elbowMask);
-    // }
-
-    // Shoulders
-    // for (int i = 0; i < 4; i++) {
-    //     vec2 shoulderUV = u_shoulders[i] - 0.5;
-    //     float shoulderMask = step(distance(uv, shoulderUV), 0.004);
-    //     color += vec3(1.0, 0.0, 1.0) * shoulderMask;
-    //     alpha = max(alpha, shoulderMask);
-    // }
- //body + color
-    return vec4( body, bodyMask); //bodyMask
+ 
+  
+    return vec4( body + hintDot, bodyMask); //bodyMask
 } 
 `);
 
@@ -521,20 +443,59 @@ half4 main(vec2 fragCoord) {
     return null;
   }
 
-  const start = useRef(Date.now());
- 
+  // const buttonStyle = useAnimatedStyle(() => {
+  //   const [u, v] = userPointSV.value;
+  //   console.log(userPointSV.value);
 
+  //   return {
+  //     zIndex: 9999,
+  //     position: "absolute",
+  //     left: u * width,
+  //     top: v * height,
+  //     transform: [{ translateX: -12 }, { translateY: -12 }],
+  //   };
+  // });
+
+  const start = useRef(Date.now());
 
   const NUM_SPINE_JOINTS = 15;
   const NUM_TAIL_JOINTS = 13;
+  const snoutRef = useRef([0, 0]);
+  const headRef = useRef([0, 0]);
+  const hintRef = useRef([0, 0]);
   const jointsRef = useRef(new Float32Array(NUM_SPINE_JOINTS * 2));
   const tailJointsRef = useRef(new Float32Array(NUM_TAIL_JOINTS * 2));
   const stepsRef = useRef(new Float32Array(4 * 2));
   const elbowsRef = useRef(new Float32Array(4 * 2));
   const shouldersRef = useRef(new Float32Array(4 * 2));
-  const legMusclesRef = useRef(new Float32Array(8*2));
-  const fingersRef = useRef(new Float32Array(20*2));
- 
+  const legMusclesRef = useRef(new Float32Array(8 * 2));
+  const fingersRef = useRef(new Float32Array(20 * 2));
+
+  useEffect(() => {
+    if (!reset) return;
+
+    // console.log("🟢 Resetting animation...");
+
+    // Reset time
+    start.current = Date.now();
+    setTime(0);
+
+    // Reset soul
+    soul.current = new Soul(restPoint, 0.02);
+    leadPoint.current = new Mover(startingCoord);
+    gecko.current = new Gecko(startingCoord, 0.06);
+
+    // Optional: clear all joints arrays
+    jointsRef.current.fill(0);
+    tailJointsRef.current.fill(0);
+    stepsRef.current.fill(0);
+    elbowsRef.current.fill(0);
+    shouldersRef.current.fill(0);
+    legMusclesRef.current.fill(0);
+    fingersRef.current.fill(0);
+
+    userPointSV.value = restPoint; // must be set to where entrance animation leaves off
+  }, [reset]);
 
   useEffect(() => {
     let frame;
@@ -543,12 +504,23 @@ half4 main(vec2 fragCoord) {
       setTime(now);
       frame = requestAnimationFrame(animate);
       soul.current.update();
+
+      if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
+        gecko.current.updateEnter(soul.current.done);
+      }
+
+      if (gecko.current.oneTimeEnterComplete) {
+        leadPoint.current.update(userPointSV.value);
+      } else {
+        leadPoint.current.update(soul.current.soul);
+      }
       // leadPoint.current.update(soul.current.soul);
-   
-           leadPoint.current.update(userPointSV.value);
+      // leadPoint.current.update(userPointSV.value);
+
       gecko.current.update(
         leadPoint.current.lead,
-        leadPoint.current.leadDistanceTraveled
+        leadPoint.current.leadDistanceTraveled,
+        leadPoint.current.isMoving
       );
 
       // pack spine joints into Float32Array for shader
@@ -561,51 +533,63 @@ half4 main(vec2 fragCoord) {
       const f_elbows = gecko.current.legs.frontLegs.elbows;
       const b_elbows = gecko.current.legs.backLegs.elbows;
 
-      const f_shoulders = [gecko.current.legs.frontLegs.rotatorJoint0, gecko.current.legs.frontLegs.rotatorJoint1];
-      const b_shoulders = [gecko.current.legs.backLegs.rotatorJoint0, gecko.current.legs.backLegs.rotatorJoint1];
+      const f_shoulders = [
+        gecko.current.legs.frontLegs.rotatorJoint0,
+        gecko.current.legs.frontLegs.rotatorJoint1,
+      ];
+      const b_shoulders = [
+        gecko.current.legs.backLegs.rotatorJoint0,
+        gecko.current.legs.backLegs.rotatorJoint1,
+      ];
 
-
-      
       const f_muscles = gecko.current.legs.frontLegs.muscles;
-      const b_muscles =  gecko.current.legs.backLegs.muscles;
+      const b_muscles = gecko.current.legs.backLegs.muscles;
 
-      // const f_fingers = [gecko.current.legs.frontLegs.fingers[0], gecko.current.legs.frontLegs.fingers[1]];
-      // const b_fingers =  [gecko.current.legs.backLegs.fingers[0], gecko.current.legs.backLegs.fingers[1]];
+      const allFingersNested = [
+        ...gecko.current.legs.frontLegs.fingers,
+        ...gecko.current.legs.backLegs.fingers,
+      ];
 
-const allFingersNested = [
-  ...gecko.current.legs.frontLegs.fingers,
-  ...gecko.current.legs.backLegs.fingers
-]; 
-// allFingersNested is [[finger0..4], [finger0..4], [finger0..4], [finger0..4]]
+      snoutRef.current = spine.unchainedJoints[0] || [0, 0];
+      headRef.current = spine.unchainedJoints[1] || [0, 0];
+      hintRef.current = spine.hintJoint || [0, 0];
 
-      packVec2Uniform_withRecenter(spine.joints, jointsRef.current, NUM_SPINE_JOINTS);
-      packVec2Uniform_withRecenter(tail.joints, tailJointsRef.current, NUM_TAIL_JOINTS);
+      packVec2Uniform_withRecenter(
+        spine.joints,
+        jointsRef.current,
+        NUM_SPINE_JOINTS
+      );
+      packVec2Uniform_withRecenter(
+        tail.joints,
+        tailJointsRef.current,
+        NUM_TAIL_JOINTS
+      );
       const allSteps = [...f_steps, ...b_steps];
       packVec2Uniform_withRecenter(allSteps, stepsRef.current, 4);
 
       const allElbows = [...f_elbows, ...b_elbows];
       packVec2Uniform_withRecenter(allElbows, elbowsRef.current, 4);
- 
+
       const allShoulders = [...f_shoulders, ...b_shoulders];
       packVec2Uniform_withRecenter(allShoulders, shouldersRef.current, 4);
 
       const allMuscles = [...f_muscles, ...b_muscles];
       packVec2Uniform_withRecenter(allMuscles, legMusclesRef.current, 8);
 
-      
-const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
+      const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
 
       packVec2Uniform_withRecenter(allFingers, fingersRef.current, 20);
- 
     };
     animate();
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const snout = gecko.current.body.spine?.unchainedJoints[0];
-  const head = gecko.current.body.spine?.unchainedJoints[1];
+  // const snout = gecko.current.body.spine?.unchainedJoints[0];
+  // const head = gecko.current.body.spine?.unchainedJoints[1];
+  // const hint = gecko.current.body.spine?.hintJoint;
 
   const uniforms = {
+    u_scale: scale,
     u_time: time,
     u_resolution: [width, height],
     u_soul: soul.current.soul, // [x, y] position
@@ -613,41 +597,60 @@ const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
 
     u_joints: Array.from(jointsRef.current),
     u_tail: Array.from(tailJointsRef.current),
-    u_snout: snout ? [snout[0], snout[1]] : [0, 0],
-    u_head: head ? [head[0], head[1]] : [0, 0],
+
+    u_snout: snoutRef.current,
+    u_head: headRef.current,
+    u_hint: hintRef.current,
+
+    //     u_hint: hint ? [hint[0], hint[1]] : [0,0],
+    // u_snout: snout ? [snout[0], snout[1]] : [0, 0],
+    // u_head: head ? [head[0], head[1]] : [0, 0],
     u_steps: Array.from(stepsRef.current),
     u_elbows: Array.from(elbowsRef.current),
     u_shoulders: Array.from(shouldersRef.current),
     u_muscles: Array.from(legMusclesRef.current),
-    u_fingers: Array.from(fingersRef.current)
+    u_fingers: Array.from(fingersRef.current),
   };
 
   return (
     <GestureDetector gesture={gesture}>
-    <View
-      style={{
-        // borderWidth: 2,
-
-        alignItems: "center",
-        justifyContent: "center",
-        // backgroundColor: "pink",
-      }}
-    >
-      <Canvas
+      <View
         style={{
-          width,
-          height,
+          // borderWidth: 2,
 
-          // alignItems: "center",
-          // justifyContent: "center",
+          alignItems: "center",
+          justifyContent: "center",
+          //  backgroundColor: "pink",
         }}
       >
-        <Rect x={0} y={0} width={width} height={height} color="lightblue">
-          <Shader source={source} uniforms={uniforms} />
-        </Rect>
-      </Canvas>
-    </View> 
-    </GestureDetector>  
+        {/* 
+               <Animated.View style={buttonStyle} pointerEvents="box-none">
+          <View
+            style={{
+              zIndex: 99999,
+              width: 24,
+              height: 24,
+              borderRadius: 12,
+              backgroundColor: "rgba(0,0,0,0.001)", // invisible hit target
+            }}
+          />
+        </Animated.View> */}
+
+        <Canvas
+          style={{
+            width,
+            height,
+
+            // alignItems: "center",
+            // justifyContent: "center",
+          }}
+        >
+          <Rect x={0} y={0} width={width} height={height} color="lightblue">
+            <Shader source={source} uniforms={uniforms} />
+          </Rect>
+        </Canvas>
+      </View>
+    </GestureDetector>
   );
 };
 

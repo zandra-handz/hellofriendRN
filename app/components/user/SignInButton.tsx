@@ -80,7 +80,8 @@ const style = StyleSheet.create({
   },
   label: {
     fontFamily: "Poppins-Bold",
-    fontSize: 14, 
+    fontWeight: 'bold',
+    fontSize: 16, 
   },
 });
 

@@ -5,10 +5,11 @@ import Tail from "./bodyClasses/tailClass.js";
 import { getWeightedValues } from "../utils.js";
 
 export default class Body {
-  constructor(state, motion ) {
+  constructor(state, motion, startingCoord = [0.,0.], hintDist = .6 ) {
  
     this.state = state;
     this.motion = motion;  
+    this.startingCoord = startingCoord;
 
     this.stiffC = 24;
     this.normalC = 12;
@@ -31,6 +32,7 @@ export default class Body {
     this.unchainedDist = .07;
     
     this.snoutDist =  .03;
+    this.hintDist = hintDist;
     let bodyWeights = [0.01, 0.025, 0.022, 0.022,0.02, 0.02, 0.01, 0.003, 0.001];
     let hipAndTConRadius = [0.015, 0.001]; // original: radius8, radius9
 
@@ -121,10 +123,13 @@ init() {
  
     this.state,
     this.motion, 
+    this.startingCoord,
     this.spineNumOfJoints,
     unchainedAnchorIndex,
     this.unchainedDist,
     this.snoutDist,
+    this.hintDist,
+
     spineDesCtrRange,
     this.baseRadius,
     this.spineClamps,
@@ -137,7 +142,9 @@ init() {
     this.spineMotion_range,
     this.spineMotion_len,
     this.spineMotion_baseClamp,
-    "debugSpineMotion"
+    "debugSpineMotion",
+    "spineUnchained",
+    "spineHint"
   );
 
   // IMPORTANT: spine.joints now definitely exists
@@ -160,10 +167,10 @@ init() {
 }
 
 
-  update(leadPoint_lead) {
+  update(leadPoint_lead, leadPoint_isMoving) {
   
     this.motion.update_headPosition(this.headRadiiSum);
-    this.spine.update(leadPoint_lead);
+    this.spine.update(leadPoint_lead, leadPoint_isMoving);
  
     this.tail.update();
   }

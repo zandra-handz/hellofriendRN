@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
 import Demo from "@/app/components/headers/SkiaDemo";
@@ -21,6 +21,10 @@ const ScreenWelcome = () => {
   const { lightDarkTheme } = useLDTheme();
   const { user, isInitializing } = useUser();
   const { selectedFriend, resetFriend } = useSelectedFriend();
+
+  const [resetAnimation, setResetAnimation] = useState(Date.now());
+
+  
 
   useEffect(() => {
     if (!isInitializing && !user?.id) {
@@ -78,29 +82,36 @@ const ScreenWelcome = () => {
         }}
       >
         <View style={styles.container}>
-                          <View
-                  style={[     StyleSheet.absoluteFill, {
-                    //  backgroundColor: "pink",
-               
-                  }]}
-                >
-                
-                    {/* <Demo text={""} /> */}
+          <View style={[StyleSheet.absoluteFill]}>
+            <PChainSkia
+              color1={manualGradientColors.lightColor}
+              color2={manualGradientColors.homeLightColor}
+              startingCoord={[.2,-1.]}
+              restPoint={[.5,.8]}
+              scale={0.76}
+              reset={resetAnimation}
+            />
+          </View>
 
-                    <PChainSkia
-                      color1={manualGradientColors.lightColor}
-                      color2={manualGradientColors.darkColor}
-                    /> 
-                </View>
           <>
             {confirmedUserNotSignedIn && !user?.id && (
               <>
-
-
                 <View style={styles.logoContainer}>
                   <LogoSmaller />
                 </View>
                 <View style={styles.signInButtonContainer}>
+                  <Pressable
+                  onPress={() => setResetAnimation(Date.now())}
+                  
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 999,
+                     // backgroundColor: "hotpink",
+                      alignSelf: "center",
+                      marginVertical: 40,
+                    }}
+                  ></Pressable>
                   <SignInButton
                     onPress={() => handleNavigateToAuthScreen(false)}
                   />
@@ -138,8 +149,8 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     width: "100%",
-    paddingBottom: 30,
-    paddingHorizontal: 10,
+    paddingBottom: 400,
+    paddingHorizontal: 20,
   },
   signInButtonContainer: {
     bottom: 40,
@@ -152,7 +163,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: "center",
     fontFamily: "Poppins-Bold",
-    fontSize: 14,
+    fontWeight: 'bold',
+    fontSize: 15,
     lineHeight: 21,
   },
 });

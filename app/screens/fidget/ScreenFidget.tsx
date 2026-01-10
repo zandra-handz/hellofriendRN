@@ -20,7 +20,7 @@ import SpinnerFour from "@/app/components/appwide/button/SpinnerFour";
 import SpinnerGeckoToes from "@/app/components/appwide/button/SpinnerGeckoToes";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
-
+import PChainSkia from "@/app/assets/shader_animations/PChainSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
@@ -33,28 +33,18 @@ const ScreenFidget = (props: Props) => {
     friendId: selectedFriend?.id,
   });
 
-
-
   const options = [1, 2, 3, 4, 5, 6];
-const mod = (n, m) => {
-  return ((n % m) + m) % m;
-};
-
+  const mod = (n, m) => {
+    return ((n % m) + m) % m;
+  };
 
   const pickRandom = options[Math.floor(Math.random() * options.length)];
-
-
-
- 
 
   const [spinnerViewing, setSpinnerViewing] = useState(0);
 
   const handleNextOption = () => {
-
-
-    
     // const randomPick = Math.floor(Math.random() * options.length);
-   const next = mod(spinnerViewing + 1, 6);
+    const next = mod(spinnerViewing + 1, 6);
     // console.log(randomPick);
     // const spinnerPicked = options[randomPick];
     setSpinnerViewing(next);
@@ -114,20 +104,40 @@ const mod = (n, m) => {
         // padding: 10, //consider this approach for all screens if possible
       }}
     >
-    {(spinnerViewing === 1 ) && (
+
+
+            {!spinnerViewing && (
         <View
-          style={{
-            //  backgroundColor: "pink",
-            width: "100%",
-            flex: 1,
-            alignItems: "center",
-          }}
+          style={[
+            StyleSheet.absoluteFill,
+            // { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
         >
-          <View style={{ width: 300, height: "100%" }}>
-            <Demo text={""} />
-          </View>
+          <PChainSkia
+            color1={manualGradientColors.lightColor}
+            color2={manualGradientColors.homeDarkColor}
+            startingCoord={[0.1, 0.0]}
+            restPoint={[1.4, 0.9]}
+            scale={.6}
+          />
         </View>
-      )} 
+      )}
+      {spinnerViewing === 1 && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            // { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
+        >
+          <PChainSkia
+            color1={manualGradientColors.lightColor}
+            color2={selectedFriend.darkColor}
+            startingCoord={[0.1, 0.0]}
+            restPoint={[1.4, 0.9]}
+            scale={.6}
+          />
+        </View>
+      )}
 
       {/* {(spinnerViewing === 2 ) && (
         <View style={StyleSheet.absoluteFillObject}>
@@ -237,11 +247,11 @@ const mod = (n, m) => {
           </View>
         )}
 
-                 <View style={styles.statsWrapper}>
-            <Text style={[welcomeTextStyle, { color: primaryColor }]}>
-              SPINNER: {spinnerViewing}
-            </Text> 
-          </View>
+        <View style={styles.statsWrapper}>
+          <Text style={[welcomeTextStyle, { color: primaryColor }]}>
+            SPINNER: {spinnerViewing}
+          </Text>
+        </View>
 
         <EscortBarFidgetScreen
           style={{ paddingHorizontal: 10 }}

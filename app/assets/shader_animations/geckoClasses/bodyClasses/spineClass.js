@@ -1,6 +1,6 @@
  
 import { solveFirst, solveProcJoint } from "./utilsPChain.js";
-import { _getCenterPoint, _makeDistancePoint, _getDistanceScalar,  _getDirVec } from "../../utils.js";
+import { _getCenterPoint, _makeDistancePoint, _makeOffscreenPoint, _getDistanceScalar,  _getDirVec } from "../../utils.js";
 import { getStartAndEndPoints, intersectLines, getSpineSagTrans } from "../../utils.js";
 
 
@@ -11,10 +11,12 @@ export default class Spine {
    
     state,
     motion,  
+    startingCoord,
     totalNumJoints,
     unchainedAnchorIndex = 0,
     unchainedDist = 0.04,
     snoutDist = 0.02,
+    hintDist = .05,
     segmentRange,
     baseRadius = 0.02,
     jointClamps,
@@ -30,11 +32,13 @@ export default class Spine {
 
     motionBaseClamp = 24, // original default for spine
     u_motion_debug_prefix = "debugSpineMotion",
-    u_unchained_prefix = "spineUnchained"
+    u_unchained_prefix = "spineUnchained",
+    u_hint_prefix = "spineHint"
   ) {
  
     this.state = state;
     this.motion = motion;  
+    this.startingCoord = startingCoord;
     this.TAU = Math.PI * 2;
     this.updatesGlobalMotion = updatesGlobalMotion;
 
@@ -47,9 +51,11 @@ export default class Spine {
     // Not part of chain because weirdly circular, but influenced by angle caused by front steps
     this.head = [0.5, 0.5];
     this.snout = [0.5, 0.5];
+    this.hint = [.5,.5];
 
     this.unchainedDist = unchainedDist;
     this.snoutDist = snoutDist;
+    this.hintDist = hintDist;
 
     this.joints = [];
     this.totalNumJoints = totalNumJoints;
@@ -61,7 +67,7 @@ export default class Spine {
     this.jointClamps = jointClamps;
 
     for (let i = 0; i <= totalNumJoints; i++) {
-      const joint = [0.5, 0.5];
+      const joint = [this.startingCoord[0], this.startingCoord[1]];
 
       joint.angle = 0;
       joint.secondaryAngle = 0; // A RECALC OF ANGLE based on spineMotion/center of current front steps. gets calculated/set inside joint solver (not used for first joint)
@@ -128,6 +134,7 @@ export default class Spine {
 
     this.u_prefix = u_prefix;
     this.u_unchained_prefix = u_unchained_prefix;
+    this.u_hint_prefix = u_hint_prefix;
 
     this.unchainedJoints = [];
     this.u_debug_prefix = u_debug_prefix;
@@ -138,6 +145,8 @@ export default class Spine {
 
     this.debugs = [];
     this.motion_debugs = [];
+
+    this.isMoving = false;
   }
  
 
@@ -229,6 +238,7 @@ export default class Spine {
 
   //customized because I have no other use case
   // HEAD
+  // and hint
   update_unchainedJoints(leadPoint_lead) {
     let midPoint = _getCenterPoint(this.motion.frontStepsSLine[1], leadPoint_lead);
 
@@ -241,11 +251,24 @@ export default class Spine {
 
     let snout = _makeDistancePoint(head, dirVec, this.snoutDist);
 
+    if (!this.isMoving) { 
+      
+        let hint = _makeDistancePoint(snout, dirVec, this.hintDist);
+            this.hintJoint = hint;
+    } else {
+      let hint = _makeOffscreenPoint();
+          this.hintJoint = hint;
+    } 
+ 
     // Put snout first so in ascending order like joints are
     this.unchainedJoints = [snout, head];
+    // this.hintJoint = hint;
   }
  
-  update(leadPoint_lead) {
+  update(leadPoint_lead, leadPoint_isMoving) {
+
+    this.isMoving = leadPoint_isMoving;
+ 
     // this.updateLeadPoint();
     this.updateMotionFirstAngle(); 
 
@@ -275,11 +298,7 @@ export default class Spine {
     }
 
     this.update_unchainedJoints(leadPoint_lead);
-
-    this.updateCurrentLength();
-
-    // this.updateUniforms();
-    // this.updateDebugsUniforms();
+    this.updateCurrentLength(); 
   }
  
 }

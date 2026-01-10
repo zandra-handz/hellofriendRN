@@ -55,6 +55,11 @@ export function _makeDistancePoint(pointA, dirVec, distScalar) {
   return [x, y];
 }
 
+
+export function _makeOffscreenPoint(offscreenX=-1000., offscreenY=-1000.){
+  return [offscreenX, offscreenY]; 
+};
+
 export function _getPointTowardB(pointA, pointB, t = 0.25) {
   return [
     pointA[0] + (pointB[0] - pointA[0]) * t,
@@ -644,3 +649,39 @@ export function solveFingers(stepTarget, fingers, fingerLen, is1, manualAdj) {
   return fingers;
 }
 
+
+export function soul_infinity(center, progress, radius) {
+    return [center[0] + Math.sin(progress) * radius*2, 
+                    center[1] + Math.cos(progress*2) * radius
+    ]
+ 
+}
+
+export function soul_oneshot_enter_right(center = [0.5, 0.5], progress = 0, radius = 0.05) {
+  const startX = 1 + radius * 2;  // offscreen start
+  const startY = center[1];
+ 
+  const clampedProgress = Math.min(Math.max(progress, 0), 1);
+
+  const x = startX + (center[0] - startX) * clampedProgress;
+  const y = startY + (center[1] - startY) * clampedProgress;
+
+  return [x, y];
+}
+
+
+export function soul_oneshot_enter_top(
+  center = [0.5, 0.5],
+  progress = 0,
+  radius = 0.05
+) {
+  const startX = center[0];
+  const startY = -radius * 2; // offscreen above top
+
+  const clampedProgress = Math.min(Math.max(progress, 0), 1);
+
+  const x = startX + (center[0] - startX) * clampedProgress;
+  const y = startY + (center[1] - startY) * clampedProgress;
+
+  return [x, y];
+}

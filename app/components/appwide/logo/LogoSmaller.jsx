@@ -9,15 +9,15 @@ const LogoSmaller = () => {
   return (
     <View style={styles.container}>
       <View>
-        <GeckoSolidSvg
+        {/* <GeckoSolidSvg
           height={130}
           width={130}
           color={"#000002"}
           style={styles.rotateGecko}
-        />
+        /> */}
       </View>
       <View style={styles.labelContainer}>
-        <Text style={styles.label}>Welcome to hellofriend!</Text>
+        <Text style={styles.label}>Welcome to Hellofriend App!</Text>
       </View>
     </View>
   );
@@ -35,9 +35,10 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "Poppins-Regular",
-    fontSize: 26,
+    fontSize: 28,
     lineHeight: 30,
     textAlign: "center",
+    fontWeight: 'bold'
   },
   labelContainer: {
     paddingHorizontal: 6,
