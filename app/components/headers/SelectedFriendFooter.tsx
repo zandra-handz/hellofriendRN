@@ -40,7 +40,7 @@ const SelectedFriendFooter = ({
   const friendId = selectedFriend?.id;
   const { friendDash } = useFriendDash({ userId: userId, friendId: friendId });
   const { autoSelectFriend } = useAutoSelector();
-  const { navigateToFidget } = useAppNavigations();
+  const { navigateToGecko } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
 
@@ -178,7 +178,7 @@ const SelectedFriendFooter = ({
           />
         }
         // onPress={() => setAboutModalVisible(true)}
-        onPress={navigateToFidget}
+        onPress={navigateToGecko}
       />
     ),
     [primaryColor]

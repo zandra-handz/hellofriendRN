@@ -52,6 +52,7 @@ type NavToNewAccountProp = {
 
 interface hookReturns {
   navigateToHome: () => void;
+  navigateToGecko: () => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
@@ -90,6 +91,10 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToHome = () => {
     navigation.navigate("hellofriend");
+  };
+
+    const navigateToGecko = () => {
+    navigation.navigate("Gecko");
   };
 
   const navigateToAddFriend = () => {
@@ -191,6 +196,7 @@ const useAppNavigations = (): hookReturns => {
 
   return {
     navigateToHome,
+    navigateToGecko,
     navigateToAddFriend,
     navigateToSelectFriend,
     navigateToFinalize,

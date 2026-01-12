@@ -26,6 +26,7 @@ const GoOptionsModal = ({
     navigateToMoments,
     navigateToLocationSearch,
     navigateToFinalize, 
+    navigateToFidget
   } = useAppNavigations();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -48,6 +49,13 @@ const GoOptionsModal = ({
     closeModal();
     navigateToFinalize();
   };
+
+
+    const handleNavToSpiners = () => {
+    closeModal();
+    navigateToFidget();
+  };
+
 
   const count = 5; // number of items
   const speed = 20; // milliseconds between each item
@@ -163,6 +171,38 @@ const GoOptionsModal = ({
                       ]}
                     >
                       Save hello
+                    </Text>
+                  </GlobalPressable>
+                </BouncyEntrance>
+              </View>
+
+
+                            <View style={styles.sectionContainer}>
+                <BouncyEntrance
+                  delay={staggeredDelays[2]}
+                  style={{ width: "100%" }}
+                >
+                  <GlobalPressable
+                    onPress={handleNavToSpiners}
+                    style={[
+                      styles.button,
+                      {
+                        padding: BUTTON_PADDING,
+                        backgroundColor: BUTTON_COLOR,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        subWelcomeTextStyle,
+                        styles.text,
+                        {
+                          color: primaryColor,
+                          backgroundColor: backgroundColor,
+                        },
+                      ]}
+                    >
+                      Spinner gallery
                     </Text>
                   </GlobalPressable>
                 </BouncyEntrance>

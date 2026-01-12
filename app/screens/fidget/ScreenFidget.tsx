@@ -3,6 +3,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import Demo from "@/app/components/headers/SkiaDemo";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import manualGradientColors from "@/app/styles/StaticColors";
 import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -20,33 +22,67 @@ import SpinnerFour from "@/app/components/appwide/button/SpinnerFour";
 import SpinnerGeckoToes from "@/app/components/appwide/button/SpinnerGeckoToes";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
-import PChainSkia from "@/app/assets/shader_animations/PChainSkia";
+import PChainSkia from "@/app/assets/shader_animations/PChainSkia"; 
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
 const ScreenFidget = (props: Props) => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
+  const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+
+
+
   const { friendDash } = useFriendDash({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
 
-  const options = [1, 2, 3, 4, 5, 6];
+
+
+
+  const { handleEditMoment, editMomentMutation } = useEditMoment({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
+ 
+
+
+
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
+ 
+const momentCoords = useMemo(() => {
+  return capsuleList.map(m => ({
+    id: m.id,
+    coord: [m.screen_x, m.screen_y],
+  }));
+}, [capsuleList]);
 
-  const pickRandom = options[Math.floor(Math.random() * options.length)];
+const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
+// Function to randomize/scatter moments
+const handleRescatterMoments = () => {
+  // console.log(`scattering moments!`, scatteredMoments);
+  setScatteredMoments(prev =>
+    prev.map(m => ({
+      ...m,
+      coord: [
+        Math.random(), // random x between 0 and 1
+        Math.random(), // random y between 0 and 1
+      ],
+    }))
+  );
+  // console.log(`done!`, scatteredMoments);
+};
+
+ 
   const [spinnerViewing, setSpinnerViewing] = useState(0);
 
-  const handleNextOption = () => {
-    // const randomPick = Math.floor(Math.random() * options.length);
-    const next = mod(spinnerViewing + 1, 6);
-    // console.log(randomPick);
-    // const spinnerPicked = options[randomPick];
+  const handleNextOption = () => { 
+    const next = mod(spinnerViewing + 1, 6); 
     setSpinnerViewing(next);
   };
 
@@ -104,9 +140,8 @@ const ScreenFidget = (props: Props) => {
         // padding: 10, //consider this approach for all screens if possible
       }}
     >
-
-
-            {!spinnerViewing && (
+ 
+      {spinnerViewing === 1 || !spinnerViewing &&  (
         <View
           style={[
             StyleSheet.absoluteFill,
@@ -118,23 +153,7 @@ const ScreenFidget = (props: Props) => {
             color2={manualGradientColors.homeDarkColor}
             startingCoord={[0.1, 0.0]}
             restPoint={[1.4, 0.9]}
-            scale={.6}
-          />
-        </View>
-      )}
-      {spinnerViewing === 1 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            // { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <PChainSkia
-            color1={manualGradientColors.lightColor}
-            color2={selectedFriend.darkColor}
-            startingCoord={[0.1, 0.0]}
-            restPoint={[1.4, 0.9]}
-            scale={.6}
+            scale={0.6}
           />
         </View>
       )}

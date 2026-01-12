@@ -95,6 +95,8 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 
 import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 
+import ScreenGecko from "./app/screens/fidget/ScreenGecko";
+
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
 import ScreenImageView from "./app/screens/images/ScreenImageView";
@@ -366,7 +368,10 @@ const linking = {
 export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
   const { user, isInitializing, refetch } = useUser();
 
-  const { settings, loadingSettings } = useTopLevelUserSettings({userId: user?.id, isInitializing: isInitializing});
+  const { settings, loadingSettings } = useTopLevelUserSettings({
+    userId: user?.id,
+    isInitializing: isInitializing,
+  });
 
   const receiveNotifications =
     settings?.receive_notifications === true
@@ -395,9 +400,16 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
     <AutoSelectorProvider userId={user?.id} settings={settings}>
       <CapsuleListProvider userId={user?.id} isInitializing={isInitializing}>
         <NavigationContainer ref={navigationRef} linking={linking}>
-          <PeacefulGradientSpinner userId={user?.id} isInitializing={isInitializing} />
+          <PeacefulGradientSpinner
+            userId={user?.id}
+            isInitializing={isInitializing}
+          />
           <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
-          <QuickActionsHandler userId={user?.id} settings={settings} navigationRef={navigationRef} />
+          <QuickActionsHandler
+            userId={user?.id}
+            settings={settings}
+            navigationRef={navigationRef}
+          />
           <TopLevelNavigationHandler
             userId={user?.id}
             isInitializing={isInitializing}
@@ -435,6 +447,15 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                       />
                     )}
                   </Stack.Screen>
+                  <Stack.Screen
+                    name="Gecko"
+                    component={ScreenGecko}
+                    options={{
+                      headerShown: false,
+                      gestureEnabled: false,
+                    }}
+                  />
+
                   <Stack.Screen
                     name="MomentFocus"
                     component={ScreenMomentFocus}

@@ -502,7 +502,7 @@ export const fetchMomentsAPI = async (friendId: number) => {
       `/friends/${friendId}/thoughtcapsules/`
     );
     //  console.log(response.data);
-    if (response && response.data) {
+    if (response && response.data) { 
       const capsules = response.data.map((capsule: MomentFromBackendType) => ({
         id: capsule.id,
         friend: capsule.friend,
@@ -512,7 +512,12 @@ export const fetchMomentsAPI = async (friendId: number) => {
         preAdded: capsule.pre_added_to_hello,
         user_category: capsule.user_category,
         user_category_name: capsule.user_category_name || "No category",
+        screen_x: capsule.screen_x,
+        screen_y: capsule.screen_y,
+        coord: [capsule.screen_x, capsule.screen_x]
       }));
+
+
       return capsules;
     } else {
       // console.log("fetchThoughtCapsules: no capsules added yet");

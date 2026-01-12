@@ -19,4 +19,7 @@ export type MomentFromBackendType = {
   pre_added_to_hello: string;
   user_category: number;
   user_category_name: string;
+  screen_x: number;
+  screen_y: number;
+  
 };
