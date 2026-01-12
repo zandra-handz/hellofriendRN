@@ -97,8 +97,7 @@ const handleRescatterMoments = () => {
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight={120}
+      friendId={selectedFriend?.id} 
       style={{
         flex: 1,
         flexDirection: "column",

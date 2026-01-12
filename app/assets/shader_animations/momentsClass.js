@@ -79,6 +79,8 @@ update(userPointer, isDragging) {
     this.moments[closestIndex].coord = userPointer;
     this.selected = this.moments[closestIndex];
     this.lastSelected =  this.moments[closestIndex];
+    // console.log(`user pointer`,userPointer)
+    // console.log(this.lastSelected.coord)
     this.selectedMomentIndex = closestIndex;
     this.selectedMomentId = this.moments[closestIndex].id;
     // console.log(this.selected, userPointer);

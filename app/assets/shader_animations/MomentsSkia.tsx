@@ -12,8 +12,6 @@ import { runOnJS, useSharedValue } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 
  import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-
  
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -32,6 +30,9 @@ import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { useFrameCallback } from "react-native-reanimated";
 
   const { width, height } = Dimensions.get("window");
+
+  const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
  
 
 type Props = {
@@ -177,24 +178,32 @@ useFocusEffect(
   const momentsLength = momentsData.length; 
 
 const isDragging = useSharedValue(false); // tracks if screen is being touched
- 
+  
 
 const gesture = Gesture.Pan()
   .onTouchesDown((e) => {
     // Finger just touched: mark dragging and update userPoint immediately
     isDragging.value = true;
     const touch = e.changedTouches[0];
+ 
     userPointSV.value = [touch.x / size.width, touch.y / size.height];
+
   })
   .onUpdate((e) => {
     // Normal drag update
-    // userPointSV.value = [e.x / size.width, e.y / size.height];
+    userPointSV.value = [e.x / size.width, e.y / size.height];
+    // console.log(userPointSV.value[1])
+    
+    console.log("Normalized userPointSV:", userPointSV.value);
+//       const x = (e.x - 0.5 * size.width) / size.height + 0.5;
+//   const y = (e.y - 0.5 * size.height) / size.height + 0.5;
+  
+//   userPointSV.value = [x, y];
 
-
-    userPointSV.value = [
-  e.x / size.width,
-  (e.y - insets.top) / (size.height - insets.top - insets.bottom)
-];
+//     userPointSV.value = [
+//   e.x / size.width,
+//   (e.y - insets.top) / (size.height - insets.top - insets.bottom)
+// ];
     
   })
   .onEnd(() => {
@@ -268,7 +277,7 @@ const onDoublePress = () => {
   const moments = useRef(new Moments(momentsData, [.5,.5], .05));
 
 
-
+ 
   const source = Skia.RuntimeEffect.Make(`
     vec3 startColor = vec3(${color1Converted});
     vec3 endColor = vec3(${color2Converted});
@@ -324,6 +333,9 @@ half4 main(vec2 fragCoord) {
     
     uv /= u_scale;
    
+
+
+    
  
     vec2 soulUV = u_soul - 0.5;
     vec2 leadUV = u_lead - 0.5;
@@ -698,6 +710,7 @@ for (int i = 0; i < 64; i++) {
     moments.current = new Moments(momentsData);
 
   }, [momentsData]);
+
   useEffect(() => {
     if (!reset) return;
 
@@ -726,13 +739,17 @@ for (int i = 0; i < 64; i++) {
   }, [reset]);
 
   useEffect(() => {
+
+     
     let frame;
     const animate = () => {
       const now = (Date.now() - start.current) / 1000;
-      setTime(now);
+      setTime(now); 
       frame = requestAnimationFrame(animate);
+         moments.current.update(userPointSV.value, isDragging.value);
+      
       soul.current.update();
-      moments.current.update(userPointSV.value, isDragging.value);
+  
 
       if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
         gecko.current.updateEnter(soul.current.done);
@@ -851,35 +868,14 @@ for (int i = 0; i < 64; i++) {
 
   return (
     <GestureDetector  gesture={gesture}>
-  
-    
         <Canvas ref={ref}
-          style={[{
-            // width,
-            // height,
-           flex: 1,
-           width: '100%',
-           height: '100%'
-            //  width: 400, height: 400
-
-            // alignItems: "center",
-            // justifyContent: "center",
+          style={[{ 
+           flex: 1, 
+ 
           }]}
         >
- 
-
-            {/* <Canvas
-  style={{ flex: 1 }}
-  onLayout={(event) => {
-    const { width, height } = event.nativeEvent.layout;
-    console.log("Canvas size:", width, height);
-    setCanvasSize({ width, height });
-  }}
-> */}
-          {/* <Rect x={0} y={0} width={width} height={height} color="lightblue"> */}
-             <Rect x={0} y={0} width={size.width} height={size.height} color="lightblue">
-
-                 
+  
+            <Rect x={0} y={0} width={size.width} height={size.height} color="lightblue">
             <Shader source={source} uniforms={uniforms} />
           </Rect>
         </Canvas>

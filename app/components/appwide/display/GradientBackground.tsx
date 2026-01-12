@@ -73,12 +73,10 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: transition.value,
   }));
-
-  const flattenMainStyle = StyleSheet.flatten([styles.container, additionalStyles])
-
+ 
   return (
  
-        <View style={flattenMainStyle}> 
+        <View style={[styles.container, additionalStyles]}> 
       <LinearGradient
         colors={previousColors}
         start={{ x: direction[0], y: direction[1] }}

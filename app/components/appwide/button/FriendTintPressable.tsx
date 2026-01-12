@@ -71,6 +71,7 @@ const FriendTintPressable = ({
 
     setPressed(true);
     const { pageX, pageY } = event.nativeEvent;
+    console.log(`FRRRRRRRRRRRRRRRRRRRRRRRRRRINED`,pageY);
     touchLocationX.value = pageX;
     touchLocationY.value = pageY;
     visibility.value = withTiming(1, { duration: 160 });
