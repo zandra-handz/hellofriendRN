@@ -623,26 +623,13 @@ half4 main(vec2 fragCoord) {
           //  backgroundColor: "pink",
         }}
       >
-        {/* 
-               <Animated.View style={buttonStyle} pointerEvents="box-none">
-          <View
-            style={{
-              zIndex: 99999,
-              width: 24,
-              height: 24,
-              borderRadius: 12,
-              backgroundColor: "rgba(0,0,0,0.001)", // invisible hit target
-            }}
-          />
-        </Animated.View> */}
+ 
 
         <Canvas
           style={{
             width,
             height,
-
-            // alignItems: "center",
-            // justifyContent: "center",
+ 
           }}
         >
           <Rect x={0} y={0} width={width} height={height} color="lightblue">

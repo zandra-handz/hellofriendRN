@@ -11,6 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = {
   onPress: () => void;
+  onBackPress: () => void;
   label: string;
   iconName: string;
   forwardFlowOn: boolean;
@@ -20,7 +21,10 @@ type Props = {
 
 const EscortBarFidgetScreen = ({
   onPress,
+  onBackPress,
+  onCenterPress,
   label = "Save and Continue",
+  labelCenter = "Recenter",
   iconName = "keyboard-arrow-left",
  
   style,
@@ -28,6 +32,14 @@ const EscortBarFidgetScreen = ({
   primaryBackground,
 }: Props) => {
   const { navigateBack } = useAppNavigations();
+
+const onGoBack = async () => {
+  if (onBackPress) {
+    // wait for onBackPress to finish if it's async
+    await onBackPress();
+  }
+  navigateBack();
+};
 
   return (
     <Animated.View
@@ -67,7 +79,7 @@ const EscortBarFidgetScreen = ({
               alignItems: "center",
               justifyContent: "center",
             }}
-            onPress={navigateBack}
+            onPress={onGoBack}
           >
             <MaterialIcons
               name={`${iconName}`}
@@ -76,7 +88,22 @@ const EscortBarFidgetScreen = ({
             />
           </Pressable>
 
-          <View style={{ alignItems: "center", flexDirection: "row" }}>
+
+                    <View style={{ alignItems: "center", flexDirection: "row" }}>
+            <Text
+              style={[
+                AppFontStyles?.subWelcomeText,
+                { color: primaryColor, fontSize: 13, marginRight: 12 },
+              ]}
+            >
+              {labelCenter}
+            </Text>
+
+         
+              <ActionAndBack onPress={onCenterPress} iconName={"refresh"} rounded={true} />
+        
+          </View>
+                    <View style={{ alignItems: "center", flexDirection: "row" }}>
             <Text
               style={[
                 AppFontStyles?.subWelcomeText,
@@ -90,6 +117,8 @@ const EscortBarFidgetScreen = ({
               <ActionAndBack onPress={onPress} iconName={"refresh"} rounded={true} />
         
           </View>
+
+
         </View>
       </GlobalPressable>
     </Animated.View>

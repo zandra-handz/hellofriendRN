@@ -1254,6 +1254,22 @@ export const updateMomentAPI = async (
   }
 };
 
+// returns udapted ids
+export const updateMomentCoordsAPI = async (
+  friendId: number, 
+  capsuleData: object
+) => {
+  try {
+    const response = await helloFriendApiClient.patch(
+      `/friends/${friendId}/thoughtcapsules/coords-update/`,
+      capsuleData
+    );
+    // console.log(response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during updateMomentAPI");
+  }
+};
 export type CapsulesAndChangesDataType = {
   id: number;
   fieldsToUpdate: object;

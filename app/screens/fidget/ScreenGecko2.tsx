@@ -1,20 +1,19 @@
 import { View, StyleSheet, Pressable, Text } from "react-native";
 import React, { useState, useMemo, useEffect } from "react";
-import UserPointer from "@/app/assets/shader_animations/UserPointer";
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
-import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
 import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
 import { AppFontStyles } from "@/app/styles/AppFonts";
- import GradientBackground from "@/app/components/appwide/display/GradientBackground";
+import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash"; 
+import useFriendDash from "@/src/hooks/useFriendDash";
 // import { useUser } from "@/src/context/UserContext";
-import useUser from "@/src/hooks/useUser"; 
+import useUser from "@/src/hooks/useUser";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
@@ -25,79 +24,46 @@ const ScreenGecko = (props: Props) => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
-
-
   const { friendDash } = useFriendDash({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
 
-
-
-
   const { handleEditMoment, editMomentMutation } = useEditMoment({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
- 
-
-
-
-  const { handleUpdateMomentCoords, updateMomentCoordsMutation } = useUpdateMomentCoords({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
- 
 
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
 
-  const handleUpdateMomentsState = () => {
+  const momentCoords = useMemo(() => {
+    return capsuleList.map((m) => ({
+      id: m.id,
+      coord: [m.screen_x, m.screen_y],
+    }));
+  }, [capsuleList]);
 
+  const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
+
+  // Function to randomize/scatter moments
+  const handleRescatterMoments = () => {
+    // console.log(`scattering moments!`, scatteredMoments);
+    setScatteredMoments((prev) =>
+      prev.map((m) => ({
+        ...m,
+        coord: [
+          Math.random(), // random x between 0 and 1
+          Math.random(), // random y between 0 and 1
+        ],
+      }))
+    );
+    // console.log(`done!`, scatteredMoments);
   };
- 
-const momentCoords = useMemo(() => {
-  return capsuleList.map(m => ({
-    id: m.id,
-    coord: [m.screen_x, m.screen_y],
-  }));
-}, [capsuleList]);
-
-const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
-
-// Function to randomize/scatter moments
-const handleRescatterMoments = () => {
-  // console.log(`scattering moments!`, scatteredMoments);
-  setScatteredMoments(prev =>
-    prev.map(m => ({
-      ...m,
-      coord: [
-        Math.random(), // random x between 0 and 1
-        Math.random(), // random y between 0 and 1
-      ],
-    }))
-  );
-  // console.log(`done!`, scatteredMoments);
-}; 
-
-
-const handleRecenterMoments = () => {
-  setScatteredMoments(prev =>
-    prev.map(m => ({
-      ...m,
-      coord: [0.5, 0.5], // recenter all coords
-    }))
-  );
-  console.log('All moments recentered to [0.5, 0.5]');
-};
-
- 
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.priamryText;
-
- 
 
   const TIME_SCORE = useMemo(() => {
     if (!friendDash || !friendDash?.time_score) {
@@ -112,73 +78,78 @@ const handleRecenterMoments = () => {
   //   console.log(`spinner viewing: `, spinnerViewing);
   // }, [spinnerViewing]);
 
-  return ( 
+  return (
     <PreAuthSafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
+      friendColorLight={null}
+      friendColorDark={null}
+      friendId={selectedFriend?.id}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id} 
       style={{
         flex: 1,
-        flexDirection: "column",
-        justifyContent: "flex-end", 
       }}
     >
-  
-         <View
-          style={[
-        StyleSheet.absoluteFill, 
-            // { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        > 
+      <GradientBackground
+        useFriendColors={false}
+        friendColorLight={null}
+        friendColorDark={null}
+        additionalStyles={{
+          ...StyleSheet.absoluteFillObject,
 
-          <MomentsSkia
-          handleEditMoment={handleEditMoment}
-          handleUpdateMomentCoords={handleUpdateMomentCoords}
+          alignItems: "center",
+        }}
+      >
       
+        <View style={styles.container}>
+          <View style={[StyleSheet.absoluteFill]}>
+          <MomentsSkia
+            handleEditMoment={handleEditMoment}
             color1={manualGradientColors.lightColor}
             color2={manualGradientColors.homeDarkColor}
             momentsData={scatteredMoments}
-            // startingCoord={[0.5, -.3]}
-                 startingCoord={[0.1, -.5]}
-            restPoint={[.5, 0.6]}
+            startingCoord={[0.5, -0.3]}
+            restPoint={[1.4, 0.9]}
             scale={.8}
-            gecko_scale={.8}
-            lightDarkTheme={lightDarkTheme}
-            handleRescatterMoments={handleRescatterMoments}
-            handleRecenterMoments={handleRecenterMoments}
           />
-       </View>
-     
- 
+        </View>
+        </View>
 
- 
+        {/*   
+      <SafeAreaView>
+  
+        <View style={styles.statsWrapper}>
+          <Text style={[welcomeTextStyle, { color: primaryColor }]}>
+         
+          </Text>
+        </View>
 
-            {/* <EscortBarFidgetScreen
-           onBackPress={handleUpdateMomentsState}
-           onCenterPress={handleRecenterMoments}
+        <EscortBarFidgetScreen
+          style={{ paddingHorizontal: 10 }}
+          primaryColor={lightDarkTheme.primaryText}
+          primaryBackground={lightDarkTheme.primaryBackground}
+          onPress={handleRescatterMoments}
+          label={"Rescatter"}
+        />
+      </SafeAreaView> */}
+
+        {/* <EscortBarFidgetScreen
           style={{ paddingHorizontal: 10 }}
           primaryColor={lightDarkTheme.primaryText}
           primaryBackground={lightDarkTheme.primaryBackground}
           onPress={handleRescatterMoments}
           label={"Rescatter"}
         /> */}
-
-
-
+      </GradientBackground>
     </PreAuthSafeViewAndGradientBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  statsWrapper: {
+  container: {
     width: "100%",
-    height: "auto",
-    padding: 10,
-    paddingHorizontal: 20,
-    flexDirection: "column",
+    flex: 1,
+    height: 400, width: '100%',
+    // flexDirection: "column",
+    justifyContent: "center",
   },
 });
 

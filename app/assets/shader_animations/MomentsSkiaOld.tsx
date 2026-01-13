@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, StyleSheet, Pressable } from "react-native";
+import { View, Text, Dimensions, StyleSheet } from "react-native";
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import Soul from "./soulClass";
 import Mover from "./leadPointClass";
@@ -11,10 +11,8 @@ import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 
-import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
-
  import { useSafeAreaInsets } from "react-native-safe-area-context";
- import { runOnUI } from 'react-native-reanimated';
+ 
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
@@ -33,7 +31,12 @@ import {
 import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { useFrameCallback } from "react-native-reanimated";
 
+  const { width, height } = Dimensions.get("window");
+
+  const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
  
+
 type Props = {
   color1: string;
   color2: string;
@@ -47,90 +50,15 @@ type Props = {
 // steps to painting a Skia canvas!
 //
 
-// function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale) {
+function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale) {
  
-//   for (let i = 0; i < num; i++) {
-//     if (points[i]) {
-//       const recenteredX = points[i][0] - 0.5;
-//       const recenteredY = points[i][1] - 0.5;
-
-//       flatArray[i * 2 + 0] = recenteredX * aspect; // exactly like shader
-//       flatArray[i * 2 + 1] = recenteredY ;
-//     } else {
-//       flatArray[i * 2 + 0] = 0.0;
-//       flatArray[i * 2 + 1] = 0.0;
-//     }
-//   }
-// }
-
-function toShaderSpace([x, y], aspect, scale) {
-  let sx = x - 0.5;
-  let sy = y - 0.5;
-
-  sx *= aspect;
-  sx /= scale;
-  sy /= scale;
-
-  return [sx, sy];
-}
-
-function toShaderModel([x, y], scale) {
-  let sx = x - 0.5;
-  let sy = y - 0.5;
-
-  sx /= scale;
-  sy /= scale;
-
-  return [sx, sy];
-}
-
-
-function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale = 1) {
   for (let i = 0; i < num; i++) {
     if (points[i]) {
-      const [sx, sy] = toShaderModel(points[i], scale);
+      const recenteredX = points[i][0] - 0.5;
+      const recenteredY = points[i][1] - 0.5;
 
-      flatArray[i * 2 + 0] = sx;
-      flatArray[i * 2 + 1] = sy;
-    } else {
-      flatArray[i * 2 + 0] = 0.0;
-      flatArray[i * 2 + 1] = 0.0;
-    }
-  }
-}
-
- 
-
-// function packVec2Uniform_withRecenter_moments(points, flatArray, num, aspect = 1, scale = 1) {
-//   for (let i = 0; i < num; i++) {
-//     if (points[i]) {
-//       const recenteredX = points[i].coord[0] - 0.5;
-//       const recenteredY = points[i].coord[1] - 0.5;
-
-//       flatArray[i * 2 + 0] = recenteredX * aspect ; // x multiplied by aspect and optional scale
-//       flatArray[i * 2 + 1] = recenteredY  ;          // y multiplied by optional scale only
-//     } else {
-//       flatArray[i * 2 + 0] = 0.0;
-//       flatArray[i * 2 + 1] = 0.0;
-//     }
-//   }
-// }
-
-
-
-function packVec2Uniform_withRecenter_moments(
-  points,
-  flatArray,
-  num,
-  aspect = 1,
-  scale = 1
-) {
-  for (let i = 0; i < num; i++) {
-    if (points[i]) {
-      const [sx, sy] = toShaderSpace(points[i].coord, aspect, scale);
-
-      flatArray[i * 2 + 0] = sx;
-      flatArray[i * 2 + 1] = sy;
+      flatArray[i * 2 + 0] = recenteredX * aspect; // exactly like shader
+      flatArray[i * 2 + 1] = recenteredY ;
     } else {
       flatArray[i * 2 + 0] = 0.0;
       flatArray[i * 2 + 1] = 0.0;
@@ -139,7 +67,24 @@ function packVec2Uniform_withRecenter_moments(
 }
 
 
- 
+
+
+
+function packVec2Uniform_withRecenter_moments(points, flatArray, num, aspect = 1, scale = 1) {
+  for (let i = 0; i < num; i++) {
+    if (points[i]) {
+      const recenteredX = points[i].coord[0] - 0.5;
+      const recenteredY = points[i].coord[1] - 0.5;
+
+      flatArray[i * 2 + 0] = recenteredX * aspect ; // x multiplied by aspect and optional scale
+      flatArray[i * 2 + 1] = recenteredY  ;          // y multiplied by optional scale only
+    } else {
+      flatArray[i * 2 + 0] = 0.0;
+      flatArray[i * 2 + 1] = 0.0;
+    }
+  }
+}
+
 
 const hexToVec3 = (hex) => {
   // Remove '#' if present
@@ -157,17 +102,12 @@ const hexToVec3 = (hex) => {
 // would do this in shader instead of current setup -->  uniform vec2 u_moments[${moments.length}];
 const MomentsSkia = ({
  handleEditMoment,
- handleUpdateMomentCoords,
   color1,
   color2,
   momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y 
   startingCoord,
   restPoint,
   scale = 1,
-  gecko_scale = 1,
-  lightDarkTheme,
-  handleRescatterMoments,
-  handleRecenterMoments,
   reset=0,
 }: Props) => {
 // console.log(momentsData);
@@ -193,103 +133,54 @@ useFocusEffect(
     };
   }, [])
 );
+const handleUpdateMomentCoords = (oldMoments, newMoments) => {
+  const oldMomentsMap = oldMoments.reduce((acc, moment) => {
+    acc[moment.id] = moment;
+    return acc;
+  }, {});
 
+  newMoments.forEach((newMoment) => {
+    const oldMoment = oldMomentsMap[newMoment.id];
 
+    // only update if coordinates differ by more than a tiny epsilon
+    const epsilon = 1e-5;
+    const hasChanged =
+      !oldMoment ||
+      Math.abs(oldMoment.coord[0] - newMoment.coord[0]) > epsilon ||
+      Math.abs(oldMoment.coord[1] - newMoment.coord[1]) > epsilon;
 
-const [ momentsState, setMomentsState] = useState(momentsData);
+    if (hasChanged) {
+      console.log(`Updating pos for moment ${newMoment.id} on backend!`);
 
-const handleUpdateMomentsState = () => {
-  const newMoments = moments.current.moments; // grab current ref
-  // console.log('current', newMoments);
+      const newCoordData = {
+        screen_x: newMoment.coord[0],
+        screen_y: newMoment.coord[1],
+      };
 
-  setMomentsState(newMoments); // update state for rendering if needed
-
-  // call update directly with the fresh value
-
-  
-  handleUpdateCoords(momentsData, newMoments);
+      handleEditMoment(newMoment.id, newCoordData);
+    }
+  });
 };
 
-
-// useEffect(() => {
-//   console.log(`moments state updated `, momentsState)
-
-// }, [momentsState]);
-
-
-
-
-// const handleUpdateMomentCoords = (oldMoments, newMoments) => {
-//   console.log('updating moment coords!')
-//   console.log(oldMoments)
-//   console.log(newMoments)
-//   const oldMomentsMap = oldMoments.reduce((acc, moment) => {
-//     acc[moment.id] = moment;
-//     return acc;
-//   }, {});
-
-//   newMoments.forEach((newMoment) => {
-//     const oldMoment = oldMomentsMap[newMoment.id];
-
-//     // only update if coordinates differ by more than a tiny epsilon
-//     const epsilon = 1e-5;
-//     const hasChanged =
-//       !oldMoment ||
-//       Math.abs(oldMoment.coord[0] - newMoment.coord[0]) > epsilon ||
-//       Math.abs(oldMoment.coord[1] - newMoment.coord[1]) > epsilon;
-
-//     if (hasChanged) {
-//       console.log(`Updating pos for moment ${newMoment.id} on backend!`);
-
-//       const newCoordData = {
-//         screen_x: newMoment.coord[0],
-//         screen_y: newMoment.coord[1],
-//       };
-
-//       handleEditMoment(newMoment.id, newCoordData);
-//     } else {
-//       'no change'
-//     }
-//   });
-// };
-
-
-const handleUpdateCoords = (oldMoments, newMoments) => {
-  // console.log('Updating all moment coords!');
-
-  // Reformat all moments for backend in one go
-  const formattedData = newMoments.map(moment => ({
-    id: moment.id,
-    screen_x: moment.coord[0],
-    screen_y: moment.coord[1],
-  }));
-
-  // console.log('Formatted data for backend:', formattedData);
-
-  // Send the batch update once
-  handleUpdateMomentCoords(formattedData);
-};
-
-
-
-// helper function to grab current ref
-const getCurrentMoments = () => {
-  console.log('getting current')
-  return moments.current.moments; // always grab the latest live ref
-};
 
 useFocusEffect(
   useCallback(() => {
+    // This runs when the screen comes into focus
+    // console.log("Screen is focused", moments.current.moments[0]);
+
     return () => {
-      // This runs once when the screen loses focus
-   
-        // momentsData is your stale baseline
-        // moments.current.moments must be a JS object, not a shared value
-        // handleUpdateCoords(momentsData, momentsState);
-    
+
+
+      // This runs when the screen loses focus
+      handleUpdateMomentCoords(momentsData, moments.current.moments);
+    //   console.log("Screen is unfocused or navigated away", moments.current.moments);
+      // You can reset state, stop animations, or disengage drags here
     };
-  }, [momentsState])
+  }, [])
 );
+
+ 
+
   const userPointSV = useSharedValue(restPoint); 
  
 
@@ -303,7 +194,7 @@ const gesture = Gesture.Pan()
     // Finger just touched: mark dragging and update userPoint immediately
     isDragging.value = true;
     const touch = e.changedTouches[0];
- 
+ console.log('touchdown');
     userPointSV.value = [touch.x / size.width, touch.y / size.height];
 
   })
@@ -396,7 +287,17 @@ useEffect(() => {
 }, [size]);
 
 
- 
+function toShaderSpace([x, y], aspect, scale) {
+  let sx = x - 0.5;
+  let sy = y - 0.5;
+
+  sx *= aspect;
+  sx /= scale;
+  sy /= scale;
+
+  return [sx, sy];
+}
+
 
   const source = Skia.RuntimeEffect.Make(`
     vec3 startColor = vec3(${color1Converted});
@@ -410,7 +311,6 @@ useEffect(() => {
 
 
     uniform float u_scale;
-    uniform float u_gecko_scale;
     uniform float u_time;
     uniform vec2 u_resolution;
     uniform float u_aspect;
@@ -451,58 +351,66 @@ float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
 
 
 half4 main(vec2 fragCoord) {
-
+    // vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
+    //  uv /= u_scale;
    
       vec2 uv = fragCoord / u_resolution; 
       
       uv -= vec2(0.5); 
       uv.x *= u_aspect;
-    //uv /= u_scale; // scale everything
-    vec2 moments_uv = uv /= u_scale;
+     uv /= u_scale; // scale everything
+ 
+ 
+    // vec2 soulUV = u_soul - vec2(0.5);
+    // vec2 leadUV = u_lead - vec2(0.5);
+    // vec2 hintUV = u_hint - vec2(.5);
+    // vec2 snoutUV = u_snout - vec2(0.5);
+    // vec2 headUV = u_head - vec2(0.5);
 
-    vec2 gecko_uv =uv /= u_gecko_scale;
+    // vec2 selectedUV = u_selected - vec2(.5);
+    // vec2 lastSelectedUV = u_lastSelected - vec2(.5);
 
-    float s = 1.0 / u_gecko_scale;
-  
+vec2 soulUV        = u_soul;// - vec2(0.5); soulUV.x *= u_aspect;
+vec2 leadUV        = u_lead;// - vec2(0.5); leadUV.x *= u_aspect;
+vec2 hintUV        = u_hint - vec2(0.5); hintUV.x *= u_aspect;
+vec2 snoutUV       = u_snout - vec2(0.5); //snoutUV.x *= u_aspect;
+vec2 headUV        = u_head - vec2(0.5); //headUV.x *= u_aspect;
+
+vec2 selectedUV     = u_selected;//- vec2(0.5); selectedUV.x *= u_aspect;
+vec2 lastSelectedUV = u_lastSelected;// - vec2(0.5); lastSelectedUV.x *= u_aspect;
+ 
+
     vec3 color = vec3(0.0);
     float alpha = 0.0;
 
-
-vec2 soulUV        = u_soul; 
-vec2 leadUV        = u_lead; 
-vec2 hintUV        = u_hint; 
-vec2 snoutUV       = u_snout; 
-vec2 headUV        = u_head; 
-
-vec2 selectedUV     = u_selected; 
-vec2 lastSelectedUV = u_lastSelected; 
- 
+    // Lead dot
     float leadMask = step(distance(uv, leadUV), 0.04);
-    vec3 lead_dot = vec3(1.0, 0.0, 0.0) * leadMask;
- 
-  
- 
+    color += vec3(1.0, 0.0, 0.0) * leadMask;
+    alpha = max(alpha, leadMask);
 
- 
+    // Soul dot
+    float soulMask = step(distance(uv, soulUV), 0.008);
+    color += vec3(0.0, 1.0, 0.0) * soulMask;
+    alpha = max(alpha, soulMask);
 
  
 vec3 moments = vec3(0.0); // start with zero
 
 for (int i = 0; i < 64; i++) {
     if (i >= u_momentsLength) continue; // skip extra moments
-    float momentsMask = step(distance(moments_uv, u_moments[i]), 0.008);
+    float momentsMask = step(distance(uv, u_moments[i]), 0.008);
     moments += startColor * momentsMask; // accumulate
 }
 
 
     vec3 selected = vec3(0.);
-    float selectedMask = step(distance(moments_uv, selectedUV), .03);
+    float selectedMask = step(distance(uv, selectedUV), .03);
     selected += startColor * selectedMask;
 
 
     
     vec3 lastSelected = vec3(0.);
-    float lastSelectedMask = step(distance(moments_uv, lastSelectedUV), .02);
+    float lastSelectedMask = step(distance(uv, lastSelectedUV), .02);
     lastSelected += startColor * lastSelectedMask;
 
 
@@ -513,51 +421,51 @@ for (int i = 0; i < 64; i++) {
 
 
 
-    float hintMask = step(distance(gecko_uv, hintUV), .008 * s);
+    float hintMask = step(distance(uv, hintUV), .008);
     vec3 hintDot = startColor * hintMask;
   
 
 
-    float armThickness = 0.005 * s; 
-    float backArmThickness = .007 * s;
-    float fingerThickness = 0.0025 * s; 
+    float armThickness = 0.005; 
+    float backArmThickness = .007;
+    float fingerThickness = 0.0025; 
     
     // in tail
-    float blendAmt = 0.054 * s;
+    float blendAmt = 0.054;
 
-    float spineBlend = .054 * s;
-    float spineTailBlend = 0.0003 * s;
-    float shoulderBlend = 0.01 * s;
-    float stepBlend = 0.003 * s;
-    float fingerBlend = 0.01 * s;
-    float fingerLineBlend = .0025 * s;   
-    float muscleBlend = 0.024 * s;   
+    float spineBlend = .054;
+    float spineTailBlend = 0.0003;
+    float shoulderBlend = 0.01;
+    float stepBlend = 0.003;
+    float fingerBlend = 0.01;
+    float fingerLineBlend = .0025;   
+    float muscleBlend = 0.024;   
 
-    float fingerRadius = 0.0015 * s;  
-    float stepRadius = .007 * s; 
-    float lowerMuscleRadius = .001 * s;
-    float upperMuscleRadius = 0.005 * s; // or whatever radius you want
-    float backMuscleBlend = .03 * s; // ultimate controller of how much of back upper leg muscle to add
-    float backUpperMuscleRadius = .86 * s;
+    float fingerRadius = 0.0015;  
+    float stepRadius = .007; 
+    float lowerMuscleRadius = .001;
+    float upperMuscleRadius = 0.005; // or whatever radius you want
+    float backMuscleBlend = .03; // ultimate controller of how much of back upper leg muscle to add
+    float backUpperMuscleRadius = .86;
   
 
 
-    float circle0 = distFCircle(gecko_uv, snoutUV, 0.003 * s/ circleSizeDiv);
-    float circle1 = distFCircle(gecko_uv, headUV, 0.019 * s / circleSizeDiv);
-    float circle1b = distFCircle(gecko_uv, u_joints[1], 0.0 / circleSizeDiv);
-    float circle2 = distFCircle(gecko_uv, u_joints[2], 0.001 * s / circleSizeDiv);
-    float circle3 = distFCircle(gecko_uv, u_joints[3], 0.004 * s / circleSizeDiv);
-    float circle4 = distFCircle(gecko_uv, u_joints[4], 0.004 * s/ circleSizeDiv);
-    float circle5 = distFCircle(gecko_uv, u_joints[5], 0.004 * s/ circleSizeDiv);
-    float circle6 = distFCircle(gecko_uv, u_joints[6], 0.004 * s / circleSizeDiv);
-    float circle7 = distFCircle(gecko_uv, u_joints[7], 0.003 *s/ circleSizeDiv);
-    float circle8 = distFCircle(gecko_uv, u_joints[8], 0.003* s / circleSizeDiv);
-    float circle9 = distFCircle(gecko_uv, u_joints[9], 0.003 * s/ circleSizeDiv);
-    float circle10 = distFCircle(gecko_uv, u_joints[10], 0.003  * s/ circleSizeDiv);
-    float circle11 = distFCircle(gecko_uv, u_joints[11], 0.003 * s / circleSizeDiv);
-    float circle12 = distFCircle(gecko_uv, u_joints[12], 0.002 * s/ circleSizeDiv);
-    float circle13 = distFCircle(gecko_uv, u_joints[13], 0.002 *s/ circleSizeDiv);
-    float circle14 = distFCircle(gecko_uv, u_joints[14], 0.0004*s / circleSizeDiv);
+    float circle0 = distFCircle(uv, snoutUV, 0.003 / circleSizeDiv);
+    float circle1 = distFCircle(uv, headUV, 0.019 / circleSizeDiv);
+    float circle1b = distFCircle(uv, u_joints[1], 0.0 / circleSizeDiv);
+    float circle2 = distFCircle(uv, u_joints[2], 0.001 / circleSizeDiv);
+    float circle3 = distFCircle(uv, u_joints[3], 0.004 / circleSizeDiv);
+    float circle4 = distFCircle(uv, u_joints[4], 0.004 / circleSizeDiv);
+    float circle5 = distFCircle(uv, u_joints[5], 0.004 / circleSizeDiv);
+    float circle6 = distFCircle(uv, u_joints[6], 0.004 / circleSizeDiv);
+    float circle7 = distFCircle(uv, u_joints[7], 0.003 / circleSizeDiv);
+    float circle8 = distFCircle(uv, u_joints[8], 0.003 / circleSizeDiv);
+    float circle9 = distFCircle(uv, u_joints[9], 0.003 / circleSizeDiv);
+    float circle10 = distFCircle(uv, u_joints[10], 0.003 / circleSizeDiv);
+    float circle11 = distFCircle(uv, u_joints[11], 0.003 / circleSizeDiv);
+    float circle12 = distFCircle(uv, u_joints[12], 0.002 / circleSizeDiv);
+    float circle13 = distFCircle(uv, u_joints[13], 0.002 / circleSizeDiv);
+    float circle14 = distFCircle(uv, u_joints[14], 0.0004 / circleSizeDiv);
 
     float circleMerge = smoothMin(
         smoothMin(circle0, circle1, 0.03),
@@ -580,19 +488,19 @@ for (int i = 0; i < 64; i++) {
 
 
      
-    float tailCircle0  = distFCircle(gecko_uv, u_tail[0],  0.002* s / circleSizeDiv);
-    float tailCircle1  = distFCircle(gecko_uv, u_tail[1],  0.005*s / circleSizeDiv);
-    float tailCircle2  = distFCircle(gecko_uv, u_tail[2],  0.004 * s/ circleSizeDiv);
-    float tailCircle3  = distFCircle(gecko_uv, u_tail[3],  0.0042 * s/ circleSizeDiv);
-    float tailCircle4  = distFCircle(gecko_uv, u_tail[4],  0.005 * s / circleSizeDiv);
-    float tailCircle5  = distFCircle(gecko_uv, u_tail[5],  0.005 * s / circleSizeDiv);
-    float tailCircle6  = distFCircle(gecko_uv, u_tail[6],  0.005*s / circleSizeDiv);
-    float tailCircle7  = distFCircle(gecko_uv, u_tail[7],  0.004 * s / circleSizeDiv);
-    float tailCircle8  = distFCircle(gecko_uv, u_tail[8],  0.0027 * s / circleSizeDiv);
-    float tailCircle9  = distFCircle(gecko_uv, u_tail[9],  0.002 * s / circleSizeDiv);
-    float tailCircle10 = distFCircle(gecko_uv, u_tail[10], 0.001 * s / circleSizeDiv);
-    float tailCircle11 = distFCircle(gecko_uv, u_tail[11], 0.0001 * s / circleSizeDiv);
-    float tailCircle12 = distFCircle(gecko_uv, u_tail[12], 0.0001 *s / circleSizeDiv);
+    float tailCircle0  = distFCircle(uv, u_tail[0],  0.002 / circleSizeDiv);
+    float tailCircle1  = distFCircle(uv, u_tail[1],  0.005 / circleSizeDiv);
+    float tailCircle2  = distFCircle(uv, u_tail[2],  0.004 / circleSizeDiv);
+    float tailCircle3  = distFCircle(uv, u_tail[3],  0.0042 / circleSizeDiv);
+    float tailCircle4  = distFCircle(uv, u_tail[4],  0.005 / circleSizeDiv);
+    float tailCircle5  = distFCircle(uv, u_tail[5],  0.005 / circleSizeDiv);
+    float tailCircle6  = distFCircle(uv, u_tail[6],  0.005 / circleSizeDiv);
+    float tailCircle7  = distFCircle(uv, u_tail[7],  0.004 / circleSizeDiv);
+    float tailCircle8  = distFCircle(uv, u_tail[8],  0.0027 / circleSizeDiv);
+    float tailCircle9  = distFCircle(uv, u_tail[9],  0.002 / circleSizeDiv);
+    float tailCircle10 = distFCircle(uv, u_tail[10], 0.001 / circleSizeDiv);
+    float tailCircle11 = distFCircle(uv, u_tail[11], 0.0001 / circleSizeDiv);
+    float tailCircle12 = distFCircle(uv, u_tail[12], 0.0001 / circleSizeDiv);
 
     float tailCircleMerge = smoothMin(
         smoothMin(tailCircle0, tailCircle1, 0.03),
@@ -616,14 +524,14 @@ for (int i = 0; i < 64; i++) {
 
     // ARMS /////////////////////////////////////////////////////////////////////////////////
 
-    float arm0Upper = lineSegmentSDF(gecko_uv, u_joints[2], u_elbows[0]);   
-    float arm0Lower = lineSegmentSDF(gecko_uv, u_elbows[0], u_steps[0]); 
-    float arm1Upper = lineSegmentSDF(gecko_uv, u_joints[2], u_elbows[1]);   
-    float arm1Lower = lineSegmentSDF(gecko_uv, u_elbows[1], u_steps[1]); 
-    float arm2Upper = lineSegmentSDF(gecko_uv, u_joints[13], u_elbows[2]);   
-    float arm2Lower = lineSegmentSDF(gecko_uv, u_elbows[2], u_steps[2]); 
-    float arm3Upper = lineSegmentSDF(gecko_uv, u_joints[13], u_elbows[3]);   
-    float arm3Lower = lineSegmentSDF(gecko_uv, u_elbows[3], u_steps[3]); 
+    float arm0Upper = lineSegmentSDF(uv, u_joints[2], u_elbows[0]);   
+    float arm0Lower = lineSegmentSDF(uv, u_elbows[0], u_steps[0]); 
+    float arm1Upper = lineSegmentSDF(uv, u_joints[2], u_elbows[1]);   
+    float arm1Lower = lineSegmentSDF(uv, u_elbows[1], u_steps[1]); 
+    float arm2Upper = lineSegmentSDF(uv, u_joints[13], u_elbows[2]);   
+    float arm2Lower = lineSegmentSDF(uv, u_elbows[2], u_steps[2]); 
+    float arm3Upper = lineSegmentSDF(uv, u_joints[13], u_elbows[3]);   
+    float arm3Lower = lineSegmentSDF(uv, u_elbows[3], u_steps[3]); 
 
 
     float arm0SDF = min(arm0Upper, arm0Lower) - armThickness;
@@ -637,10 +545,10 @@ for (int i = 0; i < 64; i++) {
     bodySDF = smoothMin(bodySDF, arm3SDF, shoulderBlend);
 
     // FRONT MUSCLES
-    float musclesSDF0 = distFCircle(gecko_uv, u_muscles[0], lowerMuscleRadius);
-    float musclesSDF1  = distFCircle(gecko_uv, u_muscles[1], upperMuscleRadius );
-    float musclesSDF2 = distFCircle(gecko_uv, u_muscles[2], lowerMuscleRadius);
-    float musclesSDF3  = distFCircle(gecko_uv, u_muscles[3], upperMuscleRadius );
+    float musclesSDF0 = distFCircle(uv, u_muscles[0], lowerMuscleRadius);
+    float musclesSDF1  = distFCircle(uv, u_muscles[1], upperMuscleRadius );
+    float musclesSDF2 = distFCircle(uv, u_muscles[2], lowerMuscleRadius);
+    float musclesSDF3  = distFCircle(uv, u_muscles[3], upperMuscleRadius );
 
     // not using these two
    // bodySDF = smoothMin(bodySDF, musclesSDF0 , muscleBlend );
@@ -650,10 +558,10 @@ for (int i = 0; i < 64; i++) {
     bodySDF = smoothMin(bodySDF, musclesSDF3 , muscleBlend ); 
 
     // BACK MUSCLES
-    float musclesSDF4 = distFCircle(gecko_uv, u_muscles[4], lowerMuscleRadius);
-    float musclesSDF5  = distFCircle(gecko_uv, u_muscles[5], upperMuscleRadius );
-    float musclesSDF6 = distFCircle(gecko_uv, u_muscles[6], lowerMuscleRadius);
-    float musclesSDF7  = distFCircle(gecko_uv, u_muscles[7], upperMuscleRadius );
+    float musclesSDF4 = distFCircle(uv, u_muscles[4], lowerMuscleRadius);
+    float musclesSDF5  = distFCircle(uv, u_muscles[5], upperMuscleRadius );
+    float musclesSDF6 = distFCircle(uv, u_muscles[6], lowerMuscleRadius);
+    float musclesSDF7  = distFCircle(uv, u_muscles[7], upperMuscleRadius );
 
     // not using these two
     // bodySDF = smoothMin(bodySDF, musclesSDF4 , muscleBlend );
@@ -666,10 +574,10 @@ for (int i = 0; i < 64; i++) {
 
     // STEPS ///////////////////////////////////////////////////////////////////////
 
-    float stepSDF0 = distFCircle(gecko_uv, u_steps[0], stepRadius);
-    float stepSDF1 = distFCircle(gecko_uv, u_steps[1], stepRadius);
-    float stepSDF2 = distFCircle(gecko_uv, u_steps[2], stepRadius);
-    float stepSDF3 = distFCircle(gecko_uv, u_steps[3], stepRadius);
+    float stepSDF0 = distFCircle(uv, u_steps[0], stepRadius);
+    float stepSDF1 = distFCircle(uv, u_steps[1], stepRadius);
+    float stepSDF2 = distFCircle(uv, u_steps[2], stepRadius);
+    float stepSDF3 = distFCircle(uv, u_steps[3], stepRadius);
 
     bodySDF = smoothMin(bodySDF, stepSDF0, stepBlend);
     bodySDF = smoothMin(bodySDF, stepSDF1, stepBlend);
@@ -678,29 +586,29 @@ for (int i = 0; i < 64; i++) {
 
     // FINGERS ////////////////////////////////////////////////////////////////////////////
 
-    float fingerLine0 = lineSegmentSDF(gecko_uv, u_fingers[0], u_steps[0]) - fingerThickness;
-    float fingerLine1 = lineSegmentSDF(gecko_uv, u_fingers[1], u_steps[0]) - fingerThickness;
-    float fingerLine2 = lineSegmentSDF(gecko_uv, u_fingers[2], u_steps[0]) - fingerThickness;
-    float fingerLine3 = lineSegmentSDF(gecko_uv, u_fingers[3], u_steps[0]) - fingerThickness;
-    float fingerLine4 = lineSegmentSDF(gecko_uv, u_fingers[4], u_steps[0]) - fingerThickness;
+    float fingerLine0 = lineSegmentSDF(uv, u_fingers[0], u_steps[0]) - fingerThickness;
+    float fingerLine1 = lineSegmentSDF(uv, u_fingers[1], u_steps[0]) - fingerThickness;
+    float fingerLine2 = lineSegmentSDF(uv, u_fingers[2], u_steps[0]) - fingerThickness;
+    float fingerLine3 = lineSegmentSDF(uv, u_fingers[3], u_steps[0]) - fingerThickness;
+    float fingerLine4 = lineSegmentSDF(uv, u_fingers[4], u_steps[0]) - fingerThickness;
 
-    float fingerLine5 = lineSegmentSDF(gecko_uv, u_fingers[5], u_steps[1]) - fingerThickness;
-    float fingerLine6 = lineSegmentSDF(gecko_uv, u_fingers[6], u_steps[1]) - fingerThickness;
-    float fingerLine7 = lineSegmentSDF(gecko_uv, u_fingers[7], u_steps[1]) - fingerThickness;
-    float fingerLine8 = lineSegmentSDF(gecko_uv, u_fingers[8], u_steps[1]) - fingerThickness;
-    float fingerLine9 = lineSegmentSDF(gecko_uv, u_fingers[9], u_steps[1]) - fingerThickness;
+    float fingerLine5 = lineSegmentSDF(uv, u_fingers[5], u_steps[1]) - fingerThickness;
+    float fingerLine6 = lineSegmentSDF(uv, u_fingers[6], u_steps[1]) - fingerThickness;
+    float fingerLine7 = lineSegmentSDF(uv, u_fingers[7], u_steps[1]) - fingerThickness;
+    float fingerLine8 = lineSegmentSDF(uv, u_fingers[8], u_steps[1]) - fingerThickness;
+    float fingerLine9 = lineSegmentSDF(uv, u_fingers[9], u_steps[1]) - fingerThickness;
 
-    float fingerLine10 = lineSegmentSDF(gecko_uv, u_fingers[10], u_steps[2]) - fingerThickness;
-    float fingerLine11 = lineSegmentSDF(gecko_uv, u_fingers[11], u_steps[2]) - fingerThickness;
-    float fingerLine12 = lineSegmentSDF(gecko_uv, u_fingers[12], u_steps[2]) - fingerThickness;
-    float fingerLine13 = lineSegmentSDF(gecko_uv, u_fingers[13], u_steps[2]) - fingerThickness;
-    float fingerLine14 = lineSegmentSDF(gecko_uv, u_fingers[14], u_steps[2]) - fingerThickness;
+    float fingerLine10 = lineSegmentSDF(uv, u_fingers[10], u_steps[2]) - fingerThickness;
+    float fingerLine11 = lineSegmentSDF(uv, u_fingers[11], u_steps[2]) - fingerThickness;
+    float fingerLine12 = lineSegmentSDF(uv, u_fingers[12], u_steps[2]) - fingerThickness;
+    float fingerLine13 = lineSegmentSDF(uv, u_fingers[13], u_steps[2]) - fingerThickness;
+    float fingerLine14 = lineSegmentSDF(uv, u_fingers[14], u_steps[2]) - fingerThickness;
 
-    float fingerLine15 = lineSegmentSDF(gecko_uv, u_fingers[15], u_steps[3]) - fingerThickness;
-    float fingerLine16 = lineSegmentSDF(gecko_uv, u_fingers[16], u_steps[3]) - fingerThickness;
-    float fingerLine17 = lineSegmentSDF(gecko_uv, u_fingers[17], u_steps[3]) - fingerThickness;
-    float fingerLine18 = lineSegmentSDF(gecko_uv, u_fingers[18], u_steps[3]) - fingerThickness;
-    float fingerLine19 = lineSegmentSDF(gecko_uv, u_fingers[19], u_steps[3]) - fingerThickness;
+    float fingerLine15 = lineSegmentSDF(uv, u_fingers[15], u_steps[3]) - fingerThickness;
+    float fingerLine16 = lineSegmentSDF(uv, u_fingers[16], u_steps[3]) - fingerThickness;
+    float fingerLine17 = lineSegmentSDF(uv, u_fingers[17], u_steps[3]) - fingerThickness;
+    float fingerLine18 = lineSegmentSDF(uv, u_fingers[18], u_steps[3]) - fingerThickness;
+    float fingerLine19 = lineSegmentSDF(uv, u_fingers[19], u_steps[3]) - fingerThickness;
 
     bodySDF = smoothMin(bodySDF, fingerLine0, fingerLineBlend );
     bodySDF = smoothMin(bodySDF, fingerLine1,fingerLineBlend );
@@ -728,29 +636,29 @@ for (int i = 0; i < 64; i++) {
 
 
       // F LEFT
-      float fingerSDF0 = distFCircle(gecko_uv, u_fingers[0], fingerRadius);
-      float fingerSDF1 = distFCircle(gecko_uv, u_fingers[1], fingerRadius);
-      float fingerSDF2 = distFCircle(gecko_uv, u_fingers[2], fingerRadius);
-      float fingerSDF3 = distFCircle(gecko_uv, u_fingers[3], fingerRadius);
-      float fingerSDF4 = distFCircle(gecko_uv, u_fingers[4], fingerRadius); 
+      float fingerSDF0 = distFCircle(uv, u_fingers[0], fingerRadius);
+      float fingerSDF1 = distFCircle(uv, u_fingers[1], fingerRadius);
+      float fingerSDF2 = distFCircle(uv, u_fingers[2], fingerRadius);
+      float fingerSDF3 = distFCircle(uv, u_fingers[3], fingerRadius);
+      float fingerSDF4 = distFCircle(uv, u_fingers[4], fingerRadius); 
       // F RIGHT
-      float fingerSDF5 = distFCircle(gecko_uv, u_fingers[5], fingerRadius);
-      float fingerSDF6 = distFCircle(gecko_uv, u_fingers[6], fingerRadius);
-      float fingerSDF7 = distFCircle(gecko_uv, u_fingers[7], fingerRadius);
-      float fingerSDF8 = distFCircle(gecko_uv, u_fingers[8], fingerRadius);
-      float fingerSDF9 = distFCircle(gecko_uv, u_fingers[9], fingerRadius); 
+      float fingerSDF5 = distFCircle(uv, u_fingers[5], fingerRadius);
+      float fingerSDF6 = distFCircle(uv, u_fingers[6], fingerRadius);
+      float fingerSDF7 = distFCircle(uv, u_fingers[7], fingerRadius);
+      float fingerSDF8 = distFCircle(uv, u_fingers[8], fingerRadius);
+      float fingerSDF9 = distFCircle(uv, u_fingers[9], fingerRadius); 
       // B LEFT
-      float fingerSDF10 = distFCircle(gecko_uv, u_fingers[10], fingerRadius);
-      float fingerSDF11 = distFCircle(gecko_uv, u_fingers[11], fingerRadius);
-      float fingerSDF12 = distFCircle(gecko_uv, u_fingers[12], fingerRadius);
-      float fingerSDF13 = distFCircle(gecko_uv, u_fingers[13], fingerRadius);
-      float fingerSDF14 = distFCircle(gecko_uv, u_fingers[14], fingerRadius);
+      float fingerSDF10 = distFCircle(uv, u_fingers[10], fingerRadius);
+      float fingerSDF11 = distFCircle(uv, u_fingers[11], fingerRadius);
+      float fingerSDF12 = distFCircle(uv, u_fingers[12], fingerRadius);
+      float fingerSDF13 = distFCircle(uv, u_fingers[13], fingerRadius);
+      float fingerSDF14 = distFCircle(uv, u_fingers[14], fingerRadius);
       // BACK r
-      float fingerSDF15 = distFCircle(gecko_uv, u_fingers[15], fingerRadius);
-      float fingerSDF16 = distFCircle(gecko_uv, u_fingers[16], fingerRadius);
-      float fingerSDF17 = distFCircle(gecko_uv, u_fingers[17], fingerRadius);
-      float fingerSDF18 = distFCircle(gecko_uv, u_fingers[18], fingerRadius);
-      float fingerSDF19 = distFCircle(gecko_uv, u_fingers[19], fingerRadius);
+      float fingerSDF15 = distFCircle(uv, u_fingers[15], fingerRadius);
+      float fingerSDF16 = distFCircle(uv, u_fingers[16], fingerRadius);
+      float fingerSDF17 = distFCircle(uv, u_fingers[17], fingerRadius);
+      float fingerSDF18 = distFCircle(uv, u_fingers[18], fingerRadius);
+      float fingerSDF19 = distFCircle(uv, u_fingers[19], fingerRadius);
 
       bodySDF = smoothMin(bodySDF, fingerSDF0, fingerBlend);
       bodySDF = smoothMin(bodySDF, fingerSDF1, fingerBlend);
@@ -832,7 +740,7 @@ for (int i = 0; i < 64; i++) {
 
 
   useEffect(() => {
-    console.log('moments data triggered new moments!')
+
     moments.current = new Moments(momentsData);
 
   }, [momentsData]);
@@ -931,30 +839,30 @@ for (int i = 0; i < 64; i++) {
         jointsRef.current,
         NUM_SPINE_JOINTS,
         aspect, 
-        gecko_scale
+        scale
       );
       packVec2Uniform_withRecenter(
         tail.joints,
         tailJointsRef.current,
         NUM_TAIL_JOINTS,
         aspect,
-        gecko_scale
+        scale
       );
       const allSteps = [...f_steps, ...b_steps];
-      packVec2Uniform_withRecenter(allSteps, stepsRef.current, 4, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(allSteps, stepsRef.current, 4, aspect, scale);
 
       const allElbows = [...f_elbows, ...b_elbows];
-      packVec2Uniform_withRecenter(allElbows, elbowsRef.current, 4, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(allElbows, elbowsRef.current, 4, aspect, scale);
 
       const allShoulders = [...f_shoulders, ...b_shoulders];
-      packVec2Uniform_withRecenter(allShoulders, shouldersRef.current, 4, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(allShoulders, shouldersRef.current, 4, aspect, scale);
 
       const allMuscles = [...f_muscles, ...b_muscles];
-      packVec2Uniform_withRecenter(allMuscles, legMusclesRef.current, 8, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(allMuscles, legMusclesRef.current, 8, aspect, scale);
 
       const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
 
-      packVec2Uniform_withRecenter(allFingers, fingersRef.current, 20, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(allFingers, fingersRef.current, 20, aspect, scale);
 
 
       packVec2Uniform_withRecenter_moments(moments.current.moments, momentsRef.current, moments.current.momentsLength, aspect, scale);
@@ -971,7 +879,6 @@ for (int i = 0; i < 64; i++) {
 
   const uniforms = {
     u_scale: scale,
-    u_gecko_scale: gecko_scale,
     u_time: time,
     u_resolution: [width, height],
     u_aspect: aspect,
@@ -981,22 +888,19 @@ for (int i = 0; i < 64; i++) {
     //u_soul: soul.current.soul, // [x, y] position
     //u_lead: leadPoint.current.lead,
 
-    u_lead: toShaderSpace(leadPoint.current.lead, aspect, scale),
-    u_soul: toShaderSpace(soul.current.soul, aspect, gecko_scale),
-    u_selected: toShaderSpace(moments.current.selected.coord, aspect, scale),
-    u_lastSelected: toShaderSpace(moments.current.lastSelected.coord, aspect, scale),
+u_lead: toShaderSpace(leadPoint.current.lead, aspect, scale),
+u_soul: toShaderSpace(soul.current.soul, aspect, scale),
+u_selected: toShaderSpace(moments.current.selected.coord, aspect, scale),
+u_lastSelected: toShaderSpace(moments.current.lastSelected.coord, aspect, scale),
 
-    u_snout: toShaderModel(snoutRef.current, gecko_scale),
-    u_head: toShaderModel(headRef.current, gecko_scale),
-    u_hint: toShaderSpace(hintRef.current, aspect, gecko_scale),
-    u_momentsLength: moments.current.momentsLength,
-
-
+    
 
     u_joints: Array.from(jointsRef.current),
     u_tail: Array.from(tailJointsRef.current),
 
-
+    u_snout: snoutRef.current,
+    u_head: headRef.current,
+    u_hint: hintRef.current,
  
     u_steps: Array.from(stepsRef.current),
     u_elbows: Array.from(elbowsRef.current),
@@ -1006,16 +910,13 @@ for (int i = 0; i < 64; i++) {
 
 
     u_moments: Array.from(momentsRef.current),
-  
+    u_momentsLength: moments.current.momentsLength,
     //u_selected: moments.current.selected.coord,
     //u_lastSelected: moments.current.lastSelected.coord
   };
 
   return (
-    <>
-
     <GestureDetector  gesture={gesture}>
-
         <Canvas ref={ref}
           style={[StyleSheet.absoluteFill, { 
             alignItems: 'center',
@@ -1034,20 +935,6 @@ for (int i = 0; i < 64; i++) {
         </Canvas>
       {/* </View> */}
     </GestureDetector>
-    <View style={{position: 'absolute', bottom: 50, width: '100%'}}>
-
-
-           <EscortBarFidgetScreen
-           onBackPress={handleUpdateMomentsState}
-           onCenterPress={handleRecenterMoments}
-          style={{ paddingHorizontal: 10 }}
-          primaryColor={lightDarkTheme.primaryText}
-          primaryBackground={lightDarkTheme.primaryBackground}
-          onPress={handleRescatterMoments}
-          label={"Rescatter"}
-        />
-            </View>
-    </>
   );
 };
 
