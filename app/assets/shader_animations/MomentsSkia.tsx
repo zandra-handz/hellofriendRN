@@ -5,17 +5,26 @@ import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
 import { BackHandler } from "react-native";
-import Animated, { useAnimatedStyle, useDerivedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
-
+import { GECKO_MOMENTS_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
 import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
 
- import { useSafeAreaInsets } from "react-native-safe-area-context";
- import { runOnUI } from 'react-native-reanimated';
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { runOnUI } from "react-native-reanimated";
+import {
+  hexToVec3,
+  toShaderSpace,
+  toShaderModel,
+  packVec2Uniform_withRecenter,
+  packVec2Uniform_withRecenter_moments,
+} from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
   usePathValue,
@@ -33,7 +42,6 @@ import {
 import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { useFrameCallback } from "react-native-reanimated";
 
- 
 type Props = {
   color1: string;
   color2: string;
@@ -44,123 +52,15 @@ type Props = {
   reset?: number | null;
 };
 
-// steps to painting a Skia canvas!
-//
-
-// function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale) {
- 
-//   for (let i = 0; i < num; i++) {
-//     if (points[i]) {
-//       const recenteredX = points[i][0] - 0.5;
-//       const recenteredY = points[i][1] - 0.5;
-
-//       flatArray[i * 2 + 0] = recenteredX * aspect; // exactly like shader
-//       flatArray[i * 2 + 1] = recenteredY ;
-//     } else {
-//       flatArray[i * 2 + 0] = 0.0;
-//       flatArray[i * 2 + 1] = 0.0;
-//     }
-//   }
-// }
-
-function toShaderSpace([x, y], aspect, scale) {
-  let sx = x - 0.5;
-  let sy = y - 0.5;
-
-  sx *= aspect;
-  sx /= scale;
-  sy /= scale;
-
-  return [sx, sy];
-}
-
-function toShaderModel([x, y], scale) {
-  let sx = x - 0.5;
-  let sy = y - 0.5;
-
-  sx /= scale;
-  sy /= scale;
-
-  return [sx, sy];
-}
-
-
-function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale = 1) {
-  for (let i = 0; i < num; i++) {
-    if (points[i]) {
-      const [sx, sy] = toShaderModel(points[i], scale);
-
-      flatArray[i * 2 + 0] = sx;
-      flatArray[i * 2 + 1] = sy;
-    } else {
-      flatArray[i * 2 + 0] = 0.0;
-      flatArray[i * 2 + 1] = 0.0;
-    }
-  }
-}
-
- 
-
-// function packVec2Uniform_withRecenter_moments(points, flatArray, num, aspect = 1, scale = 1) {
-//   for (let i = 0; i < num; i++) {
-//     if (points[i]) {
-//       const recenteredX = points[i].coord[0] - 0.5;
-//       const recenteredY = points[i].coord[1] - 0.5;
-
-//       flatArray[i * 2 + 0] = recenteredX * aspect ; // x multiplied by aspect and optional scale
-//       flatArray[i * 2 + 1] = recenteredY  ;          // y multiplied by optional scale only
-//     } else {
-//       flatArray[i * 2 + 0] = 0.0;
-//       flatArray[i * 2 + 1] = 0.0;
-//     }
-//   }
-// }
-
-
-
-function packVec2Uniform_withRecenter_moments(
-  points,
-  flatArray,
-  num,
-  aspect = 1,
-  scale = 1
-) {
-  for (let i = 0; i < num; i++) {
-    if (points[i]) {
-      const [sx, sy] = toShaderSpace(points[i].coord, aspect, scale);
-
-      flatArray[i * 2 + 0] = sx;
-      flatArray[i * 2 + 1] = sy;
-    } else {
-      flatArray[i * 2 + 0] = 0.0;
-      flatArray[i * 2 + 1] = 0.0;
-    }
-  }
-}
-
-
- 
-
-const hexToVec3 = (hex) => {
-  // Remove '#' if present
-  const cleanHex = hex.replace("#", "");
-  // Parse R, G, B as integers
-  const r = parseInt(cleanHex.substring(0, 2), 16) / 255;
-  const g = parseInt(cleanHex.substring(2, 4), 16) / 255;
-  const b = parseInt(cleanHex.substring(4, 6), 16) / 255;
-  return `${r.toFixed(4)}, ${g.toFixed(4)}, ${b.toFixed(4)}`;
-};
-
-
 // LIMIT OF 64 MOMENTS RIGHT NOW
 // TO ALLOW FOR DYNAMIC UPDATING WOULD MEAN TO RESET SHADER EVERY SINGLE TIME WHICH CAN BE EXPENSIVE
 // would do this in shader instead of current setup -->  uniform vec2 u_moments[${moments.length}];
 const MomentsSkia = ({
- handleEditMoment,
- handleUpdateMomentCoords,
+  handleEditMoment,
+  handleUpdateMomentCoords,
   color1,
   color2,
-  momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y 
+  momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y
   startingCoord,
   restPoint,
   scale = 1,
@@ -168,646 +68,173 @@ const MomentsSkia = ({
   lightDarkTheme,
   handleRescatterMoments,
   handleRecenterMoments,
-  reset=0,
+  reset = 0,
 }: Props) => {
-// console.log(momentsData);
+  // console.log(momentsData);
 
-
-const { width, height } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize(); // size = { width, height }
- 
- 
-const insets = useSafeAreaInsets();
-useFocusEffect(
-  useCallback(() => {
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        // block system back
-        return true;
-      }
-    );
 
-    return () => {
-      subscription.remove();
-    };
-  }, [])
-);
+  const insets = useSafeAreaInsets();
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          // block system back
+          return true;
+        }
+      );
 
+      return () => {
+        subscription.remove();
+      };
+    }, [])
+  );
 
+  const [momentsState, setMomentsState] = useState(momentsData);
 
-const [ momentsState, setMomentsState] = useState(momentsData);
+  const handleUpdateMomentsState = () => {
+    const newMoments = moments.current.moments; // grab current ref
+    // console.log('current', newMoments);
 
-const handleUpdateMomentsState = () => {
-  const newMoments = moments.current.moments; // grab current ref
-  // console.log('current', newMoments);
+    setMomentsState(newMoments); // update state for rendering if needed
 
-  setMomentsState(newMoments); // update state for rendering if needed
+    handleUpdateCoords(momentsData, newMoments);
+  };
 
-  // call update directly with the fresh value
+  const handleUpdateCoords = (oldMoments, newMoments) => {
+    // console.log('Updating all moment coords!');
 
-  
-  handleUpdateCoords(momentsData, newMoments);
-};
-
-
-// useEffect(() => {
-//   console.log(`moments state updated `, momentsState)
-
-// }, [momentsState]);
-
-
+    // Reformat all moments for backend in one go
+    const formattedData = newMoments.map((moment) => ({
+      id: moment.id,
+      screen_x: moment.coord[0],
+      screen_y: moment.coord[1],
+    }));
+    handleUpdateMomentCoords(formattedData);
+  };
 
 
-// const handleUpdateMomentCoords = (oldMoments, newMoments) => {
-//   console.log('updating moment coords!')
-//   console.log(oldMoments)
-//   console.log(newMoments)
-//   const oldMomentsMap = oldMoments.reduce((acc, moment) => {
-//     acc[moment.id] = moment;
-//     return acc;
-//   }, {});
-
-//   newMoments.forEach((newMoment) => {
-//     const oldMoment = oldMomentsMap[newMoment.id];
-
-//     // only update if coordinates differ by more than a tiny epsilon
-//     const epsilon = 1e-5;
-//     const hasChanged =
-//       !oldMoment ||
-//       Math.abs(oldMoment.coord[0] - newMoment.coord[0]) > epsilon ||
-//       Math.abs(oldMoment.coord[1] - newMoment.coord[1]) > epsilon;
-
-//     if (hasChanged) {
-//       console.log(`Updating pos for moment ${newMoment.id} on backend!`);
-
-//       const newCoordData = {
-//         screen_x: newMoment.coord[0],
-//         screen_y: newMoment.coord[1],
-//       };
-
-//       handleEditMoment(newMoment.id, newCoordData);
-//     } else {
-//       'no change'
-//     }
-//   });
-// };
-
-
-const handleUpdateCoords = (oldMoments, newMoments) => {
-  // console.log('Updating all moment coords!');
-
-  // Reformat all moments for backend in one go
-  const formattedData = newMoments.map(moment => ({
-    id: moment.id,
-    screen_x: moment.coord[0],
-    screen_y: moment.coord[1],
-  }));
-
-  // console.log('Formatted data for backend:', formattedData);
-
-  // Send the batch update once
-  handleUpdateMomentCoords(formattedData);
-};
-
-
-
-// helper function to grab current ref
-const getCurrentMoments = () => {
-  console.log('getting current')
-  return moments.current.moments; // always grab the latest live ref
-};
-
-useFocusEffect(
-  useCallback(() => {
-    return () => {
-      // This runs once when the screen loses focus
-   
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // This runs once when the screen loses focus
         // momentsData is your stale baseline
         // moments.current.moments must be a JS object, not a shared value
         // handleUpdateCoords(momentsData, momentsState);
-    
-    };
-  }, [momentsState])
+      };
+    }, [momentsState])
+  );
+  const userPointSV = useSharedValue(restPoint);
+
+  const momentsLength = momentsData.length;
+
+  const isDragging = useSharedValue(false); // tracks if screen is being touched
+
+  const gesture = Gesture.Pan()
+    .onTouchesDown((e) => {
+      // Finger just touched: mark dragging and update userPoint immediately
+      isDragging.value = true;
+      const touch = e.changedTouches[0];
+
+      userPointSV.value = [touch.x / size.width, touch.y / size.height];
+    })
+    .onUpdate((e) => {
+      // Normal drag update
+      userPointSV.value = [e.x / size.width, e.y / size.height];
+    })
+    .onEnd(() => {
+      isDragging.value = false; // finger lifted
+    })
+    .onFinalize(() => {
+      isDragging.value = false; // safety: ensure false if gesture cancelled
+    });
+
+  const onLongPress = () => {
+    console.log("onLongPress works!");
+    console.log(moments.current.selected);
+    console.log(moments.current.lastSelected);
+  };
+
+  const onDoublePress = () => {
+    console.log("onDoublePress works!");
+  };
+
+  const panGesture = Gesture.Pan()
+    .onTouchesDown((e) => {
+      isDragging.value = true;
+      const touch = e.changedTouches[0];
+
+      userPointSV.value = [touch.x / size.width, touch.y / size.height];
+    })
+    .onUpdate((e) => {
+       userPointSV.value = [e.x / size.width, e.y / size.height];
+    })
+    .onEnd(() => {
+      isDragging.value = false;
+    })
+    .onFinalize(() => {
+      isDragging.value = false;
+    });
+
+const doubleTapGesture = Gesture.Tap()
+  .numberOfTaps(2)
+  .onEnd(() => runOnJS(onDoublePress)());
+
+const composedGesture = Gesture.Simultaneous(
+  panGesture,
+  doubleTapGesture
 );
-  const userPointSV = useSharedValue(restPoint); 
+
+  // const doubleTapGesture = Gesture.Tap()
+  //   .numberOfTaps(2)
+  //   .onEnd(() => {
+  //     runOnJS(onDoublePress)();
+  //   });
+
+  const longPressGesture = Gesture.LongPress()
+    .minDuration(350)
+    .onStart(() => {
+      runOnJS(onLongPress)();
+    });
+
+  //   const composedGesture = Gesture.Simultaneous(
+  //   panGesture,
+  //   Gesture.Exclusive(
+  //     doubleTapGesture,
+  //     // longPressGesture
+  //   )
+  // );
+
  
-
-  const momentsLength = momentsData.length; 
-
-const isDragging = useSharedValue(false); // tracks if screen is being touched
-  
-
-const gesture = Gesture.Pan()
-  .onTouchesDown((e) => {
-    // Finger just touched: mark dragging and update userPoint immediately
-    isDragging.value = true;
-    const touch = e.changedTouches[0];
- 
-    userPointSV.value = [touch.x / size.width, touch.y / size.height];
-
-  })
-  .onUpdate((e) => {
-    // Normal drag update
-    userPointSV.value = [e.x / size.width, e.y / size.height];
-    
-   
-    
-  })
-  .onEnd(() => {
-    isDragging.value = false; // finger lifted
-  })
-  .onFinalize(() => {
-    isDragging.value = false; // safety: ensure false if gesture cancelled
-  });
-
-
-const onLongPress = () => {
-    console.log('onLongPress works!')
-    console.log(moments.current.selected)
-        console.log(moments.current.lastSelected)
-    
-
-};
-
-const onDoublePress = () => {
-    console.log('onDoublePress works!')
-
-    
-    
-
-};
-
-// const panGesture = Gesture.Pan()
-//   .onTouchesDown((e) => {
-//     isDragging.value = true;
-//     const t = e.changedTouches[0];
-//     userPointSV.value = [t.x / width, t.y / height];
-//   })
-//   .onUpdate((e) => {
-//     userPointSV.value = [e.x / width, e.y / height];
-//   })
-//   .onEnd(() => {
-//     isDragging.value = false;
-//   })
-//   .onFinalize(() => {
-//     isDragging.value = false;
-//   });
-
-// const doubleTapGesture = Gesture.Tap()
-//   .numberOfTaps(2)
-//   .onEnd(() => {
-//     runOnJS(onDoublePress)();
-//   });
-
-// const longPressGesture = Gesture.LongPress()
-//   .minDuration(350)
-//   .onStart(() => {
-//     runOnJS(onLongPress)();
-//   });
-
-
-//   const composedGesture = Gesture.Simultaneous(
-//   panGesture,
-//   Gesture.Exclusive(
-//     doubleTapGesture,
-//     // longPressGesture
-//   )
-// );
 
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
-  const color2Converted = hexToVec3(color2); 
+  const color2Converted = hexToVec3(color2);
 
-  const soul = useRef(new Soul(restPoint, .02));
+  const soul = useRef(new Soul(restPoint, 0.02));
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
-  const moments = useRef(new Moments(momentsData, [.5,.5], .05));
+  const moments = useRef(new Moments(momentsData, [0.5, 0.5], 0.05));
 
+  const [aspect, setAspect] = useState<number | null>(null);
 
-//  const aspect = size.width / size.height;
-
-
- const [aspect, setAspect] = useState<number | null>(null);
-
-useEffect(() => {
-  
-  setAspect(size.width / size.height);
-}, [size]);
-
-
- 
+  useEffect(() => {
+    setAspect(size.width / size.height);
+  }, [size]);
 
   const source = Skia.RuntimeEffect.Make(`
     vec3 startColor = vec3(${color1Converted});
     vec3 endColor = vec3(${color2Converted});
 
- 
-    uniform vec2 u_moments[64]; // HARD CODED MAX
-    uniform int u_momentsLength;
-    uniform vec2 u_selected;
-    uniform vec2 u_lastSelected;
-
-
-    uniform float u_scale;
-    uniform float u_gecko_scale;
-    uniform float u_time;
-    uniform vec2 u_resolution;
-    uniform float u_aspect;
-    uniform vec2 u_soul;
-    uniform vec2 u_lead;
-    uniform vec2 u_joints[15];
-    uniform vec2 u_head;
-    uniform vec2 u_snout;
-    uniform vec2 u_hint;
-    uniform vec2 u_tail[13];
- 
-    uniform vec2 u_steps[4];
-    uniform vec2 u_elbows[4];
-    uniform vec2 u_shoulders[4];
-    uniform vec2 u_muscles[8];
-    uniform vec2 u_fingers[20];
-
-  
-    float TWO_PI = 6.28318530718;
-    
-    float distFCircle(vec2 uv, vec2 center, float radius) {
-      return length(uv - center) - radius;
-    }
-
- 
-float smoothMin(float a, float b, float k) {
-  //clamp --> x, minVal, maxVal
-    float h = clamp(0.5 + 0.5*(b - a)/k, 0.0, 1.0);
-    return mix(b, a, h) - k*h*(1.0 - h);
-}
-
-float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
-    vec2 pa = p - a;
-    vec2 ba = b - a;
-    float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
-    return length(pa - ba*h);
-}
-
-
-half4 main(vec2 fragCoord) {
-
-   
-      vec2 uv = fragCoord / u_resolution; 
-      
-      uv -= vec2(0.5); 
-      uv.x *= u_aspect;
-    //uv /= u_scale; // scale everything
-    vec2 moments_uv = uv /= u_scale;
-
-    vec2 gecko_uv =uv /= u_gecko_scale;
-
-    float s = 1.0 / u_gecko_scale;
-  
-    vec3 color = vec3(0.0);
-    float alpha = 0.0;
-
-
-vec2 soulUV        = u_soul; 
-vec2 leadUV        = u_lead; 
-vec2 hintUV        = u_hint; 
-vec2 snoutUV       = u_snout; 
-vec2 headUV        = u_head; 
-
-vec2 selectedUV     = u_selected; 
-vec2 lastSelectedUV = u_lastSelected; 
- 
-    float leadMask = step(distance(uv, leadUV), 0.04);
-    vec3 lead_dot = vec3(1.0, 0.0, 0.0) * leadMask;
- 
-  
- 
-
- 
-
- 
-vec3 moments = vec3(0.0); // start with zero
-
-for (int i = 0; i < 64; i++) {
-    if (i >= u_momentsLength) continue; // skip extra moments
-    float momentsMask = step(distance(moments_uv, u_moments[i]), 0.008);
-    moments += startColor * momentsMask; // accumulate
-}
-
-
-    vec3 selected = vec3(0.);
-    float selectedMask = step(distance(moments_uv, selectedUV), .03);
-    selected += startColor * selectedMask;
-
-
-    
-    vec3 lastSelected = vec3(0.);
-    float lastSelectedMask = step(distance(moments_uv, lastSelectedUV), .02);
-    lastSelected += startColor * lastSelectedMask;
-
-
-
-
- 
-    float circleSizeDiv = .8; // adjust if needed
-
-
-
-    float hintMask = step(distance(gecko_uv, hintUV), .008 * s);
-    vec3 hintDot = startColor * hintMask;
-  
-
-
-    float armThickness = 0.005 * s; 
-    float backArmThickness = .007 * s;
-    float fingerThickness = 0.0025 * s; 
-    
-    // in tail
-    float blendAmt = 0.054 * s;
-
-    float spineBlend = .054 * s;
-    float spineTailBlend = 0.0003 * s;
-    float shoulderBlend = 0.01 * s;
-    float stepBlend = 0.003 * s;
-    float fingerBlend = 0.01 * s;
-    float fingerLineBlend = .0025 * s;   
-    float muscleBlend = 0.024 * s;   
-
-    float fingerRadius = 0.0015 * s;  
-    float stepRadius = .007 * s; 
-    float lowerMuscleRadius = .001 * s;
-    float upperMuscleRadius = 0.005 * s; // or whatever radius you want
-    float backMuscleBlend = .03 * s; // ultimate controller of how much of back upper leg muscle to add
-    float backUpperMuscleRadius = .86 * s;
-  
-
-
-    float circle0 = distFCircle(gecko_uv, snoutUV, 0.003 * s/ circleSizeDiv);
-    float circle1 = distFCircle(gecko_uv, headUV, 0.019 * s / circleSizeDiv);
-    float circle1b = distFCircle(gecko_uv, u_joints[1], 0.0 / circleSizeDiv);
-    float circle2 = distFCircle(gecko_uv, u_joints[2], 0.001 * s / circleSizeDiv);
-    float circle3 = distFCircle(gecko_uv, u_joints[3], 0.004 * s / circleSizeDiv);
-    float circle4 = distFCircle(gecko_uv, u_joints[4], 0.004 * s/ circleSizeDiv);
-    float circle5 = distFCircle(gecko_uv, u_joints[5], 0.004 * s/ circleSizeDiv);
-    float circle6 = distFCircle(gecko_uv, u_joints[6], 0.004 * s / circleSizeDiv);
-    float circle7 = distFCircle(gecko_uv, u_joints[7], 0.003 *s/ circleSizeDiv);
-    float circle8 = distFCircle(gecko_uv, u_joints[8], 0.003* s / circleSizeDiv);
-    float circle9 = distFCircle(gecko_uv, u_joints[9], 0.003 * s/ circleSizeDiv);
-    float circle10 = distFCircle(gecko_uv, u_joints[10], 0.003  * s/ circleSizeDiv);
-    float circle11 = distFCircle(gecko_uv, u_joints[11], 0.003 * s / circleSizeDiv);
-    float circle12 = distFCircle(gecko_uv, u_joints[12], 0.002 * s/ circleSizeDiv);
-    float circle13 = distFCircle(gecko_uv, u_joints[13], 0.002 *s/ circleSizeDiv);
-    float circle14 = distFCircle(gecko_uv, u_joints[14], 0.0004*s / circleSizeDiv);
-
-    float circleMerge = smoothMin(
-        smoothMin(circle0, circle1, 0.03),
-        smoothMin(circle1b, circle2, 0.05),
-        0.005
-    );
-
-    circleMerge = smoothMin(circleMerge, circle3, spineBlend);
-    circleMerge = smoothMin(circleMerge, circle4, spineBlend);
-    circleMerge = smoothMin(circleMerge, circle5, spineBlend);
-    circleMerge = smoothMin(circleMerge, circle6, spineBlend);
-    circleMerge = smoothMin(circleMerge, circle7, spineBlend);
-    circleMerge = smoothMin(circleMerge, circle8, spineBlend);
-    circleMerge = smoothMin(circleMerge, circle9, spineBlend);
-   // circleMerge = smoothMin(circleMerge, circle10, spineBlend);
-    // circleMerge = smoothMin(circleMerge, circle11, spineBlend);
-    //circleMerge = smoothMin(circleMerge, circle12, spineBlend);
-   circleMerge = smoothMin(circleMerge, circle13, spineBlend);
-   // circleMerge = smoothMin(circleMerge, circle14, spineBlend);
-
-
-     
-    float tailCircle0  = distFCircle(gecko_uv, u_tail[0],  0.002* s / circleSizeDiv);
-    float tailCircle1  = distFCircle(gecko_uv, u_tail[1],  0.005*s / circleSizeDiv);
-    float tailCircle2  = distFCircle(gecko_uv, u_tail[2],  0.004 * s/ circleSizeDiv);
-    float tailCircle3  = distFCircle(gecko_uv, u_tail[3],  0.0042 * s/ circleSizeDiv);
-    float tailCircle4  = distFCircle(gecko_uv, u_tail[4],  0.005 * s / circleSizeDiv);
-    float tailCircle5  = distFCircle(gecko_uv, u_tail[5],  0.005 * s / circleSizeDiv);
-    float tailCircle6  = distFCircle(gecko_uv, u_tail[6],  0.005*s / circleSizeDiv);
-    float tailCircle7  = distFCircle(gecko_uv, u_tail[7],  0.004 * s / circleSizeDiv);
-    float tailCircle8  = distFCircle(gecko_uv, u_tail[8],  0.0027 * s / circleSizeDiv);
-    float tailCircle9  = distFCircle(gecko_uv, u_tail[9],  0.002 * s / circleSizeDiv);
-    float tailCircle10 = distFCircle(gecko_uv, u_tail[10], 0.001 * s / circleSizeDiv);
-    float tailCircle11 = distFCircle(gecko_uv, u_tail[11], 0.0001 * s / circleSizeDiv);
-    float tailCircle12 = distFCircle(gecko_uv, u_tail[12], 0.0001 *s / circleSizeDiv);
-
-    float tailCircleMerge = smoothMin(
-        smoothMin(tailCircle0, tailCircle1, 0.03),
-        smoothMin(tailCircle2, tailCircle3, 0.05),
-        0.005
-    );
-
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle4, blendAmt +.04);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle5, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle6, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle7, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle8, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle9, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle10, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle11, blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle12, blendAmt);
-
-
-    float bodySDF = smoothMin(circleMerge, tailCircleMerge, spineTailBlend);
-
-
-    // ARMS /////////////////////////////////////////////////////////////////////////////////
-
-    float arm0Upper = lineSegmentSDF(gecko_uv, u_joints[2], u_elbows[0]);   
-    float arm0Lower = lineSegmentSDF(gecko_uv, u_elbows[0], u_steps[0]); 
-    float arm1Upper = lineSegmentSDF(gecko_uv, u_joints[2], u_elbows[1]);   
-    float arm1Lower = lineSegmentSDF(gecko_uv, u_elbows[1], u_steps[1]); 
-    float arm2Upper = lineSegmentSDF(gecko_uv, u_joints[13], u_elbows[2]);   
-    float arm2Lower = lineSegmentSDF(gecko_uv, u_elbows[2], u_steps[2]); 
-    float arm3Upper = lineSegmentSDF(gecko_uv, u_joints[13], u_elbows[3]);   
-    float arm3Lower = lineSegmentSDF(gecko_uv, u_elbows[3], u_steps[3]); 
-
-
-    float arm0SDF = min(arm0Upper, arm0Lower) - armThickness;
-    float arm1SDF = min(arm1Upper, arm1Lower) - armThickness;
-    float arm2SDF = min(arm2Upper, arm2Lower) - backArmThickness;
-    float arm3SDF = min(arm3Upper, arm3Lower) - backArmThickness;
-
-    bodySDF = smoothMin(bodySDF, arm0SDF, shoulderBlend);
-    bodySDF = smoothMin(bodySDF, arm1SDF, shoulderBlend);
-    bodySDF = smoothMin(bodySDF, arm2SDF, shoulderBlend);
-    bodySDF = smoothMin(bodySDF, arm3SDF, shoulderBlend);
-
-    // FRONT MUSCLES
-    float musclesSDF0 = distFCircle(gecko_uv, u_muscles[0], lowerMuscleRadius);
-    float musclesSDF1  = distFCircle(gecko_uv, u_muscles[1], upperMuscleRadius );
-    float musclesSDF2 = distFCircle(gecko_uv, u_muscles[2], lowerMuscleRadius);
-    float musclesSDF3  = distFCircle(gecko_uv, u_muscles[3], upperMuscleRadius );
-
-    // not using these two
-   // bodySDF = smoothMin(bodySDF, musclesSDF0 , muscleBlend );
-    // bodySDF = smoothMin(bodySDF, musclesSDF2 , muscleBlend );
-
-    bodySDF = smoothMin(bodySDF, musclesSDF1 , muscleBlend ); 
-    bodySDF = smoothMin(bodySDF, musclesSDF3 , muscleBlend ); 
-
-    // BACK MUSCLES
-    float musclesSDF4 = distFCircle(gecko_uv, u_muscles[4], lowerMuscleRadius);
-    float musclesSDF5  = distFCircle(gecko_uv, u_muscles[5], upperMuscleRadius );
-    float musclesSDF6 = distFCircle(gecko_uv, u_muscles[6], lowerMuscleRadius);
-    float musclesSDF7  = distFCircle(gecko_uv, u_muscles[7], upperMuscleRadius );
-
-    // not using these two
-    // bodySDF = smoothMin(bodySDF, musclesSDF4 , muscleBlend );
-    // bodySDF = smoothMin(bodySDF, musclesSDF6 , muscleBlend );
-
-    bodySDF = smoothMin(bodySDF, musclesSDF5 , backMuscleBlend);
-    bodySDF = smoothMin(bodySDF, musclesSDF7 , backMuscleBlend); 
-
-
-
-    // STEPS ///////////////////////////////////////////////////////////////////////
-
-    float stepSDF0 = distFCircle(gecko_uv, u_steps[0], stepRadius);
-    float stepSDF1 = distFCircle(gecko_uv, u_steps[1], stepRadius);
-    float stepSDF2 = distFCircle(gecko_uv, u_steps[2], stepRadius);
-    float stepSDF3 = distFCircle(gecko_uv, u_steps[3], stepRadius);
-
-    bodySDF = smoothMin(bodySDF, stepSDF0, stepBlend);
-    bodySDF = smoothMin(bodySDF, stepSDF1, stepBlend);
-    bodySDF = smoothMin(bodySDF, stepSDF2, stepBlend);
-    bodySDF = smoothMin(bodySDF, stepSDF3, stepBlend);
-
-    // FINGERS ////////////////////////////////////////////////////////////////////////////
-
-    float fingerLine0 = lineSegmentSDF(gecko_uv, u_fingers[0], u_steps[0]) - fingerThickness;
-    float fingerLine1 = lineSegmentSDF(gecko_uv, u_fingers[1], u_steps[0]) - fingerThickness;
-    float fingerLine2 = lineSegmentSDF(gecko_uv, u_fingers[2], u_steps[0]) - fingerThickness;
-    float fingerLine3 = lineSegmentSDF(gecko_uv, u_fingers[3], u_steps[0]) - fingerThickness;
-    float fingerLine4 = lineSegmentSDF(gecko_uv, u_fingers[4], u_steps[0]) - fingerThickness;
-
-    float fingerLine5 = lineSegmentSDF(gecko_uv, u_fingers[5], u_steps[1]) - fingerThickness;
-    float fingerLine6 = lineSegmentSDF(gecko_uv, u_fingers[6], u_steps[1]) - fingerThickness;
-    float fingerLine7 = lineSegmentSDF(gecko_uv, u_fingers[7], u_steps[1]) - fingerThickness;
-    float fingerLine8 = lineSegmentSDF(gecko_uv, u_fingers[8], u_steps[1]) - fingerThickness;
-    float fingerLine9 = lineSegmentSDF(gecko_uv, u_fingers[9], u_steps[1]) - fingerThickness;
-
-    float fingerLine10 = lineSegmentSDF(gecko_uv, u_fingers[10], u_steps[2]) - fingerThickness;
-    float fingerLine11 = lineSegmentSDF(gecko_uv, u_fingers[11], u_steps[2]) - fingerThickness;
-    float fingerLine12 = lineSegmentSDF(gecko_uv, u_fingers[12], u_steps[2]) - fingerThickness;
-    float fingerLine13 = lineSegmentSDF(gecko_uv, u_fingers[13], u_steps[2]) - fingerThickness;
-    float fingerLine14 = lineSegmentSDF(gecko_uv, u_fingers[14], u_steps[2]) - fingerThickness;
-
-    float fingerLine15 = lineSegmentSDF(gecko_uv, u_fingers[15], u_steps[3]) - fingerThickness;
-    float fingerLine16 = lineSegmentSDF(gecko_uv, u_fingers[16], u_steps[3]) - fingerThickness;
-    float fingerLine17 = lineSegmentSDF(gecko_uv, u_fingers[17], u_steps[3]) - fingerThickness;
-    float fingerLine18 = lineSegmentSDF(gecko_uv, u_fingers[18], u_steps[3]) - fingerThickness;
-    float fingerLine19 = lineSegmentSDF(gecko_uv, u_fingers[19], u_steps[3]) - fingerThickness;
-
-    bodySDF = smoothMin(bodySDF, fingerLine0, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine1,fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine2, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine3, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine4, fingerLineBlend);
-    
-    bodySDF = smoothMin(bodySDF, fingerLine5, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine6, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine7, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine8, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine9, fingerLineBlend);
-    
-    bodySDF = smoothMin(bodySDF, fingerLine10, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine11, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine12, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine13, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine14, fingerLineBlend);
-    
-    bodySDF = smoothMin(bodySDF, fingerLine15, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine16, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine17, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine18, fingerLineBlend );
-    bodySDF = smoothMin(bodySDF, fingerLine19, fingerLineBlend);
-
-
-      // F LEFT
-      float fingerSDF0 = distFCircle(gecko_uv, u_fingers[0], fingerRadius);
-      float fingerSDF1 = distFCircle(gecko_uv, u_fingers[1], fingerRadius);
-      float fingerSDF2 = distFCircle(gecko_uv, u_fingers[2], fingerRadius);
-      float fingerSDF3 = distFCircle(gecko_uv, u_fingers[3], fingerRadius);
-      float fingerSDF4 = distFCircle(gecko_uv, u_fingers[4], fingerRadius); 
-      // F RIGHT
-      float fingerSDF5 = distFCircle(gecko_uv, u_fingers[5], fingerRadius);
-      float fingerSDF6 = distFCircle(gecko_uv, u_fingers[6], fingerRadius);
-      float fingerSDF7 = distFCircle(gecko_uv, u_fingers[7], fingerRadius);
-      float fingerSDF8 = distFCircle(gecko_uv, u_fingers[8], fingerRadius);
-      float fingerSDF9 = distFCircle(gecko_uv, u_fingers[9], fingerRadius); 
-      // B LEFT
-      float fingerSDF10 = distFCircle(gecko_uv, u_fingers[10], fingerRadius);
-      float fingerSDF11 = distFCircle(gecko_uv, u_fingers[11], fingerRadius);
-      float fingerSDF12 = distFCircle(gecko_uv, u_fingers[12], fingerRadius);
-      float fingerSDF13 = distFCircle(gecko_uv, u_fingers[13], fingerRadius);
-      float fingerSDF14 = distFCircle(gecko_uv, u_fingers[14], fingerRadius);
-      // BACK r
-      float fingerSDF15 = distFCircle(gecko_uv, u_fingers[15], fingerRadius);
-      float fingerSDF16 = distFCircle(gecko_uv, u_fingers[16], fingerRadius);
-      float fingerSDF17 = distFCircle(gecko_uv, u_fingers[17], fingerRadius);
-      float fingerSDF18 = distFCircle(gecko_uv, u_fingers[18], fingerRadius);
-      float fingerSDF19 = distFCircle(gecko_uv, u_fingers[19], fingerRadius);
-
-      bodySDF = smoothMin(bodySDF, fingerSDF0, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF1, fingerBlend);
-       bodySDF = smoothMin(bodySDF, fingerSDF2, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF3, fingerBlend);
-       bodySDF = smoothMin(bodySDF, fingerSDF4, fingerBlend);
-
-      bodySDF = smoothMin(bodySDF, fingerSDF5, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF6, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF7, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF8, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF9, fingerBlend);
-
-      bodySDF = smoothMin(bodySDF, fingerSDF10, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF11, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF12, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF13, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF14, fingerBlend);
-
-      bodySDF = smoothMin(bodySDF, fingerSDF15, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF16, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF17, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF18, fingerBlend);
-      bodySDF = smoothMin(bodySDF, fingerSDF19, fingerBlend); 
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-
-    float bodyMask = smoothstep(0.0, 0.002, -bodySDF);
-    vec3 body = endColor * bodyMask;
- 
-
-    //////////////////////////////////////////////////
- 
-    color += vec3(0.0, 0.0, 1.0) * bodyMask;
-    alpha = max(alpha, bodyMask); 
-  
-    return vec4( body + hintDot + moments + selected + lastSelected, bodyMask); //bodyMask
-} 
+    ${GECKO_MOMENTS_GLSL}
 `);
 
   if (!source) {
     console.error("❌ Shader failed to compile");
     return null;
   }
-
-  // const buttonStyle = useAnimatedStyle(() => {
-  //   const [u, v] = userPointSV.value;
-  //   console.log(userPointSV.value);
-
-  //   return {
-  //     zIndex: 9999,
-  //     position: "absolute",
-  //     left: u * width,
-  //     top: v * height,
-  //     transform: [{ translateX: -12 }, { translateY: -12 }],
-  //   };
-  // });
 
   const start = useRef(Date.now());
 
@@ -823,36 +250,25 @@ for (int i = 0; i < 64; i++) {
   const shouldersRef = useRef(new Float32Array(4 * 2));
   const legMusclesRef = useRef(new Float32Array(8 * 2));
   const fingersRef = useRef(new Float32Array(20 * 2));
- 
 
-  const MAX_MOMENTS = 64; 
+  const MAX_MOMENTS = 64;
   const momentsRef = useRef(new Float32Array(MAX_MOMENTS * 2));
-  const momentsLengthRef = useRef(momentsLength); // good if this dynamically changes (if adding or deleting moments is allowed in this screen)
-
-
 
   useEffect(() => {
-    console.log('moments data triggered new moments!')
+    console.log("moments data triggered new moments!");
     moments.current = new Moments(momentsData);
-
   }, [momentsData]);
 
   useEffect(() => {
-    if (!reset) return;
-
-    // console.log("🟢 Resetting animation...");
-
-    // Reset time
+    if (!reset) return; 
     start.current = Date.now();
-    setTime(0);
+    setTime(0); 
 
-    // Reset soul
     soul.current = new Soul(restPoint, 0.02);
     leadPoint.current = new Mover(startingCoord);
     gecko.current = new Gecko(startingCoord, 0.06);
- 
 
-    // Optional: clear all joints arrays
+    // Optional (?)
     jointsRef.current.fill(0);
     tailJointsRef.current.fill(0);
     stepsRef.current.fill(0);
@@ -865,17 +281,14 @@ for (int i = 0; i < 64; i++) {
   }, [reset]);
 
   useEffect(() => {
-
-     
     let frame;
     const animate = () => {
       const now = (Date.now() - start.current) / 1000;
-      setTime(now); 
+      setTime(now);
       frame = requestAnimationFrame(animate);
-         moments.current.update(userPointSV.value, isDragging.value);
-      
+      moments.current.update(userPointSV.value, isDragging.value);
+
       soul.current.update();
-  
 
       if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
         gecko.current.updateEnter(soul.current.done);
@@ -885,10 +298,7 @@ for (int i = 0; i < 64; i++) {
         leadPoint.current.update(userPointSV.value);
       } else {
         leadPoint.current.update(soul.current.soul);
-      }
-      // leadPoint.current.update(soul.current.soul);
-      // leadPoint.current.update(userPointSV.value);
-
+      } 
       gecko.current.update(
         leadPoint.current.lead,
         leadPoint.current.leadDistanceTraveled,
@@ -930,7 +340,7 @@ for (int i = 0; i < 64; i++) {
         spine.joints,
         jointsRef.current,
         NUM_SPINE_JOINTS,
-        aspect, 
+        aspect,
         gecko_scale
       );
       packVec2Uniform_withRecenter(
@@ -941,33 +351,62 @@ for (int i = 0; i < 64; i++) {
         gecko_scale
       );
       const allSteps = [...f_steps, ...b_steps];
-      packVec2Uniform_withRecenter(allSteps, stepsRef.current, 4, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(
+        allSteps,
+        stepsRef.current,
+        4,
+        aspect,
+        gecko_scale
+      );
 
       const allElbows = [...f_elbows, ...b_elbows];
-      packVec2Uniform_withRecenter(allElbows, elbowsRef.current, 4, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(
+        allElbows,
+        elbowsRef.current,
+        4,
+        aspect,
+        gecko_scale
+      );
 
       const allShoulders = [...f_shoulders, ...b_shoulders];
-      packVec2Uniform_withRecenter(allShoulders, shouldersRef.current, 4, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(
+        allShoulders,
+        shouldersRef.current,
+        4,
+        aspect,
+        gecko_scale
+      );
 
       const allMuscles = [...f_muscles, ...b_muscles];
-      packVec2Uniform_withRecenter(allMuscles, legMusclesRef.current, 8, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(
+        allMuscles,
+        legMusclesRef.current,
+        8,
+        aspect,
+        gecko_scale
+      );
 
       const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
 
-      packVec2Uniform_withRecenter(allFingers, fingersRef.current, 20, aspect, gecko_scale);
+      packVec2Uniform_withRecenter(
+        allFingers,
+        fingersRef.current,
+        20,
+        aspect,
+        gecko_scale
+      );
 
-
-      packVec2Uniform_withRecenter_moments(moments.current.moments, momentsRef.current, moments.current.momentsLength, aspect, scale);
+      packVec2Uniform_withRecenter_moments(
+        moments.current.moments,
+        momentsRef.current,
+        moments.current.momentsLength,
+        aspect,
+        scale
+      );
     };
     animate();
     return () => cancelAnimationFrame(frame);
   }, [aspect]);
-
-  // const snout = gecko.current.body.spine?.unchainedJoints[0];
-  // const head = gecko.current.body.spine?.unchainedJoints[1];
-  // const hint = gecko.current.body.spine?.hintJoint;
-
-  
 
   const uniforms = {
     u_scale: scale,
@@ -976,87 +415,77 @@ for (int i = 0; i < 64; i++) {
     u_resolution: [width, height],
     u_aspect: aspect,
 
-
-    
-    //u_soul: soul.current.soul, // [x, y] position
-    //u_lead: leadPoint.current.lead,
-
     u_lead: toShaderSpace(leadPoint.current.lead, aspect, scale),
     u_soul: toShaderSpace(soul.current.soul, aspect, gecko_scale),
     u_selected: toShaderSpace(moments.current.selected.coord, aspect, scale),
-    u_lastSelected: toShaderSpace(moments.current.lastSelected.coord, aspect, scale),
+    u_lastSelected: toShaderSpace(
+      moments.current.lastSelected.coord,
+      aspect,
+      scale
+    ),
 
     u_snout: toShaderModel(snoutRef.current, gecko_scale),
     u_head: toShaderModel(headRef.current, gecko_scale),
     u_hint: toShaderSpace(hintRef.current, aspect, gecko_scale),
     u_momentsLength: moments.current.momentsLength,
 
-
-
     u_joints: Array.from(jointsRef.current),
     u_tail: Array.from(tailJointsRef.current),
 
-
- 
     u_steps: Array.from(stepsRef.current),
     u_elbows: Array.from(elbowsRef.current),
     u_shoulders: Array.from(shouldersRef.current),
     u_muscles: Array.from(legMusclesRef.current),
     u_fingers: Array.from(fingersRef.current),
 
-
     u_moments: Array.from(momentsRef.current),
-  
-    //u_selected: moments.current.selected.coord,
-    //u_lastSelected: moments.current.lastSelected.coord
   };
 
   return (
     <>
-
-    <GestureDetector  gesture={gesture}>
-
-        <Canvas ref={ref}
-          style={[StyleSheet.absoluteFill, { 
-            alignItems: 'center',
-            
-           
-          //  width: width,
-          //  height: height,
-          
- 
-          }]}
+      <GestureDetector gesture={composedGesture}>
+        <Canvas
+          ref={ref}
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              alignItems: "center",
+            },
+          ]}
         >
-  
-            <Rect x={0} y={0} width={size.width} height={size.height} color="lightblue">
+          <Rect
+            x={0}
+            y={0}
+            width={size.width}
+            height={size.height}
+            color="lightblue"
+          >
             <Shader source={source} uniforms={uniforms} />
           </Rect>
         </Canvas>
-      {/* </View> */}
-    </GestureDetector>
-    <View style={{position: 'absolute', bottom: 50, width: '100%'}}>
-
-
-           <EscortBarFidgetScreen
-           onBackPress={handleUpdateMomentsState}
-           onCenterPress={handleRecenterMoments}
+        {/* </View> */}
+      </GestureDetector>
+      <View style={styles.escortBarContainer}>
+        <EscortBarFidgetScreen
+          onBackPress={handleUpdateMomentsState}
+          onCenterPress={handleRecenterMoments}
           style={{ paddingHorizontal: 10 }}
           primaryColor={lightDarkTheme.primaryText}
           primaryBackground={lightDarkTheme.primaryBackground}
           onPress={handleRescatterMoments}
           label={"Rescatter"}
         />
-            </View>
+      </View>
     </>
   );
 };
 
-// const styles = StyleSheet.create({
-//   container: { width: 300, height: 300, backgroundColor: "hotpink" },
-//   innerContainer: { flexDirection: "column" },
-//   rowContainer: { flexDirection: "row" },
-//   labelWrapper: {},
-//   label: {},
-// });
+const styles = StyleSheet.create({
+  escortBarContainer: { position: "absolute", bottom: 50, width: "100%" },
+  innerContainer: { flexDirection: "column" },
+  rowContainer: { flexDirection: "row" },
+  labelWrapper: {},
+  label: {},
+});
 
 export default MomentsSkia;
