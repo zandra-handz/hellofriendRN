@@ -10,12 +10,12 @@ import Animated, {
   useDerivedValue,
 } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
+import MomentDotsResetter from "@/app/components/moments/MomentDotsResetter";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 import { GECKO_MOMENTS_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
-import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
-
+ 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { runOnUI } from "react-native-reanimated";
 import {
@@ -58,6 +58,7 @@ type Props = {
 const MomentsSkia = ({
   handleEditMoment,
   handleUpdateMomentCoords,
+  handleGetMoment,
   color1,
   color2,
   momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y
@@ -158,6 +159,7 @@ const MomentsSkia = ({
   };
 
   const onDoublePress = () => {
+    handleGetMoment(moments.current.lastSelected?.id)
     console.log("onDoublePress works!");
   };
 
@@ -465,8 +467,8 @@ const composedGesture = Gesture.Simultaneous(
         </Canvas>
         {/* </View> */}
       </GestureDetector>
-      <View style={styles.escortBarContainer}>
-        <EscortBarFidgetScreen
+      <View style={styles.resetterContainer}>
+        <MomentDotsResetter
           onBackPress={handleUpdateMomentsState}
           onCenterPress={handleRecenterMoments}
           style={{ paddingHorizontal: 10 }}
@@ -481,11 +483,15 @@ const composedGesture = Gesture.Simultaneous(
 };
 
 const styles = StyleSheet.create({
-  escortBarContainer: { position: "absolute", bottom: 50, width: "100%" },
+  resetterContainer: { position: "absolute", top: 90, width: "100%" },
   innerContainer: { flexDirection: "column" },
   rowContainer: { flexDirection: "row" },
   labelWrapper: {},
   label: {},
 });
 
-export default MomentsSkia;
+// export default MomentsSkia;
+
+const MemoizedMomentsSkia = React.memo(MomentsSkia);
+
+export default MemoizedMomentsSkia;

@@ -1,6 +1,7 @@
-import { View, StyleSheet, Pressable, Text } from "react-native";
-import React, { useState, useMemo, useEffect } from "react";
+import { View, ScrollView, StyleSheet, Pressable, Text } from "react-native";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import UserPointer from "@/app/assets/shader_animations/UserPointer";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -24,6 +25,7 @@ const ScreenGecko = (props: Props) => {
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+  const { navigateToMomentView} = useAppNavigations();
 
 
 
@@ -53,9 +55,21 @@ const ScreenGecko = (props: Props) => {
     return ((n % m) + m) % m;
   };
 
-  const handleUpdateMomentsState = () => {
+const handleNavigateToMoment = useCallback(
+  (m) => {
+    console.log(`navving`, m)
+    navigateToMomentView({ moment: m, index: m.uniqueIndex });
+  },
+  [navigateToMomentView] // optional, if this function comes from props/context
+);
 
-  };
+// inside your component
+<Pressable
+  onPress={() => handleNavigateToMoment(moment)}
+  style={styles.momentViewButton}
+>
+</Pressable>
+
  
 const momentCoords = useMemo(() => {
   return capsuleList.map(m => ({
@@ -92,7 +106,17 @@ const handleRecenterMoments = () => {
   console.log('All moments recentered to [0.5, 0.5]');
 };
 
- 
+const [ moment, setMoment ] = useState({category: null, capsule: null, uniqueIndex: null});
+
+const handleGetMoment = (id) => {
+  const moment = capsuleList.find((c) => c.id === id);
+  console.log(moment)
+
+  if (moment?.id) {
+    setMoment({category: moment.user_category_name, capsule: moment.capsule, uniqueIndex: moment.uniqueIndex});
+  } 
+
+}
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.priamryText;
@@ -137,6 +161,7 @@ const handleRecenterMoments = () => {
           <MomentsSkia
           handleEditMoment={handleEditMoment}
           handleUpdateMomentCoords={handleUpdateMomentCoords}
+          handleGetMoment={handleGetMoment}
       
             color1={manualGradientColors.lightColor}
             color2={manualGradientColors.homeDarkColor}
@@ -167,6 +192,26 @@ const handleRecenterMoments = () => {
         /> */}
 
 
+<View style={[styles.previewWrapper, {backgroundColor: lightDarkTheme.darkerOverlayBackground, borderColor: selectedFriend.darkColor}]}>
+  
+<Pressable
+  onPress={() => handleNavigateToMoment(moment)}
+  style={styles.momentViewButton}
+> </Pressable>
+  <ScrollView showsVerticalScrollIndicator={false} >
+    
+  
+  <Text style={[styles.previewHeader, {color: lightDarkTheme.primaryText}]}>
+  {moment.category} 
+  </Text>
+ 
+ <Text style={[styles.previewText, {color: lightDarkTheme.primaryText}]}>
+ 
+  {moment.capsule} 
+  </Text>
+  
+  </ScrollView>
+</View>
 
     </PreAuthSafeViewAndGradientBackground>
   );
@@ -180,6 +225,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: "column",
   },
+  previewWrapper: {
+    width: '100%',
+    height: 140,
+    // backgroundColor: 'red',
+    borderWidth: 2, 
+    borderRadius: 40,
+    bottom: 10,
+    padding: 20
+  }, 
+  previewText: {
+    fontSize: 15, 
+    lineHeight: 22,
+
+  },
+  previewHeader: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    lineHeight: 22
+  },
+  momentViewButton: {
+    width: '100%',
+    height: 40,
+    top: 0,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+ 
+ 
+    position: 'absolute'
+  }
 });
 
 export default ScreenGecko;
