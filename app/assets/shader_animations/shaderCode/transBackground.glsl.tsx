@@ -54,21 +54,18 @@ half4 main(vec2 fragCoord) {
       uv -= vec2(0.5); 
       uv.x *= u_aspect;
 
-         vec2 gradUV = fragCoord / u_resolution;  // 0..1
-    vec3 background = mix(backgroundStartColor, backgroundEndColor, gradUV.y); // vertical gradient
-    vec3 color = background; // start with gradient
-    float alpha = 1.0;       // background is fully opaque
-
-
-
+      
     //uv /= u_scale; // scale everything
     vec2 moments_uv = uv /= u_scale;
 
     vec2 gecko_uv =uv /= u_gecko_scale;
 
     float s = 1.0 / u_gecko_scale;
-    float momentsRadius = .01;
-   
+    float momentsRadius = .03;
+  
+    vec3 color = vec3(0.0);
+    float alpha = 0.0;
+
 
 vec2 soulUV        = u_soul; 
 vec2 leadUV        = u_lead; 
@@ -93,23 +90,20 @@ vec2 lastSelectedUV = u_lastSelected;
 //     moments += startColor * momentsMask; // accumulate
 // }
 
-float momentsField = 0.00;
-float liquidRadius = 0.015;
+float momentsDF = 1.0; // large initial distance
 
 for (int i = 0; i < 64; i++) {
     if (i >= u_momentsLength) break;
 
-    float d = length(moments_uv - u_moments[i]);
-    
-    // Add inverse-distance contribution for liquid effect
-    momentsField += liquidRadius / (d + 0.001); 
+    float d = distFCircle(
+        moments_uv,
+        u_moments[i],
+        momentsRadius
+    );
+
+    momentsDF = smoothMin(momentsDF, d, 0.02);
 }
 
-// Map the field to a mask with smoothstep
-float momentsMask = smoothstep(1.5, 0.8, momentsField); // tweak thresholds
-vec3 momentsColor = startColor * momentsMask;
-
- 
 
 
     vec3 selected = vec3(0.);
@@ -391,35 +385,43 @@ vec3 momentsColor = startColor * momentsMask;
     vec3 body = endColor * bodyMask;
  
 
+    float momentsMask = smoothstep(0.005, 0.0, momentsDF);
+     vec3 momentsColor = startColor * momentsMask;
 
-    vec3 bodyColor    = startColor   * bodyMask; 
-    //  float finalAlpha = max(bodyMask, momentsMask);
 
+     float finalAlpha = max(bodyMask, momentsMask);
+
+
+     vec3 colorAll =
+      endColor     * bodyMask
+    + momentsColor * momentsMask
+    + hintDot
+    + selected
+    + lastSelected;
+
+
+
+    //////////////////////////////////////////////////
  
+    // color += vec3(0.0, 0.0, 1.0) * bodyMask;
+    // alpha = max(alpha, bodyMask); 
 
 
-    
+    // to merge both body and dots
+    // float mergedSDF = smoothMin(bodySDF, momentsDF, 0.02);
+    // float mergedMask = smoothstep(0.0, 0.002, -mergedSDF);
+// vec3 colorAll =
+//       endColor * mergedMask
+//     + hintDot
+//     + selected
+//     + lastSelected;
+
+  return vec4(color, finalAlpha);
 
 
-vec3 colorAll = background; // 1️⃣ background gradient
 
-// 2️⃣ overlay moments (liquid glass effect, semi-transparent)
-vec3 momentsOverlay = startColor * momentsMask * 0.35; // 0.35 opacity
-colorAll = mix(colorAll, momentsOverlay, momentsMask * 0.35);
-
-// 3️⃣ overlay selected / lastSelected
-vec3 selectedOverlay = startColor * selectedMask;
-vec3 lastSelectedOverlay = startColor * lastSelectedMask;
-colorAll += selectedOverlay + lastSelectedOverlay; // small dots, additive
-
-// 4️⃣ overlay gecko/body
-vec3 bodyOverlay = endColor * bodyMask;
-colorAll = mix(colorAll, bodyOverlay, bodyMask); // smooth blend
-
-float finalAlpha = 1.0;
-return vec4(colorAll, finalAlpha);
-
-
+  
+    // return vec4( body + hintDot + momentsColor + selected + lastSelected, bodyMask); //bodyMask
 } 
 
 `

@@ -45,6 +45,8 @@ import { useFrameCallback } from "react-native-reanimated";
 type Props = {
   color1: string;
   color2: string;
+  bckgColor1: string;
+  bckgColor2: string;
   momentsData: [];
   startingCoord: number[];
   restPoint: number[];
@@ -61,6 +63,8 @@ const MomentsSkia = ({
   handleGetMoment,
   color1,
   color2,
+  bckgColor1,
+  bckgColor2,
   momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y
   startingCoord,
   restPoint,
@@ -215,6 +219,10 @@ const composedGesture = Gesture.Simultaneous(
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
 
+
+  const bckgColor1Converted = hexToVec3(bckgColor1);
+  const bckgColor2Converted = hexToVec3(bckgColor2);
+
   const soul = useRef(new Soul(restPoint, 0.02));
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
@@ -226,14 +234,35 @@ const composedGesture = Gesture.Simultaneous(
     setAspect(size.width / size.height);
   }, [size]);
 
+
+    const gradBkg = Skia.RuntimeEffect.Make(`
+    vec3 startColor = vec3(${bckgColor1Converted});
+    vec3 endColor = vec3(${bckgColor2Converted});
+
+         uniform vec2 u_resolution;
+        vec4 main(vec2 fragCoord){
+          float t = fragCoord.y / u_resolution.y;
+          vec3 color = mix(startColor, endColor, t);
+          return vec4(color,1.0);
+        }
+`);
+
+
   const source = Skia.RuntimeEffect.Make(`
     vec3 startColor = vec3(${color1Converted});
     vec3 endColor = vec3(${color2Converted});
 
+        vec3 backgroundStartColor = vec3(${bckgColor1Converted});
+        
+        vec3 backgroundEndColor = vec3(${bckgColor2Converted});
+ 
+
     ${GECKO_MOMENTS_GLSL}
 `);
 
-  if (!source) {
+
+
+  if (!source || !gradBkg) {
     console.error("❌ Shader failed to compile");
     return null;
   }
@@ -455,6 +484,13 @@ const composedGesture = Gesture.Simultaneous(
             },
           ]}
         >
+
+            {/* <Rect x={0} y={0} width={size.width} height={size.height}>
+    <Shader
+      source={gradBkg}
+      uniforms={{ u_resolution: [size.width, size.height] }}
+    />
+  </Rect> */}
           <Rect
             x={0}
             y={0}
