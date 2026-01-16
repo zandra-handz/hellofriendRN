@@ -1,4 +1,4 @@
-export const GECKO_MOMENTS_GLSL = `
+export const GECKO_MOMENTS_NO_BG_GLSL = `
 
     uniform vec2 u_moments[64]; // HARD CODED MAX
     uniform int u_momentsLength;
@@ -389,9 +389,9 @@ for (int i = 0; i < 64; i++) {
      vec3 momentsColor = startColor * momentsMask;
 
 
-     float finalAlpha = max(bodyMask, momentsMask);
+    //  float finalAlpha = max(bodyMask, momentsMask);
 
-
+   float finalAlpha = max(bodyMask, momentsMask);
      vec3 colorAll =
       endColor     * bodyMask
     + momentsColor * momentsMask
@@ -403,19 +403,7 @@ for (int i = 0; i < 64; i++) {
 
     //////////////////////////////////////////////////
  
-    // color += vec3(0.0, 0.0, 1.0) * bodyMask;
-    // alpha = max(alpha, bodyMask); 
-
-
-    // to merge both body and dots
-    // float mergedSDF = smoothMin(bodySDF, momentsDF, 0.02);
-    // float mergedMask = smoothstep(0.0, 0.002, -mergedSDF);
-// vec3 colorAll =
-//       endColor * mergedMask
-//     + hintDot
-//     + selected
-//     + lastSelected;
-
+ 
   return vec4(color, finalAlpha);
 
 

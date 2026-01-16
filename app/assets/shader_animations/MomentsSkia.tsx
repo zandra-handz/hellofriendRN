@@ -4,6 +4,11 @@ import Soul from "./soulClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
+import { MOMENTS_ONLY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
+import { GECKO_MOMENTS_NO_BG_GLSL } from "./shaderCode/transBackground.glsl";
+import { GECKO_BODY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
+import { LIQUID_GLASS_MOMENTS_GECKO_GLSL } from "./shaderCode/liquidGlassShader.glsl";
+import { LIQUID_GLASS_MOMENTS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
 import { BackHandler } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -15,7 +20,12 @@ import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 import { GECKO_MOMENTS_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
- 
+import { BG_GRADIENT_STRIPES_GLSL } from "./shaderCode/stripesShader.glsl";
+import { LAST_SELECTED_GLSL } from "./shaderCode/liquidGlassTest.glsl";
+import { BG_STRIPES_GLSL } from "./shaderCode/stripesShader.glsl";
+import { LIQUID_GLASS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
+import { BG_GRADIENT_GLSL } from "./shaderCode/stripesShader.glsl";
+import { LIQUID_GLASS_STRIPES_BG } from "./shaderCode/liquidGlassShader.glsl";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { runOnUI } from "react-native-reanimated";
 import {
@@ -73,6 +83,7 @@ const MomentsSkia = ({
   lightDarkTheme,
   handleRescatterMoments,
   handleRecenterMoments,
+
   reset = 0,
 }: Props) => {
   // console.log(momentsData);
@@ -120,7 +131,6 @@ const MomentsSkia = ({
     handleUpdateMomentCoords(formattedData);
   };
 
-
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -163,7 +173,7 @@ const MomentsSkia = ({
   };
 
   const onDoublePress = () => {
-    handleGetMoment(moments.current.lastSelected?.id)
+    handleGetMoment(moments.current.lastSelected?.id);
     console.log("onDoublePress works!");
   };
 
@@ -175,7 +185,7 @@ const MomentsSkia = ({
       userPointSV.value = [touch.x / size.width, touch.y / size.height];
     })
     .onUpdate((e) => {
-       userPointSV.value = [e.x / size.width, e.y / size.height];
+      userPointSV.value = [e.x / size.width, e.y / size.height];
     })
     .onEnd(() => {
       isDragging.value = false;
@@ -184,14 +194,11 @@ const MomentsSkia = ({
       isDragging.value = false;
     });
 
-const doubleTapGesture = Gesture.Tap()
-  .numberOfTaps(2)
-  .onEnd(() => runOnJS(onDoublePress)());
+  const doubleTapGesture = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd(() => runOnJS(onDoublePress)());
 
-const composedGesture = Gesture.Simultaneous(
-  panGesture,
-  doubleTapGesture
-);
+  const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture);
 
   // const doubleTapGesture = Gesture.Tap()
   //   .numberOfTaps(2)
@@ -213,12 +220,9 @@ const composedGesture = Gesture.Simultaneous(
   //   )
   // );
 
- 
-
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
-
 
   const bckgColor1Converted = hexToVec3(bckgColor1);
   const bckgColor2Converted = hexToVec3(bckgColor2);
@@ -234,33 +238,70 @@ const composedGesture = Gesture.Simultaneous(
     setAspect(size.width / size.height);
   }, [size]);
 
+  const gradBkg = Skia.RuntimeEffect.Make(`
+    // vec3 startColor = vec3(${bckgColor1Converted});
+   // vec3 endColor = vec3(${bckgColor2Converted});
+    vec3 startColor = vec3(${color1Converted});
+    vec3 endColor = vec3(${color2Converted});
 
-    const gradBkg = Skia.RuntimeEffect.Make(`
-    vec3 startColor = vec3(${bckgColor1Converted});
-    vec3 endColor = vec3(${bckgColor2Converted});
 
-         uniform vec2 u_resolution;
-        vec4 main(vec2 fragCoord){
-          float t = fragCoord.y / u_resolution.y;
-          vec3 color = mix(startColor, endColor, t);
-          return vec4(color,1.0);
-        }
+
+         ${BG_GRADIENT_STRIPES_GLSL}
 `);
-
 
   const source = Skia.RuntimeEffect.Make(`
     vec3 startColor = vec3(${color1Converted});
     vec3 endColor = vec3(${color2Converted});
 
         vec3 backgroundStartColor = vec3(${bckgColor1Converted});
-        
         vec3 backgroundEndColor = vec3(${bckgColor2Converted});
  
+ 
 
-    ${GECKO_MOMENTS_GLSL}
+   ${LIQUID_GLASS_MOMENTS_GECKO_GLSL}
+       
 `);
 
+  const stripesSource = Skia.RuntimeEffect.Make(`
 
+      vec3 startColor = vec3(${color1Converted});
+    vec3 endColor = vec3(${color2Converted});
+
+        vec3 backgroundStartColor = vec3(${bckgColor1Converted});
+        
+        vec3 backgroundEndColor = vec3(${bckgColor2Converted});
+        ${BG_STRIPES_GLSL}
+
+
+  `);
+
+
+    const liquidGlassStripesSource = Skia.RuntimeEffect.Make(`
+
+      vec3 startColor = vec3(${color1Converted});
+    vec3 endColor = vec3(${color2Converted});
+
+        vec3 backgroundStartColor = vec3(${bckgColor1Converted});
+        
+        vec3 backgroundEndColor = vec3(${bckgColor2Converted});
+        ${LIQUID_GLASS_STRIPES_BG}
+
+
+  `);
+
+
+  const liquidGlassSource = Skia.RuntimeEffect.Make(`
+
+      vec3 startColor = vec3(${color1Converted});
+    vec3 endColor = vec3(${color2Converted});
+
+        vec3 backgroundStartColor = vec3(${bckgColor1Converted});
+        
+        vec3 backgroundEndColor = vec3(${bckgColor2Converted});
+        ${LIQUID_GLASS_GLSL}
+
+
+  `);
 
   if (!source || !gradBkg) {
     console.error("❌ Shader failed to compile");
@@ -291,9 +332,9 @@ const composedGesture = Gesture.Simultaneous(
   }, [momentsData]);
 
   useEffect(() => {
-    if (!reset) return; 
+    if (!reset) return;
     start.current = Date.now();
-    setTime(0); 
+    setTime(0);
 
     soul.current = new Soul(restPoint, 0.02);
     leadPoint.current = new Mover(startingCoord);
@@ -329,7 +370,7 @@ const composedGesture = Gesture.Simultaneous(
         leadPoint.current.update(userPointSV.value);
       } else {
         leadPoint.current.update(soul.current.soul);
-      } 
+      }
       gecko.current.update(
         leadPoint.current.lead,
         leadPoint.current.leadDistanceTraveled,
@@ -449,11 +490,12 @@ const composedGesture = Gesture.Simultaneous(
     u_lead: toShaderSpace(leadPoint.current.lead, aspect, scale),
     u_soul: toShaderSpace(soul.current.soul, aspect, gecko_scale),
     u_selected: toShaderSpace(moments.current.selected.coord, aspect, scale),
-    u_lastSelected: toShaderSpace(
-      moments.current.lastSelected.coord,
-      aspect,
-      scale
-    ),
+    u_lastSelected: moments.current.lastSelected.coord,
+    // u_lastSelected: toShaderSpace(
+    //   moments.current.lastSelected.coord,
+    //   aspect,
+    //   scale
+    // ),
 
     u_snout: toShaderModel(snoutRef.current, gecko_scale),
     u_head: toShaderModel(headRef.current, gecko_scale),
@@ -484,14 +526,13 @@ const composedGesture = Gesture.Simultaneous(
             },
           ]}
         >
-
-            {/* <Rect x={0} y={0} width={size.width} height={size.height}>
+          {/* <Rect x={0} y={0} width={size.width} height={size.height}>
     <Shader
       source={gradBkg}
       uniforms={{ u_resolution: [size.width, size.height] }}
     />
   </Rect> */}
-          <Rect
+          {/* <Rect
             x={0}
             y={0}
             width={size.width}
@@ -499,6 +540,21 @@ const composedGesture = Gesture.Simultaneous(
             color="lightblue"
           >
             <Shader source={source} uniforms={uniforms} />
+          </Rect> */}
+                    <Rect
+            x={0}
+            y={0}
+            width={size.width}
+            height={size.height}
+            color="lightblue"
+          >
+          
+  <Shader source={source} uniforms={uniforms}>
+      {/* <Shader source={liquidGlassStripesSource} uniforms={uniforms}> */}
+    {/* </Shader>  */}
+              {/* <Shader source={gradBkg} uniforms={uniforms}/> */}
+
+            </Shader>
           </Rect>
         </Canvas>
         {/* </View> */}

@@ -23,6 +23,7 @@ export function toShaderModel([x, y], scale) {
 export function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale = 1) {
   for (let i = 0; i < num; i++) {
     if (points[i]) {
+      //    const [sx, sy] = [points[i][0], points[i][1]];
       const [sx, sy] = toShaderModel(points[i], scale);
 
       flatArray[i * 2 + 0] = sx;
@@ -45,7 +46,8 @@ export function packVec2Uniform_withRecenter_moments(
 ) {
   for (let i = 0; i < num; i++) {
     if (points[i]) {
-      const [sx, sy] = toShaderSpace(points[i].coord, aspect, scale);
+      // const [sx, sy] = toShaderSpace(points[i].coord, aspect, scale);
+        const [sx, sy] = [points[i].coord[0], points[i].coord[1]]
 
       flatArray[i * 2 + 0] = sx;
       flatArray[i * 2 + 1] = sy;

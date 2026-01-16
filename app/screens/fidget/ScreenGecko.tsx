@@ -20,6 +20,9 @@ import { SkImage } from "@shopify/react-native-skia";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import ViewShot from "react-native-view-shot";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
+ 
+
+
 type Props = {};
 
 const ScreenGecko = (props: Props) => {
@@ -29,6 +32,7 @@ const ScreenGecko = (props: Props) => {
   const { selectedFriend } = useSelectedFriend();
   const { navigateToMomentView } = useAppNavigations();
 
+   
   const { friendDash } = useFriendDash({
     userId: user?.id,
     friendId: selectedFriend?.id,
@@ -136,8 +140,8 @@ const ScreenGecko = (props: Props) => {
     <PreAuthSafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
+      friendColorLight={selectedFriend.darkColor}
+      friendColorDark={selectedFriend.lightColor}
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{
@@ -169,6 +173,7 @@ const ScreenGecko = (props: Props) => {
           lightDarkTheme={lightDarkTheme}
           handleRescatterMoments={handleRescatterMoments}
           handleRecenterMoments={handleRecenterMoments}
+  
         />
       </View>
 

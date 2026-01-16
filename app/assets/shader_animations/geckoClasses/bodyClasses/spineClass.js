@@ -296,6 +296,7 @@ export default class Spine {
         true
       );
     }
+ 
 
     this.update_unchainedJoints(leadPoint_lead);
     this.updateCurrentLength(); 

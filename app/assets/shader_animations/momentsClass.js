@@ -31,6 +31,7 @@ export default class Moments {
 //     this.selectedMomentIndex = -1;
 //   }
 update(userPointer, isDragging) {
+ 
    
   const [ux, uy] = userPointer;
  

@@ -50,6 +50,7 @@
     "expo-location": "~19.0.8",
     "expo-media-library": "~18.2.1",
     "expo-notifications": "~0.32.16",
+    "expo-performance": "^0.0.1",
     "expo-quick-actions": "^5.0.0",
     "expo-secure-store": "~15.0.8",
     "expo-share-intent": "^5.0.1",
