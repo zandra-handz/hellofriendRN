@@ -5,10 +5,11 @@ import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
 
+import { GECKO_ONLY_TRANSPARENT_SKSL } from "./shaderCode/geckoMomentsLGShader";
 import { LIQUID_GLASS_MOMENTS_GECKO_GLSL } from "./shaderCode/geckoMomentsLGShader";
 import { MOMENTS_ONLY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
 import { GECKO_MOMENTS_NO_BG_GLSL } from "./shaderCode/transBackground.glsl";
- 
+
 import { LIQUID_GLASS_MOMENTS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
 import { BackHandler } from "react-native";
 import Animated, {
@@ -101,13 +102,13 @@ const MomentsSkia = ({
         () => {
           // block system back
           return true;
-        }
+        },
       );
 
       return () => {
         subscription.remove();
       };
-    }, [])
+    }, []),
   );
 
   const [momentsState, setMomentsState] = useState(momentsData);
@@ -141,7 +142,7 @@ const MomentsSkia = ({
         // moments.current.moments must be a JS object, not a shared value
         // handleUpdateCoords(momentsData, momentsState);
       };
-    }, [momentsState])
+    }, [momentsState]),
   );
   const userPointSV = useSharedValue(restPoint);
 
@@ -176,7 +177,6 @@ const MomentsSkia = ({
 
   const onDoublePress = () => {
     handleGetMoment(moments.current.lastSelected?.id);
-   
   };
 
   const panGesture = Gesture.Pan()
@@ -238,7 +238,6 @@ const MomentsSkia = ({
 
   useEffect(() => {
     setAspect(size.width / size.height);
- 
   }, [size]);
 
   const gradBkg = Skia.RuntimeEffect.Make(`
@@ -261,7 +260,7 @@ const MomentsSkia = ({
  
  
 
-   ${LIQUID_GLASS_MOMENTS_GECKO_GLSL}
+   ${GECKO_ONLY_TRANSPARENT_SKSL}
        
 `);
 
@@ -278,8 +277,7 @@ const MomentsSkia = ({
 
   `);
 
-
-    const liquidGlassStripesSource = Skia.RuntimeEffect.Make(`
+  const liquidGlassStripesSource = Skia.RuntimeEffect.Make(`
 
       vec3 startColor = vec3(${color1Converted});
     vec3 endColor = vec3(${color2Converted});
@@ -291,7 +289,6 @@ const MomentsSkia = ({
 
 
   `);
-
 
   const liquidGlassSource = Skia.RuntimeEffect.Make(`
 
@@ -377,7 +374,7 @@ const MomentsSkia = ({
       gecko.current.update(
         leadPoint.current.lead,
         leadPoint.current.leadDistanceTraveled,
-        leadPoint.current.isMoving
+        leadPoint.current.isMoving,
       );
 
       // pack spine joints into Float32Array for shader
@@ -416,14 +413,14 @@ const MomentsSkia = ({
         jointsRef.current,
         NUM_SPINE_JOINTS,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
       packVec2Uniform_withRecenter(
         tail.joints,
         tailJointsRef.current,
         NUM_TAIL_JOINTS,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
       const allSteps = [...f_steps, ...b_steps];
       packVec2Uniform_withRecenter(
@@ -431,7 +428,7 @@ const MomentsSkia = ({
         stepsRef.current,
         4,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
 
       const allElbows = [...f_elbows, ...b_elbows];
@@ -440,7 +437,7 @@ const MomentsSkia = ({
         elbowsRef.current,
         4,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
 
       const allShoulders = [...f_shoulders, ...b_shoulders];
@@ -449,7 +446,7 @@ const MomentsSkia = ({
         shouldersRef.current,
         4,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
 
       const allMuscles = [...f_muscles, ...b_muscles];
@@ -458,7 +455,7 @@ const MomentsSkia = ({
         legMusclesRef.current,
         8,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
 
       const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
@@ -468,7 +465,7 @@ const MomentsSkia = ({
         fingersRef.current,
         20,
         aspect,
-        gecko_scale
+        gecko_scale,
       );
 
       packVec2Uniform_withRecenter_moments(
@@ -476,7 +473,7 @@ const MomentsSkia = ({
         momentsRef.current,
         moments.current.momentsLength,
         aspect,
-        scale
+        scale,
       );
     };
     animate();
@@ -520,6 +517,7 @@ const MomentsSkia = ({
   return (
     <>
       <GestureDetector gesture={composedGesture}>
+        
         <Canvas
           ref={ref}
           style={[
@@ -529,35 +527,19 @@ const MomentsSkia = ({
             },
           ]}
         >
-          {/* <Rect x={0} y={0} width={size.width} height={size.height}>
-    <Shader
-      source={gradBkg}
-      uniforms={{ u_resolution: [size.width, size.height] }}
-    />
-  </Rect> */}
-          {/* <Rect
+   
+          <Rect
             x={0}
             y={0}
             width={size.width}
             height={size.height}
             color="lightblue"
           >
-            <Shader source={source} uniforms={uniforms} />
-          </Rect> */}
-                    <Rect
-            x={0}
-            y={0}
-            width={size.width}
-            height={size.height}
-            color="lightblue"
-          >
-          
-  <Shader style={{backgroundColor: 'transparent'}} source={source} uniforms={uniforms}>
-      {/* <Shader source={liquidGlassStripesSource} uniforms={uniforms}> */}
-    {/* </Shader>  */}
-              {/* <Shader source={gradBkg} uniforms={uniforms}/> */}
-
-            </Shader>
+            <Shader
+              style={{ backgroundColor: "transparent" }}
+              source={source}
+              uniforms={uniforms}
+            ></Shader>
           </Rect>
         </Canvas>
         {/* </View> */}
