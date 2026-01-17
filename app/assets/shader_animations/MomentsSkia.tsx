@@ -4,10 +4,11 @@ import Soul from "./soulClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
+
+import { LIQUID_GLASS_MOMENTS_GECKO_GLSL } from "./shaderCode/geckoMomentsLGShader";
 import { MOMENTS_ONLY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
 import { GECKO_MOMENTS_NO_BG_GLSL } from "./shaderCode/transBackground.glsl";
-import { GECKO_BODY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
-import { LIQUID_GLASS_MOMENTS_GECKO_GLSL } from "./shaderCode/liquidGlassShader.glsl";
+ 
 import { LIQUID_GLASS_MOMENTS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
 import { BackHandler } from "react-native";
 import Animated, {
@@ -15,6 +16,7 @@ import Animated, {
   useDerivedValue,
 } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
+import MomentDotsResetterMini from "./MomentDotsResetterMini";
 import MomentDotsResetter from "@/app/components/moments/MomentDotsResetter";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
@@ -64,7 +66,7 @@ type Props = {
   reset?: number | null;
 };
 
-// LIMIT OF 64 MOMENTS RIGHT NOW
+// LIMIT OF 50 MOMENTS RIGHT NOW
 // TO ALLOW FOR DYNAMIC UPDATING WOULD MEAN TO RESET SHADER EVERY SINGLE TIME WHICH CAN BE EXPENSIVE
 // would do this in shader instead of current setup -->  uniform vec2 u_moments[${moments.length}];
 const MomentsSkia = ({
@@ -174,7 +176,7 @@ const MomentsSkia = ({
 
   const onDoublePress = () => {
     handleGetMoment(moments.current.lastSelected?.id);
-    console.log("onDoublePress works!");
+   
   };
 
   const panGesture = Gesture.Pan()
@@ -236,6 +238,7 @@ const MomentsSkia = ({
 
   useEffect(() => {
     setAspect(size.width / size.height);
+ 
   }, [size]);
 
   const gradBkg = Skia.RuntimeEffect.Make(`
@@ -323,7 +326,7 @@ const MomentsSkia = ({
   const legMusclesRef = useRef(new Float32Array(8 * 2));
   const fingersRef = useRef(new Float32Array(20 * 2));
 
-  const MAX_MOMENTS = 64;
+  const MAX_MOMENTS = 50;
   const momentsRef = useRef(new Float32Array(MAX_MOMENTS * 2));
 
   useEffect(() => {
@@ -549,7 +552,7 @@ const MomentsSkia = ({
             color="lightblue"
           >
           
-  <Shader source={source} uniforms={uniforms}>
+  <Shader style={{backgroundColor: 'transparent'}} source={source} uniforms={uniforms}>
       {/* <Shader source={liquidGlassStripesSource} uniforms={uniforms}> */}
     {/* </Shader>  */}
               {/* <Shader source={gradBkg} uniforms={uniforms}/> */}

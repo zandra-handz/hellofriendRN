@@ -1,143 +1,8 @@
-export const GECKO_BODY_GLSL = `
-
-uniform float u_time;
-uniform float u_scale;
-uniform float u_gecko_scale;
-uniform vec2 u_resolution;
-uniform float u_aspect;
-
-uniform vec3 startColor; // body start color
-uniform vec3 endColor;   // body end color
-
-uniform vec2 u_soul;
-uniform vec2 u_lead;
-uniform vec2 u_joints[15];
-uniform vec2 u_head;
-uniform vec2 u_snout;
-uniform vec2 u_hint;
-uniform vec2 u_tail[13];
-uniform vec2 u_steps[4];
-uniform vec2 u_elbows[4];
-uniform vec2 u_shoulders[4];
-uniform vec2 u_muscles[8];
-uniform vec2 u_fingers[20];
-
-// ------------------------------------------------
-// Helpers
-// ------------------------------------------------
-float distFCircle(vec2 uv, vec2 center, float radius) {
-    return length(uv - center) - radius;
-}
-
-float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
-    vec2 pa = p - a;
-    vec2 ba = b - a;
-    float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
-    return length(pa - ba*h);
-}
-
-float smoothMin(float a, float b, float k) {
-    float h = clamp(0.5 + 0.5*(b - a)/k, 0.0, 1.0);
-    return mix(b, a, h) - k*h*(1.0 - h);
-}
-
-// ------------------------------------------------
-// Main shader
-// ------------------------------------------------
-half4 main(vec2 fragCoord) {
-
-    // Normalize coordinates
-    vec2 uv = fragCoord / u_resolution;
-    uv -= 0.5;
-    uv.x *= u_aspect;
-
-    vec2 gecko_uv = uv / u_gecko_scale;
-    float s = 1.0 / u_gecko_scale;
-    float circleSizeDiv = 0.8;
-
-    // Body circles (head, snout, spine joints)
-    float circle0 = distFCircle(gecko_uv, u_snout, 0.003 * s / circleSizeDiv);
-    float circle1 = distFCircle(gecko_uv, u_head, 0.019 * s / circleSizeDiv);
-    float circle1b = distFCircle(gecko_uv, u_joints[1], 0.0);
-    float circle2 = distFCircle(gecko_uv, u_joints[2], 0.001 * s / circleSizeDiv);
-    float circle3 = distFCircle(gecko_uv, u_joints[3], 0.004 * s / circleSizeDiv);
-    float circle4 = distFCircle(gecko_uv, u_joints[4], 0.004 * s / circleSizeDiv);
-    float circle5 = distFCircle(gecko_uv, u_joints[5], 0.004 * s / circleSizeDiv);
-    float circle6 = distFCircle(gecko_uv, u_joints[6], 0.004 * s / circleSizeDiv);
-    float circle7 = distFCircle(gecko_uv, u_joints[7], 0.003 * s / circleSizeDiv);
-    float circle8 = distFCircle(gecko_uv, u_joints[8], 0.003 * s / circleSizeDiv);
-    float circle9 = distFCircle(gecko_uv, u_joints[9], 0.003 * s / circleSizeDiv);
-    float circle13 = distFCircle(gecko_uv, u_joints[13], 0.003 * s / circleSizeDiv);
-
-    float circleMerge = smoothMin(
-        smoothMin(circle0, circle1, 0.03),
-        smoothMin(circle1b, circle2, 0.05),
-        0.005
-    );
-
-    circleMerge = smoothMin(circleMerge, circle3, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle4, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle5, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle6, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle7, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle8, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle9, 0.054 * s);
-    circleMerge = smoothMin(circleMerge, circle13, 0.054 * s);
-
-    // Tail circles
-    float tailCircleMerge = 1.0; // start large
-    for(int i=0; i<13; i++){
-        float r = 0.005 * s;
-        tailCircleMerge = smoothMin(tailCircleMerge, distFCircle(gecko_uv, u_tail[i], r), 0.054 * s);
-    }
-
-    float bodySDF = smoothMin(circleMerge, tailCircleMerge, 0.0003 * s);
-
-    // Arms
-    float armThickness = 0.005 * s;
-    float backArmThickness = 0.007 * s;
-
-    for(int i=0;i<2;i++){
-        float upper = lineSegmentSDF(gecko_uv, u_joints[2], u_elbows[i]);
-        float lower = lineSegmentSDF(gecko_uv, u_elbows[i], u_steps[i]);
-        bodySDF = smoothMin(bodySDF, min(upper, lower) - armThickness, 0.01 * s);
-    }
-    for(int i=2;i<4;i++){
-        float upper = lineSegmentSDF(gecko_uv, u_joints[13], u_elbows[i]);
-        float lower = lineSegmentSDF(gecko_uv, u_elbows[i], u_steps[i]);
-        bodySDF = smoothMin(bodySDF, min(upper, lower) - backArmThickness, 0.01 * s);
-    }
-
-    // Fingers (lines and circles)
-    float fingerThickness = 0.0025 * s;
-    float fingerRadius = 0.0015 * s;
-
-    for(int i=0;i<20;i++){
-        int stepIndex = i / 5;
-        float lineSDF = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[stepIndex]) - fingerThickness;
-        float circleSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
-        bodySDF = smoothMin(bodySDF, lineSDF, 0.0025 * s);
-        bodySDF = smoothMin(bodySDF, circleSDF, 0.01 * s);
-    }
-
-    // Muscles
-    bodySDF = smoothMin(bodySDF, distFCircle(gecko_uv, u_muscles[1], 0.005 * s), 0.024 * s);
-    bodySDF = smoothMin(bodySDF, distFCircle(gecko_uv, u_muscles[3], 0.005 * s), 0.024 * s);
-    bodySDF = smoothMin(bodySDF, distFCircle(gecko_uv, u_muscles[5], 0.86 * s), 0.03 * s);
-    bodySDF = smoothMin(bodySDF, distFCircle(gecko_uv, u_muscles[7], 0.005 * s), 0.03 * s);
-
-    float bodyMask = smoothstep(0.0, 0.002, -bodySDF);
-    vec3 color = mix(vec3(0.0), endColor, bodyMask);
-
-    return vec4(color, 1.0);
-}
-`;
-
 
 
 export const GECKO_MOMENTS_GLSL = `
 
-    uniform vec2 u_moments[64]; // HARD CODED MAX
+    uniform vec2 u_moments[50]; // HARD CODED MAX
     uniform int u_momentsLength;
     uniform vec2 u_selected;
     uniform vec2 u_lastSelected;
@@ -243,7 +108,7 @@ vec2 lastSelectedUV = u_lastSelected;
  
 // vec3 moments = vec3(0.0); // start with zero
 
-// for (int i = 0; i < 64; i++) {
+// for (int i = 0; i < 50; i++) {
 //     if (i >= u_momentsLength) continue; // skip extra moments
 
     
@@ -257,7 +122,7 @@ float liquidRadius = 0.015;
 float cutoffDist = 0.05;        // max distance to contribute
 float cutoffDistSq = cutoffDist * cutoffDist;
 
-for (int i = 0; i < 64; i++) {
+for (int i = 0; i < 50; i++) {
     if (i >= u_momentsLength) break;
 
     vec2 toMoment = moments_uv - u_moments[i];
@@ -616,7 +481,7 @@ return vec4(colorAll, finalAlpha);
 
 export const MOMENTS_ONLY_GLSL = `
 
-uniform vec2 u_moments[64];      // HARD CODED MAX
+uniform vec2 u_moments[50];      // HARD CODED MAX
 uniform int u_momentsLength;
 uniform vec2 u_selected;
 uniform vec2 u_lastSelected;
@@ -647,7 +512,7 @@ half4 main(vec2 fragCoord) {
     float cutoffDist = 0.05;
     float cutoffDistSq = cutoffDist * cutoffDist;
 
-    for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < ; i++) {
         if (i >= u_momentsLength) break;
 
         vec2 toMoment = moments_uv - u_moments[i];
