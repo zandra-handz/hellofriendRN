@@ -1,4 +1,4 @@
-import { dot, minus, _subtractVec, _getAngleBetweenPoints, _getAngleFromXAxis } from "../../utils";
+import { dot, minus, _subtractVec, _subtractVec_inPlace, _getAngleBetweenPoints, _getAngleFromXAxis, _getAngleFromXAxis_inPlace } from "../../utils";
 
 
 // does not set the extra motion angles, those have their own updaters
@@ -89,6 +89,85 @@ export function constrainBlendClampAngle(
 
  
 
+export function constrainBlendClampAngle_inPlace(index, ahead, joint, dirVec, radius, maxBend, outDir) {
+  // set ahead.angle if undefined
+  if (ahead.angle === undefined) ahead.angle = _getAngleBetweenPoints(joint, ahead);
+
+  let len = Math.sqrt(dot(dirVec, dirVec));
+
+  if (len === 0) {
+    joint[0] = ahead[0] + radius;
+    joint[1] = ahead[1];
+    joint.angle = ahead.angle;
+    joint.radius = radius;
+    joint.index = index + 1;
+    joint.angleDiff = 0;
+
+    outDir[0] = 1;
+    outDir[1] = 0;
+
+    return { angle: 0, direction: outDir };
+  }
+
+  // normalize in place
+  outDir[0] = dirVec[0] / len;
+  outDir[1] = dirVec[1] / len;
+
+  let newAngle = Math.atan2(outDir[1], outDir[0]);
+
+  let blendAhead = newAngle - ahead.angle;
+  blendAhead = Math.atan2(Math.sin(blendAhead), Math.cos(blendAhead));
+  blendAhead = Math.max(-maxBend, Math.min(maxBend, blendAhead));
+
+  return { angle: blendAhead, direction: outDir };
+}
+
+
+export function solveFirst_inPlace(
+  cursor,
+  first,
+  radius,
+  secondMotionAngle,
+  secondMotionMirroredAngle
+) {
+  // update angles directly
+  first.secondaryAngle = secondMotionAngle;
+  first.mirroredSecondaryAngle = secondMotionMirroredAngle ?? secondMotionAngle;
+
+  // initialize cursor.angle if missing
+  if (cursor.angle === undefined) cursor.angle = _getAngleBetweenPoints(first, cursor);
+
+  // compute dir in-place
+  const dx = first[0] - cursor[0];
+  const dy = first[1] - cursor[1];
+  const d = Math.sqrt(dx * dx + dy * dy);
+
+  // handle zero-distance case
+  if (d === 0) {
+    first[0] = cursor[0] + radius;
+    first[1] = cursor[1];
+    first.angle = 0;
+    first.radius = radius;
+    first.index = 0;
+    return;
+  }
+
+  // normalized direction
+  const nx = dx / d;
+  const ny = dy / d;
+
+  // update first position in-place
+  first[0] = cursor[0] + nx * radius;
+  first[1] = cursor[1] + ny * radius;
+
+  const prelimAngle = _getAngleFromXAxis_inPlace(nx, ny); // still a small array allocation here, could inline if needed
+  const angleDiff = prelimAngle - cursor.angle;
+
+  first.angleDiff = angleDiff;
+  first.angle = cursor.angle + angleDiff;
+  first.radius = radius;
+  first.index = 0;
+}
 
 
 export function solveFirst(
@@ -163,6 +242,40 @@ export function solveProcJoint(index,ahead,joint,radius, maxBend, motion2Start,
    
 }
 
+export function solveProcJoint_inPlace(
+  index,
+  ahead,
+  joint,
+  radius,
+  maxBend,
+  motion2Start,
+  motion3Start,
+  motion2End,
+  secondMotionClamps
+) {
+  const inMotionRange = index >= motion2Start && index <= motion2End;
+  const setSecondary = ahead.secondaryAngle && inMotionRange;
+  const setThird = index > motion3Start && inMotionRange;
+
+  if (setSecondary) {
+    maxBend = Math.PI * 2 / secondMotionClamps[index - motion2Start];
+  } else {
+    maxBend = Math.PI * 2 / maxBend;
+  }
+
+  // reuse joint.direction array to avoid allocation
+  const dir = joint.direction || (joint.direction = [0, 0]);
+  _subtractVec_inPlace(joint, ahead, dir); // reuses dir array
+
+  const procBlend = constrainBlendClampAngle_inPlace(index, ahead, joint, dir, radius, maxBend, dir);
+
+  const finalAngle = { angle: ahead.angle + procBlend.angle };
+
+  updateJointSecondaryAngle(setSecondary, joint, finalAngle, ahead.secondaryAngle, procBlend.angle);
+  updateJointThirdAngle(setThird, joint, finalAngle, ahead.mirroredSecondaryAngle, procBlend.angle);
+
+  updateJoint(index, joint, ahead, finalAngle.angle, radius, procBlend.angle, procBlend.direction);
+}
 
 
 export const TAU = Math.PI * 2;

@@ -21,7 +21,7 @@ import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import ViewShot from "react-native-view-shot";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
  
-
+import MemoizedMomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 
 type Props = {};
 
@@ -108,6 +108,7 @@ const ScreenGecko = (props: Props) => {
   });
 
   const handleGetMoment = (id) => {
+    console.log(`moment id`, id);
     const moment = capsuleList.find((c) => c.id === id);
     console.log(moment);
 

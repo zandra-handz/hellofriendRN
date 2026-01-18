@@ -35,6 +35,32 @@ export function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1,
   }
 }
 
+export function packVec2UniformFlat_withRecenter(
+  src: Float32Array,
+  dst: Float32Array,
+  count: number,
+  scale: number
+) {
+  let k = 0;
+
+  for (let i = 0; i < count; i++) {
+    const x = src[k];
+    const y = src[k + 1];
+
+    // skip zeros
+    if (x !== 0 || y !== 0) {
+      // convert each [x, y] to shader space
+      const [sx, sy] = toShaderModel([x, y], scale);
+      dst[k]     = sx;
+      dst[k + 1] = sy;
+    } else {
+      dst[k]     = 0.0;
+      dst[k + 1] = 0.0;
+    }
+
+    k += 2;
+  }
+}
 
 
 export function packVec2Uniform_withRecenter_moments(

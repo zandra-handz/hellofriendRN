@@ -48,6 +48,14 @@ export function _getCenterPoint(pointA, pointB) {
   return [(pointA[0] + pointB[0]) / 2, (pointA[1] + pointB[1]) / 2];
 }
 
+
+export function _getCenterPoint_inPlace(pointA, pointB, out = null) {
+  if (!out) out = [0, 0]; // fallback if no array provided
+  out[0] = (pointA[0] + pointB[0]) / 2;
+  out[1] = (pointA[1] + pointB[1]) / 2;
+  return out;
+}
+
 export function _makeDistancePoint(pointA, dirVec, distScalar) {
   const x = pointA[0] + dirVec[0] * distScalar;
   const y = pointA[1] + dirVec[1] * distScalar;
@@ -56,9 +64,23 @@ export function _makeDistancePoint(pointA, dirVec, distScalar) {
 }
 
 
+export function _makeDistancePoint_inPlace(pointA, dirVec, distScalar, out = null) {
+  if (!out) out = [0, 0]; // fallback if no array provided
+  out[0] = pointA[0] + dirVec[0] * distScalar;
+  out[1] = pointA[1] + dirVec[1] * distScalar;
+  return out;
+}
+
 export function _makeOffscreenPoint(offscreenX=-1000., offscreenY=-1000.){
   return [offscreenX, offscreenY]; 
 };
+
+export function _makeOffscreenPoint_inPlace(out = null, offscreenX = -1000, offscreenY = -1000) {
+  if (!out) out = [0, 0]; // fallback if no array provided
+  out[0] = offscreenX;
+  out[1] = offscreenY;
+  return out;
+}
 
 export function _getPointTowardB(pointA, pointB, t = 0.25) {
   return [
@@ -97,8 +119,30 @@ export function _getDirVec(start, end) {
   return [dirX, dirY];
 }
 
+
+
+export function _getDirVec_inPlace(start, end, out = null) {
+  if (!out) out = [0, 0]; // fallback
+  const x = end[0] - start[0];
+  const y = end[1] - start[1];
+  const lineLength = Math.sqrt(x * x + y * y) || 1e-6; // prevent div by zero
+
+  out[0] = x / lineLength;
+  out[1] = y / lineLength;
+
+  return out;
+}
+
+
 export function _subtractVec(a, b) {
   return [a[0] - b[0], a[1] - b[1]];
+}
+
+
+export function _subtractVec_inPlace(a, b, out) {
+  out[0] = a[0] - b[0];
+  out[1] = a[1] - b[1];
+  return out;
 }
 
 export function _turnDirVec90CountrC(direction) {
@@ -151,6 +195,10 @@ export function _getAngleBetweenPoints(a, b) {
 
 export function _getAngleFromXAxis(dirVec) {
   return Math.atan2(dirVec[1], dirVec[0]);
+}
+
+export function _getAngleFromXAxis_inPlace(dx, dy) {
+  return Math.atan2(dy, dx);
 }
 
 export function _getNormAglDiff(angleA, angleB) {
@@ -359,11 +407,11 @@ export function intersectLines(
 
 export function getSpineSagTrans(startJoint, endJoint) {
   const distanceApart = _getDistanceScalar(endJoint, startJoint);
-  const lineDir = _getDirVec(endJoint, startJoint);
+  const lineDir = _getDirVec_inPlace(endJoint, startJoint);
 
   const perpendicularDir = _turnDirVec90CountrC(lineDir);
   const angle = _getAngleFromXAxis(perpendicularDir);
-  const center = _getCenterPoint(startJoint, endJoint);
+  const center = _getCenterPoint_inPlace(startJoint, endJoint);
 
   const tLine = makeLineOverACenter(center, perpendicularDir, 0.18);
 
@@ -385,7 +433,7 @@ export function getBackFrontStepDistance(frontStep, backStep) {
 }
 
 export function getFrontStepsSagTrans(step, otherStep) {
-  const centerPoint = _getCenterPoint(step, otherStep);
+  const centerPoint = _getCenterPoint_inPlace(step, otherStep);
   const tDistanceApart = _getDistanceScalar(step, otherStep);
   const lineDir = _getDirVec(step, otherStep);
   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
@@ -476,8 +524,8 @@ export function updateShoulderRotator(
 
 
 export function getArmMuscles(muscles, elbow, rotator, stepTarget){
-  muscles[0] = _getCenterPoint(stepTarget, elbow);
-  muscles[1] = _getCenterPoint(elbow, rotator);
+  muscles[0] = _getCenterPoint_inPlace(stepTarget, elbow);
+  muscles[1] = _getCenterPoint_inPlace(elbow, rotator);
 };
 
 

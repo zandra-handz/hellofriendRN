@@ -1,6 +1,6 @@
 // just data that all motions use
 // nothing specific to lengths/chains/etc
-import { _makeDistancePoint, _getDirVec, _makeLerpAngle } from "../utils.js";
+import { _makeDistancePoint, _makeDistancePoint_inPlace, _getDirVec, _getDirVec_inPlace, _makeLerpAngle } from "../utils.js";
 
 
 
@@ -108,10 +108,10 @@ export default class MotionGlobal {
   // updated in body because goes off of radii set there
   update_headPosition(sumRadii) {
     let dist = 0.01;
-    let dirVec = _getDirVec(this.frontStepsTCenter, this.frontStepsSLine[1]);
-    this.movingHead = _makeDistancePoint(this.frontStepsTCenter, dirVec, dist);
+    let dirVec = _getDirVec_inPlace(this.frontStepsTCenter, this.frontStepsSLine[1]);
+    this.movingHead = _makeDistancePoint_inPlace(this.frontStepsTCenter, dirVec, dist);
 
-    this.movingSnout = _makeDistancePoint(
+    this.movingSnout = _makeDistancePoint_inPlace(
       this.frontStepsTCenter,
       dirVec,
       dist + 0.02

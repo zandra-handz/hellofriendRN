@@ -1,6 +1,7 @@
  import {
   _getPointTowardB,
   _getCenterPoint,
+  _getCenterPoint_inPlace,
   _getDistanceScalar,
   _getDotScalar,
   _subtractVec,
@@ -102,23 +103,37 @@ export default class Legs {
       [0.5, 0.5],
     ];
 
-    this.fingers = [
-      [
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-      ],
 
-      [
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-        [0.5, 0.5],
-      ],
-    ];
+    // 10 fingers × vec2
+this.fingerBuffer = new Float32Array(20);
+
+// Convenience views (NO allocation after this)
+this.fingers = [
+  Array.from({ length: 5 }, (_, i) =>
+    this.fingerBuffer.subarray(i * 2, i * 2 + 2)
+  ),
+  Array.from({ length: 5 }, (_, i) =>
+    this.fingerBuffer.subarray(10 + i * 2, 10 + i * 2 + 2)
+  ),
+];
+
+    // this.fingers = [
+    //   [
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //   ],
+
+    //   [
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //     [0.5, 0.5],
+    //   ],
+    // ];
 
     this.fingerLen = fingerLen;
     this.fingerAngleOffset = 7;
@@ -380,21 +395,15 @@ export default class Legs {
       this.upperArmLength,
       this.forearmLength,
       true
-    );
+    ); 
 
-    //     this.muscles[0] = _getCenterPoint(this.stepTargets[0], this.elbows[0]);
-    // this.muscles[1] = _getCenterPoint(this.elbows[0], this.rotatorJoint0);
-    // this.muscles[2] = _getCenterPoint(this.stepTargets[1], this.elbows[1]);
-    // this.muscles[3] = _getCenterPoint(this.elbows[1], this.rotatorJoint1);
-    //     this.muscles[0] = _getPointTowardB( this.elbows[0], this.rotatorJoint0, .7);
-    // this.muscles[1] = _getPointTowardB(this.elbows[0], this.rotatorJoint0, .9);
-    // this.muscles[2] =_getPointTowardB(this.elbows[1], this.rotatorJoint1, .85);
-    // this.muscles[3] = _getPointTowardB(this.elbows[1], this.rotatorJoint1, .9);
 
-    this.muscles[0] = _getCenterPoint(this.stepTargets[0], this.elbows[0]);
-    this.muscles[1] = _getCenterPoint(this.elbows[0], this.stepCenterJoint);
-    this.muscles[2] = _getCenterPoint(this.stepTargets[1], this.elbows[1]);
-    this.muscles[3] = _getCenterPoint(this.elbows[1], this.stepCenterJoint);
+    // set muscles
+    _getCenterPoint_inPlace( this.stepTargets[0], this.elbows[0], this.muscles[0]);
+    _getCenterPoint_inPlace( this.elbows[0], this.stepCenterJoint, this.muscles[1]);
+    _getCenterPoint_inPlace( this.stepTargets[1], this.elbows[1], this.muscles[2]);
+    _getCenterPoint_inPlace( this.elbows[1], this.stepCenterJoint, this.muscles[3]);
+
     solveFingers(
       this.stepTargets[0],
       this.fingers[0],

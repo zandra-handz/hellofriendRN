@@ -1,128 +1,126 @@
-import { View, Text, Pressable } from "react-native";
-import React from "react";
-import Animated from "react-native-reanimated";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-
-import GlobalPressable from "../appwide/button/GlobalPressable";
- 
-import ActionAndBack from "./ActionAndBack";
+import { View,   Pressable, StyleSheet } from "react-native";
+import React from "react"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { MaterialIcons } from "@expo/vector-icons";
+ 
 
 type Props = {
   onPress: () => void;
   onBackPress: () => void;
+  onUndoPress: () => void;
   label: string;
   iconName: string;
   forwardFlowOn: boolean;
   primaryColor: string;
   primaryBackground: string;
+  borderColor: string;
 };
 
 const MomentDotsResetterMini = ({
   onPress,
   onBackPress,
-  onCenterPress,
-  label = "Save and Continue",
-  labelCenter = "Recenter",
-  iconName = "keyboard-arrow-left",
+  onCenterPress, 
+  onUndoPress,
+  iconName = "chevron_left",
  
-  style,
   primaryColor,
   primaryBackground,
+  borderColor
 }: Props) => {
   const { navigateBack } = useAppNavigations();
 
-const onGoBack = async () => {
-  if (onBackPress) {
-    // wait for onBackPress to finish if it's async
-    await onBackPress();
-  }
-  navigateBack();
-};
+  const onGoBack = async () => {
+    if (onBackPress) { 
+      await onBackPress();
+    }
+    navigateBack();
+  };
+
+  const iconSize = 24;
 
   return (
-    <Animated.View
-      style={style}
+    <View
+      style={[styles.container, { backgroundColor: primaryBackground, borderColor: borderColor }]}
       //  entering={SlideInDown} exiting={SlideOutDown}
-    >
-      <GlobalPressable
-        onPress={onPress}
-        style={[
-          {
-            height: 50,
-            paddingHorizontal: 5,
-            flexDirection: "row",
-            backgroundColor: "orange",
-
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "space-between",
-            borderRadius: 999,
-            backgroundColor: primaryBackground,
-          },
-        ]}
-      >
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            alignItems: "center",
-            height: "100%",
-            justifyContent: "space-between",
-          }}
-        >
+    > 
           <Pressable
             hitSlop={10}
-            style={{
-              height: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            style={styles.buttonContainer}
             onPress={onGoBack}
           >
-            <MaterialIcons
+            <SvgIcon
               name={`${iconName}`}
-              size={20}
+              size={iconSize}
+              color={primaryColor}
+            />
+          </Pressable>
+
+          <Pressable
+            hitSlop={10}
+            style={styles.buttonContainer}
+            onPress={onCenterPress}
+          >
+            <SvgIcon name={`refresh`} size={iconSize} color={primaryColor} />
+          </Pressable>
+
+          <Pressable
+            hitSlop={10}
+            style={styles.buttonContainer}
+            onPress={onPress}
+          >
+            <SvgIcon
+              name={`scatter_plot`}
+              size={iconSize}
+              color={primaryColor}
+            />
+          </Pressable>
+
+                    <Pressable
+            hitSlop={10}
+            style={styles.buttonContainer}
+            onPress={onUndoPress}
+          >
+            <SvgIcon
+              name={`delete`}
+              size={iconSize}
               color={primaryColor}
             />
           </Pressable>
 
 
-                    <View style={{ alignItems: "center", flexDirection: "row" }}>
-            <Text
-              style={[
-                AppFontStyles?.subWelcomeText,
-                { color: primaryColor, fontSize: 13, marginRight: 12 },
-              ]}
-            >
-              {labelCenter}
-            </Text>
 
-         
-              <ActionAndBack onPress={onCenterPress} iconName={"refresh"} rounded={true} />
-        
-          </View>
-                    <View style={{ alignItems: "center", flexDirection: "row" }}>
-            <Text
-              style={[
-                AppFontStyles?.subWelcomeText,
-                { color: primaryColor, fontSize: 13, marginRight: 12 },
-              ]}
-            >
-              {label}
-            </Text>
-
-         
-              <ActionAndBack onPress={onPress} iconName={"refresh"} rounded={true} />
-        
-          </View>
-
-
-        </View>
-      </GlobalPressable>
-    </Animated.View>
+          
+     
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: 200,//160 for three 
+    paddingTop: 18,
+    paddingBottom: 20,
+    width: 52,
+    alignItems: "center", 
+    borderRadius: 999,
+    borderWidth: 1,
+      // Shadow for iOS
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4.65,
+
+  // Shadow for Android
+  elevation: 8,
+  
+  },
+  buttonContainer: {
+    // height: 50, 
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default MomentDotsResetterMini;

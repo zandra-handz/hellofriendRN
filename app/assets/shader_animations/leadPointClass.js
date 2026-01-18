@@ -1,20 +1,4 @@
-export function _getDirVec(start, end) {
-  const x = end[0] - start[0];
-  const y = end[1] - start[1];
-
-  const lineLength = Math.sqrt(x * x + y * y);
-  const dirX = x / lineLength;
-  const dirY = y / lineLength;
-
-  return [dirX, dirY];
-}
-
-export function _makeDistancePoint(pointA, dirVec, distScalar) {
-  const x = pointA[0] + dirVec[0] * distScalar;
-  const y = pointA[1] + dirVec[1] * distScalar;
-
-  return [x, y];
-}
+ 
 
 export default class Mover {
   //time based update, updates every frame
@@ -29,13 +13,14 @@ export default class Mover {
 
     this.dampening = 6.4;
     this.spring = 20;
-
+ this.lastMovingTime = null; 
     this.u_debug_lead_point_prefix = u_debug_lead_point_prefix;
 
     this.inputDistance = 0;
 
     this.isMoving = false;
     this.stillModeThreshhold = 0.00001; // how much sooner than vel setting to [0,0] do we set still mode
+  this.speed = 0;
   }
 
   changeOverallSpeed(dampening, spring) {
@@ -48,12 +33,21 @@ export default class Mover {
     this.spring = this.defaultSpring;
   }
 
-  isLeadStationary() {
-    const [vx, vy] = this.leadVelocity;
-    return Math.sqrt(vx * vx + vy * vy) < this.stillModeThreshhold;
+  // isLeadStationary() {
+  //   const [vx, vy] = this.leadVelocity;
+  //   return Math.sqrt(vx * vx + vy * vy) < this.stillModeThreshhold;
+  // }
+
+
+    isLeadStationary() {
+    return this.speed < this.stillModeThreshhold;
   }
 
-  updateLeadPointSmooth(path, dt = 1) {
+
+
+
+
+  updateLeadPointSmooth(path, dt = 1, currentTime = Date.now()) {
     const target = path;
     const pos = this.lead;
 
@@ -81,12 +75,44 @@ export default class Mover {
 
     const vx = this.leadVelocity[0];
     const vy = this.leadVelocity[1];
-    this.lead = [pos[0] + vx * dt, pos[1] + vy * dt];
+    // this.lead = [pos[0] + vx * dt, pos[1] + vy * dt];
+    // in place
+    this.lead[0] = pos[0] + vx*dt;
+    this.lead[1] = pos[1] + vy*dt;
 
-    const moved = Math.sqrt(vx * vx + vy * vy) * dt;
+        this.speed = Math.sqrt(
+      this.leadVelocity[0] * this.leadVelocity[0] +
+      this.leadVelocity[1] * this.leadVelocity[1]
+    );
+
+
+    const rawSpeed = Math.sqrt(
+  this.leadVelocity[0] ** 2 + this.leadVelocity[1] ** 2
+);
+
+// Snap small velocities to zero
+this.speed = rawSpeed < this.stillModeThreshhold ? 0 : rawSpeed;
+
+if (this.speed > 0) {
+  // Creature is moving, reset timestamp
+  this.lastMovingTime = null;
+} else {
+  // Creature is still, record the last time it had speed
+  if (this.lastMovingTime === null) {
+    this.lastMovingTime = currentTime;
+  }
+}
+
+    const moved = this.speed * dt;
     this.leadDistanceTraveled += moved;
 
-    this.isMoving = !this.isLeadStationary(); 
+    this.isMoving = !this.isLeadStationary();
+
+// older version before we had speed
+    // const moved = Math.sqrt(vx * vx + vy * vy) * dt;
+    // this.leadDistanceTraveled += moved;
+
+    // this.isMoving = !this.isLeadStationary(); 
   }
 
   update(path) {

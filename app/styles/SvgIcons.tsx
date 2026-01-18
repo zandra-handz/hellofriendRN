@@ -66,6 +66,7 @@ import PulseSvg from "./svgs/pulse";
 import PlusCircleSvg from "./svgs/plus-circle";
 import RefreshSvg from "./svgs/refresh";
 import CalendarOutlineSvg from "./svgs/calendar-outline";
+import ScatterPlotSvg from "./svgs/scatter-plot";
 import SendSvg from "./svgs/send";
 import SendCircleOutlineSvg from "./svgs/send-circle-outline";
 import SettingsSuggestSvg from "./svgs/settings_suggest";
@@ -122,6 +123,7 @@ const svgIcons = {
   calendar_outline: CalendarOutlineSvg, // friend header
   lock_outlne: LockOutlineSvg,
   logout: LogoutSvg,
+  scatter_plot: ScatterPlotSvg,
   send: SendSvg,
   send_circle_outline: SendCircleOutlineSvg, // location map screen button
   chevron_left: ChevronLeftSvg,
