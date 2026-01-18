@@ -101,18 +101,9 @@ primaryBackground,
 
   return (
     <>
-      {/* <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
-        <SvgIcon
-          name={"moon_waning_crescent"}
-          size={1200}
-          color={CARD_BACKGROUND}
-          //color={primaryColor}
-          // color={"red"}
-          style={[styles.crescentMoon]}
-        />
-      </Animated.View> */}
-
+ 
       <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
+        
         <View
           style={[
             {

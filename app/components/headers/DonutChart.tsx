@@ -259,25 +259,7 @@ darkerOverlayBackgroundColor,
       <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
         {LabelOverlays}
       </Animated.View>
-
-      {/* <Pressable
-        onPress={() => resetLeaves()}
-        style={{
-          width: 40,
-          height: 40,
-          position: "absolute",
-          borderRadius: 999,
-          zIndex: 10000,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: "hotpink",
-        }}
-      >
-        <SvgIcon
-        name="refresh"
-        color={primaryColor}
-        size={24}/>
-      </Pressable> */}
+ 
       {  onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <SvgIcon
@@ -294,24 +276,7 @@ darkerOverlayBackgroundColor,
           />
         </View>
       )}
-      {/* <Pressable
-        onPress={onPlusPress}
-        hitSlop={60}
-        style={[
-          styles.centerButton,
-          {
-            backgroundColor: manualGradientColors.lightColor,
-          },
-        ]}
-        hitSlop={30}
-      >
-        <SvgIcon
-          name={"plus"}
-          size={22}
-          opacity={1}
-          color={manualGradientColors.homeDarkColor}
-        />
-      </Pressable> */}
+ 
     </View>
   );
 };

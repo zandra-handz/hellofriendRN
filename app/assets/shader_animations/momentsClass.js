@@ -98,11 +98,12 @@ export default class Moments {
     }
     this.momentsLength = updatedData.length;
   }
+ 
 
-  update(userPointer, isDragging) {
+  update(userPointer, isDragging, isMoving, altCoord) {
     const [ux, uy] = userPointer;
 
-    if (!isDragging) {
+    if (!isDragging && !isMoving) {
       this.draggingMomentIndex = -1;
       this.selectedMomentIndex = -1;
 
@@ -116,16 +117,23 @@ export default class Moments {
     // If already dragging a moment, update its coords directly
     if (this.draggingMomentIndex >= 0) {
       const coord = this.moments[this.draggingMomentIndex].coord;
-      coord[0] = ux;
-      coord[1] = uy;
+      // coord[0] = ux;
+      // coord[1] = uy;
+      coord[0] = altCoord[0];
+      coord[1] = altCoord[1];
 
       this.selectedMomentIndex = this.draggingMomentIndex;
 
       // Update highlight
-      this.selected.coord[0] = ux;
-      this.selected.coord[1] = uy;
-      this.lastSelected.coord[0] = ux;
-      this.lastSelected.coord[1] = uy;
+      // this.selected.coord[0] = ux;
+      // this.selected.coord[1] = uy;
+      // this.lastSelected.coord[0] = ux;
+      // this.lastSelected.coord[1] = uy;
+ 
+      this.selected.coord[0] = altCoord[0];
+      this.selected.coord[1] = altCoord[1];
+      this.lastSelected.coord[0] = altCoord[0];
+      this.lastSelected.coord[1] = altCoord[1];
 
       return;
     }
@@ -135,9 +143,9 @@ export default class Moments {
     let closestDistSquared = 0.5 * 0.5;
 
     for (let i = 0; i < this.momentsLength; i++) {
-      const [mx, my] = this.moments[i].coord;
-      const dx = ux - mx;
-      const dy = uy - my;
+    
+      const dx = ux - this.moments[i].coord[0];
+      const dy = uy - this.moments[i].coord[1];
       const distSquared = dx * dx + dy * dy;
 
       if (distSquared <= closestDistSquared) {
@@ -174,8 +182,13 @@ export default class Moments {
   this.draggingMomentIndex = closestIndex;
 
   const coord = this.moments[closestIndex].coord;
-  coord[0] = ux;
-  coord[1] = uy;
+  // coord[0] = ux;
+  // coord[1] = uy;
+    coord[0] = altCoord[0];
+    coord[1] = altCoord[1];
+
+
+
 
   this.selectedMomentIndex = closestIndex;
   this.selectedMomentId = this.moments[closestIndex].id;
@@ -184,10 +197,17 @@ export default class Moments {
   this.selected.id = this.moments[closestIndex].id;
   this.lastSelected.id = this.moments[closestIndex].id;
 
-  this.selected.coord[0] = ux;
-  this.selected.coord[1] = uy;
-  this.lastSelected.coord[0] = ux;
-  this.lastSelected.coord[1] = uy;
+  // this.selected.coord[0] = ux;
+  // this.selected.coord[1] = uy;
+  // this.lastSelected.coord[0] = ux;
+  // this.lastSelected.coord[1] = uy;
+
+
+    this.selected.coord[0] = altCoord[0];
+    this.selected.coord[1] = altCoord[1];
+    this.lastSelected.coord[0] = altCoord[0];
+    this.lastSelected.coord[1] = altCoord[1];
+
 }
 
   }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Group } from "@shopify/react-native-skia"; 
 import {
   useSharedValue,
@@ -29,16 +29,26 @@ export default function LeafPath({
 }: LeafPathProps) {
  
 
-  
+  const isSleeping = useSharedValue(false);
+
   //  console.log('LEAF POSITIONS', positions)
 
   const leafSvgString = Skia.Path.MakeFromSVGString(
     "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"
   );
 
-  
+  useEffect(() => {
+  const lastLeafFinish = (positions.length - 1) * 120 + 500;
+  const timeout = setTimeout(() => {
+    isSleeping.value = true;
+    console.log('is sleeping')
+  }, lastLeafFinish);
+  return () => clearTimeout(timeout);
+}, [positions.length]);
+
 
   return (
+    <> 
     <Group blendMode="multiply">
       {positions.map((p, i) => (
         <LeafInstance
@@ -49,8 +59,10 @@ export default function LeafPath({
           size={positions[i].size}
           index={i}
           color={colorsReversed[i]}
+          isSleeping={isSleeping}
         />
       ))}
     </Group>
+    </>
   );
 }

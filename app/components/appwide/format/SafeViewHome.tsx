@@ -56,6 +56,7 @@ const SafeViewHome = ({
   const useFriendColors = useMemo(() => friendId, [friendId]);
 
   return (
+    // <> 
     <GradientBackground
       useFriendColors={useFriendColors}
       screenname={'home'}
@@ -85,6 +86,7 @@ const SafeViewHome = ({
         </>
       </SafeAreaView>
     </GradientBackground>
+    // </>
   );
 };
 

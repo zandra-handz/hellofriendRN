@@ -24,7 +24,7 @@ const WriteButton = ({
         onPress={onPress}
         style={[styles.container, { backgroundColor: backgroundColor }]}
       >
-        <GradientBackgroundFidgetOne
+        {/* <GradientBackgroundFidgetOne
           //   speed={600} what the spinner this is based on is set to
           firstColorSetDark={manualGradientColors.darkColor}
           firstColorSetLight={manualGradientColors.lightColor}
@@ -40,7 +40,7 @@ const WriteButton = ({
           name={"draw_pen"} 
           //   name={"pen_plus"} 
           color={iconColor} size={40} />
-        </GradientBackgroundFidgetOne>
+        </GradientBackgroundFidgetOne> */}
       </GlobalPressable>
     </View>
   );

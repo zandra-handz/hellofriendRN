@@ -1,85 +1,127 @@
-export function toShaderSpace([x, y], aspect, scale) {
-  let sx = x - 0.5;
-  let sy = y - 0.5;
+// export function toShaderSpace([x, y], aspect, scale) {
+//   let sx = x - 0.5;
+//   let sy = y - 0.5;
 
-  sx *= aspect;
+//   sx *= aspect;
+//   sx /= scale;
+//   sy /= scale;
+
+//   return [sx, sy];
+// }
+
+export function toShaderSpace_inplace(point, aspect, scale, out, outIndex) {
+  let sx = point[0] - 0.5;
+  let sy = point[1] - 0.5;
+
+   //sx *= aspect;
   sx /= scale;
   sy /= scale;
 
-  return [sx, sy];
-}
-
-export function toShaderModel([x, y], scale) {
-  let sx = x - 0.5;
-  let sy = y - 0.5;
-
-  sx /= scale;
-  sy /= scale;
-
-  return [sx, sy];
+  out[outIndex + 0] = sx;
+  out[outIndex + 1] = sy;
 }
 
 
-export function packVec2Uniform_withRecenter(points, flatArray, num, aspect = 1, scale = 1) {
-  for (let i = 0; i < num; i++) {
-    if (points[i]) {
-      //    const [sx, sy] = [points[i][0], points[i][1]];
-      const [sx, sy] = toShaderModel(points[i], scale);
+// export function toShaderModel([x, y], scale) {
+//   let sx = x - 0.5;
+//   let sy = y - 0.5;
 
-      flatArray[i * 2 + 0] = sx;
-      flatArray[i * 2 + 1] = sy;
-    } else {
-      flatArray[i * 2 + 0] = 0.0;
-      flatArray[i * 2 + 1] = 0.0;
-    }
-  }
+//   sx /= scale;
+//   sy /= scale;
+
+//   return [sx, sy];
+// }
+
+export function screenToGeckoSpace(
+  p: [number, number],
+  aspect: number,
+  geckoScale: number
+): [number, number] {
+  // 1. recenter
+  let x = p[0];
+  let y =  p[1]; // <-- Y FLIP (this is the big fix)
+
+  // 2. aspect correction
+  //x *= aspect;
+
+  // 3. scale
+  x *= geckoScale;
+  y *= geckoScale;
+
+  return [x, y];
 }
 
-export function packVec2UniformFlat_withRecenter(
-  src: Float32Array,
-  dst: Float32Array,
-  count: number,
-  scale: number
+
+
+export function screenToGeckoSpace_inPlace(
+  p: [number, number],
+  aspect: number,
+  geckoScale: number,
+  out: [number, number]
 ) {
-  let k = 0;
+  // out[0] = (p[0] - 0.5) * aspect * geckoScale; // x
+  // out[1] = (0.5 - p[1]) * geckoScale;          // y flipped
+    out[0] = (p[0]);// * geckoScale; // x
+  out[1] = (p[1]);// * geckoScale;          
+}
 
+
+
+export function toShaderModel_inplace(point, scale, out, outIndex) {
+  let sx = point[0] - 0.5;
+  let sy = point[1] - 0.5;
+
+  sx /= scale;
+  sy /= scale;
+
+  out[outIndex + 0] = sx;
+  out[outIndex + 1] = sy;
+}
+
+
+export function packVec2Uniform_withRecenter(
+  points,
+  flatArray,
+  count,
+  aspect = 1,
+  scale = 1,
+  offset = 0
+) {
   for (let i = 0; i < count; i++) {
-    const x = src[k];
-    const y = src[k + 1];
+    const dst = offset + i;
+    const base = dst * 2;
 
-    // skip zeros
-    if (x !== 0 || y !== 0) {
-      // convert each [x, y] to shader space
-      const [sx, sy] = toShaderModel([x, y], scale);
-      dst[k]     = sx;
-      dst[k + 1] = sy;
+    if (points[i]) {
+      toShaderModel_inplace(points[i], scale, flatArray, base);
     } else {
-      dst[k]     = 0.0;
-      dst[k + 1] = 0.0;
+      flatArray[base + 0] = 0.0;
+      flatArray[base + 1] = 0.0;
     }
-
-    k += 2;
   }
 }
 
+
+
+ 
+ 
 
 export function packVec2Uniform_withRecenter_moments(
   points,
   flatArray,
-  num,
+  count,
   aspect = 1,
   scale = 1
 ) {
-  for (let i = 0; i < num; i++) {
-    if (points[i]) {
-      // const [sx, sy] = toShaderSpace(points[i].coord, aspect, scale);
-        const [sx, sy] = [points[i].coord[0], points[i].coord[1]]
+  for (let i = 0; i < count; i++) {
+    const base = i * 2;
 
-      flatArray[i * 2 + 0] = sx;
-      flatArray[i * 2 + 1] = sy;
+    const p = points[i];
+    if (p) {
+      flatArray[base + 0] = p.coord[0];
+      flatArray[base + 1] = p.coord[1];
     } else {
-      flatArray[i * 2 + 0] = 0.0;
-      flatArray[i * 2 + 1] = 0.0;
+      flatArray[base + 0] = 0.0;
+      flatArray[base + 1] = 0.0;
     }
   }
 }

@@ -833,43 +833,60 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
 
 
 
-    // Fingers
-    float fingerThickness = 0.0025 * s;
-    float fingerRadius = 0.0015 * s;
-    float fingerLineBlend = .0025 * s;
-    float fingerBlend = 0.01 * s;
 
-    // Front left fingers (0-4)
-    for (int i = 0; i < 5; i++) {
+
+// Fingers – Optimized but fully rendered
+float fingerThickness = 0.0025 * s;
+float fingerRadius    = 0.0045 * s;
+
+// Bounding box threshold: skip pixels clearly outside finger influence
+float bbThreshold = 0.02; // tweak to cover finger + line
+
+// --- Front left fingers (0-4) ---
+for (int i = 0; i < 5; i++) {
+    vec2 diff = gecko_uv - u_fingers[i];
+    if (abs(diff.x) < bbThreshold && abs(diff.y) < bbThreshold) {
         float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[0]) - fingerThickness;
-        float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
-        bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
-        bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+        float fingerTip  = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+        float fingerSDF  = min(fingerLine, fingerTip);  // hard union
+        bodySDF = min(bodySDF, fingerSDF);
     }
+}
 
-    // Front right fingers (5-9)
-    for (int i = 5; i < 10; i++) {
+// --- Front right fingers (5-9) ---
+for (int i = 5; i < 10; i++) {
+    vec2 diff = gecko_uv - u_fingers[i];
+    if (abs(diff.x) < bbThreshold && abs(diff.y) < bbThreshold) {
         float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[1]) - fingerThickness;
-        float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
-        bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
-        bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+        float fingerTip  = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+        float fingerSDF  = min(fingerLine, fingerTip);
+        bodySDF = min(bodySDF, fingerSDF);
     }
+}
 
-    // Back left fingers (10-14)
-    for (int i = 10; i < 15; i++) {
+// --- Back left fingers (10-14) ---
+for (int i = 10; i < 15; i++) {
+    vec2 diff = gecko_uv - u_fingers[i];
+    if (abs(diff.x) < bbThreshold && abs(diff.y) < bbThreshold) {
         float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[2]) - fingerThickness;
-        float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
-        bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
-        bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+        float fingerTip  = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+        float fingerSDF  = min(fingerLine, fingerTip);
+        bodySDF = min(bodySDF, fingerSDF);
     }
+}
 
-    // Back right fingers (15-19)
-    for (int i = 15; i < 20; i++) {
+// --- Back right fingers (15-19) ---
+for (int i = 15; i < 20; i++) {
+    vec2 diff = gecko_uv - u_fingers[i];
+    if (abs(diff.x) < bbThreshold && abs(diff.y) < bbThreshold) {
         float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[3]) - fingerThickness;
-        float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
-        bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
-        bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+        float fingerTip  = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+        float fingerSDF  = min(fingerLine, fingerTip);
+        bodySDF = min(bodySDF, fingerSDF);
     }
+}
+
+
 
     return bodySDF;
 }
@@ -897,6 +914,25 @@ half4 main(float2 fragCoord) {
 `;
 
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  export const MOMENTS_BG_SKSL = `
 
 uniform float2 u_resolution;
@@ -1303,20 +1339,12 @@ half4 main(float2 fragCoord) {
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
     uv.x *= u_aspect;
-     
- 
-    
- 
-    
-    // Create selected dot - solid
+       
     vec2 scaled_uv = uv / u_scale;
     vec2 selected_uv = u_selected;
     float selectedMask = step(distance(scaled_uv, selected_uv), 0.03);
     vec3 selectedColor = endColor * selectedMask;
-    
-    // Composite gecko elements ON TOP of glass effects
-    // Use mix() to make it completely solid where the mask is 1.0
- 
+     
     color = mix(color, selectedColor, selectedMask);
     
     return half4(color, 1.0);
@@ -1755,3 +1783,69 @@ half4 main(float2 fragCoord) {
 `;
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// BLENDED FINGERS
+    // // Fingers
+    // float fingerThickness = 0.0025 * s;
+    // float fingerRadius = 0.0015 * s;
+    // float fingerLineBlend = .0025 * s;
+    // float fingerBlend = 0.01 * s;
+
+    // // Front left fingers (0-4)
+    // for (int i = 0; i < 5; i++) {
+    //     float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[0]) - fingerThickness;
+    //     float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+    //     bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
+    //     bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+    // }
+
+    // // Front right fingers (5-9)
+    // for (int i = 5; i < 10; i++) {
+    //     float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[1]) - fingerThickness;
+    //     float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+    //     bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
+    //     bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+    // }
+
+    // // Back left fingers (10-14)
+    // for (int i = 10; i < 15; i++) {
+    //     float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[2]) - fingerThickness;
+    //     float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+    //     bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
+    //     bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+    // }
+
+    // // Back right fingers (15-19)
+    // for (int i = 15; i < 20; i++) {
+    //     float fingerLine = lineSegmentSDF(gecko_uv, u_fingers[i], u_steps[3]) - fingerThickness;
+    //     float fingerSDF = distFCircle(gecko_uv, u_fingers[i], fingerRadius);
+    //     bodySDF = smoothMin(bodySDF, fingerLine, fingerLineBlend);
+    //     bodySDF = smoothMin(bodySDF, fingerSDF, fingerBlend);
+    // }

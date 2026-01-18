@@ -36,43 +36,7 @@ const TalkingPointsChart = ({
     useCapsuleList();
 
   const capsuleListCount = capsuleList?.length;
-
-  // STABLE BECAUSE USER CATEGORIES IS NOW STABLE  ? ?
-  // const categoryIds = useMemo(
-  //   () => userCategories.map((c) => c.id), // or c.category_id
-  //   [userCategories]
-  // );
-
-  // STABLE BECAUSE USER CATEGORIES IS NOW STABLE  ? ?
-  // const categoryColors = useMemo(() => {
-  //   if (!categoryIds.length || !themeColors?.lightColor) return [];
-
-  //   return generateGradientColors(
-  //     categoryIds,
-  //     themeColors.lightColor,
-  //     themeColors.darkColor
-  //   );
-  // }, [categoryIds, themeColors?.lightColor, themeColors?.darkColor]);
-
  
-
-  // const categoryColors = useMemo(() => {
-  //   return Object.entries(categoryColorsMap).map(([user_category, color]) => ({
-  //     user_category: Number(user_category),
-  //     color,
-  //   }));
-  // }, [categoryColorsMap]);
-
-
-// const categoryColors = useMemo(() => {
-//   console.log("Calculating categoryColors from categoryColorsMap:", categoryColorsMap);
-
-//   if (!categoryColorsMap) return [];
-//   return Object.entries(categoryColorsMap).map(([user_category, color]) => ({
-//     user_category: Number(user_category),
-//     color,
-//   }));
-// }, [categoryColorsMap]);
 
 
   const colorsRef = useRef<{
@@ -132,11 +96,7 @@ const TalkingPointsChart = ({
   const handleMomentScreenNoScroll = useCallback(() => {
     navigateToMoments({ scrollTo: null });
   }, [navigateToMoments]);
-
-  // const handleNavigateToCreateNew = useCallback(() => {
-  //   navigateToMomentFocus({ screenCameFrom: 1 });
-  // }, [navigateToMomentFocus]);
-
+ 
   const memoizedData = useMemo(
     () => categorySizes.sortedList,
     [categorySizes.sortedList]
