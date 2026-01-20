@@ -7,6 +7,7 @@ uniform float u_gecko_scale;
 uniform float u_time;
 uniform vec2 u_soul;
 uniform vec2 u_lead;
+uniform vec2 u_lead_screen_space;
 uniform vec2 u_joints[15];
 uniform vec2 u_head;
 uniform vec2 u_snout;
@@ -87,6 +88,8 @@ float3 sampleBackground(float2 fragCoord) {
 // ------------------------------------------------
 float buildGeckoSDF(vec2 gecko_uv, float s) {
     float circleSizeDiv = .8;
+
+
 
     // Main body circles
     float circle0 = distFCircle(gecko_uv, u_snout, 0.003 * s / circleSizeDiv);
@@ -248,15 +251,31 @@ half4 main(float2 fragCoord) {
 
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
-    uv.x *= u_aspect;
+   uv.x *= u_aspect; 
     vec2 gecko_uv = uv / u_gecko_scale;
     float s = 1.0 / u_gecko_scale;
+
+
+    vec3 leadColor = vec3(1.0, 0.0, 0.0); // red
+
+float leadCircle = distance(gecko_uv, u_lead);
+float leadMask = 1.0 - smoothstep(0.0, 0.01, leadCircle);
+
+vec3 leadOut = leadColor * leadMask;
+
+
+    vec3 leadScreenColor = vec3(1.0, 0.5, 0.5); 
+
+float leadScreenCircle = distance(gecko_uv, u_lead_screen_space);
+float leadScreenMask = 1.0 - smoothstep(0.0, 0.01, leadScreenCircle);
+
+vec3 leadScreenOut = leadScreenColor * leadScreenMask;
 
     float geckoSDF = buildGeckoSDF(gecko_uv, s);
     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
     vec3 geckoColor = endColor * geckoMask; // example green color
     color = mix(color, geckoColor, geckoMask);
 
-    return half4(color, geckoMask);
+    return half4(color + leadOut + leadScreenOut, geckoMask);
 }
 `;

@@ -149,11 +149,13 @@ const ScreenGecko = (props: Props) => {
         flex: 1,
         flexDirection: "column",
         justifyContent: "flex-end",
+       
       }}
     >
       <View
         style={[
           StyleSheet.absoluteFill,
+        
           // { backgroundColor: lightDarkTheme?.primaryBackground },
         ]}
       >
@@ -170,7 +172,7 @@ const ScreenGecko = (props: Props) => {
           startingCoord={[0.1, -0.5]}
           restPoint={[0.5, 0.6]}
           scale={0.8}
-          gecko_scale={0.8}
+          gecko_scale={.8}
           lightDarkTheme={lightDarkTheme}
           handleRescatterMoments={handleRescatterMoments}
           handleRecenterMoments={handleRecenterMoments}

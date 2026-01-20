@@ -49,14 +49,7 @@ export default class Spine {
     this.startingCoord = startingCoord;
     this.TAU = Math.PI * 2;
     this.updatesGlobalMotion = updatesGlobalMotion;
-
-    // this.lead = this.cursor;
-
-    //     this.prevLocomotionDistance = 0;
-
-    // this.prevLocomotionDistance = this.leadPoint.locomotionDistance;
-
-    // Not part of chain because weirdly circular, but influenced by angle caused by front steps
+ 
     this.head = [0.5, 0.5];
     this.snout = [0.5, 0.5];
     this.hint = [0.5, 0.5];
@@ -94,30 +87,13 @@ export default class Spine {
 
     this.jointRadii = jointRadii;
 
-    // this.jointRadii = [];
-
-    // for (let i = 0; i <= this.totalNumJoints; i++) {
-    //   this.jointRadii.push(baseRadius);
-    // }
-
-    this.first = this.joints[0];
-
+    this.first = this.joints[0]; 
     this.bodyLength = 0.13;
     this.currentLength = 0; //stored in spineMotion as well
     this.currentJointLength = this.segmentEnd + 1 - this.segmentStart;
 
-    this.center = 0; // stored in spineMotion as well
-
-    // front steps cast onto center
-    // this.centerFlanks = [
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    // ];
-    // this.intersectionFlanks = [
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    // ];
-
+    this.center = 0;  
+ 
     this.centerFlanks = [new Float32Array(2), new Float32Array(2)];
     this.intersectionFlanks = [new Float32Array(2), new Float32Array(2)];
 
@@ -160,28 +136,13 @@ export default class Spine {
     this.u_center_prefix = u_center_prefix;
     this.u_intersection_prefix = u_intersection_prefix;
     this.u_motion_debug_prefix = u_motion_debug_prefix;
-
-    // this.debugs = [];
-
-    this.debugs = [
-      new Float32Array(2),
-      new Float32Array(2),
-      new Float32Array(2),
-      new Float32Array(2),
-      new Float32Array(2),
-      new Float32Array(2),
-    ];
-    this.motion_debugs = [];
-
+ 
     this.isMoving = false;
   }
 
   updateMotionFirstAngle() {
     this.motionFirstAngle = this.motion.realignmentAngle1;
-    // if (this.motion.frontStepsSLine) {
-    //   this.debugs[0] = this.motion.frontStepsSLine[0];
-    //   this.debugs[1] = this.motion.frontStepsSLine[1];
-    // }
+ 
   }
 
   updateCurrentLength() {
@@ -201,10 +162,7 @@ export default class Spine {
       this.joints[this.segmentEnd],
       this.joints[this.segmentStart],
     );
-
-    // center line debug
-    this.debugs[0] = [spineCenterLines.tStart[0], spineCenterLines.tStart[1]];
-    this.debugs[1] = [spineCenterLines.tEnd[0], spineCenterLines.tEnd[1]];
+ 
 
     this.centerFlanks = getStartAndEndPoints(
       this.center,
@@ -212,10 +170,7 @@ export default class Spine {
       spineCenterLines.tStart,
       this.motion.frontSteps_tDistanceApart,
     );
-
-    this.debugs[2] = this.centerFlanks[0];
-    this.debugs[3] = this.centerFlanks[1];
-
+ 
     const intersection = intersectLines(
       [spineCenterLines.tStart, spineCenterLines.tEnd],
       spineCenterLines.tAngle,
@@ -237,15 +192,10 @@ export default class Spine {
       spineCenterLines.tStart,
       this.motion.frontSteps_tDistanceApart,
     );
+ 
 
-    this.debugs[4] = this.intersectionFlanks[0];
-    this.debugs[5] = this.intersectionFlanks[1];
-
-    // warning this function uses the motion data JUST updated above
     if (this.motion.centerIntersection != null) {
-      this.motionSecondAngle = this.motion.realignmentAngle2;
-      // this.debugs[2] = this.motion.mir_frontStepsSLine[0];
-      // this.debugs[3] =  this.motion.mir_frontStepsSLine[1];
+      this.motionSecondAngle = this.motion.realignmentAngle2; 
     }
   }
 
@@ -276,38 +226,7 @@ export default class Spine {
   } else {
     this.hint = _makeOffscreenPoint_inPlace(this.hintJoint);
   }
-}
-
-  //customized because I have no other use case
-  // HEAD
-  // and hint
-  // update_unchainedJoints(leadPoint_lead) {
-  //   let midPoint = _getCenterPoint(
-  //     this.motion.frontStepsSLine[1],
-  //     leadPoint_lead,
-  //   );
-
-  //   let dirVec = _getDirVec(this.joints[this.unchainedAnchorIndex], midPoint);
-  //   let head = _makeDistancePoint(
-  //     this.joints[this.unchainedAnchorIndex],
-  //     dirVec,
-  //     this.unchainedDist,
-  //   );
-
-  //   let snout = _makeDistancePoint(head, dirVec, this.snoutDist);
-
-  //   if (!this.isMoving) {
-  //     let hint = _makeDistancePoint(snout, dirVec, this.hintDist);
-  //     this.hintJoint = hint;
-  //   } else {
-  //     let hint = _makeOffscreenPoint();
-  //     this.hintJoint = hint;
-  //   }
-
-  //   // Put snout first so in ascending order like joints are
-  //   this.unchainedJoints = [snout, head];
-  //   // this.hintJoint = hint;
-  // }
+} 
 
   update(leadPoint_lead, leadPoint_isMoving) {
     this.isMoving = leadPoint_isMoving;
@@ -346,59 +265,4 @@ export default class Spine {
 }
 
 
-
-// updateCurrentLength() {
-//   const length = _getDistanceScalar(
-//     this.joints[this.segmentEnd],
-//     this.joints[this.segmentStart]
-//   );
-//   this.currentLength = length;
-
-//   _getCenterPoint_inPlace(
-//     this.joints[this.segmentEnd],
-//     this.joints[this.segmentStart],
-//     this.center
-//   );
-
-//   const spineCenterLines = getSpineSagTrans(
-//     this.joints[this.segmentEnd],
-//     this.joints[this.segmentStart]
-//   );
-
-//   // Update debug lines in place
-//   this.debugs[0][0] = spineCenterLines.tStart[0];
-//   this.debugs[0][1] = spineCenterLines.tStart[1];
-//   this.debugs[1][0] = spineCenterLines.tEnd[0];
-//   this.debugs[1][1] = spineCenterLines.tEnd[1];
-
-//   getStartAndEndPoints(
-//     this.center,
-//     spineCenterLines.tEnd,
-//     spineCenterLines.tStart,
-//     this.motion.frontSteps_tDistanceApart,
-//     this.centerFlanks
-//   );
-
-//   // intersection calculation
-//   const intersection = intersectLines(
-//     [spineCenterLines.tStart, spineCenterLines.tEnd],
-//     spineCenterLines.tAngle,
-//     this.motion.frontSteps_tDistanceApart,
-//     [this.motion.frontStepsTCenter, this.motion.frontStepsSLine[1]],
-//     this.motion.frontStepsSAngle
-//   );
-
-//   this.intersectionPoint = intersection.intersectionPoint;
-
-//   getStartAndEndPoints(
-//     this.intersectionPoint,
-//     spineCenterLines.tEnd,
-//     spineCenterLines.tStart,
-//     this.motion.frontSteps_tDistanceApart,
-//     this.intersectionFlanks
-//   );
-
-//   if (this.motion.centerIntersection != null) {
-//     this.motionSecondAngle = this.motion.realignmentAngle2;
-//   }
-// }
+ 

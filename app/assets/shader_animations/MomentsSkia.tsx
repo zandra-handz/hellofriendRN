@@ -36,9 +36,10 @@ import { useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   hexToVec3,
-  toShaderModel_inplace,
+  toShaderModel_inPlace,
   toShaderSpace_inplace,
-  packVec2Uniform_withRecenter,
+  toGeckoPointer_inPlace,
+  toShaderModel_arrays_inPlace,
   packVec2Uniform_withRecenter_moments,
   screenToGeckoSpace_inPlace,
 } from "./animUtils";
@@ -133,6 +134,9 @@ const MomentsSkia = ({
   };
 
   const userPointSV = useSharedValue(restPoint);
+const userPoint_geckoSpaceSV = useSharedValue([0, 0]); 
+ 
+const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
 
   const isDragging = useSharedValue(false); // tracks if screen is being touched
 
@@ -143,10 +147,13 @@ const MomentsSkia = ({
       const touch = e.changedTouches[0];
 
       userPointSV.value = [touch.x / size.width, touch.y / size.height];
+
+  
     })
     .onUpdate((e) => {
       // Normal drag update
       userPointSV.value = [e.x / size.width, e.y / size.height];
+ 
     })
     .onEnd(() => {
       isDragging.value = false; // finger lifted
@@ -291,18 +298,13 @@ const MomentsSkia = ({
   const NUM_TAIL_JOINTS = 13;
   const snoutRef = useRef([0, 0]);
   const headRef = useRef([0, 0]);
-  const hintRef = useRef([0, 0]);
-  const jointsRef = useRef(new Float32Array(NUM_SPINE_JOINTS * 2));
-  const tailJointsRef = useRef(new Float32Array(NUM_TAIL_JOINTS * 2));
-  const stepsRef = useRef(new Float32Array(4 * 2));
-  const elbowsRef = useRef(new Float32Array(4 * 2));
-  const shouldersRef = useRef(new Float32Array(4 * 2));
-  const legMusclesRef = useRef(new Float32Array(8 * 2));
-  const fingersRef = useRef(new Float32Array(20 * 2));
+  const hintRef = useRef([0, 0]); 
 
   const leadUniformRef = useRef(new Float32Array(2));
+  const leadScreenSpaceUniformRef = useRef(new Float32Array(2));
   const soulUniformRef = useRef(new Float32Array(2));
   const selectedUniformRef = useRef(new Float32Array(2));
+  const lastSelectedUniformRef = useRef(new Float32Array(2));
   const hintUniformRef = useRef(new Float32Array(2));
 
   const snoutUniformRef = useRef(new Float32Array(2));
@@ -319,10 +321,16 @@ const MomentsSkia = ({
   const fingersUniform = useRef(new Array(20 * 2).fill(0));
   const momentsUniform = useRef(new Array(MAX_MOMENTS * 2).fill(0));
 
-  const momentsRef = useRef(new Float32Array(MAX_MOMENTS * 2));
 
+  const clearUniformArray = (arr: number[]) => {
+  arr.fill(0);
+};
 
-  const geckoPointerRef = useRef<[number, number]>([0, 0]);
+const clearVec2 = (v: Float32Array | number[]) => {
+  v[0] = 0;
+  v[1] = 0;
+};
+ 
 
   const [internalReset, setInternalReset] = useState(Date.now());
   const handleReset = () => {
@@ -333,300 +341,220 @@ const MomentsSkia = ({
     moments.current.updateAllCoords(momentsData);
   }, [momentsData, internalReset]);
 
-  useEffect(() => {
-    if (!internalReset && !reset) return;
-    start.current = Date.now();
-    setTime(0);
-    moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
-    soul.current = new Soul(restPoint, 0.02);
-    leadPoint.current = new Mover(startingCoord);
-    gecko.current = new Gecko(startingCoord, 0.06);
+useEffect(() => {
+  if (!internalReset && !reset) return;
 
-    momentsRef.current.fill(0);
-    jointsRef.current.fill(0);
-    tailJointsRef.current.fill(0);
-    stepsRef.current.fill(0);
-    elbowsRef.current.fill(0);
-    shouldersRef.current.fill(0);
-    legMusclesRef.current.fill(0);
-    fingersRef.current.fill(0);
+  // reset time
+  start.current = Date.now();
+  setTime(0);
 
-    userPointSV.value = restPoint; // must be set to where entrance animation leaves off
-  }, [reset, internalReset]);
+  // recreate simulation objects
+  moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
+  soul.current = new Soul(restPoint, 0.02);
+  leadPoint.current = new Mover(startingCoord);
+  gecko.current = new Gecko(startingCoord, 0.06);
 
-  useEffect(() => {
-    let cancelled = false;
-    let frame;
+  // clear ALL shader-backed arrays (CRITICAL)
+  clearUniformArray(jointsUniform.current);
+  clearUniformArray(tailUniform.current);
+  clearUniformArray(stepsUniform.current);
+  clearUniformArray(elbowsUniform.current);
+  clearUniformArray(shouldersUniform.current);
+  clearUniformArray(musclesUniform.current);
+  clearUniformArray(fingersUniform.current);
+  clearUniformArray(momentsUniform.current);
 
-    const animate = () => {
-      if (cancelled) return;
+  // clear vec2 uniforms
+  clearVec2(leadUniformRef.current);
+  clearVec2(leadScreenSpaceUniformRef.current);
+  clearVec2(soulUniformRef.current);
+  clearVec2(selectedUniformRef.current);
+  clearVec2(lastSelectedUniformRef.current);
+  clearVec2(hintUniformRef.current);
+  clearVec2(snoutUniformRef.current);
+  clearVec2(headUniformRef.current);
 
-      if (leadPoint.current.isMoving || isDragging.value) {
-        const now = (Date.now() - start.current) / 1000;
-        setTime(now);
-      }
-      // const now = (Date.now() - start.current) / 1000;
-      // setTime(now);
+  // reset input state
+  userPointSV.value = restPoint;
+  userPoint_geckoSpaceRef.current[0] = startingCoord[0];
+  userPoint_geckoSpaceRef.current[1] = startingCoord[1];
 
-      frame = requestAnimationFrame(animate);
+  // reset uniforms metadata
+  uniformsRef.current.u_time = 0;
+  uniformsRef.current.u_momentsLength = 0;
 
-      // soul.current.update(); // moved this inside if because only using it once
-      if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
-        gecko.current.updateEnter(soul.current.done);
-      } else {
-        soul.current.update();
-      }
+}, [reset, internalReset]);
 
-      // if (gecko.current.oneTimeEnterComplete) {
-      //   leadPoint.current.update(userPointSV.value);
-      // } else {
-      //   leadPoint.current.update(soul.current.soul);
-      // }
+ 
+useEffect(() => {
+  let cancelled = false;
+  let frame;
 
+  const animate = () => {
+    if (cancelled) return;
 
-      if (gecko.current.oneTimeEnterComplete) {
-screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerRef.current);
-
-
-  leadPoint.current.update(geckoPointerRef.current);
-} else {
-  leadPoint.current.update(soul.current.soul);
+    if (aspect == null) {
+  frame = requestAnimationFrame(animate);
+  return;
 }
 
-      // if (leadPoint.current.lastMovingTime) {
-      //   // console.log('creature is in Still mode')
-      //   return;
-      // } else {
-      //   // console.log('weeeee creature is moving!')
-      // }
 
 
-      gecko.current.update(
-        leadPoint.current.lead,
-        leadPoint.current.leadDistanceTraveled,
-        leadPoint.current.isMoving,
-      );
 
-      // pack spine joints into Float32Array for shader
-      const spine = gecko.current.body.spine;
-      const tail = gecko.current.body.tail;
+    
 
-      const f_steps = gecko.current.legs.frontLegs.stepTargets;
-      const b_steps = gecko.current.legs.backLegs.stepTargets;
+    // UPDATE TIME IF MOVING
+    if (leadPoint.current.isMoving || isDragging.value) {
+      const now = (Date.now() - start.current) / 1000;
+      setTime(now);
+      uniformsRef.current.u_time = now;
+    }
+         toGeckoPointer_inPlace(
+    userPointSV.value,
+    aspect,
+    scale,
+  userPoint_geckoSpaceRef.current,
+   // userPoint_geckoSpaceSV.value,
+    0
+  );
+    frame = requestAnimationFrame(animate);
 
-      const f_elbows = gecko.current.legs.frontLegs.elbows;
-      const b_elbows = gecko.current.legs.backLegs.elbows;
+    // SOUL AND GECKO ENTER ANIMATION
+    if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
+      gecko.current.updateEnter(soul.current.done);
+    } else {
+      soul.current.update();
+    }
+    
+    // LEAD POINT
+    if (gecko.current.oneTimeEnterComplete) {
+ 
 
-      const f_shoulders = [
-        gecko.current.legs.frontLegs.rotatorJoint0,
-        gecko.current.legs.frontLegs.rotatorJoint1,
-      ];
-      const b_shoulders = [
-        gecko.current.legs.backLegs.rotatorJoint0,
-        gecko.current.legs.backLegs.rotatorJoint1,
-      ];
-
-      const f_muscles = gecko.current.legs.frontLegs.muscles;
-      const b_muscles = gecko.current.legs.backLegs.muscles;
-
-      snoutRef.current = spine.unchainedJoints[0] || [0, 0];
-      headRef.current = spine.unchainedJoints[1] || [0, 0];
-      hintRef.current = spine.hintJoint || [0, 0];
-
-
+  
+      //  screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerRef.current);
+     
       
-      moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, f_steps[0]);
+  //leadPoint.current.update(userPointSV.value);
+  leadPoint.current.update(   userPoint_geckoSpaceRef.current);
+    } else {
+      leadPoint.current.update(soul.current.soul);
+    }
 
-      // Pack in-place
-      packVec2Uniform_withRecenter(
-        spine.joints,
-        jointsRef.current,
-        NUM_SPINE_JOINTS,
-        aspect,
-        gecko_scale,
-      );
-      for (let i = 0; i < jointsUniform.current.length; i++)
-        jointsUniform.current[i] = jointsRef.current[i];
+    // BODY AND LEGS
+    gecko.current.update(
+      leadPoint.current.lead,
+      leadPoint.current.leadDistanceTraveled,
+      leadPoint.current.isMoving
+    );
 
-      packVec2Uniform_withRecenter(
-        tail.joints,
-        tailJointsRef.current,
-        NUM_TAIL_JOINTS,
-        aspect,
-        gecko_scale,
-      );
-      for (let i = 0; i < tailUniform.current.length; i++)
-        tailUniform.current[i] = tailJointsRef.current[i];
+    const spine = gecko.current.body.spine;
+    const tail = gecko.current.body.tail;  
+ 
+    snoutRef.current = spine.unchainedJoints[0] || [0, 0];
+    headRef.current = spine.unchainedJoints[1] || [0, 0];
+    hintRef.current = spine.hintJoint || [0, 0];
+ 
+    moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, gecko.current.legs.frontLegs.stepTargets[0]);
+ 
+    // In place packers
 
-      const allSteps = [...f_steps, ...b_steps];
-      packVec2Uniform_withRecenter(
-        allSteps,
-        stepsRef.current,
-        4,
-        aspect,
-        gecko_scale,
-      );
-      for (let i = 0; i < stepsUniform.current.length; i++)
-        stepsUniform.current[i] = stepsRef.current[i];
+    // SPINE AND TAILS
+    toShaderModel_arrays_inPlace(spine.joints, jointsUniform.current, NUM_SPINE_JOINTS, aspect, gecko_scale);
+    toShaderModel_arrays_inPlace(tail.joints, tailUniform.current, NUM_TAIL_JOINTS, aspect, gecko_scale);
 
-      const allElbows = [...f_elbows, ...b_elbows];
-      packVec2Uniform_withRecenter(
-        allElbows,
-        elbowsRef.current,
-        4,
-        aspect,
-        gecko_scale,
-      );
-      for (let i = 0; i < elbowsUniform.current.length; i++)
-        elbowsUniform.current[i] = elbowsRef.current[i];
+    // STEPS
+    toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.stepTargets, stepsUniform.current, 2, aspect, gecko_scale, 0);
+    toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.stepTargets, stepsUniform.current, 2, aspect, gecko_scale, 2);
 
-      const allShoulders = [...f_shoulders, ...b_shoulders];
-      packVec2Uniform_withRecenter(
-        allShoulders,
-        shouldersRef.current,
-        4,
-        aspect,
-        gecko_scale,
-      );
-      for (let i = 0; i < shouldersUniform.current.length; i++)
-        shouldersUniform.current[i] = shouldersRef.current[i];
+    // ELBOWS
+    toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.elbows, elbowsUniform.current, 2, aspect, gecko_scale, 0);
+    toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.elbows, elbowsUniform.current, 2, aspect, gecko_scale, 2);
+ 
+     // SHOULDERS (doing individually... should I make a different function for these?)
+    toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 0);
+    toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.rotatorJoint1, shouldersUniform.current, 1, aspect, gecko_scale, 1);
+    toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 2);
+    toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 3);
 
-      const allMuscles = [...f_muscles, ...b_muscles];
-      packVec2Uniform_withRecenter(
-        allMuscles,
-        legMusclesRef.current,
-        8,
-        aspect,
-        gecko_scale,
-      );
-      for (let i = 0; i < musclesUniform.current.length; i++)
-        musclesUniform.current[i] = legMusclesRef.current[i];
+    toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.muscles,  musclesUniform.current, 4, aspect, gecko_scale, 0);
+    toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.muscles,  musclesUniform.current, 4, aspect, gecko_scale, 4); 
+   
+    toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.fingers[0], fingersUniform.current, 5, aspect, gecko_scale, 0);
+    toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.fingers[1], fingersUniform.current, 5, aspect, gecko_scale, 5);
+    toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.fingers[0], fingersUniform.current, 5, aspect, gecko_scale, 10);
+    toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.fingers[1], fingersUniform.current, 5, aspect, gecko_scale, 15);
 
-      packVec2Uniform_withRecenter(
-        gecko.current.legs.frontLegs.fingers[0],
-        fingersRef.current,
-        5,
-        aspect,
-        gecko_scale,
-        0,
-      );
-      packVec2Uniform_withRecenter(
-        gecko.current.legs.frontLegs.fingers[1],
-        fingersRef.current,
-        5,
-        aspect,
-        gecko_scale,
-        5,
-      );
-      packVec2Uniform_withRecenter(
-        gecko.current.legs.backLegs.fingers[0],
-        fingersRef.current,
-        5,
-        aspect,
-        gecko_scale,
-        10,
-      );
-      packVec2Uniform_withRecenter(
-        gecko.current.legs.backLegs.fingers[1],
-        fingersRef.current,
-        5,
-        aspect,
-        gecko_scale,
-        15,
-      );
-      for (let i = 0; i < fingersUniform.current.length; i++)
-        fingersUniform.current[i] = fingersRef.current[i];
+    // lead point is in pixel space/will map to user pointer
+    // toShaderSpace_inplace(leadPoint.current.lead, aspect, scale, leadUniformRef.current, 0);
+    toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, soulUniformRef.current, 0);
+    toShaderSpace_inplace(hintRef.current, aspect, gecko_scale, hintUniformRef.current, 0);
 
-      packVec2Uniform_withRecenter_moments(
-        moments.current.moments,
-        momentsRef.current,
-        moments.current.momentsLength,
-        aspect,
-        scale,
-      );
-      
-      for (let i = 0; i < momentsUniform.current.length; i++)
-        momentsUniform.current[i] = momentsRef.current[i];
+    // gecko in internal space 
+    toShaderModel_inPlace(leadPoint.current.lead, aspect, gecko_scale, leadUniformRef.current, 0);
+    toShaderSpace_inplace(leadPoint.current.lead, aspect, scale, leadScreenSpaceUniformRef.current, 0);
+    
+    toShaderModel_inPlace(snoutRef.current, aspect, gecko_scale, snoutUniformRef.current, 0);
+    toShaderModel_inPlace(headRef.current, aspect, gecko_scale, headUniformRef.current, 0);
 
-      toShaderSpace_inplace(
-        leadPoint.current.lead,
-        aspect,
-        scale,
-        leadUniformRef.current,
-        0,
-      );
+    toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, selectedUniformRef.current, 0);
+    toShaderSpace_inplace(moments.current.lastSelected.coord, aspect, scale, lastSelectedUniformRef.current, 0);
 
-      toShaderSpace_inplace(
-        soul.current.soul,
-        aspect,
-        gecko_scale,
-        soulUniformRef.current,
-        0,
-      );
+    packVec2Uniform_withRecenter_moments(moments.current.moments, momentsUniform.current, moments.current.momentsLength, aspect, scale);
 
-      toShaderSpace_inplace(
-        moments.current.selected.coord,
-        aspect,
-        scale,
-        selectedUniformRef.current,
-        0,
-      );
+    //uniformsRef.current.u_lead = leadPoint.current.lead;
+    uniformsRef.current.u_scale = scale;
+    uniformsRef.current.u_gecko_scale = gecko_scale;
+    uniformsRef.current.u_aspect = aspect;
+    uniformsRef.current.u_resolution[0] = size.width;
+    uniformsRef.current.u_resolution[1] = size.height;
+    //     uniformsRef.current.u_resolution[0] = width;
+    // uniformsRef.current.u_resolution[1] = height;
+    uniformsRef.current.u_momentsLength = moments.current.momentsLength;
 
-      toShaderSpace_inplace(
-        hintRef.current,
-        aspect,
-        gecko_scale,
-        hintUniformRef.current,
-        0,
-      );
-
-      toShaderModel_inplace(
-        snoutRef.current,
-        gecko_scale,
-        snoutUniformRef.current,
-        0,
-      );
-
-      toShaderModel_inplace(
-        headRef.current,
-        gecko_scale,
-        headUniformRef.current,
-        0,
-      );
-    };
-    animate();
-    return () => {
-      cancelled = true;
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [aspect]);
-
-  const uniforms = {
-    u_scale: scale,
-    u_gecko_scale: gecko_scale,
-    u_time: time,
-    u_resolution: [width, height],
-    u_aspect: aspect,
-
-    u_lead: leadUniformRef.current,
-    u_soul: soulUniformRef.current,
-    u_selected: selectedUniformRef.current,
-    u_lastSelected: moments.current.lastSelected.coord,
-
-    u_snout: snoutUniformRef.current,
-    u_head: headUniformRef.current,
-    u_hint: hintUniformRef.current,
-    u_momentsLength: moments.current.momentsLength, 
-
-    u_joints: jointsUniform.current,
-    u_tail: tailUniform.current,
-    u_steps: stepsUniform.current,
-    u_elbows: elbowsUniform.current,
-    u_shoulders: shouldersUniform.current,
-    u_muscles: musclesUniform.current,
-    u_fingers: fingersUniform.current,
-    u_moments: momentsUniform.current,
+    uniformsRef.current.u_lastSelected = moments.current.lastSelected.coord;
+ 
   };
+
+
+
+  animate();
+
+  return () => {
+    cancelled = true;
+    if (frame) cancelAnimationFrame(frame);
+  };
+}, [aspect, gecko_scale, scale, size.width, size.height]);
+
+
+  const uniformsRef = useRef({
+  u_scale: 1,
+  u_gecko_scale: 1,
+  u_time: 0,
+  u_resolution: [1, 1],
+  u_aspect: 1,
+
+  u_lead: leadUniformRef.current,
+  u_lead_screen_space: leadScreenSpaceUniformRef.current,
+  u_soul: soulUniformRef.current,
+  u_selected: selectedUniformRef.current,
+  // u_lastSelected: moments.current.lastSelected.coord,
+  u_lastSelected: lastSelectedUniformRef.current,
+
+  u_snout: snoutUniformRef.current,
+  u_head: headUniformRef.current,
+  u_hint: hintUniformRef.current,
+  u_momentsLength: 0,
+
+  u_joints: jointsUniform.current,
+  u_tail: tailUniform.current,
+  u_steps: stepsUniform.current,
+  u_elbows: elbowsUniform.current,
+  u_shoulders: shouldersUniform.current,
+  u_muscles: musclesUniform.current,
+  u_fingers: fingersUniform.current,
+  u_moments: momentsUniform.current,
+});
+
 
   return (
     <>
@@ -636,9 +564,6 @@ screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerR
             ref={ref}
             style={[
               StyleSheet.absoluteFill,
-              {
-                alignItems: "center",
-              },
             ]}
           >
             <Rect
@@ -651,7 +576,7 @@ screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerR
               <Shader
                 style={{ backgroundColor: "transparent" }}
                 source={sourceTwo}
-                uniforms={uniforms}
+                uniforms={uniformsRef.current}
               ></Shader>
             </Rect>
           </Canvas>
@@ -660,9 +585,6 @@ screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerR
             ref={ref}
             style={[
               StyleSheet.absoluteFill,
-              {
-                alignItems: "center",
-              },
             ]}
           >
             <Rect
@@ -675,7 +597,7 @@ screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerR
               <Shader
                 style={{ backgroundColor: "transparent" }}
                 source={source}
-                uniforms={uniforms}
+                uniforms={uniformsRef.current}
               ></Shader>
             </Rect>
           </Canvas>

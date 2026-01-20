@@ -21,9 +21,7 @@ export default class MotionGlobal {
   ) {
     this.TAU = Math.PI * 2;
  
-    this.state = state;
-
-    // calculated separately from spine length, in legs
+    this.state = state; 
 
     this.frontSteps_aheadJointAngle = 0;
     this.frontSteps_stepCenterAngle = 0;
@@ -62,8 +60,7 @@ export default class MotionGlobal {
     this.mir_frontStepsSLine = [];
 
     this.mir_frontStepsDilutedAngle = 0;
-
-    // Set to whatever I want
+ 
     this.realignmentAngle1 = 0;
     this.realignmentAngle2 = 0;
     this.realignmentAngle3 = 0;
@@ -96,11 +93,9 @@ export default class MotionGlobal {
       this.dilutionScalar
     );
     this.realignmentAngle1 = this.frontStepsDilutedAngle;
-    // Sagittal angle as a line for debug
+ 
     this.debugs[0] = data.frontStepsSLine[0];
     this.debugs[1] = data.frontStepsSLine[1];
-
-    // Transverse angle as a line for debug
     this.debugs[2] = data.frontStepsTLine[0];
     this.debugs[3] = data.frontStepsTLine[1];
   }
@@ -148,18 +143,10 @@ export default class MotionGlobal {
 
     this.debugs[8] = this.mir_frontStepsSCenter;
   }
+ 
 
-//   updateUniforms() {
-//     this.gl.setSingleUniform(`${this.u_moving_head_prefix}`, this.movingHead);
-//     this.gl.setSingleUniform(`${this.u_moving_snout_prefix}`, this.movingSnout);
-//   }
-
-//   updateDebugsUniforms() {
-//     this.gl.setArrayOfUniforms(this.u_debug_prefix, this.debugs);
-//   }
-
-  update() {
-    // this.updateUniforms();
-    // this.updateDebugsUniforms();
-  }
+  // update() {
+  //   // this.updateUniforms();
+  //   // this.updateDebugsUniforms();
+  // }
 }

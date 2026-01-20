@@ -10,7 +10,7 @@ import {
 } from "../../utils.js";
  
 
-import { updateShoulderRotator, getBackFrontStepDistance, solveBackElbowIK, getCalcStep, getPivotedStep, solveFingers, getFrontStepsSagTrans } from "../../utils.js";
+import { updateShoulderRotator, getBackFrontStepDistance, solveBackElbowIK, getCalcStep, getCalcStep_inPlace, getPivotedStep, solveFingers, getFrontStepsSagTrans } from "../../utils.js";
 
 // I am keeping both centerJoint and stepCenterJoint for now in case
 // additional animation needs to be done to the shoulder joint but not the spine joint
@@ -175,137 +175,83 @@ export default class FollowerLegs {
       this.stepAheadJoint
     );
 
-    let minimum0 = _getForwardAngle(
-      this.spine.centerFlanks[0],
-      this.stepCenterJoint
-    );
-    let minimum1 = _getForwardAngle(
-      this.spine.centerFlanks[1],
-      this.stepCenterJoint
-    );
+ 
 
     this.forwardAngle0 = _getForwardAngle(this.stepCenterJoint, forwardPoint0);
     this.forwardAngle1 = _getForwardAngle(this.stepCenterJoint, forwardPoint1);
-
-    // this.forwardAngle0 = Math.max(this.forwardAngle0, minimum0);
-    // this.forwardAngle1 = Math.max(this.forwardAngle1, minimum1);
+ 
   }
 
   solveStepTargetsBackPaired() {
-    // console.log(`front legs chest data`, this.frontLegs.chestAngle);
-    // console.log(`front legs chest data`, this.frontLegs.chestLinesData);
-    // console.log(`BACK LEGS SPINE MOTION DATA : `, this.secondMotion.spineMotionCenter, this.secondMotion.spineMotionIntersection);
-
-    const mainDot = _getDotScalar(
-      this.stepTargets[0],
-      this.stepTargets[1],
-      this.stepCenterJoint.direction
-    );
-
-    // console.log(this.frontLegs.chestLinesData.step);
-
-    // let angle = getHipsAngle(this.stepTargets[1], this.stepTargets[0]);
-    //  let angle = getChestAngle(this.frontLegs.chestLinesData.otherStep, this.frontLegs.chestLineData.step);
-
-    //     this.secondMotion.updateCurveAngle(angle);
-
-    // if (leftIsAhead) {
-    //   console.log("Back left is ahead");
-    // } else if (rightIsAhead) {
-    //   console.log("Back right is ahead");
-    // } else {
-    //   // console.log("Both level");
-    // }
+  
     ////////////////////////////////////////////////////////////////
     const distanceOut = (this.stepCenterRadius + this.stepReach)*1.4;
 
 
     const widenessAdj = 1.3;
     // just reverses the 0/1 for is1
-    const calcStep0 = getCalcStep(
-      this.stepCenterJoint,
-      // this.centerToAheadAngle,
+
+    let calcStep0 = [0.,0.];
+    let calcStep1 = [0.,0.];
+
+       getCalcStep_inPlace(
+    calcStep0,
+     this.stepCenterJoint, 
       this.forwardAngle0,
       distanceOut,
       this.stepWideness *widenessAdj,
       false
-    );
-    const calcStep1 = getCalcStep(
-      this.stepCenterJoint,
-      // this.centerToAheadAngle,
+);
+ getCalcStep_inPlace(
+  calcStep1,
+      this.stepCenterJoint, 
       this.forwardAngle1,
       distanceOut,
       this.stepWideness*widenessAdj,
       true
-    );
+);
 
-    const bigStep0 = getPivotedStep(
-      calcStep0,
-      this.stepTargets[1],
-      this.stepPivotSize,
-      distanceOut,
-      false
-    );
 
-    const bigStep1 = getPivotedStep(
-      calcStep1,
-      this.stepTargets[0],
-      this.stepPivotSize,
-      distanceOut,
-      true
-    );
+    // const calcStep0 = getCalcStep(
+    //   this.stepCenterJoint, 
+    //   this.forwardAngle0,
+    //   distanceOut,
+    //   this.stepWideness *widenessAdj,
+    //   false
+    // );
+    // const calcStep1 = getCalcStep(
+    //   this.stepCenterJoint, 
+    //   this.forwardAngle1,
+    //   distanceOut,
+    //   this.stepWideness*widenessAdj,
+    //   true
+    // );
 
-    const flankStep0 = this.spine.centerFlanks[0];
-    const flankStep1 = this.spine.centerFlanks[1];
+    // const bigStep0 = getPivotedStep(
+    //   calcStep0,
+    //   this.stepTargets[1],
+    //   this.stepPivotSize,
+    //   distanceOut,
+    //   false
+    // );
 
-    const mirroredStep0 = this.motion.centerIntersection.mirroredStepsLineStart;
-    const mirroredStep1 = this.motion.centerIntersection.mirroredStepsLineEnd;
-
-    const projectedStep0 =
-      this.motion.centerIntersection.projectedStepsLineStart;
-    const projectedStep1 = this.motion.centerIntersection.projectedStepsLineEnd;
+    // const bigStep1 = getPivotedStep(
+    //   calcStep1,
+    //   this.stepTargets[0],
+    //   this.stepPivotSize,
+    //   distanceOut,
+    //   true
+    // ); 
 
      const nextStep0 = calcStep0;
      const nextStep1 = calcStep1;
-
-    // const nextStep0 = flankStep0;
-    // const nextStep1 = flankStep1;
+ 
 
     let lDist = _getDistanceScalar(calcStep0, this.stepTargets[0]);
     let rDist = _getDistanceScalar(calcStep1, this.stepTargets[1]);
 
-    // FOR PARALLEL CHECK
-    const lDot = _getDotScalar(
-      this.stepTargets[1],
-      calcStep0,
-      this.stepCenterJoint.direction
-    );
-
-    let leftDesiredIsAhead = lDot > 0;
-
-    const rDot = _getDotScalar(
-      this.stepTargets[0],
-      calcStep1,
-      this.stepCenterJoint.direction
-    );
-    let rightDesiredIsAhead = rDot > 0;
-
-    // set debug uniform
-    this.debugDesiredExtra[0][0] = bigStep0[0];
-    this.debugDesiredExtra[0][1] = bigStep0[1];
-    this.debugDesiredExtra[1][0] = bigStep1[0];
-    this.debugDesiredExtra[1][1] = bigStep1[1];
-    this.debugDesired[0] = calcStep0;
-    this.debugDesired[1] = calcStep1;
-
-    if (this.state.takeSyncedSteps1) {
-      // if (!leftDesiredIsAhead) {
-      //   lDesiredX = bigStep0[0];
-      //   lDesiredY = bigStep0[1];
-      // }
-
-      // this.stepTargets[0][0] = calcStep0[0];
-      // this.stepTargets[0][1] = calcStep0[1];
+ 
+    if (this.state.takeSyncedSteps1) { 
       this.stepTargets[0][0] = nextStep0[0];
       this.stepTargets[0][1] = nextStep0[1];
       this.stepTargets[0].angle = calcStep0.angle;
@@ -313,25 +259,17 @@ export default class FollowerLegs {
     } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
       console.log("back leg need to catch up");
       this.state.catchUp(true);
-      // this.state.catchUpFollower(true);
+ 
     }
 
-    if (this.state.takeSyncedSteps0) {
-      // if (!rightDesiredIsAhead) {
-      //   rDesiredX = bigStep1[0];
-      //   rDesiredY = bigStep1[1];
-      // }
-
-      // this.stepTargets[1][0] = calcStep1[0];
-      // this.stepTargets[1][1] = calcStep1[1];
+    if (this.state.takeSyncedSteps0) { 
       this.stepTargets[1][0] = nextStep1[0];
       this.stepTargets[1][1] = nextStep1[1];
       this.stepTargets[1].angle = calcStep1.angle;
       this.state.syncedStepsCompleted(false);
     } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
       console.log("back leg need to catch up");
-      this.state.catchUp(false);
-      //    this.state.catchUpFollower(false);
+      this.state.catchUp(false); 
     }
   }
 
@@ -450,39 +388,7 @@ export default class FollowerLegs {
       true,
       this.fingerAngleOffset
     );
-
-
-    // this.updateUniforms();
-    // this.updateDebugUniforms();
+ 
   }
-
-  // LOGGING OPTIONS
-  logData() {
-    console.log(`back legs centerToAheadAngle: ${this.centerToAheadAngle}`);
-    console.log(
-      `Thresh: ${this.stepThreshhold}, Wideness: ${this.stepWideness}, Reach: ${this.stepReach}, Radius: ${this.stepCenterRadius}`
-    );
-    // console.log(`Legs perpendicular of steps angle: ${this.chestAngle}`);
-  }
-
-  logAllUniformNames() {
-    console.log("Center Joint Uniform:", this.u_center_joint);
-    console.log("Rotator Joint 0 Uniform:", `${this.u_rotator_joint_prefix}0`);
-    console.log("Rotator Joint 1 Uniform:", `${this.u_rotator_joint_prefix}1`);
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_step_target_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_elbow_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_feet_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_debug_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_debug_extra_prefix}${i + this.u_offset}`);
-    }
-  }
+ 
 }

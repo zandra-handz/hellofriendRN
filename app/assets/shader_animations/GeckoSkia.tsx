@@ -35,7 +35,7 @@ import {
   hexToVec3,
   toShaderSpace,
   toShaderModel,
-  packVec2Uniform_withRecenter,
+  toShaderModel_arrays_inPlace,
   packVec2Uniform_withRecenter_moments,
 } from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -408,14 +408,14 @@ const GeckoSkia = ({
       headRef.current = spine.unchainedJoints[1] || [0, 0];
       hintRef.current = spine.hintJoint || [0, 0];
 
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         spine.joints,
         jointsRef.current,
         NUM_SPINE_JOINTS,
         aspect,
         gecko_scale,
       );
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         tail.joints,
         tailJointsRef.current,
         NUM_TAIL_JOINTS,
@@ -423,7 +423,7 @@ const GeckoSkia = ({
         gecko_scale,
       );
       const allSteps = [...f_steps, ...b_steps];
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         allSteps,
         stepsRef.current,
         4,
@@ -432,7 +432,7 @@ const GeckoSkia = ({
       );
 
       const allElbows = [...f_elbows, ...b_elbows];
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         allElbows,
         elbowsRef.current,
         4,
@@ -441,7 +441,7 @@ const GeckoSkia = ({
       );
 
       const allShoulders = [...f_shoulders, ...b_shoulders];
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         allShoulders,
         shouldersRef.current,
         4,
@@ -450,7 +450,7 @@ const GeckoSkia = ({
       );
 
       const allMuscles = [...f_muscles, ...b_muscles];
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         allMuscles,
         legMusclesRef.current,
         8,
@@ -460,7 +460,7 @@ const GeckoSkia = ({
 
       const allFingers = allFingersNested.flat(); // flattens to 20 [x,y] pairs
 
-      packVec2Uniform_withRecenter(
+      toShaderModel_arrays_inPlace(
         allFingers,
         fingersRef.current,
         20,

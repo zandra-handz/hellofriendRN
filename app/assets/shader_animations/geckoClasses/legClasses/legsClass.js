@@ -12,7 +12,7 @@
 } from "../../utils.js";
  
 
-import { updateShoulderRotator, solveElbowIK, getCalcStep, getPivotedStep, solveFingers } from "../../utils.js";
+import { updateShoulderRotator, solveElbowIK, getCalcStep, getCalcStep_inPlace, getPivotedStep, solveFingers } from "../../utils.js";
 
 // I am keeping both centerJoint and stepCenterJoint for now in case
 // additional animation needs to be done to the shoulder joint but not the spine joint
@@ -107,6 +107,17 @@ export default class Legs {
     // 10 fingers × vec2
 this.fingerBuffer = new Float32Array(20);
 
+// Inside constructor
+this.calcStepBuffer = [
+  [0, 0], // step 0
+  [0, 0], // step 1
+];
+this.bigStepBuffer = [
+  [0, 0], // pivoted step 0
+  [0, 0], // pivoted step 1
+];
+
+
 // Convenience views (NO allocation after this)
 this.fingers = [
   Array.from({ length: 5 }, (_, i) =>
@@ -162,14 +173,14 @@ this.fingers = [
     this.u_debug_prefix = u_debug_prefix;
     this.u_debug_extra_prefix = u_debug_extra_prefix;
 
-    this.debugDesired = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
-    this.debugDesiredExtra = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
+    // this.debugDesired = [
+    //   [0.5, 0.5],
+    //   [0.5, 0.5],
+    // ];
+    // this.debugDesiredExtra = [
+    //   [0.5, 0.5],
+    //   [0.5, 0.5],
+    // ];
   }
 
   // get direction from center to step ahead joint
@@ -230,128 +241,107 @@ this.fingers = [
     ////////////////////////////////////////////////////////////////
     const distanceOut = this.stepCenterRadius + this.stepReach + 0.01;
 
-    const calcStep0 = getCalcStep(
-      this.stepCenterJoint,
-      this.centerToAheadAngle,
-      distanceOut,
-      this.stepWideness,
-      false
-    );
-    const calcStep1 = getCalcStep(
-      this.stepCenterJoint,
-      this.centerToAheadAngle,
-      distanceOut,
-      this.stepWideness,
-      true
-    );
+ 
 
-    const bigStep0 = getPivotedStep(
-      calcStep0,
-      this.stepTargets[1],
-      this.stepPivotSize,
-      distanceOut,
-      false
-    );
-    const bigStep1 = getPivotedStep(
-      calcStep1,
-      this.stepTargets[0],
-      this.stepPivotSize,
-      distanceOut,
-      true
-    );
+    
+    let calcStep0 = [0.,0.];
+    let calcStep1 = [0.,0.];
+
+   getCalcStep_inPlace(
+    calcStep0,
+  this.stepCenterJoint,
+  this.centerToAheadAngle,
+  distanceOut,
+  this.stepWideness,
+  false
+);
+ getCalcStep_inPlace(
+  calcStep1,
+  this.stepCenterJoint,
+  this.centerToAheadAngle,
+  distanceOut,
+  this.stepWideness,
+  true
+);
+
+    // const bigStep0 = getPivotedStep(
+    //   calcStep0,
+    //   this.stepTargets[1],
+    //   this.stepPivotSize,
+    //   distanceOut,
+    //   false
+    // );
+    // const bigStep1 = getPivotedStep(
+    //   calcStep1,
+    //   this.stepTargets[0],
+    //   this.stepPivotSize,
+    //   distanceOut,
+    //   true
+    // );
 
     // FOR THRESHHOLD CHECK
     let lDist = _getDistanceScalar(calcStep0, this.stepTargets[0]);
     let rDist = _getDistanceScalar(calcStep1, this.stepTargets[1]);
 
     // FOR PARALLEL CHECK
-    const lDot = _getDotScalar(
-      this.stepTargets[1],
-      calcStep0,
-      this.stepCenterJoint.direction
-    );
+    // const lDot = _getDotScalar(
+    //   this.stepTargets[1],
+    //   calcStep0,
+    //   this.stepCenterJoint.direction
+    // );
 
-    let leftDesiredIsAhead = lDot > 0;
+    // let leftDesiredIsAhead = lDot > 0;
 
-    const rDot = _getDotScalar(
-      this.stepTargets[0],
-      calcStep1,
-      this.stepCenterJoint.direction
-    );
-    let rightDesiredIsAhead = rDot > 0;
+    // const rDot = _getDotScalar(
+    //   this.stepTargets[0],
+    //   calcStep1,
+    //   this.stepCenterJoint.direction
+    // );
+    // let rightDesiredIsAhead = rDot > 0;
 
     // REMOVE IN FUTURE
-    this.debugDesiredExtra[0][0] = bigStep0[0];
-    this.debugDesiredExtra[0][1] = bigStep0[1];
-    this.debugDesiredExtra[1][0] = bigStep1[0];
-    this.debugDesiredExtra[1][1] = bigStep1[1];
-    this.debugDesired[0] = calcStep0;
-    this.debugDesired[1] = calcStep1;
+    // this.debugDesiredExtra[0][0] = bigStep0[0];
+    // this.debugDesiredExtra[0][1] = bigStep0[1];
+    // this.debugDesiredExtra[1][0] = bigStep1[0];
+    // this.debugDesiredExtra[1][1] = bigStep1[1];
+    // this.debugDesired[0] = calcStep0;
+    // this.debugDesired[1] = calcStep1;
     ///////////////////////////////////////////////
 
     // PICK STEP
     if (this.state.takeStep0) {
-      if (!leftDesiredIsAhead) {
-        this.stepTargets[0] = bigStep0;
-        this.stepTargets[0].angle = calcStep0.angle; //????
-      } else {
-        this.stepTargets[0] = calcStep0;
-      }
+    this.stepTargets[0] = calcStep0;
+      // REMOVED FOR MOBILE
+      // if (!leftDesiredIsAhead) {
+      //   this.stepTargets[0] = bigStep0; 
+      //   this.stepTargets[0].angle = calcStep0.angle; //????
+      // } else {
+      //   this.stepTargets[0] = calcStep0;
+      // }
       this.state.stepCompleted(false);
     } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
       this.state.catchUp(false);
     }
 
     if (this.state.takeStep1) {
-      if (!rightDesiredIsAhead) {
-        this.stepTargets[1] = bigStep1;
-        this.stepTargets[1].angle = calcStep1.angle; //???? update: yes, for finger placement, thank you past me
-      } else {
-        this.stepTargets[1] = calcStep1;
-      }
+
+   this.stepTargets[1] = calcStep1;
+
+
+      // if (!rightDesiredIsAhead) {
+      //   console.log('oop big step')
+      //   this.stepTargets[1] = bigStep1;
+      //   this.stepTargets[1].angle = calcStep1.angle; //???? update: yes, for finger placement, thank you past me
+      // } else {
+      //   this.stepTargets[1] = calcStep1;
+      // }
 
       this.state.stepCompleted(true);
     } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
       this.state.catchUp(true);
     }
   }
-
-  //   updateDebugUniforms() {
-  //     this.gl.setUniformPairsLoop(
-  //       2,
-  //       this.u_offset,
-  //       [this.u_debug_prefix, this.u_debug_extra_prefix],
-  //       [this.debugDesired, this.debugDesiredExtra]
-  //     );
-  //   }
-
-  //   updateUniforms() {
-  //     // CENTER JOINT
-  //     this.gl.setSingleUniform(`${this.u_center_joint}`, this.shoulderSpineJoint);
-
-  //     // SHOULDER JOINTS
-  //     this.gl.setSingleUniform(
-  //       `${this.u_rotator_joint_prefix}0`,
-  //       this.rotatorJoint0
-  //     );
-  //     this.gl.setSingleUniform(
-  //       `${this.u_rotator_joint_prefix}1`,
-  //       this.rotatorJoint1
-  //     );
-
-  //     // STEP TARGET, ELBOW, AND FEET JOINTS
-  //     this.gl.setUniformPairsLoop(
-  //       2,
-  //       this.u_offset,
-  //       [this.u_step_target_prefix, this.u_elbow_prefix, this.u_feet_prefix],
-  //       [this.stepTargets, this.elbows, this.feet]
-  //     );
-
-  //     this.gl.setArrayOfUniforms(this.u_muscle_prefix, this.muscles);
-  //     this.gl.setArrayOfUniforms(`${this.u_finger_prefix}${0}`, this.fingers[0]);
-  //     this.gl.setArrayOfUniforms(`${this.u_finger_prefix}${1}`, this.fingers[1]);
-
-  //   }
+ 
 
   update() {
     this.updateForwardAngle();
@@ -419,38 +409,8 @@ this.fingers = [
       true,
       this.fingerAngleOffset
     );
-
-    // this.updateUniforms();
-    // this.updateDebugUniforms();
+ 
   }
 
-  // LOGGING OPTIONS
-  logData() {
-    console.log(`Legs centerToAheadAngle: ${this.centerToAheadAngle}`);
-    console.log(
-      `Thresh: ${this.stepThreshhold}, Wideness: ${this.stepWideness}, Reach: ${this.stepReach}, Radius: ${this.stepCenterRadius}`
-    );
-    console.log(`Legs perpendicular of steps angle: ${this.chestAngle}`);
-  }
-
-  logAllUniformNames() {
-    console.log("Center Joint Uniform:", this.u_center_joint);
-    console.log("Rotator Joint 0 Uniform:", `${this.u_rotator_joint_prefix}0`);
-    console.log("Rotator Joint 1 Uniform:", `${this.u_rotator_joint_prefix}1`);
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_step_target_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_elbow_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_feet_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_debug_prefix}${i + this.u_offset}`);
-    }
-    for (let i = 0; i < 2; i++) {
-      console.log(`${this.u_debug_extra_prefix}${i + this.u_offset}`);
-    }
-  }
+  
 }

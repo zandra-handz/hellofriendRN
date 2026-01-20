@@ -43,9 +43,7 @@ export default class Mover {
     return this.speed < this.stillModeThreshhold;
   }
 
-
-
-
+ 
 
   updateLeadPointSmooth(path, dt = 1, currentTime = Date.now()) {
     const target = path;
@@ -115,7 +113,7 @@ if (this.speed > 0) {
     // this.isMoving = !this.isLeadStationary(); 
   }
 
-  update(path) {
+  update(path) { 
     // use mouse.user_pointer or a soul
 
     // console.log(`PATH`, path);

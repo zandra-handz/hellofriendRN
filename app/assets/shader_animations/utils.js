@@ -31,6 +31,7 @@ export function _normalizeVector([x, y]) {
 }
 
 // INPUT: angle
+// no allocations
 export function _normalizeToNegPItoPI(angle) {
   angle = (angle + Math.PI) % (2 * Math.PI);
   if (angle < 0) angle += 2 * Math.PI;
@@ -164,6 +165,12 @@ export function _getAngleDirVec(angle){
   return [Math.cos(angle), Math.sin(angle)];
 }
 
+export function _getAngleDirVec_inPlace(angle, outVec) {
+  outVec[0] = Math.cos(angle);
+  outVec[1] = Math.sin(angle);
+  return outVec;
+}
+
 // INPUT: angle
 // OUTPUT: direction vector
 export function _getScaledAngleDirVec(angle, scalar){
@@ -183,6 +190,7 @@ export function _add180(angle) {
 }
 
 
+// no allocations
 export function _makeLerpAngle(angleA, angleB, blendScalar) {
   blendScalar = Math.max(0, Math.min(1, blendScalar));
   let diff = _getNormAglDiff(angleA, angleB);
@@ -223,24 +231,38 @@ export function _getForwardAngle(startPoint, distPoint) {
 
 
 
+
+
 // COMBINED OUTPUT 
 
-//for solveElbowIK
-export function _getDistanceScalar_andAngle(pointA, pointB) {
+// //for solveElbowIK
+// export function _getDistanceScalar_andAngle(pointA, pointB) {
  
+//   const x = pointB[0] - pointA[0];
+//   const y = pointB[1] - pointA[1];
+
+//   const dist = Math.sqrt(x * x + y * y);
+//   const angle = Math.atan2(y, x);
+
+//   return {
+//     dist: dist,
+//     angle: angle
+//   }
+  
+ 
+// }
+
+// this one may not work in glsl canvas bc of hypot
+export function _getDistanceScalar_andAngle(pointA, pointB) {
   const x = pointB[0] - pointA[0];
   const y = pointB[1] - pointA[1];
 
-  const dist = Math.sqrt(x * x + y * y);
-  const angle = Math.atan2(y, x);
-
   return {
-    dist: dist,
-    angle: angle
-  }
-  
- 
+    dist: Math.hypot(x, y), // sqrt(x*x + y*y)
+    angle: Math.atan2(y, x),
+  };
 }
+
 
 
 
@@ -470,31 +492,57 @@ export function getFrontStepsSagTrans(step, otherStep) {
 //joint will be the rotation joint when this is called in the update function
 
 // UPDATES ROTATOR JOINT
-export function _solveShoulder(
-  radius,
-  range,
-  phase,
-  centerPoint,
-  centerAngle,
-  is1,
-  isFollower
-) {
+// export function _solveShoulder(
+//   radius,
+//   range,
+//   phase,
+//   centerPoint,
+//   centerAngle,
+//   is1,
+//   isFollower
+// ) {
+//   const perp = is1 ? -Math.PI / 2 : Math.PI / 2;
+//   const side = isFollower ? 1 : -1;
+//   const ang = centerAngle + perp;
+
+//   const perpDirVec = _getScaledAngleDirVec(ang, radius);
+//   const spineDirVec = _getAngleDirVec(centerAngle);
+
+//   const bobAmount = radius * range;
+//   const bob = _scaleDirVec(spineDirVec, bobAmount * phase * side);
+
+//   //new rotator data
+//   return [
+//     centerPoint[0] + perpDirVec[0] + bob[0],
+//     centerPoint[1] + perpDirVec[1] + bob[1],
+//   ];
+// }
+
+//  allocation reduced version
+export function _solveShoulder(radius, range, phase, centerPoint, centerAngle, is1, isFollower) {
   const perp = is1 ? -Math.PI / 2 : Math.PI / 2;
   const side = isFollower ? 1 : -1;
   const ang = centerAngle + perp;
 
-  const perpDirVec = _getScaledAngleDirVec(ang, radius);
-  const spineDirVec = _getAngleDirVec(centerAngle);
+  // inline perpDirVec calculation (was _getScaledAngleDirVec)
+  const perpX = Math.cos(ang) * radius;
+  const perpY = Math.sin(ang) * radius;
 
+  // inline spineDirVec calculation (was _getAngleDirVec)
+  const spineX = Math.cos(centerAngle);
+  const spineY = Math.sin(centerAngle);
+
+  // inline bob calculation (was _scaleDirVec)
   const bobAmount = radius * range;
-  const bob = _scaleDirVec(spineDirVec, bobAmount * phase * side);
+  const bobX = spineX * bobAmount * phase * side;
+  const bobY = spineY * bobAmount * phase * side;
 
-  //new rotator data
   return [
-    centerPoint[0] + perpDirVec[0] + bob[0],
-    centerPoint[1] + perpDirVec[1] + bob[1],
+    centerPoint[0] + perpX + bobX,
+    centerPoint[1] + perpY + bobY
   ];
 }
+
 
 export function updateShoulderRotator(
   rotator,
@@ -654,6 +702,24 @@ export function getCalcStep(
 }
 
 
+export function getCalcStep_inPlace(
+  outStep,      // pre-allocated array [x, y]
+  centerJoint,
+  forwardAngle,
+  distanceOut,
+  stepWideness,
+  is1
+) {
+  const piMultiplier = is1 ? 1 : -1;
+  const offset = (piMultiplier * Math.PI) / stepWideness;
+
+  outStep[0] = centerJoint[0] + Math.cos(forwardAngle + offset) * distanceOut;
+  outStep[1] = centerJoint[1] + Math.sin(forwardAngle + offset) * distanceOut;
+
+  outStep.angle = forwardAngle;
+
+  return outStep;
+}
 
  
  

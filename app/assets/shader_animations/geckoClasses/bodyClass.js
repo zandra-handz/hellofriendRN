@@ -10,26 +10,18 @@ export default class Body {
     this.state = state;
     this.motion = motion;  
     this.startingCoord = startingCoord;
-
     this.stiffC = 24;
     this.normalC = 12;
     this.looseC = 8;
-
-    // SPINE
-
-    this.spineNumOfJoints = 15;
-    let spineDesCtrRange = [2, 13]; // designated center
-
+    this.spineNumOfJoints = 15; 
     this.spineMotion_len = 12; 
     this.spineMotion_range = [2, 13]; 
     this.spineMotion_baseClamp = 8;
 
-
-    // SPINE RADII //////////////////////////////////////////////////////////////
-
     let headNeckChestRadii = [0.064, 0.023, 0.022]; // joints 0 -2
    // this.unchainedDist = headNeckChestRadii.reduce((sum, r) => sum + r, 0); // distance above center joint to declare head joint
-    this.unchainedDist = .07;
+    
+   this.unchainedDist = .07;
     
     this.snoutDist =  .03;
     this.hintDist = hintDist;
@@ -63,17 +55,9 @@ export default class Body {
      24,  //4
       24,  //5
       24,24, 24, 12, 12,12,8,  8];
-    // TAIL
-    // this.tailNumOfJoints = 6;
-    // let tailDesCtrRange = [0, 3]; // designated center
-
+ 
     this.tailNumOfJoints = 13;
-    let tailDesCtrRange = [0, 12]; // designated center
-
-    // this.tailMotionLen = 6;
-    // this.tailMotionRange = [0, 6];
-    
-    // Is this right??
+  
     this.tailMotionLen = 12;
     this.tailMotionRange = [0, 12];
 
@@ -169,7 +153,8 @@ init() {
 
   update(leadPoint_lead, leadPoint_isMoving) {
   
-    this.motion.update_headPosition(this.headRadiiSum);
+    // this.motion.update_headPosition(this.headRadiiSum);
+      this.motion.update_headPosition();
     this.spine.update(leadPoint_lead, leadPoint_isMoving);
  
     this.tail.update();

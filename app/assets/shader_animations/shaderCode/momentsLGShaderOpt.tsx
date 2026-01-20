@@ -330,11 +330,6 @@ half4 main(float2 fragCoord) {
     if (length(u_lastSelected) < 10.0) { // Adjust threshold as needed
 
 
-
-
-
-
-
         color = applyGlass(
             fragCoord,
             lastSelectedCenter,
@@ -383,16 +378,10 @@ half4 main(float2 fragCoord) {
  
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
-    uv.x *= u_aspect;
-
+ uv.x *= u_aspect;
+    vec2 scaled_uv = uv / u_scale; 
  
-    vec2 scaled_uv = uv / u_scale;
-    vec2 selected_uv = u_selected;
-
-
-
-
-    float selectedMask = step(distance(scaled_uv, selected_uv), 0.03);
+    float selectedMask = step(distance(scaled_uv, u_selected), 0.03);
     vec3 selectedColor = endColor * selectedMask; 
  
     color = mix(color, selectedColor, selectedMask);
