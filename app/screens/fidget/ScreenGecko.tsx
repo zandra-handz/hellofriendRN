@@ -7,18 +7,15 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
-import manualGradientColors from "@/app/styles/StaticColors";
-import EscortBarFidgetScreen from "@/app/components/moments/EscortBarFidgetScreen";
+import manualGradientColors from "@/app/styles/StaticColors"; 
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
 // import { useUser } from "@/src/context/UserContext";
-import useUser from "@/src/hooks/useUser";
-import { SkImage } from "@shopify/react-native-skia";
+import useUser from "@/src/hooks/useUser"; 
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
-import ViewShot from "react-native-view-shot";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
  
 import MemoizedMomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
@@ -49,9 +46,9 @@ const ScreenGecko = (props: Props) => {
       friendId: selectedFriend?.id,
     });
 
-  const mod = (n, m) => {
-    return ((n % m) + m) % m;
-  };
+  // const mod = (n, m) => {
+  //   return ((n % m) + m) % m;
+  // };
 
   const handleNavigateToMoment = useCallback(
     (m) => {
@@ -67,12 +64,22 @@ const ScreenGecko = (props: Props) => {
     style={styles.momentViewButton}
   ></Pressable>;
 
+  // const momentCoords = useMemo(() => {
+  //   return capsuleList.map((m) => ({
+  //     id: m.id,
+  //     coord: [m.screen_x, m.screen_y],
+  //   }));
+  // }, [capsuleList]);
+
+  const MAX_MOMENTS = 40;
+
   const momentCoords = useMemo(() => {
-    return capsuleList.map((m) => ({
-      id: m.id,
-      coord: [m.screen_x, m.screen_y],
-    }));
-  }, [capsuleList]);
+  return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
+    id: m.id,
+    coord: [m.screen_x, m.screen_y],
+  }));
+}, [capsuleList]);
+
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
@@ -108,9 +115,9 @@ const ScreenGecko = (props: Props) => {
   });
 
   const handleGetMoment = (id) => {
-    console.log(`moment id`, id);
+ 
     const moment = capsuleList.find((c) => c.id === id);
-    console.log(moment);
+    // console.log(moment);
 
     if (moment?.id) {
       setMoment({
@@ -155,6 +162,7 @@ const ScreenGecko = (props: Props) => {
       <View
         style={[
           StyleSheet.absoluteFill,
+          
         
           // { backgroundColor: lightDarkTheme?.primaryBackground },
         ]}
@@ -202,8 +210,7 @@ const ScreenGecko = (props: Props) => {
         <Pressable
           onPress={() => handleNavigateToMoment(moment)}
           style={styles.momentViewButton}
-        >
-          {" "}
+        > 
         </Pressable>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text

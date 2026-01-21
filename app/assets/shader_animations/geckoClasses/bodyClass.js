@@ -90,9 +90,9 @@ export default class Body {
 
 
 
-    let unchainedAnchorIndex = 2;
+    // let unchainedAnchorIndex = 2;
 
-        this.spine = null;
+    this.spine = null;
     this.tail = null;
 
 
@@ -154,7 +154,7 @@ init() {
   update(leadPoint_lead, leadPoint_isMoving) {
   
     // this.motion.update_headPosition(this.headRadiiSum);
-      this.motion.update_headPosition();
+    this.motion.update_headPosition();
     this.spine.update(leadPoint_lead, leadPoint_isMoving);
  
     this.tail.update();

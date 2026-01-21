@@ -1,23 +1,30 @@
 import {
   _getPointTowardB,
   _getCenterPoint,
+  _getCenterPoint_inPlace,
   _getDistanceScalar,
   _getDotScalar,
   _subtractVec,
   _getAngleFromXAxis,
   _getForwardAngle,
- 
 } from "../../utils.js";
- 
 
-import { updateShoulderRotator, getBackFrontStepDistance, solveBackElbowIK, getCalcStep, getCalcStep_inPlace, getPivotedStep, solveFingers, getFrontStepsSagTrans } from "../../utils.js";
+import {
+  updateShoulderRotator,
+  getBackFrontStepDistance,
+  solveBackElbowIK,
+  getCalcStep,
+  getCalcStep_inPlace,
+  getPivotedStep,
+  solveFingers,
+  getFrontStepsSagTrans,
+} from "../../utils.js";
 
 // I am keeping both centerJoint and stepCenterJoint for now in case
 // additional animation needs to be done to the shoulder joint but not the spine joint
 // that the legs are mapping onto
 export default class FollowerLegs {
   constructor(
-   
     state,
     spine,
     motion,
@@ -46,10 +53,10 @@ export default class FollowerLegs {
     stepWideness = 3.4,
     stepReach = 0.0453,
     upperArmLength = 0.042,
-    forearmLength = 0.026
+    forearmLength = 0.026,
   ) {
     this.TAU = Math.PI * 2;
-  
+
     this.state = state;
     this.spine = spine;
     this.motion = motion;
@@ -76,15 +83,18 @@ export default class FollowerLegs {
     this.forwardAngle0 = 0;
     this.forwardAngle1 = 0;
     this.centerToAheadAngle = 0;
- 
+
     this.elbows = [
       [0.5, 0.5],
       [0.5, 0.5],
     ];
 
     this.muscles = [
-      [.5,.5], [.5,.5], [.5,.5], [.5,.5]
-    ]
+      [0.5, 0.5],
+      [0.5, 0.5],
+      [0.5, 0.5],
+      [0.5, 0.5],
+    ];
     this.feet = [
       [0.5, 0.5],
       [0.5, 0.5],
@@ -92,23 +102,24 @@ export default class FollowerLegs {
 
     this.fingers = [
       [
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5]],
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+      ],
 
       [
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5]],
-
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+      ],
     ];
 
     this.fingerLen = fingerLen;
-      this.fingerAngleOffset = 3;
+    this.fingerAngleOffset = 3;
     this.stepTargets = [
       [0.5, 0.5],
       [0.5, 0.5],
@@ -156,159 +167,89 @@ export default class FollowerLegs {
   updateDistanceFromFrontStep() {
     this.distFromFrontStep0 = getBackFrontStepDistance(
       this.stepTargets[0],
-      this.motion.frontStepsTLine[0]
+      this.motion.frontStepsTLine[0],
     );
     this.distFromFrontStep1 = getBackFrontStepDistance(
       this.stepTargets[1],
-      this.motion.frontStepsTLine[1]
+      this.motion.frontStepsTLine[1],
     );
   }
 
   // DIFFERENT FROM LEGS WHICH USE THE SAME FORWARD ANGLE
   updateForwardAngles() {
-    let forwardPoint0 = _getCenterPoint(
-      this.frontLegs_stepTargets[0],
-      this.stepAheadJoint
-    );
-    let forwardPoint1 = _getCenterPoint(
-      this.frontLegs_stepTargets[1],
-      this.stepAheadJoint
-    );
 
- 
+    const forwardPoint0 = [0.,0.];
+    const forwardPoint1 = [0.,0.];
+    _getCenterPoint_inPlace(
+      this.frontLegs_stepTargets[0],
+      this.stepAheadJoint, forwardPoint0
+    );
+    _getCenterPoint_inPlace(
+      this.frontLegs_stepTargets[1],
+      this.stepAheadJoint,
+      forwardPoint1
+    );
 
     this.forwardAngle0 = _getForwardAngle(this.stepCenterJoint, forwardPoint0);
     this.forwardAngle1 = _getForwardAngle(this.stepCenterJoint, forwardPoint1);
- 
   }
 
   solveStepTargetsBackPaired() {
-  
     ////////////////////////////////////////////////////////////////
-    const distanceOut = (this.stepCenterRadius + this.stepReach)*1.4;
-
+    const distanceOut = (this.stepCenterRadius + this.stepReach) * 1.4;
 
     const widenessAdj = 1.3;
     // just reverses the 0/1 for is1
 
-    let calcStep0 = [0.,0.];
-    let calcStep1 = [0.,0.];
+    let calcStep0 = [0, 0];
+    let calcStep1 = [0, 0];
 
-       getCalcStep_inPlace(
-    calcStep0,
-     this.stepCenterJoint, 
+    getCalcStep_inPlace(
+      calcStep0,
+      this.stepCenterJoint,
       this.forwardAngle0,
       distanceOut,
-      this.stepWideness *widenessAdj,
-      false
-);
- getCalcStep_inPlace(
-  calcStep1,
-      this.stepCenterJoint, 
+      this.stepWideness * widenessAdj,
+      false,
+    );
+    getCalcStep_inPlace(
+      calcStep1,
+      this.stepCenterJoint,
       this.forwardAngle1,
       distanceOut,
-      this.stepWideness*widenessAdj,
-      true
-);
+      this.stepWideness * widenessAdj,
+      true,
+    );
 
 
-    // const calcStep0 = getCalcStep(
-    //   this.stepCenterJoint, 
-    //   this.forwardAngle0,
-    //   distanceOut,
-    //   this.stepWideness *widenessAdj,
-    //   false
-    // );
-    // const calcStep1 = getCalcStep(
-    //   this.stepCenterJoint, 
-    //   this.forwardAngle1,
-    //   distanceOut,
-    //   this.stepWideness*widenessAdj,
-    //   true
-    // );
-
-    // const bigStep0 = getPivotedStep(
-    //   calcStep0,
-    //   this.stepTargets[1],
-    //   this.stepPivotSize,
-    //   distanceOut,
-    //   false
-    // );
-
-    // const bigStep1 = getPivotedStep(
-    //   calcStep1,
-    //   this.stepTargets[0],
-    //   this.stepPivotSize,
-    //   distanceOut,
-    //   true
-    // ); 
-
-     const nextStep0 = calcStep0;
-     const nextStep1 = calcStep1;
- 
+    const nextStep0 = calcStep0;
+    const nextStep1 = calcStep1;
 
     let lDist = _getDistanceScalar(calcStep0, this.stepTargets[0]);
     let rDist = _getDistanceScalar(calcStep1, this.stepTargets[1]);
 
- 
-    if (this.state.takeSyncedSteps1) { 
+    if (this.state.takeSyncedSteps1) {
       this.stepTargets[0][0] = nextStep0[0];
       this.stepTargets[0][1] = nextStep0[1];
       this.stepTargets[0].angle = calcStep0.angle;
       this.state.syncedStepsCompleted(true);
     } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
-      console.log("back leg need to catch up");
+      // console.log("back leg need to catch up");
       this.state.catchUp(true);
- 
     }
 
-    if (this.state.takeSyncedSteps0) { 
+    if (this.state.takeSyncedSteps0) {
       this.stepTargets[1][0] = nextStep1[0];
       this.stepTargets[1][1] = nextStep1[1];
       this.stepTargets[1].angle = calcStep1.angle;
       this.state.syncedStepsCompleted(false);
     } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
-      console.log("back leg need to catch up");
-      this.state.catchUp(false); 
+      // console.log("back leg need to catch up");
+      this.state.catchUp(false);
     }
   }
 
-//   updateDebugUniforms() {
-//     this.gl.setUniformPairsLoop(
-//       2,
-//       this.u_offset,
-//       [this.u_debug_prefix, this.u_debug_extra_prefix],
-//       [this.debugDesired, this.debugDesiredExtra]
-//     );
-//   }
-
-//   updateUniforms() {
-//     // CENTER JOINT
-//     this.gl.setSingleUniform(`${this.u_center_joint}`, this.hipSpineJoint);
-
-//     // SHOULDER JOINTS
-//     this.gl.setSingleUniform(
-//       `${this.u_rotator_joint_prefix}0`,
-//       this.rotatorJoint0
-//     );
-//     this.gl.setSingleUniform(
-//       `${this.u_rotator_joint_prefix}1`,
-//       this.rotatorJoint1
-//     );
-
-//     // STEP TARGET, ELBOW, AND FEET JOINTS
-//     this.gl.setUniformPairsLoop(
-//       2,
-//       this.u_offset,
-//       [this.u_step_target_prefix, this.u_elbow_prefix, this.u_feet_prefix],
-//       [this.stepTargets, this.elbows, this.feet]
-//     );
-
-//    this.gl.setArrayOfUniforms(this.u_muscle_prefix, this.muscles); 
-
-//     this.gl.setArrayOfUniforms(`${this.u_finger_prefix}${0}`, this.fingers[0]); 
-//     this.gl.setArrayOfUniforms(`${this.u_finger_prefix}${1}`, this.fingers[1]); 
-//   }
+ 
 
   update() {
     this.updateDistanceFromFrontStep();
@@ -324,7 +265,7 @@ export default class FollowerLegs {
       [this.hipSpineJoint[0], this.hipSpineJoint[1]],
       this.hipSpineJoint.angle,
       false,
-      false
+      false,
     );
 
     // updates rotator joint position only
@@ -336,16 +277,10 @@ export default class FollowerLegs {
       [this.hipSpineJoint[0], this.hipSpineJoint[1]],
       this.hipSpineJoint.angle,
       true,
-      true
+      true,
     );
 
-
-
     this.solveStepTargetsBackPaired();
-
-
-
-
 
     solveBackElbowIK(
       this.rotatorJoint0,
@@ -353,7 +288,7 @@ export default class FollowerLegs {
       this.stepTargets[0],
       this.upperArmLength,
       this.forearmLength,
-      false
+      false,
     );
     solveBackElbowIK(
       this.rotatorJoint1,
@@ -361,34 +296,35 @@ export default class FollowerLegs {
       this.stepTargets[1],
       this.upperArmLength,
       this.forearmLength,
-      true
+      true,
     );
 
+    // this.muscles[0] = _getCenterPoint(this.stepTargets[0], this.elbows[0]);
+    // this.muscles[1] = _getCenterPoint(this.elbows[0], this.stepCenterJoint);
+    // this.muscles[2] = _getCenterPoint(this.stepTargets[1], this.elbows[1]);
+    // this.muscles[3] = _getCenterPoint(this.elbows[1], this.stepCenterJoint);
 
-    
-    this.muscles[0] = _getCenterPoint(this.stepTargets[0], this.elbows[0]);
-    this.muscles[1] = _getCenterPoint(this.elbows[0], this.stepCenterJoint);
-    this.muscles[2] = _getCenterPoint(this.stepTargets[1], this.elbows[1]);
-    this.muscles[3] = _getCenterPoint(this.elbows[1], this.stepCenterJoint);
 
-      solveFingers(
+    // // set muscles
+    _getCenterPoint_inPlace( this.stepTargets[0], this.elbows[0], this.muscles[0]);
+    _getCenterPoint_inPlace( this.elbows[0], this.stepCenterJoint, this.muscles[1]);
+    _getCenterPoint_inPlace( this.stepTargets[1], this.elbows[1], this.muscles[2]);
+    _getCenterPoint_inPlace( this.elbows[1], this.stepCenterJoint, this.muscles[3]);
+
+    solveFingers(
       this.stepTargets[0],
       this.fingers[0],
       this.fingerLen,
       false,
-      this.fingerAngleOffset
+      this.fingerAngleOffset,
     );
-
-
 
     solveFingers(
       this.stepTargets[1],
       this.fingers[1],
       this.fingerLen,
       true,
-      this.fingerAngleOffset
+      this.fingerAngleOffset,
     );
- 
   }
- 
 }

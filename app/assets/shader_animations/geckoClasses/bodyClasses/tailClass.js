@@ -1,10 +1,9 @@
-import { getSpineSagTrans, intersectLines } from "../../utils.js";
-import { _getCenterPoint, _getDistanceScalar } from "../../utils.js";
-import { solveProcJoint } from "./utilsPChain.js";
+import { getSpineSagTrans_inPlace, intersectLines } from "../../utils.js";
+import { _getCenterPoint, _getCenterPoint_inPlace, _getDistanceScalar } from "../../utils.js";
+import {  solveProcJoint_inPlace } from "./utilsPChain.js";
 
 export default class Tail {
   constructor(
- 
     state,
     motion,
     // subMotion,
@@ -19,12 +18,11 @@ export default class Tail {
     u_center_prefix = "tailCenter",
     u_intersection_prefix = "tailIntersection",
     updatesGlobalMotion = false,
-motionRange = [0, 6],
+    motionRange = [0, 6],
     motionIndicesLength = 6, // original default for spine
     motionBaseClamp = 8, // original default for spine
-    u_motion_debug_prefix = "debugTailMotion"
+    u_motion_debug_prefix = "debugTailMotion",
   ) {
- 
     this.state = state;
     this.motion = motion;
     this.cursor = cursor;
@@ -33,7 +31,7 @@ motionRange = [0, 6],
 
     this.joints = [this.cursor];
     this.totalNumJoints = totalNumJoints;
-     this.segmentStart = segmentRange[0];
+    this.segmentStart = segmentRange[0];
     this.segmentEnd = segmentRange[1];
     this.intersectionPoint = 1; // stored in spine motion as well
 
@@ -84,12 +82,11 @@ motionRange = [0, 6],
     this.motionFirstAngle = 0;
     this.motionSecondAngle = 0;
 
-
     this.motion2Start = motionRange[0];
     this.motionIndicesLength = motionIndicesLength;
-    this.motion2End = motionRange[1]; 
- 
-    this.motionIndicesLength = motionIndicesLength; 
+    this.motion2End = motionRange[1];
+
+    this.motionIndicesLength = motionIndicesLength;
     this.motionBaseClamp = motionBaseClamp;
     this.motionClamps = [];
     for (let i = 0; i <= this.motionIndicesLength; i++) {
@@ -108,41 +105,28 @@ motionRange = [0, 6],
     this.debugs = [];
     this.motion_debugs = [];
   }
-
-  updateMotionFirstAngle() {
-    //     const data = this.motion.allFrontStepsData;
-    //  this.motionFirstAngle = data.mCenterJointAngle;
-    //  console.log(`MOTION ANGLE`, this.motionFirstAngle);
-    //  if (data.center) {
-    //       this.debugs[0] = [data.sLineStart[0], data.sLineStart[1]];
-    // this.debugs[1] = [data.sLineEnd[0], data.sLineEnd[1]];
-    //  }
-  }
+ 
 
   updateCurrentLength() {
     //length of body
     const length = _getDistanceScalar(
       this.joints[this.segmentEnd],
-      this.joints[this.segmentStart]
+      this.joints[this.segmentStart],
     );
     this.currentLength = length;
 
-    // mid point
-    const mid = _getCenterPoint(
+    // set this.center
+    _getCenterPoint_inPlace(
       this.joints[this.segmentEnd],
-      this.joints[this.segmentStart]
-    );
-    this.center = mid;
-
-    const tailCenterLines = getSpineSagTrans(
-      this.joints[this.segmentEnd],
-      this.joints[this.segmentStart]
+      this.joints[this.segmentStart],
+      this.center,
     );
 
-    // center line debug
 
-    this.debugs[0] = [tailCenterLines.tStart[0], tailCenterLines.tStart[1]];
-    this.debugs[1] = [tailCenterLines.tEnd[0], tailCenterLines.tEnd[1]];
+    const tailCenterLines = getSpineSagTrans_inPlace(
+      this.joints[this.segmentEnd],
+      this.joints[this.segmentStart],
+    ); 
 
     const intersection = intersectLines(
       [tailCenterLines.tStart, tailCenterLines.tEnd],
@@ -152,135 +136,53 @@ motionRange = [0, 6],
       this.motion.frontStepsSAngle,
 
       this.center,
-      this.centerFlanks
+      this.centerFlanks,
     );
 
-    if (this.updatesGlobalMotion) {
-      // console.log(`${this.u_debug_prefix}, updating global motion`)
+    if (this.updatesGlobalMotion) { 
       this.motion.update_mirroredFrontStepsData(intersection);
     }
 
-    this.intersectionPoint = intersection.intersectionPoint;
-
-    // warning this function uses the motion data JUST updated above
+    this.intersectionPoint = intersection.intersectionPoint; 
     if (this.motion.centerIntersection != null) {
-      // guards against null and undefined
-
-      this.motionSecondAngle = this.motion.realignmentAngle2;
-
-      this.debugs[2] = this.motion.mir_frontStepsSLine[0];
-      this.debugs[3] = this.motion.mir_frontStepsSLine[1];
+  
+      this.motionSecondAngle = this.motion.realignmentAngle2; 
     }
   }
 
-  updateJointRadii(radii) {
-    const expectedLength = this.totalNumJoints + 1;
+  // updateJointRadii(radii) {
+  //   const expectedLength = this.totalNumJoints + 1;
 
-    if (!Array.isArray(radii)) return;
+  //   if (!Array.isArray(radii)) return;
 
-    for (let i = 0; i < expectedLength; i++) {
-      if (radii[i] !== undefined) {
-        this.jointRadii[i] = radii[i];
-      }
-    }
-  }
-
-
-//   updateDebugsUniforms() {
-//     this.gl.setSingleUniform(`${this.u_center_prefix}`, this.center);
-//     this.gl.setSingleUniform(
-//       `${this.u_intersection_prefix}`,
-//       this.intersectionPoint
-//     );
-//     this.gl.setArrayOfUniforms(this.u_debug_prefix, this.debugs);
-//     this.gl.setArrayOfUniforms(this.u_motion_debug_prefix, this.motion_debugs);
-//   }
-
-//   updateUniforms() {
-//     this.gl.setArrayOfUniforms(this.u_prefix, this.joints);
-//   }
-
-
-
-
+  //   for (let i = 0; i < expectedLength; i++) {
+  //     if (radii[i] !== undefined) {
+  //       this.jointRadii[i] = radii[i];
+  //     }
+  //   }
+  // } 
 
   update() {
-    this.updateMotionFirstAngle();
  
+
     for (let i = 0; i < this.totalNumJoints; i++) {
-      solveProcJoint(
+      solveProcJoint_inPlace(
         i,
         this.joints[i],
         this.joints[i + 1],
         this.jointRadii[i + 1],
         this.tailClamps[i],
-       this.motion2Start,
+        this.motion2Start,
         this.motion3Start, // starting joint of third calculations
         this.motion2End,
-           this.tailClamps,
+        this.tailClamps,
         this.motionScalars,
-       false,
+        false,
       );
     }
 
-    this.updateCurrentLength();
-    // this.updateUniforms();
-    // this.updateDebugsUniforms();
+    this.updateCurrentLength(); 
   }
 
-
-
-
-    logTailData(name = `Spine Segment Data`, limitRange, full = false) {
-    let start = 0;
-    let end = this.joints.length - 1;
-    let totalLength = 0;
-
-    // Optional range handling (start / end, inclusive)
-    if (Array.isArray(limitRange) && limitRange.length === 2) {
-      start = Math.max(0, limitRange[0]);
-      end = Math.min(this.joints.length - 1, limitRange[1]);
-    }
-
-    console.group(`Spine Class Debug | ${name} [${start} → ${end}]`);
-
-    for (let i = start; i <= end; i++) {
-      const joint = this.joints[i];
-      const radius = this.jointRadii[i];
-
-      totalLength += radius;
-
-      if (full) {
-        console.log(`${this.u_prefix}[${i}]`, {
-          position: [joint[0], joint[1]],
-          radius,
-          angle: joint.angle,
-          secondaryAngle: joint.secondaryAngle ?? null,
-          thirdAngle: joint.thirdAngle ?? null,
-          angleDiff: joint.angleDiff,
-          globalAngle: joint.globalAngle,
-          direction: joint.direction,
-          index: joint.index,
-        });
-      } else {
-        console.log(`${this.u_prefix}[${i}]`, {
-          radius,
-          angle: joint.angle,
-          secondaryAngle: joint.secondaryAngle ?? null,
-          thirdAngle: joint.thirdAngle ?? null,
-          // angleDiff: joint.angleDiff,
-          // globalAngle: joint.globalAngle,
-          direction: joint.direction,
-          index: joint.index,
-        });
-      }
-    }
-
-    // console.log("Total spine length (sum of radii):", totalLength);
-
-    console.groupEnd();
-
-    return totalLength;
-  }
-
+ 
 }

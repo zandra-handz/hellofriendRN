@@ -234,10 +234,10 @@ this.fingers = [
 
     // }
 
-    if (leftIsAhead) {
-      // console.log("Left is ahead");
-    } else {
-    }
+    // if (leftIsAhead) {
+    //   // console.log("Left is ahead");
+    // } else {
+    // }
     ////////////////////////////////////////////////////////////////
     const distanceOut = this.stepCenterRadius + this.stepReach + 0.01;
 

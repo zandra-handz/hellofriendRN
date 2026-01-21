@@ -125,13 +125,13 @@ export default class Moments {
       this.selectedMomentIndex = this.draggingMomentIndex;
 
       // Update highlight
-      // this.selected.coord[0] = ux;
-      // this.selected.coord[1] = uy;
+      this.selected.coord[0] = ux;
+      this.selected.coord[1] = uy;
       this.lastSelected.coord[0] = ux;
       this.lastSelected.coord[1] = uy;
  
-      this.selected.coord[0] = altCoord[0];
-      this.selected.coord[1] = altCoord[1];
+      // this.selected.coord[0] = altCoord[0];
+      // this.selected.coord[1] = altCoord[1];
       // this.lastSelected.coord[0] = altCoord[0];
       // this.lastSelected.coord[1] = altCoord[1];
 

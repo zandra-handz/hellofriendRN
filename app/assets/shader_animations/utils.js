@@ -153,11 +153,34 @@ export function _turnDirVec90CountrC(direction) {
   return [perpendicularX, perpendicularY];
 }
 
+export function _turnDirVec90CounterC_inPlace(direction, out) {
+  const x = direction[0];
+  const y = direction[1];
+
+  out[0] = y;   // counterclockwise
+  out[1] = -x;
+
+  return out;
+}
+
+
 export function _turnDirVec90ClockW(direction) {
   const perpendicularX = -direction[1]; // ? clockwise?
   const perpendicularY = direction[0]; // ? clockwise?
 
   return [perpendicularX, perpendicularY];
+}
+
+
+export function _turnDirVec90ClockW_inPlace(direction, out) {
+
+  const x = direction[0];
+  const y = direction[1];
+   
+  out[0] = -y;   // counterclockwise
+  out[1] = x;
+
+  return out;
 }
 
 // OUTPUT: direction vector
@@ -300,12 +323,34 @@ export function makeLineOverACenter(centerPoint, extensionVector, length) {
   return [lineStart, lineEnd];
 }
 
+
+export function makeLineOverACenter_inPlace(
+  centerPoint,
+  extensionVector,
+  length,
+  outStart,
+  outEnd
+) {
+  const half = length * 0.5;
+
+  const dx = extensionVector[0] * half;
+  const dy = extensionVector[1] * half;
+
+  outStart[0] = centerPoint[0] + dx;
+  outStart[1] = centerPoint[1] + dy;
+
+  outEnd[0] = centerPoint[0] - dx;
+  outEnd[1] = centerPoint[1] - dy;
+
+  return [outStart, outEnd]; 
+}
+
+
 export function makeLineFromAPoint(
-  startingPoint,
+  lineStart,
   extensionVector,
   length = 0.24
-) {
-  const lineStart = startingPoint;
+) { 
 
   const lineEndX = lineStart[0] + extensionVector[0] * length;
   const lineEndY = lineStart[1] + extensionVector[1] * length;
@@ -314,6 +359,20 @@ export function makeLineFromAPoint(
 
   return [lineStart, lineEnd];
 }
+
+export function makeLineFromAPoint_inPlace(
+  startingPoint,    
+  extensionVector,  
+  length,          
+  lineEndOut       
+) { 
+
+  lineEndOut[0] = startingPoint[0] + extensionVector[0] * length;
+  lineEndOut[1] = startingPoint[1] + extensionVector[1] * length;
+ 
+  return [startingPoint, lineEndOut];
+}
+
 
 
 export function getIntersectionPoint(aLine, bLine) {
@@ -341,13 +400,40 @@ export function getIntersectionPoint(aLine, bLine) {
   return [intersectionX, intersectionY]; // Return the position directly
 }
 
+export function getIntersectionPoint_inPlace(aLine, bLine, out) {
+  const x1 = aLine[0][0], y1 = aLine[0][1];
+  const x2 = bLine[0][0], y2 = bLine[0][1];
+
+  const dx1 = aLine[1][0] - x1;
+  const dy1 = aLine[1][1] - y1;
+  const dx2 = bLine[1][0] - x2;
+  const dy2 = bLine[1][1] - y2;
+
+  const denominator = dx1 * dy2 - dy1 * dx2;
+
+  if (denominator === 0) {
+    console.log("Lines are parallel, no intersection.");
+    return false; // or null
+  }
+
+  const t = ((x2 - x1) * dy2 - (y2 - y1) * dx2) / denominator;
+
+  out[0] = x1 + t * dx1;
+  out[1] = y1 + t * dy1;
+
+  return true; // intersection written into 'out'
+}
+
+
 export function getStartAndEndPoints(
   centerPoint,
   lineStartPoint,
   lineEndPoint,
   length
 ) {
-  const extensionVector = _getDirVec(lineEndPoint, lineStartPoint);
+
+  const extensionVector = [0.,0];
+  _getDirVec_inPlace(lineEndPoint, lineStartPoint, extensionVector);
 
   const startX = centerPoint[0] + (extensionVector[0] * length) / 2;
   const startY = centerPoint[1] + (extensionVector[1] * length) / 2;
@@ -360,6 +446,30 @@ export function getStartAndEndPoints(
   return [startPoint, endPoint];
 }
 
+export function getStartAndEndPoints_inPlace(
+  centerPoint,
+  lineStartPoint,
+  lineEndPoint,
+  length,
+  startOut,   
+  endOut      
+) {
+  // temporary vector for direction (allocates once per call)
+  const extensionVector = [0, 0];
+  _getDirVec_inPlace(lineEndPoint, lineStartPoint, extensionVector);
+
+  const half = length * 0.5;
+  const dx = extensionVector[0] * half;
+  const dy = extensionVector[1] * half;
+
+  startOut[0] = centerPoint[0] + dx;
+  startOut[1] = centerPoint[1] + dy;
+
+  endOut[0] = centerPoint[0] - dx;
+  endOut[1] = centerPoint[1] - dy;
+}
+
+
 export function intersectLines(
   line1,
   line1Angle,
@@ -369,81 +479,96 @@ export function intersectLines(
 ) {
   //line 2 is chest angle data
 
-  const position = getIntersectionPoint(line1, line2);
 
+  const position = [0.,0.,];
+  getIntersectionPoint_inPlace(line1, line2, position);
   const mirrored = _getMirrorAngleWithAngleRef(line1Angle, line2Angle);
-  const mirroredLine = makeLineFromAPoint(
-    [position[0], position[1]],
-    mirrored.direction,
-    0.24
-  );
 
+  const mirroredLineEnd = [0.,0.];
+  makeLineFromAPoint_inPlace(position, mirrored.direction, .24, mirroredLineEnd);
   const distFromSteps = _getDistanceScalar(position, line2[0]);
-  const mirroredStepsPoint = _makeDistancePoint(
-    [position[0], position[1]],
-    mirrored.direction,
-    distFromSteps
-  );
 
-  const transverseLine = _turnDirVec90ClockW(mirrored.direction);
-  const mirroredStepLine = makeLineOverACenter(
+  const mirroredStepsPoint = [0.,0.];
+  _makeDistancePoint_inPlace(
+    position,
+    mirrored.direction,
+    distFromSteps,
     mirroredStepsPoint,
-    transverseLine,
-    line1DistanceApart
   );
 
+  const transverseLine = [0.,0.];
+  _turnDirVec90ClockW_inPlace(mirrored.direction, transverseLine);
+
+  const mirroredStepLineStart = [0.,0.,];
+  const mirroredStepLineEnd = [0.,0.];
+  makeLineOverACenter_inPlace(  mirroredStepsPoint, transverseLine, line1DistanceApart, mirroredStepLineStart, mirroredStepLineEnd);
+  
   //// experimental
-  const projectedStepsPoint = _makeDistancePoint(
-    [position[0], position[1]],
-    mirrored.direction,
-    distFromSteps
-  );
 
-  const projectedStepLine = makeLineOverACenter(
+  const projectedStepsPoint = [0.,0.];
+  _makeDistancePoint_inPlace(
+      position,
+      mirrored.direction,
+      distFromSteps,
+      projectedStepsPoint
+    );
+
+  const projectedLineStart = [0.,0.];
+  const projectedLineEnd = [0.,0.];
+
+    makeLineOverACenter_inPlace(
     projectedStepsPoint,
     transverseLine,
-    line1DistanceApart
+    line1DistanceApart,
+    projectedLineStart,
+    projectedLineEnd,
   );
-
-  // position.distFromSteps = distFromSteps;
-  // position.mirroredAngle = mirrored.angle;
-  // position.mirroredDistFromSteps = mirroredStepsPoint;
-  // position.mirroredLineStart = mirroredLine[0];
-  // position.mirroredLineEnd = mirroredLine[1];
-  // // position.chestAngleData = allFirstAngleData; // spineMotion.allFirstAngleData;
-  // position.mirroredStepsLineStart = mirroredStepLine[0];
-  // position.mirroredStepsLineEnd = mirroredStepLine[1];
-  // position.projectedStepsLineStart = projectedStepLine[0];
-  // position.projectedStepsLineEnd = projectedStepLine[1];
-
+  
   return {
     intersectionPoint: position,
     sDistFromSteps: distFromSteps,
     mSCenter: mirroredStepsPoint,
-    mSLine: mirroredLine,
-    mTLine: mirroredStepLine,
-    pTLine: projectedStepLine,
+    mSLine: [position, mirroredLineEnd],
+    mTLine: [mirroredStepLineStart, mirroredStepLineEnd],
+    pTLine: [projectedLineStart, projectedLineEnd],
     mSAngle: mirrored.angle,
   };
 }
 
-export function getSpineSagTrans(startJoint, endJoint) {
+ 
+
+export function getSpineSagTrans_inPlace(startJoint, endJoint) {
   const distanceApart = _getDistanceScalar(endJoint, startJoint);
-  const lineDir = _getDirVec_inPlace(endJoint, startJoint);
+ 
+  const lineDir = [0, 0];
+  const perpendicularDir = [0, 0];
+  const center = [0.,0.];
 
-  const perpendicularDir = _turnDirVec90CountrC(lineDir);
+  _getDirVec_inPlace(endJoint, startJoint, lineDir);
+  _turnDirVec90CounterC_inPlace(lineDir, perpendicularDir);
+
   const angle = _getAngleFromXAxis(perpendicularDir);
-  const center = _getCenterPoint_inPlace(startJoint, endJoint);
+  _getCenterPoint_inPlace(startJoint, endJoint, center);
+  
+  const tLineStart = [0, 0];
+  const tLineEnd   = [0, 0];
 
-  const tLine = makeLineOverACenter(center, perpendicularDir, 0.18);
 
+  makeLineOverACenter_inPlace(
+    center,
+    perpendicularDir,
+    0.18,
+    tLineStart,
+    tLineEnd
+  );
+ 
   const nAngle = _normalizeToNegPItoPI(angle);
 
   return {
     center: center,
     tAngle: nAngle,
-    tStart: tLine[0],
-    tEnd: tLine[1],
+    tStart: tLineStart,
+    tEnd: tLineEnd,
     distanceApart: distanceApart,
   };
 }
@@ -638,9 +763,6 @@ export function solveBackElbowIK(
     Math.max(dist, Math.abs(upperArmLength - forearmLength)),
     upperArmLength + forearmLength
   );
-
-
-
 
   // Side: right = bend outwards, left = bend inwards
   const bendDir = !is1 ? 1 : -1;

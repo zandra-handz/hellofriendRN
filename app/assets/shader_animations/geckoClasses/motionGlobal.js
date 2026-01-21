@@ -1,6 +1,6 @@
 // just data that all motions use
 // nothing specific to lengths/chains/etc
-import { _makeDistancePoint, _makeDistancePoint_inPlace, _getDirVec, _getDirVec_inPlace, _makeLerpAngle } from "../utils.js";
+import { _makeDistancePoint_inPlace, _getDirVec_inPlace, _makeLerpAngle } from "../utils.js";
 
 
 
