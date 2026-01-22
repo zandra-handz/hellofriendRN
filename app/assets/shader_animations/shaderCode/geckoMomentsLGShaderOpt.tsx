@@ -19,7 +19,16 @@ uniform vec2 u_shoulders[4];
 uniform vec2 u_muscles[8];
 uniform vec2 u_fingers[20];
 
+// Add this single array:
+//uniform vec2 u_geckoPoints[68];
+
+
+
+
 float TWO_PI = 6.28318530718;
+
+
+
 
 // ------------------------------------------------
 // SDF + glass helpers
@@ -252,9 +261,11 @@ half4 main(float2 fragCoord) {
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
    uv.x *= u_aspect; 
-    vec2 gecko_uv = uv / u_gecko_scale;
-    float s = 1.0 / u_gecko_scale;
+    // uv /= u_gecko_scale;
+ 
 
+float s = 1.0 / u_gecko_scale;
+vec2 gecko_uv = uv * s;
 
     vec3 leadColor = vec3(1.0, 0.0, 0.0); // red
 

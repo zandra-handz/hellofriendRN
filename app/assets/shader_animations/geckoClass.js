@@ -52,6 +52,7 @@ export default class Gecko {
   }
 
   update(leadPoint_lead, leadPoint_distanceTraveled, leadPoint_isMoving) {
+ 
     this.gait.update(leadPoint_distanceTraveled); 
     this.legs.update();
     this.body.update(leadPoint_lead, leadPoint_isMoving);

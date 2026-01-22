@@ -326,6 +326,7 @@ half4 main(float2 fragCoord) {
    // 1. Apply FULL glass to lastSelected
     float2 lastSelectedCenter = u_lastSelected * u_resolution;
     
+    
     // Check if lastSelected is valid (not default [-100, -100])
     if (length(u_lastSelected) < 10.0) { // Adjust threshold as needed
 
@@ -356,22 +357,10 @@ half4 main(float2 fragCoord) {
         if (dist2 > maxR * maxR) continue;
 
 
-        // // Quick distance check
-        // float dist = distance(fragCoord, momentCenter);
-        // if (dist > 100.0) continue; // Skip if too far
+   
+        color = applyGlassDotSq(dist2, 8.0, color);
 
-
-        color = applyGlassDotSq(dist2, 18.0, color);
-
-        
-        // color = applyGlassDot(
-        //     fragCoord,
-        //     momentCenter,
-        //     18.0,    // smaller radius
-        //     4.0,     // thinner
-        //     1.6,     // slightly softer IOR
-        //     color
-        // );
+   
     }
     
 
@@ -379,9 +368,10 @@ half4 main(float2 fragCoord) {
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
  uv.x *= u_aspect;
+//  uv /= u_scale;
     vec2 scaled_uv = uv / u_scale; 
  
-    float selectedMask = step(distance(scaled_uv, u_selected), 0.03);
+    float selectedMask = step(distance(uv, u_selected), 0.03);
     vec3 selectedColor = endColor * selectedMask; 
  
     color = mix(color, selectedColor, selectedMask);

@@ -1,73 +1,4 @@
- 
-// export default class Moments {
-//   constructor(moments = [], center = [0.5, 0.5], radius = 0.05) {
-//     this.moments = moments; // {id: , coord: [x, y]}
-//     this.momentsLength = moments.length;
-//     this.selectedMomentIndex = -1; // -1 means no selection
-//     this.center = center; 
-//     this.radius = radius; 
-//     this.radiusSquared = radius * radius; // precompute for efficiency
-//     this.draggingMomentIndex = -1; 
-//     this.selected = {id: 0, coord: [-100, -100]}
-//     this.lastSelected = {id: 0, coord: [-100, -100]}
-//   }
-  
 
-// updateAllCoords(updatdeData){
-//   this.moments = updatdeData;
-
-// };
-
-// update(userPointer, isDragging) {
- 
-   
-//   const [ux, uy] = userPointer;
- 
-
-//   if (!isDragging) { 
-   
-//     this.draggingMomentIndex = -1;
-//     this.selectedMomentIndex = -1;
-//       this.selected = {id: 0, coord: [-100, -100]}
-//     return;
-//   }
- 
-//   if (this.draggingMomentIndex !== undefined && this.draggingMomentIndex >= 0) {
-   
-//     this.moments[this.draggingMomentIndex].coord = [userPointer[0], userPointer[1]];
-//     this.selectedMomentIndex = this.draggingMomentIndex;  
-//     return;
-//   } 
-//   let closestIndex = -1;
- 
-//   let closestDistSquared = .5 * .5;
- 
-//   for (let i = 0; i < this.momentsLength; i++) {
-//     const [mx, my] = this.moments[i].coord;
-//     const dx = ux - mx;
-//     const dy = uy - my;
-//     const distSquared = dx * dx + dy * dy;
-
-//     if (distSquared <= closestDistSquared) {
-//       closestDistSquared = distSquared;
-//       closestIndex = i;
-//     }
-//   }
-
-//   if (closestIndex >= 0) { 
-//     this.draggingMomentIndex = closestIndex;
-//     this.moments[closestIndex].coord = userPointer;
-//     this.selected = this.moments[closestIndex];
-//     this.lastSelected =  this.moments[closestIndex]; 
-//     this.selectedMomentIndex = closestIndex;
-//     this.selectedMomentId = this.moments[closestIndex].id; 
-//   } else { 
-//     this.draggingMomentIndex = -1;
-//     this.selectedMomentIndex = -1;
-//   }
-// }
-
-// }
 
 export default class Moments {
   constructor(moments = [], center = [0.5, 0.5], radius = 0.05) {
@@ -125,13 +56,13 @@ export default class Moments {
       this.selectedMomentIndex = this.draggingMomentIndex;
 
       // Update highlight
-      this.selected.coord[0] = ux;
-      this.selected.coord[1] = uy;
+      // this.selected.coord[0] = ux;
+      // this.selected.coord[1] = uy;
       this.lastSelected.coord[0] = ux;
       this.lastSelected.coord[1] = uy;
  
-      // this.selected.coord[0] = altCoord[0];
-      // this.selected.coord[1] = altCoord[1];
+      this.selected.coord[0] = altCoord[0];
+      this.selected.coord[1] = altCoord[1];
       // this.lastSelected.coord[0] = altCoord[0];
       // this.lastSelected.coord[1] = altCoord[1];
 

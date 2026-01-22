@@ -10,6 +10,9 @@ import Soul from "./soulClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
+import { toRawSpace_inplace } from "./animUtils";
+import { packGeckoOnly } from "./animUtils";
+import { useClock } from "@shopify/react-native-skia";
 import {
   MOMENTS_BG_SKSL,
   // GECKO_ONLY_TRANSPARENT_SKSL,
@@ -30,7 +33,8 @@ import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShad
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MomentDotsResetterMini from "./MomentDotsResetterMini"; 
-import { runOnJS, useSharedValue } from "react-native-reanimated";
+import { runOnJS, useSharedValue, useDerivedValue } from "react-native-reanimated";
+ 
 import { useWindowDimensions } from "react-native";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -41,7 +45,6 @@ import {
   toGeckoPointer_inPlace,
   toShaderModel_arrays_inPlace,
   packVec2Uniform_withRecenter_moments,
-  screenToGeckoSpace_inPlace,
 } from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { 
@@ -86,11 +89,14 @@ const MomentsSkia = ({
   handleRecenterMoments,
 
   reset = 0,
-}: Props) => {
-  // console.log(momentsData);
+}: Props) => { 
 
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize(); // size = { width, height }
+
+
+  // Use a ref to throttle setTime calls
+const lastRenderRef = useRef(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -133,34 +139,33 @@ const MomentsSkia = ({
     handleUpdateMomentCoords(formattedData);
   };
 
-  const userPointSV = useSharedValue(restPoint);
-const userPoint_geckoSpaceSV = useSharedValue([0, 0]); 
- 
+  const userPointSV = useSharedValue(restPoint); 
 const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
 
   const isDragging = useSharedValue(false); // tracks if screen is being touched
 
-  const gesture = Gesture.Pan()
-    .onTouchesDown((e) => {
-      // Finger just touched: mark dragging and update userPoint immediately
-      isDragging.value = true;
-      const touch = e.changedTouches[0];
+  // const gesture = Gesture.Pan()
+  //   .onTouchesDown((e) => {
+  //     // Finger just touched: mark dragging and update userPoint immediately
+  //     isDragging.value = true;
+  //     const touch = e.changedTouches[0];
 
-      userPointSV.value = [touch.x / size.width, touch.y / size.height];
+  //     userPointSV.value = [touch.x / size.width, touch.y / size.height];
+   
 
   
-    })
-    .onUpdate((e) => {
-      // Normal drag update
-      userPointSV.value = [e.x / size.width, e.y / size.height];
+  //   })
+  //   .onUpdate((e) => {
+  //     // Normal drag update
+  //     userPointSV.value = [e.x / size.width, e.y / size.height];
  
-    })
-    .onEnd(() => {
-      isDragging.value = false; // finger lifted
-    })
-    .onFinalize(() => {
-      isDragging.value = false; // safety: ensure false if gesture cancelled
-    });
+  //   })
+  //   .onEnd(() => {
+  //     isDragging.value = false; // finger lifted
+  //   })
+  //   .onFinalize(() => {
+  //     isDragging.value = false; // safety: ensure false if gesture cancelled
+  //   });
 
   const onLongPress = () => {};
 
@@ -175,9 +180,11 @@ const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
       const touch = e.changedTouches[0];
 
       userPointSV.value = [touch.x / size.width, touch.y / size.height];
+     
     })
     .onUpdate((e) => {
       userPointSV.value = [e.x / size.width, e.y / size.height];
+     
     })
     .onEnd(() => {
       isDragging.value = false;
@@ -197,7 +204,7 @@ const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   //   .onStart(() => {
   //     runOnJS(onLongPress)();
   //   });
-
+ 
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -210,7 +217,11 @@ const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const gecko = useRef(new Gecko(startingCoord, 0.06));
   const moments = useRef(new Moments(momentsData, [0.5, 0.5], 0.05));
 
+
+
+  
   const [aspect, setAspect] = useState<number | null>(null);
+ 
 
   useEffect(() => {
     setAspect(size.width / size.height);
@@ -296,6 +307,19 @@ const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
 
   const NUM_SPINE_JOINTS = 15;
   const NUM_TAIL_JOINTS = 13;
+
+  const TOTAL_SPINE = NUM_SPINE_JOINTS;
+const TOTAL_TAIL = NUM_TAIL_JOINTS;
+const TOTAL_FINGERS = 20; // 4 fingers each with 5 joints in your code
+
+const TOTAL_GECKO_POINTS = 68;
+
+const geckoPointsUniform = useRef(
+  new Float32Array(TOTAL_GECKO_POINTS * 2)
+);
+
+
+
   const snoutRef = useRef([0, 0]);
   const headRef = useRef([0, 0]);
   const hintRef = useRef([0, 0]); 
@@ -321,7 +345,9 @@ const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const fingersUniform = useRef(new Array(20 * 2).fill(0));
   const momentsUniform = useRef(new Array(MAX_MOMENTS * 2).fill(0));
 
-
+ 
+ 
+ 
   const clearUniformArray = (arr: number[]) => {
   arr.fill(0);
 };
@@ -380,11 +406,14 @@ useEffect(() => {
   userPoint_geckoSpaceRef.current[1] = startingCoord[1];
 
   // reset uniforms metadata
-  uniformsRef.current.u_time = 0;
+  // uniformsRef.current.u_time = 0;
+   uniformsRef.current.u_time = 0;
   uniformsRef.current.u_momentsLength = 0;
 
 }, [reset, internalReset]);
 
+
+ 
  
 useEffect(() => {
   let cancelled = false;
@@ -403,18 +432,22 @@ useEffect(() => {
 
     
 
-    // UPDATE TIME IF MOVING
-    if (leadPoint.current.isMoving || isDragging.value) {
-      const now = (Date.now() - start.current) / 1000;
-      setTime(now);
-      uniformsRef.current.u_time = now;
-    }
-         toGeckoPointer_inPlace(
+if (leadPoint.current.isMoving || isDragging.value) {
+  const now = Date.now();
+  if (now - lastRenderRef.current > 16) { // ~60fps
+    setTime(now);
+    lastRenderRef.current = now;
+  }
+}
+
+
+ 
+
+    toGeckoPointer_inPlace(
     userPointSV.value,
     aspect,
     scale,
-  userPoint_geckoSpaceRef.current,
-   // userPoint_geckoSpaceSV.value,
+    userPoint_geckoSpaceRef.current, 
     0
   );
     frame = requestAnimationFrame(animate);
@@ -431,8 +464,7 @@ useEffect(() => {
  
 
   
-      //  screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerRef.current);
-     
+  
       
   //leadPoint.current.update(userPointSV.value);
   leadPoint.current.update(   userPoint_geckoSpaceRef.current);
@@ -454,7 +486,7 @@ useEffect(() => {
     headRef.current = spine.unchainedJoints[1] || [0, 0];
     hintRef.current = spine.hintJoint || [0, 0];
  
-    moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, gecko.current.legs.frontLegs.stepTargets[0]);
+    moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, gecko.current.legs.frontLegs.stepTargets[1]);
  
     // In place packers
 
@@ -497,7 +529,37 @@ useEffect(() => {
     toShaderModel_inPlace(headRef.current, aspect, gecko_scale, headUniformRef.current, 0);
 
     toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, selectedUniformRef.current, 0);
+    
+  //       toGeckoPointer_inPlace(
+  //   userPointSV.value,
+  //   aspect,
+  //   scale,
+  //   userPoint_geckoSpaceRef.current, 
+  //   0
+  // );
+    
     toShaderSpace_inplace(moments.current.lastSelected.coord, aspect, scale, lastSelectedUniformRef.current, 0);
+
+
+     
+packGeckoOnly(
+  gecko.current,
+  geckoPointsUniform.current,
+  gecko_scale
+);
+ 
+
+// console.log('Gecko points array length:', geckoPointsUniform.current.length);
+// console.log('Gecko points array type:', geckoPointsUniform.current.constructor.name);
+// console.log('First 10 values:', Array.from(geckoPointsUniform.current).slice(0, 10));
+
+// // Also check the uniforms object
+// console.log('Uniforms u_geckoPoints length:', uniformsRef.current.u_geckoPoints.length);
+// console.log('Uniforms u_geckoPoints type:', uniformsRef.current.u_geckoPoints.constructor.name);
+
+// console.log(geckoPointsUniform.current);
+
+// uniformsRef.current.u_geckoPoints = geckoPointsUniform.current;
 
     packVec2Uniform_withRecenter_moments(moments.current.moments, momentsUniform.current, moments.current.momentsLength, aspect, scale);
 
@@ -512,8 +574,10 @@ useEffect(() => {
     uniformsRef.current.u_momentsLength = moments.current.momentsLength;
 
     uniformsRef.current.u_lastSelected = moments.current.lastSelected.coord;
+   
  
   };
+
 
 
 
@@ -523,7 +587,7 @@ useEffect(() => {
     cancelled = true;
     if (frame) cancelAnimationFrame(frame);
   };
-}, [aspect, gecko_scale, scale, size.width, size.height]);
+}, [aspect, gecko_scale, scale, size.width, size.height ]);
 
 
   const uniformsRef = useRef({
@@ -553,7 +617,12 @@ useEffect(() => {
   u_muscles: musclesUniform.current,
   u_fingers: fingersUniform.current,
   u_moments: momentsUniform.current,
+  u_geckoPoints: geckoPointsUniform.current,
 });
+
+
+
+
 
 
   return (
@@ -580,6 +649,45 @@ useEffect(() => {
               ></Shader>
             </Rect>
           </Canvas>
+
+
+
+
+
+
+{/* <Canvas
+  ref={ref}
+  style={StyleSheet.absoluteFill}
+  onTouchStart={(e) => {
+    console.log('touch start!')
+    isDragging.value = true;
+    const t = e.nativeEvent.touches[0];
+    userPointSV.value = [t.locationX / size.width, t.locationY / size.height];
+       console.log(`neeeeeeeeeew`,userPointSV.value);
+  }}
+  onTouchMove={(e) => {
+    const t = e.nativeEvent.touches[0];
+    userPointSV.value = [t.locationX / size.width, t.locationY / size.height];
+       console.log(`nnnnnnnnew`,userPointSV.value);
+  }}
+  onTouchEnd={() => {
+    isDragging.value = false;
+  }}
+>
+  <Rect
+    x={0}
+    y={0}
+    width={size.width}
+    height={size.height}
+    color="lightBlue"
+  >
+    <Shader   style={{ backgroundColor: "transparent" }} source={source} uniforms={uniformsRef.current} />
+  </Rect>
+</Canvas> */}
+
+
+
+          
 
           <Canvas
             ref={ref}
