@@ -32,6 +32,8 @@ export default class Moments {
  
 
   update(userPointer, isDragging, isMoving, altCoord) {
+    // console.log('MOMENTS UPDATING: ', userPointer, isDragging, isMoving, altCoord)
+ 
     const [ux, uy] = userPointer;
 
     if (!isDragging && !isMoving) {
@@ -65,6 +67,9 @@ export default class Moments {
       this.selected.coord[1] = altCoord[1];
       // this.lastSelected.coord[0] = altCoord[0];
       // this.lastSelected.coord[1] = altCoord[1];
+
+
+      // console.log(this.selected.coord)
 
       return;
     }

@@ -11,7 +11,151 @@
 
 // Calculate total number of points: spine + tail + all fingers + other small joints
  
+
 export function packGeckoOnly(
+  gecko,
+  out: Float32Array,
+  scale: number = 1
+) {
+  let i = 0;
+  let vec2Index = 0;
+
+  const DEBUG_PACK = false; // 👈 flip when you want logs
+  const INDEX = false;
+
+  const packVec2Named = (name: string, p: [number, number]) => {
+    const baseFloatIndex = i;
+
+    const x = (p[0] - 0.5) / scale;
+    const y = (p[1] - 0.5) / scale;
+
+    out[i++] = x;
+    out[i++] = y;
+
+    if (DEBUG_PACK) {
+      console.log(
+        `[${vec2Index}] ${name} | floats ${baseFloatIndex}-${baseFloatIndex + 1}`,
+        { x, y }
+      );
+    }
+
+        if (INDEX) {
+      console.log(
+        `[${vec2Index}] ${name} `,
+        
+      );
+    }
+
+    vec2Index++;
+  };
+
+  const spine = gecko.body.spine;
+  const tail  = gecko.body.tail;
+
+  // 0–2 : head-space
+  packVec2Named("u_snout", spine.unchainedJoints[0] || [0, 0]);
+  packVec2Named("u_head",  spine.unchainedJoints[1] || [0, 0]);
+  packVec2Named("u_hint",  spine.hintJoint || [0, 0]);
+
+  // 3–17 : u_joints[15]
+  for (let j = 0; j < 15; j++) {
+    packVec2Named(`u_joints[${j}]`, spine.joints[j] || [0, 0]);
+  }
+
+  // 18–30 : u_tail[13]
+  for (let j = 0; j < 13; j++) {
+    packVec2Named(`u_tail[${j}]`, tail.joints[j] || [0, 0]);
+  }
+
+// 31–34 : u_steps[4]
+// 0,1 = front legs
+// 2,3 = back legs
+
+packVec2Named(
+  "u_steps[0] front_leg_0",
+  gecko.legs.frontLegs.stepTargets[0] || [0, 0]
+);
+
+packVec2Named(
+  "u_steps[1] front_leg_1",
+  gecko.legs.frontLegs.stepTargets[1] || [0, 0]
+);
+
+packVec2Named(
+  "u_steps[2] back_leg_0",
+  gecko.legs.backLegs.stepTargets[0] || [0, 0]
+);
+
+packVec2Named(
+  "u_steps[3] back_leg_1",
+  gecko.legs.backLegs.stepTargets[1] || [0, 0]
+);
+
+  // 35–38 : u_elbows[4]
+  const elbows = [
+    gecko.legs.frontLegs.elbows[0],
+    gecko.legs.frontLegs.elbows[1],
+    gecko.legs.backLegs.elbows[0],
+    gecko.legs.backLegs.elbows[1]
+  ];
+  elbows.forEach((e, j) =>
+    packVec2Named(`u_elbows[${j}]`, e || [0, 0])
+  );
+
+  // 39–42 : u_shoulders[4]
+  const shoulders = [
+    gecko.legs.frontLegs.rotatorJoint0,
+    gecko.legs.frontLegs.rotatorJoint1,
+    gecko.legs.backLegs.rotatorJoint0,
+    gecko.legs.backLegs.rotatorJoint1
+  ];
+  shoulders.forEach((s, j) =>
+    packVec2Named(`u_shoulders[${j}]`, s || [0, 0])
+  );
+
+  // 43–50 : u_muscles[8]
+  const muscles = [
+    ...gecko.legs.frontLegs.muscles,
+    ...gecko.legs.backLegs.muscles
+  ];
+  muscles.forEach((m, j) =>
+    packVec2Named(`u_muscles[${j}]`, m || [0, 0])
+  );
+
+  // 51–70 : u_fingers[20]
+  const fingers = [
+    ...gecko.legs.frontLegs.fingers,
+    ...gecko.legs.backLegs.fingers
+  ];
+
+  let fingerIndex = 0;
+  for (let legFingers of fingers) {
+    if (legFingers && legFingers.length === 5) {
+      for (let j = 0; j < 5; j++) {
+        packVec2Named(
+          `u_fingers[${fingerIndex++}]`,
+          legFingers[j] || [0, 0]
+        );
+      }
+    } else {
+      for (let j = 0; j < 5; j++) {
+     
+        packVec2Named(`u_fingers[${fingerIndex++}]`, [0, 0]);
+      }
+    }
+  }
+
+  // 71 vec2 * 2 = 142 floats
+  if (i !== 142) {
+    console.error(`Expected 142 floats, packed ${i}`);
+  }
+
+  return out;
+}
+
+
+// revert to this when debugging is not needed
+export function packGeckoOnlyProd(
   gecko,
   out: Float32Array,
   scale: number = 1
@@ -25,28 +169,34 @@ export function packGeckoOnly(
     out[i++] = y;
   };
 
-  // TOTAL: 68 vec2s = 136 floats
-  
-  // 0-14: u_joints[15] - spine joints
+  const spine = gecko.body.spine;
+  const tail  = gecko.body.tail;
+
+  // 0-2: head-space
+  packVec2(spine.unchainedJoints[0] || [0, 0]); // u_snout
+  packVec2(spine.unchainedJoints[1] || [0, 0]); // u_head
+  packVec2(spine.hintJoint || [0, 0]);          // u_hint
+
+  // 3-17: u_joints[15] - spine joints
   for (let j = 0; j < 15; j++) {
-    packVec2(gecko.body.spine.joints[j] || [0, 0]);
+    packVec2(spine.joints[j] || [0, 0]);
   }
 
-  // 15-27: u_tail[13] - tail joints
+  // 18-30: u_tail[13]
   for (let j = 0; j < 13; j++) {
-    packVec2(gecko.body.tail.joints[j] || [0, 0]);
+    packVec2(tail.joints[j] || [0, 0]);
   }
 
-  // 28-31: u_steps[4] - step targets
-  for (let j = 0; j < 4; j++) {
-    packVec2(
-      (gecko.legs.frontLegs.stepTargets[j] || 
-       gecko.legs.backLegs.stepTargets[j] || 
-       [0, 0])
-    );
-  }
+// 31–34 : u_steps[4]
+// [0–1] front legs, [2–3] back legs
 
-  // 32-35: u_elbows[4]
+packVec2(gecko.legs.frontLegs.stepTargets[0] || [0, 0]);
+packVec2(gecko.legs.frontLegs.stepTargets[1] || [0, 0]);
+packVec2(gecko.legs.backLegs.stepTargets[0]  || [0, 0]);
+packVec2(gecko.legs.backLegs.stepTargets[1]  || [0, 0]);
+
+
+  // 35-38: u_elbows[4]
   const elbows = [
     gecko.legs.frontLegs.elbows[0],
     gecko.legs.frontLegs.elbows[1],
@@ -55,7 +205,7 @@ export function packGeckoOnly(
   ];
   for (let e of elbows) packVec2(e || [0, 0]);
 
-  // 36-39: u_shoulders[4]
+  // 39-42: u_shoulders[4]
   const shoulders = [
     gecko.legs.frontLegs.rotatorJoint0,
     gecko.legs.frontLegs.rotatorJoint1,
@@ -64,39 +214,29 @@ export function packGeckoOnly(
   ];
   for (let s of shoulders) packVec2(s || [0, 0]);
 
-  // 40-47: u_muscles[8]
+  // 43-50: u_muscles[8]
   const muscles = [
     ...gecko.legs.frontLegs.muscles,
     ...gecko.legs.backLegs.muscles
   ];
-  if (muscles.length !== 8) {
-    console.error('Expected 8 muscles, got:', muscles.length);
-  }
   for (let m of muscles) packVec2(m || [0, 0]);
 
-  // 48-67: u_fingers[20] (4 legs * 5 finger joints each)
+  // 51-70: u_fingers[20]
   const fingers = [
     ...gecko.legs.frontLegs.fingers,
     ...gecko.legs.backLegs.fingers
   ];
-  
-  // Flatten the finger arrays (should be 4 arrays of 5 joints each)
   for (let legFingers of fingers) {
     if (legFingers && legFingers.length === 5) {
-      for (let j = 0; j < 5; j++) {
-        packVec2(legFingers[j] || [0, 0]);
-      }
+      for (let j = 0; j < 5; j++) packVec2(legFingers[j] || [0, 0]);
     } else {
-      // Fill with zeros if missing
-      for (let j = 0; j < 5; j++) {
-        packVec2([0, 0]);
-      }
+
+      for (let j = 0; j < 5; j++) packVec2([0, 0]);
     }
   }
 
-  // Verify we packed exactly 68 vec2s (136 floats)
-  if (i !== 136) {
-    console.error(`Expected 136 floats, packed ${i}. Check your data structure.`);
+  if (i !== 142) {
+    console.error(`Expected 142 floats, packed ${i}`);
   }
 
   return out;

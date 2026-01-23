@@ -11,8 +11,8 @@ export default class Mover {
     this.defaultDampening = 6.4;
     this.defaultSpring = 20;
 
-    this.dampening = 6.4;
-    this.spring = 20;
+    this.dampening = 5.4; //6.4
+    this.spring = 30; //2-
  this.lastMovingTime = null; 
     this.u_debug_lead_point_prefix = u_debug_lead_point_prefix;
 
