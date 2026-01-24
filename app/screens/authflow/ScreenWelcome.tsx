@@ -14,6 +14,8 @@ import GradientBackground from "@/app/components/appwide/display/GradientBackgro
 import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+import MemoizedGeckoSkia from "@/app/assets/shader_animations/GeckoSkia";
+
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -83,12 +85,17 @@ const ScreenWelcome = () => {
       >
         <View style={styles.container}>
           <View style={[StyleSheet.absoluteFill]}>
-            <PChainSkia
+            <MemoizedGeckoSkia
               color1={manualGradientColors.lightColor}
               color2={manualGradientColors.homeLightColor}
+              bckgColor1={manualGradientColors.lightColor}
+              bckgColor2={manualGradientColors.homeLightColor}
+
               startingCoord={[.2,-1.]}
-              restPoint={[.5,.8]}
-              scale={0.76}
+              restPoint={[.5,.7]}
+              scale={1}
+              gecko_scale={1}
+              gecko_size={1.6}
               reset={resetAnimation}
             />
           </View>

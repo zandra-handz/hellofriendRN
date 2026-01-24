@@ -19,7 +19,7 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import { lightFormat } from "date-fns";
+// import ItemFooterHelloes from "../appwide/statusbar/ItemFooterHelloes";
 // import { useFocusEffect } from "@react-navigation/native";
 // import { useCallback } from "react";
 
@@ -39,14 +39,14 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   darkerOverlayBackgroundColor,
   categoryColorsArray,
   // darkerOverlayBackgroundColor,
-primaryBackground,
+  primaryBackground,
   selectedFriendId,
   selectedFriendName,
   skiaFontLarge,
   skiaFontSmall,
   themeColors,
 }) => {
-  console.log("selected friend home rerendered");
+  // console.log("selected friend home rerendered");
   const headerRef = useRef(null);
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
@@ -101,29 +101,15 @@ primaryBackground,
 
   return (
     <>
- 
       <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
-        
         <View
           style={[
+            styles.darkGlassBackgroundContainer,
             {
-              height: 275,
-              width: "100%",
-              top: -100,
-              alignSelf: "center",
-              position: "absolute",
               backgroundColor: darkGlassBackground,
             },
           ]}
         ></View>
-        {/* <SvgIcon
-          name={"moon_waning_crescent"}
-          size={1200}
-          color={CARD_BACKGROUND}
-          //color={primaryColor}
-          // color={"red"}
-          style={[styles.crescentMoon]}
-        /> */}
       </Animated.View>
       <View
         style={[
@@ -137,136 +123,98 @@ primaryBackground,
           name={"leaf"}
           size={1200}
           color={"#8bc34a"}
-          style={{
-            position: "absolute",
-            top: -750, // 740
-            left: -470,
-            opacity: 0.8,
-            transform: [{ rotate: "200deg" }, { scaleX: -1 }],
-          }}
+          style={styles.leafContainer}
         />
         <View
-          style={{
-            zIndex: 30000,
-
-            height: "100%",
-            width: "100%",
-          }}
+          style={styles.itemsContainer}
         >
           <View style={styles.containerOverScrollView}>
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
+            <Animated.View
+              style={[
+                smallHeaderAnimationStyle,
+                styles.smallerHeaderContainer,
+                {
+                  backgroundColor: primaryOverlayColor,
+                },
+              ]}
+            >
+              <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+                {selectedFriendName}
+              </Text>
+            </Animated.View>
+
+            <ScrollView
+              // ref={scrollRef}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              style={{ width: "100%" }}
+              contentContainerStyle={{
+                paddingHorizontal: 0,
                 alignItems: "center",
-                paddingBottom: 0,
               }}
             >
-              <Animated.View
-                style={[
-                  smallHeaderAnimationStyle,
-                  {
-                    position: "absolute",
-                    width: "100%",
-                    top: 0,
-                    height: "auto",
-
-                    padding: 6,
-
-                    backgroundColor: primaryOverlayColor,
-
-                    zIndex: 5000,
-                    elevation: 5000,
-                  },
-                ]}
-              >
-                <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
-                  {selectedFriendName}
-                </Text>
-              </Animated.View>
-
-              <ScrollView
-                // ref={scrollRef}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-                showsVerticalScrollIndicator={false}
-                style={{ width: "100%" }}
-                contentContainerStyle={{
-                  paddingHorizontal: 0,
-                  alignItems: "center",
+              <View
+                style={{
+                  flex: 1,
+                  height: MESSAGE_HEADER_HEIGHT, // EYEBALL
+                  width: "100%",
                 }}
+                ref={headerRef}
               >
-                <View
-                  style={{
-                    flex: 1,
-                    height: MESSAGE_HEADER_HEIGHT, // EYEBALL
-                    width: "100%",
-                  }}
-                  ref={headerRef}
-                >
-                  <FriendHeaderMessageUI
+                <FriendHeaderMessageUI
                   primaryBackground={primaryBackground}
-                    height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
-                    userId={userId}
-                    friendId={selectedFriendId}
-                    cardBackgroundColor={CARD_BACKGROUND}
-                    darkGlassBackground={darkGlassBackground}
-                    darkerGlassBackground={darkerGlassBackground}
+                  height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
+                  userId={userId}
+                  friendId={selectedFriendId}
+                  cardBackgroundColor={CARD_BACKGROUND}
+                  darkGlassBackground={darkGlassBackground}
+                  darkerGlassBackground={darkerGlassBackground}
+                  selectedFriendName={`${selectedFriendName}`}
+                  friendDarkColor={themeColors.darkColor}
+                  primaryColor={primaryColor}
+                  welcomeTextStyle={welcomeTextStyle}
+                  backgroundColor={primaryOverlayColor}
+                  onPress={() => console.log("nada!")}
+                />
+              </View>
 
-                    selectedFriendName={`${selectedFriendName}`}
-                    friendDarkColor={themeColors.darkColor}
-                    primaryColor={primaryColor}
-                    welcomeTextStyle={welcomeTextStyle}
-                    backgroundColor={primaryOverlayColor}
-                    onPress={() => console.log("nada!")}
+              <View style={styles.itemsContainer}>
+                <View style={{ width: "100%", marginTop: 3 }}>
+                  {/* {!loadingDash && ( */}
+                  <TalkingPointsChart
+                    userId={userId}
+                    textColor={primaryColor}
+                    overlayColor={primaryOverlayColor}
+                    darkerOverlayBackgroundColor={darkerGlassBackground}
+                    themeColors={themeColors}
+                    categoryColors={categoryColorsArray}
+                    skiaFontLarge={skiaFontLarge}
+                    skiaFontSmall={skiaFontSmall}
                   />
                 </View>
 
-                <View
-                  style={{
-                    flexDirection: "column",
-                    flex: 1,
-                    width: "100%",
-                    // backgroundColor: "orange",
-                  }}
-                >
-                  <View style={{ width: "100%", marginTop: 3 }}>
-                    {/* {!loadingDash && ( */}
-                    <TalkingPointsChart
-                      userId={userId}
-                      textColor={primaryColor}
-                      overlayColor={primaryOverlayColor}
-                      darkerOverlayBackgroundColor={darkerGlassBackground}
-                      themeColors={themeColors}
-                      categoryColors={categoryColorsArray}
-                      skiaFontLarge={skiaFontLarge}
-                      skiaFontSmall={skiaFontSmall}
-                    />
-                    {/* )} */}
-                  </View>
-
-                  <View style={{ width: "100%", marginBottom: 6 }}>
-                    <Pics
-                      primaryColor={primaryColor}
-                      primaryOverlayColor={ELEMENTS_BACKGROUND}
-                      userId={userId}
-                      friendId={selectedFriendId}
-                    />
-                  </View>
-
-                  <View style={{ width: "100%", marginVertical: 4 }}>
-                    <Helloes
-                      userId={userId}
-                      primaryColor={primaryColor}
-                      primaryOverlayColor={ELEMENTS_BACKGROUND}
-                      friendId={selectedFriendId}
-                    />
-                  </View>
-
-                  <View style={{ width: "100%", height: 330 }}></View>
+                <View style={{ width: "100%", marginBottom: 6 }}>
+                  <Pics
+                    primaryColor={primaryColor}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
+                    userId={userId}
+                    friendId={selectedFriendId}
+                  />
                 </View>
-              </ScrollView>
-            </View>
+
+                <View style={{ width: "100%", marginVertical: 4 }}>
+                  <Helloes
+                    userId={userId}
+                    primaryColor={primaryColor}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
+                    friendId={selectedFriendId}
+                  />
+                </View>
+
+                <View style={{ width: "100%", height: 330 }}></View>
+              </View>
+            </ScrollView>
           </View>
         </View>
       </View>
@@ -283,24 +231,46 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "space-between",
   },
+  fullViewContainer: {
+    zIndex: 30000,
+    height: "100%",
+    width: "100%",
+  },
+  darkGlassBackgroundContainer: {
+    height: 275,
+    width: "100%",
+    top: -100,
+    alignSelf: "center",
+    position: "absolute",
+  },
+  smallerHeaderContainer: {
+    position: "absolute",
+    width: "100%",
+    top: 0,
+    height: "auto",
+    padding: 6,
+    zIndex: 5000,
+    elevation: 5000,
+  },
+  leafContainer: {
+    position: "absolute",
+    top: -750, // 740
+    left: -470,
+    opacity: 0.8,
+    transform: [{ rotate: "200deg" }, { scaleX: -1 }],
+  },
   containerOverScrollView: {
     width: "100%",
     flexDirection: "column",
     flex: 1,
-    // flexGrow: 1,
-    // height: "100%",
     overflow: "hidden",
     borderWidth: 0,
     borderColor: "black",
   },
-  crescentMoon: {
-    position: "absolute",
-    top: -254,
-    left: -393,
-    zIndex: 1, // put on top of leaf
-    // opacity: 0.5,
-    transform: [{ rotate: "270deg" }, { scaleX: -1 }],
-    shadowColor: "#000",
+  itemsContainer: {
+    zIndex: 30000,
+    height: "100%",
+    width: "100%",
   },
   moonWrapper: {
     zIndex: 1,

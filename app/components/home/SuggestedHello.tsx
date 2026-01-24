@@ -93,6 +93,8 @@ const SuggestedHello = ({
               <GeckoGoButton
                 onSinglePress={openModal}
                 onDoublePress={navigateToFinalize}
+                color={primaryColor}
+                backgroundColor={primaryBackground}
               />
             </View>
           </View>

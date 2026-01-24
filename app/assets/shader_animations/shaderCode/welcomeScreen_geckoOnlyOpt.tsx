@@ -3,8 +3,8 @@ uniform float2 u_resolution;
 uniform float  u_aspect;
 uniform float  u_scale; 
 
-uniform float u_gecko_scale; 
-uniform float u_gecko_size; // overall size of gecko
+uniform float u_gecko_scale;
+uniform float u_gecko_size;
 uniform float u_time;
 uniform vec2 u_soul;
 uniform vec2 u_lead;
@@ -155,34 +155,7 @@ float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, floa
 }
 
  
-// without finger lines
-// float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, float radius, float influence) {
-//     vec2 diff = uv - fingerPos;
-//     if (length(diff) < influence) {
-//         // Only fingertip circle
-//         float fingerTip  = distFCircle(uv, fingerPos, radius + .001);
-//         return fingerTip;
-//     }
-//     return 1.0; // outside influence
-// }
-
-float fingerDrawFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, float radius) {
-    // Calculate distance to line segment directly (no SDF helper)
-    vec2 pa = uv - fingerPos;
-    vec2 ba = stepPos - fingerPos;
-    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
-    float distToLine = length(pa - ba * h);
-    
-    // Is it in the line?
-    float lineMask = step(distToLine, thickness);
-    
-    // Is it in the circle?
-    float distToCircle = distance(uv, fingerPos);
-    float circleMask = step(distToCircle, radius);
-    
-    // Return 1.0 if in either
-    return max(lineMask, circleMask);
-}
+ 
 
 // ------------------------------------------------
 // Transparent background
@@ -360,29 +333,33 @@ half4 main(float2 fragCoord) {
 
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
-    uv.x *= u_aspect;  
-    float s = 1.0 / u_gecko_scale;
-    vec2 gecko_uv = uv * s * u_gecko_size;
+   uv.x *= u_aspect; 
+    // uv /= u_gecko_scale;
+ 
+
+float s = 1.0 / u_gecko_scale;
+vec2 gecko_uv = uv * s * u_gecko_size;
 
 
-// !!! FOR DEBUGGING //////////////////////////////////////////////////////////////
-    // vec3 leadColor = vec3(1.0, 0.0, 0.0); // red
-    // float leadCircle = distance(gecko_uv, u_lead);
-    // float leadMask = 1.0 - smoothstep(0.0, 0.01, leadCircle);
-    // vec3 leadOut = leadColor * leadMask;
 
-    // vec3 leadScreenColor = vec3(1.0, 0.5, 0.5); 
-    // float leadScreenCircle = distance(gecko_uv, u_lead_screen_space);
-    // float leadScreenMask = 1.0 - smoothstep(0.0, 0.01, leadScreenCircle);
-    // vec3 leadScreenOut = leadScreenColor * leadScreenMask;
-// !!! END DEBUGGING //////////////////////////////////////////////////////////////
+    vec3 leadColor = vec3(1.0, 0.0, 0.0); // red
+
+float leadCircle = distance(gecko_uv, u_lead);
+float leadMask = 1.0 - smoothstep(0.0, 0.01, leadCircle);
+
+vec3 leadOut = leadColor * leadMask;
+
+
+vec3 leadScreenColor = vec3(1.0, 0.5, 0.5); 
+float leadScreenCircle = distance(gecko_uv, u_lead_screen_space);
+float leadScreenMask = 1.0 - smoothstep(0.0, 0.01, leadScreenCircle);
+vec3 leadScreenOut = leadScreenColor * leadScreenMask;
 
     float geckoSDF = buildGeckoSDF(gecko_uv, s);
     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
     vec3 geckoColor = endColor * geckoMask; // example green color
     color = mix(color, geckoColor, geckoMask);
 
-   // return half4(color + leadOut + leadScreenOut, geckoMask);
-     return half4(color , geckoMask);
+    return half4(color + leadOut + leadScreenOut, geckoMask);
 }
 `;

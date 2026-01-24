@@ -12,6 +12,30 @@
 // Calculate total number of points: spine + tail + all fingers + other small joints
  
 
+export function transformSelected(
+  point: [number, number],
+  scale: number,
+  out: [number, number],
+  outIndex: number = 0
+): void {
+  const x = (point[0] - 0.5) / scale;
+  const y = (point[1] - 0.5) / scale;
+
+  out[outIndex + 0] = x;
+  out[outIndex + 1] = y;
+}
+
+// Or if you want it to return a new array:
+export function toGeckoSpace(
+  point: [number, number],
+  scale: number
+): [number, number] {
+  const x = (point[0] - 0.5) / scale;
+  const y = (point[1] - 0.5) / scale;
+  
+  return [x, y];
+}
+
 export function packGeckoOnly(
   gecko,
   out: Float32Array,
@@ -264,6 +288,20 @@ export function toShaderSpace_inplace(point, aspect, scale, out, outIndex) {
   out[outIndex + 1] = sy;
 }
 
+
+export function toShader(point, aspect, scale, out, outIndex) {
+  let sx = point[0];
+  let sy = point[1]  ;
+  sx *= aspect;
+  sx /= scale;
+  sy /= scale;
+
+  out[outIndex + 0] = sx;
+  out[outIndex + 1] = sy;
+}
+
+
+
 export function toRawSpace_inplace(point, aspect, scale, out, outIndex) {
   let sx = point[0];
   let sy = point[1];// - 0.5;
@@ -321,33 +359,65 @@ export function screenToGeckoSpace(
 //  out[1] = (p[1]);// * geckoScale;          
 // }
 
-export function toGeckoPointer_inPlace(point, aspect, scale, out, outIndex){
+// export function toGeckoPointer_inPlace(point, aspect, scale, out, outIndex){
+ 
+//   if (!aspect) { 
+//     out = point;
+//     return
+//   }
+ 
+//   let sx = point[0] + 0.625; // I have absolutely no idea why this works, (edit, since only x it must have to do with aspect) but it is the only thing that works right now to match gecko to user pointer
+//   let sy = point[1] ;
+//    sx *= aspect; 
+
+//   out[outIndex + 0] = sx;
+//   out[outIndex + 1] = sy;
+ 
+
+// }
+
+
+export function toGeckoSpace_inPlace(
+  point: [number, number],
+  gecko_scale: number,
+  out: Float32Array | number[],
+  outIndex: number = 0
+): void {
+  const x = (point[0] - 0.5) / gecko_scale;
+  const y = (point[1] - 0.5) / gecko_scale;
+
+  out[outIndex + 0] = x;
+  out[outIndex + 1] = y;
+}
+
+export function toGeckoPointerScaled_inPlace(point, aspect, scale, gecko_size, out, outIndex){
  
   if (!aspect) { 
     out = point;
     return
   }
  
-  let sx = point[0] + 0.625; // I have absolutely no idea why this works, (edit, since only x it must have to do with aspect) but it is the only thing that works right now to match gecko to user pointer
-  let sy = point[1] ;
-   sx *= aspect;
-  // sx /= scale;
-  // sy /= scale;
+  let sx = point[0];// + 0.625;
+  let sy = point[1];
+  sx *= aspect;
+  
+  // Center the coordinates before scaling
+  sx -= 0.5 * aspect;  // Move to origin
+  sy -= 0.5;
+  
+  // Scale around center
+  sx *= gecko_size;
+  sy *= gecko_size;
+  
+  // Move back from origin
+  sx += 0.5 * aspect;
+  sy += 0.5;
+
+    sx += 0.625 * aspect; // Scale the offset too, or just try 0.625
 
   out[outIndex + 0] = sx;
   out[outIndex + 1] = sy;
-
-  // out[0] = sx;
-  // out[1] = sy;
-
-  // console.log(out);
-
- 
-
 }
-
-
-
 
 
 export function toShaderModel_inPlace(point, aspect, scale, out, outIndex) {
@@ -360,6 +430,9 @@ export function toShaderModel_inPlace(point, aspect, scale, out, outIndex) {
   out[outIndex + 0] = sx;
   out[outIndex + 1] = sy;
 }
+
+
+
 
 
 export function toShaderModel_arrays_inPlace(

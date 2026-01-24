@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Pressable, Text } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable, Text, Vibration } from "react-native";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import UserPointer from "@/app/assets/shader_animations/UserPointer";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -17,7 +17,9 @@ import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser"; 
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
- 
+ import * as Haptics from 'expo-haptics';
+import { Audio } from 'expo-av';
+
 import MemoizedMomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 
 type Props = {};
@@ -81,22 +83,46 @@ const ScreenGecko = (props: Props) => {
 }, [capsuleList]);
 
 
+
+
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
+
+
+ 
 
   // Function to randomize/scatter moments
   const handleRescatterMoments = () => {
+      const minY = 0.1; // 10% down from top
+  const maxY = 0.8; // 10% up from bottom
+    // console.log(`scattering moments!`, scatteredMoments);
+  setScatteredMoments((prev) =>
+    prev.map((m) => {
+      const randomX = Math.random(); // full width
+      const randomY = Math.random() * (maxY - minY) + minY; // clamp Y
+
+      return {
+        ...m,
+        coord: [randomX, randomY],
+      };
+    })
+  );
+    // console.log(`done!`, scatteredMoments);
+  };
+
+    const handleRescatterMomentsNormalizedSpace = (width, height) => {
     // console.log(`scattering moments!`, scatteredMoments);
     setScatteredMoments((prev) =>
-      prev.map((m) => ({
-        ...m,
-        coord: [
-          Math.random(), // random x between 0 and 1
-          Math.random(), // random y between 0 and 1
-        ],
-      }))
+    prev.map(m => ({
+      ...m,
+      coord: [
+        Math.random() * width,
+        Math.random() * height,
+      ],
+    }))
     );
     // console.log(`done!`, scatteredMoments);
   };
+
 
   const handleRecenterMoments = () => {
     setScatteredMoments((prev) =>
@@ -114,19 +140,36 @@ const ScreenGecko = (props: Props) => {
     uniqueIndex: null,
   });
 
-  const handleGetMoment = (id) => {
+  // const handleGetMoment = (id) => {
  
-    const moment = capsuleList.find((c) => c.id === id);
-    // console.log(moment);
+  //   const moment = capsuleList.find((c) => c.id === id);
+  //   // console.log(moment);
 
-    if (moment?.id) {
-      setMoment({
-        category: moment.user_category_name,
-        capsule: moment.capsule,
-        uniqueIndex: moment.uniqueIndex,
-      });
-    }
-  };
+  //   if (moment?.id) {
+  //     setMoment({
+  //       category: moment.user_category_name,
+  //       capsule: moment.capsule,
+  //       uniqueIndex: moment.uniqueIndex,
+  //     });
+  //   }
+  // };
+ 
+
+const handleGetMoment = (id) => {
+  const moment = capsuleList.find((c) => c.id === id);
+
+  if (moment?.id) {
+    setMoment({
+      category: moment.user_category_name,
+      capsule: moment.capsule,
+      uniqueIndex: moment.uniqueIndex,
+    });
+
+    // --- Vibration ---
+    Vibration.vibrate(50); // vibrate for 50ms
+  }
+};
+
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.priamryText;
@@ -179,25 +222,17 @@ const ScreenGecko = (props: Props) => {
           // startingCoord={[0.5, -.3]}
           startingCoord={[0.1, -0.5]}
           restPoint={[0.5, 0.6]}
-          scale={0.8}
-          gecko_scale={.8}
+          scale={1}
+          gecko_scale={1}
+          gecko_size={1.7}
           lightDarkTheme={lightDarkTheme}
-          handleRescatterMoments={handleRescatterMoments}
+          // handleRescatterMoments={handleRescatterMomentsNormalizedSpace}
+              handleRescatterMoments={handleRescatterMoments}
           handleRecenterMoments={handleRecenterMoments}
+          setScatteredMoments={setScatteredMoments}
   
         />
-      </View>
-
-      {/* <EscortBarFidgetScreen
-           onBackPress={handleUpdateMomentsState}
-           onCenterPress={handleRecenterMoments}
-          style={{ paddingHorizontal: 10 }}
-          primaryColor={lightDarkTheme.primaryText}
-          primaryBackground={lightDarkTheme.primaryBackground}
-          onPress={handleRescatterMoments}
-          label={"Rescatter"}
-        /> */}
-
+      </View> 
       <View
         style={[
           styles.previewWrapper,
@@ -263,8 +298,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 40,
     top: 0,
+    right: 0,
+    
     flexDirection: "row",
     justifyContent: "flex-end",
+   // backgroundColor: 'teal',
+    zIndex: 9000,
 
     position: "absolute",
   },

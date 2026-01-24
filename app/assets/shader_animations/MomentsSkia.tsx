@@ -10,7 +10,7 @@ import Soul from "./soulClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass"; 
-import { packGeckoOnly } from "./animUtils";
+import { packGeckoOnly, transformSelected } from "./animUtils";
  
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
@@ -24,9 +24,12 @@ import { useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   hexToVec3,
+  toShader,
   toShaderModel_inPlace,
   toShaderSpace_inplace,
+  toGeckoSpace_inPlace,
   toGeckoPointer_inPlace, 
+  toGeckoPointerScaled_inPlace,
   packVec2Uniform_withRecenter_moments,
 } from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -63,21 +66,29 @@ const MomentsSkia = ({
   restPoint,
   scale = 1,
   gecko_scale = 1,
+  gecko_size = 1.2,
   lightDarkTheme,
   handleRescatterMoments,
   handleRecenterMoments,
   reset = 0,
+  setScatteredMoments,
 }: Props) => { 
 
  
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
+  
   // const aspect = size.width > 0 ? size.width / size.height : null;
+
+
+
 
 // initializes with the dimensions aspect first to prevent errors
 const [aspect, setAspect] = useState<number>(width / height); 
-console.log(`ASPECT:`, aspect);
+// console.log(`ASPECT:`, aspect);
 
+
+ 
 useEffect(() => {
   console.log('set aspect');
   
@@ -119,6 +130,11 @@ useEffect(() => {
     }, []),
   );
 
+  // useEffect(() => {
+  //   console.log(momentsData);
+
+  // }, [momentsData]);
+
   const handleUpdateMomentsState = () => {
     const newMoments = moments.current.moments;
     handleUpdateCoords(momentsData, newMoments);
@@ -139,8 +155,17 @@ useEffect(() => {
 
   const onLongPress = () => {};
 
+    const onSinglePress = () => {
+    // console.log(moments.current.lastSelected);
+    console.log('single presss')
+  
+    handleGetMoment(moments.current.lastSelected?.id);
+  };
+
   const onDoublePress = () => {
     // console.log(moments.current.lastSelected);
+    console.log('double press')
+  
     handleGetMoment(moments.current.lastSelected?.id);
   };
 
@@ -149,9 +174,11 @@ useEffect(() => {
       isDragging.value = true;
       const touch = e.changedTouches[0];
       userPointSV.value = [touch.x / size.width, touch.y / size.height];
+       
     })
     .onUpdate((e) => {
       userPointSV.value = [e.x / size.width, e.y / size.height];
+      // console.log(userPointSV.value)
     })
     .onEnd(() => {
       isDragging.value = false;
@@ -160,12 +187,58 @@ useEffect(() => {
       isDragging.value = false;
     });
 
+    
+
+
+
+
+ 
+// const DOUBLE_TAP_DELAY = 300; // ms to wait before triggering single tap
+
+ 
+
+// const lastTapTime = useRef(0);
+// const singleTapTimeout = useRef<NodeJS.Timeout | null>(null);
+const singleTapGesture = Gesture.Tap()
+  .numberOfTaps(1)
+  .onEnd(() => runOnJS(onSinglePress)());
+ 
+
+// const singleTapGesture = Gesture.Tap()
+//   .numberOfTaps(1)
+//   .onEnd(() => {
+//     const now = Date.now();
+//     const timeSinceLastTap = now - lastTapTime.current;
+//     lastTapTime.current = now;
+
+//     // Clear any previous pending single tap
+//     if (singleTapTimeout.current) {
+//       clearTimeout(singleTapTimeout.current);
+//       singleTapTimeout.current = null;
+//     }
+
+//     singleTapTimeout.current = setTimeout(() => {
+//       runOnJS(onSinglePress)();
+//       singleTapTimeout.current = null;
+//     }, DOUBLE_TAP_DELAY);
+//   });
+
+
+
+
+ 
+
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => runOnJS(onDoublePress)());
 
-  const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture);
+  // const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture,singleTapGesture);
  
+
+
+  const tapGesture = Gesture.Race(doubleTapGesture, singleTapGesture);
+const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
+
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -236,40 +309,20 @@ useEffect(() => {
   const MAX_MOMENTS = 40;
 
   // Keep working buffers as refs (intermediate calculations)
-  const hintRef = useRef([0, 0]); 
-
-  // CONVERT TO SHARED VALUES - these will be read by useDerivedValue
-  // const leadUniformSV = useSharedValue(new Float32Array(2));
-  // const leadScreenSpaceUniformSV = useSharedValue(new Float32Array(2));
-  // const soulUniformSV = useSharedValue(new Float32Array(2));
-  // const selectedUniformSV = useSharedValue(new Float32Array(2));
-  // const lastSelectedUniformSV = useSharedValue(new Float32Array(2));
-  // const hintUniformSV = useSharedValue(new Float32Array(2));
-  // const momentsUniformSV = useSharedValue(new Array(MAX_MOMENTS * 2).fill(0));
-  // const geckoPointsUniformSV = useSharedValue(new Array(TOTAL_GECKO_POINTS * 2).fill(0));
-  // const momentsLengthSV = useSharedValue(0);
-
+  const hintRef = useRef([0, 0]);  
 
 const leadUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const leadScreenSpaceUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const soulUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const selectedUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const lastSelectedUniformSV = useSharedValue(new Float32Array([0., 0.]));
+const holding0UniformSV = useSharedValue(new Float32Array([0., 0.]));
 
 
 const hintUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const momentsUniformSV = useSharedValue(Array(MAX_MOMENTS * 2).fill(0));
 const geckoPointsUniformSV = useSharedValue(Array(TOTAL_GECKO_POINTS * 2).fill(0));
 const momentsLengthSV = useSharedValue(0);
-
-  const clearUniformArray = (arr: number[]) => {
-    arr.fill(0);
-  };
-
-  const clearVec2 = (v: Float32Array | number[]) => {
-    v[0] = 0;
-    v[1] = 0;
-  };
 
   const [internalReset, setInternalReset] = useState(0); // initialize to null or else will just immediately reset every time nav to this screen
   const handleReset = () => {
@@ -301,23 +354,13 @@ const momentsLengthSV = useSharedValue(0);
     leadPoint.current = new Mover(startingCoord);
     gecko.current = new Gecko(startingCoord, 0.06);
 
-    // Reset shared values
-    // leadUniformSV.value = new Float32Array(2);
-    // leadScreenSpaceUniformSV.value = new Float32Array(2);
-    // soulUniformSV.value = new Float32Array(2);
-    // selectedUniformSV.value = new Float32Array(2);
-    // lastSelectedUniformSV.value = new Float32Array(2);
-    // hintUniformSV.value = new Float32Array(2);
-    // momentsUniformSV.value = new Array(MAX_MOMENTS * 2).fill(0);
-    // geckoPointsUniformSV.value = new Array(TOTAL_GECKO_POINTS * 2).fill(0);
-    // momentsLengthSV.value = 0;
 
-
-    leadUniformSV.value = (new Float32Array([0, 0]));
+leadUniformSV.value = (new Float32Array([0, 0]));
 leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
  soulUniformSV.value = (new Float32Array([0, 0]));
  selectedUniformSV.value = (new Float32Array([0, 0]));
  lastSelectedUniformSV.value = (new Float32Array([0, 0]));
+ holding0UniformSV.value = (new Float32Array([0, 0]));
  hintUniformSV.value = (new Float32Array([0, 0]));
  momentsUniformSV.value = (Array(MAX_MOMENTS * 2).fill(0));
  geckoPointsUniformSV.value = (Array(TOTAL_GECKO_POINTS * 2).fill(0));
@@ -346,10 +389,11 @@ if (aspect == null || isNaN(aspect)) {
 // }
 
       // Update gecko pointer position
-      toGeckoPointer_inPlace(
+      toGeckoPointerScaled_inPlace(
         userPointSV.value,
         aspect,
         scale,
+        gecko_size,
         userPoint_geckoSpaceRef.current, 
         0
       );
@@ -377,16 +421,19 @@ if (aspect == null || isNaN(aspect)) {
 
       const spine = gecko.current.body.spine; 
       hintRef.current = spine.hintJoint || [0, 0];
+
+      
    
       moments.current.update(
         userPointSV.value, 
         isDragging.value, 
-        leadPoint.current.isMoving, 
-        gecko.current.legs.frontLegs.stepTargets[1]
+        leadPoint.current.isMoving,  
+        // gecko.current.legs.backLegs.stepTargets[1]
+        //  gecko.current.body.spine.hint,
+         leadPoint.current.lead,
+         gecko.current.legs.backLegs.stepTargets[1]
       );
-
-      // console.log(moments.current.selected);
-      // CREATE NEW ARRAYS AND ASSIGN TO SHARED VALUES
+ 
       const newSoul = new Float32Array(2);
       toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, newSoul, 0);
       soulUniformSV.value = newSoul;
@@ -403,16 +450,40 @@ if (aspect == null || isNaN(aspect)) {
       toShaderSpace_inplace(leadPoint.current.lead, aspect, scale, newLeadScreenSpace, 0);
       leadScreenSpaceUniformSV.value = newLeadScreenSpace;
 
-      const newSelected = new Float32Array(2);
-
-      // console.log(moments.current.selected.coord);
-      toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, newSelected, 0);
-      // console.log(`SELECTED: `, newSelected);
+      const newSelected = new Float32Array(2); 
+        //transformSelected(moments.current.selected.coord,  gecko_scale,   newSelected, 0);
+        newSelected[0] = moments.current.selected.coord[0];
+        newSelected[1] = moments.current.selected.coord[1];
+      
+     // toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, newSelected, 0);
       selectedUniformSV.value = newSelected;
+     
+      const newHolding0 = new Float32Array(2);
+      toGeckoSpace_inPlace(moments.current.holding0.coord, gecko_scale, newHolding0);
+      holding0UniformSV.value = newHolding0;
+
 
       const newLastSelected = new Float32Array(2);
-      toShaderSpace_inplace(moments.current.lastSelected.coord, aspect, scale, newLastSelected, 0);
-      lastSelectedUniformSV.value = newLastSelected;
+     // toGeckoPointerScaled_inPlace(moments.current.lastSelected.coord, aspect, scale, gecko_size, newLastSelected, 0);
+     
+      // newLastSelected[0] = moments.current.lastSelected.coord[0];
+      // newLastSelected[1] = moments.current.lastSelected.coord[1];
+      // // console.log(Number(newLastSelected[0]) === Number(newSelected[0]))
+
+      // lastSelectedUniformSV.value = newLastSelected;
+
+
+
+        // Apply the SAME transform as packGeckoOnly does
+
+        toGeckoSpace_inPlace(moments.current.lastSelected.coord, gecko_scale, newLastSelected);
+        // const x = (moments.current.lastSelected.coord[0] - 0.5) / gecko_scale;
+        // const y = (moments.current.lastSelected.coord[1] - 0.5) / gecko_scale;
+
+        // newLastSelected[0] = x;
+        // newLastSelected[1] = y;
+
+        lastSelectedUniformSV.value = newLastSelected;
 
       // Create new arrays for gecko points and moments
       const newGeckoPoints = new Array(TOTAL_GECKO_POINTS * 2).fill(0);
@@ -449,33 +520,9 @@ if (aspect == null || isNaN(aspect)) {
       cancelled = true;
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [aspect, gecko_scale, scale, size.width, size.height]);
+  }, [aspect, gecko_scale, gecko_size, scale, size.width, size.height]);
 
-  // Derived uniforms - reads from shared values (not refs!)
-  // const uniforms = useDerivedValue(() => {
-  //   // console.log('aspect in uniforms: ', aspect)
-  //   updateTrigger.value; // Create dependency
-    
-  //   return {
-  //     u_scale: scale,
-  //     u_gecko_scale: gecko_scale,
-  //     u_time: (Date.now() - start.current) / 1000,
-  //     u_resolution: [size.width, size.height],
-  //     u_aspect: aspect || 1,
-  //     u_lead: Array.from(leadUniformSV.value),
-  //     u_lead_screen_space: Array.from(leadScreenSpaceUniformSV.value),
-  //     u_soul: Array.from(soulUniformSV.value),
-  //   u_selected: Array.from(selectedUniformSV.value),
-  //  //   u_selected: [.5,.5],
-  //      u_lastSelected: Array.from(lastSelectedUniformSV.value),
-      
-  //     u_hint: Array.from(hintUniformSV.value),
-  //     u_momentsLength: momentsLengthSV.value,
-  //     u_moments: [...momentsUniformSV.value],
-  //     u_geckoPoints: [...geckoPointsUniformSV.value],
-  //   };
-  // }, [scale, gecko_scale, aspect, size.width, size.height]);
-
+ 
   const uniforms = useDerivedValue(() => {
   updateTrigger.value;
   
@@ -484,6 +531,7 @@ if (aspect == null || isNaN(aspect)) {
     return {
       u_scale: scale,
       u_gecko_scale: gecko_scale,
+      u_gecko_size: gecko_size,
       u_time: 0,
       u_resolution: [width, height], // Use window dimensions as fallback
       u_aspect: aspect || 1,
@@ -492,6 +540,7 @@ if (aspect == null || isNaN(aspect)) {
       u_soul: [-100, -100],
       u_selected: [-100, -100],
       u_lastSelected: [-100, -100],
+      u_holding0: [-100, -100],
       u_hint: [-100, -100],
       u_momentsLength: 0,
       u_moments: Array(MAX_MOMENTS * 2).fill(0),
@@ -502,6 +551,7 @@ if (aspect == null || isNaN(aspect)) {
   return {
     u_scale: scale,
     u_gecko_scale: gecko_scale,
+    u_gecko_size: gecko_size,
     u_time: (Date.now() - start.current) / 1000,
     u_resolution: [size.width, size.height],
     u_aspect: aspect || 1,
@@ -510,6 +560,7 @@ if (aspect == null || isNaN(aspect)) {
     u_soul: Array.from(soulUniformSV.value),
     u_selected: Array.from(selectedUniformSV.value),
     u_lastSelected: Array.from(lastSelectedUniformSV.value),
+    u_holding0: Array.from(holding0UniformSV.value),
     u_hint: Array.from(hintUniformSV.value),
     u_momentsLength: momentsLengthSV.value,
     u_moments: [...momentsUniformSV.value],

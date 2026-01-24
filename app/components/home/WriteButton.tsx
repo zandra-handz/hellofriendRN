@@ -24,6 +24,10 @@ const WriteButton = ({
         onPress={onPress}
         style={[styles.container, { backgroundColor: backgroundColor }]}
       >
+                <SvgIcon 
+          name={"draw_pen"} 
+          //   name={"pen_plus"} 
+          color={iconColor} size={40} />
         {/* <GradientBackgroundFidgetOne
           //   speed={600} what the spinner this is based on is set to
           firstColorSetDark={manualGradientColors.darkColor}

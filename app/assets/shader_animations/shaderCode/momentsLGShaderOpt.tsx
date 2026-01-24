@@ -4,11 +4,13 @@ uniform float2 u_resolution;
 uniform float  u_aspect;
 uniform float  u_scale;
 uniform float u_gecko_scale;
+uniform float u_gecko_size;
 uniform float2 u_moments[40];
 uniform int    u_momentsLength;
 
 uniform float2 u_selected;
 uniform float2 u_lastSelected;
+uniform float2 u_holding0;
 
 
 // ------------------------------------------------
@@ -85,25 +87,12 @@ float3 getCheapNormal(
     // Z = thickness biases the normal "up" for glass bulge
     return normalize(float3(g, thickness));
 }
+ 
 
 
-float3 getRectNormal(
-    float2 frag,
-    float2 center,
-    float2 size
-) {
-    float2 d = frag - center;
-    float2 q = abs(d) - size;
 
-    float2 n2;
-    if (q.x > q.y) {
-        n2 = float2(sign(d.x), 0.0);
-    } else {
-        n2 = float2(0.0, sign(d.y));
-    }
 
-    return normalize(float3(n2, 1.0));
-}
+
 
 
 // ------------------------------------------------
@@ -161,7 +150,7 @@ float3 applyGlass(
     float baseHeight = thickness * 30.0; // 10 for stripes
     float2 size = float2(2.0);
 
-    float sd = sdfRect(centerPx, size, fragCoord, radius);
+    float sd = sdfRect(centerPx, size, fragCoord , radius);
     if (sd >= 0.0) return baseColor;
 
     // float3 normal = getCheapNormal(
@@ -172,8 +161,7 @@ float3 applyGlass(
     //     sd,
     //     thickness
     // );
-
-
+ 
     
     float3 normal = getNormal(
         fragCoord,
@@ -202,12 +190,9 @@ float3 applyGlass(
     // CHEAPER option 1:
     float edge = smoothstep(0.0, thickness * 0.5, -sd);
     float3 refractedColor = mix(baseColor, sampleBackground(refrCoord), edge);
-
-    // OG option 2:
+ 
     // float3 refractedColor = sampleBackground(refrCoord);
-
-
-
+ 
     //option 1:
     // float fresnel = pow(1.0 - normal.z, 2.0);
 
@@ -220,49 +205,6 @@ float3 applyGlass(
 
     float3 col = mix(refractedColor, reflectCol, fresnel);
     return mix(col, float3(1.0), 0.25);
-}
-
-
-// ------------------------------------------------
-// SIMPLE Liquid glass lens (optimized for mobile)
-// ------------------------------------------------
-
-float3 applyGlassSimple(
-    float2 fragCoord,
-    float2 centerPx,
-    float radius,
-    float thickness,
-    float ior,
-    float3 baseColor
-) {
-    float2 size = float2(2.0);
-    float sd = sdfRect(centerPx, size, fragCoord, radius);
-    
-    if (sd >= 0.0) return baseColor;
-    
-    // QUICK DISTANCE CHECK - skip if far
-    float dist = distance(fragCoord, centerPx);
-    if (dist > radius * 3.0) return baseColor;
-    
-    // SIMPLE DISTORTION (no refract())
-    float distortion = (thickness + sd) * 0.25;
-    float2 dir = normalize(fragCoord - centerPx);
-    float2 refrCoord = fragCoord + dir * distortion * 2.0;
-    
-    float3 refractedColor = sampleBackground(refrCoord);
-    
-    // Simple fresnel approximation
-    float inside = clamp(-sd / thickness, 0.0, 1.0);
-    float fresnel = (1.0 - inside) * (1.0 - inside);
-    
-    float3 reflectCol = float3(fresnel * 0.3);
-    float3 col = mix(refractedColor, reflectCol, fresnel * 0.5);
-    
-    // Fade out near edges
-    float strength = clamp(1.0 - (dist / (radius * 2.0)), 0.0, 1.0);
-    strength *= (1.0 - inside * 0.5);
-    
-    return mix(baseColor, col, strength);
 }
 
 
@@ -282,99 +224,133 @@ float3 applyGlassDotSq(
     return mix(baseColor, dotColor, circle * 0.8);
 }
 
-
-
-// ------------------------------------------------
-// SIMPLE DOT (no glass effect at all)
-// ------------------------------------------------
-
-float3 applyGlassDot(
-    float2 fragCoord,
-    float2 centerPx,
-    float radius,
-    float thickness,
-    float ior,
-    float3 baseColor
-) {
-    // Just draw a solid circle - no glass, no refraction
-    float dist = distance(fragCoord, centerPx);
-    
-    // Smooth circle edge
-    float circle = smoothstep(radius + 1.0, radius - 1.0, dist);
-    
-    // Simple highlight in center
-    float highlight = smoothstep(radius * 0.5, 0.0, dist) * 0.3;
-    
-    // Mix with base color
-    float3 dotColor = float3(1.0, 1.0, 1.0) * (circle + highlight);
-    
-    return mix(baseColor, dotColor, circle * 0.8);
-}
  
+
+
+
+
+
+
+
+
+
 // ------------------------------------------------
 // MAIN
 // ------------------------------------------------
 
-half4 main(float2 fragCoord) {
-    // Base background
+half4 main(float2 fragCoord) { 
     float3 baseBackground = sampleBackground(fragCoord);
     float3 color = baseBackground;
- 
 
-    
-
-   // 1. Apply FULL glass to lastSelected
-    float2 lastSelectedCenter = u_lastSelected * u_resolution;
-    
-    
-    // Check if lastSelected is valid (not default [-100, -100])
-    if (length(u_lastSelected) < 10.0) { // Adjust threshold as needed
-
-
-        color = applyGlass(
-            fragCoord,
-            lastSelectedCenter,
-            34.0,      // radius
-            10.0,      // thickness
-            1.8,       // ior
-            color
-        );
-    }
-    
-    // 2. Apply SIMPLE glass to regular moments
-    for (int i = 0; i < 40; i++) {
-        if (i >= u_momentsLength) break;
-        
-        // Skip if this moment is the lastSelected (already processed)
-        if (distance(u_moments[i], u_lastSelected) < 0.001) continue;
-        
-        float2 momentCenter = u_moments[i] * u_resolution;
-        
-        float2 d = fragCoord - momentCenter;
-        float dist2 = dot(d, d);
-
-        float maxR = 19.0; // radius + edge
-        if (dist2 > maxR * maxR) continue;
-
-
-   
-        color = applyGlassDotSq(dist2, 3.0, color);
-
-   
-    }
     
 
  
     vec2 uv = fragCoord / u_resolution;
-    uv -= 0.5;
- uv.x *= u_aspect;
-//  uv /= u_scale;
-    vec2 scaled_uv = uv / u_scale; 
+//   uv -= 0.5;
+//   uv.x *= u_aspect;
+//    uv /= u_scale;
  
-    float selectedMask = step(distance(uv, u_selected), 0.008);
+ 
+
+    float s = 1.0 / u_gecko_scale;
+    vec2 gecko_uv = uv * s * u_gecko_size;
+
+   // vec2 scaled_uv = uv / u_scale; 
+
+
+    float selectedMask = step(distance(uv, u_selected), 0.02);
     vec3 selectedColor = endColor * selectedMask; 
+
+
+    // Convert selected to pixel space (same as moments)
+float2 selectedPx = u_selected * u_resolution;
+float2 d = fragCoord - selectedPx;
+float dist2 = dot(d, d);
+float maxR = 19.0; // radius + edge
+if (dist2 < maxR * maxR) {
+    color = applyGlassDotSq(dist2, 60.0, color);
+}
+
+// DON'T DELETE: USED DENORMALIZED FOR USER POINTER
+    // float2 deNormalizedLastSelectedCenter = u_lastSelected * u_resolution;
+    // // if (length(u_lastSelected) < 10.0) { // Adjust threshold as needed
+
+    // if (length(u_lastSelected) > 0.0001) {
+
+    //     color = applyGlass(
+    //         fragCoord,
+    //         deNormalizedLastSelectedCenter,
+    //         34.0,      // radius
+    //         10.0,      // thickness
+    //         1.8,       // ior
+    //         color
+    //     );
+    // }
+    
+    
+// Remove this pixel conversion for mapping onto gecko
+// float2 deNormalizedLastSelectedCenter = u_lastSelected * u_resolution;
+
+// Instead, convert to same space as gecko
+vec2 lastSelected_uv = u_lastSelected;
+
+
+// IF MAPPING ONTO GECKO (FOR USER POINTER USE ABOVE CODE INSTEAD)
+// Now convert from gecko space to pixel space for applyGlass
+// Reverse the gecko_uv transformation
+vec2 lastSelected_screen = lastSelected_uv / (s * u_gecko_size);
+lastSelected_screen.x /= u_aspect;
+lastSelected_screen += 0.5;
+float2 lastSelected_px = lastSelected_screen * u_resolution;
+
+if (length(u_lastSelected) > 0.0001) {
+    color = applyGlass(
+        fragCoord,
+        lastSelected_px,  // Now in correct pixel space
+        34.0,
+        10.0,
+        1.8,
+        color
+    );
+}
+
  
-    color = mix(color, selectedColor, selectedMask);
+
+vec2 holding0_uv = u_holding0;
+
+vec2 holding0_screen = holding0_uv / (s * u_gecko_size);
+holding0_screen.x /= u_aspect;
+holding0_screen += 0.5;
+float2 holding0_px = holding0_screen * u_resolution;
+
+if (length(u_holding0) > 0.0001) {
+    color = applyGlass(
+        fragCoord,
+        holding0_px,  // Now in correct pixel space
+        34.0,
+        10.0,
+        1.8,
+        color
+    );
+}
+
+
+        for (int i = 0; i < 40; i++) {
+        if (i >= u_momentsLength) break;
+         
+        if (distance(u_moments[i], u_lastSelected) < 0.001) continue;
+        
+        float2 deNormalizedCenter = u_moments[i] * u_resolution;
+        float2 d = fragCoord - deNormalizedCenter;
+        float dist2 = dot(d, d);
+        float maxR = 19.0; // radius + edge
+        if (dist2 > maxR * maxR) continue;
+   
+        color = applyGlassDotSq(dist2, 7.0, color);
+    }
+
+ 
+    // color = mix(color, selectedColor, selectedMask);
     return half4(color, 1.0);
 }
 
