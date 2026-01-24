@@ -72,6 +72,25 @@ const MomentsSkia = ({
  
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
+  // const aspect = size.width > 0 ? size.width / size.height : null;
+
+// initializes with the dimensions aspect first to prevent errors
+const [aspect, setAspect] = useState<number>(width / height); 
+console.log(`ASPECT:`, aspect);
+
+useEffect(() => {
+  console.log('set aspect');
+  
+  if (size && size.width > 0 && size.height > 0) {
+    const newAspect = size.width / size.height;
+    console.log('Setting aspect to:', newAspect);
+    setAspect(newAspect);
+  } else {
+    console.log(`canvas size is NAN? `, size);
+  }
+}, [size]);
+
+ 
 
   const updateTrigger = useSharedValue(0);
   const lastRenderRef = useRef(0);
@@ -121,7 +140,7 @@ const MomentsSkia = ({
   const onLongPress = () => {};
 
   const onDoublePress = () => {
-    console.log(moments.current.lastSelected);
+    // console.log(moments.current.lastSelected);
     handleGetMoment(moments.current.lastSelected?.id);
   };
 
@@ -159,11 +178,7 @@ const MomentsSkia = ({
   const gecko = useRef(new Gecko(startingCoord, 0.06));
   const moments = useRef(new Moments(momentsData, [0.5, 0.5], 0.05));
   
-  const [aspect, setAspect] = useState<number | null>(null);
 
-  useEffect(() => {
-    setAspect(size.width / size.height);
-  }, [size]);
 
   const SHARED_SKSL_PRELUDE = (
     c1: string,
@@ -235,12 +250,14 @@ const MomentsSkia = ({
   // const momentsLengthSV = useSharedValue(0);
 
 
-const leadUniformSV = useSharedValue(new Float32Array([0, 0]));
-const leadScreenSpaceUniformSV = useSharedValue(new Float32Array([0, 0]));
-const soulUniformSV = useSharedValue(new Float32Array([0, 0]));
-const selectedUniformSV = useSharedValue(new Float32Array([0, 0]));
-const lastSelectedUniformSV = useSharedValue(new Float32Array([0, 0]));
-const hintUniformSV = useSharedValue(new Float32Array([0, 0]));
+const leadUniformSV = useSharedValue(new Float32Array([0., 0.]));
+const leadScreenSpaceUniformSV = useSharedValue(new Float32Array([0., 0.]));
+const soulUniformSV = useSharedValue(new Float32Array([0., 0.]));
+const selectedUniformSV = useSharedValue(new Float32Array([0., 0.]));
+const lastSelectedUniformSV = useSharedValue(new Float32Array([0., 0.]));
+
+
+const hintUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const momentsUniformSV = useSharedValue(Array(MAX_MOMENTS * 2).fill(0));
 const geckoPointsUniformSV = useSharedValue(Array(TOTAL_GECKO_POINTS * 2).fill(0));
 const momentsLengthSV = useSharedValue(0);
@@ -254,7 +271,7 @@ const momentsLengthSV = useSharedValue(0);
     v[1] = 0;
   };
 
-  const [internalReset, setInternalReset] = useState(Date.now());
+  const [internalReset, setInternalReset] = useState(0); // initialize to null or else will just immediately reset every time nav to this screen
   const handleReset = () => {
     setInternalReset(Date.now());
   };
@@ -262,13 +279,19 @@ const momentsLengthSV = useSharedValue(0);
   useEffect(() => {
     if (moments && moments.current) {
           moments.current.updateAllCoords(momentsData);
-
     }
 
   }, [momentsData, internalReset]);
 
   useEffect(() => {
-    if (!internalReset && !reset) return;
+
+    console.log('RESET EFFECT RAN !!!');
+    if (!internalReset && !reset) {
+      console.log('conditions not met for a reset');
+      return;
+    } else {
+      console.log('TRUE RESET');
+    }
 
     start.current = Date.now();
     setTime(0);
@@ -312,10 +335,15 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
     const animate = () => {
       if (cancelled) return;
 
-      if (aspect == null) {
-        frame = requestAnimationFrame(animate);
-        return;
-      }
+if (aspect == null || isNaN(aspect)) {
+  console.log('aspect is null or NaN! QUITTING the animation', aspect);
+  frame = requestAnimationFrame(animate);
+
+  return;
+} 
+// else {
+    // console.log('aspect exists in animation -- continuing', aspect)
+// }
 
       // Update gecko pointer position
       toGeckoPointer_inPlace(
@@ -357,6 +385,7 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
         gecko.current.legs.frontLegs.stepTargets[1]
       );
 
+      // console.log(moments.current.selected);
       // CREATE NEW ARRAYS AND ASSIGN TO SHARED VALUES
       const newSoul = new Float32Array(2);
       toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, newSoul, 0);
@@ -375,7 +404,10 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
       leadScreenSpaceUniformSV.value = newLeadScreenSpace;
 
       const newSelected = new Float32Array(2);
+
+      // console.log(moments.current.selected.coord);
       toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, newSelected, 0);
+      // console.log(`SELECTED: `, newSelected);
       selectedUniformSV.value = newSelected;
 
       const newLastSelected = new Float32Array(2);
@@ -420,32 +452,76 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
   }, [aspect, gecko_scale, scale, size.width, size.height]);
 
   // Derived uniforms - reads from shared values (not refs!)
-  const uniforms = useDerivedValue(() => {
-    updateTrigger.value; // Create dependency
+  // const uniforms = useDerivedValue(() => {
+  //   // console.log('aspect in uniforms: ', aspect)
+  //   updateTrigger.value; // Create dependency
     
+  //   return {
+  //     u_scale: scale,
+  //     u_gecko_scale: gecko_scale,
+  //     u_time: (Date.now() - start.current) / 1000,
+  //     u_resolution: [size.width, size.height],
+  //     u_aspect: aspect || 1,
+  //     u_lead: Array.from(leadUniformSV.value),
+  //     u_lead_screen_space: Array.from(leadScreenSpaceUniformSV.value),
+  //     u_soul: Array.from(soulUniformSV.value),
+  //   u_selected: Array.from(selectedUniformSV.value),
+  //  //   u_selected: [.5,.5],
+  //      u_lastSelected: Array.from(lastSelectedUniformSV.value),
+      
+  //     u_hint: Array.from(hintUniformSV.value),
+  //     u_momentsLength: momentsLengthSV.value,
+  //     u_moments: [...momentsUniformSV.value],
+  //     u_geckoPoints: [...geckoPointsUniformSV.value],
+  //   };
+  // }, [scale, gecko_scale, aspect, size.width, size.height]);
+
+  const uniforms = useDerivedValue(() => {
+  updateTrigger.value;
+  
+  // Guard against invalid size
+  if (!size.width || !size.height) {
     return {
       u_scale: scale,
       u_gecko_scale: gecko_scale,
-      u_time: (Date.now() - start.current) / 1000,
-      u_resolution: [size.width, size.height],
+      u_time: 0,
+      u_resolution: [width, height], // Use window dimensions as fallback
       u_aspect: aspect || 1,
-      u_lead: Array.from(leadUniformSV.value),
-      u_lead_screen_space: Array.from(leadScreenSpaceUniformSV.value),
-      u_soul: Array.from(soulUniformSV.value),
-      u_selected: Array.from(selectedUniformSV.value),
-       u_lastSelected: Array.from(lastSelectedUniformSV.value),
-      
-      u_hint: Array.from(hintUniformSV.value),
-      u_momentsLength: momentsLengthSV.value,
-      u_moments: [...momentsUniformSV.value],
-      u_geckoPoints: [...geckoPointsUniformSV.value],
+      u_lead: [-100, -100],
+      u_lead_screen_space: [-100, -100],
+      u_soul: [-100, -100],
+      u_selected: [-100, -100],
+      u_lastSelected: [-100, -100],
+      u_hint: [-100, -100],
+      u_momentsLength: 0,
+      u_moments: Array(MAX_MOMENTS * 2).fill(0),
+      u_geckoPoints: Array(TOTAL_GECKO_POINTS * 2).fill(0),
     };
-  }, [scale, gecko_scale, aspect, size.width, size.height]);
+  }
+  
+  return {
+    u_scale: scale,
+    u_gecko_scale: gecko_scale,
+    u_time: (Date.now() - start.current) / 1000,
+    u_resolution: [size.width, size.height],
+    u_aspect: aspect || 1,
+    u_lead: Array.from(leadUniformSV.value),
+    u_lead_screen_space: Array.from(leadScreenSpaceUniformSV.value),
+    u_soul: Array.from(soulUniformSV.value),
+    u_selected: Array.from(selectedUniformSV.value),
+    u_lastSelected: Array.from(lastSelectedUniformSV.value),
+    u_hint: Array.from(hintUniformSV.value),
+    u_momentsLength: momentsLengthSV.value,
+    u_moments: [...momentsUniformSV.value],
+    u_geckoPoints: [...geckoPointsUniformSV.value],
+  };
+}, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
 
   return (
     <>
       <GestureDetector gesture={composedGesture}>
-        <View style={StyleSheet.absoluteFill}>
+         <View style={StyleSheet.absoluteFill}>
+       
           <Canvas
             ref={ref}
             style={[StyleSheet.absoluteFill]}
@@ -457,12 +533,12 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
               height={size.height}
               color="lightblue"
             >
-             {/* <Shader
+              <Shader
                 style={{ backgroundColor: "transparent" }}
                 source={sourceTwo}
                 uniforms={uniforms}
               />
-              */}
+            
             </Rect>
           </Canvas>
 
@@ -484,7 +560,11 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
               />
             </Rect>
           </Canvas>
+        
+
         </View>
+        
+      
       </GestureDetector>
       <View style={styles.resetterContainer}>
         <MomentDotsResetterMini

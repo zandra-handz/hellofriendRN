@@ -110,21 +110,21 @@ float3 getRectNormal(
 // Background sampling
 // ------------------------------------------------
 
-float3 sampleBackground(float2 fragCoord) {
-    float2 uv = fragCoord / u_resolution;
-    uv -= 0.5;
-    uv.x *= u_aspect;
-    uv /= u_scale;
+// float3 sampleBackground(float2 fragCoord) {
+//     float2 uv = fragCoord / u_resolution;
+//     uv -= 0.5;
+//     uv.x *= u_aspect;
+//     uv /= u_scale;
 
-    float pixelY = uv.y * u_resolution.y;
-    float stripe = step(1.0, mod(pixelY / 20.0, 2.0));
+//     float pixelY = uv.y * u_resolution.y;
+//     float stripe = step(1.0, mod(pixelY / 20.0, 2.0));
 
-    float t = clamp(uv.y + 0.5, 0.0, 1.0);
-    float3 grad = mix(backgroundStartColor, backgroundEndColor, t);
+//     float t = clamp(uv.y + 0.5, 0.0, 1.0);
+//     float3 grad = mix(backgroundStartColor, backgroundEndColor, t);
 
 
-    return mix(grad, grad * 0.6, stripe);
-}
+//     return mix(grad, grad * 0.6, stripe);
+// }
 
 
 
@@ -133,18 +133,18 @@ float3 sampleBackground(float2 fragCoord) {
 // Background sampling - NO STRIPES
 // ------------------------------------------------
 
-// float3 sampleBackground(float2 fragCoord) {
-//     float2 uv = fragCoord / u_resolution;
-//     uv -= 0.5;
-//     uv.x *= u_aspect;
-//     uv /= u_scale;
+float3 sampleBackground(float2 fragCoord) {
+    float2 uv = fragCoord / u_resolution;
+    uv -= 0.5;
+    uv.x *= u_aspect;
+    uv /= u_scale;
 
-//     // Simple vertical gradient without stripes
-//     float t = clamp(uv.y + 0.5, 0.0, 1.0);
-//    float3 grad = mix(backgroundStartColor, backgroundEndColor, t);
+    // Simple vertical gradient without stripes
+    float t = clamp(uv.y + 0.5, 0.0, 1.0);
+   float3 grad = mix(backgroundStartColor, backgroundEndColor, t);
 
-//     return grad;
-// }
+    return grad;
+}
 
 // ------------------------------------------------
 // Liquid glass lens
@@ -358,7 +358,7 @@ half4 main(float2 fragCoord) {
 
 
    
-        color = applyGlassDotSq(dist2, 8.0, color);
+        color = applyGlassDotSq(dist2, 3.0, color);
 
    
     }
@@ -371,7 +371,7 @@ half4 main(float2 fragCoord) {
 //  uv /= u_scale;
     vec2 scaled_uv = uv / u_scale; 
  
-    float selectedMask = step(distance(uv, u_selected), 0.03);
+    float selectedMask = step(distance(uv, u_selected), 0.008);
     vec3 selectedColor = endColor * selectedMask; 
  
     color = mix(color, selectedColor, selectedMask);
