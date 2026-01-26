@@ -1,0 +1,224 @@
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Alert,
+  Vibration,
+} from "react-native";
+import { useLDTheme } from "@/src/context/LDThemeContext";
+import React, { useState, useMemo, useEffect } from "react";
+import SvgIcon from "@/app/styles/SvgIcons";
+
+type Props = {
+  color: string;
+  backgroundColor: string;
+  borderColor: string;
+  momentsData: any[];
+  lastSelected: any;
+  updatePaw: (moment: any, index: number) => any;
+};
+
+const PawSetter = ({
+  color,
+  backgroundColor,
+  borderColor,
+  momentsData,
+  lastSelected,
+  updatePaw,
+  clearPaw,
+  updateSelected,
+  handleGetMoment,
+}: Props) => {
+  const iconSize = 26;
+  const highlightColor = color || "#FFD700"; // Use accent or gold as highlight
+
+  const [localPaws, setLocalPaws] = useState([false, false, false, false]);
+
+  // Initialize localPaws from momentsData
+  useEffect(() => {
+    const newPaws = [false, false, false, false];
+    momentsData.forEach((moment) => {
+      if (
+        moment.stored_index !== null &&
+        moment.stored_index >= 0 &&
+        moment.stored_index < 4
+      ) {
+        newPaws[moment.stored_index] = true;
+      }
+    });
+    setLocalPaws(newPaws);
+  }, [momentsData]);
+
+  const runClearPaw = (index: number) => {
+    console.log("long press! clear paw here if any is here");
+    const updatedHoldings = clearPaw(index);
+
+    // Map holdings to boolean array for icon display
+    setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+  };
+
+  const handleClearPaw = (index: number) => {
+    if (!localPaws[index]) {
+      console.log("nothing here for long press!");
+      return;
+    }
+
+    Alert.alert(
+      "Are you sure?",
+      "Do you want to proceed with this action?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Proceed",
+          onPress: () => {
+            runClearPaw(index);
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
+  const handlePawPress = (index: number) => {
+    if (!lastSelected.id) {
+      console.log("no lastSelect");
+      return;
+    }
+
+    if (localPaws[index]) {
+      console.log("one is held here");
+
+      Alert.alert(
+        "Are you sure?",
+        "Select new moment?",
+        [
+          {
+            text: "Oops no!",
+            style: "cancel",
+          },
+          {
+            text: "Yes please",
+            onPress: () => {
+              Vibration.vibrate(50);
+              const last_selected = updateSelected(index);
+              //  console.log(last_selected)
+              handleGetMoment(last_selected.id);
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+    // console.log(lastSelected);
+    const updatedHoldings = updatePaw(lastSelected, index);
+
+    // Map holdings to boolean array for icon display
+    setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+    // console.log(localPaws);
+  };
+
+  const getPawColor = (index: number) => {
+    // console.log('paw color updating', index, lastSelected.id)
+    const moment = momentsData.find((m) => m.stored_index === index);
+    if (moment && lastSelected && moment.id === lastSelected.id) {
+      return highlightColor;
+    }
+    return borderColor;
+  };
+
+  return (
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: backgroundColor, borderColor: borderColor },
+      ]}
+    >
+      <View style={styles.row}>
+        <Pressable
+          onLongPress={() => handleClearPaw(0)}
+          onPress={() => handlePawPress(0)}
+          style={styles.buttonContainer}
+        >
+          <SvgIcon
+            name={localPaws[0] ? `paw` : `paw_outline`}
+            size={iconSize}
+            color={getPawColor(0)}
+          />
+        </Pressable>
+        <Pressable
+          onLongPress={() => handleClearPaw(1)}
+          onPress={() => handlePawPress(1)}
+          style={styles.buttonContainer}
+        >
+          <SvgIcon
+            name={localPaws[1] ? `paw` : `paw_outline`}
+            size={iconSize}
+            color={getPawColor(1)}
+          />
+        </Pressable>
+      </View>
+      <View style={styles.row}>
+        <Pressable
+          onLongPress={() => handleClearPaw(2)}
+          onPress={() => handlePawPress(2)}
+          style={styles.buttonContainer}
+        >
+          <SvgIcon
+            name={localPaws[2] ? `paw` : `paw_outline`}
+            size={iconSize}
+            color={getPawColor(2)}
+          />
+        </Pressable>
+        <Pressable
+          onLongPress={() => handleClearPaw(3)}
+          onPress={() => handlePawPress(3)}
+          style={styles.buttonContainer}
+        >
+          <SvgIcon
+            name={localPaws[3] ? `paw` : `paw_outline`}
+            size={iconSize}
+            color={getPawColor(3)}
+          />
+        </Pressable>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: 120,
+    paddingTop: 18,
+    paddingBottom: 20,
+    width: 120,
+    alignItems: "center",
+    borderRadius: 30,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  row: {
+    flexDirection: "row",
+    height: "50%",
+    width: "80%",
+    justifyContent: "space-evenly",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    width: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
+export default PawSetter;

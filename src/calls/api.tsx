@@ -514,6 +514,7 @@ export const fetchMomentsAPI = async (friendId: number) => {
         user_category_name: capsule.user_category_name || "No category",
         screen_x: capsule.screen_x,
         screen_y: capsule.screen_y,
+        stored_index: capsule.stored_index,
         coord: [capsule.screen_x, capsule.screen_x]
       }));
 
@@ -1259,12 +1260,13 @@ export const updateMomentCoordsAPI = async (
   friendId: number, 
   capsuleData: object
 ) => {
+  console.log('updateMomentCoordsAPI triggered');
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsules/coords-update/`,
       capsuleData
     );
-    // console.log(response.data);
+    console.log(response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during updateMomentAPI");

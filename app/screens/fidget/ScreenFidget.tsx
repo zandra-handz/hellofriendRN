@@ -140,7 +140,7 @@ const handleRescatterMoments = () => {
         // padding: 10, //consider this approach for all screens if possible
       }}
     >
- 
+{/*  
       {spinnerViewing === 1 || !spinnerViewing &&  (
         <View
           style={[
@@ -156,7 +156,7 @@ const handleRescatterMoments = () => {
             scale={0.6}
           />
         </View>
-      )}
+      )} */}
 
       {/* {(spinnerViewing === 2 ) && (
         <View style={StyleSheet.absoluteFillObject}>

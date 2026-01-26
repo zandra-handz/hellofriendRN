@@ -53,6 +53,8 @@ import MoonWaningCrescentSvg from "./svgs/moon-waning-crescent";
 import NoteEditOutlineSvg from "./svgs/note-edit-outline";
 import NoteTextSvg from "./svgs/note-text";
 import PaletteSvg from "./svgs/palette";
+import PawSvg from "./svgs/paw";
+import PawOutlineSvg from "./svgs/paw-outline";
 import PenSvg from "./svgs/pen";
 import PenPlusSvg from "./svgs/pen-plus";
 import PencilSvg from "./svgs/pencil";
@@ -111,6 +113,8 @@ const svgIcons = {
   eye_closed: EyeClosedSvg,
   hand_pointing_right: HandPointingRightSvg,
   palette: PaletteSvg,
+  paw: PawSvg,
+  paw_outline: PawOutlineSvg,
   pen: PenSvg,
   pencil: PencilSvg, // hello quick view
   pencil_circle: PencilCircleSvg,

@@ -11,7 +11,7 @@ import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass"; 
 import { packGeckoOnly, transformSelected } from "./animUtils";
- 
+import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
 
@@ -145,6 +145,7 @@ useEffect(() => {
       id: moment.id,
       screen_x: moment.coord[0],
       screen_y: moment.coord[1],
+      stored_index: moment.stored_index
     }));
     handleUpdateMomentCoords(formattedData);
   };
@@ -307,7 +308,7 @@ const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
   const start = useRef(Date.now()); 
   const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 40;
-
+const MAX_HELD = 4;
   // Keep working buffers as refs (intermediate calculations)
   const hintRef = useRef([0, 0]);  
 
@@ -321,6 +322,7 @@ const holding0UniformSV = useSharedValue(new Float32Array([0., 0.]));
 
 const hintUniformSV = useSharedValue(new Float32Array([0., 0.]));
 const momentsUniformSV = useSharedValue(Array(MAX_MOMENTS * 2).fill(0));
+const heldMomentUniformSV = useSharedValue(Array(MAX_HELD * 2).fill(0));
 const geckoPointsUniformSV = useSharedValue(Array(TOTAL_GECKO_POINTS * 2).fill(0));
 const momentsLengthSV = useSharedValue(0);
 
@@ -363,6 +365,7 @@ leadScreenSpaceUniformSV.value = (new Float32Array([0, 0]));
  holding0UniformSV.value = (new Float32Array([0, 0]));
  hintUniformSV.value = (new Float32Array([0, 0]));
  momentsUniformSV.value = (Array(MAX_MOMENTS * 2).fill(0));
+ heldMomentUniformSV.value = (Array(MAX_HELD * 2).fill(0));
  geckoPointsUniformSV.value = (Array(TOTAL_GECKO_POINTS * 2).fill(0));
  momentsLengthSV.value =(0);
 
@@ -427,11 +430,14 @@ if (aspect == null || isNaN(aspect)) {
       moments.current.update(
         userPointSV.value, 
         isDragging.value, 
-        leadPoint.current.isMoving,  
-        // gecko.current.legs.backLegs.stepTargets[1]
-        //  gecko.current.body.spine.hint,
+        leadPoint.current.isMoving,   
          leadPoint.current.lead,
-         gecko.current.legs.backLegs.stepTargets[1]
+  [
+    gecko.current.legs.frontLegs.stepTargets[0],
+    gecko.current.legs.frontLegs.stepTargets[1],
+    gecko.current.legs.backLegs.stepTargets[0],
+    gecko.current.legs.backLegs.stepTargets[1]
+  ]
       );
  
       const newSoul = new Float32Array(2);
@@ -461,6 +467,17 @@ if (aspect == null || isNaN(aspect)) {
       const newHolding0 = new Float32Array(2);
       toGeckoSpace_inPlace(moments.current.holding0.coord, gecko_scale, newHolding0);
       holding0UniformSV.value = newHolding0;
+
+      const heldCoords = new Float32Array(MAX_HELD * 2);
+
+for (let i = 0; i < 4; i++) {
+  const newHolding = new Float32Array(2);
+  toGeckoSpace_inPlace(moments.current.holdings[i].coord, gecko_scale, newHolding);
+  heldCoords[i * 2] = newHolding[0];
+  heldCoords[i * 2 + 1] = newHolding[1];
+}
+
+heldMomentUniformSV.value = heldCoords;
 
 
       const newLastSelected = new Float32Array(2);
@@ -544,6 +561,7 @@ if (aspect == null || isNaN(aspect)) {
       u_hint: [-100, -100],
       u_momentsLength: 0,
       u_moments: Array(MAX_MOMENTS * 2).fill(0),
+      u_heldMoments:  Array(MAX_HELD * 2).fill(0),
       u_geckoPoints: Array(TOTAL_GECKO_POINTS * 2).fill(0),
     };
   }
@@ -564,6 +582,7 @@ if (aspect == null || isNaN(aspect)) {
     u_hint: Array.from(hintUniformSV.value),
     u_momentsLength: momentsLengthSV.value,
     u_moments: [...momentsUniformSV.value],
+    u_heldMoments: [...heldMomentUniformSV.value],
     u_geckoPoints: [...geckoPointsUniformSV.value],
   };
 }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
@@ -617,6 +636,23 @@ if (aspect == null || isNaN(aspect)) {
         
       
       </GestureDetector>
+          <View style={styles.pawSetterContainer}>
+        <PawSetter
+        color={lightDarkTheme.primaryText}
+        backgroundColor={lightDarkTheme.primaryBackground}
+        borderColor={lightDarkTheme.lighterOverlayBackground}
+        // momentsData={momentsData}
+        momentsData={moments.current.moments}
+        lastSelected={moments.current.lastSelected}
+        updatePaw={(moment, holdIndex) => moments.current.updateHold(moment, holdIndex)}
+        clearPaw={(holdIndex) => moments.current.clearHolding(holdIndex)}
+        updateSelected={(holdIndex) => moments.current.updateSelected(holdIndex)}
+        handleGetMoment={handleGetMoment}
+         
+        />
+
+          </View>
+
       <View style={styles.resetterContainer}>
         <MomentDotsResetterMini
           onBackPress={handleUpdateMomentsState}
@@ -633,6 +669,7 @@ if (aspect == null || isNaN(aspect)) {
 };
 
 const styles = StyleSheet.create({
+    pawSetterContainer: { position: "absolute", bottom: 200, left: 16 },
   resetterContainer: { position: "absolute", bottom: 200, right: 16 },
 });
 

@@ -21,5 +21,6 @@ export type MomentFromBackendType = {
   user_category_name: string;
   screen_x: number;
   screen_y: number;
+  stored_index: number | null;
   
 };

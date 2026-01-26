@@ -6,6 +6,8 @@ uniform float  u_scale;
 uniform float u_gecko_scale;
 uniform float u_gecko_size;
 uniform float2 u_moments[40];
+uniform float2 u_heldMoments[4];
+
 uniform int    u_momentsLength;
 
 uniform float2 u_selected;
@@ -314,25 +316,45 @@ if (length(u_lastSelected) > 0.0001) {
     );
 }
 
+
+for (int i = 0; i < 4; i++) {
+    vec2 holding_uv = u_heldMoments[i];
+    
+    vec2 holding_screen = holding_uv / (s * u_gecko_size);
+    holding_screen.x /= u_aspect;
+    holding_screen += 0.5;
+    float2 holding_px = holding_screen * u_resolution;
+    
+    if (length(u_heldMoments[i]) > 0.0001) {
+        color = applyGlass(
+            fragCoord,
+            holding_px,
+            20.0,
+            10.0,
+            1.8,
+            color
+        );
+    }
+}
  
 
-vec2 holding0_uv = u_holding0;
+// vec2 holding0_uv = u_holding0;
 
-vec2 holding0_screen = holding0_uv / (s * u_gecko_size);
-holding0_screen.x /= u_aspect;
-holding0_screen += 0.5;
-float2 holding0_px = holding0_screen * u_resolution;
+// vec2 holding0_screen = holding0_uv / (s * u_gecko_size);
+// holding0_screen.x /= u_aspect;
+// holding0_screen += 0.5;
+// float2 holding0_px = holding0_screen * u_resolution;
 
-if (length(u_holding0) > 0.0001) {
-    color = applyGlass(
-        fragCoord,
-        holding0_px,  // Now in correct pixel space
-        34.0,
-        10.0,
-        1.8,
-        color
-    );
-}
+// if (length(u_holding0) > 0.0001) {
+//     color = applyGlass(
+//         fragCoord,
+//         holding0_px,  // Now in correct pixel space
+//         34.0,
+//         10.0,
+//         1.8,
+//         color
+//     );
+// }
 
 
         for (int i = 0; i < 40; i++) {

@@ -100,6 +100,7 @@ export default class Body {
   }
  
 init() {
+  // console.log('initializing gecko body');
   const spineDesCtrRange = [2, 13];
   const unchainedAnchorIndex = 2;
 

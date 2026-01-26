@@ -13,6 +13,7 @@ import GradientBackground from "@/app/components/appwide/display/GradientBackgro
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
+import PawSetter from "./PawSetter";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser"; 
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
@@ -79,6 +80,8 @@ const ScreenGecko = (props: Props) => {
   return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
     id: m.id,
     coord: [m.screen_x, m.screen_y],
+    stored_index: m.stored_index
+    
   }));
 }, [capsuleList]);
 
@@ -99,30 +102,19 @@ const ScreenGecko = (props: Props) => {
     prev.map((m) => {
       const randomX = Math.random(); // full width
       const randomY = Math.random() * (maxY - minY) + minY; // clamp Y
+      const storedIndex = m.stored_index;
 
       return {
         ...m,
         coord: [randomX, randomY],
+        stored_index: storedIndex
       };
     })
   );
     // console.log(`done!`, scatteredMoments);
   };
 
-    const handleRescatterMomentsNormalizedSpace = (width, height) => {
-    // console.log(`scattering moments!`, scatteredMoments);
-    setScatteredMoments((prev) =>
-    prev.map(m => ({
-      ...m,
-      coord: [
-        Math.random() * width,
-        Math.random() * height,
-      ],
-    }))
-    );
-    // console.log(`done!`, scatteredMoments);
-  };
-
+ 
 
   const handleRecenterMoments = () => {
     setScatteredMoments((prev) =>
@@ -140,24 +132,23 @@ const ScreenGecko = (props: Props) => {
     uniqueIndex: null,
   });
 
-  // const handleGetMoment = (id) => {
  
-  //   const moment = capsuleList.find((c) => c.id === id);
-  //   // console.log(moment);
+  // might need to go in momentSkia instead, handled/kept track of in momentsClass
+  // set this in momentsClass constructor
+// const hold = (id) => {
+// console.log('hold', id);
 
-  //   if (moment?.id) {
-  //     setMoment({
-  //       category: moment.user_category_name,
-  //       capsule: moment.capsule,
-  //       uniqueIndex: moment.uniqueIndex,
-  //     });
-  //   }
-  // };
- 
+// };
+
+// const drop = (id) => { 
+//   console.log('drop', id);
+// };
+
 
 const handleGetMoment = (id) => {
+  
   const moment = capsuleList.find((c) => c.id === id);
-
+   console.log(`setting moment`, moment)
   if (moment?.id) {
     setMoment({
       category: moment.user_category_name,
@@ -167,6 +158,7 @@ const handleGetMoment = (id) => {
 
     // --- Vibration ---
     Vibration.vibrate(50); // vibrate for 50ms
+ 
   }
 };
 
@@ -233,6 +225,15 @@ const handleGetMoment = (id) => {
   
         />
       </View> 
+             <View style={[styles.statsWrapper, {backgroundColor: lightDarkTheme.lighterOverlayBackground}]}>
+                  <Text style={[styles.statsText, { color: primaryColor }]}>
+                    Health: {TIME_SCORE}%
+                  </Text>
+                  <Text style={[styles.statsText, { color: primaryColor }]}>
+                    Days since: {DAYS_SINCE}
+                  </Text>
+                </View>
+ 
       <View
         style={[
           styles.previewWrapper,
@@ -270,11 +271,30 @@ const handleGetMoment = (id) => {
 
 const styles = StyleSheet.create({
   statsWrapper: {
-    width: "100%",
-    height: "auto",
-    padding: 10,
+   // width: "100%",
+    height: 80,
+    padding: 20,
     paddingHorizontal: 20,
+    top: 60,
+    left: 16,//same as pawsetter
+flex: 1,
+   // width: 170,
+    position: 'absolute',
     flexDirection: "column",
+    //  alignItems: "center",
+    borderRadius: 30,
+  //   borderWidth: 1,
+  //   shadowColor: "#000",
+  //  shadowOffset: { width: 0, height: 4 },
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 4.65,
+  //  elevation: 8,
+    
+  },
+  statsText: {
+    fontWeight: 'bold',
+    fontSize: 16
+
   },
   previewWrapper: {
     width: "100%",
@@ -306,6 +326,22 @@ const styles = StyleSheet.create({
     zIndex: 9000,
 
     position: "absolute",
+  },
+  holdMomentButton: {
+    width: 'auto',
+    maxWidth: 90,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    
+    padding: 8,
+    borderRadius: 999,
+    marginBottom: 20,
+    alignItems: 'center'
+  },
+  holdMomentText: {
+    fontSize: 15,
+    fontWeight: 'bold'
+
   },
 });
 
