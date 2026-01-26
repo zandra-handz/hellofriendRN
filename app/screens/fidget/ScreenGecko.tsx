@@ -1,4 +1,11 @@
-import { View, ScrollView, StyleSheet, Pressable, Text, Vibration } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  Text,
+  Vibration,
+} from "react-native";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import UserPointer from "@/app/assets/shader_animations/UserPointer";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -7,7 +14,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
-import manualGradientColors from "@/app/styles/StaticColors"; 
+import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,11 +22,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import PawSetter from "./PawSetter";
 // import { useUser } from "@/src/context/UserContext";
-import useUser from "@/src/hooks/useUser"; 
+import useUser from "@/src/hooks/useUser";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
- import * as Haptics from 'expo-haptics';
-import { Audio } from 'expo-av';
+import * as Haptics from "expo-haptics";
+import { Audio } from "expo-av";
 
 import MemoizedMomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 
@@ -32,7 +39,6 @@ const ScreenGecko = (props: Props) => {
   const { selectedFriend } = useSelectedFriend();
   const { navigateToMomentView } = useAppNavigations();
 
-   
   const { friendDash } = useFriendDash({
     userId: user?.id,
     friendId: selectedFriend?.id,
@@ -58,7 +64,7 @@ const ScreenGecko = (props: Props) => {
       console.log(`navving`, m);
       navigateToMomentView({ moment: m, index: m.uniqueIndex });
     },
-    [navigateToMomentView] // optional, if this function comes from props/context
+    [navigateToMomentView], // optional, if this function comes from props/context
   );
 
   // inside your component
@@ -77,51 +83,61 @@ const ScreenGecko = (props: Props) => {
   const MAX_MOMENTS = 40;
 
   const momentCoords = useMemo(() => {
-  return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
-    id: m.id,
-    coord: [m.screen_x, m.screen_y],
-    stored_index: m.stored_index
-    
-  }));
-}, [capsuleList]);
+    return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
+      id: m.id,
+      coord: [m.screen_x, m.screen_y],
+      stored_index: m.stored_index,
+    }));
+  }, [capsuleList]);
 
+  const [resetSkia, setResetSkia] = useState(null);
 
-
+  useEffect(() => {
+    setMoment({
+      category: null,
+      capsule: null,
+      uniqueIndex: null,
+      id: null,
+    });
+  }, [resetSkia]);
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
+  useEffect(() => {
+    setScatteredMoments(momentCoords);
+    setResetSkia(Date.now());
+  }, [momentCoords]);
 
-
- 
+  useEffect(() => {
+    console.log(`capsule list triggered`);
+  }, [capsuleList]);
 
   // Function to randomize/scatter moments
   const handleRescatterMoments = () => {
-      const minY = 0.1; // 10% down from top
-  const maxY = 0.8; // 10% up from bottom
+    const minY = 0.1; // 10% down from top
+    const maxY = 0.8; // 10% up from bottom
     // console.log(`scattering moments!`, scatteredMoments);
-  setScatteredMoments((prev) =>
-    prev.map((m) => {
-      const randomX = Math.random(); // full width
-      const randomY = Math.random() * (maxY - minY) + minY; // clamp Y
-      const storedIndex = m.stored_index;
+    setScatteredMoments((prev) =>
+      prev.map((m) => {
+        const randomX = Math.random(); // full width
+        const randomY = Math.random() * (maxY - minY) + minY; // clamp Y
+        const storedIndex = m.stored_index;
 
-      return {
-        ...m,
-        coord: [randomX, randomY],
-        stored_index: storedIndex
-      };
-    })
-  );
+        return {
+          ...m,
+          coord: [randomX, randomY],
+          stored_index: storedIndex,
+        };
+      }),
+    );
     // console.log(`done!`, scatteredMoments);
   };
-
- 
 
   const handleRecenterMoments = () => {
     setScatteredMoments((prev) =>
       prev.map((m) => ({
         ...m,
         coord: [0.5, 0.5], // recenter all coords
-      }))
+      })),
     );
     // console.log('All moments recentered to [0.5, 0.5]');
   };
@@ -130,38 +146,35 @@ const ScreenGecko = (props: Props) => {
     category: null,
     capsule: null,
     uniqueIndex: null,
+    id: null,
   });
 
- 
   // might need to go in momentSkia instead, handled/kept track of in momentsClass
   // set this in momentsClass constructor
-// const hold = (id) => {
-// console.log('hold', id);
+  // const hold = (id) => {
+  // console.log('hold', id);
 
-// };
+  // };
 
-// const drop = (id) => { 
-//   console.log('drop', id);
-// };
+  // const drop = (id) => {
+  //   console.log('drop', id);
+  // };
 
+  const handleGetMoment = (id) => {
+    const moment = capsuleList.find((c) => c.id === id);
+    //  console.log(`setting moment`, moment)
+    if (moment?.id) {
+      setMoment({
+        category: moment.user_category_name,
+        capsule: moment.capsule,
+        uniqueIndex: moment.uniqueIndex,
+        id: moment.id,
+      });
 
-const handleGetMoment = (id) => {
-  
-  const moment = capsuleList.find((c) => c.id === id);
-   console.log(`setting moment`, moment)
-  if (moment?.id) {
-    setMoment({
-      category: moment.user_category_name,
-      capsule: moment.capsule,
-      uniqueIndex: moment.uniqueIndex,
-    });
-
-    // --- Vibration ---
-    Vibration.vibrate(50); // vibrate for 50ms
- 
-  }
-};
-
+      // --- Vibration ---
+      Vibration.vibrate(50); // vibrate for 50ms
+    }
+  };
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.priamryText;
@@ -191,14 +204,12 @@ const handleGetMoment = (id) => {
         flex: 1,
         flexDirection: "column",
         justifyContent: "flex-end",
-       
       }}
     >
       <View
         style={[
           StyleSheet.absoluteFill,
-          
-        
+
           // { backgroundColor: lightDarkTheme?.primaryBackground },
         ]}
       >
@@ -218,22 +229,27 @@ const handleGetMoment = (id) => {
           gecko_scale={1}
           gecko_size={1.7}
           lightDarkTheme={lightDarkTheme}
+          reset={resetSkia}
           // handleRescatterMoments={handleRescatterMomentsNormalizedSpace}
-              handleRescatterMoments={handleRescatterMoments}
+          handleRescatterMoments={handleRescatterMoments}
           handleRecenterMoments={handleRecenterMoments}
           setScatteredMoments={setScatteredMoments}
-  
         />
-      </View> 
-             <View style={[styles.statsWrapper, {backgroundColor: lightDarkTheme.lighterOverlayBackground}]}>
-                  <Text style={[styles.statsText, { color: primaryColor }]}>
-                    Health: {TIME_SCORE}%
-                  </Text>
-                  <Text style={[styles.statsText, { color: primaryColor }]}>
-                    Days since: {DAYS_SINCE}
-                  </Text>
-                </View>
- 
+      </View>
+      <View
+        style={[
+          styles.statsWrapper,
+          { backgroundColor: lightDarkTheme.lighterOverlayBackground },
+        ]}
+      >
+        <Text style={[styles.statsText, { color: primaryColor }]}>
+          Health: {TIME_SCORE}%
+        </Text>
+        <Text style={[styles.statsText, { color: primaryColor }]}>
+          Days since: {DAYS_SINCE}
+        </Text>
+      </View>
+
       <View
         style={[
           styles.previewWrapper,
@@ -246,24 +262,35 @@ const handleGetMoment = (id) => {
         <Pressable
           onPress={() => handleNavigateToMoment(moment)}
           style={styles.momentViewButton}
-        > 
-        </Pressable>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text
-            style={[
-              styles.previewHeader,
-              { color: lightDarkTheme.primaryText },
-            ]}
-          >
-            {moment.category}
-          </Text>
+        ></Pressable>
+        {moment.id && (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text
+              style={[
+                styles.previewHeader,
+                { color: lightDarkTheme.primaryText },
+              ]}
+            >
+              {moment.category}
+            </Text>
 
-          <Text
-            style={[styles.previewText, { color: lightDarkTheme.primaryText }]}
-          >
-            {moment.capsule}
-          </Text>
-        </ScrollView>
+            <Text
+              style={[
+                styles.previewText,
+                { color: lightDarkTheme.primaryText },
+              ]}
+            >
+              {moment.capsule}
+            </Text>
+          </ScrollView>
+        )}
+        {!moment.id && (
+          <View style={styles.noMomentWrapper}>
+            <Text style={[styles.noMomentText, {color: lightDarkTheme.primaryText}]}>
+              Select a moment to view it
+            </Text>
+          </View>
+        )}
       </View>
     </PreAuthSafeViewAndGradientBackground>
   );
@@ -271,30 +298,28 @@ const handleGetMoment = (id) => {
 
 const styles = StyleSheet.create({
   statsWrapper: {
-   // width: "100%",
+    // width: "100%",
     height: 80,
     padding: 20,
     paddingHorizontal: 20,
     top: 60,
-    left: 16,//same as pawsetter
-flex: 1,
-   // width: 170,
-    position: 'absolute',
+    left: 16, //same as pawsetter
+    flex: 1,
+    // width: 170,
+    position: "absolute",
     flexDirection: "column",
     //  alignItems: "center",
     borderRadius: 30,
-  //   borderWidth: 1,
-  //   shadowColor: "#000",
-  //  shadowOffset: { width: 0, height: 4 },
-  //   shadowOpacity: 0.3,
-  //   shadowRadius: 4.65,
-  //  elevation: 8,
-    
+    //   borderWidth: 1,
+    //   shadowColor: "#000",
+    //  shadowOffset: { width: 0, height: 4 },
+    //   shadowOpacity: 0.3,
+    //   shadowRadius: 4.65,
+    //  elevation: 8,
   },
   statsText: {
-    fontWeight: 'bold',
-    fontSize: 16
-
+    fontWeight: "bold",
+    fontSize: 16,
   },
   previewWrapper: {
     width: "100%",
@@ -304,6 +329,17 @@ flex: 1,
     borderRadius: 40,
     bottom: 10,
     padding: 20,
+  },
+  noMomentWrapper: {
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  noMomentText: {
+    fontSize: 17,
+    //fontWeight: "bold",
   },
   previewText: {
     fontSize: 15,
@@ -319,29 +355,28 @@ flex: 1,
     height: 40,
     top: 0,
     right: 0,
-    
+
     flexDirection: "row",
     justifyContent: "flex-end",
-   // backgroundColor: 'teal',
+    // backgroundColor: 'teal',
     zIndex: 9000,
 
     position: "absolute",
   },
   holdMomentButton: {
-    width: 'auto',
+    width: "auto",
     maxWidth: 90,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    
+    flexDirection: "row",
+    justifyContent: "center",
+
     padding: 8,
     borderRadius: 999,
     marginBottom: 20,
-    alignItems: 'center'
+    alignItems: "center",
   },
   holdMomentText: {
     fontSize: 15,
-    fontWeight: 'bold'
-
+    fontWeight: "bold",
   },
 });
 

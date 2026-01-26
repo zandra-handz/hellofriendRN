@@ -55,6 +55,51 @@ initializeHoldings() {
   }
 }
 
+reset(momentsData = [], center = [0.5, 0.5], radius = 0.05) {
+  // Reset core geometry
+  this.center[0] = center[0];
+  this.center[1] = center[1];
+  this.radius = radius;
+  this.radiusSquared = radius * radius;
+
+  // Rebuild moments array (identity of Moments stays the same)
+  this.moments = momentsData.map((m) => ({
+    id: m.id,
+    coord: new Float32Array(m.coord),
+    stored_index: m.stored_index,
+  }));
+
+  this.momentsLength = this.moments.length;
+
+  // Reset interaction state
+  this.selectedMomentIndex = -1;
+  this.draggingMomentIndex = -1;
+
+  // Reset selection markers
+  this.selected.id = null;
+  this.selected.coord[0] = -100;
+  this.selected.coord[1] = -100;
+
+  this.lastSelected.id = null;
+  this.lastSelected.coord[0] = -100;
+  this.lastSelected.coord[1] = -100;
+
+  this.lastSelectedCoord[0] = 0;
+  this.lastSelectedCoord[1] = 0;
+
+  // Reset holdings
+  for (let i = 0; i < 4; i++) {
+    this.holdings[i].id = null;
+    this.holdings[i].stored_index = null;
+    this.holdings[i].coord[0] = -100;
+    this.holdings[i].coord[1] = -100;
+  }
+
+  // Re-apply stored_index → holding mapping
+  this.initializeHoldings();
+}
+
+
   updateAllCoords(updatedData) {
     for (let i = 0; i < updatedData.length; i++) {
       const m = updatedData[i];

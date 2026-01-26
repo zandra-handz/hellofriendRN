@@ -90,14 +90,14 @@ const [aspect, setAspect] = useState<number>(width / height);
 
  
 useEffect(() => {
-  console.log('set aspect');
+  // console.log('set aspect');
   
   if (size && size.width > 0 && size.height > 0) {
     const newAspect = size.width / size.height;
     console.log('Setting aspect to:', newAspect);
     setAspect(newAspect);
   } else {
-    console.log(`canvas size is NAN? `, size);
+    // console.log(`canvas size is NAN? `, size);
   }
 }, [size]);
 
@@ -239,8 +239,7 @@ const singleTapGesture = Gesture.Tap()
 
   const tapGesture = Gesture.Race(doubleTapGesture, singleTapGesture);
 const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
-
-  const [time, setTime] = useState(0);
+ 
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
   const bckgColor1Converted = hexToVec3(bckgColor1);
@@ -332,11 +331,23 @@ const momentsLengthSV = useSharedValue(0);
   };
 
   useEffect(() => {
+    // console.log('reset in capsule list triggered', momentsData.length)
+    //  moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
+
+     moments.current.reset(momentsData, [0.5, 0.5], 0.05);
+     moments.current.updateAllCoords(momentsData);
+
+  }, [momentsData, reset]);
+
+  // reset isn't working
+  useEffect(() => {
+    console.log('useeffect in SKIA triggered by momentsData or reset', momentsData, momentsData.length)
     if (moments && moments.current) {
+          // moments.current.reset(momentsData, [0.5, 0.5], 0.05);
           moments.current.updateAllCoords(momentsData);
     }
 
-  }, [momentsData, internalReset]);
+  }, [ internalReset ]);
 
   useEffect(() => {
 
@@ -349,7 +360,7 @@ const momentsLengthSV = useSharedValue(0);
     }
 
     start.current = Date.now();
-    setTime(0);
+   
 
     moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
     soul.current = new Soul(restPoint, 0.02);

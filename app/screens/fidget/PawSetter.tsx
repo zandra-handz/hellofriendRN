@@ -51,7 +51,7 @@ const PawSetter = ({
   }, [momentsData]);
 
   const runClearPaw = (index: number) => {
-    console.log("long press! clear paw here if any is here");
+    // console.log("long press! clear paw here if any is here");
     const updatedHoldings = clearPaw(index);
 
     // Map holdings to boolean array for icon display
@@ -60,20 +60,20 @@ const PawSetter = ({
 
   const handleClearPaw = (index: number) => {
     if (!localPaws[index]) {
-      console.log("nothing here for long press!");
+      // console.log("nothing here for long press!");
       return;
     }
 
     Alert.alert(
       "Are you sure?",
-      "Do you want to proceed with this action?",
+      "Do you want to drop this moment?",
       [
         {
-          text: "Cancel",
+          text: "Wait no",
           style: "cancel",
         },
         {
-          text: "Proceed",
+          text: "Yes",
           onPress: () => {
             runClearPaw(index);
           },
@@ -83,44 +83,85 @@ const PawSetter = ({
     );
   };
 
+  // const handlePawPress = (index: number) => {
+  //   if (!lastSelected.id) {
+  //     // console.log("no lastSelect");
+  //     return;
+  //   }
+
+  //   if (localPaws[index]) {
+  //     // console.log("one is held here");
+
+  //     Alert.alert(
+  //       "Are you sure?",
+  //       "Select new moment?",
+  //       [
+  //         {
+  //           text: "Oops no!",
+  //           style: "cancel",
+  //         },
+  //         {
+  //           text: "Yes please",
+  //           onPress: () => {
+  //             Vibration.vibrate(50);
+  //             const last_selected = updateSelected(index);
+  //             //  console.log(last_selected)
+  //             handleGetMoment(last_selected.id);
+  //           },
+  //         },
+  //       ],
+  //       { cancelable: true },
+  //     );
+  //     return;
+  //   }
+  //   // console.log(lastSelected);
+  //   const updatedHoldings = updatePaw(lastSelected, index);
+
+  //   // Map holdings to boolean array for icon display
+  //   setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+  //   // console.log(localPaws);
+  // };
+
   const handlePawPress = (index: number) => {
-    if (!lastSelected.id) {
-      console.log("no lastSelect");
-      return;
-    }
+  if (!lastSelected.id) {
+    return; // no selected moment, do nothing
+  }
 
-    if (localPaws[index]) {
-      console.log("one is held here");
+  const momentInSlot = momentsData.find((m) => m.stored_index === index);
 
-      Alert.alert(
-        "Are you sure?",
-        "Select new moment?",
-        [
-          {
-            text: "Oops no!",
-            style: "cancel",
+  // EARLY RETURN: if the paw already holds the lastSelected moment
+  if (momentInSlot && momentInSlot.id === lastSelected.id) {
+    return; // do nothing
+  }
+
+  if (localPaws[index]) {
+    Alert.alert(
+      "Are you sure?",
+      "Select new moment?",
+      [
+        {
+          text: "Oops no!",
+          style: "cancel",
+        },
+        {
+          text: "Yes please",
+          onPress: () => {
+            Vibration.vibrate(50);
+            const last_selected = updateSelected(index);
+            handleGetMoment(last_selected.id);
           },
-          {
-            text: "Yes please",
-            onPress: () => {
-              Vibration.vibrate(50);
-              const last_selected = updateSelected(index);
-              //  console.log(last_selected)
-              handleGetMoment(last_selected.id);
-            },
-          },
-        ],
-        { cancelable: true },
-      );
-      return;
-    }
-    // console.log(lastSelected);
-    const updatedHoldings = updatePaw(lastSelected, index);
+        },
+      ],
+      { cancelable: true },
+    );
+    return;
+  }
 
-    // Map holdings to boolean array for icon display
-    setLocalPaws(updatedHoldings.map((h) => h.id !== null));
-    // console.log(localPaws);
-  };
+  // Otherwise, assign lastSelected to this paw
+  const updatedHoldings = updatePaw(lastSelected, index);
+  setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+};
+
 
   const getPawColor = (index: number) => {
     // console.log('paw color updating', index, lastSelected.id)
