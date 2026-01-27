@@ -420,6 +420,45 @@ export function toGeckoPointerScaled_inPlace(point, aspect, scale, gecko_size, o
 }
 
 
+export function geckoToMoment_inPlace(
+  geckoPoint: [number, number],
+  aspect: number,
+  gecko_size: number,
+  out: Float32Array | number[],
+  outIndex: number = 0
+): void {
+  if (!aspect) {
+    out[outIndex + 0] = geckoPoint[0];
+    out[outIndex + 1] = geckoPoint[1];
+    return;
+  }
+
+  let sx = geckoPoint[0];
+  let sy = geckoPoint[1];
+
+  // undo final offset
+  sx -= 0.625 * aspect;
+  // console.log(gecko_size)
+  // move to origin
+  sx -= 0.5 * aspect;
+  sy -= 0.5;
+
+  // undo scale
+  sx /= gecko_size;
+  sy /= gecko_size;
+
+  // move back
+  sx += 0.5 * aspect;
+  sy += 0.5;
+
+  // undo aspect scaling
+  sx /= aspect;
+
+  out[outIndex + 0] = sx;
+  out[outIndex + 1] = sy;
+}
+
+
 export function toShaderModel_inPlace(point, aspect, scale, out, outIndex) {
   let sx = point[0] - 0.5;
   let sy = point[1] - 0.5;

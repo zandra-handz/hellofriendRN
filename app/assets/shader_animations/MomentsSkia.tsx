@@ -81,8 +81,7 @@ const MomentsSkia = ({
   // const aspect = size.width > 0 ? size.width / size.height : null;
 
 
-
-
+ 
 // initializes with the dimensions aspect first to prevent errors
 const [aspect, setAspect] = useState<number>(width / height); 
 // console.log(`ASPECT:`, aspect);
@@ -96,6 +95,7 @@ useEffect(() => {
     const newAspect = size.width / size.height;
     console.log('Setting aspect to:', newAspect);
     setAspect(newAspect);
+
   } else {
     // console.log(`canvas size is NAN? `, size);
   }
@@ -159,50 +159,113 @@ useEffect(() => {
     const onSinglePress = () => {
     // console.log(moments.current.lastSelected);
     console.log('single presss')
+      handleGetMoment(moments.current.lastSelected?.id);
   
-    handleGetMoment(moments.current.lastSelected?.id);
+   // handleGetMoment(moments.current.lastSelected?.id);
   };
 
   const onDoublePress = () => {
     // console.log(moments.current.lastSelected);
     console.log('double press')
   
-    handleGetMoment(moments.current.lastSelected?.id);
+   // handleGetMoment(moments.current.lastSelected?.id);
   };
 
-  const panGesture = Gesture.Pan()
-    .onTouchesDown((e) => {
-      isDragging.value = true;
-      const touch = e.changedTouches[0];
-      userPointSV.value = [touch.x / size.width, touch.y / size.height];
+  // const panGesture = Gesture.Pan()
+  //   .onTouchesDown((e) => {
+  //     isDragging.value = true;
+  //     const touch = e.changedTouches[0];
+  //     userPointSV.value = [touch.x / size.width, touch.y / size.height];
        
-    })
-    .onUpdate((e) => {
-      userPointSV.value = [e.x / size.width, e.y / size.height];
-      // console.log(userPointSV.value)
-    })
-    .onEnd(() => {
-      isDragging.value = false;
-    })
-    .onFinalize(() => {
-      isDragging.value = false;
-    });
+  //   })
+  //   .onUpdate((e) => {
+  //     userPointSV.value = [e.x / size.width, e.y / size.height];
+  //     // console.log(userPointSV.value)
+  //   })
+  //   .onEnd(() => {
+  //     isDragging.value = false;
+  //   })
+  //   .onFinalize(() => {
+  //     isDragging.value = false;
+  //   });
+const tapState = useRef({
+  startTime: 0,
+  startPos: [0, 0] as [number, number],
+  wasDragged: false,
+  wasTap: false,
+  wasDoubleTap: false, // 👈 Add this
+});
 
-    
+// Add this ref
+const doubleTapPending = useRef(false); 
+const wasTapSV = useSharedValue(false);
+const wasDoubleTapSV = useSharedValue(false);
+const tapStartTimeSV = useSharedValue(0);
+const wasDraggedSV = useSharedValue(false); 
 
+// Pan gesture for dragging
+const panGesture = Gesture.Pan()
+  .onTouchesDown((e) => {
+    isDragging.value = true;
+    const touch = e.changedTouches[0];
+    userPointSV.value = [touch.x / size.width, touch.y / size.height];
+  })
+  .onUpdate((e) => {
+    userPointSV.value = [e.x / size.width, e.y / size.height];
+  })
+  .onEnd(() => {
+    isDragging.value = false;
+  })
+  .onFinalize(() => {
+    isDragging.value = false;
+  });
 
+// Double tap (higher priority)
+const doubleTapGesture = Gesture.Tap()
+  .numberOfTaps(2)
+  .onEnd((_event, success) => {
+    if (success) {
+      wasDoubleTapSV.value = true;
+      runOnJS(onDoublePress)();
+      setTimeout(() => {
+        wasDoubleTapSV.value = false;
+      }, 100);
+    }
+  });
 
-
- 
-// const DOUBLE_TAP_DELAY = 300; // ms to wait before triggering single tap
-
- 
-
-// const lastTapTime = useRef(0);
-// const singleTapTimeout = useRef<NodeJS.Timeout | null>(null);
+// Single tap (lower priority - waits for double tap to fail)
 const singleTapGesture = Gesture.Tap()
   .numberOfTaps(1)
-  .onEnd(() => runOnJS(onSinglePress)());
+  .onEnd((_event, success) => {
+    if (success) {
+      wasTapSV.value = true;
+      runOnJS(onSinglePress)();
+      setTimeout(() => {
+        wasTapSV.value = false;
+      }, 100);
+    }
+  });
+
+// Exclusive: double tap gets priority, single tap waits
+const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
+
+// Combine with pan
+const composedGesture = Gesture.Simultaneous(panGesture, taps);
+
+//const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture);
+
+// const handleTap = () => {
+//   const lastSelected = moments.current.lastSelected;
+//   if (lastSelected && lastSelected.id !== -1) {
+//     console.log('Tapped moment:', lastSelected.id);
+//     onSinglePress();
+//   }
+// };
+
+  
+// const singleTapGesture = Gesture.Tap()
+//   .numberOfTaps(1)
+//   .onEnd(() => runOnJS(onSinglePress)());
  
 
 // const singleTapGesture = Gesture.Tap()
@@ -229,16 +292,16 @@ const singleTapGesture = Gesture.Tap()
 
  
 
-  const doubleTapGesture = Gesture.Tap()
-    .numberOfTaps(2)
-    .onEnd(() => runOnJS(onDoublePress)());
+  // const doubleTapGesture = Gesture.Tap()
+  //   .numberOfTaps(2)
+  //   .onEnd(() => runOnJS(onDoublePress)());
 
   // const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture,singleTapGesture);
  
 
 
-  const tapGesture = Gesture.Race(doubleTapGesture, singleTapGesture);
-const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
+  // const tapGesture = Gesture.Race(doubleTapGesture, singleTapGesture);
+//const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
  
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -249,7 +312,15 @@ const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
   const soul = useRef(new Soul(restPoint, 0.02));
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
-  const moments = useRef(new Moments(momentsData, [0.5, 0.5], 0.05));
+  const moments = useRef(new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05));
+
+
+  useEffect(() => {
+    if (aspect) {
+      moments.current.setAspect(aspect);
+    }
+
+  }, [aspect]);
   
 
 
@@ -347,7 +418,7 @@ const momentsLengthSV = useSharedValue(0);
           moments.current.updateAllCoords(momentsData);
     }
 
-  }, [ internalReset ]);
+  }, [ momentsData, internalReset ]);
 
   useEffect(() => {
 
@@ -362,7 +433,7 @@ const momentsLengthSV = useSharedValue(0);
     start.current = Date.now();
    
 
-    moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
+    moments.current = new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05);
     soul.current = new Soul(restPoint, 0.02);
     leadPoint.current = new Mover(startingCoord);
     gecko.current = new Gecko(startingCoord, 0.06);
@@ -436,20 +507,22 @@ if (aspect == null || isNaN(aspect)) {
       const spine = gecko.current.body.spine; 
       hintRef.current = spine.hintJoint || [0, 0];
 
-      
+      // console.log(tapState)
    
-      moments.current.update(
-        userPointSV.value, 
-        isDragging.value, 
-        leadPoint.current.isMoving,   
-         leadPoint.current.lead,
+moments.current.update(
+  userPointSV.value, 
+  isDragging.value, 
+  leadPoint.current.isMoving,   
+  wasTapSV.value,        
+  wasDoubleTapSV.value,  
+  leadPoint.current.lead,
   [
     gecko.current.legs.frontLegs.stepTargets[0],
     gecko.current.legs.frontLegs.stepTargets[1],
     gecko.current.legs.backLegs.stepTargets[0],
     gecko.current.legs.backLegs.stepTargets[1]
   ]
-      );
+);
  
       const newSoul = new Float32Array(2);
       toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, newSoul, 0);

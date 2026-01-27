@@ -113,12 +113,15 @@ const ScreenGecko = (props: Props) => {
 
   // Function to randomize/scatter moments
   const handleRescatterMoments = () => {
-    const minY = 0.1; // 10% down from top
-    const maxY = 0.8; // 10% up from bottom
+    const minY = 0.2; // 10% down from top
+    const maxY = 0.75; // 10% up from bottom
+
+    const minX = 0.05;  
+    const maxX = 0.95;  
     // console.log(`scattering moments!`, scatteredMoments);
     setScatteredMoments((prev) =>
       prev.map((m) => {
-        const randomX = Math.random(); // full width
+        const randomX = Math.random() * (maxX - minX) + minX; // clamp X
         const randomY = Math.random() * (maxY - minY) + minY; // clamp Y
         const storedIndex = m.stored_index;
 
@@ -162,7 +165,7 @@ const ScreenGecko = (props: Props) => {
 
   const handleGetMoment = (id) => {
     const moment = capsuleList.find((c) => c.id === id);
-    //  console.log(`setting moment`, moment)
+     console.log(`setting moment`, moment)
     if (moment?.id) {
       setMoment({
         category: moment.user_category_name,
@@ -173,6 +176,14 @@ const ScreenGecko = (props: Props) => {
 
       // --- Vibration ---
       Vibration.vibrate(50); // vibrate for 50ms
+    } else {
+
+          setMoment({
+      category: null,
+      capsule: null,
+      uniqueIndex: null,
+      id: null,
+    });
     }
   };
 
