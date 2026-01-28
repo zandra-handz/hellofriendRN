@@ -12,9 +12,11 @@ export default class Gecko {
     this.mir_MotionDilutionScalar = 0.5;
     this.startingCoord = startingCoord;
     this.hintDist = hintDist;
+
  
+
     this.oneTimeEnterComplete = false; // set only once
-    this.userControlOverride = false; // not using yet
+    this.sleepWalkMode = false;
 
     this.gait = new GaitState(this.gaitSpeedScalar);
     this.motion = new MotionGlobal(
@@ -51,8 +53,19 @@ export default class Gecko {
     }
   }
 
+  updateSleepWalkMode(on) {
+    if (on) {
+      this.sleepWalkMode = true;
+    } else {
+    this.sleepWalkMode = false;
+    }
+
+  }
+
   update(leadPoint_lead, leadPoint_distanceTraveled, leadPoint_isMoving) {
- 
+    // if (this.sleepWalkMode) {
+    //   console.log('gecko is in sleep mode')
+    // }
     this.gait.update(leadPoint_distanceTraveled); 
     this.legs.update();
     this.body.update(leadPoint_lead, leadPoint_isMoving);

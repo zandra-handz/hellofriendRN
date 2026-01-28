@@ -1,7 +1,12 @@
 import { geckoToMoment_inPlace } from "./animUtils";
 
 export default class Moments {
-  constructor(moments = [], gecko_size = 1, center = [0.5, 0.5], radius = 0.05) {
+  constructor(
+    moments = [],
+    gecko_size = 1,
+    center = [0.5, 0.5],
+    radius = 0.05,
+  ) {
     this.moments = moments.map((m) => ({
       id: m.id,
       coord: new Float32Array(m.coord), // preallocate
@@ -58,7 +63,7 @@ export default class Moments {
   }
 
   setAspect(aspect) {
-    console.log('SETTING ASPECT IN MOMENTS')
+    console.log("SETTING ASPECT IN MOMENTS");
     this.aspect = aspect;
   }
 
@@ -115,47 +120,45 @@ export default class Moments {
     this.momentsLength = updatedData.length;
   }
 
+  clearHolding(holdIndex) {
+    if (!this.aspect) {
+      // console.log('NO ASPECT CANNOT CLEAR');
+      return this.holdings;
+    }
 
-clearHolding(holdIndex) {
-  if (!this.aspect) {
-    console.log('NO ASPECT CANNOT CLEAR');
+    const holding = this.holdings[holdIndex];
+    if (!holding.id) return this.holdings;
+
+    const moment = this.moments.find((m) => m.id === holding.id);
+    if (!moment) {
+      // console.log("no matching moment found");
+      return this.holdings;
+    }
+
+    moment.stored_index = null;
+
+    // Debug what we're working with
+    // console.log('holding.coord BEFORE conversion:', holding.coord);
+
+    // 🔹 Convert Gecko space → Moment space
+    geckoToMoment_inPlace(
+      holding.coord, // input Gecko coord
+      this.aspect,
+      this.gecko_size,
+      moment.coord, // write into moment.coord directly
+      0,
+    );
+
+    //console.log('moment.coord AFTER conversion:', moment.coord);
+
+    // Clear holding
+    holding.id = null;
+    holding.stored_index = null;
+    holding.coord[0] = -100;
+    holding.coord[1] = -100;
+
     return this.holdings;
   }
-
-  const holding = this.holdings[holdIndex];
-  if (!holding.id) return this.holdings;
-
-  const moment = this.moments.find((m) => m.id === holding.id);
-  if (!moment) {
-    console.log("no matching moment found");
-    return this.holdings;
-  }
-
-  moment.stored_index = null;
-
-  // Debug what we're working with
-  console.log('holding.coord BEFORE conversion:', holding.coord); 
-
-  // 🔹 Convert Gecko space → Moment space
-  geckoToMoment_inPlace(
-    holding.coord, // input Gecko coord
-    this.aspect,
-    this.gecko_size,
-    moment.coord, // write into moment.coord directly
-    0
-  );
-
-  console.log('moment.coord AFTER conversion:', moment.coord);
-
-  // Clear holding
-  holding.id = null;
-  holding.stored_index = null;
-  holding.coord[0] = -100;
-  holding.coord[1] = -100;
-
-  return this.holdings;
-}
-
 
   updateHold(moment, holdIndex) {
     if (!moment || holdIndex < 0 || holdIndex >= 4) {
@@ -188,7 +191,6 @@ clearHolding(holdIndex) {
     targetHolding.id = moment.id;
     targetHolding.stored_index = holdIndex;
     m.stored_index = holdIndex;
- 
 
     return this.holdings;
   }
@@ -217,88 +219,6 @@ clearHolding(holdIndex) {
     return { ...this.lastSelected };
   }
 
-  // update(
-  //   userPointer,
-  //   isDragging,
-  //   isMoving,
-  //   altCoord,
-  //   holding0Coord,
-  //   holding1Coord,
-  //   holding2Coord,
-  //   holding3Coord,
-  // ) {
-  //   // console.log('MOMENTS UPDATING: ', userPointer, isDragging, isMoving, altCoord)
-
-  //   const [ux, uy] = userPointer;
-
-  //   if (!isDragging && !isMoving) {
-  //     this.draggingMomentIndex = -1;
-  //     this.selectedMomentIndex = -1;
-
-  //     // Move highlight offscreen
-  //     this.selected.coord[0] = -100;
-  //     this.selected.coord[1] = -100;
-
-  //     return;
-  //   }
-
-  //   if (this.draggingMomentIndex >= 0) {
-  //     const coord = this.moments[this.draggingMomentIndex].coord;
-  //     coord[0] = ux;
-  //     coord[1] = uy;
-
-  //     this.selectedMomentIndex = this.draggingMomentIndex;
-
-  //     // Update highlight
-  //     this.selected.coord[0] = ux;
-  //     this.selected.coord[1] = uy;
-  //     this.lastSelected.coord[0] = altCoord[0];
-  //     this.lastSelected.coord[1] = altCoord[1];
-
-  //     this.holding0.coord[0] = holding0Coord[0];
-  //     this.holding0.coord[1] = holding0Coord[1];
-
-  //     return;
-  //   }
-  //   let closestIndex = -1;
-  //   let closestDistSquared = Infinity; // start with no limit
-
-  //   for (let i = 0; i < this.momentsLength; i++) {
-  //     const dx = ux - this.moments[i].coord[0];
-  //     const dy = uy - this.moments[i].coord[1];
-  //     const distSquared = dx * dx + dy * dy;
-
-  //     if (distSquared < closestDistSquared) {
-  //       closestDistSquared = distSquared;
-  //       closestIndex = i;
-  //     }
-  //   }
-
-  //   if (closestIndex >= 0) {
-  //     this.draggingMomentIndex = closestIndex;
-
-  //     const coord = this.moments[closestIndex].coord;
-
-  //     coord[0] = ux;
-  //     coord[1] = uy;
-
-  //     this.selectedMomentIndex = closestIndex;
-  //     this.selectedMomentId = this.moments[closestIndex].id;
-
-  //     this.selected.id = this.moments[closestIndex].id;
-  //     this.lastSelected.id = this.moments[closestIndex].id;
-
-  //     this.selected.coord[0] = coord[0];
-  //     this.selected.coord[1] = coord[1];
-
-  //     this.lastSelected.coord[0] = altCoord[0];
-  //     this.lastSelected.coord[1] = altCoord[1];
-
-  //     this.holding0.coord[0] = holding0Coord[0];
-  //     this.holding0.coord[1] = holding0Coord[1];
-  //   }
-  // }
-
   update(
     userPointer,
     isDragging,
@@ -310,17 +230,24 @@ clearHolding(holdIndex) {
   ) {
     const [ux, uy] = userPointer;
 
-    if (wasDoubleTap) {
-      console.log('double tap!')
-    } 
+    // if (wasDoubleTap) {
+    //   console.log('double tap!')
+    // }
 
-        if (wasTap) {
-      console.log('single tap!')
-    }   
+    //     if (wasTap) {
+    //   console.log('single tap!')
+    // }
 
     const fallbackLastSelectedCoord = altCoord;
 
     let lastSelectedIsHeld = false;
+
+    if (wasDoubleTap && this.lastSelected.id !== -1) {
+      // console.log('double ressssssssssssss')
+      // console.log(this.lastSelected.id)
+      this.lastSelected.id = -1;
+      // console.log('deselect the current moment')
+    }
 
     // Move moments that are in holdings offscreen
     for (let i = 0; i < 4; i++) {
@@ -334,11 +261,8 @@ clearHolding(holdIndex) {
           moment.coord[0] = -100;
           moment.coord[1] = -100;
 
-          // console.log('lastSelected:', this.lastSelected.id, 'holding:', holding.id, 'moment', moment.id)
-
           if (this.lastSelected.id === holding.id) {
-            lastSelectedIsHeld = true; // 👈 SINGLE SOURCE OF TRUTH
-            // console.log(holding.coord);
+            lastSelectedIsHeld = true;
             this.lastSelected.coord[0] = holding.coord[0];
             this.lastSelected.coord[1] = holding.coord[1];
           } else {
@@ -366,8 +290,8 @@ clearHolding(holdIndex) {
       return;
     }
 
+    // if not dragging
     if (this.draggingMomentIndex >= 0) {
-//  console.log('NOT DRAGGING')
       const coord = this.moments[this.draggingMomentIndex].coord;
       coord[0] = ux;
       coord[1] = uy;
@@ -419,14 +343,9 @@ clearHolding(holdIndex) {
     }
 
     if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap)) {
-
-     
       const coord = this.moments[closestIndex].coord;
       coord[0] = ux;
       coord[1] = uy;
-
-
-
 
       this.draggingMomentIndex = closestIndex;
       this.selectedMomentIndex = closestIndex;
@@ -439,16 +358,12 @@ clearHolding(holdIndex) {
       this.selected.coord[1] = coord[1];
 
       if (lastSelectedIsHeld) {
-
-
-      // this.lastSelected.coord[0] = this.lastSelectedCoord[0];
-      // this.lastSelected.coord[1] = this.lastSelectedCoord[1];
+        // this.lastSelected.coord[0] = this.lastSelectedCoord[0];
+        // this.lastSelected.coord[1] = this.lastSelectedCoord[1];
       } else {
-      this.lastSelected.coord[0] = this.lastSelectedCoord[0];
-      this.lastSelected.coord[1] = this.lastSelectedCoord[1];
-
+        this.lastSelected.coord[0] = this.lastSelectedCoord[0];
+        this.lastSelected.coord[1] = this.lastSelectedCoord[1];
       }
-
     }
   }
 }
