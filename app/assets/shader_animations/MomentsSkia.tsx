@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from "react";
 import Soul from "./soulClass";
+import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
@@ -296,6 +297,7 @@ const MomentsSkia = ({
 
   // Keep simulation objects as refs (they don't go into uniforms)
   const soul = useRef(new Soul(restPoint, 0.02));
+  const sleepWalk0 = useRef(new SleepWalk0([.5,.3], 0.3));
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
   const moments = useRef(
@@ -370,11 +372,12 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
   const hintRef = useRef([0, 0]);
 
   const leadUniformSV = useSharedValue(new Float32Array([0, 0]));
-  const leadScreenSpaceUniformSV = useSharedValue(new Float32Array([0, 0]));
+  // const leadScreenSpaceUniformSV = useSharedValue(new Float32Array([0, 0]));
   const soulUniformSV = useSharedValue(new Float32Array([0, 0]));
+  const walk0UniformSV = useSharedValue(new Float32Array([0, 0]));
   const selectedUniformSV = useSharedValue(new Float32Array([0, 0]));
   const lastSelectedUniformSV = useSharedValue(new Float32Array([0, 0]));
-  const holding0UniformSV = useSharedValue(new Float32Array([0, 0]));
+  // const holding0UniformSV = useSharedValue(new Float32Array([0, 0]));
 
   const hintUniformSV = useSharedValue(new Float32Array([0, 0]));
   const momentsUniformSV = useSharedValue(Array(MAX_MOMENTS * 2).fill(0));
@@ -427,11 +430,12 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
     gecko.current = new Gecko(startingCoord, 0.06);
 
     leadUniformSV.value = new Float32Array([0, 0]);
-    leadScreenSpaceUniformSV.value = new Float32Array([0, 0]);
+    // leadScreenSpaceUniformSV.value = new Float32Array([0, 0]);
     soulUniformSV.value = new Float32Array([0, 0]);
+    walk0UniformSV.value = new Float32Array([0, 0]);
     selectedUniformSV.value = new Float32Array([0, 0]);
     lastSelectedUniformSV.value = new Float32Array([0, 0]);
-    holding0UniformSV.value = new Float32Array([0, 0]);
+    // holding0UniformSV.value = new Float32Array([0, 0]);
     hintUniformSV.value = new Float32Array([0, 0]);
     momentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
     heldMomentUniformSV.value = Array(MAX_HELD * 2).fill(0);
@@ -445,9 +449,13 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
 
   const frameCountRef = useRef(0); // At component level with your other refs
 
+
+ 
   useEffect(() => {
     let cancelled = false;
     let frame;
+
+
 
     let sleepWalkAfter = 100;
 
@@ -455,6 +463,7 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
 
     const animate = () => {
       if (cancelled) return;
+          // const frameStart = performance.now();
 
       if (aspect == null || isNaN(aspect)) {
         console.log("aspect is null or NaN! QUITTING the animation", aspect);
@@ -467,10 +476,11 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
         frameCountRef.current = 0;
       }
 
+      // break out of sleep mode
       if (isDragging.value && gecko.current.sleepWalkMode) {
           frameCountRef.current = 0;
           gecko.current.updateSleepWalkMode(false);
-          setGeckoColor(color2Converted);
+        //  setGeckoColor(color2Converted);
 
       }
 
@@ -478,7 +488,7 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
         frameCountRef.current += 1; // Just increment each frame
       } else if ((frameCountRef.current === sleepWalkAfter) && !gecko.current.sleepWalkMode) {
         gecko.current.updateSleepWalkMode(true);
-         setGeckoColor(color1Converted);
+        // setGeckoColor(color1Converted);
 
       }
 
@@ -503,10 +513,15 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       }
 
       // LEAD POINT
-      if (gecko.current.oneTimeEnterComplete) {
+      if (gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
         leadPoint.current.update(userPoint_geckoSpaceRef.current);
-      } else {
+      } else if (!gecko.current.sleepWalkMode) {
         leadPoint.current.update(soul.current.soul);
+      } 
+      
+      else if (gecko.current.sleepWalkMode) {
+        sleepWalk0.current.update();
+       leadPoint.current.update(sleepWalk0.current.walk);
       }
 
       // BODY AND LEGS
@@ -540,6 +555,11 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, newSoul, 0);
       soulUniformSV.value = newSoul;
 
+
+      const newWalk = new Float32Array(2);
+      toShaderSpace_inplace(sleepWalk0.current.walk, aspect, gecko_scale, newWalk, 0);
+      walk0UniformSV.value = newWalk;
+
       const newHint = new Float32Array(2);
       toShaderSpace_inplace(hintRef.current, aspect, gecko_scale, newHint, 0);
       hintUniformSV.value = newHint;
@@ -554,15 +574,15 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       );
       leadUniformSV.value = newLead;
 
-      const newLeadScreenSpace = new Float32Array(2);
-      toShaderSpace_inplace(
-        leadPoint.current.lead,
-        aspect,
-        scale,
-        newLeadScreenSpace,
-        0,
-      );
-      leadScreenSpaceUniformSV.value = newLeadScreenSpace;
+      // const newLeadScreenSpace = new Float32Array(2);
+      // toShaderSpace_inplace(
+      //   leadPoint.current.lead,
+      //   aspect,
+      //   scale,
+      //   newLeadScreenSpace,
+      //   0,
+      // );
+      // leadScreenSpaceUniformSV.value = newLeadScreenSpace;
 
       const newSelected = new Float32Array(2);
       //transformSelected(moments.current.selected.coord,  gecko_scale,   newSelected, 0);
@@ -572,13 +592,13 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       // toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, newSelected, 0);
       selectedUniformSV.value = newSelected;
 
-      const newHolding0 = new Float32Array(2);
-      toGeckoSpace_inPlace(
-        moments.current.holding0.coord,
-        gecko_scale,
-        newHolding0,
-      );
-      holding0UniformSV.value = newHolding0;
+      // const newHolding0 = new Float32Array(2);
+      // toGeckoSpace_inPlace(
+      //   moments.current.holding0.coord,
+      //   gecko_scale,
+      //   newHolding0,
+      // );
+      // holding0UniformSV.value = newHolding0;
 
       const heldCoords = new Float32Array(MAX_HELD * 2);
 
@@ -646,6 +666,16 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
         }
       }
 
+          
+    // const frameEnd = performance.now();
+    // const frameTime = frameEnd - frameStart;  // ← This is the actual frame time
+    
+    // if (frameTime > 16) {
+    //     console.log(`Slow frame: ${frameTime.toFixed(2)}ms`);
+    
+    // }
+    
+
       frame = requestAnimationFrame(animate);
     };
 
@@ -672,9 +702,10 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
         u_lead: [-100, -100],
         u_lead_screen_space: [-100, -100],
         u_soul: [-100, -100],
+        u_walk0: [-100, -100],
         u_selected: [-100, -100],
         u_lastSelected: [-100, -100],
-        u_holding0: [-100, -100],
+        // u_holding0: [-100, -100],
         u_hint: [-100, -100],
         u_momentsLength: 0,
         u_moments: Array(MAX_MOMENTS * 2).fill(0),
@@ -691,11 +722,12 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       u_resolution: [size.width, size.height],
       u_aspect: aspect || 1,
       u_lead: Array.from(leadUniformSV.value),
-      u_lead_screen_space: Array.from(leadScreenSpaceUniformSV.value),
+      // u_lead_screen_space: Array.from(leadScreenSpaceUniformSV.value),
       u_soul: Array.from(soulUniformSV.value),
+      u_walk0: Array.from(walk0UniformSV.value),
       u_selected: Array.from(selectedUniformSV.value),
       u_lastSelected: Array.from(lastSelectedUniformSV.value),
-      u_holding0: Array.from(holding0UniformSV.value),
+      // u_holding0: Array.from(holding0UniformSV.value),
       u_hint: Array.from(hintUniformSV.value),
       u_momentsLength: momentsLengthSV.value,
       u_moments: [...momentsUniformSV.value],

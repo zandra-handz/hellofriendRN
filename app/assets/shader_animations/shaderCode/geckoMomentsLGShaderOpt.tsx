@@ -8,7 +8,7 @@ uniform float u_gecko_size; // overall size of gecko
 uniform float u_time;
 uniform vec2 u_soul;
 uniform vec2 u_lead;
-uniform vec2 u_lead_screen_space;
+// uniform vec2 u_lead_screen_space;
 
 // uniform vec2 u_head;
 // uniform vec2 u_snout;

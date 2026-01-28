@@ -3,6 +3,7 @@ export const MOMENTS_BG_SKSL_OPT = `
 uniform float2 u_resolution;
 uniform float  u_aspect;
 uniform float  u_scale;
+uniform float2 u_walk0;
 uniform float u_gecko_scale;
 uniform float u_gecko_size;
 uniform float2 u_moments[40];
@@ -12,7 +13,7 @@ uniform int    u_momentsLength;
 
 uniform float2 u_selected;
 uniform float2 u_lastSelected;
-uniform float2 u_holding0;
+// uniform float2 u_holding0;
 
 
 // ------------------------------------------------
@@ -356,6 +357,25 @@ for (int i = 0; i < 4; i++) {
 //     );
 // }
 
+// u_walk0 dot (separate from holdings and moments)
+vec2 walk0_uv = u_walk0;
+
+vec2 walk0_screen = walk0_uv / (s * u_gecko_size);
+walk0_screen.x /= u_aspect;
+walk0_screen += 0.5;
+float2 walk0_px = walk0_screen * u_resolution;
+
+if (length(u_walk0) > 0.0001) {
+    color = applyGlass(
+        fragCoord,
+        walk0_px,
+        20.0,
+        10.0,
+        1.8,
+        color
+    );
+}
+
 
         for (int i = 0; i < 40; i++) {
         if (i >= u_momentsLength) break;
@@ -370,6 +390,8 @@ for (int i = 0; i < 4; i++) {
    
         color = applyGlassDotSq(dist2, 7.0, color);
     }
+
+    
 
  
     // color = mix(color, selectedColor, selectedMask);

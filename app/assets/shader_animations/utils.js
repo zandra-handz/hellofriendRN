@@ -893,6 +893,12 @@ export function soul_infinity(center, progress, radius) {
  
 }
 
+export function soul_circle(center, progress, radius) {
+    return [center[0] + Math.cos(progress) * radius, 
+            center[1] + Math.sin(progress) * radius
+    ]
+}
+
 export function soul_oneshot_enter_right(center = [0.5, 0.5], progress = 0, radius = 0.05) {
   const startX = 1 + radius * 2;  // offscreen start
   const startY = center[1];
