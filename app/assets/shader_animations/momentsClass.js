@@ -224,20 +224,26 @@ export default class Moments {
     isDragging,
     isMoving,
     wasTap,
+    sleepWalk0,
     wasDoubleTap,
     altCoord,
     holdingCoords, // array of 4 coords
   ) {
-    const [ux, uy] = userPointer;
 
-    // if (wasDoubleTap) {
-    //   console.log('double tap!')
-    // }
+    // console.log(sleepWalk0.current.autoSelectCoord);
 
-    //     if (wasTap) {
-    //   console.log('single tap!')
-    // }
+    
+    let ux = userPointer[0];
+    let uy = userPointer[1];
 
+    if (sleepWalk0.current.autoSelectCoord[0] !== -100) {
+      // console.log('autoselect!')
+      ux = sleepWalk0.current.autoSelectCoord[0];
+      uy = sleepWalk0.current.autoSelectCoord[1]; 
+    } 
+ 
+
+ 
     const fallbackLastSelectedCoord = altCoord;
 
     let lastSelectedIsHeld = false;
@@ -279,7 +285,7 @@ export default class Moments {
       this.lastSelectedCoord[1] = fallbackLastSelectedCoord[1];
     }
 
-    if (!isDragging && !isMoving) {
+    if (!isDragging && !isMoving && sleepWalk0.current.autoSelectCoord[0] === -100) {
       this.draggingMomentIndex = -1;
       this.selectedMomentIndex = -1;
       this.selected.coord[0] = -100;
@@ -290,7 +296,7 @@ export default class Moments {
       return;
     }
 
-    // if not dragging
+    // if dragging
     if (this.draggingMomentIndex >= 0) {
       const coord = this.moments[this.draggingMomentIndex].coord;
       coord[0] = ux;
@@ -316,6 +322,7 @@ export default class Moments {
       if (distSquared < closestDistSquared) {
         closestDistSquared = distSquared;
         closestIndex = i;
+       
       }
     }
 
@@ -342,7 +349,8 @@ export default class Moments {
       return;
     }
 
-    if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap)) {
+    // if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap || sleepWalk0.current.autoSelectCoord[0] !== -100)) {
+       if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap)) {
       const coord = this.moments[closestIndex].coord;
       coord[0] = ux;
       coord[1] = uy;
@@ -364,6 +372,15 @@ export default class Moments {
         this.lastSelected.coord[0] = this.lastSelectedCoord[0];
         this.lastSelected.coord[1] = this.lastSelectedCoord[1];
       }
+
+      // if (sleepWalk0.current.autoSelectCoord[0] !== -100) {
+
+      //   console.log('reseetttinggg autoselect')
+      //   sleepWalk0.current.autoSelectCoord[0] = -100;
+      //   sleepWalk0.current.autoSelectCoord[1] = -100;
+      // }
+
+
     }
   }
 }

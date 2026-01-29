@@ -150,54 +150,23 @@ const MomentsSkia = ({
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const isDragging = useSharedValue(false);
 
-  const onLongPress = () => {};
+ 
 
-  const onSinglePress = () => {
-    // console.log(moments.current.lastSelected);
+  const onSinglePress = () => { 
     console.log("single presss");
     handleGetMoment(moments.current.lastSelected?.id);
-
-    // handleGetMoment(moments.current.lastSelected?.id);
+ 
   };
 
-  const onDoublePress = () => {
-    // console.log(moments.current.lastSelected);
+  const onDoublePress = () => { 
     console.log("double press");
-
-    // handleGetMoment(moments.current.lastSelected?.id);
+ 
   };
-
-  // const panGesture = Gesture.Pan()
-  //   .onTouchesDown((e) => {
-  //     isDragging.value = true;
-  //     const touch = e.changedTouches[0];
-  //     userPointSV.value = [touch.x / size.width, touch.y / size.height];
-
-  //   })
-  //   .onUpdate((e) => {
-  //     userPointSV.value = [e.x / size.width, e.y / size.height];
-  //     // console.log(userPointSV.value)
-  //   })
-  //   .onEnd(() => {
-  //     isDragging.value = false;
-  //   })
-  //   .onFinalize(() => {
-  //     isDragging.value = false;
-  //   });
-  const tapState = useRef({
-    startTime: 0,
-    startPos: [0, 0] as [number, number],
-    wasDragged: false,
-    wasTap: false,
-    wasDoubleTap: false, // 👈 Add this
-  });
-
-  // Add this ref
-  const doubleTapPending = useRef(false);
+ 
+  
   const wasTapSV = useSharedValue(false);
   const wasDoubleTapSV = useSharedValue(false);
-  const tapStartTimeSV = useSharedValue(0);
-  const wasDraggedSV = useSharedValue(false);
+ 
 
   // Pan gesture for dragging
   const panGesture = Gesture.Pan()
@@ -247,48 +216,7 @@ const MomentsSkia = ({
 
   // Combine with pan
   const composedGesture = Gesture.Simultaneous(panGesture, taps);
-
-  //const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture);
-
-  // const handleTap = () => {
-  //   const lastSelected = moments.current.lastSelected;
-  //   if (lastSelected && lastSelected.id !== -1) {
-  //     console.log('Tapped moment:', lastSelected.id);
-  //     onSinglePress();
-  //   }
-  // };
-
-  // const singleTapGesture = Gesture.Tap()
-  //   .numberOfTaps(1)
-  //   .onEnd(() => runOnJS(onSinglePress)());
-
-  // const singleTapGesture = Gesture.Tap()
-  //   .numberOfTaps(1)
-  //   .onEnd(() => {
-  //     const now = Date.now();
-  //     const timeSinceLastTap = now - lastTapTime.current;
-  //     lastTapTime.current = now;
-
-  //     // Clear any previous pending single tap
-  //     if (singleTapTimeout.current) {
-  //       clearTimeout(singleTapTimeout.current);
-  //       singleTapTimeout.current = null;
-  //     }
-
-  //     singleTapTimeout.current = setTimeout(() => {
-  //       runOnJS(onSinglePress)();
-  //       singleTapTimeout.current = null;
-  //     }, DOUBLE_TAP_DELAY);
-  //   });
-
-  // const doubleTapGesture = Gesture.Tap()
-  //   .numberOfTaps(2)
-  //   .onEnd(() => runOnJS(onDoublePress)());
-
-  // const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture,singleTapGesture);
-
-  // const tapGesture = Gesture.Race(doubleTapGesture, singleTapGesture);
-  //const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
+ 
 
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -296,17 +224,30 @@ const MomentsSkia = ({
   const bckgColor2Converted = hexToVec3(bckgColor2);
 
   // Keep simulation objects as refs (they don't go into uniforms)
-  const soul = useRef(new Soul(restPoint, 0.02));
-  const sleepWalk0 = useRef(new SleepWalk0([.5,.3], 0.3));
+  const soul = useRef(new Soul(restPoint, 0.02)); 
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
   const moments = useRef(
     new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05),
   );
 
+
+  // In your component, create a ref for the callback
+const onMomentReachedRef = useRef(null);
+
+// Set the callback
+useEffect(() => {
+  onMomentReachedRef.current = (momentId) => {
+    handleGetMoment(momentId);
+  };
+}, [handleGetMoment]);
+
+  const sleepWalk0 = useRef(new SleepWalk0([.5,.3], 0.3,   gecko_size));
+
   useEffect(() => {
     if (aspect) {
       moments.current.setAspect(aspect);
+      sleepWalk0.current.setAspect(aspect);
     }
   }, [aspect]);
 
@@ -520,7 +461,7 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       } 
       
       else if (gecko.current.sleepWalkMode) {
-        sleepWalk0.current.update();
+        sleepWalk0.current.update(moments);
        leadPoint.current.update(sleepWalk0.current.walk);
       }
 
@@ -541,6 +482,7 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
         isDragging.value,
         leadPoint.current.isMoving,
         wasTapSV.value,
+        sleepWalk0,
         wasDoubleTapSV.value,
         leadPoint.current.lead,
         [
