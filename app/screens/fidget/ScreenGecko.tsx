@@ -164,8 +164,9 @@ const ScreenGecko = (props: Props) => {
   // };
 
   const handleGetMoment = (id) => {
+    // console.log('handleGetMoment')
     const moment = capsuleList.find((c) => c.id === id);
-     console.log(`setting moment`, moment)
+    //  console.log(`setting moment`, moment)
     if (moment?.id) {
       setMoment({
         category: moment.user_category_name,

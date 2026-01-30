@@ -102,13 +102,27 @@ const MomentsSkia = ({
   const updateTrigger = useSharedValue(0);
   const lastRenderRef = useRef(0);
 
+  const isPausedRef = useRef(false);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     return () => {
+  //       isDragging.value = false;
+  //     };
+  //   }, []),
+  // );
+
+
   useFocusEffect(
-    useCallback(() => {
-      return () => {
-        isDragging.value = false;
-      };
-    }, []),
-  );
+  useCallback(() => {
+    isPausedRef.current = false; // Resume when focused
+    
+    return () => {
+      isPausedRef.current = true; // Pause when unfocused
+      isDragging.value = false;
+    };
+  }, []),
+);
 
   const insets = useSafeAreaInsets();
   useFocusEffect(
@@ -153,8 +167,8 @@ const MomentsSkia = ({
  
 
   const onSinglePress = () => { 
-    console.log("single presss");
-    handleGetMoment(moments.current.lastSelected?.id);
+    // console.log("single presss");
+handleGetMoment(moments.current.lastSelected?.id);
  
   };
 
@@ -204,7 +218,7 @@ const MomentsSkia = ({
     .onEnd((_event, success) => {
       if (success) {
         wasTapSV.value = true;
-        runOnJS(onSinglePress)();
+        // runOnJS(onSinglePress)();
         setTimeout(() => {
           wasTapSV.value = false;
         }, 100);
@@ -391,7 +405,9 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
   const frameCountRef = useRef(0); // At component level with your other refs
 
 
- 
+ const lastTriggeredIdRef = useRef(-1);
+
+
   useEffect(() => {
     let cancelled = false;
     let frame;
@@ -403,7 +419,10 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
     frameCountRef.current = 0; // Reset when effect runs
 
     const animate = () => {
-      if (cancelled) return;
+      if (cancelled || isPausedRef.current) {
+    frame = requestAnimationFrame(animate);
+    return;
+  }
           // const frameStart = performance.now();
 
       if (aspect == null || isNaN(aspect)) {
@@ -412,6 +431,15 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
 
         return;
       }
+
+      const currentId = moments.current.lastSelected?.id ?? -1;
+      // console.log(currentId);
+
+if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
+  // console.log('handle moment triggered by animation loop')
+  lastTriggeredIdRef.current = currentId;
+  onSinglePress();
+}
 
       if (leadPoint.current.isMoving && !gecko.current.sleepWalkMode) {
         frameCountRef.current = 0;
@@ -476,6 +504,9 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       hintRef.current = spine.hintJoint || [0, 0];
 
       // console.log(tapState)
+
+
+      // console.log(sleepWalk0);
 
       moments.current.update(
         userPointSV.value,

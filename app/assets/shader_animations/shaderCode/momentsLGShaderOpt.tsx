@@ -358,23 +358,23 @@ for (int i = 0; i < 4; i++) {
 // }
 
 // u_walk0 dot (separate from holdings and moments)
-vec2 walk0_uv = u_walk0;
+// vec2 walk0_uv = u_walk0;
 
-vec2 walk0_screen = walk0_uv / (s * u_gecko_size);
-walk0_screen.x /= u_aspect;
-walk0_screen += 0.5;
-float2 walk0_px = walk0_screen * u_resolution;
+// vec2 walk0_screen = walk0_uv / (s * u_gecko_size);
+// walk0_screen.x /= u_aspect;
+// walk0_screen += 0.5;
+// float2 walk0_px = walk0_screen * u_resolution;
 
-if (length(u_walk0) > 0.0001) {
-    color = applyGlass(
-        fragCoord,
-        walk0_px,
-        20.0,
-        10.0,
-        1.8,
-        color
-    );
-}
+// if (length(u_walk0) > 0.0001) {
+//     color = applyGlass(
+//         fragCoord,
+//         walk0_px,
+//         20.0,
+//         10.0,
+//         1.8,
+//         color
+//     );
+// }
 
 
         for (int i = 0; i < 40; i++) {
