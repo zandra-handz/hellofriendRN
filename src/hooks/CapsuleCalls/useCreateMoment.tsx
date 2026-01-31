@@ -23,8 +23,10 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
        user: userId,
  
       friend: momentData.friend,
-  capsule: momentData.moment,
+      capsule: momentData.moment,
       user_category: momentData.selectedUserCategory,
+      screen_x: .5,
+      screen_y: .5,
     };
 
     try {
@@ -53,6 +55,8 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
         preAdded: data.pre_added_to_hello,
         user_category: data.user_category || null,
         user_category_name: data.user_category_name || null,
+        screen_x: data.screen_x,
+        screen_y: data.screen_y
       };
  
 

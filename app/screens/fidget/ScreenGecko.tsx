@@ -163,6 +163,11 @@ const ScreenGecko = (props: Props) => {
   //   console.log('drop', id);
   // };
 
+  useEffect(() => {
+    console.log(`SCREENGECKO CAPSULES: `, capsuleList.length);
+
+  }, [capsuleList]);
+
   const handleGetMoment = (id) => {
     // console.log('handleGetMoment')
     const moment = capsuleList.find((c) => c.id === id);

@@ -16,7 +16,7 @@ import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
 
-import { BackHandler } from "react-native";
+import { BackHandler, AppState } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MomentDotsResetterMini from "./MomentDotsResetterMini";
 import {
@@ -92,7 +92,7 @@ const MomentsSkia = ({
 
     if (size && size.width > 0 && size.height > 0) {
       const newAspect = size.width / size.height;
-      console.log("Setting aspect to:", newAspect);
+      //console.log("Setting aspect to:", newAspect);
       setAspect(newAspect);
     } else {
       // console.log(`canvas size is NAN? `, size);
@@ -357,11 +357,11 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
 
   // reset isn't working
   useEffect(() => {
-    console.log(
-      "useeffect in SKIA triggered by momentsData or reset",
-      momentsData,
-      momentsData.length,
-    );
+    // console.log(
+    //   "useeffect in SKIA triggered by momentsData or reset",
+    //   momentsData,
+    //   momentsData.length,
+    // );
     if (moments && moments.current) {
       // moments.current.reset(momentsData, [0.5, 0.5], 0.05);
       moments.current.updateAllCoords(momentsData);
@@ -369,7 +369,7 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
   }, [momentsData, internalReset]);
 
   useEffect(() => {
-    console.log("RESET EFFECT RAN !!!");
+   // console.log("RESET EFFECT RAN !!!");
     if (!internalReset && !reset) {
       console.log("conditions not met for a reset");
       return;

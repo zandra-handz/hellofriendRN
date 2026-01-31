@@ -60,7 +60,7 @@ export default class Moments {
   }
 
   setAspect(aspect) {
-    console.log("SETTING ASPECT IN MOMENTS");
+    // console.log("SETTING ASPECT IN MOMENTS");
     this.aspect = aspect;
   }
 
@@ -226,6 +226,8 @@ export default class Moments {
     altCoord,
     holdingCoords,
   ) {
+
+  //  console.log(`momentsClass moments length: `, this.moments.length, this.momentsLength);
     let ux = userPointer[0];
     let uy = userPointer[1];
 
@@ -335,7 +337,7 @@ export default class Moments {
     let closestIndex = -1;
     let closestDistSquared = Infinity;
 
-    for (let i = 0; i < this.momentsLength; i++) {
+    for (let i = 0; i < this.moments.length; i++) {
       const dx = ux - this.moments[i].coord[0];
       const dy = uy - this.moments[i].coord[1];
       const distSquared = dx * dx + dy * dy;
