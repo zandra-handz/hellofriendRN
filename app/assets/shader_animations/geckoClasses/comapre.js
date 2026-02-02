@@ -1,6 +1,9 @@
+
+
 // Gait animation via distance leading point for creature travels instead of time
 export default class GaitState {
-  constructor(speedScalar, reverseSpeedScalar) {
+  constructor(speedScalar) {
+ 
     this.TAU = Math.PI * 2;
     this.gaitDistanceCorrection = 0;
     this.accumulatedDistance = 0;
@@ -9,12 +12,7 @@ export default class GaitState {
 
     this.maxAdvanceRate = 0.03; // distance per frame (tunable)
     this.catchUpGain = 0.15;
-    this.speedScalar = speedScalar;
-    this.reverseSpeedScalar = reverseSpeedScalar;
-
-    this.scalar = this.speedScalar; // initialize to forward scalar
-
-    this.threshold = 0.94;
+    (this.scalar = speedScalar), (this.threshold = 0.94);
     this.cycle = 1 / this.scalar;
     this.jumpCount = 0;
     this.frontCenterAngle = 0;
@@ -32,15 +30,17 @@ export default class GaitState {
 
     this.swayBodyFront = false;
 
+    this.debugPhase = 0;
+    this.debugFollowerPhase = 0;
+
     // New: backwards movement tracking
     this.isReversing = false;
   }
 
   get phaseAngle() {
-    // New
+    // Reverse the phase direction when going backwards
     const direction = this.isReversing ? -1 : 1;
     return this.finalDistance * this.TAU * this.scalar * direction;
-    // return this.finalDistance * this.TAU * this.scalar;
   }
 
   get phase() {
@@ -66,20 +66,22 @@ export default class GaitState {
   }
 
   update(externalDistanceDriver, goingBackwards) {
-    this.isReversing = goingBackwards;
-  
 
+    this.isReversing = goingBackwards;
     if (this.isReversing) {
-      this.updateSpeedScalar(this.reverseSpeedScalar);
+      this.updateSpeedScalar(20);
       // console.log('gait is in reversal!!');
     } else {
-      this.updateSpeedScalar(this.speedScalar);
+      this.updateSpeedScalar(9)
     }
-
     this.externalDistanceDriver = externalDistanceDriver;
 
     this.finalDistance = externalDistanceDriver + this.gaitDistanceCorrection;
 
+    this.debugPhase = this.phase;
+    this.debugFollowerPhase = this.followerPhase;
+    
+    // Reverse step triggers when going backwards
     if (this.isReversing) {
       if (this.phase < -0.89) {
         this.takeStep0 = true;
@@ -123,7 +125,10 @@ export default class GaitState {
 
     this.finalDistance =
       this.externalDistanceDriver + this.gaitDistanceCorrection;
-
+ 
+    this.debugPhase = this.phase;
+    this.debugFollowerPhase = this.followerPhase;
+    
     // Reverse step triggers when going backwards
     if (this.isReversing) {
       if (this.phase < -0.89) {
@@ -153,7 +158,6 @@ export default class GaitState {
         this.takeSyncedSteps1 = true;
       }
     }
-
 
     if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
       // console.log("setting sway to tru!!");

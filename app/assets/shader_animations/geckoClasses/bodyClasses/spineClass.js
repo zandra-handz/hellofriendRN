@@ -1,4 +1,4 @@
-import { solveFirst_inPlace, solveProcJoint_inPlace } from "./utilsPChain.js";
+import { solveFirst_withBackwardsDetect, solveProcJoint_inPlace } from "./utilsPChain.js";
 import {
   _getCenterPoint,
   _makeDistancePoint,
@@ -9,8 +9,7 @@ import {
   _makeOffscreenPoint_inPlace,
   _getDistanceScalar,
 } from "../../utils.js";
-import {
-  getStartAndEndPoints,
+import { 
   getStartAndEndPoints_inPlace,
   intersectLines,
   getSpineSagTrans_inPlace,
@@ -19,6 +18,7 @@ import {
 export default class Spine {
   constructor(
     state,
+    valuesForReversing,
     motion,
     startingCoord,
     totalNumJoints,
@@ -35,7 +35,7 @@ export default class Spine {
     u_center_prefix = "spineCenter",
     u_intersection_prefix = "spineIntersection",
     updatesGlobalMotion = false,
-
+  
     motionRange = [2, 10], // original default for spine
     motionIndicesLength = 9, // original default for spine
 
@@ -60,6 +60,8 @@ export default class Spine {
     this.unchainedDist = unchainedDist;
     this.snoutDist = snoutDist;
     this.hintDist = hintDist;
+
+    this.valuesForReversing = valuesForReversing;
 
     this.joints = [];
     this.totalNumJoints = totalNumJoints;
@@ -250,13 +252,22 @@ export default class Spine {
     }
   }
 
+
+
+ 
+
   update(leadPoint_lead, leadPoint_isMoving) {
+ 
     this.isMoving = leadPoint_isMoving;
 
     // this.updateLeadPoint();
     this.updateMotionFirstAngle();
 
-    solveFirst_inPlace(
+    solveFirst_withBackwardsDetect(
+           this.motion.frontStepsTCenter,
+      this.motion.frontStepsTAngle,
+      this.motion.frontSteps_tDistanceApart,
+      this.valuesForReversing,
       leadPoint_lead,
       this.first,
       this.jointRadii[0],
@@ -276,8 +287,11 @@ export default class Spine {
         this.motion2End,
         // this.motionClamps,
         this.jointClamps,
-        this.motionScalars,
-        true,
+        this.valuesForReversing.goingBackwards,
+        this.valuesForReversing.stiffnessBlend
+        
+        //this.motionScalars,
+        //true,
       );
     }
 

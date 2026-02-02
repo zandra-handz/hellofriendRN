@@ -6,6 +6,7 @@ import FourLegs from "./geckoClasses/fourLegsClass.js";
 export default class Gecko {
   constructor(startingCoord=[0.,0.], hintDist=.04) {
     this.gaitSpeedScalar = 9;
+    this.reverseGaitSpeedScalar = 20;
     this.stepThreshhold = 0.1;
     this.stepPivotSize = 0.24;
     this.motionDilutionScalar = 0.5;
@@ -14,13 +15,26 @@ export default class Gecko {
     this.hintDist = hintDist;
 
  
+this.valuesForReversing = {
+  direction: 0,           // clamped relative angle to stepsAngle
+  turnRadius: 0,          // distance metric for pivot/backwards
+  goingBackwards: false,  // are we in backwards mode
+  totalRotation: 0,       // cumulative rotation while going backwards
+  rotationChange: 0,      // change in first.angle per frame
+  prevFirstAngle: undefined, // store previous first.angle to compute rotationChange
+  distanceHistory: [],    // history of distances to detect shrinking/growing
+  turnDirection: 0,       // normalized lateral turn direction (-1 to 1)
+  stiffnessBlend: 0       // interpolates stiffness while going backwards
+};
+
 
     this.oneTimeEnterComplete = false; // set only once
     this.sleepWalkMode = false;
 
-    this.gait = new GaitState(this.gaitSpeedScalar);
+    this.gait = new GaitState(this.gaitSpeedScalar, this.reverseGaitSpeedScalar);
     this.motion = new MotionGlobal(
       this.gait,
+      this.valuesForReversing,
       this.motionDilutionScalar,
       this.mir_MotionDilutionScalar,
       "debugMotionGlobal"
@@ -28,15 +42,18 @@ export default class Gecko {
 
     this.body = new Body(
       this.gait,
+        this.valuesForReversing,
       this.motion,
       this.startingCoord,
-      this.hintDist
+      this.hintDist,
+    
     );
 
     this.body.init();
 
     this.legs = new FourLegs(
       this.gait,
+      this.valuesForReversing,
       this.body.spine,
       this.motion,
       this.stepThreshhold,
@@ -66,7 +83,13 @@ export default class Gecko {
     // if (this.sleepWalkMode) {
     //   console.log('gecko is in sleep mode')
     // }
-    this.gait.update(leadPoint_distanceTraveled); 
+
+    //     if (this.valuesForReversing.goingBackwards) {
+    //   console.log('GOING BACKWARDS!');
+
+    // } 
+  
+    this.gait.update(leadPoint_distanceTraveled, this.valuesForReversing.goingBackwards); 
     this.legs.update();
     this.body.update(leadPoint_lead, leadPoint_isMoving);
   }

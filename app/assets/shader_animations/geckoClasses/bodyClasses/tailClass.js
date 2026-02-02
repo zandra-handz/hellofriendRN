@@ -5,6 +5,7 @@ import {  solveProcJoint_inPlace } from "./utilsPChain.js";
 export default class Tail {
   constructor(
     state,
+    valuesForReversing,
     motion,
     // subMotion,
     cursor,
@@ -24,6 +25,7 @@ export default class Tail {
     u_motion_debug_prefix = "debugTailMotion",
   ) {
     this.state = state;
+    this.valuesForReversing = valuesForReversing;
     this.motion = motion;
     this.cursor = cursor;
     this.TAU = Math.PI * 2;
@@ -176,8 +178,10 @@ export default class Tail {
         this.motion3Start, // starting joint of third calculations
         this.motion2End,
         this.tailClamps,
-        this.motionScalars,
-        false,
+        this.valuesForReversing.goingBackwards,
+        this.valuesForReversing.stiffnessBlend
+        // this.motionScalars,
+        // false,
       );
     }
 

@@ -13,6 +13,7 @@ export default class MotionGlobal {
   constructor(
    
     state,
+    valuesForReversing,
     dilutionScalar = 0.4,
     mir_dilutionScalar = 0.4,
     u_debug_prefix = "debugMotionGlobal",
@@ -22,6 +23,7 @@ export default class MotionGlobal {
     this.TAU = Math.PI * 2;
  
     this.state = state; 
+    this.valuesForReversing = valuesForReversing;
 
     this.frontSteps_aheadJointAngle = 0;
     this.frontSteps_stepCenterAngle = 0;
@@ -73,11 +75,15 @@ export default class MotionGlobal {
     
 
     this.u_debug_prefix = u_debug_prefix;
-    this.debugs = [];
+  
   }
 
   // updated in frontLegs solve pair steps
   update_frontStepsData(data) {
+
+        let dScalar = this.valuesForReversing.goingBackwards ? 0 : this.dilutionScalar;
+
+// OR JUST USE  this.dilutionScalar  to remove
     this.frontStepsTCenter = data.frontStepsTCenter;
     this.frontSteps_tDistanceApart = data.frontSteps_tDistanceApart;
     this.frontStepsTAngle = data.frontStepsTAngle;
@@ -90,14 +96,11 @@ export default class MotionGlobal {
     this.frontStepsDilutedAngle = getDilutedAngle(
       this.frontSteps_spineJointAngle,
       this.frontStepsSAngle,
-      this.dilutionScalar
+      dScalar, // < --  HERE this.dilutionScalar  
     );
     this.realignmentAngle1 = this.frontStepsDilutedAngle;
  
-    this.debugs[0] = data.frontStepsSLine[0];
-    this.debugs[1] = data.frontStepsSLine[1];
-    this.debugs[2] = data.frontStepsTLine[0];
-    this.debugs[3] = data.frontStepsTLine[1];
+ 
   }
 
   // updated in body because goes off of radii set there
@@ -114,6 +117,9 @@ export default class MotionGlobal {
   }
 
   update_mirroredFrontStepsData(data) {
+
+         let dScalar = this.valuesForReversing.goingBackwards ? 0 : this.dilutionScalar;
+
     this.frontSteps_sDistFromIntrs = data.sDistFromSteps;
 
     this.mir_frontStepsSCenter = data.mSCenter;
@@ -129,24 +135,12 @@ export default class MotionGlobal {
     this.mir_frontStepsDilutedAngle = getDilutedAngle(
       this.frontSteps_spineJointAngle,
       this.mir_frontStepsSAngle,
-      this.dilutionScalar
+       dScalar, // < --  HERE this.dilutionScalar  
     );
 
-    this.realignmentAngle2 = this.mir_frontStepsSAngle;
-    //  this.realignmentAngle2 =  this.mir_frontStepsDilutedAngle;
-
-    this.debugs[4] = this.mir_frontStepsSLine[0];
-    this.debugs[5] = this.mir_frontStepsSLine[1];
-
-    this.debugs[6] = this.mir_frontStepsTLine[0];
-    this.debugs[7] = this.mir_frontStepsTLine[1];
-
-    this.debugs[8] = this.mir_frontStepsSCenter;
+    this.realignmentAngle2 = this.mir_frontStepsSAngle; 
+ 
   }
  
-
-  // update() {
-  //   // this.updateUniforms();
-  //   // this.updateDebugsUniforms();
-  // }
+ 
 }

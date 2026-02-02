@@ -12,8 +12,7 @@ import {
 import {
   updateShoulderRotator,
   getBackFrontStepDistance,
-  solveBackElbowIK,
-  getCalcStep,
+  solveBackElbowIK, 
   getCalcStep_inPlace,
   getPivotedStep,
   solveFingers,
@@ -26,6 +25,7 @@ import {
 export default class FollowerLegs {
   constructor(
     state,
+    valuesForReversing,
     spine,
     motion,
     frontLegs_stepTargets,
@@ -34,18 +34,9 @@ export default class FollowerLegs {
     stepCenterRadius,
     stepAheadJoint0,
     stepAheadJoint1,
+    stepBehindJoint,
     stepPivotSize,
-    fingerLen,
-    u_center_joint,
-    u_rotator_joint_prefix,
-    u_offset = 0,
-    u_step_target_prefix,
-    u_elbow_prefix,
-    u_muscle_prefix,
-    u_feet_prefix,
-    u_finger_prefix,
-    u_debug_prefix,
-    u_debug_extra_prefix,
+    fingerLen,  
     rotationRadius = 0.007, // original as default
     rotationRange = 2.2, // original as default
     stepThreshhold = 0.06, // original as default
@@ -58,6 +49,8 @@ export default class FollowerLegs {
     this.TAU = Math.PI * 2;
 
     this.state = state;
+    this.valuesForReversing = valuesForReversing;
+    
     this.spine = spine;
     this.motion = motion;
     this.frontLegs_stepTargets = frontLegs_stepTargets;
@@ -77,12 +70,15 @@ export default class FollowerLegs {
     this.stepAheadJoint0 = stepAheadJoint0;
     this.stepAheadJoint1 = stepAheadJoint1;
 
+    this.stepBehindJoint = stepBehindJoint;
+
     this.distFromFrontStep0 = 0;
     this.distFromFrontStep1 = 0;
 
     this.forwardAngle0 = 0;
     this.forwardAngle1 = 0;
     this.centerToAheadAngle = 0;
+       this.centerToBehindAngle = 0;
 
     this.elbows = [
       [0.5, 0.5],
@@ -135,34 +131,25 @@ export default class FollowerLegs {
     this.upperArmLength = upperArmLength;
     this.forearmLength = forearmLength;
 
-    this.u_center_joint = u_center_joint;
-    this.u_rotator_joint_prefix = u_rotator_joint_prefix;
-    (this.u_offset = u_offset),
-      (this.u_step_target_prefix = u_step_target_prefix);
-    this.u_elbow_prefix = u_elbow_prefix;
-    this.u_muscle_prefix = u_muscle_prefix;
-    this.u_feet_prefix = u_feet_prefix;
-    this.u_finger_prefix = u_finger_prefix; // will be ten, they go from 01 - 15
-    this.u_debug_prefix = u_debug_prefix;
-    this.u_debug_extra_prefix = u_debug_extra_prefix;
-
-    this.debugDesired = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
-
-    this.debugDesiredExtra = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
+ 
+ 
   }
 
-  updateForwardAngle() {
-    const xForward = this.stepAheadJoint[0] - this.stepCenterJoint[0];
-    const yForward = this.stepAheadJoint[1] - this.stepCenterJoint[1];
+  // updateForwardAngle() {
+  //   const xForward = this.stepAheadJoint[0] - this.stepCenterJoint[0];
+  //   const yForward = this.stepAheadJoint[1] - this.stepCenterJoint[1];
 
-    this.centerToAheadAngle = Math.atan2(yForward, xForward);
+  //   this.centerToAheadAngle = Math.atan2(yForward, xForward);
+  // }
+
+
+    updateBackwardAngle() { 
+
+       this.centerToBehindAngle = _getForwardAngle( this.stepCenterJoint,  this.stepBehindJoint );
   }
+
+
+
 
   updateDistanceFromFrontStep() {
     this.distFromFrontStep0 = getBackFrontStepDistance(
@@ -208,17 +195,23 @@ export default class FollowerLegs {
       calcStep0,
       this.stepCenterJoint,
       this.forwardAngle0,
+      // this.centerToBehindAngle,
+         this.forwardAngle0,
       distanceOut,
       this.stepWideness * widenessAdj,
       false,
+      this.valuesForReversing.goingBackwards
     );
     getCalcStep_inPlace(
       calcStep1,
       this.stepCenterJoint,
-      this.forwardAngle1,
+        this.forwardAngle1,
+       //   this.centerToBehindAngle,
+             this.forwardAngle1,
       distanceOut,
       this.stepWideness * widenessAdj,
       true,
+         this.valuesForReversing.goingBackwards
     );
 
 
@@ -228,33 +221,76 @@ export default class FollowerLegs {
     let lDist = _getDistanceScalar(calcStep0, this.stepTargets[0]);
     let rDist = _getDistanceScalar(calcStep1, this.stepTargets[1]);
 
-    if (this.state.takeSyncedSteps1) {
-      this.stepTargets[0][0] = nextStep0[0];
-      this.stepTargets[0][1] = nextStep0[1];
-      this.stepTargets[0].angle = calcStep0.angle;
-      this.state.syncedStepsCompleted(true);
-    } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
-      // console.log("back leg need to catch up");
-      this.state.catchUp(true);
-    }
 
-    if (this.state.takeSyncedSteps0) {
-      this.stepTargets[1][0] = nextStep1[0];
-      this.stepTargets[1][1] = nextStep1[1];
-      this.stepTargets[1].angle = calcStep1.angle;
-      this.state.syncedStepsCompleted(false);
-    } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
-      // console.log("back leg need to catch up");
-      this.state.catchUp(false);
-    }
+
+
+
+  const goingBackwards = this.valuesForReversing.goingBackwards;
+
+ 
+
+// CHANGING STEP PATTERN WHEN GOING BACKWARDS
+if (goingBackwards ? this.state.takeSyncedSteps0 : this.state.takeSyncedSteps1) { 
+  this.stepTargets[0][0] = nextStep0[0];
+  this.stepTargets[0][1] = nextStep0[1];
+  this.stepTargets[0].angle = calcStep0.angle;
+  this.state.syncedStepsCompleted(this.state.takeSyncedSteps1);
+} else if (
+  lDist > this.stepThreshhold + this.stepWiggleRoom &&
+  !goingBackwards
+) {
+  console.log("back leg need to catch up");
+  this.state.catchUp(true); 
+}
+
+if (goingBackwards ? this.state.takeSyncedSteps1 : this.state.takeSyncedSteps0) { 
+  this.stepTargets[1][0] = nextStep1[0];
+  this.stepTargets[1][1] = nextStep1[1];
+  this.stepTargets[1].angle = calcStep1.angle;
+  this.state.syncedStepsCompleted(false);
+} else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
+  console.log("back leg need to catch up");
+  this.state.catchUp(!this.state.takeSyncedSteps0);
+}
+
+  
+
+// OLD, WITHOUT CHANGING STEP PATTERN FOR GOING BACKWADS
+    // if (this.state.takeSyncedSteps1) {
+    //   this.stepTargets[0][0] = nextStep0[0];
+    //   this.stepTargets[0][1] = nextStep0[1];
+    //   this.stepTargets[0].angle = calcStep0.angle;
+    //   this.state.syncedStepsCompleted(true);
+    // } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
+    //   // console.log("back leg need to catch up");
+    //   this.state.catchUp(true);
+    // }
+
+    // if (this.state.takeSyncedSteps0) {
+    //   this.stepTargets[1][0] = nextStep1[0];
+    //   this.stepTargets[1][1] = nextStep1[1];
+    //   this.stepTargets[1].angle = calcStep1.angle;
+    //   this.state.syncedStepsCompleted(false);
+    // } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
+    //   // console.log("back leg need to catch up");
+    //   this.state.catchUp(false);
+    // }
+
+
   }
 
  
 
   update() {
     this.updateDistanceFromFrontStep();
-    this.updateForwardAngle();
+    // this.updateForwardAngle();
     this.updateForwardAngles();
+
+
+        if (this.valuesForReversing.goingBackwards){
+      this.updateBackwardAngle();
+    }
+
 
     // updates rotator joint position only
     updateShoulderRotator(

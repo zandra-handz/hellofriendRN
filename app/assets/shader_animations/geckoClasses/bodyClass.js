@@ -5,9 +5,10 @@ import Tail from "./bodyClasses/tailClass.js";
 import { getWeightedValues } from "../utils.js";
 
 export default class Body {
-  constructor(state, motion, startingCoord = [0.,0.], hintDist = .6 ) {
+  constructor(state, valuesForReversing, motion, startingCoord = [0.,0.], hintDist = .6 ) {
  
     this.state = state;
+    this.valuesForReversing = valuesForReversing;
     this.motion = motion;  
     this.startingCoord = startingCoord;
     this.stiffC = 24;
@@ -16,8 +17,8 @@ export default class Body {
     this.spineNumOfJoints = 15; 
     this.spineMotion_len = 12; 
     this.spineMotion_range = [2, 13]; 
-    this.spineMotion_baseClamp = 8;
-
+    this.spineMotion_baseClamp = 8; 
+  
     let headNeckChestRadii = [0.064, 0.023, 0.022]; // joints 0 -2
    // this.unchainedDist = headNeckChestRadii.reduce((sum, r) => sum + r, 0); // distance above center joint to declare head joint
     
@@ -107,6 +108,7 @@ init() {
   this.spine = new Spine(
  
     this.state,
+    this.valuesForReversing,
     this.motion, 
     this.startingCoord,
     this.spineNumOfJoints,
@@ -123,7 +125,7 @@ init() {
     "debugSpine",
     "spineCenter",
     "spineIntersection",
-    true,
+    true, 
     this.spineMotion_range,
     this.spineMotion_len,
     this.spineMotion_baseClamp,
@@ -136,6 +138,7 @@ init() {
   this.tail = new Tail(
   
     this.state,
+    this.valuesForReversing,
     this.motion,
     this.spine.joints[10],
     this.tailNumOfJoints,
@@ -153,7 +156,8 @@ init() {
 
 
   update(leadPoint_lead, leadPoint_isMoving) {
-  
+
+
     // this.motion.update_headPosition(this.headRadiiSum);
     this.motion.update_headPosition();
     this.spine.update(leadPoint_lead, leadPoint_isMoving);
