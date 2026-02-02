@@ -320,7 +320,7 @@ export default class Moments {
 
     // if dragging
     if (this.draggingMomentIndex >= 0 && sleepWalk0.current.autoSelectId === -1) {
-      console.log(this.draggingMomentIndex)
+      // console.log(this.draggingMomentIndex)
       const coord = this.moments[this.draggingMomentIndex].coord;
       coord[0] = ux;
       coord[1] = uy;

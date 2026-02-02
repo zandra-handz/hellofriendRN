@@ -230,51 +230,51 @@ export default class FollowerLegs {
  
 
 // CHANGING STEP PATTERN WHEN GOING BACKWARDS
-if (goingBackwards ? this.state.takeSyncedSteps0 : this.state.takeSyncedSteps1) { 
-  this.stepTargets[0][0] = nextStep0[0];
-  this.stepTargets[0][1] = nextStep0[1];
-  this.stepTargets[0].angle = calcStep0.angle;
-  this.state.syncedStepsCompleted(this.state.takeSyncedSteps1);
-} else if (
-  lDist > this.stepThreshhold + this.stepWiggleRoom &&
-  !goingBackwards
-) {
-  console.log("back leg need to catch up");
-  this.state.catchUp(true); 
-}
+// if (goingBackwards ? this.state.takeSyncedSteps0 : this.state.takeSyncedSteps1) { 
+//   this.stepTargets[0][0] = nextStep0[0];
+//   this.stepTargets[0][1] = nextStep0[1];
+//   this.stepTargets[0].angle = calcStep0.angle;
+//   this.state.syncedStepsCompleted(this.state.takeSyncedSteps1);
+// } else if (
+//   lDist > this.stepThreshhold + this.stepWiggleRoom &&
+//   !goingBackwards
+// ) {
+//   // console.log("back leg need to catch up");
+//   this.state.catchUp(true); 
+// }
 
-if (goingBackwards ? this.state.takeSyncedSteps1 : this.state.takeSyncedSteps0) { 
-  this.stepTargets[1][0] = nextStep1[0];
-  this.stepTargets[1][1] = nextStep1[1];
-  this.stepTargets[1].angle = calcStep1.angle;
-  this.state.syncedStepsCompleted(false);
-} else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
-  console.log("back leg need to catch up");
-  this.state.catchUp(!this.state.takeSyncedSteps0);
-}
+// if (goingBackwards ? this.state.takeSyncedSteps1 : this.state.takeSyncedSteps0) { 
+//   this.stepTargets[1][0] = nextStep1[0];
+//   this.stepTargets[1][1] = nextStep1[1];
+//   this.stepTargets[1].angle = calcStep1.angle;
+//   this.state.syncedStepsCompleted(false);
+// } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
+//   // console.log("back leg need to catch up");
+//   this.state.catchUp(!this.state.takeSyncedSteps0);
+// }
 
   
 
 // OLD, WITHOUT CHANGING STEP PATTERN FOR GOING BACKWADS
-    // if (this.state.takeSyncedSteps1) {
-    //   this.stepTargets[0][0] = nextStep0[0];
-    //   this.stepTargets[0][1] = nextStep0[1];
-    //   this.stepTargets[0].angle = calcStep0.angle;
-    //   this.state.syncedStepsCompleted(true);
-    // } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
-    //   // console.log("back leg need to catch up");
-    //   this.state.catchUp(true);
-    // }
+    if (this.state.takeSyncedSteps1) {
+      this.stepTargets[0][0] = nextStep0[0];
+      this.stepTargets[0][1] = nextStep0[1];
+      this.stepTargets[0].angle = calcStep0.angle;
+      this.state.syncedStepsCompleted(true);
+    } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
+      // console.log("back leg need to catch up");
+      this.state.catchUp(true);
+    }
 
-    // if (this.state.takeSyncedSteps0) {
-    //   this.stepTargets[1][0] = nextStep1[0];
-    //   this.stepTargets[1][1] = nextStep1[1];
-    //   this.stepTargets[1].angle = calcStep1.angle;
-    //   this.state.syncedStepsCompleted(false);
-    // } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
-    //   // console.log("back leg need to catch up");
-    //   this.state.catchUp(false);
-    // }
+    if (this.state.takeSyncedSteps0) {
+      this.stepTargets[1][0] = nextStep1[0];
+      this.stepTargets[1][1] = nextStep1[1];
+      this.stepTargets[1].angle = calcStep1.angle;
+      this.state.syncedStepsCompleted(false);
+    } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
+      // console.log("back leg need to catch up");
+      this.state.catchUp(false);
+    }
 
 
   }

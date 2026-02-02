@@ -132,7 +132,7 @@ export default class SleepWalk0 {
 
   update(momentsRef, scale) {
     // console.log(`autoselect`, this.autoSelectCoord)
-    if (this.tick > 200) {
+    if (this.tick > 50) {
       this.tick = 0;
     }
 

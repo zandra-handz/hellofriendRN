@@ -1,3 +1,4 @@
+import { dist } from "@shopify/react-native-skia";
 import { dot, minus, _subtractVec, _subtractVec_inPlace, _getAngleBetweenPoints, _getAngleFromXAxis, _getAngleFromXAxis_inPlace } from "../../utils";
 
 
@@ -261,9 +262,7 @@ const MAX_BACKWARDS_DISTANCE = 0.15;
 const MIN_BACKWARDS_DISTANCE = 0.02;
 const BREAK_OUT_DISTANCE = 0.015; // Force exit if distance gets this small
 
-let isInBackwardsRange = distanceToCursor >= MIN_BACKWARDS_DISTANCE && distanceToCursor <= MAX_BACKWARDS_DISTANCE;
-
-
+ 
   //  if (distanceToCursor < .06) {
   // console.log('distanceToCursor:', distanceToCursor);
   //  }
@@ -279,9 +278,15 @@ let normalizedTurnDirection = lateralOffset / (frontSteps_distanceApart / 2);
 normalizedTurnDirection = Math.max(-1, Math.min(1, normalizedTurnDirection));
 goingBackwards.turnDirection = normalizedTurnDirection; // -1 to 1, where 0 is center
 // if (goingBackwards.turnDirection !== 1) {
-//   console.log('TURN DIRECTION', goingBackwards.turnDirection)
+//    console.log('TURN DIRECTION', goingBackwards.turnDirection)
+
 
 // }
+
+
+let isInBackwardsRange = distanceToCursor >= MIN_BACKWARDS_DISTANCE && distanceToCursor <= MAX_BACKWARDS_DISTANCE;
+
+
 
 ///////////////////////////////////////////////////////////////////
 
@@ -305,26 +310,88 @@ goingBackwards.turnDirection = normalizedTurnDirection; // -1 to 1, where 0 is c
  
   goingBackwards.distanceHistory.push(distanceToCursor);
  
-const historyLengthBackwards = 5;  // Keep this sensitive for backwards detection
+const historyLengthBackwards = 7;  // Keep this sensitive for backwards detection
 const historyLengthForwards = 4;   // Make forward detection more responsive
 
 if (goingBackwards.distanceHistory.length > historyLengthBackwards) {
   goingBackwards.distanceHistory.shift();
 }
   
+
+
  
 // Check if distance is consistently shrinking
+// let isShrinking = false;
+// if ((goingBackwards.distanceHistory.length >= historyLengthBackwards) && isInBackwardsRange) {
+//   isShrinking = true;
+//   for (let i = 1; i < goingBackwards.distanceHistory.length; i++) {
+    
+//     if (goingBackwards.distanceHistory[i] >= goingBackwards.distanceHistory[i - 1]) {
+//       isShrinking = false;
+//       break;
+//     }
+//   }
+// }
+
+// Check if distance is consistently shrinking
 let isShrinking = false;
-if ((goingBackwards.distanceHistory.length >= historyLengthBackwards) && isInBackwardsRange) {
+
+if (
+  goingBackwards.distanceHistory.length >= historyLengthBackwards &&
+  isInBackwardsRange
+) {
   isShrinking = true;
+
+  let deltas = [];
   for (let i = 1; i < goingBackwards.distanceHistory.length; i++) {
-    if (goingBackwards.distanceHistory[i] >= goingBackwards.distanceHistory[i - 1]) {
+    const prev = goingBackwards.distanceHistory[i - 1];
+    const curr = goingBackwards.distanceHistory[i];
+    const diff = curr - prev;
+
+    deltas.push(diff);
+
+    if (curr >= prev) {
       isShrinking = false;
       break;
     }
   }
+
+  if (isShrinking) {
+    const first = goingBackwards.distanceHistory[0];
+    const last = goingBackwards.distanceHistory[goingBackwards.distanceHistory.length - 1];
+    const totalShrink = last - first;
+
+    // console.log(
+    //   '[BACKWARDS SHRINK]',
+    //   {
+    //     range: `[${first.toFixed(4)} → ${last.toFixed(4)}]`,
+    //     totalShrink: totalShrink.toFixed(4),
+    //     deltas: deltas.map(d => d.toFixed(4))
+    //   }
+    // );
+  }
 }
 
+
+const TURN_DIRECTION_MIN = .6;
+const DISTANCE_MIN = .04;
+
+
+// if (goingBackwards.turnDirection !== 1 && distanceToCursor > .12) {
+//    console.log('TURN DIRECTION', goingBackwards.turnDirection, distanceToCursor, isInBackwardsRange, goingBackwards.distanceHistory.length, isShrinking)
+   
+
+// } else if (goingBackwards.turnDirection < .7 ) {
+//   console.log(goingBackwards.turnDirection)
+// }
+
+if (!isShrinking && goingBackwards.turnDirection < TURN_DIRECTION_MIN && (distanceToCursor < DISTANCE_MIN)) {
+console.log('NEED JUMP ERE')
+isShrinking = true;
+}
+// else {
+//   console.log(goingBackwards.turnDirection, distanceToCursor)
+// }
 // Check if distance is consistently growing
 let isGrowing = false;
 if (goingBackwards.distanceHistory.length >= historyLengthForwards) {

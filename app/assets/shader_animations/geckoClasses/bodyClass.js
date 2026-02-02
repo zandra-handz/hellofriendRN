@@ -56,6 +56,15 @@ export default class Body {
      24,  //4
       24,  //5
       24,24, 24, 12, 12,12,8,  8];
+
+    //     this.spineClamps = [
+    //   this.normalC,  //0
+    //   this.normalC,  //1
+    //   24,   //2
+    //  24, //3
+    //  24,  //4
+    //   24,  //5
+    //   24,24, 24, 24, 24,24,24,  24];
  
     this.tailNumOfJoints = 13;
   
@@ -120,18 +129,13 @@ init() {
     spineDesCtrRange,
     this.baseRadius,
     this.spineClamps,
-    this.spineRadii,
-    "joint",
-    "debugSpine",
-    "spineCenter",
-    "spineIntersection",
+    this.spineRadii, 
     true, 
     this.spineMotion_range,
     this.spineMotion_len,
     this.spineMotion_baseClamp,
-    "debugSpineMotion",
-    "spineUnchained",
-    "spineHint"
+   
+ 
   );
 
   // IMPORTANT: spine.joints now definitely exists

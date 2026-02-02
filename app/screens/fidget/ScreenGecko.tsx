@@ -107,10 +107,7 @@ const ScreenGecko = (props: Props) => {
     setResetSkia(Date.now());
   }, [momentCoords]);
 
-  useEffect(() => {
-    console.log(`capsule list triggered`);
-  }, [capsuleList]);
-
+ 
   // Function to randomize/scatter moments
   const handleRescatterMoments = () => {
     const minY = 0.2; // 10% down from top
@@ -163,10 +160,10 @@ const ScreenGecko = (props: Props) => {
   //   console.log('drop', id);
   // };
 
-  useEffect(() => {
-    console.log(`SCREENGECKO CAPSULES: `, capsuleList.length);
+  // useEffect(() => {
+  //   console.log(`SCREENGECKO CAPSULES: `, capsuleList.length);
 
-  }, [capsuleList]);
+  // }, [capsuleList]);
 
   const handleGetMoment = (id) => {
     // console.log('handleGetMoment')

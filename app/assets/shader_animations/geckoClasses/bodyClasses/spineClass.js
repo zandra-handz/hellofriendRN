@@ -29,20 +29,15 @@ export default class Spine {
     segmentRange,
     baseRadius = 0.02,
     jointClamps,
-    jointRadii,
-    u_prefix = "joint",
-    u_debug_prefix = "debugSpine",
-    u_center_prefix = "spineCenter",
-    u_intersection_prefix = "spineIntersection",
+    jointRadii, 
     updatesGlobalMotion = false,
   
     motionRange = [2, 10], // original default for spine
     motionIndicesLength = 9, // original default for spine
 
     motionBaseClamp = 24, // original default for spine
-    u_motion_debug_prefix = "debugSpineMotion",
-    u_unchained_prefix = "spineUnchained",
-    u_hint_prefix = "spineHint",
+    
+ 
   ) {
     this.state = state;
     this.motion = motion;
@@ -128,16 +123,11 @@ export default class Spine {
 
     this.motionScalars = [0.02, 0.02, 0.03, 0.04, 0.03, 0.02, 0.02, 0.02]; // Example pattern
     /////////////////////////////////////////////////////////////////////////////
+ 
+ 
 
-    this.u_prefix = u_prefix;
-    this.u_unchained_prefix = u_unchained_prefix;
-    this.u_hint_prefix = u_hint_prefix;
-
-    this.u_debug_prefix = u_debug_prefix;
-
-    this.u_center_prefix = u_center_prefix;
-    this.u_intersection_prefix = u_intersection_prefix;
-    this.u_motion_debug_prefix = u_motion_debug_prefix;
+ 
+ 
 
     this.isMoving = false;
   }
