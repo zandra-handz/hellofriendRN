@@ -98,6 +98,7 @@ export default class Legs {
       [0.5, 0.5],
       [0.5, 0.5],
     ];
+    
 
 
     // 10 fingers × vec2
@@ -358,6 +359,14 @@ this.fingers = [
  
 
   update() {
+
+    // if ( this.valuesForReversing.jumpRotation) {
+    //      console.log(`rotation delta of hop inside legsClass: `, this.valuesForReversing.jumpRotation)
+    //   console.log(`first position after jump: `, this.valuesForReversing.jumpedFirstPosition)
+   
+
+    // }
+ 
     this.updateForwardAngle();
 
 

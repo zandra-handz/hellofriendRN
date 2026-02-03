@@ -1,42 +1,67 @@
 import { dist } from "@shopify/react-native-skia";
-import { dot, minus, _subtractVec, _subtractVec_inPlace, _getAngleBetweenPoints, _getAngleFromXAxis, _getAngleFromXAxis_inPlace } from "../../utils";
-
+import {
+  dot,
+  minus,
+  _subtractVec,
+  _subtractVec_inPlace,
+  _getAngleBetweenPoints,
+  _getAngleFromXAxis,
+  _getAngleFromXAxis_inPlace,
+} from "../../utils";
 
 // does not set the extra motion angles, those have their own updaters
-export function updateJoint(index, joint, ahead, newAngle, radius, angleDiff, direction){
+export function updateJoint(
+  index,
+  joint,
+  ahead,
+  newAngle,
+  radius,
+  angleDiff,
+  direction,
+) {
   joint[0] = ahead[0] + Math.cos(newAngle) * radius;
   joint[1] = ahead[1] + Math.sin(newAngle) * radius;
   joint.angle = newAngle;
   joint.radius = radius;
   joint.index = index + 1;
-  joint.angleDiff = angleDiff; 
-  joint.direction = direction; 
-};
- 
+  joint.angleDiff = angleDiff;
+  joint.direction = direction;
+}
+
 // setter and updater for joint.secondaryAngle
-export function updateJointSecondaryAngle(needs, joint, finalAngle, prevJSecondaryAngle, procAngle){
-  if (needs) { 
+export function updateJointSecondaryAngle(
+  needs,
+  joint,
+  finalAngle,
+  prevJSecondaryAngle,
+  procAngle,
+) {
+  if (needs) {
     // add to joint.angle (essentially), and update joint.secondaryAngle for the next angle
     finalAngle.angle = prevJSecondaryAngle + procAngle;
     joint.secondaryAngle = finalAngle.angle;
-   } else { 
+  } else {
     // just pass on joint.secondaryAngle as is
     joint.secondaryAngle = prevJSecondaryAngle;
-   }
-};
+  }
+}
 
 // setter and updator for joint.mirroredSecondaryAngle
-export function updateJointThirdAngle(needs, joint, finalAngle, prevJThirdAngle, procAngle) {
+export function updateJointThirdAngle(
+  needs,
+  joint,
+  finalAngle,
+  prevJThirdAngle,
+  procAngle,
+) {
   if (needs && prevJThirdAngle) {
     // add to joint.angle (essentially), and update joint.mirroredSecondaryAngle
     finalAngle.angle = procAngle + prevJThirdAngle;
     joint.mirroredSecondaryAngle = finalAngle.angle;
-  } else{ 
+  } else {
     joint.mirroredSecondaryAngle = prevJThirdAngle;
-  } 
   }
- 
-
+}
 
 export function constrainBlendClampAngle(
   index,
@@ -44,7 +69,7 @@ export function constrainBlendClampAngle(
   joint,
   curDirVector,
   radius,
-  maxBend
+  maxBend,
 ) {
   if (ahead.angle === undefined) {
     ahead.angle = _getAngleBetweenPoints(joint, ahead);
@@ -88,11 +113,18 @@ export function constrainBlendClampAngle(
   return { angle: blendAhead, direction: newDirVector };
 }
 
- 
-
-export function constrainBlendClampAngle_inPlaceOld(index, ahead, joint, dirVec, radius, maxBend, outDir) {
+export function constrainBlendClampAngle_inPlaceOld(
+  index,
+  ahead,
+  joint,
+  dirVec,
+  radius,
+  maxBend,
+  outDir,
+) {
   // set ahead.angle if undefined
-  if (ahead.angle === undefined) ahead.angle = _getAngleBetweenPoints(joint, ahead);
+  if (ahead.angle === undefined)
+    ahead.angle = _getAngleBetweenPoints(joint, ahead);
 
   let len = Math.sqrt(dot(dirVec, dirVec));
 
@@ -123,12 +155,20 @@ export function constrainBlendClampAngle_inPlaceOld(index, ahead, joint, dirVec,
   return { angle: blendAhead, direction: outDir };
 }
 
-
-
-
-export function constrainBlendClampAngle_inPlace(index, ahead, joint, dirVec, radius, maxBend, goingBackwards, stiffnessBlend, outDir) {
+export function constrainBlendClampAngle_inPlace(
+  index,
+  ahead,
+  joint,
+  dirVec,
+  radius,
+  maxBend,
+  goingBackwards,
+  stiffnessBlend,
+  outDir,
+) {
   // set ahead.angle if undefined
-  if (ahead.angle === undefined) ahead.angle = _getAngleBetweenPoints(joint, ahead);
+  if (ahead.angle === undefined)
+    ahead.angle = _getAngleBetweenPoints(joint, ahead);
 
   let len = Math.sqrt(dot(dirVec, dirVec));
 
@@ -155,14 +195,12 @@ export function constrainBlendClampAngle_inPlace(index, ahead, joint, dirVec, ra
   let blendAhead = newAngle - ahead.angle;
   blendAhead = Math.atan2(Math.sin(blendAhead), Math.cos(blendAhead));
 
-
-
   // CALCULATE EFFECTIVE MAX BEND
   let effectiveMaxBend;
   if (goingBackwards && stiffnessBlend > 0) {
     // Apply stiffness restriction when going backwards
     const minStiffness = 0.2;
-    const stiffnessMultiplier = 1.0 - (stiffnessBlend * (1.0 - minStiffness));
+    const stiffnessMultiplier = 1.0 - stiffnessBlend * (1.0 - minStiffness);
     effectiveMaxBend = maxBend * stiffnessMultiplier;
   } else {
     // Use normal maxBend when not going backwards
@@ -170,9 +208,10 @@ export function constrainBlendClampAngle_inPlace(index, ahead, joint, dirVec, ra
   }
 
   // ENFORCE CLAMP
-  blendAhead = Math.max(-effectiveMaxBend, Math.min(effectiveMaxBend, blendAhead));
-
- 
+  blendAhead = Math.max(
+    -effectiveMaxBend,
+    Math.min(effectiveMaxBend, blendAhead),
+  );
 
   return { angle: blendAhead, direction: outDir };
 }
@@ -180,9 +219,223 @@ export function constrainBlendClampAngle_inPlace(index, ahead, joint, dirVec, ra
 
 
 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function handleBackwardsJump(
+  goingBackwards,
+  cursor,
+  first,
+  radius,
+  n,
+  isGrowing
+) {
+
+  // Early exit if creature is moving forward
+  if (isGrowing) {
+   // console.log('Aborting backwards jump - creature moving forward');
+    goingBackwards.goingBackwards = false;
+    goingBackwards.totalRotation = 0;
+    goingBackwards.jumpRotation = 0;
+    goingBackwards.jumpedFirstPosition = null;
+    goingBackwards.jumpedCursorPosition = null;
+    goingBackwards.jumpFrameCount = 0;
+    return;
+  }
+  const rotationAmountDivisor = 2;  // Divide total rotation by this (higher = less rotation)
+
+  const jumpBackTimeLength = 20; // Total frames for the entire animation sequence
+  const useReleasePhase = false; // Set to true to gradually decrease, false to stay pushed out
+  
+  // Rotation timing controls
+  const rotationStartFrame = 0;   // When to start rotating
+  const rotationEndFrame = 10;    // When to stop rotating
+  
+  // Initialize frame counter on first call
+  if (goingBackwards.jumpFrameCount === undefined) {
+    goingBackwards.jumpFrameCount = 0;
+  }
+  
+  // Increment frame counter
+  goingBackwards.jumpFrameCount++;
+  
+  // Define the push-out wave phases (in frames)
+  const quickPushPhase = 5;        // Frames 0-5: Quick push to 75% (6/8)
+  const slowPushPhase = 10;        // Frames 5-15: Slow push to 100% (8/8)
+  const holdPhase = useReleasePhase ? 30 : 45;  // Adjust hold based on whether we release
+  const releasePhase = 15;         // Frames 45-60: Slow release back to normal (only if enabled)
+  
+  const maxPushMultiplier = 3;     // Maximum push distance multiplier
+  
+  let pushMultiplier;
+  
+  if (goingBackwards.jumpFrameCount <= quickPushPhase) {
+    // Quick push to 75% of max
+    const progress = goingBackwards.jumpFrameCount / quickPushPhase;
+    pushMultiplier = maxPushMultiplier * 0.75 * progress;
+    
+  } else if (goingBackwards.jumpFrameCount <= quickPushPhase + slowPushPhase) {
+    // Slow push from 75% to 100%
+    const progress = (goingBackwards.jumpFrameCount - quickPushPhase) / slowPushPhase;
+    pushMultiplier = maxPushMultiplier * (0.75 + 0.25 * progress);
+    
+  } else if (goingBackwards.jumpFrameCount <= quickPushPhase + slowPushPhase + holdPhase) {
+    // Hold at maximum
+    pushMultiplier = maxPushMultiplier;
+    
+  } else if (useReleasePhase) {
+    // Slow release back down (only if enabled)
+    const releaseProgress = (goingBackwards.jumpFrameCount - quickPushPhase - slowPushPhase - holdPhase) / releasePhase;
+    pushMultiplier = maxPushMultiplier * (1 - releaseProgress);
+  } else {
+    // Stay at max if release phase is disabled
+    pushMultiplier = maxPushMultiplier;
+  }
+  
+  const pushDistance = radius * pushMultiplier;
+  first[0] = cursor[0] + n[0] * pushDistance;
+  first[1] = cursor[1] + n[1] * pushDistance;
+
+  // Only rotate if within the rotation frame range
+  const shouldRotate = goingBackwards.jumpFrameCount >= rotationStartFrame && 
+                       goingBackwards.jumpFrameCount <= rotationEndFrame;
+
+  if (shouldRotate) {
+    const TOTAL_TARGET = (Math.PI / 2) / rotationAmountDivisor;  // Adjust total rotation
+    const rotationDuration = rotationEndFrame - rotationStartFrame;
+    const INCREMENT = TOTAL_TARGET / rotationDuration;
+    const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
+
+    first.angle += INCREMENT * rotationDir;
+
+    // Store the jump rotation for use elsewhere
+    goingBackwards.jumpRotation = INCREMENT * rotationDir;
+
+    first[0] = cursor[0] + Math.cos(first.angle) * pushDistance;
+    first[1] = cursor[1] + Math.sin(first.angle) * pushDistance;
+
+    goingBackwards.jumpedFirstPosition = [first[0], first[1]];
+    goingBackwards.jumpedCursorPosition = [cursor[0], cursor[1]];
+
+    if (goingBackwards.totalRotation === undefined) {
+      goingBackwards.totalRotation = 0;
+    }
+    goingBackwards.totalRotation += INCREMENT;
+  }
+  
+  // Check if animation sequence is complete
+  if (goingBackwards.jumpFrameCount >= jumpBackTimeLength) {
+    // Reset everything
+    goingBackwards.goingBackwards = false;
+    goingBackwards.totalRotation = 0;
+    goingBackwards.jumpRotation = 0;
+    goingBackwards.jumpedFirstPosition = null;
+    goingBackwards.jumpedCursorPosition = null;
+    goingBackwards.jumpFrameCount = 0;
+  }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function handleBackwardsJumpFast(
+  goingBackwards,
+  cursor,
+  first,
+  radius,
+  n,
+  isGrowing
+) {
+
+  // Early exit if creature is moving forward
+  if (isGrowing) {
+    goingBackwards.goingBackwards = false;
+    goingBackwards.totalRotation = 0;
+    goingBackwards.jumpRotation = 0;
+    goingBackwards.jumpedFirstPosition = null;
+    goingBackwards.jumpedCursorPosition = null;
+    goingBackwards.jumpFrameCount = 0;
+    return;
+  }
+
+  const rotationAmountDivisor = 2;  // Divide total rotation by this (higher = less rotation)
+  const jumpBackTimeLength = 9; // Total frames: 3 push + 3 rotate + 3 drop
+  
+  // Phase durations
+  const pushPhase = 3;      // Frames 0-3: Push out
+  const rotatePhase = 3;    // Frames 3-6: Rotate
+  const dropPhase = 3;      // Frames 6-9: Drop back
+  
+  // Initialize frame counter on first call
+  if (goingBackwards.jumpFrameCount === undefined) {
+    goingBackwards.jumpFrameCount = 0;
+  }
+  
+  // Increment frame counter
+  goingBackwards.jumpFrameCount++;
+  
+  const maxPushMultiplier = 1;     // Maximum push distance multiplier
+  let pushMultiplier;
+  let shouldRotate = false;
+  
+  // Phase 1: PUSH (frames 0-3)
+  if (goingBackwards.jumpFrameCount <= pushPhase) {
+    const progress = goingBackwards.jumpFrameCount / pushPhase;
+    pushMultiplier = maxPushMultiplier * progress; // 0 → 1
+    
+  // Phase 2: ROTATE (frames 3-6)
+  } else if (goingBackwards.jumpFrameCount <= pushPhase + rotatePhase) {
+    pushMultiplier = maxPushMultiplier; // Hold at max
+    shouldRotate = true;
+    
+  // Phase 3: DROP (frames 6-9)
+  } else {
+    const dropProgress = (goingBackwards.jumpFrameCount - pushPhase - rotatePhase) / dropPhase;
+    pushMultiplier = maxPushMultiplier * (1 - dropProgress); // 1 → 0
+  }
+  
+  const pushDistance = radius * pushMultiplier;
+  first[0] = cursor[0] + n[0] * pushDistance;
+  first[1] = cursor[1] + n[1] * pushDistance;
+
+  if (shouldRotate) {
+    const TOTAL_TARGET = (Math.PI / 2) / rotationAmountDivisor;
+    const INCREMENT = TOTAL_TARGET / rotatePhase;
+    const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
+
+    first.angle += INCREMENT * rotationDir;
+    goingBackwards.jumpRotation = INCREMENT * rotationDir;
+
+    first[0] = cursor[0] + Math.cos(first.angle) * pushDistance;
+    first[1] = cursor[1] + Math.sin(first.angle) * pushDistance;
+
+    goingBackwards.jumpedFirstPosition = [first[0], first[1]];
+    goingBackwards.jumpedCursorPosition = [cursor[0], cursor[1]];
+
+    if (goingBackwards.totalRotation === undefined) {
+      goingBackwards.totalRotation = 0;
+    }
+    goingBackwards.totalRotation += INCREMENT;
+  }
+  
+  // Check if animation sequence is complete
+  if (goingBackwards.jumpFrameCount >= jumpBackTimeLength) {
+    goingBackwards.goingBackwards = false;
+    goingBackwards.totalRotation = 0;
+    goingBackwards.jumpRotation = 0;
+    goingBackwards.jumpedFirstPosition = null;
+    goingBackwards.jumpedCursorPosition = null;
+    goingBackwards.jumpFrameCount = 0;
+  }
+}
+
+
+
+
 export function solveFirst_withBackwardsDetect(
   stepsCenter,
-  stepsAngle, 
+  stepsAngle,
+  stepsSAngle,
   frontSteps_distanceApart,
   goingBackwards,
 
@@ -190,25 +443,27 @@ export function solveFirst_withBackwardsDetect(
   first,
   radius,
   secondMotionAngle,
-  secondMotionMirroredAngle
+  secondMotionMirroredAngle,
 ) {
 
  
+ 
   first.secondaryAngle = secondMotionAngle;
-  first.mirroredSecondaryAngle = secondMotionMirroredAngle ? secondMotionMirroredAngle : secondMotionAngle;
+  first.mirroredSecondaryAngle = secondMotionMirroredAngle
+    ? secondMotionMirroredAngle
+    : secondMotionAngle;
 
-  if (cursor.angle === undefined) cursor.angle = _getAngleBetweenPoints(first, cursor);
-
-
+  if (cursor.angle === undefined)
+    cursor.angle = _getAngleBetweenPoints(first, cursor);
 
   let dir = _subtractVec(first, cursor);
-  let d = Math.sqrt(dot(dir, dir)); 
+  let d = Math.sqrt(dot(dir, dir));
 
-  if (d === 0) { 
-    first[0] = cursor[0] + radius; 
-    first[1] = cursor[1]; 
-    first.angle = 0; 
-    first.radius = radius; 
+  if (d === 0) {
+    first[0] = cursor[0] + radius;
+    first[1] = cursor[1];
+    first.angle = 0;
+    first.radius = radius;
     first.index = 0;
     return;
   }
@@ -217,129 +472,147 @@ export function solveFirst_withBackwardsDetect(
   first[0] = cursor[0] + n[0] * radius;
   first[1] = cursor[1] + n[1] * radius;
 
-// --- ROTATION DEBUG (inline, no helper) ---
-if (goingBackwards.prevFirstAngle !== undefined) {
-  let delta = first.angle - goingBackwards.prevFirstAngle;
+  // --- ROTATION DEBUG (inline, no helper) ---
+  if (goingBackwards.prevFirstAngle !== undefined) {
+    let delta = first.angle - goingBackwards.prevFirstAngle;
 
-  // normalize to [-PI, PI]
-  while (delta > Math.PI) delta -= 2 * Math.PI;
-  while (delta < -Math.PI) delta += 2 * Math.PI;
+    while (delta > Math.PI) delta -= 2 * Math.PI;
+    while (delta < -Math.PI) delta += 2 * Math.PI;
 
-  // Store the rotation change
-  goingBackwards.rotationChange = Math.abs(delta);
+    goingBackwards.rotationChange = Math.abs(delta);
+    goingBackwards.rotationDelta = delta;
+  }
 
- 
-}
+  goingBackwards.prevFirstAngle = first.angle;
 
-goingBackwards.prevFirstAngle = first.angle;
-
-
-
-  /// option one, no lock ///////////
   let prelimAngle = _getAngleFromXAxis(n);
   let angleDiff = prelimAngle - cursor.angle;
-
   first.angleDiff = angleDiff;
   first.angle = cursor.angle + angleDiff;
- 
-first.angleDiff = angleDiff;
-first.angle = cursor.angle + angleDiff;
-
-///////////////////////////////////////
-
-
 
   first.radius = radius;
   first.index = 0;
 
-  // Measure distance and angle from stepsCenter to cursor
-  let vecToCursor = _subtractVec(cursor, stepsCenter);
+  // let vecToCursor = _subtractVec(cursor, stepsCenter);
+    let vecToCursor = _subtractVec(cursor, stepsCenter);
   let distanceToCursor = Math.sqrt(dot(vecToCursor, vecToCursor));
- 
 
-// Define the backwards range
-const MAX_BACKWARDS_DISTANCE = 0.15;
-const MIN_BACKWARDS_DISTANCE = 0.02;
-const BREAK_OUT_DISTANCE = 0.015; // Force exit if distance gets this small
+  // Define the backwards range
+  const MAX_BACKWARDS_DISTANCE = 0.15;
+  const MIN_BACKWARDS_DISTANCE = 0.02; 
 
- 
   //  if (distanceToCursor < .06) {
   // console.log('distanceToCursor:', distanceToCursor);
   //  }
   let angleToCursor = _getAngleFromXAxis([
     vecToCursor[0] / distanceToCursor,
-    vecToCursor[1] / distanceToCursor
+    vecToCursor[1] / distanceToCursor,
   ]);
 
- 
-let perpVector = [Math.cos(stepsAngle - Math.PI/2), Math.sin(stepsAngle - Math.PI/2)];
-let lateralOffset = vecToCursor[0] * perpVector[0] + vecToCursor[1] * perpVector[1];
-let normalizedTurnDirection = lateralOffset / (frontSteps_distanceApart / 2);
+let perpVector = [
+  Math.cos(stepsAngle - Math.PI / 2),
+  Math.sin(stepsAngle - Math.PI / 2),
+];
+let lateralOffset =
+  vecToCursor[0] * perpVector[0] + vecToCursor[1] * perpVector[1];
+
+// Use the MAGNITUDE of vecToCursor for normalization, not step width
+let normalizedTurnDirection = lateralOffset / distanceToCursor;
 normalizedTurnDirection = Math.max(-1, Math.min(1, normalizedTurnDirection));
 goingBackwards.turnDirection = normalizedTurnDirection; // -1 to 1, where 0 is center
-// if (goingBackwards.turnDirection !== 1) {
-//    console.log('TURN DIRECTION', goingBackwards.turnDirection)
+  // if (goingBackwards.turnDirection !== 1) {
+  //    console.log('TURN DIRECTION', goingBackwards.turnDirection)
 
+  // }
 
-// }
+  let isInBackwardsRange =
+    distanceToCursor >= MIN_BACKWARDS_DISTANCE &&
+    distanceToCursor <= MAX_BACKWARDS_DISTANCE;
 
-
-let isInBackwardsRange = distanceToCursor >= MIN_BACKWARDS_DISTANCE && distanceToCursor <= MAX_BACKWARDS_DISTANCE;
-
-
-
-///////////////////////////////////////////////////////////////////
-
-
-  // Calculate relative angle from stepsAngle
   let relativeAngle = angleToCursor - stepsAngle;
-  
+
   while (relativeAngle > Math.PI) relativeAngle -= 2 * Math.PI;
   while (relativeAngle < -Math.PI) relativeAngle += 2 * Math.PI;
 
-  let clampedRelativeAngle = -Math.max(-Math.PI / 2, Math.min(Math.PI / 2, relativeAngle));
+  let clampedRelativeAngle = -Math.max(
+    -Math.PI / 2,
+    Math.min(Math.PI / 2, relativeAngle),
+  );
 
-  goingBackwards.turnRadius = distanceToCursor + distanceToCursor - frontSteps_distanceApart;
-  
+  goingBackwards.turnRadius =
+    distanceToCursor + distanceToCursor - frontSteps_distanceApart;
+
   goingBackwards.direction = clampedRelativeAngle;
 
-  // Initialize distance history if needed
   if (!goingBackwards.distanceHistory) {
     goingBackwards.distanceHistory = [];
   }
- 
+
   goingBackwards.distanceHistory.push(distanceToCursor);
- 
-const historyLengthBackwards = 7;  // Keep this sensitive for backwards detection
-const historyLengthForwards = 4;   // Make forward detection more responsive
 
-if (goingBackwards.distanceHistory.length > historyLengthBackwards) {
-  goingBackwards.distanceHistory.shift();
-}
-  
+  const historyLengthBackwards = 6; // Keep this sensitive for backwards detection
+  const historyLengthForwards = 4; // Make forward detection more responsive
 
 
- 
-// Check if distance is consistently shrinking
-// let isShrinking = false;
-// if ((goingBackwards.distanceHistory.length >= historyLengthBackwards) && isInBackwardsRange) {
-//   isShrinking = true;
-//   for (let i = 1; i < goingBackwards.distanceHistory.length; i++) {
-    
-//     if (goingBackwards.distanceHistory[i] >= goingBackwards.distanceHistory[i - 1]) {
-//       isShrinking = false;
-//       break;
-//     }
-//   }
-// }
+  const historyLengthBackwardsStepLine = 2;
 
-// Check if distance is consistently shrinking
-let isShrinking = false;
+  if (goingBackwards.distanceHistory.length > historyLengthBackwards) {
+    goingBackwards.distanceHistory.shift();
+  }
 
+
+
+
+
+  // let isShrinking = false;
+
+  // if (
+  //   goingBackwards.distanceHistory.length >= historyLengthBackwards &&
+  //   isInBackwardsRange
+  // ) {
+  //   isShrinking = true;
+
+  //   let deltas = [];
+  //   for (let i = 1; i < goingBackwards.distanceHistory.length; i++) {
+  //     const prev = goingBackwards.distanceHistory[i - 1];
+  //     const curr = goingBackwards.distanceHistory[i];
+  //     const diff = curr - prev;
+
+  //     deltas.push(diff);
+
+  //     if (curr >= prev) {
+  //       isShrinking = false;
+  //       break;
+  //     }
+  //   }
+
+  //   if (isShrinking) {
+  //     const first = goingBackwards.distanceHistory[0];
+  //     const last =
+  //       goingBackwards.distanceHistory[
+  //         goingBackwards.distanceHistory.length - 1
+  //       ];
+  //     const totalShrink = last - first;
+
+  //     // console.log(
+  //     //   '[BACKWARDS SHRINK]',
+  //     //   {
+  //     //     range: `[${first.toFixed(4)} → ${last.toFixed(4)}]`,
+  //     //     totalShrink: totalShrink.toFixed(4),
+  //     //     deltas: deltas.map(d => d.toFixed(4))
+  //     //   }
+  //     // );
+  //   }
+  // }
+
+  let isShrinking = false;
+
+// First check: distance-based shrinking (existing logic)
 if (
   goingBackwards.distanceHistory.length >= historyLengthBackwards &&
   isInBackwardsRange
 ) {
+ 
   isShrinking = true;
 
   let deltas = [];
@@ -354,125 +627,156 @@ if (
       isShrinking = false;
       break;
     }
-  }
 
-  if (isShrinking) {
-    const first = goingBackwards.distanceHistory[0];
-    const last = goingBackwards.distanceHistory[goingBackwards.distanceHistory.length - 1];
-    const totalShrink = last - first;
-
-    // console.log(
-    //   '[BACKWARDS SHRINK]',
-    //   {
-    //     range: `[${first.toFixed(4)} → ${last.toFixed(4)}]`,
-    //     totalShrink: totalShrink.toFixed(4),
-    //     deltas: deltas.map(d => d.toFixed(4))
-    //   }
-    // );
+    // console.log(Date.now())
   }
 }
 
-
-const TURN_DIRECTION_MIN = .6;
-const DISTANCE_MIN = .04;
-
-
-// if (goingBackwards.turnDirection !== 1 && distanceToCursor > .12) {
-//    console.log('TURN DIRECTION', goingBackwards.turnDirection, distanceToCursor, isInBackwardsRange, goingBackwards.distanceHistory.length, isShrinking)
-   
-
-// } else if (goingBackwards.turnDirection < .7 ) {
-//   console.log(goingBackwards.turnDirection)
-// }
-
-if (!isShrinking && goingBackwards.turnDirection < TURN_DIRECTION_MIN && (distanceToCursor < DISTANCE_MIN)) {
-console.log('NEED JUMP ERE')
-isShrinking = true;
+// Track turnDirection history (always, not just when checking)
+if (!goingBackwards.turnDirectionHistory) {
+  goingBackwards.turnDirectionHistory = [];
 }
-// else {
-//   console.log(goingBackwards.turnDirection, distanceToCursor)
-// }
-// Check if distance is consistently growing
-let isGrowing = false;
-if (goingBackwards.distanceHistory.length >= historyLengthForwards) {
-  isGrowing = true;
-  for (let i = goingBackwards.distanceHistory.length - historyLengthForwards; i < goingBackwards.distanceHistory.length; i++) {
-    if (goingBackwards.distanceHistory[i] <= goingBackwards.distanceHistory[i - 1]) {
-      isGrowing = false;
+
+goingBackwards.turnDirectionHistory.push(goingBackwards.turnDirection);
+
+if (goingBackwards.turnDirectionHistory.length > historyLengthBackwardsStepLine) {
+  goingBackwards.turnDirectionHistory.shift();
+}
+
+// Second check: turn direction crossing (only if not already shrinking from distance)
+// Second check: turn direction crossing (only if not already shrinking from distance)
+if (!isShrinking && goingBackwards.turnDirectionHistory.length >= historyLengthBackwardsStepLine) {
+  let allBelowZero = true;
+  for (let i = 0; i < goingBackwards.turnDirectionHistory.length; i++) {
+  // console.log(goingBackwards.turnDirectionHistory[i])
+    if (goingBackwards.turnDirectionHistory[i] >= .7) {  // If ANY value is >= 0
+      allBelowZero = false;  // Then NOT all are below zero
       break;
     }
   }
-}
- 
-// const MAX_ROTATION_CHANGE = .05; 
-
-
   
-if (isShrinking && !goingBackwards.goingBackwards) { 
-  goingBackwards.goingBackwards = true;
-  goingBackwards.totalRotation = 0;
-  goingBackwards.backwardsAngle = first.angle; // ← CAPTURE
-  console.log('Entering backwards mode');
+  if (allBelowZero && isInBackwardsRange) {  // If all ARE below zero
+   //console.log('all turndirection ', Date.now())
+    isShrinking = true;
+  }
 }
+  const TURN_DIRECTION_MIN = 0.6;
+  const DISTANCE_MIN = 0.04;
 
-  
-
-if (goingBackwards.goingBackwards) {
-  // initialize totalRotation if undefined
-  if (goingBackwards.totalRotation === undefined) goingBackwards.totalRotation = 0;
-
-  const pushDistance = radius * 4; // how far back to push 
-  first[0] = cursor[0] + n[0] * pushDistance;
-  first[1] = cursor[1] + n[1] * pushDistance;
-  // console.log('Pushing back while going backwards');
-
-  // Start rotating only if totalRotation > 0 (i.e., after first push)
-  if (goingBackwards.totalRotation > 0) {
-    const TOTAL_TARGET = Math.PI / 2; // 90 degrees
-    const INCREMENT = TOTAL_TARGET / 2; // two steps
-    const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
-
-    first.angle += INCREMENT * rotationDir;
-
-    // Update push based on new rotated angle
-    first[0] = cursor[0] + Math.cos(first.angle) * pushDistance;
-    first[1] = cursor[1] + Math.sin(first.angle) * pushDistance;
-
-    goingBackwards.totalRotation += INCREMENT;
-
-    if (goingBackwards.totalRotation >= TOTAL_TARGET) {
-      // console.log('Backwards 90° completed');
-      goingBackwards.goingBackwards = false;
-      goingBackwards.totalRotation = 0;
+  if (
+    !isShrinking &&
+    goingBackwards.turnDirection < TURN_DIRECTION_MIN &&
+    distanceToCursor < DISTANCE_MIN
+  ) {
+  //  console.log("NEED JUMP ERE");
+    isShrinking = true;
+  }
+  let isGrowing = false;
+  if (goingBackwards.distanceHistory.length >= historyLengthForwards) {
+    isGrowing = true;
+    for (
+      let i = goingBackwards.distanceHistory.length - historyLengthForwards;
+      i < goingBackwards.distanceHistory.length;
+      i++
+    ) {
+      if (
+        goingBackwards.distanceHistory[i] <=
+        goingBackwards.distanceHistory[i - 1]
+      ) {
+        isGrowing = false;
+        break;
+      }
     }
+  }
+
+
+  // // WITH THIS:
+  // if (isShrinking && !goingBackwards.goingBackwards) {
+  //   const COOLDOWN_FRAMES = 60;
+    
+  //   if (goingBackwards.framesSinceLastJump === undefined) {
+  //       goingBackwards.framesSinceLastJump = COOLDOWN_FRAMES;
+  //   }
+    
+  //   if (goingBackwards.framesSinceLastJump >= COOLDOWN_FRAMES) {
+  //       goingBackwards.goingBackwards = true;
+  //       goingBackwards.totalRotation = 0;
+  //       goingBackwards.backwardsAngle = first.angle;
+  //       goingBackwards.framesSinceLastJump = 0;
+  //   }
+  // }
+
+  // In solveFirst_withBackwardsDetect, modify the trigger condition:
+
+if (isShrinking && !goingBackwards.goingBackwards && !isGrowing) {  // Add !isGrowing check
+    const COOLDOWN_FRAMES = 60;
+    
+    if (goingBackwards.framesSinceLastJump === undefined) {
+        goingBackwards.framesSinceLastJump = COOLDOWN_FRAMES;
+    }
+    
+    if (goingBackwards.framesSinceLastJump >= COOLDOWN_FRAMES) {
+        goingBackwards.goingBackwards = true;
+        goingBackwards.totalRotation = 0;
+        goingBackwards.backwardsAngle = first.angle;
+        goingBackwards.framesSinceLastJump = 0;
+    }
+}
+
+  // Add this right after:
+  if (!goingBackwards.goingBackwards && goingBackwards.framesSinceLastJump !== undefined) {
+    goingBackwards.framesSinceLastJump++;
+  }
+
+
+  // if (isShrinking && !goingBackwards.goingBackwards) {
+  //   goingBackwards.goingBackwards = true;
+  //   goingBackwards.totalRotation = 0;
+  //   goingBackwards.backwardsAngle = first.angle;
+  // }
+ 
+    if (goingBackwards.goingBackwards) {
+    handleBackwardsJump(goingBackwards, cursor, first, radius, n, isGrowing);
+  }
+
+
+  if (goingBackwards.stiffnessBlend === undefined) {
+    goingBackwards.stiffnessBlend = 0.0;
+  }
+
+  const stiffnessSpeed = 0.8;
+
+  if (goingBackwards.goingBackwards) {
+    goingBackwards.stiffnessBlend += stiffnessSpeed;
+    if (goingBackwards.stiffnessBlend > 1.0)
+      goingBackwards.stiffnessBlend = 1.0;
   } else {
-    // Mark that the first push happened
-    goingBackwards.totalRotation += 0.0001; // tiny value to differentiate first frame
+    goingBackwards.stiffnessBlend -= stiffnessSpeed;
+    if (goingBackwards.stiffnessBlend < 0.0)
+      goingBackwards.stiffnessBlend = 0.0;
   }
 }
 
 
- 
-
-if (goingBackwards.stiffnessBlend === undefined) {
-  goingBackwards.stiffnessBlend = 0.0;
-}
- 
-// SMOOTHLY INTERPOLATE STIFFNESS EVERY FRAME
-const stiffnessSpeed = .8;// = 0.02; // Much slower transition (try 0.01-0.03)
-
-if (goingBackwards.goingBackwards) {
-  // Gradually increase stiffness when going backwards
-  goingBackwards.stiffnessBlend += stiffnessSpeed;
-  if (goingBackwards.stiffnessBlend > 1.0) goingBackwards.stiffnessBlend = 1.0;
-} else {
-  // Gradually decrease stiffness when going forward
-  goingBackwards.stiffnessBlend -= stiffnessSpeed;
-  if (goingBackwards.stiffnessBlend < 0.0) goingBackwards.stiffnessBlend = 0.0;
-} 
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 export function solveFirst_inPlace(
@@ -480,14 +784,15 @@ export function solveFirst_inPlace(
   first,
   radius,
   secondMotionAngle,
-  secondMotionMirroredAngle
+  secondMotionMirroredAngle,
 ) {
   // update angles directly
   first.secondaryAngle = secondMotionAngle;
   first.mirroredSecondaryAngle = secondMotionMirroredAngle ?? secondMotionAngle;
 
   // initialize cursor.angle if missing
-  if (cursor.angle === undefined) cursor.angle = _getAngleBetweenPoints(first, cursor);
+  if (cursor.angle === undefined)
+    cursor.angle = _getAngleBetweenPoints(first, cursor);
 
   // compute dir in-place
   const dx = first[0] - cursor[0];
@@ -521,29 +826,29 @@ export function solveFirst_inPlace(
   first.index = 0;
 }
 
-
 export function solveFirst(
   cursor,
   first,
   radius,
   secondMotionAngle,
-  secondMotionMirroredAngle
+  secondMotionMirroredAngle,
 ) {
- 
   first.secondaryAngle = secondMotionAngle;
-  first.mirroredSecondaryAngle = secondMotionMirroredAngle ? secondMotionMirroredAngle : secondMotionAngle;
+  first.mirroredSecondaryAngle = secondMotionMirroredAngle
+    ? secondMotionMirroredAngle
+    : secondMotionAngle;
 
-  if (cursor.angle === undefined) cursor.angle = _getAngleBetweenPoints(first, cursor);
+  if (cursor.angle === undefined)
+    cursor.angle = _getAngleBetweenPoints(first, cursor);
 
   let dir = _subtractVec(first, cursor);
-  let d = Math.sqrt(dot(dir, dir)); 
+  let d = Math.sqrt(dot(dir, dir));
 
-  if (d === 0) { 
- 
-    first[0] = cursor[0] + radius; 
-    first[1] = cursor[1]; 
-    first.angle = 0; 
-    first.radius = radius; 
+  if (d === 0) {
+    first[0] = cursor[0] + radius;
+    first[1] = cursor[1];
+    first.angle = 0;
+    first.radius = radius;
     first.index = 0;
     return;
   }
@@ -558,21 +863,26 @@ export function solveFirst(
   first.angleDiff = angleDiff;
   first.angle = cursor.angle + angleDiff;
   first.radius = radius;
-  first.index = 0; 
+  first.index = 0;
 }
 
-
 // Loop over this. values passed in to this are arrays
-export function solveProcJoint(index,ahead,joint,radius, maxBend, motion2Start, 
+export function solveProcJoint(
+  index,
+  ahead,
+  joint,
+  radius,
+  maxBend,
+  motion2Start,
   motion3Start, // spine // turning point for angle that will layer on third angle
   motion2End,
   secondMotionClamps,
-  // secondMotionScalars, 
+  // secondMotionScalars,
 ) {
   // let curveAngleScalar = 1;
   let inMotionRange = index >= motion2Start && index <= motion2End;
   let setSecondary = ahead.secondaryAngle && inMotionRange;
-  let setThird = (index > motion3Start) && inMotionRange;
+  let setThird = index > motion3Start && inMotionRange;
 
   if (setSecondary) {
     maxBend = TAU / secondMotionClamps[index - motion2Start];
@@ -582,16 +892,42 @@ export function solveProcJoint(index,ahead,joint,radius, maxBend, motion2Start,
   }
 
   let dirVec = minus(joint, ahead);
-  let procBlend = constrainBlendClampAngle(index, ahead, joint, dirVec, radius,maxBend );
+  let procBlend = constrainBlendClampAngle(
+    index,
+    ahead,
+    joint,
+    dirVec,
+    radius,
+    maxBend,
+  );
 
-  const finalAngle = { angle: ahead.angle + procBlend.angle};
-  // let newAngle = ahead.angle + procBlend.angle; 
+  const finalAngle = { angle: ahead.angle + procBlend.angle };
+  // let newAngle = ahead.angle + procBlend.angle;
 
-  updateJointSecondaryAngle(setSecondary, joint, finalAngle, ahead.secondaryAngle, procBlend.angle);
-  updateJointThirdAngle(setThird, joint, finalAngle, ahead.mirroredSecondaryAngle, procBlend.angle );
+  updateJointSecondaryAngle(
+    setSecondary,
+    joint,
+    finalAngle,
+    ahead.secondaryAngle,
+    procBlend.angle,
+  );
+  updateJointThirdAngle(
+    setThird,
+    joint,
+    finalAngle,
+    ahead.mirroredSecondaryAngle,
+    procBlend.angle,
+  );
 
-  updateJoint(index, joint, ahead, finalAngle.angle, radius, procBlend.angle, procBlend.direction);
-   
+  updateJoint(
+    index,
+    joint,
+    ahead,
+    finalAngle.angle,
+    radius,
+    procBlend.angle,
+    procBlend.direction,
+  );
 }
 
 export function solveProcJoint_inPlaceOld(
@@ -603,46 +939,79 @@ export function solveProcJoint_inPlaceOld(
   motion2Start,
   motion3Start,
   motion2End,
-  secondMotionClamps
+  secondMotionClamps,
 ) {
   const inMotionRange = index >= motion2Start && index <= motion2End;
   const setSecondary = ahead.secondaryAngle && inMotionRange;
   const setThird = index > motion3Start && inMotionRange;
 
   if (setSecondary) {
-    maxBend = Math.PI * 2 / secondMotionClamps[index - motion2Start];
+    maxBend = (Math.PI * 2) / secondMotionClamps[index - motion2Start];
   } else {
-    maxBend = Math.PI * 2 / maxBend;
+    maxBend = (Math.PI * 2) / maxBend;
   }
 
   // reuse joint.direction array to avoid allocation
   const dir = joint.direction || (joint.direction = [0, 0]);
   _subtractVec_inPlace(joint, ahead, dir); // reuses dir array
 
-  const procBlend = constrainBlendClampAngle_inPlaceOld(index, ahead, joint, dir, radius, maxBend, dir);
+  const procBlend = constrainBlendClampAngle_inPlaceOld(
+    index,
+    ahead,
+    joint,
+    dir,
+    radius,
+    maxBend,
+    dir,
+  );
 
   const finalAngle = { angle: ahead.angle + procBlend.angle };
 
-  updateJointSecondaryAngle(setSecondary, joint, finalAngle, ahead.secondaryAngle, procBlend.angle);
-  updateJointThirdAngle(setThird, joint, finalAngle, ahead.mirroredSecondaryAngle, procBlend.angle);
+  updateJointSecondaryAngle(
+    setSecondary,
+    joint,
+    finalAngle,
+    ahead.secondaryAngle,
+    procBlend.angle,
+  );
+  updateJointThirdAngle(
+    setThird,
+    joint,
+    finalAngle,
+    ahead.mirroredSecondaryAngle,
+    procBlend.angle,
+  );
 
-  updateJoint(index, joint, ahead, finalAngle.angle, radius, procBlend.angle, procBlend.direction);
+  updateJoint(
+    index,
+    joint,
+    ahead,
+    finalAngle.angle,
+    radius,
+    procBlend.angle,
+    procBlend.direction,
+  );
 }
-
 
 export const TAU = Math.PI * 2;
 
 // Use for tail, made separate function instead of conditional checking in original function
-export function mir_solveProcJoint(index,ahead,joint,radius, maxBend, motion2Start, 
+export function mir_solveProcJoint(
+  index,
+  ahead,
+  joint,
+  radius,
+  maxBend,
+  motion2Start,
   motion3Start, // spine // turning point for angle that will layer on third angle
   motion2End,
   secondMotionClamps,
-  // secondMotionScalars, 
+  // secondMotionScalars,
 ) {
   // let curveAngleScalar = 1;
   let inMotionRange = index >= motion2Start && index <= motion2End;
   let needsSecondary = ahead.secondaryAngle && inMotionRange;
-  let needsThird = (index > motion3Start) && inMotionRange;
+  let needsThird = index > motion3Start && inMotionRange;
 
   if (needsSecondary) {
     maxBend = TAU / secondMotionClamps[index - motion2Start];
@@ -652,10 +1021,17 @@ export function mir_solveProcJoint(index,ahead,joint,radius, maxBend, motion2Sta
   }
 
   let dirVec = minus(joint, ahead);
-  let procBlend = constrainBlendClampAngle(index, ahead, joint, dirVec, radius,maxBend );
- 
+  let procBlend = constrainBlendClampAngle(
+    index,
+    ahead,
+    joint,
+    dirVec,
+    radius,
+    maxBend,
+  );
+
   let newAngle = ahead.angle + procBlend.angle;
-  if (needsSecondary ) {
+  if (needsSecondary) {
     newAngle = ahead.secondaryAngle + procBlend.angle;
     joint.secondaryAngle = newAngle;
   } else {
@@ -667,14 +1043,18 @@ export function mir_solveProcJoint(index,ahead,joint,radius, maxBend, motion2Sta
     joint.mirroredSecondaryAngle = newAngle;
   } else {
     joint.mirroredSecondaryAngle = ahead.mirroredSecondaryAngle;
-  } 
+  }
 
-  setJoint(index, joint, ahead, newAngle, radius, procBlend.angle, procBlend.direction);
-   
+  setJoint(
+    index,
+    joint,
+    ahead,
+    newAngle,
+    radius,
+    procBlend.angle,
+    procBlend.direction,
+  );
 }
-
-
-
 
 export function solveProcJoint_inPlace(
   index,
@@ -686,40 +1066,66 @@ export function solveProcJoint_inPlace(
   motion3Start,
   motion2End,
   secondMotionClamps,
-    goingBackwards = false,
-  stiffnessBlend
+  goingBackwards = false,
+  stiffnessBlend,
 ) {
   const inMotionRange = index >= motion2Start && index <= motion2End;
-  const setSecondary =
-    !goingBackwards && ahead.secondaryAngle && inMotionRange;
+  const setSecondary = !goingBackwards && ahead.secondaryAngle && inMotionRange;
 
-  const setThird =
-    !goingBackwards && index > motion3Start && inMotionRange;
-
+  const setThird = !goingBackwards && index > motion3Start && inMotionRange;
 
   if (setSecondary) {
-    maxBend = Math.PI * 2 / secondMotionClamps[index - motion2Start];
+    maxBend = (Math.PI * 2) / secondMotionClamps[index - motion2Start];
   } else {
-    maxBend = Math.PI * 2 / maxBend;
+    maxBend = (Math.PI * 2) / maxBend;
   }
 
   // reuse joint.direction array to avoid allocation
   const dir = joint.direction || (joint.direction = [0, 0]);
   _subtractVec_inPlace(joint, ahead, dir); // reuses dir array
 
-  const procBlend = constrainBlendClampAngle_inPlace(index, ahead, joint, dir, radius, maxBend, goingBackwards, stiffnessBlend, dir);
+  const procBlend = constrainBlendClampAngle_inPlace(
+    index,
+    ahead,
+    joint,
+    dir,
+    radius,
+    maxBend,
+    goingBackwards,
+    stiffnessBlend,
+    dir,
+  );
 
   const finalAngle = { angle: ahead.angle + procBlend.angle };
 
-    if (!goingBackwards) {
-
-  updateJointSecondaryAngle(setSecondary, joint, finalAngle, ahead.secondaryAngle, procBlend.angle);
-  updateJointThirdAngle(setThird, joint, finalAngle, ahead.mirroredSecondaryAngle, procBlend.angle);
+  if (!goingBackwards) {
+    updateJointSecondaryAngle(
+      setSecondary,
+      joint,
+      finalAngle,
+      ahead.secondaryAngle,
+      procBlend.angle,
+    );
+    updateJointThirdAngle(
+      setThird,
+      joint,
+      finalAngle,
+      ahead.mirroredSecondaryAngle,
+      procBlend.angle,
+    );
   } else {
     // Explicitly preserve existing values
     joint.secondaryAngle = ahead.secondaryAngle;
     joint.mirroredSecondaryAngle = ahead.mirroredSecondaryAngle;
   }
-  
-  updateJoint(index, joint, ahead, finalAngle.angle, radius, procBlend.angle, procBlend.direction);
+
+  updateJoint(
+    index,
+    joint,
+    ahead,
+    finalAngle.angle,
+    radius,
+    procBlend.angle,
+    procBlend.direction,
+  );
 }
