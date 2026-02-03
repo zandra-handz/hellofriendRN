@@ -649,7 +649,7 @@ if (!isShrinking && goingBackwards.turnDirectionHistory.length >= historyLengthB
   let allBelowZero = true;
   for (let i = 0; i < goingBackwards.turnDirectionHistory.length; i++) {
   // console.log(goingBackwards.turnDirectionHistory[i])
-    if (goingBackwards.turnDirectionHistory[i] >= .7) {  // If ANY value is >= 0
+    if (goingBackwards.turnDirectionHistory[i] >= .5) {  // If ANY value is >= 0
       allBelowZero = false;  // Then NOT all are below zero
       break;
     }
