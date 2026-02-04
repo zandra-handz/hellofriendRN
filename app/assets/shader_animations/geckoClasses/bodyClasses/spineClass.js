@@ -255,8 +255,7 @@ export default class Spine {
 
     solveFirst_withBackwardsDetect(
            this.motion.frontStepsTCenter,
-      this.motion.frontStepsTAngle,
-         this.motion.frontStepsSAngle,
+      this.motion.frontStepsTAngle, 
       this.motion.frontSteps_tDistanceApart,
       this.valuesForReversing,
       leadPoint_lead,

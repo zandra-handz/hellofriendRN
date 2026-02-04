@@ -68,8 +68,8 @@ export default class FourLegs {
       this.stepAheadJointFront,
       this.stepBehindJointFront,
       stepPivotSizeFront,
-      fingerLen, 
-   
+      fingerLen,
+
       rotationRadius,
       rotationRange,
       stepThreshhold,
@@ -93,7 +93,7 @@ export default class FourLegs {
       this.stepAheadJointBack,
       this.stepBehindJointBack,
       stepPivotSizeBack,
-      backFingerLen, 
+      backFingerLen,
       rotationRadius,
       rotationRange,
       stepThreshhold + 0.01,
@@ -105,57 +105,55 @@ export default class FourLegs {
     );
   }
 
-  jumpUpdate() {
-  if (!this.valuesForReversing.jumpRotation || this.valuesForReversing.jumpRotation === 0) {
-    return;
-  }
+  // jumpUpdate() {
+  //   if (
+  //     !this.valuesForReversing.jumpRotation ||
+  //     this.valuesForReversing.jumpRotation === 0
+  //   ) {
+  //     return;
+  //   }
 
-  const jumpRot = this.valuesForReversing.jumpRotation;
-  const cos = Math.cos(jumpRot);
-  const sin = Math.sin(jumpRot);
-  const cursor = this.valuesForReversing.jumpedCursorPosition;
-  
-  // Front legs
-  for (let i = 0; i < 2; i++) {
-    const dx = this.frontLegs.stepTargets[i][0] - cursor[0];
-    const dy = this.frontLegs.stepTargets[i][1] - cursor[1];
-    
-    this.frontLegs.stepTargets[i][0] = cursor[0] + (dx * cos - dy * sin);
-    this.frontLegs.stepTargets[i][1] = cursor[1] + (dx * sin + dy * cos);
-  }
-  
-  // Back legs
-  for (let i = 0; i < 2; i++) {
-    const dx = this.backLegs.stepTargets[i][0] - cursor[0];
-    const dy = this.backLegs.stepTargets[i][1] - cursor[1];
-    
-    this.backLegs.stepTargets[i][0] = cursor[0] + (dx * cos - dy * sin);
-    this.backLegs.stepTargets[i][1] = cursor[1] + (dx * sin + dy * cos);
-  }
-}
+  //   const jumpRot = this.valuesForReversing.jumpRotation;
+  //   const cos = Math.cos(jumpRot);
+  //   const sin = Math.sin(jumpRot);
+  //   const cursor = this.valuesForReversing.jumpedCursorPosition;
 
+  //   // Front legs
+  //   for (let i = 0; i < 2; i++) {
+  //     const dx = this.frontLegs.stepTargets[i][0] - cursor[0];
+  //     const dy = this.frontLegs.stepTargets[i][1] - cursor[1];
+
+  //     this.frontLegs.stepTargets[i][0] = cursor[0] + (dx * cos - dy * sin);
+  //     this.frontLegs.stepTargets[i][1] = cursor[1] + (dx * sin + dy * cos);
+  //   }
+
+  //   // Back legs
+  //   for (let i = 0; i < 2; i++) {
+  //     const dx = this.backLegs.stepTargets[i][0] - cursor[0];
+  //     const dy = this.backLegs.stepTargets[i][1] - cursor[1];
+
+  //     this.backLegs.stepTargets[i][0] = cursor[0] + (dx * cos - dy * sin);
+  //     this.backLegs.stepTargets[i][1] = cursor[1] + (dx * sin + dy * cos);
+  //   }
+  // }
 
   // update() {
   //   this.frontLegs.update();
   //   this.backLegs.update();
   // }
 
+  update() {
+    //   if (this.valuesForReversing.jumpRotation && this.valuesForReversing.jumpRotation !== 0) {
+    //     console.log('TRIGGER JUMP STEPS')
+    //      this.jumpUpdate();
+    //      console.log(`jump`, this.frontLegs.stepTargets)
+    //   } else {
+    // console.log('no jump',this.frontLegs.stepTargets)
+    this.frontLegs.update();
+    this.backLegs.update();
 
-
-update() {
-//   if (this.valuesForReversing.jumpRotation && this.valuesForReversing.jumpRotation !== 0) {
-//     console.log('TRIGGER JUMP STEPS')
-//      this.jumpUpdate();
-//      console.log(`jump`, this.frontLegs.stepTargets)
-//   } else {
-// console.log('no jump',this.frontLegs.stepTargets)
-  this.frontLegs.update();
-  this.backLegs.update();
-
-  // }
-  
-
-}
+    // }
+  }
 
   //   logAllUniformNames() {
   //     this.frontLegs.logAllUniformNames();
