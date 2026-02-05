@@ -234,12 +234,14 @@ function handleBackwardsJump(
     goingBackwards.jumpedFirstPosition = null;
     goingBackwards.jumpedCursorPosition = null;
     goingBackwards.jumpFrameCount = 0;
+    console.log('IS GROWING ----- RETURN')
     return;
   }
-  const rotationAmountDivisor = 2; // Divide total rotation by this (higher = less rotation)
+ 
+  const rotationAmountDivisor = 3.; // Divide total rotation by this (higher = less rotation)
 
   const jumpBackTimeLength = 20; // Total frames for the entire animation sequence
-  const useReleasePhase = false; // Set to true to gradually decrease, false to stay pushed out
+  const useReleasePhase = true; // Set to true to gradually decrease, false to stay pushed out
 
   // Rotation timing controls
   const rotationStartFrame = 0; // When to start rotating
@@ -305,7 +307,11 @@ function handleBackwardsJump(
     const TOTAL_TARGET = Math.PI / 2 / rotationAmountDivisor; // Adjust total rotation
     const rotationDuration = rotationEndFrame - rotationStartFrame;
     const INCREMENT = TOTAL_TARGET / rotationDuration;
-    const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
+    // old
+    // const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
+
+      // Use the raw lateral offset sign instead of turnDirection
+  const rotationDir = goingBackwards.lateralOffsetSign || 0;
 
     first.angle += INCREMENT * rotationDir;
 
@@ -336,97 +342,97 @@ function handleBackwardsJump(
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function handleBackwardsJumpFast(
-  goingBackwards,
-  cursor,
-  first,
-  radius,
-  n,
-  isGrowing,
-) {
-  // Early exit if creature is moving forward
-  if (isGrowing) {
-    goingBackwards.goingBackwards = false;
-    goingBackwards.totalRotation = 0;
-    goingBackwards.jumpRotation = 0;
-    goingBackwards.jumpedFirstPosition = null;
-    goingBackwards.jumpedCursorPosition = null;
-    goingBackwards.jumpFrameCount = 0;
-    return;
-  }
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// function handleBackwardsJumpFast(
+//   goingBackwards,
+//   cursor,
+//   first,
+//   radius,
+//   n,
+//   isGrowing,
+// ) {
+//   // Early exit if creature is moving forward
+//   if (isGrowing) {
+//     goingBackwards.goingBackwards = false;
+//     goingBackwards.totalRotation = 0;
+//     goingBackwards.jumpRotation = 0;
+//     goingBackwards.jumpedFirstPosition = null;
+//     goingBackwards.jumpedCursorPosition = null;
+//     goingBackwards.jumpFrameCount = 0;
+//     return;
+//   }
 
-  const rotationAmountDivisor = 2; // Divide total rotation by this (higher = less rotation)
-  const jumpBackTimeLength = 9; // Total frames: 3 push + 3 rotate + 3 drop
+//   const rotationAmountDivisor = 2; // Divide total rotation by this (higher = less rotation)
+//   const jumpBackTimeLength = 9; // Total frames: 3 push + 3 rotate + 3 drop
 
-  // Phase durations
-  const pushPhase = 3; // Frames 0-3: Push out
-  const rotatePhase = 3; // Frames 3-6: Rotate
-  const dropPhase = 3; // Frames 6-9: Drop back
+//   // Phase durations
+//   const pushPhase = 3; // Frames 0-3: Push out
+//   const rotatePhase = 3; // Frames 3-6: Rotate
+//   const dropPhase = 3; // Frames 6-9: Drop back
 
-  // Initialize frame counter on first call
-  if (goingBackwards.jumpFrameCount === undefined) {
-    goingBackwards.jumpFrameCount = 0;
-  }
+//   // Initialize frame counter on first call
+//   if (goingBackwards.jumpFrameCount === undefined) {
+//     goingBackwards.jumpFrameCount = 0;
+//   }
 
-  // Increment frame counter
-  goingBackwards.jumpFrameCount++;
+//   // Increment frame counter
+//   goingBackwards.jumpFrameCount++;
 
-  const maxPushMultiplier = 1; // Maximum push distance multiplier
-  let pushMultiplier;
-  let shouldRotate = false;
+//   const maxPushMultiplier = 1; // Maximum push distance multiplier
+//   let pushMultiplier;
+//   let shouldRotate = false;
 
-  // Phase 1: PUSH (frames 0-3)
-  if (goingBackwards.jumpFrameCount <= pushPhase) {
-    const progress = goingBackwards.jumpFrameCount / pushPhase;
-    pushMultiplier = maxPushMultiplier * progress; // 0 → 1
+//   // Phase 1: PUSH (frames 0-3)
+//   if (goingBackwards.jumpFrameCount <= pushPhase) {
+//     const progress = goingBackwards.jumpFrameCount / pushPhase;
+//     pushMultiplier = maxPushMultiplier * progress; // 0 → 1
 
-    // Phase 2: ROTATE (frames 3-6)
-  } else if (goingBackwards.jumpFrameCount <= pushPhase + rotatePhase) {
-    pushMultiplier = maxPushMultiplier; // Hold at max
-    shouldRotate = true;
+//     // Phase 2: ROTATE (frames 3-6)
+//   } else if (goingBackwards.jumpFrameCount <= pushPhase + rotatePhase) {
+//     pushMultiplier = maxPushMultiplier; // Hold at max
+//     shouldRotate = true;
 
-    // Phase 3: DROP (frames 6-9)
-  } else {
-    const dropProgress =
-      (goingBackwards.jumpFrameCount - pushPhase - rotatePhase) / dropPhase;
-    pushMultiplier = maxPushMultiplier * (1 - dropProgress); // 1 → 0
-  }
+//     // Phase 3: DROP (frames 6-9)
+//   } else {
+//     const dropProgress =
+//       (goingBackwards.jumpFrameCount - pushPhase - rotatePhase) / dropPhase;
+//     pushMultiplier = maxPushMultiplier * (1 - dropProgress); // 1 → 0
+//   }
 
-  const pushDistance = radius * pushMultiplier;
-  first[0] = cursor[0] + n[0] * pushDistance;
-  first[1] = cursor[1] + n[1] * pushDistance;
+//   const pushDistance = radius * pushMultiplier;
+//   first[0] = cursor[0] + n[0] * pushDistance;
+//   first[1] = cursor[1] + n[1] * pushDistance;
 
-  if (shouldRotate) {
-    const TOTAL_TARGET = Math.PI / 2 / rotationAmountDivisor;
-    const INCREMENT = TOTAL_TARGET / rotatePhase;
-    const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
+//   if (shouldRotate) {
+//     const TOTAL_TARGET = Math.PI / 2 / rotationAmountDivisor;
+//     const INCREMENT = TOTAL_TARGET / rotatePhase;
+//     const rotationDir = goingBackwards.turnDirection < 0 ? -1 : 1;
 
-    first.angle += INCREMENT * rotationDir;
-    goingBackwards.jumpRotation = INCREMENT * rotationDir;
+//     first.angle += INCREMENT * rotationDir;
+//     goingBackwards.jumpRotation = INCREMENT * rotationDir;
 
-    first[0] = cursor[0] + Math.cos(first.angle) * pushDistance;
-    first[1] = cursor[1] + Math.sin(first.angle) * pushDistance;
+//     first[0] = cursor[0] + Math.cos(first.angle) * pushDistance;
+//     first[1] = cursor[1] + Math.sin(first.angle) * pushDistance;
 
-    goingBackwards.jumpedFirstPosition = [first[0], first[1]];
-    goingBackwards.jumpedCursorPosition = [cursor[0], cursor[1]];
+//     goingBackwards.jumpedFirstPosition = [first[0], first[1]];
+//     goingBackwards.jumpedCursorPosition = [cursor[0], cursor[1]];
 
-    if (goingBackwards.totalRotation === undefined) {
-      goingBackwards.totalRotation = 0;
-    }
-    goingBackwards.totalRotation += INCREMENT;
-  }
+//     if (goingBackwards.totalRotation === undefined) {
+//       goingBackwards.totalRotation = 0;
+//     }
+//     goingBackwards.totalRotation += INCREMENT;
+//   }
 
-  // Check if animation sequence is complete
-  if (goingBackwards.jumpFrameCount >= jumpBackTimeLength) {
-    goingBackwards.goingBackwards = false;
-    goingBackwards.totalRotation = 0;
-    goingBackwards.jumpRotation = 0;
-    goingBackwards.jumpedFirstPosition = null;
-    goingBackwards.jumpedCursorPosition = null;
-    goingBackwards.jumpFrameCount = 0;
-  }
-}
+//   // Check if animation sequence is complete
+//   if (goingBackwards.jumpFrameCount >= jumpBackTimeLength) {
+//     goingBackwards.goingBackwards = false;
+//     goingBackwards.totalRotation = 0;
+//     goingBackwards.jumpRotation = 0;
+//     goingBackwards.jumpedFirstPosition = null;
+//     goingBackwards.jumpedCursorPosition = null;
+//     goingBackwards.jumpFrameCount = 0;
+//   }
+// }
 
 export function solveFirst_withBackwardsDetect(
   stepsCenter,
@@ -495,14 +501,22 @@ export function solveFirst_withBackwardsDetect(
     vecToCursor[1] / distanceToCursor,
   ]);
 
-  let perpVector = [
-    Math.cos(stepsAngle - Math.PI / 2),
-    Math.sin(stepsAngle - Math.PI / 2),
-  ];
-  let lateralOffset =
-    vecToCursor[0] * perpVector[0] + vecToCursor[1] * perpVector[1];
+let perpVector = [
+  Math.cos(stepsAngle - Math.PI / 2),
+  Math.sin(stepsAngle - Math.PI / 2),
+];
+let lateralOffset =
+  vecToCursor[0] * perpVector[0] + vecToCursor[1] * perpVector[1];
 
-  // Use the MAGNITUDE of vecToCursor for normalization, not step width
+// console.log('vecToCursor:', vecToCursor, 'perpVector:', perpVector, 'lateralOffset:', lateralOffset);
+
+goingBackwards.lateralOffsetSign = Math.sign(lateralOffset);
+goingBackwards.lateralOffsetSign = Math.sign(lateralOffset); // -1, 0, or 1
+
+// console.log('lateralOffset:', lateralOffset, 'sign:', goingBackwards.lateralOffsetSign);
+ 
+
+// Use the MAGNITUDE of vecToCursor for normalization, not step width
   let normalizedTurnDirection = lateralOffset / distanceToCursor;
   normalizedTurnDirection = Math.max(-1, Math.min(1, normalizedTurnDirection));
   goingBackwards.turnDirection = normalizedTurnDirection; // 1 is center
@@ -602,7 +616,7 @@ export function solveFirst_withBackwardsDetect(
   ) {
     let allBelowZero = true;
     for (let i = 0; i < goingBackwards.turnDirectionHistory.length; i++) {
-      if (goingBackwards.turnDirectionHistory[i] >= 0.5) {
+      if (goingBackwards.turnDirectionHistory[i] >= 0.7) {
         // If ANY value is >= 0
         allBelowZero = false; // Then NOT all are below zero
         break;
@@ -614,31 +628,34 @@ export function solveFirst_withBackwardsDetect(
       //console.log('all turndirection ', Date.now())
 
       isShrinking = true;
-
-
     }
 
     trigger_turnJump = isShrinking;
 
-          if (isShrinking) {
-        console.log("jump back triggered by turn: ", isShrinking, Date.now());
-      } else {
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-      }
+    // if (isShrinking) {
+    //   console.log("jump back triggered by turn: ", isShrinking, Date.now());
+    // } else {
+    //   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    // }
   }
   const TURN_DIRECTION_MIN = 0.6;
   const DISTANCE_MIN = 0.04;
 
+    let isGrowing = false;
+
   if (
     !isShrinking &&
-    goingBackwards.turnDirection < TURN_DIRECTION_MIN &&
+   // !goingBackwards.goingBackwards &&
+     goingBackwards.turnDirection < TURN_DIRECTION_MIN &&
     distanceToCursor < DISTANCE_MIN
   ) {
+    console.log('EMERGENCY SHRINK', Date.now(), goingBackwards.goingBackwards)
     isShrinking = true;
-  }
-  let isGrowing = false;
+  } 
+
+
   if (goingBackwards.distanceHistory.length >= historyLengthForwards) {
-    isGrowing = true;
+    isGrowing = true; 
     for (
       let i = goingBackwards.distanceHistory.length - historyLengthForwards;
       i < goingBackwards.distanceHistory.length;
@@ -651,12 +668,13 @@ export function solveFirst_withBackwardsDetect(
         isGrowing = false;
         break;
       }
+      isShrinking = !isGrowing;
     }
   }
 
   if (isShrinking && !goingBackwards.goingBackwards && !isGrowing) {
     // Add !isGrowing check
-    const COOLDOWN_FRAMES = trigger_distanceJump ? 60 : 20;
+    const COOLDOWN_FRAMES = trigger_distanceJump ? 60 : 15;
 
     if (goingBackwards.framesSinceLastJump === undefined) {
       goingBackwards.framesSinceLastJump = COOLDOWN_FRAMES;
@@ -670,21 +688,23 @@ export function solveFirst_withBackwardsDetect(
     }
   }
 
-  if (
+
+
+  if (goingBackwards.goingBackwards) {
+    handleBackwardsJump(goingBackwards, cursor, first, radius, n, isGrowing);
+  }
+
+    if (
     !goingBackwards.goingBackwards &&
     goingBackwards.framesSinceLastJump !== undefined
   ) {
     goingBackwards.framesSinceLastJump++;
   }
 
-  if (goingBackwards.goingBackwards) {
-    handleBackwardsJump(goingBackwards, cursor, first, radius, n, isGrowing);
-  }
-
   if (goingBackwards.stiffnessBlend === undefined) {
     goingBackwards.stiffnessBlend = 0.0;
   }
-
+ 
   const stiffnessSpeed = 0.8;
 
   if (goingBackwards.goingBackwards) {
@@ -697,6 +717,9 @@ export function solveFirst_withBackwardsDetect(
       goingBackwards.stiffnessBlend = 0.0;
   }
 }
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

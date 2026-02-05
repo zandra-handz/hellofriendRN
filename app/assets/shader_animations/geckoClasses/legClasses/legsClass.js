@@ -1,4 +1,4 @@
- import {
+import {
   _getPointTowardB,
   _getCenterPoint,
   _getCenterPoint_inPlace,
@@ -7,12 +7,15 @@
   _subtractVec,
   _getAngleFromXAxis,
   _getForwardAngle,
-
   getFrontStepsSagTrans,
 } from "../../utils.js";
- 
 
-import { updateShoulderRotator, solveElbowIK,  getCalcStep_inPlace,  solveFingers } from "../../utils.js";
+import {
+  updateShoulderRotator,
+  solveElbowIK,
+  getCalcStep_inPlace,
+  solveFingers,
+} from "../../utils.js";
 
 // I am keeping both centerJoint and stepCenterJoint for now in case
 // additional animation needs to be done to the shoulder joint but not the spine joint
@@ -20,9 +23,9 @@ import { updateShoulderRotator, solveElbowIK,  getCalcStep_inPlace,  solveFinger
 export default class Legs {
   constructor(
     state,
-      valuesForReversing,
+    valuesForReversing,
 
-   spine,
+    spine,
     motion,
     shoulderSpineJoint,
     stepCenterJoint,
@@ -30,7 +33,7 @@ export default class Legs {
     stepAheadJoint,
     stepBehindJoint,
     stepPivotSize,
-    fingerLen, 
+    fingerLen,
     rotationRadius = 0.007, // original as default
     rotationRange = 2.2, // original as default
     stepThreshhold = 0.06, // original as default
@@ -38,13 +41,13 @@ export default class Legs {
     stepWideness = 3.4,
     stepReach = 0.0453,
     upperArmLength = 0.042,
-    forearmLength = 0.026
+    forearmLength = 0.026,
   ) {
     this.TAU = Math.PI * 2;
     this.state = state;
     this.valuesForReversing = valuesForReversing;
     this.spine = spine;
-  
+
     this.motion = motion;
 
     this.shoulderSpineJoint = shoulderSpineJoint; // anchorCenter
@@ -58,10 +61,10 @@ export default class Legs {
     this.stepCenterJoint = stepCenterJoint; //can be same as anchor or different (spine.joints[2])
     this.stepCenterRadius = stepCenterRadius; //can be same as anchor or different
     this.stepAheadJoint = stepAheadJoint;
-      this.stepBehindJoint = stepBehindJoint;
+    this.stepBehindJoint = stepBehindJoint;
 
     this.centerToAheadAngle = 0;
-      this.centerToBehindAngle = 0;
+    this.centerToBehindAngle = 0;
     this.chestAngle = 0; // rename
     this.stepsDistanceApart = 0;
 
@@ -98,32 +101,29 @@ export default class Legs {
       [0.5, 0.5],
       [0.5, 0.5],
     ];
-    
-
 
     // 10 fingers × vec2
-this.fingerBuffer = new Float32Array(20);
+    this.fingerBuffer = new Float32Array(20);
 
-// Inside constructor
-this.calcStepBuffer = [
-  [0, 0], // step 0
-  [0, 0], // step 1
-];
-this.bigStepBuffer = [
-  [0, 0], // pivoted step 0
-  [0, 0], // pivoted step 1
-];
+    // Inside constructor
+    this.calcStepBuffer = [
+      [0, 0], // step 0
+      [0, 0], // step 1
+    ];
+    this.bigStepBuffer = [
+      [0, 0], // pivoted step 0
+      [0, 0], // pivoted step 1
+    ];
 
-
-// Convenience views (NO allocation after this)
-this.fingers = [
-  Array.from({ length: 5 }, (_, i) =>
-    this.fingerBuffer.subarray(i * 2, i * 2 + 2)
-  ),
-  Array.from({ length: 5 }, (_, i) =>
-    this.fingerBuffer.subarray(10 + i * 2, 10 + i * 2 + 2)
-  ),
-];
+    // Convenience views (NO allocation after this)
+    this.fingers = [
+      Array.from({ length: 5 }, (_, i) =>
+        this.fingerBuffer.subarray(i * 2, i * 2 + 2),
+      ),
+      Array.from({ length: 5 }, (_, i) =>
+        this.fingerBuffer.subarray(10 + i * 2, 10 + i * 2 + 2),
+      ),
+    ];
 
     // this.fingers = [
     //   [
@@ -158,33 +158,18 @@ this.fingers = [
 
     this.upperArmLength = upperArmLength;
     this.forearmLength = forearmLength;
-
- 
- 
   }
 
-
   // not using rn
-      getStepValues() {
-
-    //       rotationRadius = 0.007, // original as default
-    // rotationRange = 2.2, // original as default
-    // stepThreshhold = 0.06, // original as default
-    // stepWiggleRoom = 0.02, // original as default
-    // stepWideness = 3.4,
-    // stepReach = 0.0453,
+  getStepValues() {
     if (this.valuesForReversing.goingBackwards) {
-    //  console.log('setting backwards step values')
-      this.stepThreshhold = .06;
-      this.stepWideness = 3.4;
-      this.stepReach = .0453;
-
-
+    this.stepThreshhold = 0.03;
+      this.stepWideness = 5;
+      this.stepReach = 0.0253;
     } else {
-      this.stepThreshhold = .06;
-      this.stepWideness = 3.4;
-      this.stepReach = .0453;
-      
+      this.stepThreshhold = 0.09;
+      this.stepWideness = 4;
+      this.stepReach = 0.0463;
     }
   }
 
@@ -192,15 +177,16 @@ this.fingers = [
   updateForwardAngle() {
     this.centerToAheadAngle = _getForwardAngle(
       this.stepCenterJoint,
-      this.stepAheadJoint
+      this.stepAheadJoint,
     );
   }
 
-      updateBackwardAngle() {  
-    this.centerToBehindAngle = _getForwardAngle( this.stepCenterJoint,  this.stepBehindJoint );
-
+  updateBackwardAngle() {
+    this.centerToBehindAngle = _getForwardAngle(
+      this.stepCenterJoint,
+      this.stepBehindJoint,
+    );
   }
-
 
   solveStepTargetsPaired() {
     // get dot product of steps' current locations
@@ -216,7 +202,7 @@ this.fingers = [
       this.stepTargets[0],
       this.stepTargets[1],
       this.stepAheadJoint.angle,
-      this.stepCenterJoint.angle
+      this.stepCenterJoint.angle,
     );
 
     this.stepsDistanceApart = data.tDistanceApart;
@@ -252,32 +238,29 @@ this.fingers = [
     ////////////////////////////////////////////////////////////////
     const distanceOut = this.stepCenterRadius + this.stepReach + 0.01;
 
- 
+    let calcStep0 = [0, 0];
+    let calcStep1 = [0, 0];
 
-    
-    let calcStep0 = [0.,0.];
-    let calcStep1 = [0.,0.];
-
-   getCalcStep_inPlace(
-  calcStep0,
-  this.stepCenterJoint,
-  this.centerToAheadAngle,
-   this.centerToBehindAngle,
-  distanceOut,
-  this.stepWideness,
-  false,
-  this.valuesForReversing.goingBackwards,
-);
- getCalcStep_inPlace(
-  calcStep1,
-  this.stepCenterJoint,
-  this.centerToAheadAngle,
-   this.centerToBehindAngle,
-  distanceOut,
-  this.stepWideness,
-  true,
-  this.valuesForReversing.goingBackwards,
-);
+    getCalcStep_inPlace(
+      calcStep0,
+      this.stepCenterJoint,
+      this.centerToAheadAngle,
+      this.centerToBehindAngle,
+      distanceOut,
+      this.stepWideness,
+      false,
+      this.valuesForReversing.goingBackwards,
+    );
+    getCalcStep_inPlace(
+      calcStep1,
+      this.stepCenterJoint,
+      this.centerToAheadAngle,
+      this.centerToBehindAngle,
+      distanceOut,
+      this.stepWideness,
+      true,
+      this.valuesForReversing.goingBackwards,
+    );
 
     // const bigStep0 = getPivotedStep(
     //   calcStep0,
@@ -325,10 +308,10 @@ this.fingers = [
 
     // PICK STEP
     if (this.state.takeStep0) {
-    this.stepTargets[0] = calcStep0;
+      this.stepTargets[0] = calcStep0;
       // REMOVED FOR MOBILE
       // if (!leftDesiredIsAhead) {
-      //   this.stepTargets[0] = bigStep0; 
+      //   this.stepTargets[0] = bigStep0;
       //   this.stepTargets[0].angle = calcStep0.angle; //????
       // } else {
       //   this.stepTargets[0] = calcStep0;
@@ -339,9 +322,7 @@ this.fingers = [
     }
 
     if (this.state.takeStep1) {
-
-   this.stepTargets[1] = calcStep1;
-
+      this.stepTargets[1] = calcStep1;
 
       // if (!rightDesiredIsAhead) {
       //   console.log('oop big step')
@@ -356,24 +337,19 @@ this.fingers = [
       this.state.catchUp(true);
     }
   }
- 
 
   update() {
-
+    this.getStepValues();
     // if ( this.valuesForReversing.jumpRotation) {
     //      console.log(`rotation delta of hop inside legsClass: `, this.valuesForReversing.jumpRotation)
     //   console.log(`first position after jump: `, this.valuesForReversing.jumpedFirstPosition)
-   
 
     // }
- 
+
     this.updateForwardAngle();
 
-
-
     if (this.valuesForReversing.goingBackwards) {
-           this.updateBackwardAngle();
-
+      this.updateBackwardAngle();
     }
 
     // updates rotator joint position only
@@ -386,7 +362,7 @@ this.fingers = [
       this.shoulderSpineJoint.angle,
       false,
       false,
-      this.valuesForReversing.goingBackwards
+      this.valuesForReversing.goingBackwards,
     );
     // updates rotator joint position only
     updateShoulderRotator(
@@ -398,7 +374,7 @@ this.fingers = [
       this.shoulderSpineJoint.angle,
       true,
       true,
-      this.valuesForReversing.goingBackwards
+      this.valuesForReversing.goingBackwards,
     );
     this.solveStepTargetsPaired();
 
@@ -408,7 +384,7 @@ this.fingers = [
       this.stepTargets[0],
       this.upperArmLength,
       this.forearmLength,
-      false
+      false,
     );
     solveElbowIK(
       this.rotatorJoint1,
@@ -416,22 +392,37 @@ this.fingers = [
       this.stepTargets[1],
       this.upperArmLength,
       this.forearmLength,
-      true
-    ); 
-
+      true,
+    );
 
     // set muscles
-    _getCenterPoint_inPlace( this.stepTargets[0], this.elbows[0], this.muscles[0]);
-    _getCenterPoint_inPlace( this.elbows[0], this.stepCenterJoint, this.muscles[1]);
-    _getCenterPoint_inPlace( this.stepTargets[1], this.elbows[1], this.muscles[2]);
-    _getCenterPoint_inPlace( this.elbows[1], this.stepCenterJoint, this.muscles[3]);
+    _getCenterPoint_inPlace(
+      this.stepTargets[0],
+      this.elbows[0],
+      this.muscles[0],
+    );
+    _getCenterPoint_inPlace(
+      this.elbows[0],
+      this.stepCenterJoint,
+      this.muscles[1],
+    );
+    _getCenterPoint_inPlace(
+      this.stepTargets[1],
+      this.elbows[1],
+      this.muscles[2],
+    );
+    _getCenterPoint_inPlace(
+      this.elbows[1],
+      this.stepCenterJoint,
+      this.muscles[3],
+    );
 
     solveFingers(
       this.stepTargets[0],
       this.fingers[0],
       this.fingerLen,
       false,
-      this.fingerAngleOffset
+      this.fingerAngleOffset,
     );
 
     solveFingers(
@@ -439,10 +430,7 @@ this.fingers = [
       this.fingers[1],
       this.fingerLen,
       true,
-      this.fingerAngleOffset
+      this.fingerAngleOffset,
     );
- 
   }
-
-  
 }

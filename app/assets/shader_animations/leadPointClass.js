@@ -115,8 +115,7 @@ if (this.speed > 0) {
 
   update(path) { 
     // use mouse.user_pointer or a soul
-
-    // console.log(`PATH`, path);
+ 
 
     this.updateLeadPointSmooth(path);
   }

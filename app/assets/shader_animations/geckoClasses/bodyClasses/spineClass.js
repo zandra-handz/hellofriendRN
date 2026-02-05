@@ -1,4 +1,7 @@
-import { solveFirst_withBackwardsDetect, solveProcJoint_inPlace } from "./utilsPChain.js";
+import {  solveProcJoint_inPlace } from "./utilsPChain.js";
+
+import { solveFirst_withBackwardsDetect } from "./utilsFirstPChain.js";
+
 import {
   _getCenterPoint,
   _makeDistancePoint,
