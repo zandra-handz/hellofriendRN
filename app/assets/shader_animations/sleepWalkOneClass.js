@@ -46,6 +46,7 @@ export default class SleepWalk0 {
     this.currentPos = [0, 0];
 
     this.autoTap = false;
+    this.paused = false;
   }
 
   setAspect(aspect) {
@@ -109,6 +110,11 @@ export default class SleepWalk0 {
     this.startPoint = pos;
   }
 
+  updatePauseMode(value) {
+    this.paused = value;
+
+  }
+
   resetTick() {
     this.tick = 0;
   }
@@ -132,6 +138,7 @@ export default class SleepWalk0 {
 
   update(momentsRef, scale) {
     // console.log(`autoselect`, this.autoSelectCoord)
+    if (!this.paused) {
     if (this.tick > 50) {
       this.tick = 0;
     }
@@ -140,7 +147,12 @@ export default class SleepWalk0 {
       this.updateCurrentPos(momentsRef, this.aspect, scale);
     }
 // console.log(this.currentPos);
+ 
     this.tick += 1;
-    this.walk = this.currentPos;
+       this.walk = this.currentPos;
+
+ 
+    // this.walk = this.currentPos;
   }
+}
 }

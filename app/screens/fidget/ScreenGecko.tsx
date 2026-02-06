@@ -7,7 +7,6 @@ import {
   Vibration,
 } from "react-native";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import UserPointer from "@/app/assets/shader_animations/UserPointer";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -16,19 +15,11 @@ import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import GradientBackground from "@/app/components/appwide/display/GradientBackground";
-import { SafeAreaView } from "react-native-safe-area-context";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
+import SvgIcon from "@/app/styles/SvgIcons";
 import useFriendDash from "@/src/hooks/useFriendDash";
-import PawSetter from "./PawSetter";
-// import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-import * as Haptics from "expo-haptics";
-import { Audio } from "expo-av";
-
-import MemoizedMomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 
 type Props = {};
 
@@ -61,7 +52,6 @@ const ScreenGecko = (props: Props) => {
 
   const handleNavigateToMoment = useCallback(
     (m) => {
-      console.log(`navving`, m);
       navigateToMomentView({ moment: m, index: m.uniqueIndex });
     },
     [navigateToMomentView], // optional, if this function comes from props/context
@@ -92,6 +82,12 @@ const ScreenGecko = (props: Props) => {
 
   const [resetSkia, setResetSkia] = useState(null);
 
+  const [manualOnly, setManualOnly] = useState(false);
+
+  const handleToggleManual = () => {
+    setManualOnly((prev) => !prev);
+  };
+
   useEffect(() => {
     setMoment({
       category: null,
@@ -107,14 +103,13 @@ const ScreenGecko = (props: Props) => {
     setResetSkia(Date.now());
   }, [momentCoords]);
 
- 
   // Function to randomize/scatter moments
   const handleRescatterMoments = () => {
     const minY = 0.2; // 10% down from top
     const maxY = 0.75; // 10% up from bottom
 
-    const minX = 0.05;  
-    const maxX = 0.95;  
+    const minX = 0.05;
+    const maxX = 0.95;
     // console.log(`scattering moments!`, scatteredMoments);
     setScatteredMoments((prev) =>
       prev.map((m) => {
@@ -141,6 +136,8 @@ const ScreenGecko = (props: Props) => {
     );
     // console.log('All moments recentered to [0.5, 0.5]');
   };
+
+  const [count, setCount] = useState(0);
 
   const [moment, setMoment] = useState({
     category: null,
@@ -177,16 +174,17 @@ const ScreenGecko = (props: Props) => {
         id: moment.id,
       });
 
+      setCount((prev) => prev + Number(moment?.charCount));
+
       // --- Vibration ---
       Vibration.vibrate(50); // vibrate for 50ms
     } else {
-
-          setMoment({
-      category: null,
-      capsule: null,
-      uniqueIndex: null,
-      id: null,
-    });
+      setMoment({
+        category: null,
+        capsule: null,
+        uniqueIndex: null,
+        id: null,
+      });
     }
   };
 
@@ -247,7 +245,9 @@ const ScreenGecko = (props: Props) => {
           // handleRescatterMoments={handleRescatterMomentsNormalizedSpace}
           handleRescatterMoments={handleRescatterMoments}
           handleRecenterMoments={handleRecenterMoments}
-          setScatteredMoments={setScatteredMoments}
+          // setScatteredMoments={setScatteredMoments}
+          handleToggleManual={handleToggleManual}
+          manualOnly={manualOnly}
         />
       </View>
       <View
@@ -262,6 +262,23 @@ const ScreenGecko = (props: Props) => {
         <Text style={[styles.statsText, { color: primaryColor }]}>
           Days since: {DAYS_SINCE}
         </Text>
+      </View>
+
+      <View
+        style={[
+          styles.scoreWrapper,
+          // { backgroundColor: lightDarkTheme.lighterOverlayBackground },
+        ]}
+      >
+        <Text style={[styles.scoreText, { color: primaryColor }]}>{count}</Text>
+        <Pressable   onPress={handleToggleManual} style={styles.manualButton}>
+          <SvgIcon
+        
+            name={manualOnly ? `motion_play_outline` : `motion_pause_outline`}
+            size={34}
+           // color={lightDarkTheme.primaryBackground}
+          ></SvgIcon>
+        </Pressable>
       </View>
 
       <View
@@ -300,7 +317,12 @@ const ScreenGecko = (props: Props) => {
         )}
         {!moment.id && (
           <View style={styles.noMomentWrapper}>
-            <Text style={[styles.noMomentText, {color: lightDarkTheme.primaryText}]}>
+            <Text
+              style={[
+                styles.noMomentText,
+                { color: lightDarkTheme.primaryText },
+              ]}
+            >
               Select a moment to view it
             </Text>
           </View>
@@ -331,9 +353,38 @@ const styles = StyleSheet.create({
     //   shadowRadius: 4.65,
     //  elevation: 8,
   },
+
+  scoreWrapper: {
+    // width: "100%",
+    height: 80,
+    padding: 20,
+    paddingHorizontal: 20,
+    top: 150,
+    left: 16, //same as pawsetter
+    flex: 1,
+    // width: 170,
+    position: "absolute",
+    flexDirection: "column",
+    //  alignItems: "center",
+    borderRadius: 30,
+    //   borderWidth: 1,
+    //   shadowColor: "#000",
+    //  shadowOffset: { width: 0, height: 4 },
+    //   shadowOpacity: 0.3,
+    //   shadowRadius: 4.65,
+    //  elevation: 8,
+  },
   statsText: {
     fontWeight: "bold",
     fontSize: 16,
+  },
+  scoreText: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  manualButton: {
+    paddingVertical: 20,
+
   },
   previewWrapper: {
     width: "100%",

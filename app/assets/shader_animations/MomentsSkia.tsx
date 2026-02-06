@@ -74,9 +74,11 @@ const MomentsSkia = ({
   gecko_size = 1.2,
   lightDarkTheme,
   handleRescatterMoments,
+  handleToggleManual,
   handleRecenterMoments,
+  manualOnly,
   reset = 0,
-  setScatteredMoments,
+  // setScatteredMoments,
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -264,6 +266,10 @@ useEffect(() => {
       sleepWalk0.current.setAspect(aspect);
     }
   }, [aspect]);
+
+  useEffect(() => {
+    sleepWalk0.current.updatePauseMode(manualOnly);
+  }, [manualOnly])
 
   const SHARED_SKSL_PRELUDE = (
     c1: string,

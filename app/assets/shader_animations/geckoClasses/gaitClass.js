@@ -68,13 +68,14 @@ export default class GaitState {
   update(externalDistanceDriver, goingBackwards) {
     this.isReversing = goingBackwards;
   
-
+//console.log(this.phase)
     if (this.isReversing) {
       this.updateSpeedScalar(this.reverseSpeedScalar);
-      // console.log('gait is in reversal!!');
+        // console.log('gait is in reversal!!');
     } else {
+      // console.log(`~~~~~~~~~~`)
       this.updateSpeedScalar(this.speedScalar);
-    }
+    } 
 
     this.externalDistanceDriver = externalDistanceDriver;
 
@@ -96,9 +97,11 @@ export default class GaitState {
     } else {
       // Normal forward step triggers
       if (this.phase > 0.89) {
+   
         this.takeStep0 = true;
       }
       if (this.phase < -0.89) {
+      
         this.takeStep1 = true;
       }
 
@@ -115,6 +118,16 @@ export default class GaitState {
     } else {
       this.swayBodyFront = false;
     }
+
+    // if (this.takeStep0){
+
+    //        console.log('setting step')
+    // } else if (this.takeStep1){
+    //     console.log('                       setting step')
+      
+    // } else {
+    //     console.log('                              no step')
+    // }
   }
 
   jumpUpdate(inputDistance, dt = 1) {

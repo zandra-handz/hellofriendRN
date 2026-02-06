@@ -6,8 +6,17 @@ import FourLegs from "./geckoClasses/fourLegsClass.js";
 export default class Gecko {
   constructor(startingCoord=[0.,0.], hintDist=.04) {
     this.gaitSpeedScalar = 9;
-    this.reverseGaitSpeedScalar = 20;
-    this.stepThreshhold = 0.1;
+    this.reverseGaitSpeedScalar = 40;
+
+    this.forwardStepThreshhold = 0.1;
+    this.reverseStepThreshhold = .02;
+
+    this.forwardStepWideness = 4;
+    this.reverseStepWideness = 6;
+
+    this.forwardStepReach = .0463;
+    this.reverseStepReach = .0253;
+
     this.stepPivotSize = 0.24;
     this.motionDilutionScalar = 0.5;
     this.mir_MotionDilutionScalar = 0.5;
@@ -37,12 +46,12 @@ this.valuesForReversing = {
       this.valuesForReversing,
       this.motionDilutionScalar,
       this.mir_MotionDilutionScalar,
-      "debugMotionGlobal"
+      
     );
 
     this.body = new Body(
       this.gait,
-        this.valuesForReversing,
+      this.valuesForReversing,
       this.motion,
       this.startingCoord,
       this.hintDist,
@@ -56,9 +65,18 @@ this.valuesForReversing = {
       this.valuesForReversing,
       this.body.spine,
       this.motion,
-      this.stepThreshhold,
+      this.forwardStepThreshhold,
+      this.reverseStepThreshhold,
       this.stepPivotSize,
-      this.stepPivotSize
+      this.stepPivotSize,
+      this.forwardStepWideness,
+      this.reverseStepWideness,
+      this.forwardStepReach,
+      this.reverseStepReach,
+      // rotationRadius,
+      // rotationRange,
+      // upperArmLength,
+      // foreArmLength
     );
   }
 

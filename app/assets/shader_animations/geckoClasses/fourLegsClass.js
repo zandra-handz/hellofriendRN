@@ -1,5 +1,6 @@
 import Legs from "./legClasses/legsClass.js";
 import FollowerLegs from "./legClasses/followerLegsClass.js";
+import ThemedListItem from "react-native-elements/dist/list/ListItem.js";
 
 let backUpLegLen = 0.05;
 let backLowLegLen = 0.02;
@@ -14,15 +15,19 @@ export default class FourLegs {
 
     spine,
     motion,
-    stepThreshhold = 0.09, // original as default
+    forwardStepThreshhold = 0.09, // original as default
+    reverseStepThreshold = .09,
     stepPivotSizeFront,
     stepPivotSizeBack,
+    stepWideness = 4,
+    reverseStepWideness = 4,
+    stepReach = 0.0463,
+    reverseStepReach = .0463,
 
     rotationRadius = 0.007, // original as default
     rotationRange = 2.2, // original as default
 
-    stepWideness = 4,
-    stepReach = 0.0463,
+
     upperArmLength = 0.042,
     forearmLength = 0.026, //upperArmLength * 0.619047619;
   ) {
@@ -32,17 +37,8 @@ export default class FourLegs {
     this.spine = spine;
     this.valuesForReversing = valuesForReversing;
 
-    this.stepWiggleRoom = stepThreshhold / 3;
-
-    // this.stepAheadJointFront = spine.first; // head
-    // this.shoulderSpineJoint = spine.joints[2];
-    // this.stepCenterJointFront = spine.joints[2];
-    // this.distanceOutRadiusFront = 0.02;
-
-    // this.stepAheadJointBack = spine.joints[2]; // head
-    // this.hipSpineJoint = spine.joints[13];
-    // this.stepCenterJointBack = spine.joints[13];
-    // this.distanceOutRadiusBack = 0.02;
+    this.stepWiggleRoom = forwardStepThreshhold / 3; 
+    this.reverseStepWiggleRoom = reverseStepThreshold / 3;
 
     this.stepAheadJointFront = spine.first; // head
     this.shoulderSpineJoint = spine.joints[2];
@@ -72,10 +68,14 @@ export default class FourLegs {
 
       rotationRadius,
       rotationRange,
-      stepThreshhold,
+      forwardStepThreshhold,
+      reverseStepThreshold,
       this.stepWiggleRoom,
+      this.reverseStepWiggleRoom,
       stepWideness,
+      reverseStepWideness,
       stepReach,
+      reverseStepReach,
       upperArmLength,
       forearmLength,
     );
@@ -96,10 +96,15 @@ export default class FourLegs {
       backFingerLen,
       rotationRadius,
       rotationRange,
-      stepThreshhold + 0.01,
+      forwardStepThreshhold + 0.01,
+      reverseStepThreshold + .01,
+
       this.stepWiggleRoom,
+      this.reverseStepWiggleRoom,
       stepWideness,
+      reverseStepWideness,
       stepReach,
+      reverseStepReach,
       backUpLegLen,
       backLowLegLen,
     );

@@ -15,10 +15,7 @@ export default class MotionGlobal {
     state,
     valuesForReversing,
     dilutionScalar = 0.4,
-    mir_dilutionScalar = 0.4,
-    u_debug_prefix = "debugMotionGlobal",
-     u_moving_snout_prefix = "motionGlobalSnout",
-    u_moving_head_prefix = "motionGlobalHead"
+    mir_dilutionScalar = 0.4,  
   ) {
     this.TAU = Math.PI * 2;
  
@@ -66,15 +63,11 @@ export default class MotionGlobal {
     this.realignmentAngle1 = 0;
     this.realignmentAngle2 = 0;
     this.realignmentAngle3 = 0;
-
-    this.u_moving_snout_prefix = u_moving_snout_prefix;
-    this.movingSnout = [0.5, 0.5];
-    this.u_moving_head_prefix = u_moving_head_prefix;
+ 
+    this.movingSnout = [0.5, 0.5]; 
     this.movingHead = [0.5, 0.5];
 
-    
-
-    this.u_debug_prefix = u_debug_prefix;
+     
   
   }
 
