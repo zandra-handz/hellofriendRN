@@ -13,16 +13,12 @@ export default class Tail {
     segmentRange,
     baseRadius = 0.02,
     tailClamps,
-    tailRadii,
-    u_prefix = "joint",
-    u_debug_prefix = "debugTail",
-    u_center_prefix = "tailCenter",
-    u_intersection_prefix = "tailIntersection",
+    tailRadii, 
     updatesGlobalMotion = false,
     motionRange = [0, 6],
     motionIndicesLength = 6, // original default for spine
     motionBaseClamp = 8, // original default for spine
-    u_motion_debug_prefix = "debugTailMotion",
+ 
   ) {
     this.state = state;
     this.valuesForReversing = valuesForReversing;
@@ -39,20 +35,50 @@ export default class Tail {
 
     this.tailClamps = tailClamps;
 
-    for (let i = 0; i <= totalNumJoints; i++) {
-      const joint = [0.5, 0.5];
+    // for (let i = 0; i <= totalNumJoints; i++) {
+    //   const joint = [0.5, 0.5];
 
-      joint.angle = 0;
-      joint.secondaryAngle = 0; // A RECALC OF ANGLE based on spineMotion/center of current front steps. gets calculated/set inside joint solver (not used for first joint)
-      joint.thirdAngle = 0; // only for second half of curve, an additional recalculation/correction after getting the body length according to second angle
-      joint.radius = 0;
-      joint.index = 0;
-      joint.angleDiff = 0;
-      joint.globalAngle = 0;
-      joint.direction = [1, 0];
+    //   joint.angle = 0;
+    //   joint.secondaryAngle = 0; // A RECALC OF ANGLE based on spineMotion/center of current front steps. gets calculated/set inside joint solver (not used for first joint)
+    //   joint.thirdAngle = 0; // only for second half of curve, an additional recalculation/correction after getting the body length according to second angle
+    //   joint.radius = 0;
+    //   joint.index = 0;
+    //   joint.angleDiff = 0;
+    //   joint.globalAngle = 0;
+    //   joint.direction = [1, 0];
 
-      this.joints.push(joint);
-    }
+    //   this.joints.push(joint);
+    // }
+
+    // TO SWITCH OVER TO!
+// All other properties as typed arrays
+// this.jointAngles = new Float32Array(numJoints);
+// this.jointSecondaryAngles = new Float32Array(numJoints);
+// this.jointThirdAngles = new Float32Array(numJoints);
+// this.jointRadii = new Float32Array(numJoints);
+// this.jointIndices = new Uint16Array(numJoints); // or Uint8Array if < 256 joints
+// this.jointAngleDiffs = new Float32Array(numJoints);
+// this.jointGlobalAngles = new Float32Array(numJoints);
+// this.jointDirections = new Float32Array(numJoints * 2); // vec2 for each joint
+this.jointBuffer = new Float32Array((totalNumJoints + 1) * 2);
+ 
+for (let i = 0; i <= totalNumJoints; i++) {
+  // Create a view into the buffer for position
+  const joint = this.jointBuffer.subarray(i * 2, i * 2 + 2);
+  
+  // Add other properties with dot notation
+  joint.angle = 0;
+  joint.secondaryAngle = 0;
+  joint.thirdAngle = 0;
+  joint.radius = 0;
+  joint.index = 0;
+  joint.angleDiff = 0;
+  joint.globalAngle = 0;
+  joint.direction = [1, 0];
+  
+  this.joints.push(joint);
+}
+
 
     this.jointRadii = tailRadii;
 
@@ -67,10 +93,7 @@ export default class Tail {
     this.currentJointLength = this.segmentEnd + 1 - this.segmentStart;
 
     this.center = 0; // stored in spineMotion as well
-    this.centerFlanks = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
+    // this.centerFlanks = [new Float32Array(2), new Float32Array(2)];
     this.manualAdjust = 2; // start mirrored angle animation later in the joint chain than midway
     let segmentCenterIndex =
       Math.ceil((this.segmentEnd + 1 - this.segmentStart) / 2) +
@@ -98,14 +121,7 @@ export default class Tail {
     this.motionScalars = [0.02, 0.02, 0.03, 0.04, 0.03, 0.02, 0.02, 0.02]; // Example pattern
     /////////////////////////////////////////////////////////////////////////////
 
-    this.u_prefix = u_prefix;
-    this.u_debug_prefix = u_debug_prefix;
-    this.u_motion_debug_prefix = u_motion_debug_prefix;
-    this.u_center_prefix = u_center_prefix;
-    this.u_intersection_prefix = u_intersection_prefix;
-
-    this.debugs = [];
-    this.motion_debugs = [];
+  
   }
  
 
@@ -137,8 +153,8 @@ export default class Tail {
       this.motion.frontStepsSLine,
       this.motion.frontStepsSAngle,
 
-      this.center,
-      this.centerFlanks,
+      // this.center,
+      // this.centerFlanks,
     );
 
     if (this.updatesGlobalMotion) { 
@@ -150,19 +166,7 @@ export default class Tail {
   
       this.motionSecondAngle = this.motion.realignmentAngle2; 
     }
-  }
-
-  // updateJointRadii(radii) {
-  //   const expectedLength = this.totalNumJoints + 1;
-
-  //   if (!Array.isArray(radii)) return;
-
-  //   for (let i = 0; i < expectedLength; i++) {
-  //     if (radii[i] !== undefined) {
-  //       this.jointRadii[i] = radii[i];
-  //     }
-  //   }
-  // } 
+  } 
 
   update() {
  

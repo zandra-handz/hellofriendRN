@@ -149,11 +149,7 @@ init() {
     [0, 12],
     this.baseRadius,
     this.tailClamps,
-    this.tailRadii,
-    "tail",
-    "debugTail",
-    "tailCenter",
-    "tailIntersection",
+    this.tailRadii, 
     false
   );
 }

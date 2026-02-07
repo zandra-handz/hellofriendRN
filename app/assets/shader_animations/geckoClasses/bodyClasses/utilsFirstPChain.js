@@ -794,7 +794,8 @@ export function solveFirst_withBackwardsDetect(
   const DISTANCE_MIN = 0.04;
 
   if (!isShrinking && distanceToCursor < DISTANCE_MIN) {
-    console.log("EMERGENCY SHRINK", Date.now(), goingBackwards.goingBackwards);
+    // console.log("EMERGENCY SHRINK", Date.now(), goingBackwards.goingBackwards);
+   
     isShrinking = true;
   }
 

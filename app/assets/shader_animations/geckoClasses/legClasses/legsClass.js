@@ -539,13 +539,19 @@ export default class Legs {
       [0.5, 0.5],
     ];
 
-    this.muscles = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
+    // this.muscles = [
+    //   [0.5, 0.5],
+    //   [0.5, 0.5],
+    //   [0.5, 0.5],
+    //   [0.5, 0.5],
+    // ];
 
+    this.muscleBuffer = new Float32Array(8);
+
+// Create views into the buffer
+this.muscles = Array.from({ length: 4 }, (_, i) =>
+  this.muscleBuffer.subarray(i * 2, i * 2 + 2)
+);
     this.feet = [
       [0.5, 0.5],
       [0.5, 0.5],
@@ -554,17 +560,8 @@ export default class Legs {
     // 10 fingers × vec2
     this.fingerBuffer = new Float32Array(20);
 
-    // Inside constructor
-    this.calcStepBuffer = [
-      [0, 0], // step 0
-      [0, 0], // step 1
-    ];
-    this.bigStepBuffer = [
-      [0, 0], // pivoted step 0
-      [0, 0], // pivoted step 1
-    ];
-
-    // Convenience views (NO allocation after this)
+ 
+    // Convenience views (no allocation after this)
     this.fingers = [
       Array.from({ length: 5 }, (_, i) =>
         this.fingerBuffer.subarray(i * 2, i * 2 + 2),
@@ -574,23 +571,7 @@ export default class Legs {
       ),
     ];
 
-    // this.fingers = [
-    //   [
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //   ],
-
-    //   [
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //     [0.5, 0.5],
-    //   ],
-    // ];
+  
 
     this.fingerLen = fingerLen;
     this.fingerAngleOffset = 7;

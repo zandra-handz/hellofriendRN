@@ -70,20 +70,53 @@ export default class Spine {
 
     this.jointClamps = jointClamps;
 
-    for (let i = 0; i <= totalNumJoints; i++) {
-      const joint = [this.startingCoord[0], this.startingCoord[1]];
+    // for (let i = 0; i <= totalNumJoints; i++) {
+    //   const joint = [this.startingCoord[0], this.startingCoord[1]];
 
-      joint.angle = 0;
-      joint.secondaryAngle = 0; // A RECALC OF ANGLE based on spineMotion/center of current front steps. gets calculated/set inside joint solver (not used for first joint)
-      joint.thirdAngle = 0; // only for second half of curve, an additional recalculation/correction after getting the body length according to second angle
-      joint.radius = 0;
-      joint.index = 0;
-      joint.angleDiff = 0;
-      joint.globalAngle = 0;
-      joint.direction = [1, 0];
+    //   joint.angle = 0;
+    //   joint.secondaryAngle = 0; // A RECALC OF ANGLE based on spineMotion/center of current front steps. gets calculated/set inside joint solver (not used for first joint)
+    //   joint.thirdAngle = 0; // only for second half of curve, an additional recalculation/correction after getting the body length according to second angle
+    //   joint.radius = 0;
+    //   joint.index = 0;
+    //   joint.angleDiff = 0;
+    //   joint.globalAngle = 0;
+    //   joint.direction = [1, 0];
 
-      this.joints.push(joint);
-    }
+    //   this.joints.push(joint);
+    // }
+
+    // Create buffer for positions
+this.jointBuffer = new Float32Array((totalNumJoints + 1) * 2);
+
+
+// TO SWITCH OVER TO!
+// All other properties as typed arrays
+// this.jointAngles = new Float32Array(numJoints);
+// this.jointSecondaryAngles = new Float32Array(numJoints);
+// this.jointThirdAngles = new Float32Array(numJoints);
+// this.jointRadii = new Float32Array(numJoints);
+// this.jointIndices = new Uint16Array(numJoints); // or Uint8Array if < 256 joints
+// this.jointAngleDiffs = new Float32Array(numJoints);
+// this.jointGlobalAngles = new Float32Array(numJoints);
+// this.jointDirections = new Float32Array(numJoints * 2); // vec2 for each joint
+
+this.joints = [];
+for (let i = 0; i <= totalNumJoints; i++) {
+  // Create a view into the buffer for position
+  const joint = this.jointBuffer.subarray(i * 2, i * 2 + 2);
+  
+  // Add other properties with dot notation
+  joint.angle = 0;
+  joint.secondaryAngle = 0;
+  joint.thirdAngle = 0;
+  joint.radius = 0;
+  joint.index = 0;
+  joint.angleDiff = 0;
+  joint.globalAngle = 0;
+  joint.direction = [1, 0];
+  
+  this.joints.push(joint);
+}
 
     this.jointRadii = jointRadii;
 
@@ -94,8 +127,8 @@ export default class Spine {
 
     this.center = 0;
 
-    this.centerFlanks = [new Float32Array(2), new Float32Array(2)];
-    this.intersectionFlanks = [new Float32Array(2), new Float32Array(2)];
+    // this.centerFlanks = [new Float32Array(2), new Float32Array(2)];
+    // this.intersectionFlanks = [new Float32Array(2), new Float32Array(2)];
 
     this.manualAdjust = 2; // start mirrored angle animation later in the joint chain than midway
 
@@ -158,14 +191,14 @@ export default class Spine {
       this.joints[this.segmentStart],
     );
 
-    getStartAndEndPoints_inPlace(
-      this.center,
-      spineCenterLines.tEnd,
-      spineCenterLines.tStart,
-      this.motion.frontSteps_tDistanceApart,
-      this.centerFlanks[0],
-      this.centerFlanks[1],
-    );
+    // getStartAndEndPoints_inPlace(
+    //   this.center,
+    //   spineCenterLines.tEnd,
+    //   spineCenterLines.tStart,
+    //   this.motion.frontSteps_tDistanceApart,
+    //   this.centerFlanks[0],
+    //   this.centerFlanks[1],
+    // );
 
     const intersection = intersectLines(
       [spineCenterLines.tStart, spineCenterLines.tEnd],
@@ -181,14 +214,14 @@ export default class Spine {
 
     this.intersectionPoint = intersection.intersectionPoint;
 
-    getStartAndEndPoints_inPlace(
-      this.intersectionPoint,
-      spineCenterLines.tEnd,
-      spineCenterLines.tStart,
-      this.motion.frontSteps_tDistanceApart,
-      this.intersectionFlanks[0],
-      this.intersectionFlanks[1],
-    );
+    // getStartAndEndPoints_inPlace(
+    //   this.intersectionPoint,
+    //   spineCenterLines.tEnd,
+    //   spineCenterLines.tStart,
+    //   this.motion.frontSteps_tDistanceApart,
+    //   this.intersectionFlanks[0],
+    //   this.intersectionFlanks[1],
+    // );
 
     if (this.motion.centerIntersection != null) {
       this.motionSecondAngle = this.motion.realignmentAngle2;

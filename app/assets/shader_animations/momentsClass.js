@@ -226,15 +226,12 @@ export default class Moments {
     altCoord,
     holdingCoords,
   ) {
-
-  //  console.log(`momentsClass moments length: `, this.moments.length, this.momentsLength);
+ 
     let ux = userPointer[0];
     let uy = userPointer[1];
+ 
 
-     //console.log(`momentClass0`,this.lastSelected.id);
-
-    if (sleepWalk0.current.autoSelectCoord[0] !== -100) {
-      // console.log('autoselect', sleepWalk0.current.autoSelectCoord[0]);
+    if (sleepWalk0.current.autoSelectCoord[0] !== -100) { 
       ux = sleepWalk0.current.autoSelectCoord[0];
       uy = sleepWalk0.current.autoSelectCoord[1];
       this.lastSelected.id = sleepWalk0.current.autoSelectId;
@@ -242,13 +239,9 @@ export default class Moments {
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
             this.draggingMomentIndex = -1;
-      this.selectedMomentIndex = -1;
-      //console.log(`momentClass`,this.lastSelected.id);
-      // console.log(sleepWalk0.current.autoSelectCoord);
+      this.selectedMomentIndex = -1; 
     } 
-    // else {
-    //   console.log('no autoselect', sleepWalk0.current.autoSelectCoord[0])
-    // }
+ 
 
 // everything that will break out of auto
     if (isDragging || wasTap || wasDoubleTap) {
@@ -260,18 +253,15 @@ export default class Moments {
 
     }
 
+    // DESELECT NO MATTER WHERE ON SCREEN DOUBLE TAP IS
     if (wasDoubleTap && this.lastSelected.id !== -1) {
       this.lastSelected.id = -1;
     }
 
- 
 
     const fallbackLastSelectedCoord = altCoord;
-
-
     let lastSelectedIsHeld = false;
 
-    // DESELECT NO MATTER WHERE ON SCREEN DOUBLE TAP IS
 
     // Move moments that are in holdings offscreen
     for (let i = 0; i < 4; i++) {
@@ -299,21 +289,32 @@ export default class Moments {
     }
 
     if (!lastSelectedIsHeld) {
+
+    
+  
       this.lastSelectedCoord[0] = fallbackLastSelectedCoord[0];
       this.lastSelectedCoord[1] = fallbackLastSelectedCoord[1];
+     // console.log(`set last selected`, this.lastSelectedCoord);
     }
 
     if (
       !isDragging &&
-      !isMoving &&
+      
+      //!isMoving &&
       sleepWalk0.current.autoSelectCoord[0] === -100
     ) {
       this.draggingMomentIndex = -1;
       this.selectedMomentIndex = -1;
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
+      
+     // console.log('last selected held? ', this.lastSelectedCoord)
       // this.lastSelected.coord[0] = this.lastSelectedCoord[0];
       // this.lastSelected.coord[1] = this.lastSelectedCoord[1];
+          if (!lastSelectedIsHeld) {
+      this.lastSelected.coord[0] = this.lastSelectedCoord[0];
+      this.lastSelected.coord[1] = this.lastSelectedCoord[1];
+          }
 
       return;
     }
@@ -368,14 +369,16 @@ export default class Moments {
       this.selected.id = -1;
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
+     
 
       // ONLY snap back if lastSelected is NOT held
       if (!lastSelectedIsHeld) {
-        // console.log('NOT HELD')
+        console.log('NOT HELD')
         this.lastSelected.id = -1;
         this.lastSelected.coord[0] = altCoord[0];
         this.lastSelected.coord[1] = altCoord[1];
       } else {
+         console.log('HELD')
         // console.log('last selected held')
       }
 
