@@ -14,15 +14,15 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts";
+ 
 import SvgIcon from "@/app/styles/SvgIcons";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
-  useKeepAwake,
-  activateKeepAwake,
+  // useKeepAwake,
+  // activateKeepAwake,
   activateKeepAwakeAsync,
   deactivateKeepAwake,
 } from "expo-keep-awake";
@@ -87,7 +87,7 @@ const ScreenGecko = (props: Props) => {
 
   const [resetSkia, setResetSkia] = useState(null);
 
-  const [manualOnly, setManualOnly] = useState(false);
+  const [manualOnly, setManualOnly] = useState(true);
 
   useEffect(() => {
     if (!manualOnly) {
@@ -155,7 +155,7 @@ const ScreenGecko = (props: Props) => {
     // console.log('All moments recentered to [0.5, 0.5]');
   };
 
-  const [count, setCount] = useState(0);
+  //  const [count, setCount] = useState(0);
 
   const [moment, setMoment] = useState({
     category: null,
@@ -181,7 +181,7 @@ const ScreenGecko = (props: Props) => {
   // }, [capsuleList]);
 
   const handleGetMoment = useCallback((id) => {
-    console.log('handleGetMoment', id)
+    // console.log('handleGetMoment', id)
     const moment = capsuleList.find((c) => c.id === id);
     //  console.log(`setting moment`, moment)
     if (moment?.id) {
@@ -192,13 +192,12 @@ const ScreenGecko = (props: Props) => {
         id: moment.id,
       });
 
-      setCount((prev) => prev + Number(moment?.charCount));
+      // setCount((prev) => prev + Number(moment?.charCount));
 
       // --- Vibration ---
       Vibration.vibrate(50); // vibrate for 50ms
     } else {
-      console.log('not found')
-      console.log(capsuleList)
+  
       setMoment({
         category: null,
         capsule: null,

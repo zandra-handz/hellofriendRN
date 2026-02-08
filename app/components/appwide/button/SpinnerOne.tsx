@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas, Rect, Shader } from "@shopify/react-native-skia";
 import { Skia } from "@shopify/react-native-skia";
 import { Dimensions, View, StyleSheet } from "react-native";
+import { useClock } from "@shopify/react-native-skia";
 
 const { width, height } = Dimensions.get("window");
 

@@ -106,16 +106,16 @@ const MomentsSkia = ({
 
   const isPausedRef = useRef(false);
 
-//    useEffect(() => {
-//   if (global.gc) {
-//     // Force GC every 5 seconds to see the pattern
-//     const interval = setInterval(() => {
-//       console.log('Forcing GC...');
-//       global.gc();
-//     }, 5000);
-//     return () => clearInterval(interval);
-//   }
-// }, []);
+  //    useEffect(() => {
+  //   if (global.gc) {
+  //     // Force GC every 5 seconds to see the pattern
+  //     const interval = setInterval(() => {
+  //       console.log('Forcing GC...');
+  //       global.gc();
+  //     }, 5000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, []);
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -125,10 +125,23 @@ const MomentsSkia = ({
   //   }, []),
   // );
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     isPausedRef.current = false; // Resume when focused
+
+  //     return () => {
+  //       isPausedRef.current = true; // Pause when unfocused
+  //       isDragging.value = false;
+  //     };
+  //   }, []),
+  // );
+
 
   useFocusEffect(
   useCallback(() => {
     isPausedRef.current = false; // Resume when focused
+    console.log('is unpaused!')
+    updateTrigger.value += 1; // Force a re-render to restart animation
     
     return () => {
       isPausedRef.current = true; // Pause when unfocused
@@ -136,7 +149,6 @@ const MomentsSkia = ({
     };
   }, []),
 );
-
   const insets = useSafeAreaInsets();
   useFocusEffect(
     useCallback(() => {
@@ -177,25 +189,18 @@ const MomentsSkia = ({
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const isDragging = useSharedValue(false);
 
- 
-
-  const onSinglePress = () => { 
+  const onSinglePress = () => {
     // console.log("single presss");
-handleGetMoment(moments.current.lastSelected?.id);
- 
+    handleGetMoment(moments.current.lastSelected?.id);
   };
 
-  const onDoublePress = () => { 
-
+  const onDoublePress = () => {
     handleGetMoment(-1);
     console.log("double press");
- 
   };
- 
-  
+
   const wasTapSV = useSharedValue(false);
   const wasDoubleTapSV = useSharedValue(false);
- 
 
   // Pan gesture for dragging
   const panGesture = Gesture.Pan()
@@ -214,8 +219,6 @@ handleGetMoment(moments.current.lastSelected?.id);
       isDragging.value = false;
     });
 
-
-
   // Single tap (lower priority - waits for double tap to fail)
   const singleTapGesture = Gesture.Tap()
     .numberOfTaps(1)
@@ -228,7 +231,7 @@ handleGetMoment(moments.current.lastSelected?.id);
         }, 100);
       }
     });
-      // Double tap (higher priority)
+  // Double tap (higher priority)
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd((_event, success) => {
@@ -246,7 +249,6 @@ handleGetMoment(moments.current.lastSelected?.id);
 
   // Combine with pan
   const composedGesture = Gesture.Simultaneous(panGesture, taps);
- 
 
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -254,34 +256,33 @@ handleGetMoment(moments.current.lastSelected?.id);
   const bckgColor2Converted = hexToVec3(bckgColor2);
 
   // Keep simulation objects as refs (they don't go into uniforms)
-  const soul = useRef(new Soul(restPoint, 0.02)); 
+  const soul = useRef(new Soul(restPoint, 0.02));
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
   const moments = useRef(
     new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05),
   );
 
-
   // In your component, create a ref for the callback
-const onMomentReachedRef = useRef(null);
+  const onMomentReachedRef = useRef(null);
 
-// Set the callback
+  // Set the callback
 
-// 1️⃣ Create a ref
-const handleGetMomentRef = useRef(handleGetMoment);
+  // 1️⃣ Create a ref
+  const handleGetMomentRef = useRef(handleGetMoment);
 
-// 2️⃣ Keep it updated whenever handleGetMoment changes
-useEffect(() => {
-  handleGetMomentRef.current = handleGetMoment;
-}, [handleGetMoment]);
+  // 2️⃣ Keep it updated whenever handleGetMoment changes
+  useEffect(() => {
+    handleGetMomentRef.current = handleGetMoment;
+  }, [handleGetMoment]);
 
-useEffect(() => {
-  onMomentReachedRef.current = (momentId) => {
-    handleGetMoment(momentId);
-  };
-}, [handleGetMoment]);
+  useEffect(() => {
+    onMomentReachedRef.current = (momentId) => {
+      handleGetMoment(momentId);
+    };
+  }, [handleGetMoment]);
 
-  const sleepWalk0 = useRef(new SleepWalk0([.5,.3], 0.3,   gecko_size));
+  const sleepWalk0 = useRef(new SleepWalk0([0.5, 0.3], 0.3, gecko_size));
 
   useEffect(() => {
     if (aspect) {
@@ -292,7 +293,7 @@ useEffect(() => {
 
   useEffect(() => {
     sleepWalk0.current.updatePauseMode(manualOnly);
-  }, [manualOnly])
+  }, [manualOnly]);
 
   const SHARED_SKSL_PRELUDE = (
     c1: string,
@@ -306,7 +307,7 @@ useEffect(() => {
   vec3 backgroundEndColor = vec3(${b2});
 `;
 
-const [ geckoColor, setGeckoColor ] = useState(color2Converted);
+  const [geckoColor, setGeckoColor] = useState(color2Converted);
 
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
@@ -398,7 +399,7 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
   }, [momentsData, internalReset]);
 
   useEffect(() => {
-   // console.log("RESET EFFECT RAN !!!");
+    // console.log("RESET EFFECT RAN !!!");
     if (!internalReset && !reset) {
       console.log("conditions not met for a reset");
       return;
@@ -433,26 +434,22 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
 
   const frameCountRef = useRef(0); // At component level with your other refs
 
-
- const lastTriggeredIdRef = useRef(-1);
-
+  const lastTriggeredIdRef = useRef(-1);
 
   useEffect(() => {
     let cancelled = false;
     let frame;
-
-
 
     let sleepWalkAfter = 100;
 
     frameCountRef.current = 0; // Reset when effect runs
 
     const animate = () => {
-      if (cancelled || isPausedRef.current) {
-    frame = requestAnimationFrame(animate);
-    return;
-  }
-          // const frameStart = performance.now();
+ if (cancelled || isPausedRef.current) {
+  frame = requestAnimationFrame(animate);
+  return;
+ }
+      // const frameStart = performance.now();
 
       if (aspect == null || isNaN(aspect)) {
         console.log("aspect is null or NaN! QUITTING the animation", aspect);
@@ -464,38 +461,37 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       const currentId = moments.current.lastSelected?.id ?? -1;
       // console.log(currentId);
 
-// if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
-//   // console.log('handle moment triggered by animation loop')
-//   lastTriggeredIdRef.current = currentId;
-//   onSinglePress();
-// }
-// 3️⃣ Inside your animation loop, call the ref instead of the function directly
-if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
-  lastTriggeredIdRef.current = currentId;
- 
-  handleGetMomentRef.current(currentId);
-}
+      // if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
+      //   // console.log('handle moment triggered by animation loop')
+      //   lastTriggeredIdRef.current = currentId;
+      //   onSinglePress();
+      // }
+      // 3️⃣ Inside your animation loop, call the ref instead of the function directly
+      if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
+        lastTriggeredIdRef.current = currentId;
+
+        handleGetMomentRef.current(currentId);
+      }
       if (leadPoint.current.isMoving && !gecko.current.sleepWalkMode) {
         frameCountRef.current = 0;
       }
 
       // break out of sleep mode
       if (isDragging.value && gecko.current.sleepWalkMode) {
-          frameCountRef.current = 0;
-          gecko.current.updateSleepWalkMode(false);
+        frameCountRef.current = 0;
+        gecko.current.updateSleepWalkMode(false);
         //  setGeckoColor(color2Converted);
-
       }
 
       if (frameCountRef.current < sleepWalkAfter) {
         frameCountRef.current += 1; // Just increment each frame
-      } else if ((frameCountRef.current === sleepWalkAfter) && !gecko.current.sleepWalkMode) {
+      } else if (
+        frameCountRef.current === sleepWalkAfter &&
+        !gecko.current.sleepWalkMode
+      ) {
         gecko.current.updateSleepWalkMode(true);
         // setGeckoColor(color1Converted);
-
       }
-
-
 
       // console.log(frameCountRef.current)
       // Update gecko pointer position
@@ -520,11 +516,9 @@ if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
         leadPoint.current.update(userPoint_geckoSpaceRef.current);
       } else if (!gecko.current.sleepWalkMode) {
         leadPoint.current.update(soul.current.soul);
-      } 
-      
-      else if (gecko.current.sleepWalkMode) {
+      } else if (gecko.current.sleepWalkMode) {
         sleepWalk0.current.update(moments);
-       leadPoint.current.update(sleepWalk0.current.walk);
+        leadPoint.current.update(sleepWalk0.current.walk);
       }
 
       // BODY AND LEGS
@@ -538,7 +532,6 @@ if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
       hintRef.current = spine.hintJoint || [0, 0];
 
       // console.log(tapState)
-
 
       // console.log(sleepWalk0);
 
@@ -562,9 +555,14 @@ if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
       toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, newSoul, 0);
       soulUniformSV.value = newSoul;
 
-
       const newWalk = new Float32Array(2);
-      toShaderSpace_inplace(sleepWalk0.current.walk, aspect, gecko_scale, newWalk, 0);
+      toShaderSpace_inplace(
+        sleepWalk0.current.walk,
+        aspect,
+        gecko_scale,
+        newWalk,
+        0,
+      );
       walk0UniformSV.value = newWalk;
 
       const newHint = new Float32Array(2);
@@ -673,15 +671,13 @@ if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
         }
       }
 
-          
-    // const frameEnd = performance.now();
-    // const frameTime = frameEnd - frameStart;  // ← This is the actual frame time
-    
-    // if (frameTime > 16) {
-    //     console.log(`Slow frame: ${frameTime.toFixed(2)}ms`);
-    
-    // }
-    
+      // const frameEnd = performance.now();
+      // const frameTime = frameEnd - frameStart;  // ← This is the actual frame time
+
+      // if (frameTime > 16) {
+      //     console.log(`Slow frame: ${frameTime.toFixed(2)}ms`);
+
+      // }
 
       frame = requestAnimationFrame(animate);
     };
