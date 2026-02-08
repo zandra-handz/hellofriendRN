@@ -139,58 +139,29 @@ init() {
   );
 
   // IMPORTANT: spine.joints now definitely exists
-  // this.tail = new Tail(
+  this.tail = new Tail(
   
-  //   this.state,
-  //   this.valuesForReversing,
-  //   this.motion,
-  //   this.spine.joints[10],
-  //   this.spine.jointAngles[10],
-  //   this.tailNumOfJoints,
-  //   [0, 12],
-  //   this.baseRadius,
-  //   this.tailClamps,
-  //   this.tailRadii, 
-  //   false
-  // );
-this.tail = new Tail(
-  this.state,
-  this.valuesForReversing,
-  this.motion,
-  this.spine.joints[10],          
-  this.spine.jointAngles,          
-  this.spine.jointSecondaryAngles,  
-  this.spine.jointmirroredSecondaryAngles,  
-  this.spine.jointThirdAngles,    
-  this.spine.jointIndices,          
-  this.spine.jointAngleDiffs,      
-  this.spine.jointGlobalAngles,    
-  10,                              
-  this.tailNumOfJoints,
-  [0, 12],
-  this.baseRadius,
-  this.tailClamps,
-  this.tailRadii, 
-  false
-);
-}
-
-
-  // update(leadPoint_lead, leadPoint_isMoving) {
-
-
-  //   // this.motion.update_headPosition(this.headRadiiSum);
-  //   this.motion.update_headPosition();
-  //   this.spine.update(leadPoint_lead, leadPoint_isMoving);
- 
-  //   this.tail.update();
-  // }
-  update(leadPoint_lead, leadPoint_isMoving) {
-  // this.motion.update_headPosition(this.headRadiiSum);
-  this.motion.update_headPosition();
-  this.spine.update(leadPoint_lead, leadPoint_isMoving);
-  
-  this.tail.update( 
+    this.state,
+    this.valuesForReversing,
+    this.motion,
+    this.spine.joints[10],
+    this.tailNumOfJoints,
+    [0, 12],
+    this.baseRadius,
+    this.tailClamps,
+    this.tailRadii, 
+    false
   );
 }
+
+
+  update(leadPoint_lead, leadPoint_isMoving) {
+
+
+    // this.motion.update_headPosition(this.headRadiiSum);
+    this.motion.update_headPosition();
+    this.spine.update(leadPoint_lead, leadPoint_isMoving);
+ 
+    this.tail.update();
+  }
 }

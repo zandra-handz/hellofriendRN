@@ -1,3 +1,13 @@
+// TO SWITCH OVER TO!
+// All other properties as typed arrays
+// this.jointAngles = new Float32Array(numJoints);
+// this.jointSecondaryAngles = new Float32Array(numJoints);
+// this.jointThirdAngles = new Float32Array(numJoints);
+// this.jointRadii = new Float32Array(numJoints);
+// this.jointIndices = new Uint16Array(numJoints); // or Uint8Array if < 256 joints
+// this.jointAngleDiffs = new Float32Array(numJoints);
+// this.jointGlobalAngles = new Float32Array(numJoints);
+// this.jointDirections = new Float32Array(numJoints * 2); // vec2 for each joint
 
 
 
@@ -11,14 +21,13 @@ import {
   _getAngleFromXAxis_inPlace,
 } from "../../utils";
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function handleBackwardsJump(
   goingBackwards,
   cursor,
-  first,
+  first, 
+  firstAngle,
   radius,
   n,
   isGrowing,
@@ -130,6 +139,8 @@ export function handleBackwardsJump(
     goingBackwards.jumpRotation = 0;
     goingBackwards.jumpFrameCount = 0;
   }
+
+
 }
 
 export function solveFirst_withBackwardsDetect(
@@ -155,7 +166,6 @@ export function solveFirst_withBackwardsDetect(
   }
 
   const angleAtStart = first.angle;
-  
 
   first.secondaryAngle = secondMotionAngle;
   first.mirroredSecondaryAngle = secondMotionMirroredAngle

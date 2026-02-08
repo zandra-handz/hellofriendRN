@@ -1,47 +1,29 @@
 import { getSpineSagTrans_inPlace, intersectLines } from "../../utils.js";
 import { _getCenterPoint, _getCenterPoint_inPlace, _getDistanceScalar } from "../../utils.js";
-import {  solveProcJoint_inPlace } from "./utils_otherJoints.js";
+import {  solveProcJoint_inPlace } from "./utilsPChain.js";
 
 export default class Tail {
-constructor(
-  state,
-  valuesForReversing,
-  motion,
-  cursor,
-  spineJointAngles,          // ✅ Array reference
-  spineJointSecondaryAngles,
-  spineJointmirroredSecondaryAngles,
-  spineJointThirdAngles,
-  spineJointIndices,
-  spineJointAngleDiffs,
-  spineJointGlobalAngles,
-  cursorIndex,               // ✅ Index to read from
-  totalNumJoints,
-  segmentRange,
-  baseRadius = 0.02,
-  tailClamps,
-  tailRadii, 
-  updatesGlobalMotion = false,
-  motionRange = [0, 6],
-  motionIndicesLength = 6,
-  motionBaseClamp = 8,
-) {
+  constructor(
+    state,
+    valuesForReversing,
+    motion,
+    // subMotion,
+    cursor,
+    totalNumJoints,
+    segmentRange,
+    baseRadius = 0.02,
+    tailClamps,
+    tailRadii, 
+    updatesGlobalMotion = false,
+    motionRange = [0, 6],
+    motionIndicesLength = 6, // original default for spine
+    motionBaseClamp = 8, // original default for spine
+ 
+  ) {
     this.state = state;
     this.valuesForReversing = valuesForReversing;
     this.motion = motion;
     this.cursor = cursor;
-
-        this.spineJointAngles = spineJointAngles;
-    this.spineJointSecondaryAngles = spineJointSecondaryAngles;
-    this.spineJointmirroredSecondaryAngles = spineJointmirroredSecondaryAngles;
-    this.spineJointThirdAngles = spineJointThirdAngles;
-    this.spineJointIndices = spineJointIndices;
-    this.spineJointAngleDiffs = spineJointAngleDiffs;
-    this.spineJointGlobalAngles = spineJointGlobalAngles;
-    this.cursorIndex = cursorIndex;
-    
-    // this.cursorAngle = cursorAngle;
-    
     this.TAU = Math.PI * 2;
     this.updatesGlobalMotion = updatesGlobalMotion;
 
@@ -52,38 +34,51 @@ constructor(
     this.intersectionPoint = 1; // stored in spine motion as well
 
     this.tailClamps = tailClamps;
- 
- 
+
+    // for (let i = 0; i <= totalNumJoints; i++) {
+    //   const joint = [0.5, 0.5];
+
+    //   joint.angle = 0;
+    //   joint.secondaryAngle = 0; // A RECALC OF ANGLE based on spineMotion/center of current front steps. gets calculated/set inside joint solver (not used for first joint)
+    //   joint.thirdAngle = 0; // only for second half of curve, an additional recalculation/correction after getting the body length according to second angle
+    //   joint.radius = 0;
+    //   joint.index = 0;
+    //   joint.angleDiff = 0;
+    //   joint.globalAngle = 0;
+    //   joint.direction = [1, 0];
+
+    //   this.joints.push(joint);
+    // }
+
+    // TO SWITCH OVER TO!
+// All other properties as typed arrays
+// this.jointAngles = new Float32Array(numJoints);
+// this.jointSecondaryAngles = new Float32Array(numJoints);
+// this.jointThirdAngles = new Float32Array(numJoints);
+// this.jointRadii = new Float32Array(numJoints);
+// this.jointIndices = new Uint16Array(numJoints); // or Uint8Array if < 256 joints
+// this.jointAngleDiffs = new Float32Array(numJoints);
+// this.jointGlobalAngles = new Float32Array(numJoints);
+// this.jointDirections = new Float32Array(numJoints * 2); // vec2 for each joint
 this.jointBuffer = new Float32Array((totalNumJoints + 1) * 2);
-
  
-this.jointAngles = new Float32Array(totalNumJoints + 1);  // +1 here
-this.jointSecondaryAngles = new Float32Array(totalNumJoints + 1);
-this.jointmirroredSecondaryAngles = new Float32Array(totalNumJoints + 1);
-this.jointThirdAngles = new Float32Array(totalNumJoints + 1);
-this.jointIndices = new Uint16Array(totalNumJoints + 1);
-this.jointAngleDiffs = new Float32Array(totalNumJoints + 1);
-this.jointGlobalAngles = new Float32Array(totalNumJoints + 1);
-// this.jointDirections = new Float32Array((totalNumJoints + 1) * 2);
-
 for (let i = 0; i <= totalNumJoints; i++) {
   // Create a view into the buffer for position
   const joint = this.jointBuffer.subarray(i * 2, i * 2 + 2);
   
- 
+  // Add other properties with dot notation
+  // joint.angle = 0;
+  // joint.secondaryAngle = 0;
+  // joint.thirdAngle = 0;
+  // joint.radius = 0;
+  // joint.index = 0;
+  // joint.angleDiff = 0;
+  // joint.globalAngle = 0;
+  // joint.direction = [1, 0];
   
   this.joints.push(joint);
 }
 
-// Create buffer for directions
-this.jointDirectionsBuffer = new Float32Array((totalNumJoints + 1) * 2);
-
-// Create array of views into the buffer
-this.jointDirections = [];
-for (let i = 0; i <= totalNumJoints; i++) {
-  const direction = this.jointDirectionsBuffer.subarray(i * 2, i * 2 + 2);
-  this.jointDirections.push(direction);
-}
 
     this.jointRadii = tailRadii;
 
@@ -173,38 +168,13 @@ for (let i = 0; i <= totalNumJoints; i++) {
     }
   } 
 
-  // update() {
-update( 
-) {
-
-      this.jointAngles[0] = this.spineJointAngles[this.cursorIndex];
-    this.jointSecondaryAngles[0] = this.spineJointSecondaryAngles[this.cursorIndex];
-    this.jointmirroredSecondaryAngles[0] = this.spineJointmirroredSecondaryAngles[this.cursorIndex];
-    this.jointThirdAngles[0] = this.spineJointThirdAngles[this.cursorIndex];
-    this.jointIndices[0] = this.spineJointIndices[this.cursorIndex];
-    this.jointAngleDiffs[0] = this.spineJointAngleDiffs[this.cursorIndex];
-    this.jointGlobalAngles[0] = this.spineJointGlobalAngles[this.cursorIndex];
-
-  // Update cursor data every frame
-  // this.jointAngles[0] = cursorAngle;
-  // this.jointSecondaryAngles[0] = cursorSecondaryAngle;
-  // this.jointmirroredSecondaryAngles[0] = cursorMirroredSecondaryAngle;
-  // this.jointThirdAngles[0] = cursorThirdAngle;
-  // this.jointIndices[0] = cursorIndex;
-  // this.jointAngleDiffs[0] = cursorAngleDiff;
-  // this.jointGlobalAngles[0] = cursorGlobalAngle;
-
+  update() {
+ 
+ 
     for (let i = 0; i < this.totalNumJoints; i++) {
       solveProcJoint_inPlace(
         i,
-        this.joints[i], // ahead
-        this.jointAngles, // aheadAngle
-        this.jointSecondaryAngles, // aheadSecondaryAngle
-        this.jointThirdAngles, // aheadThirdAngle
-        this.jointmirroredSecondaryAngles, // aheadMirroredSecondaryAngle
-        this.jointAngleDiffs,
-        this.jointDirections,
-        this.jointIndices,
+        this.joints[i],
         this.joints[i + 1],
         this.jointRadii[i + 1],
         this.tailClamps[i],
@@ -214,7 +184,8 @@ update(
         this.tailClamps,
         this.valuesForReversing.goingBackwards,
         this.valuesForReversing.stiffnessBlend
-
+        // this.motionScalars,
+        // false,
       );
     }
 

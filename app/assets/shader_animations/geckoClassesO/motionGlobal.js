@@ -112,7 +112,7 @@ export default class MotionGlobal {
   }
 
   update_mirroredFrontStepsData(data) {
-    // console.log(data)
+    console.log(data)
 
          let dScalar = this.valuesForReversing.goingBackwards ? 0 : this.dilutionScalar;
 
@@ -135,8 +135,6 @@ export default class MotionGlobal {
     );
 
     this.realignmentAngle2 = this.mir_frontStepsSAngle; 
-
- 
  
   }
  

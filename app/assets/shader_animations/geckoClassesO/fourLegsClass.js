@@ -1,7 +1,6 @@
 import Legs from "./legClasses/legsClass.js";
 import FollowerLegs from "./legClasses/followerLegsClass.js";
 import ThemedListItem from "react-native-elements/dist/list/ListItem.js";
-import ThemedDialog from "react-native-elements/dist/dialog/Dialog.js";
 
 let backUpLegLen = 0.05;
 let backLowLegLen = 0.02;
@@ -17,16 +16,17 @@ export default class FourLegs {
     spine,
     motion,
     forwardStepThreshhold = 0.09, // original as default
-    reverseStepThreshold = 0.09,
+    reverseStepThreshold = .09,
     stepPivotSizeFront,
     stepPivotSizeBack,
     stepWideness = 4,
     reverseStepWideness = 4,
     stepReach = 0.0463,
-    reverseStepReach = 0.0463,
+    reverseStepReach = .0463,
 
     rotationRadius = 0.007, // original as default
     rotationRange = 2.2, // original as default
+
 
     upperArmLength = 0.042,
     forearmLength = 0.026, //upperArmLength * 0.619047619;
@@ -37,25 +37,15 @@ export default class FourLegs {
     this.spine = spine;
     this.valuesForReversing = valuesForReversing;
 
-    this.stepWiggleRoom = forwardStepThreshhold / 3;
+    this.stepWiggleRoom = forwardStepThreshhold / 3; 
     this.reverseStepWiggleRoom = reverseStepThreshold / 3;
 
     this.stepAheadJointFront = spine.first; // head
-    this.jointAngles = spine.jointAngles;
-    this.stepAheadJointFrontAngle = spine.jointAngles[0];
     this.shoulderSpineJoint = spine.joints[2];
     this.stepCenterJointFront = spine.joints[2];
-    this.stepCenterJointFrontAngle = spine.jointAngles[2];
     this.distanceOutRadiusFront = 0.02;
-    this.joints = spine.joints;
- 
+
     this.stepBehindJointFront = spine.joints[0]; // guessing
-   this.anchorJointIndex = 2;
-    this.frontAheadAngleIndex = 0;
-
-
-    this.back_anchorJIndex = 13;
-    this.back_aheadJIndex = 2;
 
     this.stepAheadJointBack = spine.joints[2]; // head
     this.hipSpineJoint = spine.joints[13];
@@ -66,16 +56,12 @@ export default class FourLegs {
     this.frontLegs = new Legs(
       state,
       this.valuesForReversing,
-      this.joints,
-      this.jointAngles,
-      this.anchorJointIndex,
-      this.frontAheadAngleIndex,
+      spine,
       motion,
-      // this.stepCenterJointFront,
-      // this.stepCenterJointFrontAngle,
+      this.shoulderSpineJoint,
+      this.stepCenterJointFront,
       this.distanceOutRadiusFront,
       this.stepAheadJointFront,
-      // this.stepAheadJointFrontAngle,
       this.stepBehindJointFront,
       stepPivotSizeFront,
       fingerLen,
@@ -97,10 +83,7 @@ export default class FourLegs {
     this.backLegs = new FollowerLegs(
       state,
       this.valuesForReversing,
-      this.joints,
-      this.jointAngles,
-         this.back_anchorJIndex,
-    this.back_aheadJIndex,
+      spine,
       motion,
       this.frontLegs.stepTargets,
       this.hipSpineJoint,
@@ -114,7 +97,7 @@ export default class FourLegs {
       rotationRadius,
       rotationRange,
       forwardStepThreshhold + 0.01,
-      reverseStepThreshold + 0.01,
+      reverseStepThreshold + .01,
 
       this.stepWiggleRoom,
       this.reverseStepWiggleRoom,

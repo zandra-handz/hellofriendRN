@@ -20,6 +20,12 @@ import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
+import {
+  useKeepAwake,
+  activateKeepAwake,
+  activateKeepAwakeAsync,
+  deactivateKeepAwake,
+} from "expo-keep-awake";
 
 type Props = {};
 
@@ -28,7 +34,10 @@ const ScreenGecko = (props: Props) => {
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
-  const { navigateToMomentView } = useAppNavigations();
+  const { navigateToMomentView, navigateToMomentFocus } = useAppNavigations();
+  const handleNavigateToCreateNew = useCallback(() => {
+    navigateToMomentFocus({ screenCameFrom: 1 });
+  }, [navigateToMomentFocus]);
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -57,12 +66,6 @@ const ScreenGecko = (props: Props) => {
     [navigateToMomentView], // optional, if this function comes from props/context
   );
 
-  // inside your component
-  <Pressable
-    onPress={() => handleNavigateToMoment(moment)}
-    style={styles.momentViewButton}
-  ></Pressable>;
-
   // const momentCoords = useMemo(() => {
   //   return capsuleList.map((m) => ({
   //     id: m.id,
@@ -73,16 +76,30 @@ const ScreenGecko = (props: Props) => {
   const MAX_MOMENTS = 40;
 
   const momentCoords = useMemo(() => {
+ 
     return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
       id: m.id,
       coord: [m.screen_x, m.screen_y],
       stored_index: m.stored_index,
     }));
+
   }, [capsuleList]);
 
   const [resetSkia, setResetSkia] = useState(null);
 
   const [manualOnly, setManualOnly] = useState(false);
+
+  useEffect(() => {
+    if (!manualOnly) {
+      console.log("keep awake!!");
+      activateKeepAwakeAsync();
+    } else {
+      deactivateKeepAwake();
+      console.log("sleep");
+    }
+
+    return () => deactivateKeepAwake(); // safety cleanup
+  }, [manualOnly]);
 
   const handleToggleManual = () => {
     setManualOnly((prev) => !prev);
@@ -99,6 +116,7 @@ const ScreenGecko = (props: Props) => {
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
   useEffect(() => {
+    console.log(momentCoords)
     setScatteredMoments(momentCoords);
     setResetSkia(Date.now());
   }, [momentCoords]);
@@ -162,8 +180,8 @@ const ScreenGecko = (props: Props) => {
 
   // }, [capsuleList]);
 
-  const handleGetMoment = (id) => {
-    // console.log('handleGetMoment')
+  const handleGetMoment = useCallback((id) => {
+    console.log('handleGetMoment', id)
     const moment = capsuleList.find((c) => c.id === id);
     //  console.log(`setting moment`, moment)
     if (moment?.id) {
@@ -179,6 +197,8 @@ const ScreenGecko = (props: Props) => {
       // --- Vibration ---
       Vibration.vibrate(50); // vibrate for 50ms
     } else {
+      console.log('not found')
+      console.log(capsuleList)
       setMoment({
         category: null,
         capsule: null,
@@ -186,10 +206,16 @@ const ScreenGecko = (props: Props) => {
         id: null,
       });
     }
-  };
+  }, [capsuleList]);
 
-  const welcomeTextStyle = AppFontStyles.welcomeText;
   const primaryColor = lightDarkTheme.priamryText;
+
+  const BLANK_WINDOW_MESSAGE = useMemo(() => {
+    if (!scatteredMoments || scatteredMoments.length < 1) {
+      return `No moments to view.`;
+    }
+    return `Select a moment to view it.`;
+  }, [scatteredMoments]);
 
   const TIME_SCORE = useMemo(() => {
     if (!friendDash || !friendDash?.time_score) {
@@ -256,6 +282,9 @@ const ScreenGecko = (props: Props) => {
           { backgroundColor: lightDarkTheme.lighterOverlayBackground },
         ]}
       >
+        <Text style={[styles.friendText, { color: primaryColor }]}>
+          Friend: {selectedFriend.name}
+        </Text>
         <Text style={[styles.statsText, { color: primaryColor }]}>
           Health: {TIME_SCORE}%
         </Text>
@@ -266,67 +295,79 @@ const ScreenGecko = (props: Props) => {
 
       <View
         style={[
-          styles.scoreWrapper,
+          styles.manualButtonWrapper,
           // { backgroundColor: lightDarkTheme.lighterOverlayBackground },
         ]}
       >
-        <Text style={[styles.scoreText, { color: primaryColor }]}>{count}</Text>
-        <Pressable   onPress={handleToggleManual} style={styles.manualButton}>
+        {/* <Text style={[styles.scoreText, { color: primaryColor }]}>{count}</Text> */}
+        <Pressable onPress={handleToggleManual} style={[styles.manualButton, {backgroundColor: lightDarkTheme.lighterOverlayBackground}]}>
           <SvgIcon
-        
             name={manualOnly ? `motion_play_outline` : `motion_pause_outline`}
-            size={34}
-           // color={lightDarkTheme.primaryBackground}
+            size={36}
+           color={lightDarkTheme.primaryBackground}
           ></SvgIcon>
         </Pressable>
       </View>
 
-      <View
-        style={[
-          styles.previewWrapper,
-          {
-            backgroundColor: lightDarkTheme.darkerOverlayBackground,
-            borderColor: selectedFriend.darkColor,
-          },
-        ]}
-      >
-        <Pressable
-          onPress={() => handleNavigateToMoment(moment)}
-          style={styles.momentViewButton}
-        ></Pressable>
-        {moment.id && (
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <Text
-              style={[
-                styles.previewHeader,
-                { color: lightDarkTheme.primaryText },
-              ]}
-            >
-              {moment.category}
-            </Text>
+      <View style={styles.previewOuter}>
+        <View
+          style={[
+            styles.previewWrapper,
+            {
+              backgroundColor: lightDarkTheme.darkerOverlayBackground,
+              borderColor: selectedFriend.darkColor,
+            },
+          ]}
+        >
+           {scatteredMoments.length > 0 && (
 
-            <Text
-              style={[
-                styles.previewText,
-                { color: lightDarkTheme.primaryText },
-              ]}
-            >
-              {moment.capsule}
-            </Text>
-          </ScrollView>
-        )}
-        {!moment.id && (
-          <View style={styles.noMomentWrapper}>
-            <Text
-              style={[
-                styles.noMomentText,
-                { color: lightDarkTheme.primaryText },
-              ]}
-            >
-              Select a moment to view it
-            </Text>
-          </View>
-        )}
+        
+          <Pressable
+            onPress={() => handleNavigateToMoment(moment)}
+            style={styles.momentViewButton}
+          >
+           
+            <SvgIcon
+              name={`chevron_double_right`}
+              size={28}
+              color={lightDarkTheme.primaryText}
+            />
+          </Pressable>
+             )}
+          {moment.id && (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text
+                style={[
+                  styles.previewHeader,
+                  { color: lightDarkTheme.primaryText },
+                ]}
+              >
+                {moment.category}
+              </Text>
+
+              <Text
+                style={[
+                  styles.previewText,
+                  { color: lightDarkTheme.primaryText },
+                ]}
+              >
+                {moment.capsule}
+              </Text>
+            </ScrollView>
+          )}
+          {!moment.id && (
+            <Pressable onPress={handleNavigateToCreateNew} style={styles.noMomentWrapper}>
+              <Text
+                style={[
+                  styles.noMomentText,
+                  { color: lightDarkTheme.primaryText },
+                ]}
+              >
+                {BLANK_WINDOW_MESSAGE} <Text style={[styles.buttonText, {color: lightDarkTheme.primaryText}]}> Add one?</Text> 
+              </Text>
+            </Pressable>
+          )}
+        </View>
       </View>
     </PreAuthSafeViewAndGradientBackground>
   );
@@ -335,7 +376,7 @@ const ScreenGecko = (props: Props) => {
 const styles = StyleSheet.create({
   statsWrapper: {
     // width: "100%",
-    height: 80,
+    height: 106,
     padding: 20,
     paddingHorizontal: 20,
     top: 60,
@@ -374,6 +415,17 @@ const styles = StyleSheet.create({
     //   shadowRadius: 4.65,
     //  elevation: 8,
   },
+
+  friendText: {
+    fontWeight: "bold",
+    fontSize: 17,
+    lineHeight: 26,
+  },
+  buttonText: {
+    fontWeight: "bold",
+    fontSize: 16
+
+  },
   statsText: {
     fontWeight: "bold",
     fontSize: 16,
@@ -382,9 +434,41 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 20,
   },
+    manualButtonWrapper: {
+    // width: "100%",
+    height: 80,
+    padding: 20,
+    paddingHorizontal: 20,
+    top: 160,
+    left: 0, //same as pawsetter
+    flex: 1,
+    // width: 170,
+    position: "absolute",
+    flexDirection: "column",
+    //  alignItems: "center",
+    borderRadius: 999,
+    borderRadius: 30,
+ 
+  },
   manualButton: {
     paddingVertical: 20,
-
+    borderRadius: 999,
+    height: 60,
+    width: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+         borderWidth: 1,
+    //   shadowColor: "#000",
+    //  shadowOffset: { width: 0, height: 4 },
+    //   shadowOpacity: 0.3,
+    //   shadowRadius: 4.65,
+    //  elevation: 1,
+  },
+  previewOuter: {
+    width: "100%",
+    paddingHorizontal: 20,
+    bottom: 10,
+    height: 140,
   },
   previewWrapper: {
     width: "100%",
@@ -392,7 +476,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'red',
     borderWidth: 2,
     borderRadius: 40,
-    bottom: 10,
+
     padding: 20,
   },
   noMomentWrapper: {
@@ -416,8 +500,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   momentViewButton: {
+    padding: 20,
     width: "100%",
-    height: 40,
+    height: 50,
     top: 0,
     right: 0,
 

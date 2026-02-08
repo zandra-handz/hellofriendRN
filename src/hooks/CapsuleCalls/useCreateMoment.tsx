@@ -56,7 +56,8 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
         user_category: data.user_category || null,
         user_category_name: data.user_category_name || null,
         screen_x: data.screen_x,
-        screen_y: data.screen_y
+        screen_y: data.screen_y,
+         stored_index: null
       };
  
 

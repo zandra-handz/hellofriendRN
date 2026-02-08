@@ -1,3 +1,13 @@
+// TO SWITCH OVER TO!
+// All other properties as typed arrays
+// this.jointAngles = new Float32Array(numJoints);
+// this.jointSecondaryAngles = new Float32Array(numJoints);
+// this.jointThirdAngles = new Float32Array(numJoints);
+// this.jointRadii = new Float32Array(numJoints);
+// this.jointIndices = new Uint16Array(numJoints); // or Uint8Array if < 256 joints
+// this.jointAngleDiffs = new Float32Array(numJoints);
+// this.jointGlobalAngles = new Float32Array(numJoints);
+// this.jointDirections = new Float32Array(numJoints * 2); // vec2 for each joint
 
 
 
@@ -11,14 +21,13 @@ import {
   _getAngleFromXAxis_inPlace,
 } from "../../utils";
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function handleBackwardsJump(
+export function handleBackwardsJump_inPlace(
   goingBackwards,
   cursor,
-  first,
+  first, 
+  jointAngles,
   radius,
   n,
   isGrowing,
@@ -31,6 +40,8 @@ export function handleBackwardsJump(
     goingBackwards.jumpFrameCount = 0;
     return;
   }
+
+  let firstJointAngle = jointAngles[0];
 
   const rotationAmountDivisor = 2;
   const jumpBackTimeLength = 20;
@@ -103,13 +114,13 @@ export function handleBackwardsJump(
       rotationDir = goingBackwards.lateralOffsetSign || 1;
     }
 
-    first.angle += INCREMENT * rotationDir;
+    firstJointAngle +=  INCREMENT * rotationDir;
 
     // Store the jump rotation for use elsewhere
     goingBackwards.jumpRotation = INCREMENT * rotationDir;
 
-    first[0] = cursor[0] + Math.cos(first.angle) * pushDistance;
-    first[1] = cursor[1] + Math.sin(first.angle) * pushDistance;
+    first[0] = cursor[0] + Math.cos(firstJointAngle) * pushDistance;
+    first[1] = cursor[1] + Math.sin(firstJointAngle) * pushDistance;
 
     // Reuse pre-allocated arrays instead of creating new ones
     goingBackwards.jumpedFirstPosition[0] = first[0];
@@ -130,6 +141,10 @@ export function handleBackwardsJump(
     goingBackwards.jumpRotation = 0;
     goingBackwards.jumpFrameCount = 0;
   }
+
+  return firstJointAngle;
+
+
 }
 
 export function solveFirst_withBackwardsDetect(
@@ -139,7 +154,13 @@ export function solveFirst_withBackwardsDetect(
   goingBackwards,
   cursor,
   first,
-  radius,
+  jointRadii,
+  jointIndices,
+  jointAngles,
+  jointSecondaryAngles,
+  jointmirroredSecondaryAngles,
+ 
+  jointAngleDiffs,
   secondMotionAngle,
   secondMotionMirroredAngle,
 ) {
@@ -154,11 +175,12 @@ export function solveFirst_withBackwardsDetect(
     goingBackwards.jumpedCursorPosition = [0, 0];
   }
 
-  const angleAtStart = first.angle;
-  
+  const angleAtStart = jointAngles[0];
+  const radius = jointRadii[0];
+  //console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`,secondMotionAngle)
 
-  first.secondaryAngle = secondMotionAngle;
-  first.mirroredSecondaryAngle = secondMotionMirroredAngle
+  jointSecondaryAngles[0] = secondMotionAngle;
+  jointmirroredSecondaryAngles[0] = secondMotionMirroredAngle
     ? secondMotionMirroredAngle
     : secondMotionAngle;
 
@@ -171,11 +193,13 @@ export function solveFirst_withBackwardsDetect(
   let d = Math.sqrt(dot(dir, dir));
 
   if (d === 0) {
-    first[0] = cursor[0] + radius;
+    first[0] = cursor[0] + jointRadii[0];
     first[1] = cursor[1];
-    first.angle = 0;
-    first.radius = radius;
-    first.index = 0;
+    // first.angle = 0;
+    jointAngles[0] = 0;
+  
+    // first.radius = radius;
+    jointIndices[0] = 0;
     return;
   }
 
@@ -189,12 +213,12 @@ export function solveFirst_withBackwardsDetect(
 
   let prelimAngle = _getAngleFromXAxis(n);
   let angleDiff = prelimAngle - cursor.angle;
-  first.angleDiff = angleDiff;
-  first.angle = cursor.angle + angleDiff;
+  jointAngleDiffs[0] = angleDiff;
+  jointAngles[0] = cursor.angle + angleDiff;
 
   // NOW CALCULATE THE ROTATION DIRECTION
   if (angleAtStart !== undefined) {
-    let delta = first.angle - angleAtStart;
+    let delta = jointAngles[0] - angleAtStart;
 
     while (delta > Math.PI) delta -= 2 * Math.PI;
     while (delta < -Math.PI) delta += 2 * Math.PI;
@@ -202,8 +226,8 @@ export function solveFirst_withBackwardsDetect(
     goingBackwards.rotationDir = Math.sign(delta);
   }
 
-  first.radius = radius;
-  first.index = 0;
+  jointRadii[0] = radius;
+  jointIndices[0] = 0;
 
   // OPTIMIZED: Use pre-allocated buffer
   const vecToCursor = goingBackwards._vecToCursorBuffer;
@@ -373,7 +397,7 @@ export function solveFirst_withBackwardsDetect(
     if (goingBackwards.framesSinceLastJump >= COOLDOWN_FRAMES) {
       goingBackwards.goingBackwards = true;
       goingBackwards.totalRotation = 0;
-      goingBackwards.backwardsAngle = first.angle;
+      goingBackwards.backwardsAngle = jointAngles[0];
       goingBackwards.framesSinceLastJump = 0;
     }
   }
@@ -386,7 +410,7 @@ export function solveFirst_withBackwardsDetect(
   }
 
   if (goingBackwards.goingBackwards) {
-    handleBackwardsJump(goingBackwards, cursor, first, radius, n, isGrowing);
+    handleBackwardsJump_inPlace(goingBackwards, cursor, first, jointAngles, radius, n, isGrowing);
   }
 
   if (goingBackwards.stiffnessBlend === undefined) {

@@ -1,5 +1,5 @@
 import {  solveProcJoint_inPlace } from "./utils_otherJoints.js";
-import { intersectLines } from "./utils_motionCalcs.js";
+
 import { solveFirst_withBackwardsDetect } from "./utils_firstJoint.js";
 
 import {
@@ -14,7 +14,7 @@ import {
 } from "../../utils.js";
 import { 
   // getStartAndEndPoints_inPlace,
-  // intersectLines,
+  intersectLines,
   getSpineSagTrans_inPlace,
 } from "../../utils.js";
 
@@ -47,7 +47,7 @@ export default class Spine {
     this.startingCoord = startingCoord;
     this.TAU = Math.PI * 2;
     this.updatesGlobalMotion = updatesGlobalMotion;
-this.testTick = 0;
+
     this.head = [0.5, 0.5];
     this.snout = [0.5, 0.5];
     this.hint = [0.5, 0.5];
@@ -142,7 +142,6 @@ for (let i = 0; i <= totalNumJoints; i++) {
     this.jointRadii = jointRadii;
 
     this.first = this.joints[0];
-    // this.firstAngle = this.jointAngles[0];
     this.bodyLength = 0.13;
     this.currentLength = 0; //stored in spineMotion as well
     this.currentJointLength = this.segmentEnd + 1 - this.segmentStart;
@@ -281,7 +280,6 @@ for (let i = 0; i <= totalNumJoints; i++) {
     } else {
       this.hint = _makeOffscreenPoint_inPlace(this.hintJoint);
     }
- 
   }
 
 
@@ -291,18 +289,8 @@ for (let i = 0; i <= totalNumJoints; i++) {
   update(leadPoint_lead, leadPoint_isMoving) {
 
 
- 
-  //   this.testTick += 1;
-
-
-  //  // console.log(this.jointAngles)
-  //   // console.log(this.jointSecondaryAngles);
-  //   if (this.testTick%100 === 0) {
-  //       console.log(this.joints)
-  //       console.log(this.jointAngles)
-
-  //   }
-  
+   // console.log(this.jointAngles)
+    //console.log(this.jointSecondaryAngles);
  
     this.isMoving = leadPoint_isMoving;
 

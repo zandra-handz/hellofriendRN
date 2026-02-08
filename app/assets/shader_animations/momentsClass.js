@@ -15,6 +15,10 @@ export default class Moments {
     this.gecko_size = gecko_size;
     this.momentsLength = moments.length;
     this.aspect = null;
+    this.momentIndexById = new Map();
+for (let i = 0; i < this.moments.length; i++) {
+  this.momentIndexById.set(this.moments[i].id, i);
+}
 
     this.selectedMomentIndex = -1;
     this.draggingMomentIndex = -1;
@@ -71,6 +75,8 @@ export default class Moments {
     this.radius = radius;
     this.radiusSquared = radius * radius;
 
+    console.log('resetting moments in SKIA', momentsData)
+
     // Rebuild moments array (identity of Moments stays the same)
     this.moments = momentsData.map((m) => ({
       id: m.id,
@@ -126,7 +132,10 @@ export default class Moments {
     const holding = this.holdings[holdIndex];
     if (!holding.id) return this.holdings;
 
-    const moment = this.moments.find((m) => m.id === holding.id);
+    // const moment = this.moments.find((m) => m.id === holding.id);
+
+    const idx = this.momentIndexById.get(holding.id);
+const moment = idx !== undefined ? this.moments[idx] : null;
     if (!moment) {
       // console.log("no matching moment found");
       return this.holdings;
@@ -245,6 +254,7 @@ export default class Moments {
 
 // everything that will break out of auto
     if (isDragging || wasTap || wasDoubleTap) {
+      // console.log('double tap')
         ux = userPointer[0];
         uy = userPointer[1]; 
         sleepWalk0.current.autoSelectCoord[0] = -100;
@@ -255,6 +265,7 @@ export default class Moments {
 
     // DESELECT NO MATTER WHERE ON SCREEN DOUBLE TAP IS
     if (wasDoubleTap && this.lastSelected.id !== -1) {
+      // console.log(this.lastSelected.id)
       this.lastSelected.id = -1;
     }
 
@@ -373,12 +384,12 @@ export default class Moments {
 
       // ONLY snap back if lastSelected is NOT held
       if (!lastSelectedIsHeld) {
-        console.log('NOT HELD')
+        // console.log('NOT HELD')
         this.lastSelected.id = -1;
         this.lastSelected.coord[0] = altCoord[0];
         this.lastSelected.coord[1] = altCoord[1];
       } else {
-         console.log('HELD')
+        //  console.log('HELD')
         // console.log('last selected held')
       }
 

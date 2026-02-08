@@ -777,61 +777,61 @@ export function getPivotedStep(step, pivot, pivotSize, distanceOut, is1) {
   return [newX, newY];
 }
 
-// export function getCalcStep(
-//   centerJoint,
-//   forwardAngle,
-//   distanceOut,
-//   stepWideness,
-//   is1,
-// ) {
-//   const piMultiplier = is1 ? 1 : -1;
-//   const offset = (piMultiplier * Math.PI) / stepWideness;
+export function getCalcStep(
+  centerJoint,
+  forwardAngle,
+  distanceOut,
+  stepWideness,
+  is1,
+) {
+  const piMultiplier = is1 ? 1 : -1;
+  const offset = (piMultiplier * Math.PI) / stepWideness;
 
-//   const xNext = centerJoint[0] + Math.cos(forwardAngle + offset) * distanceOut;
-//   const yNext = centerJoint[1] + Math.sin(forwardAngle + offset) * distanceOut;
+  const xNext = centerJoint[0] + Math.cos(forwardAngle + offset) * distanceOut;
+  const yNext = centerJoint[1] + Math.sin(forwardAngle + offset) * distanceOut;
 
-//   let nextStep = [xNext, yNext];
-//   nextStep.angle = forwardAngle; // FOR FINGER PLACEMENT. finger placement should be decided here because should only change when step changes
+  let nextStep = [xNext, yNext];
+  nextStep.angle = forwardAngle; // FOR FINGER PLACEMENT. finger placement should be decided here because should only change when step changes
 
-//   return nextStep;
-// }
+  return nextStep;
+}
 
-// export function getCalcStepNew(
-//   centerJoint,
-//   forwardAngle,
-//   backwardAngle,
-//   distanceOut,
-//   stepWideness,
-//   is1,
-//   goingBackwards = false,
-// ) {
-//   // if (goingBackwards) {
-//   //   console.log('going backwards!!');
-//   // }
+export function getCalcStepNew(
+  centerJoint,
+  forwardAngle,
+  backwardAngle,
+  distanceOut,
+  stepWideness,
+  is1,
+  goingBackwards = false,
+) {
+  // if (goingBackwards) {
+  //   console.log('going backwards!!');
+  // }
 
-//   const piMultiplier = is1 ? 1 : -1;
-//   const offset = (piMultiplier * Math.PI) / stepWideness;
+  const piMultiplier = is1 ? 1 : -1;
+  const offset = (piMultiplier * Math.PI) / stepWideness;
 
-//   // When going backwards, add/subtract 90 degrees based on which side
-//   const backwardsOffset = goingBackwards
-//     ? is1
-//       ? Math.PI / 3
-//       : -Math.PI / 3
-//     : 0;
+  // When going backwards, add/subtract 90 degrees based on which side
+  const backwardsOffset = goingBackwards
+    ? is1
+      ? Math.PI / 3
+      : -Math.PI / 3
+    : 0;
 
-//   const angle = goingBackwards ? backwardAngle : forwardAngle;
-//   const effectiveAngle = forwardAngle + backwardsOffset;
+  const angle = goingBackwards ? backwardAngle : forwardAngle;
+  const effectiveAngle = forwardAngle + backwardsOffset;
 
-//   const xNext =
-//     centerJoint[0] + Math.cos(effectiveAngle + offset) * distanceOut;
-//   const yNext =
-//     centerJoint[1] + Math.sin(effectiveAngle + offset) * distanceOut;
+  const xNext =
+    centerJoint[0] + Math.cos(effectiveAngle + offset) * distanceOut;
+  const yNext =
+    centerJoint[1] + Math.sin(effectiveAngle + offset) * distanceOut;
 
-//   let nextStep = [xNext, yNext];
-//   nextStep.angle = forwardAngle;
+  let nextStep = [xNext, yNext];
+  nextStep.angle = forwardAngle;
 
-//   return nextStep;
-// }
+  return nextStep;
+}
 
 export function getCalcStep_inPlace(
   outStep, // pre-allocated array [x, y]

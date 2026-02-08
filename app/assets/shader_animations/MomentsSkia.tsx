@@ -106,6 +106,17 @@ const MomentsSkia = ({
 
   const isPausedRef = useRef(false);
 
+//    useEffect(() => {
+//   if (global.gc) {
+//     // Force GC every 5 seconds to see the pattern
+//     const interval = setInterval(() => {
+//       console.log('Forcing GC...');
+//       global.gc();
+//     }, 5000);
+//     return () => clearInterval(interval);
+//   }
+// }, []);
+
   // useFocusEffect(
   //   useCallback(() => {
   //     return () => {
@@ -175,6 +186,8 @@ handleGetMoment(moments.current.lastSelected?.id);
   };
 
   const onDoublePress = () => { 
+
+    handleGetMoment(-1);
     console.log("double press");
  
   };
@@ -201,18 +214,7 @@ handleGetMoment(moments.current.lastSelected?.id);
       isDragging.value = false;
     });
 
-  // Double tap (higher priority)
-  const doubleTapGesture = Gesture.Tap()
-    .numberOfTaps(2)
-    .onEnd((_event, success) => {
-      if (success) {
-        wasDoubleTapSV.value = true;
-        runOnJS(onDoublePress)();
-        setTimeout(() => {
-          wasDoubleTapSV.value = false;
-        }, 100);
-      }
-    });
+
 
   // Single tap (lower priority - waits for double tap to fail)
   const singleTapGesture = Gesture.Tap()
@@ -223,6 +225,18 @@ handleGetMoment(moments.current.lastSelected?.id);
         // runOnJS(onSinglePress)();
         setTimeout(() => {
           wasTapSV.value = false;
+        }, 100);
+      }
+    });
+      // Double tap (higher priority)
+  const doubleTapGesture = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd((_event, success) => {
+      if (success) {
+        wasDoubleTapSV.value = true;
+        runOnJS(onDoublePress)();
+        setTimeout(() => {
+          wasDoubleTapSV.value = false;
         }, 100);
       }
     });
@@ -252,6 +266,15 @@ handleGetMoment(moments.current.lastSelected?.id);
 const onMomentReachedRef = useRef(null);
 
 // Set the callback
+
+// 1️⃣ Create a ref
+const handleGetMomentRef = useRef(handleGetMoment);
+
+// 2️⃣ Keep it updated whenever handleGetMoment changes
+useEffect(() => {
+  handleGetMomentRef.current = handleGetMoment;
+}, [handleGetMoment]);
+
 useEffect(() => {
   onMomentReachedRef.current = (momentId) => {
     handleGetMoment(momentId);
@@ -441,12 +464,17 @@ const [ geckoColor, setGeckoColor ] = useState(color2Converted);
       const currentId = moments.current.lastSelected?.id ?? -1;
       // console.log(currentId);
 
+// if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
+//   // console.log('handle moment triggered by animation loop')
+//   lastTriggeredIdRef.current = currentId;
+//   onSinglePress();
+// }
+// 3️⃣ Inside your animation loop, call the ref instead of the function directly
 if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
-  // console.log('handle moment triggered by animation loop')
   lastTriggeredIdRef.current = currentId;
-  onSinglePress();
+ 
+  handleGetMomentRef.current(currentId);
 }
-
       if (leadPoint.current.isMoving && !gecko.current.sleepWalkMode) {
         frameCountRef.current = 0;
       }

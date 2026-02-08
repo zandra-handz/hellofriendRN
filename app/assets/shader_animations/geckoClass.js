@@ -24,18 +24,40 @@ export default class Gecko {
     this.hintDist = hintDist;
 
  
-this.valuesForReversing = {
-  direction: 0,           // clamped relative angle to stepsAngle
-  turnRadius: 0,          // distance metric for pivot/backwards
-  goingBackwards: false,  // are we in backwards mode
-  totalRotation: 0,       // cumulative rotation while going backwards
-  rotationChange: 0,      // change in first.angle per frame
-  prevFirstAngle: undefined, // store previous first.angle to compute rotationChange
-  distanceHistory: [],    // history of distances to detect shrinking/growing
-  turnDirection: 0,       // normalized lateral turn direction (-1 to 1)
-  stiffnessBlend: 0       // interpolates stiffness while going backwards
-};
-
+    this.valuesForReversing = {
+      // Scalar values
+      direction: 0,           // clamped relative angle to stepsAngle
+      turnRadius: 0,          // distance metric for pivot/backwards
+      goingBackwards: false,  // are we in backwards mode
+      totalRotation: 0,       // cumulative rotation while going backwards
+      rotationChange: 0,      // change in first.angle per frame
+      jumpRotation: 0,        // rotation amount during jump
+      jumpFrameCount: 0,      // frame counter for jump animation
+      framesSinceLastJump: 0, // cooldown counter
+      rotationDir: 0,         // direction of rotation (-1, 0, 1)
+      lateralOffsetSign: 0,   // sign of lateral offset
+      turnDirection: 0,       // normalized lateral turn direction (-1 to 1)
+      stiffnessBlend: 0,      // interpolates stiffness while going backwards
+      backwardsAngle: 0,      // angle when backwards started
+      
+      // Preallocated buffers (from solveFirst_withBackwardsDetect)
+      _dirBuffer: new Float32Array(2),
+      _nBuffer: new Float32Array(2),
+      _vecToCursorBuffer: new Float32Array(2),
+      _perpVectorBuffer: new Float32Array(2),
+      _normalizedBuffer: new Float32Array(2),
+      jumpedFirstPosition: new Float32Array(2),
+      jumpedCursorPosition: new Float32Array(2),
+      
+      // ✅ Ring buffers instead of dynamic arrays
+      distanceHistory: new Float32Array(6),      // max length = 6
+      distanceHistoryIndex: 0,
+      distanceHistoryCount: 0,
+      
+      turnDirectionHistory: new Float32Array(2), // max length = 2
+      turnDirectionHistoryIndex: 0,
+      turnDirectionHistoryCount: 0,
+    };
 
     this.oneTimeEnterComplete = false; // set only once
     this.sleepWalkMode = false;

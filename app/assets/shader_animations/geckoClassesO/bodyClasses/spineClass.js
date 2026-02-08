@@ -1,6 +1,6 @@
-import {  solveProcJoint_inPlace } from "./utils_otherJoints.js";
-import { intersectLines } from "./utils_motionCalcs.js";
-import { solveFirst_withBackwardsDetect } from "./utils_firstJoint.js";
+import {  solveProcJoint_inPlace } from "./utilsPChain.js";
+
+import { solveFirst_withBackwardsDetect } from "./utilsFirstPChain.js";
 
 import {
   _getCenterPoint,
@@ -13,8 +13,8 @@ import {
   _getDistanceScalar,
 } from "../../utils.js";
 import { 
-  // getStartAndEndPoints_inPlace,
-  // intersectLines,
+  getStartAndEndPoints_inPlace,
+  intersectLines,
   getSpineSagTrans_inPlace,
 } from "../../utils.js";
 
@@ -47,7 +47,7 @@ export default class Spine {
     this.startingCoord = startingCoord;
     this.TAU = Math.PI * 2;
     this.updatesGlobalMotion = updatesGlobalMotion;
-this.testTick = 0;
+
     this.head = [0.5, 0.5];
     this.snout = [0.5, 0.5];
     this.hint = [0.5, 0.5];
@@ -70,6 +70,8 @@ this.testTick = 0;
 
     this.jointClamps = jointClamps;
 
+    this.testTick = 0;
+
     // for (let i = 0; i <= totalNumJoints; i++) {
     //   const joint = [this.startingCoord[0], this.startingCoord[1]];
 
@@ -91,25 +93,14 @@ this.jointBuffer = new Float32Array((totalNumJoints + 1) * 2);
 
 // TO SWITCH OVER TO!
 // All other properties as typed arrays
-// this.jointAngles = new Float32Array(totalNumJoints);
-// this.jointSecondaryAngles = new Float32Array(totalNumJoints);
-// this.jointmirroredSecondaryAngles = new Float32Array(totalNumJoints);
-// this.jointThirdAngles = new Float32Array(totalNumJoints);
-// // this.jointRadii = new Float32Array(numJoints);
-// this.jointIndices = new Uint16Array(totalNumJoints); // or Uint8Array if < 256 joints
-// this.jointAngleDiffs = new Float32Array(totalNumJoints);
-// this.jointGlobalAngles = new Float32Array(totalNumJoints);
-// this.jointDirections = new Float32Array(totalNumJoints * 2); // vec2 for each joint
-
-// Fix this:
-this.jointAngles = new Float32Array(totalNumJoints + 1);  // +1 here
-this.jointSecondaryAngles = new Float32Array(totalNumJoints + 1);
-this.jointmirroredSecondaryAngles = new Float32Array(totalNumJoints + 1);
-this.jointThirdAngles = new Float32Array(totalNumJoints + 1);
-this.jointIndices = new Uint16Array(totalNumJoints + 1);
-this.jointAngleDiffs = new Float32Array(totalNumJoints + 1);
-this.jointGlobalAngles = new Float32Array(totalNumJoints + 1);
-// this.jointDirections = new Float32Array((totalNumJoints + 1) * 2);
+// this.jointAngles = new Float32Array(numJoints);
+// this.jointSecondaryAngles = new Float32Array(numJoints);
+// this.jointThirdAngles = new Float32Array(numJoints);
+// this.jointRadii = new Float32Array(numJoints);
+// this.jointIndices = new Uint16Array(numJoints); // or Uint8Array if < 256 joints
+// this.jointAngleDiffs = new Float32Array(numJoints);
+// this.jointGlobalAngles = new Float32Array(numJoints);
+// this.jointDirections = new Float32Array(numJoints * 2); // vec2 for each joint
 
 this.joints = [];
 for (let i = 0; i <= totalNumJoints; i++) {
@@ -117,32 +108,21 @@ for (let i = 0; i <= totalNumJoints; i++) {
   const joint = this.jointBuffer.subarray(i * 2, i * 2 + 2);
   
   // Add other properties with dot notation
-  // joint.angle = 0;
-  // joint.secondaryAngle = 0;
-  // joint.thirdAngle = 0;
-  // joint.radius = 0;
-  // joint.index = 0;
-  // joint.angleDiff = 0;
-  // joint.globalAngle = 0;
-  // joint.direction = [1, 0];
+  joint.angle = 0;
+  joint.secondaryAngle = 0;
+  joint.thirdAngle = 0;
+  joint.radius = 0;
+  joint.index = 0;
+  joint.angleDiff = 0;
+  joint.globalAngle = 0;
+  joint.direction = [1, 0];
   
   this.joints.push(joint);
-}
-
-// Create buffer for directions
-this.jointDirectionsBuffer = new Float32Array((totalNumJoints + 1) * 2);
-
-// Create array of views into the buffer
-this.jointDirections = [];
-for (let i = 0; i <= totalNumJoints; i++) {
-  const direction = this.jointDirectionsBuffer.subarray(i * 2, i * 2 + 2);
-  this.jointDirections.push(direction);
 }
 
     this.jointRadii = jointRadii;
 
     this.first = this.joints[0];
-    // this.firstAngle = this.jointAngles[0];
     this.bodyLength = 0.13;
     this.currentLength = 0; //stored in spineMotion as well
     this.currentJointLength = this.segmentEnd + 1 - this.segmentStart;
@@ -213,7 +193,15 @@ for (let i = 0; i <= totalNumJoints; i++) {
       this.joints[this.segmentStart],
     );
 
- 
+    // getStartAndEndPoints_inPlace(
+    //   this.center,
+    //   spineCenterLines.tEnd,
+    //   spineCenterLines.tStart,
+    //   this.motion.frontSteps_tDistanceApart,
+    //   this.centerFlanks[0],
+    //   this.centerFlanks[1],
+    // );
+
     const intersection = intersectLines(
       [spineCenterLines.tStart, spineCenterLines.tEnd],
       spineCenterLines.tAngle,
@@ -227,7 +215,16 @@ for (let i = 0; i <= totalNumJoints; i++) {
     }
 
     this.intersectionPoint = intersection.intersectionPoint;
- 
+
+    // getStartAndEndPoints_inPlace(
+    //   this.intersectionPoint,
+    //   spineCenterLines.tEnd,
+    //   spineCenterLines.tStart,
+    //   this.motion.frontSteps_tDistanceApart,
+    //   this.intersectionFlanks[0],
+    //   this.intersectionFlanks[1],
+    // );
+
     if (this.motion.centerIntersection != null) {
       this.motionSecondAngle = this.motion.realignmentAngle2;
     }
@@ -281,7 +278,6 @@ for (let i = 0; i <= totalNumJoints; i++) {
     } else {
       this.hint = _makeOffscreenPoint_inPlace(this.hintJoint);
     }
- 
   }
 
 
@@ -291,17 +287,18 @@ for (let i = 0; i <= totalNumJoints; i++) {
   update(leadPoint_lead, leadPoint_isMoving) {
 
 
- 
-  //   this.testTick += 1;
+
+        this.testTick += 1;
 
 
-  //  // console.log(this.jointAngles)
-  //   // console.log(this.jointSecondaryAngles);
-  //   if (this.testTick%100 === 0) {
-  //       console.log(this.joints)
-  //       console.log(this.jointAngles)
+   // console.log(this.jointAngles)
+    // console.log(this.jointSecondaryAngles);
+    if (this.testTick%100 === 0) {
+      console.log('OLD')
+        console.log(this.joints)
+        console.log(this.jointAngles)
 
-  //   }
+    }
   
  
     this.isMoving = leadPoint_isMoving;
@@ -316,13 +313,7 @@ for (let i = 0; i <= totalNumJoints; i++) {
       this.valuesForReversing,
       leadPoint_lead,
       this.first,
-      this.jointRadii,
-      this.jointIndices,
-      this.jointAngles,
-      this.jointSecondaryAngles,
-       this.jointmirroredSecondaryAngles,
-    
-     this.jointAngleDiffs,
+      this.jointRadii[0],
       this.motion.realignmentAngle1, // necessary for secondaryAngle
       this.motion.realignmentAngle2, // adding the third animation here as well to keep code cleam/less confusing
       true,
@@ -330,14 +321,7 @@ for (let i = 0; i <= totalNumJoints; i++) {
     for (let i = 0; i < this.totalNumJoints; i++) {
       solveProcJoint_inPlace(
         i,
-        this.joints[i], // ahead
-        this.jointAngles, // aheadAngle
-        this.jointSecondaryAngles, // aheadSecondaryAngle
-        this.jointThirdAngles, // aheadThirdAngle
-        this.jointmirroredSecondaryAngles, // aheadMirroredSecondaryAngle
-        this.jointAngleDiffs,
-        this.jointDirections,
-        this.jointIndices,
+        this.joints[i],
         this.joints[i + 1],
         this.jointRadii[i + 1],
         this.jointClamps[i + 1],

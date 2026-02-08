@@ -24,10 +24,7 @@ export default class FollowerLegs {
   constructor(
     state,
     valuesForReversing,
-    joints,
-    jointAngles,
-    anchorJIndex,
-    aheadJIndex,
+    spine,
     motion,
     frontLegs_stepTargets,
     hipSpineJoint,
@@ -56,9 +53,7 @@ export default class FollowerLegs {
     this.state = state;
     this.valuesForReversing = valuesForReversing;
 
-    this.joints = joints;
-    this.jointAngles = jointAngles;
-    this.anchorJIndex = anchorJIndex;
+    this.spine = spine;
     this.motion = motion;
     this.frontLegs_stepTargets = frontLegs_stepTargets;
     this.hipSpineJoint = hipSpineJoint;
@@ -78,9 +73,6 @@ export default class FollowerLegs {
     this.stepAheadJoint1 = stepAheadJoint1;
 
     this.stepBehindJoint = stepBehindJoint;
-
-        this.anchorJIndex = anchorJIndex;
-    this.aheadJIndex = aheadJIndex;
 
     this.distFromFrontStep0 = 0;
     this.distFromFrontStep1 = 0;
@@ -329,6 +321,9 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
   }
 
   update() {
+
+    
+ 
     if (this.valuesForReversing?.goingBackwards !== this.prevBackwards) {
       this.getStepValues(this.valuesForReversing.goingBackwards);
 
@@ -350,9 +345,8 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
       this.rotationRadius,
       this.rotationRange,
       this.state.followerPhase,
-     this.joints[this.anchorJIndex],
-     this.jointAngles[this.anchorJIndex],
-      // this.hipSpineJoint.angle,
+      [this.hipSpineJoint[0], this.hipSpineJoint[1]],
+      this.hipSpineJoint.angle,
       false,
       false,
     );
@@ -363,10 +357,8 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
       this.rotationRadius,
       this.rotationRange,
       this.state.followerPhase,
-           this.joints[this.anchorJIndex],
-     this.jointAngles[this.anchorJIndex],
-      // [this.hipSpineJoint[0], this.hipSpineJoint[1]],
-      // this.hipSpineJoint.angle,
+      [this.hipSpineJoint[0], this.hipSpineJoint[1]],
+      this.hipSpineJoint.angle,
       true,
       true,
     );
@@ -434,4 +426,308 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
     );
   }
 }
- 
+
+// import {
+//   _getPointTowardB,
+//   _getCenterPoint,
+//   _getCenterPoint_inPlace,
+//   _getDistanceScalar,
+//   _getDotScalar,
+//   _subtractVec,
+//   _getAngleFromXAxis,
+//   _getForwardAngle,
+// } from "../../utils.js";
+
+// import {
+//   updateShoulderRotator,
+//   getBackFrontStepDistance,
+//   solveBackElbowIK,
+//   getCalcStep_inPlace,
+//   getPivotedStep,
+//   solveFingers,
+//   getFrontStepsSagTrans,
+// } from "../../utils.js";
+
+// export default class FollowerLegs {
+//   constructor(
+//     state,
+//     valuesForReversing,
+//     spine,
+//     motion,
+//     frontLegs_stepTargets,
+//     hipSpineJoint,
+//     stepCenterJoint,
+//     stepCenterRadius,
+//     stepAheadJoint0,
+//     stepAheadJoint1,
+//     stepBehindJoint,
+//     stepPivotSize,
+//     fingerLen,
+//     rotationRadius = 0.007,
+//     rotationRange = 2.2,
+//     stepThreshhold = 0.06,
+//     stepWiggleRoom = 0.02,
+//     stepWideness = 3.4,
+//     stepReach = 0.0453,
+//     upperArmLength = 0.042,
+//     forearmLength = 0.026,
+//   ) {
+//     this.TAU = Math.PI * 2;
+
+//     this.state = state;
+//     this.valuesForReversing = valuesForReversing;
+
+//     this.spine = spine;
+//     this.motion = motion;
+//     this.frontLegs_stepTargets = frontLegs_stepTargets;
+//     this.hipSpineJoint = hipSpineJoint;
+
+//     this.rotatorJoint0 = [0.5, 0.5];
+//     this.rotatorJoint1 = [0.5, 0.5];
+
+//     this.rotationRadius = rotationRadius;
+//     this.rotationRange = rotationRange;
+
+//     this.stepPivotSize = stepPivotSize;
+//     this.stepCenterJoint = stepCenterJoint;
+//     this.stepCenterRadius = stepCenterRadius;
+
+//     this.stepAheadJoint = stepAheadJoint0;
+//     this.stepAheadJoint0 = stepAheadJoint0;
+//     this.stepAheadJoint1 = stepAheadJoint1;
+//     this.stepBehindJoint = stepBehindJoint;
+
+//     this.distFromFrontStep0 = 0;
+//     this.distFromFrontStep1 = 0;
+
+//     this.forwardAngle0 = 0;
+//     this.forwardAngle1 = 0;
+//     this.centerToAheadAngle = 0;
+//     this.centerToBehindAngle = 0;
+
+//     // 🔑 transition tracking
+//     this.prevBackwards = false;
+
+//     this.elbows = [
+//       [0.5, 0.5],
+//       [0.5, 0.5],
+//     ];
+
+//     this.muscles = [
+//       [0.5, 0.5],
+//       [0.5, 0.5],
+//       [0.5, 0.5],
+//       [0.5, 0.5],
+//     ];
+
+//     this.feet = [
+//       [0.5, 0.5],
+//       [0.5, 0.5],
+//     ];
+
+//     this.fingers = [
+//       Array(5).fill().map(() => [0.5, 0.5]),
+//       Array(5).fill().map(() => [0.5, 0.5]),
+//     ];
+
+//     this.fingerLen = fingerLen;
+//     this.fingerAngleOffset = 3;
+
+//     this.stepTargets = [
+//       [0.5, 0.5],
+//       [0.5, 0.5],
+//     ];
+
+//     this.stepThreshhold = stepThreshhold;
+//     this.stepWiggleRoom = stepWiggleRoom;
+//     this.stepWideness = stepWideness;
+//     this.stepReach = stepReach;
+
+//     this.upperArmLength = upperArmLength;
+//     this.forearmLength = forearmLength;
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // STEP PARAMS
+//   // ─────────────────────────────────────────────
+//   getStepValues() {
+//     if (this.valuesForReversing.goingBackwards) {
+//       this.stepThreshhold = 0.03;
+//       this.stepWideness = 5;
+//       this.stepReach = 0.0253;
+//     } else {
+//       this.stepThreshhold = 0.10;
+//       this.stepWideness = 4;
+//       this.stepReach = 0.0463;
+//     }
+//   }
+
+//   updateDistanceFromFrontStep() {
+//     this.distFromFrontStep0 = getBackFrontStepDistance(
+//       this.stepTargets[0],
+//       this.motion.frontStepsTLine[0],
+//     );
+//     this.distFromFrontStep1 = getBackFrontStepDistance(
+//       this.stepTargets[1],
+//       this.motion.frontStepsTLine[1],
+//     );
+//   }
+
+//   updateForwardAngles() {
+//     const p0 = [0, 0];
+//     const p1 = [0, 0];
+
+//     _getCenterPoint_inPlace(
+//       this.frontLegs_stepTargets[0],
+//       this.stepAheadJoint,
+//       p0,
+//     );
+//     _getCenterPoint_inPlace(
+//       this.frontLegs_stepTargets[1],
+//       this.stepAheadJoint,
+//       p1,
+//     );
+
+//     this.forwardAngle0 = _getForwardAngle(this.stepCenterJoint, p0);
+//     this.forwardAngle1 = _getForwardAngle(this.stepCenterJoint, p1);
+//   }
+
+//   updateBackwardAngle() {
+//     this.centerToBehindAngle = _getForwardAngle(
+//       this.stepCenterJoint,
+//       this.stepBehindJoint,
+//     );
+//   }
+
+//   resetStepsOnForward() {
+//     console.log('resetting')
+//     // this.state.takeSyncedSteps0 = true;
+//    // this.state.takeSyncedSteps1 = false;
+
+//   }
+
+//   solveStepTargetsBackPaired() {
+//     const distanceOut = (this.stepCenterRadius + this.stepReach) * 1.4;
+//     const widenessAdj = 1.3;
+
+//     let calcStep0 = [0, 0];
+//     let calcStep1 = [0, 0];
+
+//     getCalcStep_inPlace(
+//       calcStep0,
+//       this.stepCenterJoint,
+//       this.forwardAngle0,
+//       this.forwardAngle0,
+//       distanceOut,
+//       this.stepWideness * widenessAdj,
+//       false,
+//       this.valuesForReversing.goingBackwards,
+//     );
+
+//     getCalcStep_inPlace(
+//       calcStep1,
+//       this.stepCenterJoint,
+//       this.forwardAngle1,
+//       this.forwardAngle1,
+//       distanceOut,
+//       this.stepWideness * widenessAdj,
+//       true,
+//       this.valuesForReversing.goingBackwards,
+//     );
+
+//     const lDist = _getDistanceScalar(calcStep0, this.stepTargets[0]);
+//     const rDist = _getDistanceScalar(calcStep1, this.stepTargets[1]);
+
+//     const goingBackwards = this.valuesForReversing.goingBackwards;
+
+//     if (
+//       goingBackwards ? this.state.takeSyncedSteps0 : this.state.takeSyncedSteps1
+//     ) {
+//       this.stepTargets[0][0] = calcStep0[0];
+//       this.stepTargets[0][1] = calcStep0[1];
+//       this.stepTargets[0].angle = calcStep0.angle;
+//       this.state.syncedStepsCompleted(this.state.takeSyncedSteps1);
+//     } else if (!goingBackwards && lDist > this.stepThreshhold + this.stepWiggleRoom) {
+//       this.state.catchUp(true);
+//     }
+
+//     if (
+//       goingBackwards ? this.state.takeSyncedSteps1 : this.state.takeSyncedSteps0
+//     ) {
+//       this.stepTargets[1][0] = calcStep1[0];
+//       this.stepTargets[1][1] = calcStep1[1];
+//       this.stepTargets[1].angle = calcStep1.angle;
+//       this.state.syncedStepsCompleted(false);
+//     } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
+//       this.state.catchUp(!this.state.takeSyncedSteps0);
+//     }
+//   }
+
+//   update() {
+//     const goingBackwards = this.valuesForReversing.goingBackwards;
+
+//     //  transition hook
+//     if (this.prevBackwards && !goingBackwards) {
+//       this.resetStepsOnForward();
+//     }
+//     this.prevBackwards = goingBackwards;
+
+//     this.getStepValues();
+//     this.updateDistanceFromFrontStep();
+//     this.updateForwardAngles();
+
+//     if (goingBackwards) {
+//       this.updateBackwardAngle();
+//     }
+
+//     updateShoulderRotator(
+//       this.rotatorJoint0,
+//       this.rotationRadius,
+//       this.rotationRange,
+//       this.state.followerPhase,
+//       this.hipSpineJoint,
+//       this.hipSpineJoint.angle,
+//       false,
+//       false,
+//     );
+
+//     updateShoulderRotator(
+//       this.rotatorJoint1,
+//       this.rotationRadius,
+//       this.rotationRange,
+//       this.state.followerPhase,
+//       this.hipSpineJoint,
+//       this.hipSpineJoint.angle,
+//       true,
+//       true,
+//     );
+
+//     this.solveStepTargetsBackPaired();
+
+//     solveBackElbowIK(
+//       this.rotatorJoint0,
+//       this.elbows[0],
+//       this.stepTargets[0],
+//       this.upperArmLength,
+//       this.forearmLength,
+//       false,
+//     );
+
+//     solveBackElbowIK(
+//       this.rotatorJoint1,
+//       this.elbows[1],
+//       this.stepTargets[1],
+//       this.upperArmLength,
+//       this.forearmLength,
+//       true,
+//     );
+
+//     _getCenterPoint_inPlace(this.stepTargets[0], this.elbows[0], this.muscles[0]);
+//     _getCenterPoint_inPlace(this.elbows[0], this.stepCenterJoint, this.muscles[1]);
+//     _getCenterPoint_inPlace(this.stepTargets[1], this.elbows[1], this.muscles[2]);
+//     _getCenterPoint_inPlace(this.elbows[1], this.stepCenterJoint, this.muscles[3]);
+
+//     solveFingers(this.stepTargets[0], this.fingers[0], this.fingerLen, false, this.fingerAngleOffset);
+//     solveFingers(this.stepTargets[1], this.fingers[1], this.fingerLen, true, this.fingerAngleOffset);
+//   }
+// }
