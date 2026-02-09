@@ -13,6 +13,7 @@ import AccountArrowLeftOutlineSvg from "./svgs/account-arrow-left-outline";
 import AccountPlusSvg from "./svgs/account-plus";
 import AccountSwitchOutlineSvg from "./svgs/account-switch-outline";
 import ArrowRightSvg from "./svgs/arrow-right";
+import AutoModeSvg from "./svgs/auto-mode";
 import BellSvg from "./svgs/bell";
 import BugSvg from "./svgs/bug";
 import BugOutlineSvg from "./svgs/bug-outline";
@@ -74,6 +75,9 @@ import ScatterPlotSvg from "./svgs/scatter-plot";
 import SendSvg from "./svgs/send";
 import SendCircleOutlineSvg from "./svgs/send-circle-outline";
 import SettingsSuggestSvg from "./svgs/settings_suggest";
+import SpeedometerSlowSvg from "./svgs/speedometer-slow";
+import SpeedometerMediumSvg from "./svgs/speedometer-medium";
+import SpeedometerSvg from "./svgs/speedometer";
 import StarSvg from "./svgs/star";
 import TextSearchSvg from "./svgs/text-search";
 import TextShadowSvg from "./svgs/text-shadow";
@@ -96,6 +100,7 @@ const svgIcons = {
   account_plus: AccountPlusSvg,
   account_switch_outline: AccountSwitchOutlineSvg,
   arrow_right: ArrowRightSvg,
+  auto_mode: AutoModeSvg,
   bookmark: BookmarkSvg,
   bell: BellSvg,
   bug: BugSvg,
@@ -156,6 +161,9 @@ const svgIcons = {
   pulse: PulseSvg,
   refresh: RefreshSvg,
   settings_suggest: SettingsSuggestSvg,
+  speedometer_slow: SpeedometerSlowSvg,
+  speedometer: SpeedometerSvg,
+  speedometer_medium: SpeedometerMediumSvg,
   star: StarSvg,
   theme_light_dark: ThemeLightDarkSvg,
   text_search: TextSearchSvg,

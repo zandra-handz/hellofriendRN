@@ -1,6 +1,5 @@
 import { View, Text } from "react-native";
-import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React from "react"; 
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import SvgIcon from "@/app/styles/SvgIcons";
 

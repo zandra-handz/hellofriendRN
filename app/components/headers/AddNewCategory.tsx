@@ -39,6 +39,8 @@ const AddNewCategory = ({
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
 
+
+
   const ENTER_MESSAGE_WIDTH = 60;
 
   const [flashMessage, setFlashMessage] = useState<null | {
@@ -54,7 +56,7 @@ const AddNewCategory = ({
 
   useEffect(() => {
     if (inputActive && newCategoryRef.current) {
-      console.log("ready!!!!!!");
+      // console.log("ready!!!!!!");
       setNewCategory(" "); // space or something else
       setTimeout(() => setNewCategory(""), 0);
       setTimeout(() => {
@@ -85,12 +87,19 @@ const AddNewCategory = ({
   }, [createNewCategoryMutation.isError]);
 
   const remaining = useMemo(() => {
+   
     if (userCategories && userCategories.length > 0) {
+   
       return userCategories[0].max_active - userCategories.length;
-    } else {
+    } else { 
       return 1;
     }
   }, [userCategories]);
+
+  useEffect(() => {
+    console.log(`DEBUG: `, remaining)
+
+  }, [remaining]);
 
   const toggleInput = () => {
     console.log("toggle pressed");

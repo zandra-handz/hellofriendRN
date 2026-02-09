@@ -54,7 +54,7 @@ const MomentDotsResetterMini = ({
         style={styles.buttonContainer}
         onPress={onCenterPress}
       >
-        <SvgIcon name={`refresh`} size={iconSize} color={primaryColor} />
+        <SvgIcon name={`image_filter_center_focus`} size={iconSize} color={primaryColor} />
       </Pressable>
 
       <Pressable hitSlop={10} style={styles.buttonContainer} onPress={onPress}>
@@ -66,7 +66,7 @@ const MomentDotsResetterMini = ({
         style={styles.buttonContainer}
         onPress={onUndoPress}
       >
-        <SvgIcon name={`delete`} size={iconSize} color={primaryColor} />
+        <SvgIcon name={`refresh`} size={iconSize} color={primaryColor} />
       </Pressable>
     </View>
   );

@@ -63,6 +63,7 @@ const MomentWriteEditView = ({
   friendName,
   friendFaves,
 }: Props) => {
+  // console.log(existingMomentObject)
   const { handleCreateMoment, createMomentMutation } = useCreateMoment({
     userId: userId,
     friendId: friendId,
@@ -75,15 +76,15 @@ const MomentWriteEditView = ({
 
   const { capsuleList } = useCapsuleList();
 
-  const yTranslateValue = useSharedValue(-460);
+  const yTranslateValue = useSharedValue(-850);
 
   const handleOpenCat = () => {
-    yTranslateValue.value = withTiming(0, { duration: 200 });
+    yTranslateValue.value = withTiming(0, { duration: 100 });
     Keyboard.dismiss();
   };
 
   const handleCloseCat = () => {
-    yTranslateValue.value = withTiming(-460, { duration: 100 });
+    yTranslateValue.value = withTiming(-850, { duration: 100 });
   };
 
   const TOPPER_PADDING_TOP = 0;
@@ -96,6 +97,21 @@ const MomentWriteEditView = ({
   const [userChangedCategory, setUserChangedCategory] =
     useState<boolean>(false);
 
+  const extractScoresFromMoment = (moment?: Moment): MomentScores => {
+    if (!moment) return DEFAULT_SCORES;
+
+    return {
+      easy_score: moment.easy_score ?? DEFAULT_SCORES.easy_score,
+      hard_score: moment.hard_score ?? DEFAULT_SCORES.hard_score,
+      quick_score: moment.quick_score ?? DEFAULT_SCORES.quick_score,
+      long_score: moment.long_score ?? DEFAULT_SCORES.long_score,
+      relevant_score: moment.relevant_score ?? DEFAULT_SCORES.relevant_score,
+      random_score: moment.random_score ?? DEFAULT_SCORES.random_score,
+      unique_score: moment.unique_score ?? DEFAULT_SCORES.unique_score,
+      generic_score: moment.generic_score ?? DEFAULT_SCORES.generic_score,
+    };
+  };
+
   const handleUserChangedCategoryState = () => {
     if (!userChangedCategory) {
       setUserChangedCategory(true);
@@ -107,7 +123,7 @@ const MomentWriteEditView = ({
       if (momentText && !userChangedCategory) {
         setMomentTestToSave(momentText);
       }
-    }, [momentText])
+    }, [momentText]),
   );
 
   const handleTriggerRefocus = () => {
@@ -124,7 +140,7 @@ const MomentWriteEditView = ({
       return () => {
         console.log("Screen is unfocused");
       };
-    }, [])
+    }, []),
   );
 
   const handleCloseCatCreator = () => {
@@ -149,11 +165,11 @@ const MomentWriteEditView = ({
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
+      () => setIsKeyboardVisible(true),
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
+      () => setIsKeyboardVisible(false),
     );
 
     return () => {
@@ -163,11 +179,48 @@ const MomentWriteEditView = ({
   }, []);
 
   const [selectedCategory, setSelectedCategory] = useState(
-    existingMomentObject?.user_category_name ?? ""
+    existingMomentObject?.user_category_name ?? "",
   );
   const [selectedUserCategory, setSelectedUserCategory] = useState(
-    Number(existingMomentObject?.user_category ?? 0)
+    Number(existingMomentObject?.user_category ?? 0),
   );
+
+  type MomentScores = {
+    easy_score: number;
+    hard_score: number;
+    quick_score: number;
+    long_score: number;
+    relevant_score: number;
+    random_score: number;
+    unique_score: number;
+    generic_score: number;
+  };
+
+  const DEFAULT_SCORES: MomentScores = {
+    easy_score: 2,
+    hard_score: 2,
+    quick_score: 2,
+    long_score: 2,
+    relevant_score: 2,
+    random_score: 2,
+    unique_score: 2,
+    generic_score: 2,
+  };
+
+  // In your component:
+  // const [scoresObject, setScoresObject] = useState<MomentScores>(DEFAULT_SCORES);
+
+  const [scoresObject, setScoresObject] = useState<MomentScores>(() =>
+    extractScoresFromMoment(existingMomentObject),
+  );
+
+  // Update individual score:
+  const handleScoreChange = (field: keyof MomentScores, value: number) => {
+    setScoresObject((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleUserCategorySelect = ({ name: name, id: id }) => {
     setSelectedUserCategory(id);
@@ -175,6 +228,7 @@ const MomentWriteEditView = ({
   };
 
   const handleSave = async () => {
+    console.log(scoresObject);
     if (!selectedUserCategory) {
       Alert.alert(`DEV MODE`, `Oops! SelectedUserCategory is null`, [
         {
@@ -197,7 +251,7 @@ const MomentWriteEditView = ({
             onPress: () => {},
             style: "cancel",
           },
-        ]
+        ],
       );
       return;
     }
@@ -218,9 +272,16 @@ const MomentWriteEditView = ({
         if (!updateExistingMoment) {
           const requestData = {
             friend: friendId,
-            // selectedCategory: selectedCategory, // just need ID below
             selectedUserCategory: selectedUserCategory,
             moment: momentTextToSave,
+            easy_score: scoresObject.easy_score,
+            hard_score: scoresObject.hard_score,
+            quick_score: scoresObject.quick_score,
+            long_score: scoresObject.long_score,
+            relevant_score: scoresObject.relevant_score,
+            random_score: scoresObject.random_score,
+            unique_score: scoresObject.unique_score,
+            generic_score: scoresObject.generic_score,
           };
           showFlashMessage("Idea saved!", false, 2000);
           await handleCreateMoment(requestData);
@@ -231,6 +292,14 @@ const MomentWriteEditView = ({
             user_category: selectedUserCategory,
             // capsule: momentTextRef.current.getText(),
             capsule: momentTextToSave,
+            easy_score: scoresObject.easy_score,
+            hard_score: scoresObject.hard_score,
+            quick_score: scoresObject.quick_score,
+            long_score: scoresObject.long_score,
+            relevant_score: scoresObject.relevant_score,
+            random_score: scoresObject.random_score,
+            unique_score: scoresObject.unique_score,
+            generic_score: scoresObject.generic_score,
           };
           showFlashMessage("Changes saved!", false, 1000);
           await handleEditMoment(existingMomentObject?.id, editData);
@@ -274,7 +343,7 @@ const MomentWriteEditView = ({
   useEffect(() => {
     if (editMomentMutation.isSuccess && capsuleList?.length) {
       console.log(
-        "useeffect for navving after edit triggered and code will be used"
+        "useeffect for navving after edit triggered and code will be used",
       );
       const id = existingMomentObject.id;
       const updatedCapsule = capsuleList.filter((item) => item.id === id);
@@ -310,6 +379,8 @@ const MomentWriteEditView = ({
           existingId={Number(existingMomentObject?.user_category) || null}
           onClose={handleCloseCatCreator}
           yTranslateValue={yTranslateValue}
+          scoresObject={scoresObject}
+          handleScoreChange={handleScoreChange}
         />
 
         <View
@@ -324,9 +395,12 @@ const MomentWriteEditView = ({
         >
           <View style={styles.innerContainer}>
             <View
-              style={[styles.card, { 
-                backgroundColor: darkGlassBackground,
-              }]}
+              style={[
+                styles.card,
+                {
+                  backgroundColor: darkGlassBackground,
+                },
+              ]}
             >
               <MomentFocusTray
                 userId={userId}

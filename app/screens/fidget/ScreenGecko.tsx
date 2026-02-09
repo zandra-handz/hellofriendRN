@@ -5,8 +5,9 @@ import {
   Pressable,
   Text,
   Vibration,
+  Alert
 } from "react-native";
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -14,8 +15,10 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
- 
+import HelpButton from "@/app/components/alerts/HelpButton";
 import SvgIcon from "@/app/styles/SvgIcons";
+import SpeedButtons from "./SpeedButtons";
+import AutoPickUpButton from "./AutoPickUpButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
@@ -76,18 +79,104 @@ const ScreenGecko = (props: Props) => {
   const MAX_MOMENTS = 40;
 
   const momentCoords = useMemo(() => {
- 
     return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
       id: m.id,
       coord: [m.screen_x, m.screen_y],
       stored_index: m.stored_index,
     }));
-
   }, [capsuleList]);
 
   const [resetSkia, setResetSkia] = useState(null);
 
   const [manualOnly, setManualOnly] = useState(true);
+  const [speedSetting, setSpeedSetting] = useState(0);
+
+  const [autoPickUp, setAutoPickUp] = useState(false);
+
+  const autoPickUpRef = useRef(false);
+
+   const tickTotals = [300, 150, 50];
+
+  const speedSettingRef = useRef(tickTotals[0]);
+  const manualOnlyRef = useRef(true);
+
+const pickRandomMomentIds = (moments, count = 4) => {
+  const result = new Array(count).fill(-1);
+
+  if (!moments || moments.length === 0) {
+    return result;
+  }
+
+  const shuffled = [...moments].sort(() => Math.random() - 0.5);
+
+  for (let i = 0; i < Math.min(shuffled.length, count); i++) {
+    result[i] = shuffled[i].id;
+  }
+
+  return result;
+};
+
+
+const randomMomentIdsRef = useRef<string[]>([]);
+
+// useEffect(() => {
+//   if (!capsuleList || capsuleList.length < 4) return;
+
+//   randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+ 
+// }, [capsuleList]);
+
+useEffect(() => {
+  randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+
+
+}, [capsuleList]);
+
+
+const regenerateRandomMoments = () => {
+  if (!capsuleList || capsuleList.length < 4) return;
+
+  randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+
+  console.log("🔄 regenerated random ids:", randomMomentIdsRef.current);
+};
+
+
+const handleChangeSpeed = (newSpeedFromButton) => {
+  speedSettingRef.current = tickTotals[newSpeedFromButton] || 150;
+  setSpeedSetting(newSpeedFromButton);
+}; 
+
+const handleToggleAutoPickUp = () => {
+  const newValue = !autoPickUp;
+  
+  // If turning ON and there are moments in paws, show alert
+  if (newValue) {
+    Alert.alert(
+      "Auto Pick-Up",
+      "This will drop any currently held moments. Continue?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Continue",
+          onPress: () => {
+            setAutoPickUp(true);
+            autoPickUpRef.current = true;
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  } else {
+    // Just turn it off without alert
+    setAutoPickUp(false);
+    autoPickUpRef.current = false;
+  }
+};
+
 
   useEffect(() => {
     if (!manualOnly) {
@@ -103,6 +192,7 @@ const ScreenGecko = (props: Props) => {
 
   const handleToggleManual = () => {
     setManualOnly((prev) => !prev);
+    manualOnlyRef.current = !manualOnlyRef.current;
   };
 
   useEffect(() => {
@@ -116,7 +206,7 @@ const ScreenGecko = (props: Props) => {
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
   useEffect(() => {
-    console.log(momentCoords)
+    console.log(momentCoords);
     setScatteredMoments(momentCoords);
     setResetSkia(Date.now());
   }, [momentCoords]);
@@ -180,32 +270,34 @@ const ScreenGecko = (props: Props) => {
 
   // }, [capsuleList]);
 
-  const handleGetMoment = useCallback((id) => {
-    // console.log('handleGetMoment', id)
-    const moment = capsuleList.find((c) => c.id === id);
-    //  console.log(`setting moment`, moment)
-    if (moment?.id) {
-      setMoment({
-        category: moment.user_category_name,
-        capsule: moment.capsule,
-        uniqueIndex: moment.uniqueIndex,
-        id: moment.id,
-      });
+  const handleGetMoment = useCallback(
+    (id) => {
+      // console.log('handleGetMoment', id)
+      const moment = capsuleList.find((c) => c.id === id);
+      //  console.log(`setting moment`, moment)
+      if (moment?.id) {
+        setMoment({
+          category: moment.user_category_name,
+          capsule: moment.capsule,
+          uniqueIndex: moment.uniqueIndex,
+          id: moment.id,
+        });
 
-      // setCount((prev) => prev + Number(moment?.charCount));
+        // setCount((prev) => prev + Number(moment?.charCount));
 
-      // --- Vibration ---
-      Vibration.vibrate(50); // vibrate for 50ms
-    } else {
-  
-      setMoment({
-        category: null,
-        capsule: null,
-        uniqueIndex: null,
-        id: null,
-      });
-    }
-  }, [capsuleList]);
+        // --- Vibration ---
+        Vibration.vibrate(50); // vibrate for 50ms
+      } else {
+        setMoment({
+          category: null,
+          capsule: null,
+          uniqueIndex: null,
+          id: null,
+        });
+      }
+    },
+    [capsuleList],
+  );
 
   const primaryColor = lightDarkTheme.priamryText;
 
@@ -272,7 +364,11 @@ const ScreenGecko = (props: Props) => {
           handleRecenterMoments={handleRecenterMoments}
           // setScatteredMoments={setScatteredMoments}
           handleToggleManual={handleToggleManual}
-          manualOnly={manualOnly}
+          manualOnly={manualOnlyRef}
+        
+          speedSetting={speedSettingRef}
+          autoPickUp={autoPickUpRef}
+            randomMomentIds={randomMomentIdsRef}
         />
       </View>
       <View
@@ -291,22 +387,55 @@ const ScreenGecko = (props: Props) => {
           Days since: {DAYS_SINCE}
         </Text>
       </View>
-
-      <View
-        style={[
-          styles.manualButtonWrapper,
-          // { backgroundColor: lightDarkTheme.lighterOverlayBackground },
-        ]}
-      >
-        {/* <Text style={[styles.scoreText, { color: primaryColor }]}>{count}</Text> */}
-        <Pressable onPress={handleToggleManual} style={[styles.manualButton, {backgroundColor: lightDarkTheme.lighterOverlayBackground}]}>
+      <View style={styles.movementSettingsRow}>
+        <Pressable
+          onPress={handleToggleManual}
+          style={[
+            styles.manualButton,
+            { backgroundColor: lightDarkTheme.lighterOverlayBackground },
+          ]}
+        >
           <SvgIcon
             name={manualOnly ? `motion_play_outline` : `motion_pause_outline`}
             size={36}
-           color={lightDarkTheme.primaryBackground}
+            color={lightDarkTheme.primaryBackground}
           ></SvgIcon>
         </Pressable>
+
+        {!manualOnly && (
+          <View style={{ marginHorizontal: 10 }}>
+            <SpeedButtons
+             // color={lightDarkTheme.primaryBackground}
+              color={lightDarkTheme.primaryText}
+              curSetting={speedSetting}
+              buttonDiameter={40}
+              buttonPadding={0}
+              iconSize={24}
+             // backgroundColor={lightDarkTheme.lighterOverlayBackground}
+              backgroundColor={lightDarkTheme.primaryBackground}
+              onPress={handleChangeSpeed}
+            />
+          </View>
+        )}
       </View>
+{!manualOnly && (
+
+
+      <View style={styles.autoPickUpWrapper}>
+ 
+
+        <AutoPickUpButton 
+          color={autoPickUp ? selectedFriend.lightColor : lightDarkTheme.primaryText}
+         
+              buttonDiameter={40}
+              buttonPadding={0}
+              iconSize={24}
+             // backgroundColor={lightDarkTheme.lighterOverlayBackground}
+              backgroundColor={lightDarkTheme.primaryBackground}
+              onPress={handleToggleAutoPickUp}
+            />
+      </View>
+      )}
 
       <View style={styles.previewOuter}>
         <View
@@ -318,21 +447,18 @@ const ScreenGecko = (props: Props) => {
             },
           ]}
         >
-           {scatteredMoments.length > 0 && (
-
-        
-          <Pressable
-            onPress={() => handleNavigateToMoment(moment)}
-            style={styles.momentViewButton}
-          >
-           
-            <SvgIcon
-              name={`chevron_double_right`}
-              size={28}
-              color={lightDarkTheme.primaryText}
-            />
-          </Pressable>
-             )}
+          {scatteredMoments.length > 0 && (
+            <Pressable
+              onPress={() => handleNavigateToMoment(moment)}
+              style={styles.momentViewButton}
+            >
+              <SvgIcon
+                name={`chevron_double_right`}
+                size={28}
+                color={lightDarkTheme.primaryText}
+              />
+            </Pressable>
+          )}
           {moment.id && (
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text
@@ -355,14 +481,26 @@ const ScreenGecko = (props: Props) => {
             </ScrollView>
           )}
           {!moment.id && (
-            <Pressable onPress={handleNavigateToCreateNew} style={styles.noMomentWrapper}>
+            <Pressable
+              onPress={handleNavigateToCreateNew}
+              style={styles.noMomentWrapper}
+            >
               <Text
                 style={[
                   styles.noMomentText,
                   { color: lightDarkTheme.primaryText },
                 ]}
               >
-                {BLANK_WINDOW_MESSAGE} <Text style={[styles.buttonText, {color: lightDarkTheme.primaryText}]}> Add one?</Text> 
+                {BLANK_WINDOW_MESSAGE}{" "}
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { color: lightDarkTheme.primaryText },
+                  ]}
+                >
+                  {" "}
+                  Add one?
+                </Text>
               </Text>
             </Pressable>
           )}
@@ -422,8 +560,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "bold",
-    fontSize: 16
-
+    fontSize: 16,
   },
   statsText: {
     fontWeight: "bold",
@@ -433,30 +570,32 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 20,
   },
-    manualButtonWrapper: {
-    // width: "100%",
+  movementSettingsRow: {
+   
+    flexDirection: "row",
+
+    justifyContent: "flex-start",
+    width: "100%",
     height: 80,
-    padding: 20,
-    paddingHorizontal: 20,
-    top: 160,
-    left: 0, //same as pawsetter
-    flex: 1,
-    // width: 170,
+    top: 168,
+    left: 0,
+    alignItems: "center",
     position: "absolute",
-    flexDirection: "column",
+    padding: 20,
+  },
+  manualButtonWrapper: {
     //  alignItems: "center",
-    borderRadius: 999,
+   // borderRadius: 999,
     borderRadius: 30,
- 
   },
   manualButton: {
     paddingVertical: 20,
     borderRadius: 999,
     height: 60,
     width: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-         borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
     //   shadowColor: "#000",
     //  shadowOffset: { width: 0, height: 4 },
     //   shadowOpacity: 0.3,
@@ -477,6 +616,14 @@ const styles = StyleSheet.create({
     borderRadius: 40,
 
     padding: 20,
+  },
+  autoPickUpWrapper: {
+    width: 100,
+    left: 0,
+    padding: 20,
+    bottom: 310,
+    position: 'absolute'
+
   },
   noMomentWrapper: {
     width: "100%",

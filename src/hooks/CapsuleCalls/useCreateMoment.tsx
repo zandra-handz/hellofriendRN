@@ -47,19 +47,26 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
       }, 500);
     },
     onSuccess: (data) => {
-      const formattedMoment = {
-        id: data.id,
-        typedCategory: data.typed_category || "Uncategorized",
-        capsule: data.capsule,
-        created: data.created_on,
-        preAdded: data.pre_added_to_hello,
-        user_category: data.user_category || null,
-        user_category_name: data.user_category_name || null,
-        screen_x: data.screen_x,
-        screen_y: data.screen_y,
-         stored_index: null
-      };
- 
+  const formattedMoment = {
+    id: data.id,
+    typedCategory: data.typed_category || "Uncategorized",
+    capsule: data.capsule,
+    created: data.created_on,
+    preAdded: data.pre_added_to_hello,
+    user_category: data.user_category || null,
+    user_category_name: data.user_category_name || null,
+    screen_x: data.screen_x,
+    screen_y: data.screen_y,
+    stored_index: null,
+    easy_score: data.easy_score,
+    hard_score: data.hard_score,
+    quick_score: data.quick_score,
+    long_score: data.long_score,
+    relevant_score: data.relevant_score,
+    random_score: data.random_score,
+    unique_score: data.unique_score,
+    generic_score: data.generic_score,
+  };
 
       queryClient.setQueryData(
         ["Moments", userId, friendId],

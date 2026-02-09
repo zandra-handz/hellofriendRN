@@ -501,7 +501,7 @@ export const fetchMomentsAPI = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`
     );
-    //  console.log(response.data);
+     console.log(response.data);
     if (response && response.data) { 
       const capsules = response.data.map((capsule: MomentFromBackendType) => ({
         id: capsule.id,
@@ -515,7 +515,15 @@ export const fetchMomentsAPI = async (friendId: number) => {
         screen_x: capsule.screen_x,
         screen_y: capsule.screen_y,
         stored_index: capsule.stored_index,
-        coord: [capsule.screen_x, capsule.screen_x]
+        coord: [capsule.screen_x, capsule.screen_x],
+        easy_score: capsule.easy_score,
+        hard_score: capsule.hard_score,
+        quick_score: capsule.quick_score,
+        long_score: capsule.long_score,
+        relevant_score: capsule.relevant_score,
+        random_score: capsule.random_score,
+        unique_score: capsule.unique_score,
+        generic_score: capsule.generic_score,
       }));
 
 
@@ -1266,7 +1274,7 @@ export const updateMomentCoordsAPI = async (
       `/friends/${friendId}/thoughtcapsules/coords-update/`,
       capsuleData
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during updateMomentAPI");

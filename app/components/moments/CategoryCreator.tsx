@@ -13,7 +13,7 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 import { useCategoryColors } from "@/src/context/CategoryColorsContext";
-
+import FiveValueSlider from "../friends/FiveValueSlider";
 type Props = {
   userId: number;
   freezeCategory: boolean;
@@ -43,9 +43,10 @@ const CategoryCreator = ({
   updatingExisting,
   existingId,
 
-  yTranslateValue,
-
   onClose,
+    yTranslateValue,
+    scoresObject,
+    handleScoreChange,
 }: Props) => {
   const { categoryColors, handleSetCategoryColors } = useCategoryColors();
 
@@ -91,6 +92,42 @@ const CategoryCreator = ({
     []
   );
   const [pressedOnce, setPressedOnce] = useState(false);
+
+// type MomentScores = {
+//   easy_score: number;
+//   hard_score: number;
+//   quick_score: number;
+//   long_score: number;
+//   relevant_score: number;
+//   random_score: number;
+//   unique_score: number;
+//   generic_score: number;
+// };
+
+// const DEFAULT_SCORES: MomentScores = {
+//   easy_score: 2,
+//   hard_score: 2,
+//   quick_score: 2,
+//   long_score: 2,
+//   relevant_score: 2,
+//   random_score: 2,
+//   unique_score: 2,
+//   generic_score: 2,
+// };
+
+// // In your component:
+// const [scoresObject, setScoresObject] = useState<MomentScores>(DEFAULT_SCORES);
+
+// // Update individual score:
+// const handleScoreChange = (field: keyof MomentScores, value: number) => {
+//   setScoresObject(prev => ({
+//     ...prev,
+//     [field]: value
+//   }));
+// };
+
+// Usage example:
+// handleScoreChange('easy_score', 4);
 
   const HORIZONTAL_PADDING = 10;
 
@@ -160,7 +197,7 @@ const CategoryCreator = ({
       const find = userCategories.findIndex(
         (category) => category.id === existingId
       );
-      console.log(find);
+    
 
       setSelectedId(existingId);
 
@@ -173,8 +210,7 @@ const CategoryCreator = ({
         (category) => category.id === friendDefault
       );
 
-      if (name) {
-        // console.warn("SETTTINGGGGGGGGGG");
+      if (name) { 
 
         onPress({ name: name.name, id: name.id });
         setSelectedId(name.id);
@@ -185,6 +221,8 @@ const CategoryCreator = ({
     if (!categoriesSortedList || !(categoriesSortedList.length > 0)) {
       return;
     }
+
+
 
     let largest = categoriesSortedList[0]?.user_category;
     let largestName = categoriesSortedList[0]?.name;
@@ -250,13 +288,14 @@ const CategoryCreator = ({
             paddingHorizontal: HORIZONTAL_PADDING,
             backgroundColor: primaryBackground,
 
-            paddingTop: 60, //IMPORTANT, this is for status bar clearing since this component appears outside of safe view
+            paddingTop: 450, //IMPORTANT, this is for status bar clearing since this component appears outside of safe view
           },
         ]}
       >
         <AddNewCategory
           primaryColor={primaryColor}
           primaryBackground={primaryBackground}
+          userCategories={userCategories}
           manualGradientColors={manualGradientColors}
           addToOnPress={handleSelectCreated}
         />
@@ -268,7 +307,91 @@ const CategoryCreator = ({
             {renderedButtons}
           </View>
         )}
-        sv
+        <View style={styles.capsuleScoresPanel}>
+
+        <View style={styles.capsuleScoresPanel}>
+  <FiveValueSlider 
+    label="Easy"
+    value={scoresObject.easy_score}
+    onValueChange={(value) => handleScoreChange('easy_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Hard"
+    value={scoresObject.hard_score}
+    onValueChange={(value) => handleScoreChange('hard_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Quick"
+    value={scoresObject.quick_score}
+    onValueChange={(value) => handleScoreChange('quick_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Long"
+    value={scoresObject.long_score}
+    onValueChange={(value) => handleScoreChange('long_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Relevant"
+    value={scoresObject.relevant_score}
+    onValueChange={(value) => handleScoreChange('relevant_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Random"
+    value={scoresObject.random_score}
+    onValueChange={(value) => handleScoreChange('random_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Unique"
+    value={scoresObject.unique_score}
+    onValueChange={(value) => handleScoreChange('unique_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+  
+  <FiveValueSlider 
+    label="Generic"
+    value={scoresObject.generic_score}
+    onValueChange={(value) => handleScoreChange('generic_score', value)}
+    labelColor={primaryColor}
+    barColor={friendLightColor}
+    pointColor={friendDarkColor}
+    trackColor={'transparent'}
+  />
+</View>
+
+        </View>
         <Pressable onPress={onClose} style={styles.bottomButtonContainer}>
           <SvgIcon
             name={"chevron_down"}
@@ -296,7 +419,8 @@ const styles = StyleSheet.create({
 
   categoryNavigatorContainer: {
     position: "absolute",
-    top: -70, //20
+   // top: -70, //20
+    top: -460,
 
     paddingTop: 0,
     zIndex: 5000,
@@ -305,6 +429,12 @@ const styles = StyleSheet.create({
     // width: "74%",
     width: "100%",
     selfAlign: "center",
+  },
+  capsuleScoresPanel: {
+   // backgroundColor: 'red',
+    height: 390,
+    marginTop: 10,
+
   },
   scrollContainer: {
     maxHeight: 400,

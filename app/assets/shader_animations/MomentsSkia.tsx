@@ -11,7 +11,7 @@ import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
-import { packGeckoOnly, transformSelected } from "./animUtils";
+import { packGeckoOnly  } from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
@@ -26,14 +26,11 @@ import {
 } from "react-native-reanimated";
 
 import { useWindowDimensions } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  hexToVec3,
-  toShader,
+  hexToVec3, 
   toShaderModel_inPlace,
   toShaderSpace_inplace,
-  toGeckoSpace_inPlace,
-  toGeckoPointer_inPlace,
+  toGeckoSpace_inPlace, 
   toGeckoPointerScaled_inPlace,
   packVec2Uniform_withRecenter_moments,
 } from "./animUtils";
@@ -77,6 +74,9 @@ const MomentsSkia = ({
   handleToggleManual,
   handleRecenterMoments,
   manualOnly,
+  speedSetting,
+  autoPickUp,
+  randomMomentIds,
   reset = 0,
   // setScatteredMoments,
 }: Props) => {
@@ -140,7 +140,7 @@ const MomentsSkia = ({
   useFocusEffect(
   useCallback(() => {
     isPausedRef.current = false; // Resume when focused
-    console.log('is unpaused!')
+    // console.log('is unpaused!')
     updateTrigger.value += 1; // Force a re-render to restart animation
     
     return () => {
@@ -148,8 +148,7 @@ const MomentsSkia = ({
       isDragging.value = false;
     };
   }, []),
-);
-  const insets = useSafeAreaInsets();
+); 
   useFocusEffect(
     useCallback(() => {
       const subscription = BackHandler.addEventListener(
@@ -259,41 +258,49 @@ const MomentsSkia = ({
   const soul = useRef(new Soul(restPoint, 0.02));
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
-  const moments = useRef(
+  const sleepWalk0 = useRef(new SleepWalk0([0.5, 0.3], 0.3, gecko_size, manualOnly, speedSetting, autoPickUp, randomMomentIds));
+
+ 
+    const moments = useRef(
     new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05),
   );
 
+
   // In your component, create a ref for the callback
-  const onMomentReachedRef = useRef(null);
+  // const onMomentReachedRef = useRef(null);
+
+  const onPawsClearedRef = useRef(false);
+
+  const lastAutoHoldVersionRef = useRef(0);
+
 
   // Set the callback
-
-  // 1️⃣ Create a ref
+ 
   const handleGetMomentRef = useRef(handleGetMoment);
 
-  // 2️⃣ Keep it updated whenever handleGetMoment changes
+
+ 
   useEffect(() => {
+   
     handleGetMomentRef.current = handleGetMoment;
   }, [handleGetMoment]);
 
-  useEffect(() => {
-    onMomentReachedRef.current = (momentId) => {
-      handleGetMoment(momentId);
-    };
-  }, [handleGetMoment]);
 
-  const sleepWalk0 = useRef(new SleepWalk0([0.5, 0.3], 0.3, gecko_size));
+
+  // useEffect(() => {
+   
+  //   onMomentReachedRef.current = (momentId) => {
+  //     handleGetMoment(momentId);
+  //   };
+  // }, [handleGetMoment]);
+
 
   useEffect(() => {
     if (aspect) {
       moments.current.setAspect(aspect);
       sleepWalk0.current.setAspect(aspect);
     }
-  }, [aspect]);
-
-  useEffect(() => {
-    sleepWalk0.current.updatePauseMode(manualOnly);
-  }, [manualOnly]);
+  }, [aspect]); 
 
   const SHARED_SKSL_PRELUDE = (
     c1: string,
@@ -436,6 +443,11 @@ const MomentsSkia = ({
 
   const lastTriggeredIdRef = useRef(-1);
 
+  const lastPawsClearedRef = useRef(false);
+  const clearAllPawsInUIRef = useRef(() => {}); // ← Starts as empty function
+  const syncPawsInUIRef = useRef<() => void>(() => {});
+
+
   useEffect(() => {
     let cancelled = false;
     let frame;
@@ -458,23 +470,26 @@ const MomentsSkia = ({
         return;
       }
 
-      const currentId = moments.current.lastSelected?.id ?? -1;
-      // console.log(currentId);
-
-      // if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
-      //   // console.log('handle moment triggered by animation loop')
-      //   lastTriggeredIdRef.current = currentId;
-      //   onSinglePress();
-      // }
-      // 3️⃣ Inside your animation loop, call the ref instead of the function directly
+        const shouldClearPaws = sleepWalk0.current.paws_cleared_for_auto;
+  
+  if (shouldClearPaws && !lastPawsClearedRef.current) {
+    lastPawsClearedRef.current = true;
+    clearAllPawsInUIRef.current(); // ← No runOnJS needed!
+  } else if (!shouldClearPaws && lastPawsClearedRef.current) {
+    lastPawsClearedRef.current = false;
+  }
+ 
+      const currentId = moments.current.lastSelected?.id ?? -1; 
       if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
         lastTriggeredIdRef.current = currentId;
-
         handleGetMomentRef.current(currentId);
       }
       if (leadPoint.current.isMoving && !gecko.current.sleepWalkMode) {
         frameCountRef.current = 0;
       }
+
+
+
 
       // break out of sleep mode
       if (isDragging.value && gecko.current.sleepWalkMode) {
@@ -550,6 +565,14 @@ const MomentsSkia = ({
           gecko.current.legs.backLegs.stepTargets[1],
         ],
       );
+
+      if (
+  sleepWalk0.current.pickUpNextId !== -1 &&
+  sleepWalk0.current.pickUpNextId !== lastTriggeredIdRef.current
+) {
+  // Auto pickup happened → sync UI
+  syncPawsInUIRef.current();
+}
 
       const newSoul = new Float32Array(2);
       toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, newSoul, 0);
@@ -788,10 +811,23 @@ const MomentsSkia = ({
             moments.current.updateHold(moment, holdIndex)
           }
           clearPaw={(holdIndex) => moments.current.clearHolding(holdIndex)}
+          autoUpdatePaw={(holdIndex) => moments.current.updateHold(moment, holdIndex)}
+          updateSelected={(holdIndex) =>
+            moments.current.updateSelected(holdIndex)
+          }
+            registerClearAll={(fn) => {
+            clearAllPawsInUIRef.current = fn;  // ← This ASSIGNS the function
+          }}
+            registerSyncPaws={(fn) => {
+    syncPawsInUIRef.current = fn;
+  }}
+          clearAllPaws={() => moments.current.clearAllHoldings()}
+   
           updateSelected={(holdIndex) =>
             moments.current.updateSelected(holdIndex)
           }
           handleGetMoment={handleGetMoment}
+
         />
       </View>
 

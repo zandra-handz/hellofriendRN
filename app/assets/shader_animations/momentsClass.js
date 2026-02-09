@@ -16,17 +16,19 @@ export default class Moments {
     this.momentsLength = moments.length;
     this.aspect = null;
     this.momentIndexById = new Map();
-for (let i = 0; i < this.moments.length; i++) {
-  this.momentIndexById.set(this.moments[i].id, i);
-}
+    for (let i = 0; i < this.moments.length; i++) {
+      this.momentIndexById.set(this.moments[i].id, i);
+    }
 
     this.selectedMomentIndex = -1;
     this.draggingMomentIndex = -1;
 
+    this.lastAutoPickUpId = -1;
+    this.lastHoldingIndex = -1;
+
     this.center = center;
     this.radius = radius;
-    this.radiusSquared = radius * radius; 
-
+    this.radiusSquared = radius * radius;
 
     this.selected = { id: null, coord: new Float32Array([-100, -100]) };
     this.lastSelected = { id: null, coord: new Float32Array([-100, -100]) };
@@ -74,8 +76,6 @@ for (let i = 0; i < this.moments.length; i++) {
     this.center[1] = center[1];
     this.radius = radius;
     this.radiusSquared = radius * radius;
-
-    console.log('resetting moments in SKIA', momentsData)
 
     // Rebuild moments array (identity of Moments stays the same)
     this.moments = momentsData.map((m) => ({
@@ -135,7 +135,7 @@ for (let i = 0; i < this.moments.length; i++) {
     // const moment = this.moments.find((m) => m.id === holding.id);
 
     const idx = this.momentIndexById.get(holding.id);
-const moment = idx !== undefined ? this.moments[idx] : null;
+    const moment = idx !== undefined ? this.moments[idx] : null;
     if (!moment) {
       // console.log("no matching moment found");
       return this.holdings;
@@ -197,11 +197,51 @@ const moment = idx !== undefined ? this.moments[idx] : null;
     targetHolding.id = moment.id;
     targetHolding.stored_index = holdIndex;
     m.stored_index = holdIndex;
-
+console.log('updated hold')
     return this.holdings;
   }
 
-  updateSelected(holdIndex) { 
+  clearAllHoldings() {
+    // console.log('clear all holdings')
+  if (!this.aspect) {
+    // console.log('NO ASPECT CANNOT CLEAR');
+    return this.holdings;
+  }
+
+  // Clear all 4 holdings
+  for (let i = 0; i < 4; i++) {
+    const holding = this.holdings[i];
+    
+    if (!holding.id) continue; // Skip empty holdings
+
+    const idx = this.momentIndexById.get(holding.id);
+    const moment = idx !== undefined ? this.moments[idx] : null;
+    
+    if (!moment) continue;
+
+    // Clear the moment's stored_index
+    moment.stored_index = null;
+
+    // Convert Gecko space → Moment space
+    geckoToMoment_inPlace(
+      holding.coord,      // input Gecko coord
+      this.aspect,
+      this.gecko_size,
+      moment.coord,       // write into moment.coord directly
+      0,
+    );
+
+    // Clear the holding
+    holding.id = null;
+    holding.stored_index = null;
+    holding.coord[0] = -100;
+    holding.coord[1] = -100;
+  }
+
+  return this.holdings;
+}
+
+  updateSelected(holdIndex) {
     if (holdIndex < 0 || holdIndex >= 4) return null;
 
     const holding = this.holdings[holdIndex];
@@ -235,32 +275,57 @@ const moment = idx !== undefined ? this.moments[idx] : null;
     altCoord,
     holdingCoords,
   ) {
- 
     let ux = userPointer[0];
     let uy = userPointer[1];
- 
 
-    if (sleepWalk0.current.autoSelectCoord[0] !== -100) { 
+//  console.log(sleepWalk0.current.pickUpNextId)
+
+    if (sleepWalk0.current.auto_pick_up.current && !sleepWalk0.current.paws_cleared_for_auto) {
+    //  console.log('clear holdings')
+      this.clearAllHoldings();
+      sleepWalk0.current.pawsCleared();
+
+    }
+
+    if (sleepWalk0.current.pickUpNextId !== this.lastAutoPickUpId) {
+      const m = this.moments.find((m) => m.id === sleepWalk0.current.pickUpNextId);
+      const h_index = (this.lastHoldingIndex + 1)%4;
+
+      if (m) {
+          this.updateHold(m, h_index);
+          this.lastHoldingIndex = h_index;
+
+          this.lastAutoPickUpId = sleepWalk0.current.pickUpNextId;
+
+      }
+    
+    }
+
+
+
+
+    
+
+
+    if (sleepWalk0.current.autoSelectCoord[0] !== -100) {
       ux = sleepWalk0.current.autoSelectCoord[0];
       uy = sleepWalk0.current.autoSelectCoord[1];
       this.lastSelected.id = sleepWalk0.current.autoSelectId;
       this.selected.id = -1;
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
-            this.draggingMomentIndex = -1;
-      this.selectedMomentIndex = -1; 
-    } 
- 
+      this.draggingMomentIndex = -1;
+      this.selectedMomentIndex = -1;
+    }
 
-// everything that will break out of auto
+    // everything that will break out of auto
     if (isDragging || wasTap || wasDoubleTap) {
       // console.log('double tap')
-        ux = userPointer[0];
-        uy = userPointer[1]; 
-        sleepWalk0.current.autoSelectCoord[0] = -100;
-        sleepWalk0.current.autoSelectCoord[1] = -100;
-        sleepWalk0.current.autoSelectId = -1;
-
+      ux = userPointer[0];
+      uy = userPointer[1];
+      sleepWalk0.current.autoSelectCoord[0] = -100;
+      sleepWalk0.current.autoSelectCoord[1] = -100;
+      sleepWalk0.current.autoSelectId = -1;
     }
 
     // DESELECT NO MATTER WHERE ON SCREEN DOUBLE TAP IS
@@ -269,10 +334,8 @@ const moment = idx !== undefined ? this.moments[idx] : null;
       this.lastSelected.id = -1;
     }
 
-
     const fallbackLastSelectedCoord = altCoord;
     let lastSelectedIsHeld = false;
-
 
     // Move moments that are in holdings offscreen
     for (let i = 0; i < 4; i++) {
@@ -300,17 +363,13 @@ const moment = idx !== undefined ? this.moments[idx] : null;
     }
 
     if (!lastSelectedIsHeld) {
-
-    
-  
       this.lastSelectedCoord[0] = fallbackLastSelectedCoord[0];
       this.lastSelectedCoord[1] = fallbackLastSelectedCoord[1];
-     // console.log(`set last selected`, this.lastSelectedCoord);
+      // console.log(`set last selected`, this.lastSelectedCoord);
     }
 
     if (
       !isDragging &&
-      
       //!isMoving &&
       sleepWalk0.current.autoSelectCoord[0] === -100
     ) {
@@ -318,20 +377,23 @@ const moment = idx !== undefined ? this.moments[idx] : null;
       this.selectedMomentIndex = -1;
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
-      
-     // console.log('last selected held? ', this.lastSelectedCoord)
+
+      // console.log('last selected held? ', this.lastSelectedCoord)
       // this.lastSelected.coord[0] = this.lastSelectedCoord[0];
       // this.lastSelected.coord[1] = this.lastSelectedCoord[1];
-          if (!lastSelectedIsHeld) {
-      this.lastSelected.coord[0] = this.lastSelectedCoord[0];
-      this.lastSelected.coord[1] = this.lastSelectedCoord[1];
-          }
+      if (!lastSelectedIsHeld) {
+        this.lastSelected.coord[0] = this.lastSelectedCoord[0];
+        this.lastSelected.coord[1] = this.lastSelectedCoord[1];
+      }
 
       return;
     }
 
     // if dragging
-    if (this.draggingMomentIndex >= 0 && sleepWalk0.current.autoSelectId === -1) {
+    if (
+      this.draggingMomentIndex >= 0 &&
+      sleepWalk0.current.autoSelectId === -1
+    ) {
       // console.log(this.draggingMomentIndex)
       const coord = this.moments[this.draggingMomentIndex].coord;
       coord[0] = ux;
@@ -373,14 +435,13 @@ const moment = idx !== undefined ? this.moments[idx] : null;
     const SELECT_RADIUS_SQ = SELECT_RADIUS * SELECT_RADIUS;
 
     if (closestDistSquared > SELECT_RADIUS_SQ) {
-       // console.log('DESELECTIN')
+      // console.log('DESELECTIN')
       this.draggingMomentIndex = -1;
       this.selectedMomentIndex = -1;
 
       this.selected.id = -1;
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
-     
 
       // ONLY snap back if lastSelected is NOT held
       if (!lastSelectedIsHeld) {
@@ -397,13 +458,12 @@ const moment = idx !== undefined ? this.moments[idx] : null;
     }
 
     // if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap || sleepWalk0.current.autoSelectCoord[0] !== -100)) {
-    
 
     // DRAG MOMENT IF IT IS PRESSED ON AND NOT SPECIAL SELECTED
     if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap)) {
       const coord = this.moments[closestIndex].coord;
-      coord[0] = ux;  
-      coord[1] = uy;  
+      coord[0] = ux;
+      coord[1] = uy;
 
       this.draggingMomentIndex = closestIndex;
       this.selectedMomentIndex = closestIndex;
@@ -412,7 +472,7 @@ const moment = idx !== undefined ? this.moments[idx] : null;
       this.selected.id = this.moments[closestIndex].id;
       this.lastSelected.id = this.moments[closestIndex].id;
 
-      // this will select the autoselect in advance 
+      // this will select the autoselect in advance
       // this.selected.coord[0] = coord[0];
       // this.selected.coord[1] = coord[1];
 
@@ -423,7 +483,6 @@ const moment = idx !== undefined ? this.moments[idx] : null;
         this.lastSelected.coord[0] = this.lastSelectedCoord[0];
         this.lastSelected.coord[1] = this.lastSelectedCoord[1];
       }
- 
     }
   }
 }

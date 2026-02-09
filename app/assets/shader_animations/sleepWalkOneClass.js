@@ -21,11 +21,14 @@ export function _getStartAngleTop() {
 }
 
 export default class SleepWalk0 {
-  constructor(center = [0.5, 0.5], radius = 2, gecko_size) {
-    this.moments = [];
+  constructor(center = [0.5, 0.5], radius = 2,  gecko_size, paused, change_speed_setting, auto_pick_up, randomMomentIds) {
+   
 
     this.aspect = null;
     this.gecko_size = gecko_size;
+  
+
+    this.change_speed_setting = change_speed_setting;
 
     this.center = center; //center
     this.radius = radius; //distanceScalar
@@ -46,7 +49,12 @@ export default class SleepWalk0 {
     this.currentPos = [0, 0];
 
     this.autoTap = false;
-    this.paused = false;
+    this.paused = paused;
+    this.auto_pick_up = auto_pick_up;
+    this.paws_cleared_for_auto = false;
+    this.randomMomentIds = randomMomentIds;
+    this.pickUpNextId = -1;
+ 
   }
 
   setAspect(aspect) {
@@ -54,93 +62,144 @@ export default class SleepWalk0 {
     this.aspect = aspect;
   }
 
-  setMoments(moments) {
-    this.moments = moments;
+  pawsCleared(){
+    if (this.auto_pick_up.current && !this.paws_cleared_for_auto){
+      // console.log('cleared')
+        this.paws_cleared_for_auto = true; 
+
+    } 
   }
-
-  updateCurrentPos(momentsRef, aspect, scale) {
-    const moments = momentsRef.current.moments;
-    if (!moments || moments.length === 0 || !aspect) return;
-
-    let tries = 0;
-
-    while (tries < moments.length) {
-      const currentMoment = moments[this.currentIndex];
-
-      if (currentMoment.coord[0] === -100) {
-        this.currentIndex = (this.currentIndex + 1) % moments.length;
-        tries++;
-        continue;
-      }
-
-      this.autoSelectId = moments[this.currentIndex].id;
-
-      //this.currentPos = moments[this.currentIndex].coord;
-
-      // console.log(`sleepWalk`,moments[this.currentIndex].id)
-
-      this.autoSelectCoord[0] = currentMoment.coord[0];
-      this.autoSelectCoord[1] = currentMoment.coord[1];
-
-      toGeckoPointerScaled_inPlace(
-        currentMoment.coord,
-        aspect,
-        scale,
-        this.gecko_size,
-        this.currentPos,
-        0,
-      );
-
-      // this.autoSelectCoord[0] = this.currentPos[0];
-      // this.autoSelectCoord[1] = this.currentPos[1];
-
-      // console.log(`CLASS: `, this.autoSelectCoord);
-      // console.log(`CLASS ID :`, this.autoSelectId );
-  
-
-      // advance for next time
-      this.currentIndex = (this.currentIndex + 1) % moments.length;
-      return;
+ 
+  resetPaws(){
+    if (!this.auto_pick_up.current){
+      this.paws_cleared_for_auto = false;
     }
 
-    // If all moments are invalid, do nothing
   }
 
-  updateBegin(pos) {
-    this.startPoint = pos;
+updateCurrentPos(momentsRef, aspect, scale) {
+  const moments = momentsRef.current.moments;
+  if (!moments || moments.length === 0 || !aspect) return;
+
+  let tries = 0;
+
+  while (tries < moments.length) {
+    const currentMoment = moments[this.currentIndex];
+
+    if (!currentMoment || !currentMoment.coord) {
+      this.currentIndex = (this.currentIndex + 1) % moments.length;
+      tries++;
+      continue;
+    }
+
+    // Skip off-screen / held moments
+    if (currentMoment.coord[0] === -100) {
+      this.currentIndex = (this.currentIndex + 1) % moments.length;
+      tries++;
+      continue;
+    }
+
+    // Only assign pickUpNextId if the current moment is valid AND in randomMomentIds
+    if (
+      this.auto_pick_up.current &&
+      Array.isArray(this.randomMomentIds.current) &&
+      this.randomMomentIds.current.includes(currentMoment.id)
+    ) {
+      this.pickUpNextId = currentMoment.id;
+    }
+
+    // Set the coordinates
+    this.autoSelectId = currentMoment.id;
+    this.autoSelectCoord[0] = currentMoment.coord[0];
+    this.autoSelectCoord[1] = currentMoment.coord[1];
+
+    // Scale pointer
+    toGeckoPointerScaled_inPlace(
+      currentMoment.coord,
+      aspect,
+      scale,
+      this.gecko_size,
+      this.currentPos,
+      0,
+    );
+
+    this.currentIndex = (this.currentIndex + 1) % moments.length;
+    return;
   }
 
-  updatePauseMode(value) {
-    this.paused = value;
+  // All invalid → default off-screen
+  this.autoSelectCoord[0] = .5;
+  this.autoSelectCoord[1] = .5;
+  this.currentPos[0] = .5;
+  this.currentPos[1] = .5;
+}
 
-  }
+
+
+
+// updateCurrentPos(momentsRef, aspect, scale) {
+//   const moments = momentsRef.current.moments;
+//   if (!moments || moments.length === 0 || !aspect) return;
+
+//   let tries = 0;
+
+//   while (tries < moments.length) {
+//     const currentMoment = moments[this.currentIndex];
+
+//     // Check if currentMoment and coord exist
+//     if (!currentMoment || !currentMoment.coord) {
+//       this.currentIndex = (this.currentIndex + 1) % moments.length;
+//       tries++;
+//       continue;
+//     }
+
+//     if (currentMoment.coord[0] === -100) {
+//       this.currentIndex = (this.currentIndex + 1) % moments.length;
+//       tries++;
+//       continue;
+//     }
+
+//     this.autoSelectId = currentMoment.id;
+//     this.autoSelectCoord[0] = currentMoment.coord[0];
+//     this.autoSelectCoord[1] = currentMoment.coord[1];
+
+//     toGeckoPointerScaled_inPlace(
+//       currentMoment.coord,
+//       aspect,
+//       scale,
+//       this.gecko_size,
+//       this.currentPos,
+//       0,
+//     );
+
+//     this.currentIndex = (this.currentIndex + 1) % moments.length;
+//     return;
+//   }
+
+//   // If all moments are invalid, default to off-screen
+//   this.autoSelectCoord[0] = -100;
+//   this.autoSelectCoord[1] = -100;
+//   this.currentPos[0] = -100;
+//   this.currentPos[1] = -100;
+// }
+ 
 
   resetTick() {
     this.tick = 0;
-  }
+  } 
 
-  // update(dt = 1) {
-  //     console.log(this.moments);
-  //     this.tick += 1;
-  //     this.progress += this.speed * dt;
+ 
+  update(momentsRef, scale) { 
 
-  //     // Wrap progress to keep it in [0, 2π]
-  //     if (this.progress >= Math.PI * 2) {
-  //         this.progress -= Math.PI * 2;
-  //     }
 
-  //     this.walk = soul_circle(
-  //         this.center,
-  //         this.progress,
-  //         this.radius
-  //     );
-  // }
-
-  update(momentsRef, scale) {
-    // console.log(`autoselect`, this.autoSelectCoord)
-    if (!this.paused) {
-    if (this.tick > 50) {
+ 
+ 
+  
+  if (!this.paused.current) {
+    if (this.tick > this.change_speed_setting.current) {
       this.tick = 0;
+
+
     }
 
     if (this.tick === 0) {

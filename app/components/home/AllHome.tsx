@@ -87,7 +87,7 @@ const AllHome = ({
             />
           </View> 
 
-          <Animated.View
+          {/* <Animated.View
             entering={FadeIn}
             exiting={SlideOutRight}
             style={styles.geckoTransformer}
@@ -97,7 +97,7 @@ const AllHome = ({
               width={200}
               height={200}
             />
-          </Animated.View>
+          </Animated.View> */}
         </View>
       )}
     </View>

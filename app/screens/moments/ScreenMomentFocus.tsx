@@ -1,20 +1,16 @@
-import React, { useState, useEffect  } from "react"; 
+import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// import { useUserSettings } from "@/src/context/UserSettingsContext";
-import useUserSettings from "@/src/hooks/useUserSettings";
-//import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash"; 
-  
-import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import useUserSettings from "@/src/hooks/useUserSettings"; 
+import useFriendDash from "@/src/hooks/useFriendDash";
 
-// import { useUser } from "@/src/context/UserContext";
+import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
+ 
 import useUser from "@/src/hooks/useUser";
-import { useLDTheme } from "@/src/context/LDThemeContext"; 
-import Animated, { 
-} from "react-native-reanimated"; 
+import { useLDTheme } from "@/src/context/LDThemeContext";
+import Animated from "react-native-reanimated";
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
@@ -26,12 +22,12 @@ const ScreenMomentFocus = () => {
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
   const { selectedFriend } = useSelectedFriend();
-  const { friendDash } = useFriendDash({userId: user?.id, friendId: selectedFriend?.id});
- 
- 
+  const { friendDash } = useFriendDash({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
 
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
-
 
   const [triggerMessage, setTriggerMessage] = useState<number>(0);
 
@@ -40,13 +36,10 @@ const ScreenMomentFocus = () => {
   //using this arrangement below to keep top and bottom bar spacing the same :)
   const CARD_PADDING = 4;
   const SPACER_BETWEEN_BAR_AND_CARD = 2; // low bc there is already parent padding
- 
- 
+
   // only used to tell background screen when to turn dark
   const handleOpenCatCreator = () => {
     setCatCreatorVisible(true);
-   
-
   };
 
   const handleCloseCatCreator = () => {
@@ -54,10 +47,7 @@ const ScreenMomentFocus = () => {
   };
 
   const [triggerSaveFromLateral, setTriggerSaveFromLateral] = useState(false);
-
-  // const handleTriggerSaveFromLateral = () => {
-  //   setTriggerSaveFromLateral(true);
-  // };
+ 
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -73,8 +63,6 @@ const ScreenMomentFocus = () => {
     };
   }, [triggerSaveFromLateral]);
 
-  
-
   return (
     <SafeViewAndGradientBackground
       friendColorLight={selectedFriend.lightColor}
@@ -89,46 +77,44 @@ const ScreenMomentFocus = () => {
       includeBackgroundOverlay={catCreatorVisible}
       styles={{ flex: 1 }}
     >
-    
-        <Animated.View 
-          style={{
-            width: "100%",
-            flex: 1,
-            marginTop: SPACER_BETWEEN_BAR_AND_CARD,
+      <Animated.View
+        style={{
+          width: "100%",
+          flex: 1,
+          marginTop: SPACER_BETWEEN_BAR_AND_CARD,
+        }}
+      >
+        <MomentWriteEditView
+          paddingHorizontal={PADDING_HORIZONTAL}
+          defaultCategory={settings?.user_default_category}
+          friendId={selectedFriend?.id}
+          friendName={selectedFriend?.name}
+          userId={user?.id}
+          primaryColor={lightDarkTheme.primaryText}
+          primaryBackground={lightDarkTheme.primaryBackground}
+          lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+          darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
+          darkGlassBackground={lightDarkTheme.darkGlassBackground}
+          themeColors={{
+            lightColor: selectedFriend.lightColor,
+            darkColor: selectedFriend.darkColor,
+            fontColor: selectedFriend.fontColor,
+            fontColorSecondary: selectedFriend.fontColorSecondary,
           }}
-        >
-          <MomentWriteEditView
-            paddingHorizontal={PADDING_HORIZONTAL}
-            defaultCategory={settings?.user_default_category}
-        
-            friendId={selectedFriend?.id}
-            friendName={selectedFriend?.name} 
-            userId={user?.id}
-            primaryColor={lightDarkTheme.primaryText}
-            primaryBackground={lightDarkTheme.primaryBackground}
-            lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
-            darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
-            darkGlassBackground={lightDarkTheme.darkGlassBackground}
-                        themeColors={{
-              lightColor: selectedFriend.lightColor,
-              darkColor: selectedFriend.darkColor,
-              fontColor: selectedFriend.fontColor,
-              fontColorSecondary: selectedFriend.fontColorSecondary,
-            }}  
-            friendFaves={friendDash?.friend_faves}
-            screenCameFromToParent={screenCameFrom}
-            triggerSaveFromLateral={triggerSaveFromLateral}
-            catCreatorVisible={catCreatorVisible}
-            openCatCreator={handleOpenCatCreator}
-            closeCatCreator={handleCloseCatCreator} 
-            momentText={momentText}
-            updateExistingMoment={updateExistingMoment}
-            existingMomentObject={existingMomentObject}
-            escortBarSpacer={SPACER_BETWEEN_BAR_AND_CARD + CARD_PADDING}
-            cardPaddingVertical={CARD_PADDING}
-          />
-        </Animated.View>
-  
+          friendFaves={friendDash?.friend_faves}
+          screenCameFromToParent={screenCameFrom}
+          triggerSaveFromLateral={triggerSaveFromLateral}
+          catCreatorVisible={catCreatorVisible}
+          openCatCreator={handleOpenCatCreator}
+          closeCatCreator={handleCloseCatCreator}
+          momentText={momentText}
+          updateExistingMoment={updateExistingMoment}
+          existingMomentObject={existingMomentObject}
+          escortBarSpacer={SPACER_BETWEEN_BAR_AND_CARD + CARD_PADDING}
+          cardPaddingVertical={CARD_PADDING}
+        />
+      </Animated.View>
+
       <TinyFlashMessage triggerMessage={triggerMessage} />
     </SafeViewAndGradientBackground>
   );

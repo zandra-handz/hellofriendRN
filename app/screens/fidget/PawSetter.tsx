@@ -27,6 +27,10 @@ const PawSetter = ({
   lastSelected,
   updatePaw,
   clearPaw,
+  registerClearAll,
+  registerSyncPaws,
+  clearAllPaws,
+  triggerClearPaws,
   updateSelected,
   handleGetMoment,
 }: Props) => {
@@ -49,6 +53,24 @@ const PawSetter = ({
     });
     setLocalPaws(newPaws);
   }, [momentsData]);
+
+  useEffect(() => {
+    if (!registerSyncPaws) return;
+
+    registerSyncPaws(() => {
+      const newPaws = [false, false, false, false];
+      momentsData.forEach((moment) => {
+        if (
+          moment.stored_index !== null &&
+          moment.stored_index >= 0 &&
+          moment.stored_index < 4
+        ) {
+          newPaws[moment.stored_index] = true;
+        }
+      });
+      setLocalPaws(newPaws);
+    });
+  }, [registerSyncPaws, momentsData]);
 
   const runClearPaw = (index: number) => {
     // console.log("long press! clear paw here if any is here");
@@ -82,6 +104,48 @@ const PawSetter = ({
       { cancelable: true },
     );
   };
+
+  const handleClearAllPaws = () => {
+    // Check if any paws are occupied
+
+    const anyPawsOccupied = localPaws.some((paw) => paw);
+
+    if (!anyPawsOccupied) {
+      return; // No paws to clear
+    }
+
+    Alert.alert(
+      "Clear All Paws?",
+      "Do you want to drop all moments?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Clear All",
+          onPress: () => {
+            // Use the clearAllPaws function from props
+            const updatedHoldings = clearAllPaws();
+
+            // Reset local state
+            setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+
+            Vibration.vibrate(100); // Optional feedback
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
+  useEffect(() => {
+    if (triggerClearPaws) {
+      console.log("clearing all paws in paw setter");
+      handleClearAllPaws();
+    }
+  }, [triggerClearPaws]);
 
   // const handlePawPress = (index: number) => {
   //   if (!lastSelected.id) {
@@ -123,45 +187,54 @@ const PawSetter = ({
   // };
 
   const handlePawPress = (index: number) => {
-  if (!lastSelected.id) {
-    return; // no selected moment, do nothing
-  }
+    if (!lastSelected.id) {
+      return; // no selected moment, do nothing
+    }
 
-  const momentInSlot = momentsData.find((m) => m.stored_index === index);
+    const momentInSlot = momentsData.find((m) => m.stored_index === index);
 
-  // EARLY RETURN: if the paw already holds the lastSelected moment
-  if (momentInSlot && momentInSlot.id === lastSelected.id) {
-    return; // do nothing
-  }
+    // EARLY RETURN: if the paw already holds the lastSelected moment
+    if (momentInSlot && momentInSlot.id === lastSelected.id) {
+      return; // do nothing
+    }
 
-  if (localPaws[index]) {
-    Alert.alert(
-      "Are you sure?",
-      "Select new moment?",
-      [
-        {
-          text: "Oops no!",
-          style: "cancel",
-        },
-        {
-          text: "Yes please",
-          onPress: () => {
-            Vibration.vibrate(50);
-            const last_selected = updateSelected(index);
-            handleGetMoment(last_selected.id);
+    if (localPaws[index]) {
+      Alert.alert(
+        "Are you sure?",
+        "Select new moment?",
+        [
+          {
+            text: "Oops no!",
+            style: "cancel",
           },
-        },
-      ],
-      { cancelable: true },
-    );
-    return;
-  }
+          {
+            text: "Yes please",
+            onPress: () => {
+              Vibration.vibrate(50);
+              const last_selected = updateSelected(index);
+              handleGetMoment(last_selected.id);
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
 
-  // Otherwise, assign lastSelected to this paw
-  const updatedHoldings = updatePaw(lastSelected, index);
-  setLocalPaws(updatedHoldings.map((h) => h.id !== null));
-};
+    // Otherwise, assign lastSelected to this paw
+    const updatedHoldings = updatePaw(lastSelected, index);
+    setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+  };
 
+  useEffect(() => {
+    if (registerClearAll) {
+      registerClearAll(() => {
+        const updatedHoldings = clearAllPaws();
+        setLocalPaws(updatedHoldings.map((h) => h.id !== null));
+        Vibration.vibrate(100);
+      });
+    }
+  }, [registerClearAll, clearAllPaws]);
 
   const getPawColor = (index: number) => {
     // console.log('paw color updating', index, lastSelected.id)
@@ -179,6 +252,18 @@ const PawSetter = ({
         { backgroundColor: backgroundColor, borderColor: borderColor },
       ]}
     >
+      {/* <Pressable
+        onPress={() => handleClearAllPaws()}
+        style={{
+          position: "absolute",
+          top: -50,
+          left: 0,
+          height: 40,
+          width: 40,
+          borderRadius: 999,
+          backgroundColor: "pink",
+        }}
+      ></Pressable> */}
       <View style={styles.row}>
         <Pressable
           onLongPress={() => handleClearPaw(0)}
