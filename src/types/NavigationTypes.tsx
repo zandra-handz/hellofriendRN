@@ -1,11 +1,18 @@
 export type RootStackParamList = {
   hellofriend: undefined;
-  Gecko: undefined;
   UserDetails: undefined;
   MomentFocus: {
     screenCameFrom: number;
     momentText?: string | null;
   };
+    Gecko: {
+      selection?: number | null;
+      autoPick?: false | null;
+    }
+    
+  GeckoSelectSettings: {
+    selection: number; 
+  }
   Moments: {
     scrollTo: number | null;
   };

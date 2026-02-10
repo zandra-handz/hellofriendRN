@@ -262,7 +262,7 @@ const MomentsSkia = ({
 
  
     const moments = useRef(
-    new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05),
+    new Moments(momentsData, gecko_size,sleepWalk0,  [0.5, 0.5], 0.05),
   );
 
 
@@ -388,26 +388,32 @@ const MomentsSkia = ({
     // console.log('reset in capsule list triggered', momentsData.length)
     //  moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
 
-    moments.current.reset(momentsData, [0.5, 0.5], 0.05);
+    console.log('resetting')
+
+    // moments.current.reset(momentsData, [0.5, 0.5], 0.05);
+
+    moments.current.updateOrAddMoments(momentsData)
     moments.current.updateAllCoords(momentsData);
   }, [momentsData, reset]);
 
   // reset isn't working
+
+  // MOMENTS DATA CAN BE STALE, SHOULDNT USE THIS
   useEffect(() => {
-    // console.log(
-    //   "useeffect in SKIA triggered by momentsData or reset",
-    //   momentsData,
-    //   momentsData.length,
-    // );
+    console.log(
+      "useeffect in SKIA triggered by momentsData or reset",
+      momentsData,
+      momentsData.length,
+    );
     if (moments && moments.current) {
       // moments.current.reset(momentsData, [0.5, 0.5], 0.05);
-      moments.current.updateAllCoords(momentsData);
+    //  moments.current.updateAllCoords(momentsData);
     }
   }, [momentsData, internalReset]);
 
   useEffect(() => {
     // console.log("RESET EFFECT RAN !!!");
-    if (!internalReset && !reset) {
+    if (!internalReset || !reset) {
       console.log("conditions not met for a reset");
       return;
     } else {
@@ -416,7 +422,10 @@ const MomentsSkia = ({
 
     start.current = Date.now();
 
-    moments.current = new Moments(momentsData, gecko_size, [0.5, 0.5], 0.05);
+    // THIS WILL CAUSE THE AUTO PICK UP RESET TO MALFUNCTION
+    // JUST DON'T RESET MOMENTS
+    //  moments.current = new Moments(momentsData, gecko_size, sleepWalk0, [0.5, 0.5], 0.05); 
+ 
     soul.current = new Soul(restPoint, 0.02);
     leadPoint.current = new Mover(startingCoord);
     gecko.current = new Gecko(startingCoord, 0.06);
@@ -553,9 +562,9 @@ const MomentsSkia = ({
       moments.current.update(
         userPointSV.value,
         isDragging.value,
-        leadPoint.current.isMoving,
+        // leadPoint.current.isMoving,
         wasTapSV.value,
-        sleepWalk0,
+        // sleepWalk0,
         wasDoubleTapSV.value,
         leadPoint.current.lead,
         [

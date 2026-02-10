@@ -108,6 +108,8 @@ const PawSetter = ({
   const handleClearAllPaws = () => {
     // Check if any paws are occupied
 
+
+
     const anyPawsOccupied = localPaws.some((paw) => paw);
 
     if (!anyPawsOccupied) {
@@ -140,12 +142,12 @@ const PawSetter = ({
     );
   };
 
-  useEffect(() => {
-    if (triggerClearPaws) {
-      console.log("clearing all paws in paw setter");
-      handleClearAllPaws();
-    }
-  }, [triggerClearPaws]);
+  // useEffect(() => {
+  //   if (triggerClearPaws) {
+  //     console.log("clearing all paws in paw setter");
+  //     handleClearAllPaws();
+  //   }
+  // }, [triggerClearPaws]);
 
   // const handlePawPress = (index: number) => {
   //   if (!lastSelected.id) {

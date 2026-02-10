@@ -36,6 +36,7 @@ import ChevronDownSvg from "./svgs/chevron-down";
 import ChevronUpSvg from "./svgs/chevron-up";
 import ChevronDoubleRightSvg from "./svgs/chevron-double-right";
 import ChevronDoubleLeftSvg from "./svgs/chevron-double-left";
+import CloseSvg from "./svgs/close";
 import CloseOutlineSvg from "./svgs/close-outline"; //IonIcons
 import CommentSearchOutlineSvg from "./svgs/comment-search-outline";
 import CompareSvg from "./svgs/compare";
@@ -113,6 +114,7 @@ const svgIcons = {
   camera_outline: CameraOutlineSvg,
   cancel: CancelSvg,
   check: CheckSvg,
+  close: CloseSvg,
   close_outline: CloseOutlineSvg,
   compare: CompareSvg,
   comment_search_outline: CommentSearchOutlineSvg, 

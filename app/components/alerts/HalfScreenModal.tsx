@@ -9,7 +9,6 @@ import Animated, {
 } from "react-native-reanimated";
 
 import PlainSafeView from "../appwide/format/PlainSafeView";
- 
 
 interface Props {
   isVisible: boolean;
@@ -35,6 +34,8 @@ const HalfScreenModal: React.FC<Props> = ({
   contentPadding = 10,
 
   onClose,
+  modalIsTransparent = true,
+  padding = 10,
 }) => {
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
@@ -47,7 +48,6 @@ const HalfScreenModal: React.FC<Props> = ({
   // const modalAnimationStyle = useAnimatedStyle(() => {
   //   return { translateY: xAnim.value, scaleY: scaleAnim.value };
   // });
- 
 
   const translateY = useSharedValue(50);
 
@@ -87,19 +87,24 @@ const HalfScreenModal: React.FC<Props> = ({
 
   return (
     <Modal
-      transparent={true}
+      transparent={modalIsTransparent}
+      presentationStyle="fullScreen"
+      statusBarTranslucent={true}
       visible={isVisible}
+      backdropColor={backgroundColor}
       // style={modalAnimationStyle}
       animationType="slide"
       style={{
-         backgroundColor: "rgba(0, 0, 0, 0.5)"
+        //  backgroundColor: "rgba(0, 0, 0, 0.5)"
+        backgroundColor: backgroundColor,
+        
       }}
     >
       <Animated.View
         style={[
           // modalAnimationStyle,
           styles.modalContainer,
-          // { backgroundColor: "rgba(0, 0, 0, 0.5)" }, // semi-transparent black
+          //  { backgroundColor: "rgba(0, 0, 0, 0.5)" }, // semi-transparent black
         ]}
       >
         <PlainSafeView style={{ flex: 1 }}>
@@ -111,6 +116,7 @@ const HalfScreenModal: React.FC<Props> = ({
                 // borderColor:
                 //   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
                 borderRadius: borderRadius,
+                padding: padding
               },
             ]}
           >
@@ -145,16 +151,17 @@ const styles = StyleSheet.create({
     flexDirection: "column",
 
     justifyContent: "flex-start",
-    paddingBottom: 80, // EYEBALL
+    //  paddingBottom: 80, // EYEBALL
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.84)",
+    //  backgroundColor: "rgba(0, 0, 0, 0.84)",
   },
   modalContent: {
-    width: "94%",
+    width: "100%",
     minHeight: 200,
     height: "50%",
+    flex: 1,
 
-    borderWidth: 2,
+    //  borderWidth: 2,
     alignItems: "center",
     backgroundColor: "white",
     flexDirection: "column",
@@ -164,14 +171,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     maxHeight: 50,
+
+    height: 100,
     marginVertical: 10, // header spacing
     alignItems: "center",
     justifyContent: "flex-start",
   },
   questionText: {
-    fontSize: 18,
+    fontSize: 24,
     textAlign: "center",
-    fontFamily: "Poppins-Regular",
     // marginLeft: 10,
   },
   buttonContainer: {

@@ -6,15 +6,14 @@ import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 // import FriendSettingsModal from "./FriendSettingsModal";
-import CategoriesModal from "./CategoriesModal"; 
+import CategoriesModal from "./CategoriesModal";
 import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import useSignOut from "@/src/hooks/UserCalls/useSignOut"; 
- 
-import SvgIcon from "@/app/styles/SvgIcons"; 
- 
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import useSignOut from "@/src/hooks/UserCalls/useSignOut";
+
+import SvgIcon from "@/app/styles/SvgIcons";
 
 // types
 import { LDTheme } from "@/src/types/LDThemeTypes";
@@ -36,9 +35,9 @@ const HelloFriendFooter = ({
   const dividerStyle = lightDarkTheme.divider;
 
   const { onSignOut } = useSignOut();
-  const { selectFriend } = useSelectedFriend();
+  // const { selectFriend } = useSelectedFriend();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  
+
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
@@ -61,11 +60,11 @@ const HelloFriendFooter = ({
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
+      () => setIsKeyboardVisible(true),
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
+      () => setIsKeyboardVisible(false),
     );
 
     return () => {
@@ -98,7 +97,7 @@ const HelloFriendFooter = ({
         onPress={() => onSignOut()}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
 
   const RenderSettingsButton = useCallback(
@@ -117,7 +116,7 @@ const HelloFriendFooter = ({
         onPress={() => setSettingsModalVisible(true)}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
 
   const RenderReportIssueButton = useCallback(
@@ -135,7 +134,7 @@ const HelloFriendFooter = ({
         onPress={() => setReportModalVisible(true)}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
 
   const handleCenterButtonToggle = () => {
@@ -148,13 +147,8 @@ const HelloFriendFooter = ({
   };
 
   const RenderCategoryButton = useCallback(
-    () => (
-      <CategoryFooterButton
-      
-        onPress={() => handleCenterButtonToggle()}
-      />
-    ),
-    [themeColors]
+    () => <CategoryFooterButton onPress={() => handleCenterButtonToggle()} />,
+    [themeColors],
   );
 
   const RenderAboutAppButton = useCallback(
@@ -172,15 +166,22 @@ const HelloFriendFooter = ({
         onPress={() => setAboutModalVisible(true)}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
 
   return (
-
-    <View style={[styles.container, {backgroundColor: manualGradientColors.homeLightColor,    height: footerHeight,
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: manualGradientColors.homeLightColor,
+          height: footerHeight,
           paddingBottom: footerPaddingBottom,
-          opacity: 0.94}]}>
-    {/* <GradientBackground
+          opacity: 0.94,
+        },
+      ]}
+    >
+      {/* <GradientBackground
       useFriendColors={false}
       screenname={"hellofriendfooter"}
       friendColorDark={themeColors.darkColor}
@@ -198,16 +199,18 @@ const HelloFriendFooter = ({
         style={[
           styles.container,
           {
+            backgroundColor: lightDarkTheme.darkerOverlayBackground,
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: manualGradientColors.homeLightColor,
+            paddingBottom: footerPaddingBottom,
+            opacity: 0.94,
+            // backgroundColor: manualGradientColors.homeLightColor,
           },
         ]}
       >
         <View style={styles.section}>
           <RenderSignOutButton />
         </View>
-      
 
         <View style={[styles.divider, dividerStyle]} />
         <>
@@ -219,8 +222,7 @@ const HelloFriendFooter = ({
         <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderCategoryButton
-            />
+            <RenderCategoryButton />
           </View>
         </>
 
@@ -245,7 +247,7 @@ const HelloFriendFooter = ({
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
-            lightDarkTheme={lightDarkTheme} 
+            lightDarkTheme={lightDarkTheme}
           />
         </View>
       )}
@@ -253,8 +255,8 @@ const HelloFriendFooter = ({
       {categoriesModalVisible && (
         <View>
           <CategoriesModal
-            userId={userId}  
-            primaryColor={primaryColor}  
+            userId={userId}
+            primaryColor={primaryColor}
             isVisible={categoriesModalVisible}
             isKeyboardVisible={isKeyboardVisible}
             bottomSpacer={footerHeight - 30} //for safe view
@@ -277,13 +279,13 @@ const HelloFriendFooter = ({
         <View>
           <ReportIssueModal
             username={username}
-            primaryColor={primaryColor} 
+            primaryColor={primaryColor}
             isVisible={reportModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setReportModalVisible(false)}
           />
         </View>
-      )} 
+      )}
     </View>
   );
 };
@@ -293,6 +295,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     position: "absolute",
+    // borderTopRightRadius: 20,
+    // borderTopLeftRadius: 20,
+    borderRadius: 999,
     bottom: 0,
     zIndex: 50000,
   },

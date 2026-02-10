@@ -4,6 +4,7 @@ export default class Moments {
   constructor(
     moments = [],
     gecko_size = 1,
+    sleepWalk0,
     center = [0.5, 0.5],
     radius = 0.05,
   ) {
@@ -13,6 +14,7 @@ export default class Moments {
       stored_index: m.stored_index,
     }));
     this.gecko_size = gecko_size;
+    this.sleepWalk0 = sleepWalk0;
     this.momentsLength = moments.length;
     this.aspect = null;
     this.momentIndexById = new Map();
@@ -114,14 +116,62 @@ export default class Moments {
     this.initializeHoldings();
   }
 
-  updateAllCoords(updatedData) {
-    for (let i = 0; i < updatedData.length; i++) {
-      const m = updatedData[i];
-      this.moments[i].coord[0] = m.coord[0];
-      this.moments[i].coord[1] = m.coord[1];
+  // updateAllCoords(updatedData) {
+  //   for (let i = 0; i < updatedData.length; i++) {
+  //     const m = updatedData[i];
+  //     this.moments[i].coord[0] = m.coord[0];
+  //     this.moments[i].coord[1] = m.coord[1];
+  //   }
+  //   this.momentsLength = updatedData.length;
+  // }
+
+  updateOrAddMoments(momentsData) {
+  for (let i = 0; i < momentsData.length; i++) {
+    const m = momentsData[i];
+
+    // If the moment already exists, update it
+    if (this.moments[i]) {
+      // Ensure coord array exists
+      if (!this.moments[i].coord) this.moments[i].coord = new Float32Array([0.5, 0.5]);
+
+      this.moments[i].coord[0] = m.coord?.[0] ?? this.moments[i].coord[0] ?? 0.5;
+      this.moments[i].coord[1] = m.coord?.[1] ?? this.moments[i].coord[1] ?? 0.5;
+
+      // Keep ID and stored_index consistent
+      this.moments[i].id = m.id ?? this.moments[i].id;
+      this.moments[i].stored_index = m.stored_index ?? this.moments[i].stored_index;
+    } else {
+      // New moment → add it
+      this.moments[i] = {
+        id: m.id ?? null,
+        stored_index: m.stored_index ?? i,
+        coord: new Float32Array([m.coord?.[0] ?? 0.5, m.coord?.[1] ?? 0.5]),
+      };
     }
-    this.momentsLength = updatedData.length;
   }
+
+  // Update the length
+  this.momentsLength = this.moments.length;
+}
+
+
+  updateAllCoords(updatedData) {
+  for (let i = 0; i < updatedData.length; i++) {
+    const m = updatedData[i];
+
+    // Default to 0.5 if coord or individual value is missing
+    const x = m.coord?.[0] ?? 0.5;
+    const y = m.coord?.[1] ?? 0.5;
+
+    // Make sure the target moments[i].coord array exists
+    if (!this.moments[i].coord) this.moments[i].coord = [];
+
+    this.moments[i].coord[0] = x;
+    this.moments[i].coord[1] = y;
+  }
+
+  this.momentsLength = updatedData.length;
+}
 
   clearHolding(holdIndex) {
     if (!this.aspect) {
@@ -197,26 +247,27 @@ export default class Moments {
     targetHolding.id = moment.id;
     targetHolding.stored_index = holdIndex;
     m.stored_index = holdIndex;
-console.log('updated hold')
+    console.log("updated hold");
+    return this.holdings;
+  }
+clearAllHoldings() {
+  if (!this.aspect) {
     return this.holdings;
   }
 
-  clearAllHoldings() {
-    // console.log('clear all holdings')
-  if (!this.aspect) {
-    // console.log('NO ASPECT CANNOT CLEAR');
-    return this.holdings;
-  }
+  // ✅ Set the flag FIRST, before any early returns
+  this.sleepWalk0.current.pawsCleared();
+  console.log("paws cleared flag set");
 
   // Clear all 4 holdings
   for (let i = 0; i < 4; i++) {
     const holding = this.holdings[i];
-    
+
     if (!holding.id) continue; // Skip empty holdings
 
     const idx = this.momentIndexById.get(holding.id);
     const moment = idx !== undefined ? this.moments[idx] : null;
-    
+
     if (!moment) continue;
 
     // Clear the moment's stored_index
@@ -224,10 +275,10 @@ console.log('updated hold')
 
     // Convert Gecko space → Moment space
     geckoToMoment_inPlace(
-      holding.coord,      // input Gecko coord
+      holding.coord,
       this.aspect,
       this.gecko_size,
-      moment.coord,       // write into moment.coord directly
+      moment.coord,
       0,
     );
 
@@ -268,9 +319,9 @@ console.log('updated hold')
   update(
     userPointer,
     isDragging,
-    isMoving,
+    // isMoving,
     wasTap,
-    sleepWalk0,
+    // sleepWalk0,
     wasDoubleTap,
     altCoord,
     holdingCoords,
@@ -278,39 +329,37 @@ console.log('updated hold')
     let ux = userPointer[0];
     let uy = userPointer[1];
 
-//  console.log(sleepWalk0.current.pickUpNextId)
-
-    if (sleepWalk0.current.auto_pick_up.current && !sleepWalk0.current.paws_cleared_for_auto) {
-    //  console.log('clear holdings')
+    // console.log(
+    //   this.sleepWalk0.current.auto_pick_up.current,
+    //   this.sleepWalk0.current.paws_cleared_for_auto,
+    // );
+    //       console.log(`AUTO PICK UP MODE`,this.sleepWalk0.current.auto_pick_up.current)
+    if (
+      this.sleepWalk0.current.auto_pick_up.current &&
+      !this.sleepWalk0.current.paws_cleared_for_auto
+    ) {
       this.clearAllHoldings();
-      sleepWalk0.current.pawsCleared();
-
+      // this.sleepWalk0.current.pawsCleared();
     }
 
-    if (sleepWalk0.current.pickUpNextId !== this.lastAutoPickUpId) {
-      const m = this.moments.find((m) => m.id === sleepWalk0.current.pickUpNextId);
-      const h_index = (this.lastHoldingIndex + 1)%4;
+    if (this.sleepWalk0.current.pickUpNextId !== this.lastAutoPickUpId) {
+      const m = this.moments.find(
+        (m) => m.id === this.sleepWalk0.current.pickUpNextId,
+      );
+      const h_index = (this.lastHoldingIndex + 1) % 4;
 
       if (m) {
-          this.updateHold(m, h_index);
-          this.lastHoldingIndex = h_index;
+        this.updateHold(m, h_index);
+        this.lastHoldingIndex = h_index;
 
-          this.lastAutoPickUpId = sleepWalk0.current.pickUpNextId;
-
+        this.lastAutoPickUpId = this.sleepWalk0.current.pickUpNextId;
       }
-    
     }
 
-
-
-
-    
-
-
-    if (sleepWalk0.current.autoSelectCoord[0] !== -100) {
-      ux = sleepWalk0.current.autoSelectCoord[0];
-      uy = sleepWalk0.current.autoSelectCoord[1];
-      this.lastSelected.id = sleepWalk0.current.autoSelectId;
+    if (this.sleepWalk0.current.autoSelectCoord[0] !== -100) {
+      ux = this.sleepWalk0.current.autoSelectCoord[0];
+      uy = this.sleepWalk0.current.autoSelectCoord[1];
+      this.lastSelected.id = this.sleepWalk0.current.autoSelectId;
       this.selected.id = -1;
       this.selected.coord[0] = -100;
       this.selected.coord[1] = -100;
@@ -323,9 +372,9 @@ console.log('updated hold')
       // console.log('double tap')
       ux = userPointer[0];
       uy = userPointer[1];
-      sleepWalk0.current.autoSelectCoord[0] = -100;
-      sleepWalk0.current.autoSelectCoord[1] = -100;
-      sleepWalk0.current.autoSelectId = -1;
+      this.sleepWalk0.current.autoSelectCoord[0] = -100;
+      this.sleepWalk0.current.autoSelectCoord[1] = -100;
+      this.sleepWalk0.current.autoSelectId = -1;
     }
 
     // DESELECT NO MATTER WHERE ON SCREEN DOUBLE TAP IS
@@ -371,7 +420,7 @@ console.log('updated hold')
     if (
       !isDragging &&
       //!isMoving &&
-      sleepWalk0.current.autoSelectCoord[0] === -100
+      this.sleepWalk0.current.autoSelectCoord[0] === -100
     ) {
       this.draggingMomentIndex = -1;
       this.selectedMomentIndex = -1;
@@ -392,7 +441,7 @@ console.log('updated hold')
     // if dragging
     if (
       this.draggingMomentIndex >= 0 &&
-      sleepWalk0.current.autoSelectId === -1
+      this.sleepWalk0.current.autoSelectId === -1
     ) {
       // console.log(this.draggingMomentIndex)
       const coord = this.moments[this.draggingMomentIndex].coord;

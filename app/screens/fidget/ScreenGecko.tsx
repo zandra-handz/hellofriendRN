@@ -5,9 +5,15 @@ import {
   Pressable,
   Text,
   Vibration,
-  Alert
+  Alert,
 } from "react-native";
-import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useMemo,
+  useEffect,
+  useCallback,
+} from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -21,6 +27,7 @@ import SpeedButtons from "./SpeedButtons";
 import AutoPickUpButton from "./AutoPickUpButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
+import { useRoute } from "@react-navigation/native";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
@@ -33,11 +40,18 @@ import {
 type Props = {};
 
 const ScreenGecko = (props: Props) => {
+  const route = useRoute();
+  const selection = route.params?.selection ?? null;
+  const autoPick = route.params?.autoPick ?? false;
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
-  const { navigateToMomentView, navigateToMomentFocus } = useAppNavigations();
+  const {
+    navigateToMomentView,
+    navigateToMomentFocus,
+    navigateToGeckoSelectSettings,
+  } = useAppNavigations();
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
@@ -46,6 +60,50 @@ const ScreenGecko = (props: Props) => {
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
+
+  const AUTO_SELECT_TYPES = [
+    "RANDOM",
+    "BALANCED",
+    "HARD MODE",
+    "EASY MODE",
+    "QUICK SHARES",
+    "FILL THE TIME",
+    "MORE SPECIFIC TO FRIEND",
+    "MORE GENERAL",
+    "RELEVANT TO THEIR INTERESTS",
+    "RANDOM MY INTERESTS",
+  ];
+
+  const [autoSelectType, setAutoSelectType] = useState(0);
+  const [acceptPawClear, setAcceptPawClear] = useState(false);
+
+  function getAutoSelectLabel(type) {
+    return AUTO_SELECT_TYPES[type] ?? AUTO_SELECT_TYPES[0];
+  }
+
+  useEffect(() => {
+    if (
+      route.params?.autoPick !== undefined &&
+      route.params?.selection !== undefined
+    ) {
+      setAcceptPawClear(route.params.autoPick);
+      setAutoSelectType(route.params.selection);
+    }
+  }, [route.params?.selection, route.params?.autoPick]);
+
+
+  useEffect(() => {
+    if (acceptPawClear) {
+      // handleToggleAutoPickUp();
+      setAutoPickUp(true);
+      autoPickUpRef.current = true;
+      setAcceptPawClear(false);
+    }
+  }, [acceptPawClear]);
+
+  //const currentLabel = getAutoSelectLabel(autoSelectType);
+
+
 
   const { handleEditMoment, editMomentMutation } = useEditMoment({
     userId: user?.id,
@@ -89,94 +147,97 @@ const ScreenGecko = (props: Props) => {
   const [resetSkia, setResetSkia] = useState(null);
 
   const [manualOnly, setManualOnly] = useState(true);
-  const [speedSetting, setSpeedSetting] = useState(0);
+  const [speedSetting, setSpeedSetting] = useState(1);
 
   const [autoPickUp, setAutoPickUp] = useState(false);
 
   const autoPickUpRef = useRef(false);
 
-   const tickTotals = [300, 150, 50];
+  const tickTotals = [300, 150, 50];
 
   const speedSettingRef = useRef(tickTotals[0]);
   const manualOnlyRef = useRef(true);
 
-const pickRandomMomentIds = (moments, count = 4) => {
-  const result = new Array(count).fill(-1);
+  const pickRandomMomentIds = (moments, count = 4) => {
+    const result = new Array(count).fill(-1);
 
-  if (!moments || moments.length === 0) {
+    if (!moments || moments.length === 0) {
+      return result;
+    }
+
+    const shuffled = [...moments].sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < Math.min(shuffled.length, count); i++) {
+      result[i] = shuffled[i].id;
+    }
+
     return result;
-  }
+  };
 
-  const shuffled = [...moments].sort(() => Math.random() - 0.5);
+  const randomMomentIdsRef = useRef<string[]>([]);
 
-  for (let i = 0; i < Math.min(shuffled.length, count); i++) {
-    result[i] = shuffled[i].id;
-  }
-
-  return result;
-};
-
-
-const randomMomentIdsRef = useRef<string[]>([]);
-
-// useEffect(() => {
-//   if (!capsuleList || capsuleList.length < 4) return;
-
-//   randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
  
-// }, [capsuleList]);
+  useEffect(() => {
+    randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+  }, [capsuleList]);
 
-useEffect(() => {
-  randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+  const regenerateRandomMoments = () => {
+    if (!capsuleList || capsuleList.length < 4) return;
+
+    randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+
+    console.log("🔄 regenerated random ids:", randomMomentIdsRef.current);
+  };
+
+  const handleChangeSpeed = (newSpeedFromButton) => {
+    speedSettingRef.current = tickTotals[newSpeedFromButton] || 150;
+    setSpeedSetting(newSpeedFromButton);
+  };
 
 
-}, [capsuleList]);
+    const handleNavToSelect = useCallback(() => {
+    if (autoPickUp) {
+      setAutoPickUp(false);
+      autoPickUpRef.current = false;
+    } else {
+      navigateToGeckoSelectSettings({ selection: autoSelectType });
+    }
+  }, [autoPickUp, autoSelectType]);
 
+  // const handleToggleAutoPickUp = () => {
+  //   const newValue = !autoPickUp;
+  //   console.log("handle toggle auto pickup");
 
-const regenerateRandomMoments = () => {
-  if (!capsuleList || capsuleList.length < 4) return;
+  //   // If turning ON and there are moments in paws, show alert
+  //   if (newValue) {
+  //     setAutoPickUp(true);
+  //     autoPickUpRef.current = true;
+  //     // // handleNavToSelect();
+  //     // Alert.alert(
+  //     //   "Auto Pick-Up",
+  //     //   "This will drop any currently held moments. Continue?",
+  //     //   [
+  //     //     {
+  //     //       text: "Cancel",
+  //     //       style: "cancel",
 
-  randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
-
-  console.log("🔄 regenerated random ids:", randomMomentIdsRef.current);
-};
-
-
-const handleChangeSpeed = (newSpeedFromButton) => {
-  speedSettingRef.current = tickTotals[newSpeedFromButton] || 150;
-  setSpeedSetting(newSpeedFromButton);
-}; 
-
-const handleToggleAutoPickUp = () => {
-  const newValue = !autoPickUp;
-  
-  // If turning ON and there are moments in paws, show alert
-  if (newValue) {
-    Alert.alert(
-      "Auto Pick-Up",
-      "This will drop any currently held moments. Continue?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Continue",
-          onPress: () => {
-            setAutoPickUp(true);
-            autoPickUpRef.current = true;
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  } else {
-    // Just turn it off without alert
-    setAutoPickUp(false);
-    autoPickUpRef.current = false;
-  }
-};
-
+  //     //     },
+  //     //     {
+  //     //       text: "Continue",
+  //     //       onPress: () => {
+  //     //         setAutoPickUp(true);
+  //     //         autoPickUpRef.current = true;
+  //     //       },
+  //     //     },
+  //     //   ],
+  //     //   { cancelable: true }
+  //     // );
+  //   } else {
+  //     // Just turn it off without alert
+  //     setAutoPickUp(false);
+  //     autoPickUpRef.current = false;
+  //   }
+  // };
 
   useEffect(() => {
     if (!manualOnly) {
@@ -365,10 +426,9 @@ const handleToggleAutoPickUp = () => {
           // setScatteredMoments={setScatteredMoments}
           handleToggleManual={handleToggleManual}
           manualOnly={manualOnlyRef}
-        
           speedSetting={speedSettingRef}
           autoPickUp={autoPickUpRef}
-            randomMomentIds={randomMomentIdsRef}
+          randomMomentIds={randomMomentIdsRef}
         />
       </View>
       <View
@@ -405,36 +465,35 @@ const handleToggleAutoPickUp = () => {
         {!manualOnly && (
           <View style={{ marginHorizontal: 10 }}>
             <SpeedButtons
-             // color={lightDarkTheme.primaryBackground}
+              // color={lightDarkTheme.primaryBackground}
               color={lightDarkTheme.primaryText}
               curSetting={speedSetting}
               buttonDiameter={40}
               buttonPadding={0}
               iconSize={24}
-             // backgroundColor={lightDarkTheme.lighterOverlayBackground}
+              // backgroundColor={lightDarkTheme.lighterOverlayBackground}
               backgroundColor={lightDarkTheme.primaryBackground}
               onPress={handleChangeSpeed}
             />
           </View>
         )}
       </View>
-{!manualOnly && (
-
-
-      <View style={styles.autoPickUpWrapper}>
- 
-
-        <AutoPickUpButton 
-          color={autoPickUp ? selectedFriend.lightColor : lightDarkTheme.primaryText}
-         
-              buttonDiameter={40}
-              buttonPadding={0}
-              iconSize={24}
-             // backgroundColor={lightDarkTheme.lighterOverlayBackground}
-              backgroundColor={lightDarkTheme.primaryBackground}
-              onPress={handleToggleAutoPickUp}
-            />
-      </View>
+      {!manualOnly && (
+        <View style={styles.autoPickUpWrapper}>
+          <AutoPickUpButton
+            color={
+              autoPickUp
+                ? selectedFriend.lightColor
+                : lightDarkTheme.primaryText
+            }
+            buttonDiameter={40}
+            buttonPadding={0}
+            iconSize={24}
+            // backgroundColor={lightDarkTheme.lighterOverlayBackground}
+            backgroundColor={lightDarkTheme.primaryBackground}
+            onPress={handleNavToSelect}
+          />
+        </View>
       )}
 
       <View style={styles.previewOuter}>
@@ -571,7 +630,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   movementSettingsRow: {
-   
     flexDirection: "row",
 
     justifyContent: "flex-start",
@@ -585,7 +643,7 @@ const styles = StyleSheet.create({
   },
   manualButtonWrapper: {
     //  alignItems: "center",
-   // borderRadius: 999,
+    // borderRadius: 999,
     borderRadius: 30,
   },
   manualButton: {
@@ -622,8 +680,7 @@ const styles = StyleSheet.create({
     left: 0,
     padding: 20,
     bottom: 310,
-    position: 'absolute'
-
+    position: "absolute",
   },
   noMomentWrapper: {
     width: "100%",

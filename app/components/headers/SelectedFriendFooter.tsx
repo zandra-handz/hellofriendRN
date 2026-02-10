@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
-
-import { Fontisto } from "@expo/vector-icons";
+import { View, StyleSheet } from "react-native"; 
 
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app components
@@ -176,9 +174,9 @@ const SelectedFriendFooter = ({
             size={footerIconSize}
             color={primaryColor}
           />
-        }
-        // onPress={() => setAboutModalVisible(true)}
-        onPress={navigateToGecko}
+        } 
+       // onPress={() => navigateToGecko({selection: 0})} // can use this too
+          onPress={navigateToGecko} 
       />
     ),
     [primaryColor]

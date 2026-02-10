@@ -14,7 +14,7 @@ type NavToHelloViewProps = {
 
 type NavToAddImageProps = {
   imageUri: string;
-}
+};
 
 type NavToSelectFriendProps = {
   useNavigateBack?: boolean;
@@ -42,6 +42,15 @@ type NavToMomentFocusWithTextProp = {
   momentText?: string | null;
 };
 
+type NavToGeckoProp = {
+  selection?: number | null;
+  autoPick?: false | null;
+};
+
+type NavToGeckoSelectSettingsProp = {
+  selection: number;
+};
+
 type NavToAuthProp = {
   usernameEntered: string | null;
 };
@@ -52,7 +61,6 @@ type NavToNewAccountProp = {
 
 interface hookReturns {
   navigateToHome: () => void;
-  navigateToGecko: () => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
@@ -62,10 +70,8 @@ interface hookReturns {
     startingIndex,
     inPersonFilter,
   }: NavToHelloViewProps) => void;
-  navigateToAddImage: ({
-    imageUri
-  }: NavToAddImageProps) => void;
-  
+  navigateToAddImage: ({ imageUri }: NavToAddImageProps) => void;
+
   navigateToLocationSearch: () => void;
   navigateToLocationEdit: ({
     location,
@@ -76,6 +82,11 @@ interface hookReturns {
     screenCameFrom,
     momentText,
   }: NavToMomentFocusWithTextProp) => void;
+  navigateToGecko: ({ selection, autoPick }: NavToGeckoProp) => void;
+  navigateToGeckoSelectSettings: ({
+    selection,
+  }: NavToGeckoSelectSettingsProp) => void;
+
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
   navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
 
@@ -91,10 +102,6 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToHome = () => {
     navigation.navigate("hellofriend");
-  };
-
-    const navigateToGecko = () => {
-    navigation.navigate("Gecko");
   };
 
   const navigateToAddFriend = () => {
@@ -153,6 +160,26 @@ const useAppNavigations = (): hookReturns => {
       momentText: momentText,
     });
   };
+// const navigateToGecko = ({ selection = 0 }: NavToGeckoProp) => {
+//   navigation.navigate("Gecko", {
+//     selection,
+//   });
+// };
+
+const navigateToGecko = (
+  { selection = 0, autoPick = false}: NavToGeckoProp = {}
+) => {
+  navigation.navigate("Gecko", { selection, autoPick });
+};
+
+
+  const navigateToGeckoSelectSettings = ({
+    selection,
+  }: NavToGeckoSelectSettingsProp) => {
+    navigation.navigate("GeckoSelectSettings", {
+      selection: selection,
+    });
+  };
 
   const navigateToMoments = ({ scrollTo = null }: NavToMomentsProp) => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
@@ -196,7 +223,6 @@ const useAppNavigations = (): hookReturns => {
 
   return {
     navigateToHome,
-    navigateToGecko,
     navigateToAddFriend,
     navigateToSelectFriend,
     navigateToFinalize,
@@ -208,6 +234,8 @@ const useAppNavigations = (): hookReturns => {
     navigateToLocationSearch,
     navigateToMomentFocus,
     navigateToMomentFocusWithText,
+    navigateToGecko,
+    navigateToGeckoSelectSettings,
     navigateToMoments,
     navigateToMomentView,
     navigateToWelcome,

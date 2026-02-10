@@ -64,7 +64,7 @@ export default class SleepWalk0 {
 
   pawsCleared(){
     if (this.auto_pick_up.current && !this.paws_cleared_for_auto){
-      // console.log('cleared')
+       console.log('cleared')
         this.paws_cleared_for_auto = true; 
 
     } 
@@ -192,7 +192,10 @@ updateCurrentPos(momentsRef, aspect, scale) {
   update(momentsRef, scale) { 
 
 
- 
+    //added this to clear it because couldn't figure out where else more local I wasn't setting it
+ if (!this.auto_pick_up.current) {
+  this.paws_cleared_for_auto = false;
+ }
  
   
   if (!this.paused.current) {

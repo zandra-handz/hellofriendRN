@@ -96,6 +96,7 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 
 import ScreenGecko from "./app/screens/fidget/ScreenGecko";
+import ScreenGeckoSelectSettings from "./app/screens/moments/ScreenGeckoSelectSettings";
 
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
@@ -450,6 +451,14 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                   <Stack.Screen
                     name="Gecko"
                     component={ScreenGecko}
+                    options={{
+                      headerShown: false,
+                      gestureEnabled: false,
+                    }}
+                  />
+                   <Stack.Screen
+                    name="GeckoSelectSettings"
+                    component={ScreenGeckoSelectSettings}
                     options={{
                       headerShown: false,
                       gestureEnabled: false,

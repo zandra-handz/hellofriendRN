@@ -72,6 +72,7 @@ const GoOptionsModal = ({
       primaryColor={primaryColor}
       backgroundColor={modalBackgroundColor}
       isFullscreen={false}
+      modalIsTransparent={false}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
