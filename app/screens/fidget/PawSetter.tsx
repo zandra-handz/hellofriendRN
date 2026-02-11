@@ -105,43 +105,7 @@ const PawSetter = ({
     );
   };
 
-  const handleClearAllPaws = () => {
-    // Check if any paws are occupied
-
-
-
-    const anyPawsOccupied = localPaws.some((paw) => paw);
-
-    if (!anyPawsOccupied) {
-      return; // No paws to clear
-    }
-
-    Alert.alert(
-      "Clear All Paws?",
-      "Do you want to drop all moments?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Clear All",
-          onPress: () => {
-            // Use the clearAllPaws function from props
-            const updatedHoldings = clearAllPaws();
-
-            // Reset local state
-            setLocalPaws(updatedHoldings.map((h) => h.id !== null));
-
-            Vibration.vibrate(100); // Optional feedback
-          },
-          style: "destructive",
-        },
-      ],
-      { cancelable: true },
-    );
-  };
-
+ 
   // useEffect(() => {
   //   if (triggerClearPaws) {
   //     console.log("clearing all paws in paw setter");

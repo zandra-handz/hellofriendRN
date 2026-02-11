@@ -400,11 +400,11 @@ const MomentsSkia = ({
 
   // MOMENTS DATA CAN BE STALE, SHOULDNT USE THIS
   useEffect(() => {
-    console.log(
-      "useeffect in SKIA triggered by momentsData or reset",
-      momentsData,
-      momentsData.length,
-    );
+    // console.log(
+    //   "useeffect in SKIA triggered by momentsData or reset",
+    //   momentsData,
+    //   momentsData.length,
+    // );
     if (moments && moments.current) {
       // moments.current.reset(momentsData, [0.5, 0.5], 0.05);
     //  moments.current.updateAllCoords(momentsData);
@@ -479,7 +479,8 @@ const MomentsSkia = ({
         return;
       }
 
-        const shouldClearPaws = sleepWalk0.current.paws_cleared_for_auto;
+        const shouldClearPaws = moments.current.trigger_remote;
+       //     const shouldClearPaws = sleepWalk0.current.auto_pick_up.current && sleepWa;
   
   if (shouldClearPaws && !lastPawsClearedRef.current) {
     lastPawsClearedRef.current = true;

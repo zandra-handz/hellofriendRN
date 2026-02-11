@@ -81,24 +81,45 @@ const ScreenGecko = (props: Props) => {
     return AUTO_SELECT_TYPES[type] ?? AUTO_SELECT_TYPES[0];
   }
 
-  useEffect(() => {
-    if (
-      route.params?.autoPick !== undefined &&
-      route.params?.selection !== undefined
-    ) {
-      setAcceptPawClear(route.params.autoPick);
-      setAutoSelectType(route.params.selection);
-    }
-  }, [route.params?.selection, route.params?.autoPick]);
+  // useEffect(() => {
+ 
+  //   if (
+  //     autoPick !== undefined &&
+  //     selection !== undefined
+  //   ) {
+  //     console.log('setting acceptPawClear to', autoPick)
+  //     console.log('setting autoselecttype to', selection)
+  //     setAcceptPawClear(autoPick);
+  //     setAutoSelectType(selection);
+  //   }
+  // }, [selection, autoPick]);
+
+
+  const timestamp = route.params?.timestamp ?? null;  
+
+useEffect(() => {
+  if (autoPick !== undefined && selection !== undefined) {
+    console.log('setting acceptPawClear to', autoPick)
+    console.log('setting autoselecttype to', selection)
+    setAcceptPawClear(autoPick);
+    setAutoSelectType(selection);
+  }
+}, [selection, autoPick, timestamp]); 
 
 
   useEffect(() => {
+ 
     if (acceptPawClear) {
-      // handleToggleAutoPickUp();
+ 
       setAutoPickUp(true);
       autoPickUpRef.current = true;
       setAcceptPawClear(false);
-    }
+    } 
+ 
+
+    // else {
+    //   console.log('acceptPawClear not true. value: ', acceptPawClear)
+    // }
   }, [acceptPawClear]);
 
   //const currentLabel = getAutoSelectLabel(autoSelectType);
@@ -199,7 +220,9 @@ const ScreenGecko = (props: Props) => {
     if (autoPickUp) {
       setAutoPickUp(false);
       autoPickUpRef.current = false;
+
     } else {
+
       navigateToGeckoSelectSettings({ selection: autoSelectType });
     }
   }, [autoPickUp, autoSelectType]);

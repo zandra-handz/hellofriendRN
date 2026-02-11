@@ -55,6 +55,7 @@ const ScreenGeckoSelectSettings = (props: Props) => {
   }));
 
   const updateSelected = (update: number) => {
+    console.log(update)
     setSelected(update);
   };
 
@@ -71,10 +72,11 @@ const ScreenGeckoSelectSettings = (props: Props) => {
     "Random My Interests",
   ];
 
-  const handleNavToGecko = useCallback(() => {
+  const handleNavToGecko = useCallback((index=0) => {
+    console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
     opacity.value = withTiming(0, { duration: 100 });
     setTimeout(() => {
-      navigateToGecko({ selection: selected, autoPick: acceptPawClear });
+      navigateToGecko({ selection: index, autoPick: acceptPawClear, timestamp: Date.now()  });
     }, 100);
   }, [selected, acceptPawClear, navigateToGecko, opacity]);
 
@@ -181,7 +183,7 @@ const ScreenGeckoSelectSettings = (props: Props) => {
                       <GlobalPressable
                         onPress={() => {
                           updateSelected(index);
-                          handleNavToGecko();
+                          handleNavToGecko(index);
                         }}
                         onLongPress={() => setLongPressedIndex(index)}
                         onPressOut={() => setLongPressedIndex(null)}
