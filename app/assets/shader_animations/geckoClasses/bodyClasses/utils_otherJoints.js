@@ -9,6 +9,18 @@ import {
   _getAngleFromXAxis_inPlace,
 } from "../../utils";
 
+
+// At top of file
+const PI = Math.PI;
+const PI_2 = Math.PI * 2;
+const PI_OVER_2 = Math.PI / 2;
+const PI_OVER_3 = Math.PI / 3;
+const PI_OVER_4 = Math.PI / 4;
+const PI_OVER_6 = Math.PI / 6;
+const TAU = Math.PI * 2;
+
+// Use these throughout instead of recalculating
+
 // does not set the extra motion angles, those have their own updaters
 export function updateJointCoords(
  
@@ -145,9 +157,9 @@ export function solveProcJoint_inPlace(
   const setThird = !goingBackwards && index > motion3Start && inMotionRange;
 
   if (setSecondary) {
-    maxBend = (Math.PI * 2) / secondMotionClamps[index - motion2Start];
+    maxBend = PI_2 / secondMotionClamps[index - motion2Start];
   } else {
-    maxBend = (Math.PI * 2) / maxBend;
+    maxBend = PI_2/ maxBend;
   }
 
   // reuse joint.direction array to avoid allocation

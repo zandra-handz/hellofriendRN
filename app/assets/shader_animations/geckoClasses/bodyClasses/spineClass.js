@@ -15,6 +15,7 @@ import {
 import { 
   // getStartAndEndPoints_inPlace,
   // intersectLines,
+  intersectLines_inPlace,
   getSpineSagTrans_inPlace,
 } from "../../utils.js";
 
@@ -67,6 +68,39 @@ this.testTick = 0;
     this.segmentStart = segmentRange[0];
     this.segmentEnd = segmentRange[1];
     this.intersectionPoint = 1; // stored in spine motion as well
+  // Preallocated result container for intersectLines
+  this._intersectResult = {
+    position: new Float32Array(2),
+    mirroredDir: new Float32Array(2),
+    mirroredLineEnd: new Float32Array(2),
+    mirroredStepsPoint: new Float32Array(2),
+    transverseLine: new Float32Array(2),
+    mirroredStepLineStart: new Float32Array(2),
+    mirroredStepLineEnd: new Float32Array(2),
+    projectedStepsPoint: new Float32Array(2),
+    projectedLineStart: new Float32Array(2),
+    projectedLineEnd: new Float32Array(2),
+    mSLineStart: new Float32Array(2),
+    mSLineEnd: new Float32Array(2),
+    mirroredAngle: 0,
+    distFromSteps: 0
+  };
+  
+  // Also preallocate for spine center lines result
+  this._spineSagTransResult = {
+    center: new Float32Array(2),
+    lineDir: new Float32Array(2),
+    perpendicularDir: new Float32Array(2),
+    tStart: new Float32Array(2),
+    tEnd: new Float32Array(2),
+    distanceApart: 0,
+    angle: 0,
+    tAngle: 0
+  };
+
+
+      this._midPointBuffer = new Float32Array(2);
+  this._dirVecBuffer = new Float32Array(2);
 
     this.jointClamps = jointClamps;
 
@@ -195,43 +229,85 @@ for (let i = 0; i <= totalNumJoints; i++) {
   }
 
   updateCurrentLength() {
-    const length = _getDistanceScalar(
-      this.joints[this.segmentEnd],
-      this.joints[this.segmentStart],
-    );
-    this.currentLength = length;
+  const length = _getDistanceScalar(
+    this.joints[this.segmentEnd],
+    this.joints[this.segmentStart],
+  );
+  this.currentLength = length;
 
-    // set this.center
-    _getCenterPoint_inPlace(
-      this.joints[this.segmentEnd],
-      this.joints[this.segmentStart],
-      this.center,
-    );
+  // set this.center
+  _getCenterPoint_inPlace(
+    this.joints[this.segmentEnd],
+    this.joints[this.segmentStart],
+    this.center,
+  );
 
-    const spineCenterLines = getSpineSagTrans_inPlace(
-      this.joints[this.segmentEnd],
-      this.joints[this.segmentStart],
-    );
+  // Use preallocated result
+  const spineCenterLines = getSpineSagTrans_inPlace(
+    this.joints[this.segmentEnd],
+    this.joints[this.segmentStart],
+    this._spineSagTransResult, // Pass preallocated result
+  );
 
- 
-    const intersection = intersectLines(
-      [spineCenterLines.tStart, spineCenterLines.tEnd],
-      spineCenterLines.tAngle,
-      this.motion.frontSteps_tDistanceApart,
-      [this.motion.frontStepsTCenter, this.motion.frontStepsSLine[1]], // mirrored line starts from tCenter
-      this.motion.frontStepsSAngle,
-    );
+  // Use preallocated result for intersection
+  const intersection = intersectLines_inPlace(
+    [spineCenterLines.tStart, spineCenterLines.tEnd],
+    spineCenterLines.tAngle,
+    this.motion.frontSteps_tDistanceApart,
+    [this.motion.frontStepsTCenter, this.motion.frontStepsSLine[1]],
+    this.motion.frontStepsSAngle,
+    this._intersectResult, // Pass preallocated result
+  );
 
-    if (this.updatesGlobalMotion) { 
-      this.motion.update_mirroredFrontStepsData(intersection);
-    }
-
-    this.intersectionPoint = intersection.intersectionPoint;
- 
-    if (this.motion.centerIntersection != null) {
-      this.motionSecondAngle = this.motion.realignmentAngle2;
-    }
+  if (this.updatesGlobalMotion) {
+    this.motion.update_mirroredFrontStepsData(intersection);
   }
+
+  this.intersectionPoint = intersection.position;
+
+  if (this.motion.centerIntersection != null) {
+    this.motionSecondAngle = this.motion.realignmentAngle2;
+  }
+}
+
+  // updateCurrentLength() {
+  //   const length = _getDistanceScalar(
+  //     this.joints[this.segmentEnd],
+  //     this.joints[this.segmentStart],
+  //   );
+  //   this.currentLength = length;
+
+  //   // set this.center
+  //   _getCenterPoint_inPlace(
+  //     this.joints[this.segmentEnd],
+  //     this.joints[this.segmentStart],
+  //     this.center,
+  //   );
+
+  //   const spineCenterLines = getSpineSagTrans_inPlace(
+  //     this.joints[this.segmentEnd],
+  //     this.joints[this.segmentStart],
+  //   );
+
+ 
+  //   const intersection = intersectLines(
+  //     [spineCenterLines.tStart, spineCenterLines.tEnd],
+  //     spineCenterLines.tAngle,
+  //     this.motion.frontSteps_tDistanceApart,
+  //     [this.motion.frontStepsTCenter, this.motion.frontStepsSLine[1]], // mirrored line starts from tCenter
+  //     this.motion.frontStepsSAngle,
+  //   );
+
+  //   if (this.updatesGlobalMotion) { 
+  //     this.motion.update_mirroredFrontStepsData(intersection);
+  //   }
+
+  //   this.intersectionPoint = intersection.intersectionPoint;
+ 
+  //   if (this.motion.centerIntersection != null) {
+  //     this.motionSecondAngle = this.motion.realignmentAngle2;
+  //   }
+  // }
 
   updateJointRadii(radii) {
     const expectedLength = this.totalNumJoints + 1;
@@ -246,17 +322,28 @@ for (let i = 0; i <= totalNumJoints; i++) {
   }
 
   update_unchainedJoints(leadPoint_lead) {
-    const midPoint = _getCenterPoint_inPlace(
-      this.motion.frontStepsSLine[1],
-      leadPoint_lead,
-      new Float32Array(2),
-    );
-    const dirVec = _getDirVec_inPlace(
-      this.joints[this.unchainedAnchorIndex],
-      midPoint,
-      new Float32Array(2),
-    );
+    // const midPoint = _getCenterPoint_inPlace(
+    //   this.motion.frontStepsSLine[1],
+    //   leadPoint_lead,
+    //   new Float32Array(2),
+    // );
+    // const dirVec = _getDirVec_inPlace(
+    //   this.joints[this.unchainedAnchorIndex],
+    //   midPoint,
+    //   new Float32Array(2),
+    // );
 
+    const midPoint = _getCenterPoint_inPlace(
+  this.motion.frontStepsSLine[1],
+  leadPoint_lead,
+  this._midPointBuffer,  // Reuse buffer
+);
+
+const dirVec = _getDirVec_inPlace(
+  this.joints[this.unchainedAnchorIndex],
+  midPoint,
+  this._dirVecBuffer,    // Reuse buffer
+);
     // Update head & snout in place
     this.head = _makeDistancePoint_inPlace(
       this.joints[this.unchainedAnchorIndex],

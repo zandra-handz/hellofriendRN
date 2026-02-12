@@ -64,6 +64,8 @@ export default class Legs {
 
     this.motion = motion;
 
+      this._calcStepBuffer0 = new Float32Array(2);
+  this._calcStepBuffer1 = new Float32Array(2);
     this.shoulderSpineJoint = this.joints[this.anchorJIndex]; // anchorCenter
     this.shoulderSpineJointAngle = this.jointAngles[this.anchorJIndex];
     this.rotatorJoint0 = [0.5, 0.5]; //anchorFront/Back0/1
@@ -104,31 +106,16 @@ export default class Legs {
     ];
 
     // this.syncedJoint = syncedJoint;
+    this.elbows = [new Float32Array([0.5, 0.5]), new Float32Array([0.5, 0.5])];
 
-    this.elbows = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
-
-    // this.muscles = [
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    // ];
-
+  
     this.muscleBuffer = new Float32Array(8);
 
 // Create views into the buffer
 this.muscles = Array.from({ length: 4 }, (_, i) =>
   this.muscleBuffer.subarray(i * 2, i * 2 + 2)
 );
-    this.feet = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
-
-    // 10 fingers × vec2
+  
     this.fingerBuffer = new Float32Array(20);
 
  
@@ -146,12 +133,12 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
 
     this.fingerLen = fingerLen;
     this.fingerAngleOffset = 7;
+ 
 
-    this.stepTargets = [
-      [0.5, 0.5],
-      [0.5, 0.5],
+        this.stepTargets = [
+      new Float32Array([0.5, 0.5]),
+      new Float32Array([0.5, 0.5]),
     ];
-
     this.stepThreshhold = forwardStepThreshhold;
     this.stepWiggleRoom = forwardStepWiggleRoom;
     this.stepWideness = forwardStepWideness;

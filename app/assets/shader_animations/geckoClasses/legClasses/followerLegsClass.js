@@ -62,8 +62,11 @@ export default class FollowerLegs {
     this.motion = motion;
     this.frontLegs_stepTargets = frontLegs_stepTargets;
     this.hipSpineJoint = hipSpineJoint;
-    this.rotatorJoint0 = [0.5, 0.5]; //anchorFront/Back0/1
-    this.rotatorJoint1 = [0.5, 0.5];
+    // this.rotatorJoint0 = [0.5, 0.5]; //anchorFront/Back0/1
+    // this.rotatorJoint1 = [0.5, 0.5];
+
+    this.rotatorJoint0 = new Float32Array([0.5, 0.5]);
+    this.rotatorJoint1 = new Float32Array([0.5, 0.5]);
 
     this.rotationRadius = rotationRadius;
     this.rotationRange = rotationRange;
@@ -79,7 +82,7 @@ export default class FollowerLegs {
 
     this.stepBehindJoint = stepBehindJoint;
 
-        this.anchorJIndex = anchorJIndex;
+    this.anchorJIndex = anchorJIndex;
     this.aheadJIndex = aheadJIndex;
 
     this.distFromFrontStep0 = 0;
@@ -92,30 +95,18 @@ export default class FollowerLegs {
 
     this.prevBackwards = false;
 
-    this.elbows = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
+    this.elbows = [new Float32Array([0.5, 0.5]), new Float32Array([0.5, 0.5])];
 
-    // this.muscles = [
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    //   [0.5, 0.5],
-    // ];
+ 
 
     this.muscleBuffer = new Float32Array(8);
 
-// Create views into the buffer
-this.muscles = Array.from({ length: 4 }, (_, i) =>
-  this.muscleBuffer.subarray(i * 2, i * 2 + 2)
-);
+    // Create views into the buffer
+    this.muscles = Array.from({ length: 4 }, (_, i) =>
+      this.muscleBuffer.subarray(i * 2, i * 2 + 2),
+    );
 
-    this.feet = [
-      [0.5, 0.5],
-      [0.5, 0.5],
-    ];
-
+ 
     // this.fingers = [
     //   [
     //     [0.5, 0.5],
@@ -134,11 +125,9 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
     //   ],
     // ];
 
-
-        // 10 fingers × vec2
+    // 10 fingers × vec2
     this.fingerBuffer = new Float32Array(20);
 
- 
     // Convenience views (no allocation after this)
     this.fingers = [
       Array.from({ length: 5 }, (_, i) =>
@@ -149,14 +138,19 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
       ),
     ];
 
-  
-
     this.fingerLen = fingerLen;
     this.fingerAngleOffset = 3;
+    // this.stepTargets = [
+    //   [0.5, 0.5],
+    //   [0.5, 0.5],
+    // ];
+
     this.stepTargets = [
-      [0.5, 0.5],
-      [0.5, 0.5],
+      new Float32Array([0.5, 0.5]),
+      new Float32Array([0.5, 0.5]),
     ];
+
+     this.stepTargetAngles = [0, 0];
 
     this.flippedChestLines = {};
 
@@ -208,6 +202,32 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
     );
   }
 
+  // BEFORE - function call overhead
+  // updateDistanceFromFrontStep() {
+  //   this.distFromFrontStep0 = getBackFrontStepDistance(
+  //     this.stepTargets[0],
+  //     this.motion.frontStepsTLine[0],
+  //   );
+  //   this.distFromFrontStep1 = getBackFrontStepDistance(
+  //     this.stepTargets[1],
+  //     this.motion.frontStepsTLine[1],
+  //   );
+  // }
+
+  // AFTER - inline the calculation
+  updateDistanceFromFrontStep() {
+    const s0 = this.stepTargets[0];
+    const f0 = this.motion.frontStepsTLine[0];
+    const dx0 = f0[0] - s0[0];
+    const dy0 = f0[1] - s0[1];
+    this.distFromFrontStep0 = Math.sqrt(dx0 * dx0 + dy0 * dy0);
+
+    const s1 = this.stepTargets[1];
+    const f1 = this.motion.frontStepsTLine[1];
+    const dx1 = f1[0] - s1[0];
+    const dy1 = f1[1] - s1[1];
+    this.distFromFrontStep1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+  }
   // DIFFERENT FROM LEGS WHICH USE THE SAME FORWARD ANGLE
   updateForwardAngles() {
     const forwardPoint0 = [0, 0];
@@ -350,8 +370,8 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
       this.rotationRadius,
       this.rotationRange,
       this.state.followerPhase,
-     this.joints[this.anchorJIndex],
-     this.jointAngles[this.anchorJIndex],
+      this.joints[this.anchorJIndex],
+      this.jointAngles[this.anchorJIndex],
       // this.hipSpineJoint.angle,
       false,
       false,
@@ -363,8 +383,8 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
       this.rotationRadius,
       this.rotationRange,
       this.state.followerPhase,
-           this.joints[this.anchorJIndex],
-     this.jointAngles[this.anchorJIndex],
+      this.joints[this.anchorJIndex],
+      this.jointAngles[this.anchorJIndex],
       // [this.hipSpineJoint[0], this.hipSpineJoint[1]],
       // this.hipSpineJoint.angle,
       true,
@@ -434,4 +454,3 @@ this.muscles = Array.from({ length: 4 }, (_, i) =>
     );
   }
 }
- 

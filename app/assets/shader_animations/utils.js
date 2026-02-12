@@ -22,6 +22,8 @@ export function times(a, scalar) {
 
 export const TAU = Math.PI * 2;
 
+
+
 /////////////////////////////////////////////////////////////
 
 // INPUT: two points
@@ -445,6 +447,86 @@ export function getStartAndEndPoints_inPlace(
 
   endOut[0] = centerPoint[0] - dx;
   endOut[1] = centerPoint[1] - dy;
+
+  
+}
+
+
+
+export function intersectLines_inPlace(
+  line1,
+  line1Angle,
+  line1DistanceApart,
+  line2,
+  line2Angle,
+  result // pre-allocated result object
+) {
+  // Get intersection point
+  getIntersectionPoint_inPlace(line1, line2, result.position);
+  
+  // Calculate mirrored angle without object allocation
+  const diff = _getNormAglDiff(line1Angle, line2Angle);
+  result.mirroredAngle = _normalizeToNegPItoPI(_add180(line1Angle - diff));
+  
+  // Calculate direction vector from angle
+  result.mirroredDir[0] = Math.cos(result.mirroredAngle);
+  result.mirroredDir[1] = Math.sin(result.mirroredAngle);
+  
+  // Make mirrored line end
+  makeLineFromAPoint_inPlace(
+    result.position,
+    result.mirroredDir,
+    0.24,
+    result.mirroredLineEnd,
+  );
+  
+  // Calculate distance
+  result.distFromSteps = _getDistanceScalar(result.position, line2[0]);
+  
+  // Make mirrored steps point
+  _makeDistancePoint_inPlace(
+    result.position,
+    result.mirroredDir,
+    result.distFromSteps,
+    result.mirroredStepsPoint,
+  );
+  
+  // Calculate transverse line
+  _turnDirVec90ClockW_inPlace(result.mirroredDir, result.transverseLine);
+  
+  // Make mirrored step line
+  makeLineOverACenter_inPlace(
+    result.mirroredStepsPoint,
+    result.transverseLine,
+    line1DistanceApart,
+    result.mirroredStepLineStart,
+    result.mirroredStepLineEnd,
+  );
+  
+  // Make projected steps point
+  _makeDistancePoint_inPlace(
+    result.position,
+    result.mirroredDir,
+    result.distFromSteps,
+    result.projectedStepsPoint,
+  );
+  
+  // Make projected line
+  makeLineOverACenter_inPlace(
+    result.projectedStepsPoint,
+    result.transverseLine,
+    line1DistanceApart,
+    result.projectedLineStart,
+    result.projectedLineEnd,
+  );
+  
+  // Store line endpoints for mSLine
+  result.mSLineStart[0] = result.position[0];
+  result.mSLineStart[1] = result.position[1];
+  result.mSLineEnd[0] = result.mirroredLineEnd[0];
+  result.mSLineEnd[1] = result.mirroredLineEnd[1];
+  
+  return result;
 }
 
 export function intersectLines(
@@ -853,7 +935,7 @@ export function getCalcStep_inPlace(
       : -Math.PI / 3
     : 0;
 
-  const angle = goingBackwards ? backwardAngle : forwardAngle;
+ // const angle = goingBackwards ? backwardAngle : forwardAngle;
   const effectiveAngle = forwardAngle + backwardsOffset;
 
   outStep[0] = centerJoint[0] + Math.cos(effectiveAngle + offset) * distanceOut;

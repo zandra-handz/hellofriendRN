@@ -62,16 +62,16 @@ const ScreenGecko = (props: Props) => {
   });
 
   const AUTO_SELECT_TYPES = [
-    "RANDOM",
-    "BALANCED",
-    "HARD MODE",
-    "EASY MODE",
-    "QUICK SHARES",
-    "FILL THE TIME",
-    "MORE SPECIFIC TO FRIEND",
-    "MORE GENERAL",
-    "RELEVANT TO THEIR INTERESTS",
-    "RANDOM MY INTERESTS",
+    "Random",
+    "Balanced",
+    "Hard mode",
+    "Easy mode",
+    "Quick shares",
+    "Fill the time",
+    "Specific",
+    "General",
+    "Their interests",
+    "My interests",
   ];
 
   const [autoSelectType, setAutoSelectType] = useState(0);
@@ -155,6 +155,57 @@ useEffect(() => {
   //   }));
   // }, [capsuleList]);
 
+
+const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
+  const result = new Array(count).fill(-1);
+  
+  if (!moments || moments.length === 0) {
+    return result;
+  }
+
+  // Handle RANDOM separately (index 0)
+  if (typeIndex === 0) {
+    const shuffled = [...moments].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < Math.min(shuffled.length, count); i++) {
+      result[i] = shuffled[i].id;
+    }
+    return result;
+  }
+
+  // Map type index to the corresponding score field
+  const scoreFieldMap = {
+    1: "generic_score",     // BALANCED
+    2: "hard_score",        // HARD MODE
+    3: "easy_score",        // EASY MODE
+    4: "quick_score",       // QUICK SHARES
+    5: "long_score",        // FILL THE TIME
+    6: "unique_score",      // MORE SPECIFIC TO FRIEND
+    7: "generic_score",     // MORE GENERAL
+    8: "relevant_score",    // RELEVANT TO THEIR INTERESTS
+    9: "random_score",      // RANDOM MY INTERESTS
+  };
+
+  const scoreKey = scoreFieldMap[typeIndex];
+  
+  // Filter moments that have a valid score for this key
+  const withScores = moments.filter(m => m && typeof m[scoreKey] === 'number');
+  
+  if (withScores.length === 0) {
+    return result;
+  }
+
+  // Sort by the specific score field in descending order
+  const sorted = [...withScores].sort((a, b) => b[scoreKey] - a[scoreKey]);
+  console.log(sorted)
+
+  // Take top N
+  for (let i = 0; i < Math.min(sorted.length, count); i++) {
+    result[i] = sorted[i].id;
+  }
+
+  return result;
+};
+
   const MAX_MOMENTS = 40;
 
   const momentCoords = useMemo(() => {
@@ -201,6 +252,26 @@ useEffect(() => {
   useEffect(() => {
     randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
   }, [capsuleList]);
+
+
+    useEffect(() => {
+      console.log('autoselect !!!')
+      if (autoSelectType === 0) {
+           randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+
+      } else if (autoSelectType < 8) {
+        randomMomentIdsRef.current = pickTopScoredMomentIds(capsuleList, autoSelectType, 4);
+      }
+
+      console.log(randomMomentIdsRef.current)
+ 
+  }, [autoSelectType]);
+
+
+  const selectLabel = useMemo(()=>{
+    return getAutoSelectLabel(autoSelectType)
+
+  }, [autoSelectType]);
 
   const regenerateRandomMoments = () => {
     if (!capsuleList || capsuleList.length < 4) return;
@@ -516,6 +587,31 @@ useEffect(() => {
             backgroundColor={lightDarkTheme.primaryBackground}
             onPress={handleNavToSelect}
           />
+
+                       {autoPickUp && (
+          <View
+            style={{
+              width: 'auto',
+              flexGrow: 1,
+              minWidth: 110,
+              
+              //minWidth: 200,
+              flexDirection: 'row',
+              height: 40,
+              marginTop: 10,
+              borderRadius: 16,
+              padding: 10,
+              alignItems: 'center',
+              alignContent: 'center',
+              //paddingVertical: 10,
+              backgroundColor: lightDarkTheme.lighterOverlayBackground
+            }}
+          >
+            <Text numberOfLines={1} style={[styles.typeText, {color: lightDarkTheme.primaryBackground}]}>
+            {selectLabel}
+            </Text>
+          </View>
+          )}
         </View>
       )}
 
@@ -651,6 +747,12 @@ const styles = StyleSheet.create({
   scoreText: {
     fontWeight: "bold",
     fontSize: 20,
+  },
+
+  typeText: {
+    fontSize: 14,
+    fontWeight: 'bold'
+
   },
   movementSettingsRow: {
     flexDirection: "row",
