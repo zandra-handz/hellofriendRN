@@ -23,8 +23,7 @@ const WorkletTest = () => {
     if (frameCount.value % 60 === 0) {
       runOnJS(logJS)(frameCount.value);
     }
-
-    // Schedule next frame on UI thread
+ 
     requestAnimationFrame(animate);
   };
 
@@ -50,6 +49,7 @@ const WorkletTest = () => {
     <View style={StyleSheet.absoluteFill}>
       <Canvas style={StyleSheet.absoluteFill}>
         <Rect x={0} y={0} width={400} height={400}>
+    
           <Shader
             source={source}
             uniforms={{

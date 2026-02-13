@@ -25,6 +25,7 @@ uniform vec2 u_hint;
 uniform vec2 u_geckoPoints[71];
 
 
+
 //  LOG  [0] u_snout
 //  LOG  [1] u_head
 //  LOG  [2] u_hint

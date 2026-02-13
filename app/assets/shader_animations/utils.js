@@ -453,48 +453,131 @@ export function getStartAndEndPoints_inPlace(
 
 
 
-export function intersectLines_inPlace(
+// export function intersectLines_inPlace_Opt(
+//   line1,
+//   line1Angle,
+//   line1DistanceApart,
+//   line2,
+//   line2Angle,
+//   result // pre-allocated result object
+// ) {
+//   // Get intersection point
+//   getIntersectionPoint_inPlace(line1, line2, result.position);
+  
+//   // Calculate mirrored angle without object allocation
+//   const diff = _getNormAglDiff(line1Angle, line2Angle);
+//   result.mirroredAngle = _normalizeToNegPItoPI(_add180(line1Angle - diff));
+  
+//   // Calculate direction vector from angle
+//   result.mirroredDir[0] = Math.cos(result.mirroredAngle);
+//   result.mirroredDir[1] = Math.sin(result.mirroredAngle);
+  
+//   // Make mirrored line end
+//   makeLineFromAPoint_inPlace(
+//     result.position,
+//     result.mirroredDir,
+//     0.24,
+//     result.mirroredLineEnd,
+//   );
+  
+//   // Calculate distance
+//   result.distFromSteps = _getDistanceScalar(result.position, line2[0]);
+  
+//   // Make mirrored steps point
+//   _makeDistancePoint_inPlace(
+//     result.position,
+//     result.mirroredDir,
+//     result.distFromSteps,
+//     result.mirroredStepsPoint,
+//   );
+  
+//   // Calculate transverse line
+//   _turnDirVec90ClockW_inPlace(result.mirroredDir, result.transverseLine);
+  
+//   // Make mirrored step line
+//   makeLineOverACenter_inPlace(
+//     result.mirroredStepsPoint,
+//     result.transverseLine,
+//     line1DistanceApart,
+//     result.mirroredStepLineStart,
+//     result.mirroredStepLineEnd,
+//   );
+  
+//   // Make projected steps point
+//   _makeDistancePoint_inPlace(
+//     result.position,
+//     result.mirroredDir,
+//     result.distFromSteps,
+//     result.projectedStepsPoint,
+//   );
+  
+//   // Make projected line
+//   makeLineOverACenter_inPlace(
+//     result.projectedStepsPoint,
+//     result.transverseLine,
+//     line1DistanceApart,
+//     result.projectedLineStart,
+//     result.projectedLineEnd,
+//   );
+  
+//   // Store line endpoints for mSLine
+//   result.mSLineStart[0] = result.position[0];
+//   result.mSLineStart[1] = result.position[1];
+//   result.mSLineEnd[0] = result.mirroredLineEnd[0];
+//   result.mSLineEnd[1] = result.mirroredLineEnd[1];
+  
+//   return result;
+// }
+
+
+export function intersectLines_inPlace_Opt(
   line1,
   line1Angle,
   line1DistanceApart,
   line2,
   line2Angle,
-  result // pre-allocated result object
+  result
 ) {
-  // Get intersection point
+  // intersection point -> result.position (and Motion alias result.intersectionPoint points here)
   getIntersectionPoint_inPlace(line1, line2, result.position);
-  
-  // Calculate mirrored angle without object allocation
+
+  // angle
   const diff = _getNormAglDiff(line1Angle, line2Angle);
   result.mirroredAngle = _normalizeToNegPItoPI(_add180(line1Angle - diff));
-  
-  // Calculate direction vector from angle
+
+  // ✅ Motion alias
+  result.mSAngle = result.mirroredAngle;
+
+  // dir from angle
   result.mirroredDir[0] = Math.cos(result.mirroredAngle);
   result.mirroredDir[1] = Math.sin(result.mirroredAngle);
-  
-  // Make mirrored line end
+
+  // mirrored line end
   makeLineFromAPoint_inPlace(
     result.position,
     result.mirroredDir,
     0.24,
     result.mirroredLineEnd,
   );
-  
-  // Calculate distance
+
+  // distance from steps
   result.distFromSteps = _getDistanceScalar(result.position, line2[0]);
-  
-  // Make mirrored steps point
+
+  // ✅ Motion alias
+  result.sDistFromSteps = result.distFromSteps;
+
+  // mirrored steps point
   _makeDistancePoint_inPlace(
     result.position,
     result.mirroredDir,
     result.distFromSteps,
     result.mirroredStepsPoint,
   );
-  
-  // Calculate transverse line
+
+  // transverse line
   _turnDirVec90ClockW_inPlace(result.mirroredDir, result.transverseLine);
-  
-  // Make mirrored step line
+
+  // mirrored step line (this becomes Motion's mTLine via alias array)
   makeLineOverACenter_inPlace(
     result.mirroredStepsPoint,
     result.transverseLine,
@@ -502,16 +585,15 @@ export function intersectLines_inPlace(
     result.mirroredStepLineStart,
     result.mirroredStepLineEnd,
   );
-  
-  // Make projected steps point
+
+  // projected (if you really want it—currently identical to mirrored)
   _makeDistancePoint_inPlace(
     result.position,
     result.mirroredDir,
     result.distFromSteps,
     result.projectedStepsPoint,
   );
-  
-  // Make projected line
+
   makeLineOverACenter_inPlace(
     result.projectedStepsPoint,
     result.transverseLine,
@@ -519,13 +601,17 @@ export function intersectLines_inPlace(
     result.projectedLineStart,
     result.projectedLineEnd,
   );
-  
-  // Store line endpoints for mSLine
+
+  // mSLine endpoints (Motion uses mSLine via alias)
   result.mSLineStart[0] = result.position[0];
   result.mSLineStart[1] = result.position[1];
   result.mSLineEnd[0] = result.mirroredLineEnd[0];
   result.mSLineEnd[1] = result.mirroredLineEnd[1];
-  
+
+  // ✅ Motion expects mSCenter too
+  result.mSCenter[0] = (result.mSLineStart[0] + result.mSLineEnd[0]) * 0.5;
+  result.mSCenter[1] = (result.mSLineStart[1] + result.mSLineEnd[1]) * 0.5;
+
   return result;
 }
 
@@ -604,46 +690,269 @@ export function intersectLines(
   };
 }
 
-export function getSpineSagTrans_inPlace(startJoint, endJoint) {
-  const distanceApart = _getDistanceScalar(endJoint, startJoint);
+// export function getSpineSagTrans_inPlace(startJoint, endJoint) {
+//   const distanceApart = _getDistanceScalar(endJoint, startJoint);
 
-  const lineDir = [0, 0];
-  const perpendicularDir = [0, 0];
-  const center = [0, 0];
+//   const lineDir = [0, 0];
+//   const perpendicularDir = [0, 0];
+//   const center = [0, 0];
 
-  _getDirVec_inPlace(endJoint, startJoint, lineDir);
-  _turnDirVec90CounterC_inPlace(lineDir, perpendicularDir);
+//   _getDirVec_inPlace(endJoint, startJoint, lineDir);
+//   _turnDirVec90CounterC_inPlace(lineDir, perpendicularDir);
 
-  const angle = _getAngleFromXAxis(perpendicularDir);
-  _getCenterPoint_inPlace(startJoint, endJoint, center);
+//   const angle = _getAngleFromXAxis(perpendicularDir);
+//   _getCenterPoint_inPlace(startJoint, endJoint, center);
 
-  const tLineStart = [0, 0];
-  const tLineEnd = [0, 0];
+//   const tLineStart = [0, 0];
+//   const tLineEnd = [0, 0];
+
+//   makeLineOverACenter_inPlace(
+//     center,
+//     perpendicularDir,
+//     0.18,
+//     tLineStart,
+//     tLineEnd,
+//   );
+
+//   const nAngle = _normalizeToNegPItoPI(angle);
+
+//   return {
+//     center: center,
+//     tAngle: nAngle,
+//     tStart: tLineStart,
+//     tEnd: tLineEnd,
+//     distanceApart: distanceApart,
+//   };
+// }
+
+
+export function getSpineSagTrans_inPlace(startJoint, endJoint, result) {
+  //   if (!result) {
+  //   console.error("RESULT IS UNDEFINED");
+  //   console.trace(); // ← THIS IS IMPORTANT
+  //   return;
+  // }
+  result.distanceApart = _getDistanceScalar(endJoint, startJoint);
+
+  _getDirVec_inPlace(endJoint, startJoint, result.lineDir);
+  _turnDirVec90CounterC_inPlace(result.lineDir, result.perpendicularDir);
+
+  const angle = _getAngleFromXAxis(result.perpendicularDir);
+  _getCenterPoint_inPlace(startJoint, endJoint, result.center);
 
   makeLineOverACenter_inPlace(
-    center,
-    perpendicularDir,
+    result.center,
+    result.perpendicularDir,
     0.18,
-    tLineStart,
-    tLineEnd,
+    result.tStart,
+    result.tEnd,
   );
 
-  const nAngle = _normalizeToNegPItoPI(angle);
-
-  return {
-    center: center,
-    tAngle: nAngle,
-    tStart: tLineStart,
-    tEnd: tLineEnd,
-    distanceApart: distanceApart,
-  };
+  result.tAngle = _normalizeToNegPItoPI(angle);
+  // No return!
 }
 
+export function intersectLines_inPlace(
+  line1,
+  line1Angle,
+  line1DistanceApart,
+  line2,
+  line2Angle,
+  result
+) {
+  getIntersectionPoint_inPlace(line1, line2, result.position);
+  
+  const diff = _getNormAglDiff(line1Angle, line2Angle);
+  result.mirroredAngle = _normalizeToNegPItoPI(_add180(line1Angle - diff));
+  
+  result.mirroredDir[0] = Math.cos(result.mirroredAngle);
+  result.mirroredDir[1] = Math.sin(result.mirroredAngle);
+  
+  makeLineFromAPoint_inPlace(
+    result.position,
+    result.mirroredDir,
+    0.24,
+    result.mirroredLineEnd,
+  );
+  
+  result.distFromSteps = _getDistanceScalar(result.position, line2[0]);
+  
+  _makeDistancePoint_inPlace(
+    result.position,
+    result.mirroredDir,
+    result.distFromSteps,
+    result.mirroredStepsPoint,
+  );
+  
+  _turnDirVec90ClockW_inPlace(result.mirroredDir, result.transverseLine);
+  
+  makeLineOverACenter_inPlace(
+    result.mirroredStepsPoint,
+    result.transverseLine,
+    line1DistanceApart,
+    result.mirroredStepLineStart,
+    result.mirroredStepLineEnd,
+  );
+  
+  _makeDistancePoint_inPlace(
+    result.position,
+    result.mirroredDir,
+    result.distFromSteps,
+    result.projectedStepsPoint,
+  );
+  
+  makeLineOverACenter_inPlace(
+    result.projectedStepsPoint,
+    result.transverseLine,
+    line1DistanceApart,
+    result.projectedLineStart,
+    result.projectedLineEnd,
+  );
+  
+  result.mSLineStart[0] = result.position[0];
+  result.mSLineStart[1] = result.position[1];
+  result.mSLineEnd[0] = result.mirroredLineEnd[0];
+  result.mSLineEnd[1] = result.mirroredLineEnd[1];
+  // No return!
+}
 export function getBackFrontStepDistance(frontStep, backStep) {
   const dist = _getDistanceScalar(frontStep, backStep);
 
   return dist;
 }
+
+
+
+export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
+  // out must be:
+  // {
+  //   tCenter: Float32Array(2),
+  //   tLineStart: Float32Array(2),
+  //   tLineEnd: Float32Array(2),
+  //   sLineStart: Float32Array(2),
+  //   sLineEnd: Float32Array(2),
+  //   tDistanceApart: number,
+  //   sAngle: number,
+  //   tAngle: number,
+  // }
+
+  // --- EXACTLY LIKE OLD: center, distance, dirs ---
+  // NOTE: your _getCenterPoint_inPlace API seems inconsistent in your codebase,
+  // so we support both "returns vec" and "writes to provided out".
+  let centerPoint = _getCenterPoint_inPlace(step, otherStep, out.tCenter);
+  if (centerPoint && centerPoint !== out.tCenter) {
+    out.tCenter[0] = centerPoint[0];
+    out.tCenter[1] = centerPoint[1];
+    centerPoint = out.tCenter;
+  } else {
+    centerPoint = out.tCenter;
+  }
+
+  const tDistanceApart = _getDistanceScalar(step, otherStep);
+  const lineDir = _getDirVec(step, otherStep);
+  const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
+
+  // --- EXACTLY LIKE OLD: angles ---
+  out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
+  out.tAngle = _getAngleFromXAxis(lineDir);
+  out.tDistanceApart = tDistanceApart;
+
+  // --- EXACTLY LIKE OLD: tLine shape, just split into start/end ---
+  out.tLineStart[0] = step[0];
+  out.tLineStart[1] = step[1];
+  out.tLineEnd[0] = otherStep[0];
+  out.tLineEnd[1] = otherStep[1];
+
+  // --- EXACTLY LIKE OLD: sLine via makeLineOverACenter(center, perpDir, 0.2) ---
+  // This preserves whatever ordering / internal behavior your old version had.
+  const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
+
+  // sLine is expected to be: [ [x0,y0], [x1,y1] ]
+  out.sLineStart[0] = sLine[0][0];
+  out.sLineStart[1] = sLine[0][1];
+  out.sLineEnd[0] = sLine[1][0];
+  out.sLineEnd[1] = sLine[1][1];
+
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+// export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
+//   // ---- center point (MUST populate out.tCenter) ----
+//   // Support both possible APIs:
+//   // 1) _getCenterPoint_inPlace(step, otherStep, out.tCenter) writes into out.tCenter
+//   // 2) _getCenterPoint_inPlace(step, otherStep) returns a vec2
+//   let c = _getCenterPoint_inPlace(step, otherStep, out.tCenter);
+//   if (c && c !== out.tCenter) {
+//     // if it returned a center vec, copy it
+//     out.tCenter[0] = c[0];
+//     out.tCenter[1] = c[1];
+//   }
+
+//   // ---- distance (compute once) ----
+//   const tDistanceApart = _getDistanceScalar(step, otherStep);
+//   out.tDistanceApart = tDistanceApart;
+
+//   // ---- t-line endpoints ----
+//   out.tLineStart[0] = step[0];
+//   out.tLineStart[1] = step[1];
+//   out.tLineEnd[0] = otherStep[0];
+//   out.tLineEnd[1] = otherStep[1];
+
+//   // ---- directions ----
+//   const lineDir = _getDirVec(step, otherStep);
+//   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
+
+//   // ---- angles (same as original) ----
+//   out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
+//   out.tAngle = _getAngleFromXAxis(lineDir);
+
+
+//   // sagittal line endpoints (same length as before)
+// const halfLen = 0.1;
+
+// // compute raw endpoints from perpDir
+// let sx0 = out.tCenter[0] - perpDir[0] * halfLen;
+// let sy0 = out.tCenter[1] - perpDir[1] * halfLen;
+// let sx1 = out.tCenter[0] + perpDir[0] * halfLen;
+// let sy1 = out.tCenter[1] + perpDir[1] * halfLen;
+
+// // ENFORCE STABLE ORDER:
+// // make sLineEnd be the one that lies in +perpDir direction from center
+// // (dot((endpoint - center), perpDir) should be >= 0 for the "end")
+// const v0x = sx0 - out.tCenter[0];
+// const v0y = sy0 - out.tCenter[1];
+// const d0 = v0x * perpDir[0] + v0y * perpDir[1];
+
+// // if start is actually the +perp side, swap so end is +perp
+// if (d0 > 0) {
+//   const tx = sx0; const ty = sy0;
+//   sx0 = sx1; sy0 = sy1;
+//   sx1 = tx;  sy1 = ty;
+// }
+
+// out.sLineStart[0] = sx0;
+// out.sLineStart[1] = sy0;
+// out.sLineEnd[0] = sx1;
+// out.sLineEnd[1] = sy1;
+ 
+
+//   return out;
+// }
+
+
+ 
+
+
+
 
 export function getFrontStepsSagTrans(step, otherStep) {
   const centerPoint = _getCenterPoint_inPlace(step, otherStep);
@@ -945,6 +1254,90 @@ export function getCalcStep_inPlace(
 
   return outStep;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+export function getCalcStep_inPlace_Opt(
+  outStep, // pre-allocated array [x, y]
+  centerJoint,
+  forwardAngle,
+  // backwardAngle,
+  distanceOut,
+  stepWideness,
+  is1,
+  goingBackwards = false,
+ 
+) {
+  const piMultiplier = is1 ? 1 : -1;
+  const offset = (piMultiplier * Math.PI) / stepWideness;
+
+  // When going backwards, add/subtract 90 degrees based on which side
+  const backwardsOffset = goingBackwards
+    ? is1
+      ? Math.PI / 3
+      : -Math.PI / 3
+    : 0;
+
+ // const angle = goingBackwards ? backwardAngle : forwardAngle;
+  const effectiveAngle = forwardAngle + backwardsOffset;
+
+  outStep[0] = centerJoint[0] + Math.cos(effectiveAngle + offset) * distanceOut;
+  outStep[1] = centerJoint[1] + Math.sin(effectiveAngle + offset) * distanceOut;
+ 
+
+  return forwardAngle;
+}
+
+
+// gapoCenterAngle is forwardAngle of step which gets attached to stepTarget and passed in separately as gapCenterAngle
+// we flip the angle 180 degrees for this
+export function solveFingers_Opt(stepTarget, fingers, fingerLen, is1, manualAdj, stepAngle) {
+  const numFingers = fingers.length; // usually 5
+
+  // Base angle for the gap
+  let gapCenterAngle = stepAngle;
+
+  // Flip the angle to correct the backward gap
+  gapCenterAngle += Math.PI;
+
+  // Side offset: fingers point slightly outward depending on hand
+  const sideOffset = Math.PI / manualAdj; // adjust this to taste (small angle)
+  gapCenterAngle += is1 ? sideOffset : -sideOffset;
+
+  // Gap for the arm/wrist (adjustable)
+  const gapAngle = (2 * Math.PI) / 1.7; // <------ lower to shrink arc of fingers
+
+  const fanStart = gapCenterAngle + gapAngle / 2;
+  const fanEnd = gapCenterAngle + 2 * Math.PI - gapAngle / 2;
+  const fanAngle = fanEnd - fanStart; // remaining arc for fingers
+
+  // Place each finger evenly along the fan
+  for (let i = 0; i < numFingers; i++) {
+    const t = numFingers === 1 ? 0.5 : i / (numFingers - 1);
+    const angle = fanStart + t * fanAngle;
+
+    // Convert polar to Cartesian
+    const x = stepTarget[0] + Math.cos(angle) * fingerLen;
+    const y = stepTarget[1] + Math.sin(angle) * fingerLen;
+
+    fingers[i][0] = x;
+    fingers[i][1] = y;
+  }
+
+  return fingers;
+}
+
+
 
 // gapoCenterAngle is forwardAngle of step which gets attached to stepTarget and passed in separately as gapCenterAngle
 // we flip the angle 180 degrees for this

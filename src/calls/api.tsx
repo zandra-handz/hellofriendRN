@@ -501,7 +501,7 @@ export const fetchMomentsAPI = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`
     );
-     console.log(response.data);
+    //  console.log(response.data);
     if (response && response.data) { 
       const capsules = response.data.map((capsule: MomentFromBackendType) => ({
         id: capsule.id,
