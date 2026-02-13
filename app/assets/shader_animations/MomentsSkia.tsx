@@ -43,7 +43,6 @@
 //   Skia,
 // } from "@shopify/react-native-skia";
 
-
 //   let lastTime = global.performance.now();
 
 // export function beginFrameProfile() {
@@ -55,7 +54,6 @@
 //     console.log("⚠️ Frame over budget:", delta.toFixed(2), "ms");
 //   }
 // }
-
 
 // let last = global.performance?.now?.() ?? Date.now();
 // let worst = 0;
@@ -82,8 +80,6 @@
 //     lastReport = now;
 //   }
 // }
-
-
 
 // type Props = {
 //   color1: string;
@@ -199,7 +195,6 @@
 //     const newMoments = moments.current.moments;
 //     handleUpdateCoords(momentsData, newMoments);
 //   };
-
 
 //   const handleUpdateCoords = (oldMoments, newMoments) => {
 //     const formattedData = newMoments.map((moment) => ({
@@ -747,9 +742,14 @@
 // const MemoizedMomentsSkia = React.memo(MomentsSkia);
 // export default MemoizedMomentsSkia;
 
-
 import { View, StyleSheet } from "react-native";
-import React, { useEffect, useRef, useCallback, useState, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  useState,
+  useMemo,
+} from "react";
 import Soul from "./soulClass";
 import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
@@ -763,7 +763,11 @@ import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT } from "./shaderCode/geckoMomen
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MomentDotsResetterMini from "./MomentDotsResetterMini";
-import { runOnJS, useSharedValue, useDerivedValue } from "react-native-reanimated";
+import {
+  runOnJS,
+  useSharedValue,
+  useDerivedValue,
+} from "react-native-reanimated";
 
 import { useWindowDimensions } from "react-native";
 import {
@@ -775,7 +779,13 @@ import {
   packVec2Uniform_withRecenter_moments,
 } from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { Canvas, useCanvasSize, Shader, Rect, Skia } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  useCanvasSize,
+  Shader,
+  Rect,
+  Skia,
+} from "@shopify/react-native-skia";
 
 // ---------------------------------------------------------------------------
 // FPS monitor (prints once/sec). Keep while profiling; remove for production.
@@ -796,7 +806,9 @@ export function frameBudgetMonitor() {
   if (dt > 18) _over++;
 
   if (now - _lastReport >= 1000) {
-    console.log(`FPS≈${_frames}  over18ms=${_over}  worst=${_worst.toFixed(1)}ms`);
+    console.log(
+      `FPS≈${_frames}  over18ms=${_over}  worst=${_worst.toFixed(1)}ms`,
+    );
     _frames = 0;
     _over = 0;
     _worst = 0;
@@ -862,8 +874,6 @@ const MomentsSkia = ({
 
   const TOTAL_GECKO_POINTS_COMPACT = 56;
 
- 
-
   // ============== TRULY PREALLOCATED BUFFERS ==============
   // ✅ CHANGE #1: make big buffers typed arrays (no JS array objects)
   const workingBuffers = useRef({
@@ -878,10 +888,9 @@ const MomentsSkia = ({
     heldTemp: new Float32Array(2),
 
     // ✅ BIG BUFFERS as Float32Array
-   // geckoPoints: new Float32Array(TOTAL_GECKO_POINTS * 2),
- 
+    // geckoPoints: new Float32Array(TOTAL_GECKO_POINTS * 2),
 
-geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
+    geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
     moments: new Float32Array(MAX_MOMENTS * 2),
 
     // pass step target refs to moments.update without allocating
@@ -897,9 +906,15 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
   const hintUniformSV = useSharedValue<number[]>([0, 0]);
 
   // Big uniforms (still SharedValues, but we will only update them when needed)
-  const momentsUniformSV = useSharedValue<number[]>(Array(MAX_MOMENTS * 2).fill(0));
-  const heldMomentUniformSV = useSharedValue<number[]>(Array(MAX_HELD * 2).fill(0));
-  const geckoPointsUniformSV = useSharedValue<number[]>(Array(TOTAL_GECKO_POINTS * 2).fill(0));
+  const momentsUniformSV = useSharedValue<number[]>(
+    Array(MAX_MOMENTS * 2).fill(0),
+  );
+  const heldMomentUniformSV = useSharedValue<number[]>(
+    Array(MAX_HELD * 2).fill(0),
+  );
+  const geckoPointsUniformSV = useSharedValue<number[]>(
+    Array(TOTAL_GECKO_POINTS * 2).fill(0),
+  );
   const momentsLengthSV = useSharedValue(0);
 
   useFocusEffect(
@@ -915,7 +930,10 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
 
   useFocusEffect(
     useCallback(() => {
-      const subscription = BackHandler.addEventListener("hardwareBackPress", () => true);
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => true,
+      );
       return () => subscription.remove();
     }, []),
   );
@@ -998,9 +1016,19 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
   const leadPoint = useRef(new Mover(startingCoord));
   const gecko = useRef(new Gecko(startingCoord, 0.06));
   const sleepWalk0 = useRef(
-    new SleepWalk0([0.5, 0.3], 0.3, gecko_size, manualOnly, speedSetting, autoPickUp, randomMomentIds),
+    new SleepWalk0(
+      [0.5, 0.3],
+      0.3,
+      gecko_size,
+      manualOnly,
+      speedSetting,
+      autoPickUp,
+      randomMomentIds,
+    ),
   );
-  const moments = useRef(new Moments(momentsData, gecko_size, sleepWalk0, [0.5, 0.5], 0.05));
+  const moments = useRef(
+    new Moments(momentsData, gecko_size, sleepWalk0, [0.5, 0.5], 0.05),
+  );
 
   const handleGetMomentRef = useRef(handleGetMoment);
   useEffect(() => {
@@ -1035,7 +1063,12 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
       ${MOMENTS_BG_SKSL_OPT}
     `);
-  }, [color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted]);
+  }, [
+    color1Converted,
+    color2Converted,
+    bckgColor1Converted,
+    bckgColor2Converted,
+  ]);
 
   if (!source) {
     console.error("❌ Shader failed to compile");
@@ -1088,7 +1121,7 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
 
     momentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
     heldMomentUniformSV.value = Array(MAX_HELD * 2).fill(0);
-    geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS * 2).fill(0);
+    geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0);
     momentsLengthSV.value = 0;
 
     userPointSV.value = restPoint;
@@ -1151,7 +1184,10 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
 
       if (frameCountRef.current < sleepWalkAfter) {
         frameCountRef.current += 1;
-      } else if (frameCountRef.current === sleepWalkAfter && !gecko.current.sleepWalkMode) {
+      } else if (
+        frameCountRef.current === sleepWalkAfter &&
+        !gecko.current.sleepWalkMode
+      ) {
         gecko.current.updateSleepWalkMode(true);
       }
 
@@ -1192,10 +1228,14 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
       hintRef.current = spine.hintJoint || [0, 0];
 
       // step targets (no alloc)
-      workingBuffers.stepTargets[0] = gecko.current.legs.frontLegs.stepTargets[0];
-      workingBuffers.stepTargets[1] = gecko.current.legs.frontLegs.stepTargets[1];
-      workingBuffers.stepTargets[2] = gecko.current.legs.backLegs.stepTargets[0];
-      workingBuffers.stepTargets[3] = gecko.current.legs.backLegs.stepTargets[1];
+      workingBuffers.stepTargets[0] =
+        gecko.current.legs.frontLegs.stepTargets[0];
+      workingBuffers.stepTargets[1] =
+        gecko.current.legs.frontLegs.stepTargets[1];
+      workingBuffers.stepTargets[2] =
+        gecko.current.legs.backLegs.stepTargets[0];
+      workingBuffers.stepTargets[3] =
+        gecko.current.legs.backLegs.stepTargets[1];
 
       moments.current.update(
         userPointSV.value,
@@ -1216,29 +1256,67 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
       // ---------------------------------------------------------------------
       // ✅ CHANGE #2: ALWAYS update the SMALL uniforms (cheap)
       // ---------------------------------------------------------------------
-      toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, workingBuffers.soul, 0);
-      toShaderSpace_inplace(sleepWalk0.current.walk, aspect, gecko_scale, workingBuffers.walk, 0);
-      toShaderSpace_inplace(hintRef.current, aspect, gecko_scale, workingBuffers.hint, 0);
-      toShaderModel_inPlace(leadPoint.current.lead, aspect, gecko_scale, workingBuffers.lead, 0);
+      toShaderSpace_inplace(
+        soul.current.soul,
+        aspect,
+        gecko_scale,
+        workingBuffers.soul,
+        0,
+      );
+      toShaderSpace_inplace(
+        sleepWalk0.current.walk,
+        aspect,
+        gecko_scale,
+        workingBuffers.walk,
+        0,
+      );
+      toShaderSpace_inplace(
+        hintRef.current,
+        aspect,
+        gecko_scale,
+        workingBuffers.hint,
+        0,
+      );
+      toShaderModel_inPlace(
+        leadPoint.current.lead,
+        aspect,
+        gecko_scale,
+        workingBuffers.lead,
+        0,
+      );
 
       workingBuffers.selected[0] = moments.current.selected.coord[0];
       workingBuffers.selected[1] = moments.current.selected.coord[1];
 
       for (let i = 0; i < MAX_HELD; i++) {
-        toGeckoSpace_inPlace(moments.current.holdings[i].coord, gecko_scale, workingBuffers.heldTemp);
+        toGeckoSpace_inPlace(
+          moments.current.holdings[i].coord,
+          gecko_scale,
+          workingBuffers.heldTemp,
+        );
         workingBuffers.heldCoords[i * 2] = workingBuffers.heldTemp[0];
         workingBuffers.heldCoords[i * 2 + 1] = workingBuffers.heldTemp[1];
       }
 
-      toGeckoSpace_inPlace(moments.current.lastSelected.coord, gecko_scale, workingBuffers.lastSelected);
+      toGeckoSpace_inPlace(
+        moments.current.lastSelected.coord,
+        gecko_scale,
+        workingBuffers.lastSelected,
+      );
 
       // Update the small SharedValues every frame (tiny allocs, acceptable)
       soulUniformSV.value = [workingBuffers.soul[0], workingBuffers.soul[1]];
       walk0UniformSV.value = [workingBuffers.walk[0], workingBuffers.walk[1]];
       hintUniformSV.value = [workingBuffers.hint[0], workingBuffers.hint[1]];
       leadUniformSV.value = [workingBuffers.lead[0], workingBuffers.lead[1]];
-      selectedUniformSV.value = [workingBuffers.selected[0], workingBuffers.selected[1]];
-      lastSelectedUniformSV.value = [workingBuffers.lastSelected[0], workingBuffers.lastSelected[1]];
+      selectedUniformSV.value = [
+        workingBuffers.selected[0],
+        workingBuffers.selected[1],
+      ];
+      lastSelectedUniformSV.value = [
+        workingBuffers.lastSelected[0],
+        workingBuffers.lastSelected[1],
+      ];
 
       // ---------------------------------------------------------------------
       // ✅ CHANGE #3: Gate BIG uniform packing + copying
@@ -1255,11 +1333,12 @@ geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
         // workingBuffers.geckoPoints.fill(0);
         // packGeckoOnlyProd(gecko.current, workingBuffers.geckoPoints as any, gecko_scale);
 
-
         workingBuffers.geckoPoints.fill(0);
-packGeckoOnlyProdCompact56(gecko.current, workingBuffers.geckoPoints, gecko_scale);
-
- 
+        packGeckoOnlyProdCompact56(
+          gecko.current,
+          workingBuffers.geckoPoints,
+          gecko_scale,
+        );
 
         workingBuffers.moments.fill(0);
         packVec2Uniform_withRecenter_moments(
@@ -1271,11 +1350,11 @@ packGeckoOnlyProdCompact56(gecko.current, workingBuffers.geckoPoints, gecko_scal
         );
 
         // COPY ONLY WHEN NEEDED (this is where your GC spikes were coming from)
- 
+
         heldMomentUniformSV.value = Array.from(workingBuffers.heldCoords);
 
         // COPY ONLY WHEN NEEDED (your existing shouldUpdateBigUniforms gate)
- 
+
         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
         momentsUniformSV.value = Array.from(workingBuffers.moments);
 
@@ -1350,14 +1429,34 @@ packGeckoOnlyProdCompact56(gecko.current, workingBuffers.geckoPoints, gecko_scal
       <GestureDetector gesture={composedGesture}>
         <View style={StyleSheet.absoluteFill}>
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
-            <Rect x={0} y={0} width={size.width} height={size.height} color="lightblue">
-              <Shader style={{ backgroundColor: "transparent" }} source={sourceTwo} uniforms={uniforms} />
+            <Rect
+              x={0}
+              y={0}
+              width={size.width}
+              height={size.height}
+              color="lightblue"
+            >
+              <Shader
+                style={{ backgroundColor: "transparent" }}
+                source={sourceTwo}
+                uniforms={uniforms}
+              />
             </Rect>
           </Canvas>
 
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
-            <Rect x={0} y={0} width={size.width} height={size.height} color="lightblue">
-              <Shader style={{ backgroundColor: "transparent" }} source={source} uniforms={uniforms} />
+            <Rect
+              x={0}
+              y={0}
+              width={size.width}
+              height={size.height}
+              color="lightblue"
+            >
+              <Shader
+                style={{ backgroundColor: "transparent" }}
+                source={source}
+                uniforms={uniforms}
+              />
             </Rect>
           </Canvas>
         </View>
@@ -1370,10 +1469,16 @@ packGeckoOnlyProdCompact56(gecko.current, workingBuffers.geckoPoints, gecko_scal
           borderColor={lightDarkTheme.lighterOverlayBackground}
           momentsData={moments.current.moments}
           lastSelected={moments.current.lastSelected}
-          updatePaw={(moment, holdIndex) => moments.current.updateHold(moment, holdIndex)}
+          updatePaw={(moment, holdIndex) =>
+            moments.current.updateHold(moment, holdIndex)
+          }
           clearPaw={(holdIndex) => moments.current.clearHolding(holdIndex)}
-          autoUpdatePaw={(holdIndex) => moments.current.updateHold(moment, holdIndex)}
-          updateSelected={(holdIndex) => moments.current.updateSelected(holdIndex)}
+          autoUpdatePaw={(holdIndex) =>
+            moments.current.updateHold(moment, holdIndex)
+          }
+          updateSelected={(holdIndex) =>
+            moments.current.updateSelected(holdIndex)
+          }
           registerClearAll={(fn) => {
             clearAllPawsInUIRef.current = fn;
           }}
