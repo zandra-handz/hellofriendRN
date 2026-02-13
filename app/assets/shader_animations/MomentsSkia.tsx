@@ -913,7 +913,7 @@ const MomentsSkia = ({
     Array(MAX_HELD * 2).fill(0),
   );
   const geckoPointsUniformSV = useSharedValue<number[]>(
-    Array(TOTAL_GECKO_POINTS * 2).fill(0),
+    Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0),
   );
   const momentsLengthSV = useSharedValue(0);
 
