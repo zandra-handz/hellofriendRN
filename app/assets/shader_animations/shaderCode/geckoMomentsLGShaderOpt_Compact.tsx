@@ -294,13 +294,13 @@ uniform vec2 u_soul;
 uniform vec2 u_lead; 
 uniform vec2 u_hint; 
 
-// COMPACT: 42 vec2 - NO CHANGES
+// COMPACT: only 40 vec2 (was 56)
 uniform vec2 u_geckoPoints[40];
 
 float TWO_PI = 6.28318530718;
 
 // ------------------------------------------------
-// SDF helpers (unchanged)
+// SDF + glass helpers
 // ------------------------------------------------
 float distFCircle(vec2 uv, vec2 center, float radius) {
     return length(uv - center) - radius;
@@ -318,6 +318,18 @@ float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
     return length(pa - ba*h);
 }
 
+float sdfRect(float2 c, float2 s, float2 p, float r) {
+    float2 q = abs(p - c) - s;
+    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+float heightFunc(float sd, float thickness) {
+    if (sd >= 0.0) return 0.0;
+    if (sd < -thickness) return thickness;
+    float x = thickness + sd;
+    return sqrt(max(thickness * thickness - x*x, 0.0));
+}
+
 float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, float radius, float influence) {
     vec2 diff = uv - fingerPos;
     if (length(diff) < influence) {
@@ -329,24 +341,25 @@ float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, floa
 }
 
 // ------------------------------------------------
-// ✅ DERIVE other fingers from first finger position
+// Finger calculation function (derives angle from first finger)
 // ------------------------------------------------
 vec2 calculateFinger(vec2 stepTarget, vec2 firstFinger, int fingerIndex) {
     const int numFingers = 5;
     const float fingerLen = 0.02;
     
-    // ✅ Calculate base angle from first finger's actual position
+    // Calculate the base angle from the first finger's position
     vec2 diff = firstFinger - stepTarget;
-    float firstFingerAngle = atan(diff.y, diff.x);
+    float baseAngle = atan(diff.y, diff.x);
     
-    // The first finger is at fanStart, so work backwards from there
+    // Calculate the angular span for all 5 fingers
     float gapAngle = (2.0 * 3.14159265) / 1.7;
     float fanAngle = 2.0 * 3.14159265 - gapAngle;
     
-    // fingerIndex 0 = first finger (at fanStart)
-    // fingerIndex 4 = last finger (at fanStart + fanAngle)
+    // The first finger is at one edge of the fan
     float t = float(fingerIndex) / float(numFingers - 1);
-    float angle = firstFingerAngle + t * fanAngle;
+    float angleOffset = t * fanAngle;
+    
+    float angle = baseAngle + angleOffset;
     
     vec2 fingerPos;
     fingerPos.x = stepTarget.x + cos(angle) * fingerLen;
@@ -363,12 +376,23 @@ float3 sampleBackground(float2 fragCoord) {
 }
 
 // ------------------------------------------------
-// Gecko SDF Construction
+// Gecko SDF Construction (all body parts included)
 // ------------------------------------------------
 float buildGeckoSDF(vec2 gecko_uv, float s) {
     float circleSizeDiv = .8;
 
-    // Body circles (0-11)
+    // ============================================================
+    // INDEX REMAP (compact u_geckoPoints[40])
+    //
+    // Body(12):        indices 0-11
+    // Tail(12):        indices 12-23
+    // Steps(4):        indices 24-27
+    // Elbows(4):       indices 28-31
+    // Muscles(4):      indices 32-35
+    // FirstFingers(4): indices 36-39
+    // ============================================================
+
+    // Main body circles (0-11)
     float circle0  = distFCircle(gecko_uv, u_geckoPoints[0],  0.003 * s / circleSizeDiv);
     float circle1  = distFCircle(gecko_uv, u_geckoPoints[1],  0.019 * s / circleSizeDiv);
     float circle1b = distFCircle(gecko_uv, u_geckoPoints[2],  0.0   / circleSizeDiv);
@@ -484,50 +508,60 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     bodySDF = smoothMin(bodySDF, stepSDF3, stepBlend);
 
     // ------------------------------------------------
-    // ✅ Fingers - derive from first finger positions
+    // ✅ OPTIMIZED: Pre-calculate all finger positions ONCE
     // ------------------------------------------------
-    float fingerThickness = 0.0025 * s;
-    float fingerRadius    = 0.0045 * s;
-    float fingerInfluence = 0.02;
-
     vec2 stepFL = u_geckoPoints[24];
     vec2 stepFR = u_geckoPoints[25];
     vec2 stepBL = u_geckoPoints[26];
     vec2 stepBR = u_geckoPoints[27];
     
-    vec2 firstFingerFL = u_geckoPoints[36];  // First finger front left
-    vec2 firstFingerFR = u_geckoPoints[37];  // First finger front right
-    vec2 firstFingerBL = u_geckoPoints[38];  // First finger back left
-    vec2 firstFingerBR = u_geckoPoints[39];  // First finger back right
+    vec2 firstFingerFL = u_geckoPoints[36];
+    vec2 firstFingerFR = u_geckoPoints[37];
+    vec2 firstFingerBL = u_geckoPoints[38];
+    vec2 firstFingerBR = u_geckoPoints[39];
     
-    // Front left fingers - derive all 5 from firstFingerFL
+    // Pre-calculate all 20 finger positions (done ONCE, not per-pixel!)
+    vec2 fingersFL[5];
+    vec2 fingersFR[5];
+    vec2 fingersBL[5];
+    vec2 fingersBR[5];
+    
     for (int i = 0; i < 5; i++) {
-        vec2 fingerPos = calculateFinger(stepFL, firstFingerFL, i);
-        float sdf = fingerSDFFunc(gecko_uv, fingerPos, stepFL,
+        fingersFL[i] = calculateFinger(stepFL, firstFingerFL, i);
+        fingersFR[i] = calculateFinger(stepFR, firstFingerFR, i);
+        fingersBL[i] = calculateFinger(stepBL, firstFingerBL, i);
+        fingersBR[i] = calculateFinger(stepBR, firstFingerBR, i);
+    }
+    
+    // Now use pre-calculated positions for SDF
+    float fingerThickness = 0.0025 * s;
+    float fingerRadius    = 0.0045 * s;
+    float fingerInfluence = 0.02;
+    
+    // Front left fingers
+    for (int i = 0; i < 5; i++) {
+        float sdf = fingerSDFFunc(gecko_uv, fingersFL[i], stepFL,
                                   fingerThickness, fingerRadius, fingerInfluence);
         bodySDF = min(bodySDF, sdf);
     }
     
-    // Front right fingers - derive all 5 from firstFingerFR
+    // Front right fingers
     for (int i = 0; i < 5; i++) {
-        vec2 fingerPos = calculateFinger(stepFR, firstFingerFR, i);
-        float sdf = fingerSDFFunc(gecko_uv, fingerPos, stepFR,
+        float sdf = fingerSDFFunc(gecko_uv, fingersFR[i], stepFR,
                                   fingerThickness, fingerRadius, fingerInfluence);
         bodySDF = min(bodySDF, sdf);
     }
     
-    // Back left fingers - derive all 5 from firstFingerBL
+    // Back left fingers
     for (int i = 0; i < 5; i++) {
-        vec2 fingerPos = calculateFinger(stepBL, firstFingerBL, i);
-        float sdf = fingerSDFFunc(gecko_uv, fingerPos, stepBL,
+        float sdf = fingerSDFFunc(gecko_uv, fingersBL[i], stepBL,
                                   fingerThickness, fingerRadius, fingerInfluence);
         bodySDF = min(bodySDF, sdf);
     }
     
-    // Back right fingers - derive all 5 from firstFingerBR
+    // Back right fingers
     for (int i = 0; i < 5; i++) {
-        vec2 fingerPos = calculateFinger(stepBR, firstFingerBR, i);
-        float sdf = fingerSDFFunc(gecko_uv, fingerPos, stepBR,
+        float sdf = fingerSDFFunc(gecko_uv, fingersBR[i], stepBR,
                                   fingerThickness, fingerRadius, fingerInfluence);
         bodySDF = min(bodySDF, sdf);
     }
