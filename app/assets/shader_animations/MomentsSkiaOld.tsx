@@ -1,1192 +1,466 @@
-
-
-
-
-// NEWER OLD 
-// import { View, StyleSheet } from "react-native";
-// import React, {
-//   useEffect,
-//   useRef,
-//   useCallback,
-//   useState,
-//   useMemo,
-// } from "react";
-// import Soul from "./soulClass";
-// import Mover from "./leadPointClass";
-// import Gecko from "./geckoClass";
-// import Moments from "./momentsClass";
-// import { toRawSpace_inplace } from "./animUtils";
-// import { packGeckoOnly } from "./animUtils";
-// import { useClock } from "@shopify/react-native-skia";
-// import {
-//   MOMENTS_BG_SKSL,
-//   // GECKO_ONLY_TRANSPARENT_SKSL,
-//   // LIQUID_GLASS_MOMENTS_GECKO_GLSL,
-// } from "./shaderCode/geckoMomentsLGShader";
-// import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
-
-// import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
-
-// // import { MOMENTS_ONLY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
-// // import { GECKO_MOMENTS_NO_BG_GLSL } from "./shaderCode/transBackground.glsl";
-// // import { LIQUID_GLASS_MOMENTS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
-
-// // import { GECKO_MOMENTS_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
-// // import { LIQUID_GLASS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
-// // import { LIQUID_GLASS_STRIPES_BG } from "./shaderCode/liquidGlassShader.glsl";
-
-// import { BackHandler } from "react-native";
-// import { useFocusEffect } from "@react-navigation/native";
-// import MomentDotsResetterMini from "./MomentDotsResetterMini"; 
-// import { runOnJS, useSharedValue, useDerivedValue } from "react-native-reanimated";
- 
-// import { useWindowDimensions } from "react-native";
-
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import {
-//   hexToVec3,
-//   toShaderModel_inPlace,
-//   toShaderSpace_inplace,
-//   toGeckoPointer_inPlace,
-//   toShaderModel_arrays_inPlace,
-//   packVec2Uniform_withRecenter_moments,
-// } from "./animUtils";
-// import { Gesture, GestureDetector } from "react-native-gesture-handler";
-// import { 
-//   Canvas,
-//   useCanvasSize, 
-//   Shader,
-//   Rect,
-//   Skia,
-// } from "@shopify/react-native-skia";
-// import { Poppins_400Regular } from "@expo-google-fonts/poppins"; 
-
-// type Props = {
-//   color1: string;
-//   color2: string;
-//   bckgColor1: string;
-//   bckgColor2: string;
-//   momentsData: [];
-//   startingCoord: number[];
-//   restPoint: number[];
-//   scale: number;
-//   reset?: number | null;
-// };
-
-// // LIMIT OF 40 MOMENTS RIGHT NOW
-// // TO ALLOW FOR DYNAMIC UPDATING WOULD MEAN TO RESET SHADER EVERY SINGLE TIME WHICH CAN BE EXPENSIVE
-// // would do this in shader instead of current setup -->  uniform vec2 u_moments[${moments.length}];
-// const MomentsSkia = ({
-//   handleEditMoment,
-//   handleUpdateMomentCoords,
-//   handleGetMoment,
-//   color1,
-//   color2,
-//   bckgColor1,
-//   bckgColor2,
-//   momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y
-//   startingCoord,
-//   restPoint,
-//   scale = 1,
-//   gecko_scale = 1,
-//   lightDarkTheme,
-//   handleRescatterMoments,
-//   handleRecenterMoments,
-
-//   reset = 0,
-// }: Props) => { 
-
-//   const { width, height } = useWindowDimensions();
-//   const { ref, size } = useCanvasSize(); // size = { width, height }
-
-//   const updateTrigger = useSharedValue(0);
-
-//   // Use a ref to throttle setTime calls
-// const lastRenderRef = useRef(0);
-
-//   useFocusEffect(
-//     useCallback(() => {
-//       return () => {
-//         // screen is blurred
-//         isDragging.value = false;
-//       };
-//     }, []),
-//   );
-
-//   // DONT DELETE
-//   const insets = useSafeAreaInsets();
-//   useFocusEffect(
-//     useCallback(() => {
-//       const subscription = BackHandler.addEventListener(
-//         "hardwareBackPress",
-//         () => {
-//           // block system back
-//           return true;
-//         },
-//       );
-
-//       return () => {
-//         subscription.remove();
-//       };
-//     }, []),
-//   );
-
-//   const handleUpdateMomentsState = () => {
-//     const newMoments = moments.current.moments;
-//     handleUpdateCoords(momentsData, newMoments);
-//   };
-
-//   const handleUpdateCoords = (oldMoments, newMoments) => {
-//     const formattedData = newMoments.map((moment) => ({
-//       id: moment.id,
-//       screen_x: moment.coord[0],
-//       screen_y: moment.coord[1],
-//     }));
-//     handleUpdateMomentCoords(formattedData);
-//   };
-
-//   const userPointSV = useSharedValue(restPoint); 
-// const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
-
-//   const isDragging = useSharedValue(false); // tracks if screen is being touched
-
-//   // const gesture = Gesture.Pan()
-//   //   .onTouchesDown((e) => {
-//   //     // Finger just touched: mark dragging and update userPoint immediately
-//   //     isDragging.value = true;
-//   //     const touch = e.changedTouches[0];
-
-//   //     userPointSV.value = [touch.x / size.width, touch.y / size.height];
-   
-
-  
-//   //   })
-//   //   .onUpdate((e) => {
-//   //     // Normal drag update
-//   //     userPointSV.value = [e.x / size.width, e.y / size.height];
- 
-//   //   })
-//   //   .onEnd(() => {
-//   //     isDragging.value = false; // finger lifted
-//   //   })
-//   //   .onFinalize(() => {
-//   //     isDragging.value = false; // safety: ensure false if gesture cancelled
-//   //   });
-
-//   const onLongPress = () => {};
-
-//   const onDoublePress = () => {
-//     console.log(moments.current.lastSelected);
-//     handleGetMoment(moments.current.lastSelected?.id);
-//   };
-
-//   const panGesture = Gesture.Pan()
-//     .onTouchesDown((e) => {
-//       isDragging.value = true;
-//       const touch = e.changedTouches[0];
-
-//       userPointSV.value = [touch.x / size.width, touch.y / size.height];
-     
-//     })
-//     .onUpdate((e) => {
-//       userPointSV.value = [e.x / size.width, e.y / size.height];
-     
-//     })
-//     .onEnd(() => {
-//       isDragging.value = false;
-//     })
-//     .onFinalize(() => {
-//       isDragging.value = false;
-//     });
-
-//   const doubleTapGesture = Gesture.Tap()
-//     .numberOfTaps(2)
-//     .onEnd(() => runOnJS(onDoublePress)());
-
-//   const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture);
-
-//   // const longPressGesture = Gesture.LongPress()
-//   //   .minDuration(350)
-//   //   .onStart(() => {
-//   //     runOnJS(onLongPress)();
-//   //   });
- 
-//   const [time, setTime] = useState(0);
-//   const color1Converted = hexToVec3(color1);
-//   const color2Converted = hexToVec3(color2);
-
-//   const bckgColor1Converted = hexToVec3(bckgColor1);
-//   const bckgColor2Converted = hexToVec3(bckgColor2);
-
-//   const soul = useRef(new Soul(restPoint, 0.02));
-//   const leadPoint = useRef(new Mover(startingCoord));
-//   const gecko = useRef(new Gecko(startingCoord, 0.06));
-//   const moments = useRef(new Moments(momentsData, [0.5, 0.5], 0.05));
-
-
-
-  
-//   const [aspect, setAspect] = useState<number | null>(null);
- 
-
-//   useEffect(() => {
-//     setAspect(size.width / size.height);
-//   }, [size]);
-
-//   const SHARED_SKSL_PRELUDE = (
-//     c1: string,
-//     c2: string,
-//     b1: string,
-//     b2: string,
-//   ) => `
-//   vec3 startColor = vec3(${c1});
-//   vec3 endColor = vec3(${c2});
-
-//   vec3 backgroundStartColor = vec3(${b1});
-//   vec3 backgroundEndColor = vec3(${b2});
-// `;
-
-//   const source = useMemo(() => {
-//     return Skia.RuntimeEffect.Make(`
-//     ${SHARED_SKSL_PRELUDE(
-//       color1Converted,
-//       color2Converted,
-//       bckgColor1Converted,
-//       bckgColor2Converted,
-//     )}
-
-//     ${GECKO_ONLY_TRANSPARENT_SKSL_OPT}
-//   `);
-//   }, [
-//     color1Converted,
-//     color2Converted,
-//     bckgColor1Converted,
-//     bckgColor2Converted,
-//   ]);
-
-//   const sourceTwo = useMemo(() => {
-//     return Skia.RuntimeEffect.Make(`
-//     ${SHARED_SKSL_PRELUDE(
-//       color1Converted,
-//       color2Converted,
-//       bckgColor1Converted,
-//       bckgColor2Converted,
-//     )}
-
-//     ${MOMENTS_BG_SKSL_OPT}
-//   `);
-//   }, [
-//     color1Converted,
-//     color2Converted,
-//     bckgColor1Converted,
-//     bckgColor2Converted,
-//   ]);
-
-//   //   const source = Skia.RuntimeEffect.Make(`
-//   //     vec3 startColor = vec3(${color1Converted});
-//   //     vec3 endColor = vec3(${color2Converted});
-
-//   //         vec3 backgroundStartColor = vec3(${bckgColor1Converted});
-//   //         vec3 backgroundEndColor = vec3(${bckgColor2Converted});
-
-//   //    ${GECKO_ONLY_TRANSPARENT_SKSL}
-
-//   // `);
-
-//   //   const sourceTwo = Skia.RuntimeEffect.Make(`
-//   //     vec3 startColor = vec3(${color1Converted});
-//   //     vec3 endColor = vec3(${color2Converted});
-
-//   //         vec3 backgroundStartColor = vec3(${bckgColor1Converted});
-//   //         vec3 backgroundEndColor = vec3(${bckgColor2Converted});
-
-//   //    ${MOMENTS_BG_SKSL}
-
-//   // `);
-
-//   if (!source) {
-//     console.error("❌ Shader failed to compile");
-//     return null;
-//   }
-
-//   const start = useRef(Date.now());
-
-//   const NUM_SPINE_JOINTS = 15;
-//   const NUM_TAIL_JOINTS = 13;
-
-//   const TOTAL_SPINE = NUM_SPINE_JOINTS;
-// const TOTAL_TAIL = NUM_TAIL_JOINTS;
-// const TOTAL_FINGERS = 20; // 4 fingers each with 5 joints in your code
-
-// const TOTAL_GECKO_POINTS = 71;
-
-
-
-
-
-//   const snoutRef = useRef([0, 0]);
-//   const headRef = useRef([0, 0]);
-//   const hintRef = useRef([0, 0]); 
-
-//   const leadUniformRef = useRef(new Float32Array(2));
-//   const leadScreenSpaceUniformRef = useRef(new Float32Array(2));
-//   const soulUniformRef = useRef(new Float32Array(2));
-//   const selectedUniformRef = useRef(new Float32Array(2));
-//   const lastSelectedUniformRef = useRef(new Float32Array(2));
-//   const hintUniformRef = useRef(new Float32Array(2));
-
-//   const snoutUniformRef = useRef(new Float32Array(2));
-//   const headUniformRef = useRef(new Float32Array(2));
-
-//   const MAX_MOMENTS = 40;
-//   // Preallocate uniform arrays once at top-level inside component
-//   const jointsUniform = useRef(new Array(NUM_SPINE_JOINTS * 2).fill(0));
-//   const tailUniform = useRef(new Array(NUM_TAIL_JOINTS * 2).fill(0));
-//   const stepsUniform = useRef(new Array(4 * 2).fill(0));
-//   const elbowsUniform = useRef(new Array(4 * 2).fill(0));
-//   const shouldersUniform = useRef(new Array(4 * 2).fill(0));
-//   const musclesUniform = useRef(new Array(8 * 2).fill(0));
-//   const fingersUniform = useRef(new Array(20 * 2).fill(0));
-//   const momentsUniform = useRef(new Array(MAX_MOMENTS * 2).fill(0));
-//   const geckoPointsUniform = useRef(new Array(TOTAL_GECKO_POINTS * 2).fill(0));
-// // const geckoPointsUniform = useRef(
-// //   new Float32Array(TOTAL_GECKO_POINTS * 2)
-// // );
- 
- 
- 
-//   const clearUniformArray = (arr: number[]) => {
-//   arr.fill(0);
-// };
-
-// const clearVec2 = (v: Float32Array | number[]) => {
-//   v[0] = 0;
-//   v[1] = 0;
-// };
- 
-
-//   const [internalReset, setInternalReset] = useState(Date.now());
-//   const handleReset = () => {
-//     setInternalReset(Date.now());
-//   };
-
-//   useEffect(() => {
-//     moments.current.updateAllCoords(momentsData);
-//   }, [momentsData, internalReset]);
-
-// useEffect(() => {
-//   if (!internalReset && !reset) return;
-
-//   // reset time
-//   start.current = Date.now();
-//   setTime(0);
-
-//   // recreate simulation objects
-//   moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
-//   soul.current = new Soul(restPoint, 0.02);
-//   leadPoint.current = new Mover(startingCoord);
-//   gecko.current = new Gecko(startingCoord, 0.06);
-
-//   // clear ALL shader-backed arrays (CRITICAL)
-//   clearUniformArray(jointsUniform.current);
-//   clearUniformArray(tailUniform.current);
-//   clearUniformArray(stepsUniform.current);
-//   clearUniformArray(elbowsUniform.current);
-//   clearUniformArray(shouldersUniform.current);
-//   clearUniformArray(musclesUniform.current);
-//   clearUniformArray(fingersUniform.current);
-//   clearUniformArray(momentsUniform.current);
-
-//   // clear vec2 uniforms
-//   clearVec2(leadUniformRef.current);
-//   clearVec2(leadScreenSpaceUniformRef.current);
-//   clearVec2(soulUniformRef.current);
-//   clearVec2(selectedUniformRef.current);
-//   clearVec2(lastSelectedUniformRef.current);
-//   clearVec2(hintUniformRef.current);
-//   clearVec2(snoutUniformRef.current);
-//   clearVec2(headUniformRef.current);
-
-//   // reset input state
-//   userPointSV.value = restPoint;
-//   userPoint_geckoSpaceRef.current[0] = startingCoord[0];
-//   userPoint_geckoSpaceRef.current[1] = startingCoord[1];
-
-//   // reset uniforms metadata
-//   // uniformsRef.current.u_time = 0;
-//    uniformsRef.current.u_time = 0;
-//   uniformsRef.current.u_momentsLength = 0;
-
-// }, [reset, internalReset]);
-
-
- 
- 
-// useEffect(() => {
-//   let cancelled = false;
-//   let frame;
-
-//   const animate = () => {
-//     if (cancelled) return;
-
-//     if (aspect == null) {
-//   frame = requestAnimationFrame(animate);
-//   return;
-// }
-
-
-
-
-    
-
-// if (leadPoint.current.isMoving || isDragging.value) {
-//   const now = Date.now();
-//   if (now - lastRenderRef.current > 16) { // ~60fps
-//     setTime(now);
-//     lastRenderRef.current = now;
-
-//       updateTrigger.value += 1;
-  
-//   }
-// }
-
-
- 
-
-//     toGeckoPointer_inPlace(
-//     userPointSV.value,
-//     aspect,
-//     scale,
-//     userPoint_geckoSpaceRef.current, 
-//     0
-//   );
-//     frame = requestAnimationFrame(animate);
-
-//     // SOUL AND GECKO ENTER ANIMATION
-//     if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
-//       gecko.current.updateEnter(soul.current.done);
-//     } else {
-//       soul.current.update();
-//     }
-    
-//     // LEAD POINT
-//     if (gecko.current.oneTimeEnterComplete) {
- 
-
-  
-  
-      
-//   //leadPoint.current.update(userPointSV.value);
-//   leadPoint.current.update(   userPoint_geckoSpaceRef.current);
-//     } else {
-//       leadPoint.current.update(soul.current.soul);
-//     }
-
-//     // BODY AND LEGS
-//     gecko.current.update(
-//       leadPoint.current.lead,
-//       leadPoint.current.leadDistanceTraveled,
-//       leadPoint.current.isMoving
-//     );
-
-//     const spine = gecko.current.body.spine;
-//     const tail = gecko.current.body.tail;  
- 
-//     snoutRef.current = spine.unchainedJoints[0] || [0, 0];
-//     headRef.current = spine.unchainedJoints[1] || [0, 0];
-//     hintRef.current = spine.hintJoint || [0, 0];
- 
-//     moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, gecko.current.legs.frontLegs.stepTargets[1]);
- 
-//     // In place packers
-
-//     // SPINE AND TAILS
-//     toShaderModel_arrays_inPlace(spine.joints, jointsUniform.current, NUM_SPINE_JOINTS, aspect, gecko_scale);
-//     toShaderModel_arrays_inPlace(tail.joints, tailUniform.current, NUM_TAIL_JOINTS, aspect, gecko_scale);
-
-//     // STEPS
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.stepTargets, stepsUniform.current, 2, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.stepTargets, stepsUniform.current, 2, aspect, gecko_scale, 2);
-
-//     // ELBOWS
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.elbows, elbowsUniform.current, 2, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.elbows, elbowsUniform.current, 2, aspect, gecko_scale, 2);
- 
-//      // SHOULDERS (doing individually... should I make a different function for these?)
-//     toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.rotatorJoint1, shouldersUniform.current, 1, aspect, gecko_scale, 1);
-//     toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 2);
-//     toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 3);
-
-//     toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.muscles,  musclesUniform.current, 4, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.muscles,  musclesUniform.current, 4, aspect, gecko_scale, 4); 
-   
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.fingers[0], fingersUniform.current, 5, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.fingers[1], fingersUniform.current, 5, aspect, gecko_scale, 5);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.fingers[0], fingersUniform.current, 5, aspect, gecko_scale, 10);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.fingers[1], fingersUniform.current, 5, aspect, gecko_scale, 15);
-
-//     // lead point is in pixel space/will map to user pointer
-//     // toShaderSpace_inplace(leadPoint.current.lead, aspect, scale, leadUniformRef.current, 0);
-//     toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, soulUniformRef.current, 0);
-//     toShaderSpace_inplace(hintRef.current, aspect, gecko_scale, hintUniformRef.current, 0);
-
-//     // gecko in internal space 
-//     toShaderModel_inPlace(leadPoint.current.lead, aspect, gecko_scale, leadUniformRef.current, 0);
-//     toShaderSpace_inplace(leadPoint.current.lead, aspect, scale, leadScreenSpaceUniformRef.current, 0);
-    
-//     toShaderModel_inPlace(snoutRef.current, aspect, gecko_scale, snoutUniformRef.current, 0);
-//     toShaderModel_inPlace(headRef.current, aspect, gecko_scale, headUniformRef.current, 0);
-
-//     toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, selectedUniformRef.current, 0);
-  
-//     toShaderSpace_inplace(moments.current.lastSelected.coord, aspect, scale, lastSelectedUniformRef.current, 0);
- 
-//     // console.log(gecko.current);
-//     //console.log(geckoPointsUniform.current.length);
-     
-// packGeckoOnly(
-//   gecko.current,
-//   geckoPointsUniform.current,
-//   gecko_scale
-// );
- 
-
-// // console.log('Gecko points array length:', geckoPointsUniform.current.length);
-// // console.log('Gecko points array type:', geckoPointsUniform.current.constructor.name);
-// // console.log('First 10 values:', Array.from(geckoPointsUniform.current).slice(0, 10));
-
-// // // Also check the uniforms object
-// // console.log('Uniforms u_geckoPoints length:', uniformsRef.current.u_geckoPoints.length);
-// // console.log('Uniforms u_geckoPoints type:', uniformsRef.current.u_geckoPoints.constructor.name);
-
-// // console.log(geckoPointsUniform.current);
-
-// // uniformsRef.current.u_geckoPoints = geckoPointsUniform.current;
-
-//     packVec2Uniform_withRecenter_moments(moments.current.moments, momentsUniform.current, moments.current.momentsLength, aspect, scale);
-// // console.log(momentsUniform.current);
-//     //uniformsRef.current.u_lead = leadPoint.current.lead;
-//     uniformsRef.current.u_scale = scale;
-//     uniformsRef.current.u_gecko_scale = gecko_scale;
-//     uniformsRef.current.u_aspect = aspect;
-//     uniformsRef.current.u_resolution[0] = size.width;
-//     uniformsRef.current.u_resolution[1] = size.height;
-//     //     uniformsRef.current.u_resolution[0] = width;
-//     // uniformsRef.current.u_resolution[1] = height;
-//     uniformsRef.current.u_momentsLength = moments.current.momentsLength;
-
-//     uniformsRef.current.u_lastSelected = moments.current.lastSelected.coord;
-   
- 
-//   };
-
-
-
-
-//   animate();
-
-//   return () => {
-//     cancelled = true;
-//     if (frame) cancelAnimationFrame(frame);
-//   };
-// }, [aspect, gecko_scale, scale, size.width, size.height ]);
-
-
-//   const uniformsRef = useRef({
-//   u_scale: 1,
-//   u_gecko_scale: 1,
-//   u_time: 0,
-//   u_resolution: [1, 1],
-//   u_aspect: 1,
-
-//   u_lead: leadUniformRef.current,
-//   u_lead_screen_space: leadScreenSpaceUniformRef.current,
-//   u_soul: soulUniformRef.current,
-//   u_selected: selectedUniformRef.current,
-//   // u_lastSelected: moments.current.lastSelected.coord,
-//   u_lastSelected: lastSelectedUniformRef.current,
-
-//   u_snout: snoutUniformRef.current,
-//   u_head: headUniformRef.current,
-//   u_hint: hintUniformRef.current,
-//   u_momentsLength: 0,
-
-//   u_joints: jointsUniform.current,
-//   u_tail: tailUniform.current,
-//   u_steps: stepsUniform.current,
-//   u_elbows: elbowsUniform.current,
-//   u_shoulders: shouldersUniform.current,
-//   u_muscles: musclesUniform.current,
-//   u_fingers: fingersUniform.current,
-//   u_moments: momentsUniform.current,
-//   u_geckoPoints: geckoPointsUniform.current,
-// });
-
-
- 
-
-// // // Derive uniforms - creates NEW object each time updateTrigger changes
-// // const uniforms = useDerivedValue(() => {
-// //   // This reads updateTrigger, so it re-runs when it changes
-// //   updateTrigger.value;
-  
-// //   // Return a NEW object every time
-// //   return {
-// //     u_time: (Date.now() - start.current) / 1000,
-// //     u_scale: scale,
-// //     u_gecko_scale: gecko_scale,
-// //     u_aspect: aspect,
-// //     u_resolution: [size.width, size.height],
-// //     u_momentsLength: moments.current.momentsLength,
-    
-// //     // These point to the same arrays, but the OBJECT is new
-// //     u_geckoPoints: geckoPointsUniform.current,
-// //     u_joints: jointsUniform.current,
-// //     u_tail: tailUniform.current,
-// //     u_steps: stepsUniform.current,
-// //     u_elbows: elbowsUniform.current,
-// //     u_shoulders: shouldersUniform.current,
-// //     u_muscles: musclesUniform.current,
-// //     u_fingers: fingersUniform.current,
-// //     u_moments: momentsUniform.current,
-// //     u_lead: leadUniformRef.current,
-// //     u_soul: soulUniformRef.current,
-// //     u_selected: selectedUniformRef.current,
-// //     u_lastSelected: lastSelectedUniformRef.current,
-// //     u_snout: snoutUniformRef.current,
-// //     u_head: headUniformRef.current,
-// //     u_hint: hintUniformRef.current,
+// // import { View, StyleSheet } from "react-native";
+// // import React, {
+// //   useEffect,
+// //   useRef,
+// //   useCallback,
+// //   useState,
+// //   useMemo,
+// // } from "react";
+// // import Soul from "./soulClass";
+// // import SleepWalk0 from "./sleepWalkOneClass";
+// // import Mover from "./leadPointClass";
+// // import Gecko from "./geckoClass";
+// // import Moments from "./momentsClass";
+// // import { packGeckoOnly, packGeckoOnlyProd } from "./animUtils";
+// // import PawSetter from "@/app/screens/fidget/PawSetter";
+// // import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
+// // import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
+
+// // import { BackHandler } from "react-native";
+// // import { useFocusEffect } from "@react-navigation/native";
+// // import MomentDotsResetterMini from "./MomentDotsResetterMini";
+// // import {
+// //   runOnJS,
+// //   useSharedValue,
+// //   useDerivedValue,
+// // } from "react-native-reanimated";
+
+// // import { useWindowDimensions } from "react-native";
+// // import {
+// //   hexToVec3,
+// //   toShaderModel_inPlace,
+// //   toShaderSpace_inplace,
+// //   toGeckoSpace_inPlace,
+// //   toGeckoPointerScaled_inPlace,
+// //   packVec2Uniform_withRecenter_moments,
+// // } from "./animUtils";
+// // import { Gesture, GestureDetector } from "react-native-gesture-handler";
+// // import {
+// //   Canvas,
+// //   useCanvasSize,
+// //   Shader,
+// //   Rect,
+// //   Skia,
+// // } from "@shopify/react-native-skia";
+
+// //   let lastTime = global.performance.now();
+
+// // export function beginFrameProfile() {
+// //   const now = global.performance.now();
+// //   const delta = now - lastTime;
+// //   lastTime = now;
+
+// //   if (delta > 18) {
+// //     console.log("⚠️ Frame over budget:", delta.toFixed(2), "ms");
+// //   }
+// // }
+
+// // let last = global.performance?.now?.() ?? Date.now();
+// // let worst = 0;
+// // let over = 0;
+// // let frames = 0;
+// // let lastReport = last;
+
+// // export function frameBudgetMonitor() {
+// //   const now = global.performance?.now?.() ?? Date.now();
+// //   const dt = now - last;
+// //   last = now;
+
+// //   frames++;
+// //   if (dt > worst) worst = dt;
+// //   if (dt > 18) over++;
+
+// //   if (now - lastReport >= 1000) {
+// //     console.log(
+// //       `FPS≈${frames}  over18ms=${over}  worst=${worst.toFixed(1)}ms`
+// //     );
+// //     frames = 0;
+// //     over = 0;
+// //     worst = 0;
+// //     lastReport = now;
+// //   }
+// // }
+
+// // type Props = {
+// //   color1: string;
+// //   color2: string;
+// //   bckgColor1: string;
+// //   bckgColor2: string;
+// //   momentsData: [];
+// //   startingCoord: number[];
+// //   restPoint: number[];
+// //   scale: number;
+// //   reset?: number | null;
+// // };
+
+// // const MomentsSkia = ({
+// //   handleEditMoment,
+// //   handleUpdateMomentCoords,
+// //   handleGetMoment,
+// //   color1,
+// //   color2,
+// //   bckgColor1,
+// //   bckgColor2,
+// //   momentsData = [],
+// //   startingCoord,
+// //   restPoint,
+// //   scale = 1,
+// //   gecko_scale = 1,
+// //   gecko_size = 1.2,
+// //   lightDarkTheme,
+// //   handleRescatterMoments,
+// //   handleToggleManual,
+// //   handleRecenterMoments,
+// //   manualOnly,
+// //   speedSetting,
+// //   autoPickUp,
+// //   randomMomentIds,
+// //   reset = 0,
+// // }: Props) => {
+// //   const { width, height } = useWindowDimensions();
+// //   const { ref, size } = useCanvasSize();
+
+// //   const [aspect, setAspect] = useState<number>(width / height);
+
+// //   useEffect(() => {
+// //     if (size && size.width > 0 && size.height > 0) {
+// //       const newAspect = size.width / size.height;
+// //       setAspect(newAspect);
+// //     }
+// //   }, [size]);
+
+// //   const updateTrigger = useSharedValue(0);
+// //   const lastRenderRef = useRef(0);
+// //   const isPausedRef = useRef(false);
+
+// //   const TOTAL_GECKO_POINTS = 71;
+// //   const MAX_MOMENTS = 40;
+// //   const MAX_HELD = 4;
+
+// //   // ============== TRULY PREALLOCATED BUFFERS ==============
+// //   // These are reused every frame - NO allocations in animate()
+// //   const workingBuffers = useRef({
+// //     soul: new Float32Array(2),
+// //     walk: new Float32Array(2),
+// //     hint: new Float32Array(2),
+// //     lead: new Float32Array(2),
+// //     selected: new Float32Array(2),
+// //     lastSelected: new Float32Array(2),
+// //     heldCoords: new Float32Array(MAX_HELD * 2),
+// //     heldTemp: new Float32Array(2),
+// //     geckoPoints: new Array(TOTAL_GECKO_POINTS * 2).fill(0),
+// //     moments: new Array(MAX_MOMENTS * 2).fill(0),
+// //     stepTargets: [null, null, null, null], // <-- ADD THIS
+// //   }).current;
+// //   // Shared values - these will receive NEW arrays only when we update them
+// //   const leadUniformSV = useSharedValue<number[]>([0, 0]);
+// //   const soulUniformSV = useSharedValue<number[]>([0, 0]);
+// //   const walk0UniformSV = useSharedValue<number[]>([0, 0]);
+// //   const selectedUniformSV = useSharedValue<number[]>([0, 0]);
+// //   const lastSelectedUniformSV = useSharedValue<number[]>([0, 0]);
+// //   const hintUniformSV = useSharedValue<number[]>([0, 0]);
+// //   const momentsUniformSV = useSharedValue<number[]>(
+// //     Array(MAX_MOMENTS * 2).fill(0),
+// //   );
+// //   const heldMomentUniformSV = useSharedValue<number[]>(
+// //     Array(MAX_HELD * 2).fill(0),
+// //   );
+// //   const geckoPointsUniformSV = useSharedValue<number[]>(
+// //     Array(TOTAL_GECKO_POINTS * 2).fill(0),
+// //   );
+// //   const momentsLengthSV = useSharedValue(0);
+
+// //   useFocusEffect(
+// //     useCallback(() => {
+// //       isPausedRef.current = false;
+// //       updateTrigger.value += 1;
+// //       return () => {
+// //         isPausedRef.current = true;
+// //         isDragging.value = false;
+// //       };
+// //     }, []),
+// //   );
+
+// //   useFocusEffect(
+// //     useCallback(() => {
+// //       const subscription = BackHandler.addEventListener(
+// //         "hardwareBackPress",
+// //         () => true,
+// //       );
+// //       return () => subscription.remove();
+// //     }, []),
+// //   );
+
+// //   const handleUpdateMomentsState = () => {
+// //     const newMoments = moments.current.moments;
+// //     handleUpdateCoords(momentsData, newMoments);
 // //   };
-// // }, [scale, gecko_scale, aspect, size.width, size.height]);
-
-
-
-//   return (
-//     <>
-//       <GestureDetector gesture={composedGesture}>
-//         <View style={StyleSheet.absoluteFill}>
-//           <Canvas
-//             ref={ref}
-//             style={[
-//               StyleSheet.absoluteFill,
-//             ]}
-//           >
-//             <Rect
-//               x={0}
-//               y={0}
-//               width={size.width}
-//               height={size.height}
-//               color="lightblue"
-//             >
-//               <Shader
-//                 style={{ backgroundColor: "transparent" }}
-//                 source={sourceTwo}
-//                 uniforms={uniformsRef.current}
-//               ></Shader>
-//             </Rect>
-//           </Canvas>
-
-
-
-
-
-
-// {/* <Canvas
-//   ref={ref}
-//   style={StyleSheet.absoluteFill}
-//   onTouchStart={(e) => {
-//     console.log('touch start!')
-//     isDragging.value = true;
-//     const t = e.nativeEvent.touches[0];
-//     userPointSV.value = [t.locationX / size.width, t.locationY / size.height];
-//        console.log(`neeeeeeeeeew`,userPointSV.value);
-//   }}
-//   onTouchMove={(e) => {
-//     const t = e.nativeEvent.touches[0];
-//     userPointSV.value = [t.locationX / size.width, t.locationY / size.height];
-//        console.log(`nnnnnnnnew`,userPointSV.value);
-//   }}
-//   onTouchEnd={() => {
-//     isDragging.value = false;
-//   }}
-// >
-//   <Rect
-//     x={0}
-//     y={0}
-//     width={size.width}
-//     height={size.height}
-//     color="lightBlue"
-//   >
-//     <Shader   style={{ backgroundColor: "transparent" }} source={source} uniforms={uniformsRef.current} />
-//   </Rect>
-// </Canvas> */}
-
-
-
-          
-
-//           <Canvas
-//             ref={ref}
-//             style={[
-//               StyleSheet.absoluteFill,
-//             ]}
-//           >
-//             <Rect
-//               x={0}
-//               y={0}
-//               width={size.width}
-//               height={size.height}
-//               color="lightblue"
-//             >
-//               <Shader
-//                 style={{ backgroundColor: "transparent" }}
-//                 source={source}
-//                 uniforms={uniformsRef.current}
-//               ></Shader>
-//             </Rect>
-//           </Canvas>
-//         </View>
-//       </GestureDetector>
-//       <View style={styles.resetterContainer}>
-//         <MomentDotsResetterMini
-//           onBackPress={handleUpdateMomentsState}
-//           onCenterPress={handleRecenterMoments}
-//           onUndoPress={handleReset}
-//           primaryColor={lightDarkTheme.primaryText}
-//           borderColor={lightDarkTheme.lighterOverlayBackground}
-//           primaryBackground={lightDarkTheme.primaryBackground}
-//           onPress={handleRescatterMoments}
-//         />
-//       </View>
-//     </>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   resetterContainer: { position: "absolute", bottom: 200, right: 16 },
- 
-// });
-
-// // export default MomentsSkia;
-
-// const MemoizedMomentsSkia = React.memo(MomentsSkia);
-// export default MemoizedMomentsSkia;
-
-
-
-
-
-// import { View, StyleSheet } from "react-native";
-// import React, {
-//   useEffect,
-//   useRef,
-//   useCallback,
-//   useState,
-//   useMemo,
-// } from "react";
-// import Soul from "./soulClass";
-// import Mover from "./leadPointClass";
-// import Gecko from "./geckoClass";
-// import Moments from "./momentsClass";
-// import {
-//   MOMENTS_BG_SKSL,
-//   // GECKO_ONLY_TRANSPARENT_SKSL,
-//   // LIQUID_GLASS_MOMENTS_GECKO_GLSL,
-// } from "./shaderCode/geckoMomentsLGShader";
-// import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
-
-// import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
-
-// // import { MOMENTS_ONLY_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
-// // import { GECKO_MOMENTS_NO_BG_GLSL } from "./shaderCode/transBackground.glsl";
-// // import { LIQUID_GLASS_MOMENTS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
-
-// // import { GECKO_MOMENTS_GLSL } from "./shaderCode/geckoMomentsShader.glsl";
-// // import { LIQUID_GLASS_GLSL } from "./shaderCode/liquidGlassShader.glsl";
-// // import { LIQUID_GLASS_STRIPES_BG } from "./shaderCode/liquidGlassShader.glsl";
-
-// import { BackHandler } from "react-native";
-// import { useFocusEffect } from "@react-navigation/native";
-// import MomentDotsResetterMini from "./MomentDotsResetterMini"; 
-// import { runOnJS, useSharedValue } from "react-native-reanimated";
-// import { useWindowDimensions } from "react-native";
-
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import {
-//   hexToVec3,
-//   toShaderModel_inPlace,
-//   toShaderSpace_inplace,
-//   toShaderModel_arrays_inPlace,
-//   packVec2Uniform_withRecenter_moments,
-//   screenToGeckoSpace_inPlace,
-// } from "./animUtils";
-// import { Gesture, GestureDetector } from "react-native-gesture-handler";
-// import { 
-//   Canvas,
-//   useCanvasSize, 
-//   Shader,
-//   Rect,
-//   Skia,
-// } from "@shopify/react-native-skia";
-// import { Poppins_400Regular } from "@expo-google-fonts/poppins"; 
-
-// type Props = {
-//   color1: string;
-//   color2: string;
-//   bckgColor1: string;
-//   bckgColor2: string;
-//   momentsData: [];
-//   startingCoord: number[];
-//   restPoint: number[];
-//   scale: number;
-//   reset?: number | null;
-// };
-
-// // LIMIT OF 40 MOMENTS RIGHT NOW
-// // TO ALLOW FOR DYNAMIC UPDATING WOULD MEAN TO RESET SHADER EVERY SINGLE TIME WHICH CAN BE EXPENSIVE
-// // would do this in shader instead of current setup -->  uniform vec2 u_moments[${moments.length}];
-// const MomentsSkia = ({
-//   handleEditMoment,
-//   handleUpdateMomentCoords,
-//   handleGetMoment,
-//   color1,
-//   color2,
-//   bckgColor1,
-//   bckgColor2,
-//   momentsData = [], //mapped list of capsuleList with just the id and a field combining x and y
-//   startingCoord,
-//   restPoint,
-//   scale = 1,
-//   gecko_scale = 1,
-//   lightDarkTheme,
-//   handleRescatterMoments,
-//   handleRecenterMoments,
-
-//   reset = 0,
-// }: Props) => {
-//   // console.log(momentsData);
-
-//   const { width, height } = useWindowDimensions();
-//   const { ref, size } = useCanvasSize(); // size = { width, height }
-
-//   useFocusEffect(
-//     useCallback(() => {
-//       return () => {
-//         // screen is blurred
-//         isDragging.value = false;
-//       };
-//     }, []),
-//   );
-
-//   // DONT DELETE
-//   const insets = useSafeAreaInsets();
-//   useFocusEffect(
-//     useCallback(() => {
-//       const subscription = BackHandler.addEventListener(
-//         "hardwareBackPress",
-//         () => {
-//           // block system back
-//           return true;
-//         },
-//       );
-
-//       return () => {
-//         subscription.remove();
-//       };
-//     }, []),
-//   );
-
-//   const handleUpdateMomentsState = () => {
-//     const newMoments = moments.current.moments;
-//     handleUpdateCoords(momentsData, newMoments);
-//   };
-
-//   const handleUpdateCoords = (oldMoments, newMoments) => {
-//     const formattedData = newMoments.map((moment) => ({
-//       id: moment.id,
-//       screen_x: moment.coord[0],
-//       screen_y: moment.coord[1],
-//     }));
-//     handleUpdateMomentCoords(formattedData);
-//   };
-
-//   const userPointSV = useSharedValue(restPoint);
-
-//   const isDragging = useSharedValue(false); // tracks if screen is being touched
-
-//   const gesture = Gesture.Pan()
-//     .onTouchesDown((e) => {
-//       // Finger just touched: mark dragging and update userPoint immediately
-//       isDragging.value = true;
-//       const touch = e.changedTouches[0];
-
-//       userPointSV.value = [touch.x / size.width, touch.y / size.height];
-//     })
-//     .onUpdate((e) => {
-//       // Normal drag update
-//       userPointSV.value = [e.x / size.width, e.y / size.height];
-//     })
-//     .onEnd(() => {
-//       isDragging.value = false; // finger lifted
-//     })
-//     .onFinalize(() => {
-//       isDragging.value = false; // safety: ensure false if gesture cancelled
-//     });
-
-//   const onLongPress = () => {};
-
-//   const onDoublePress = () => {
-//     console.log(moments.current.lastSelected);
-//     handleGetMoment(moments.current.lastSelected?.id);
-//   };
-
-//   const panGesture = Gesture.Pan()
-//     .onTouchesDown((e) => {
-//       isDragging.value = true;
-//       const touch = e.changedTouches[0];
-
-//       userPointSV.value = [touch.x / size.width, touch.y / size.height];
-//     })
-//     .onUpdate((e) => {
-//       userPointSV.value = [e.x / size.width, e.y / size.height];
-//     })
-//     .onEnd(() => {
-//       isDragging.value = false;
-//     })
-//     .onFinalize(() => {
-//       isDragging.value = false;
-//     });
-
-//   const doubleTapGesture = Gesture.Tap()
-//     .numberOfTaps(2)
-//     .onEnd(() => runOnJS(onDoublePress)());
-
-//   const composedGesture = Gesture.Simultaneous(panGesture, doubleTapGesture);
-
-//   // const longPressGesture = Gesture.LongPress()
-//   //   .minDuration(350)
-//   //   .onStart(() => {
-//   //     runOnJS(onLongPress)();
-//   //   });
-
-//   const [time, setTime] = useState(0);
-//   const color1Converted = hexToVec3(color1);
-//   const color2Converted = hexToVec3(color2);
-
-//   const bckgColor1Converted = hexToVec3(bckgColor1);
-//   const bckgColor2Converted = hexToVec3(bckgColor2);
-
-//   const soul = useRef(new Soul(restPoint, 0.02));
-//   const leadPoint = useRef(new Mover(startingCoord));
-//   const gecko = useRef(new Gecko(startingCoord, 0.06));
-//   const moments = useRef(new Moments(momentsData, [0.5, 0.5], 0.05));
-
-//   const [aspect, setAspect] = useState<number | null>(null);
-
-//   useEffect(() => {
-//     setAspect(size.width / size.height);
-//   }, [size]);
-
-//   const SHARED_SKSL_PRELUDE = (
-//     c1: string,
-//     c2: string,
-//     b1: string,
-//     b2: string,
-//   ) => `
-//   vec3 startColor = vec3(${c1});
-//   vec3 endColor = vec3(${c2});
-
-//   vec3 backgroundStartColor = vec3(${b1});
-//   vec3 backgroundEndColor = vec3(${b2});
-// `;
-
-//   const source = useMemo(() => {
-//     return Skia.RuntimeEffect.Make(`
-//     ${SHARED_SKSL_PRELUDE(
-//       color1Converted,
-//       color2Converted,
-//       bckgColor1Converted,
-//       bckgColor2Converted,
-//     )}
-
-//     ${GECKO_ONLY_TRANSPARENT_SKSL_OPT}
-//   `);
-//   }, [
-//     color1Converted,
-//     color2Converted,
-//     bckgColor1Converted,
-//     bckgColor2Converted,
-//   ]);
-
-//   const sourceTwo = useMemo(() => {
-//     return Skia.RuntimeEffect.Make(`
-//     ${SHARED_SKSL_PRELUDE(
-//       color1Converted,
-//       color2Converted,
-//       bckgColor1Converted,
-//       bckgColor2Converted,
-//     )}
-
-//     ${MOMENTS_BG_SKSL_OPT}
-//   `);
-//   }, [
-//     color1Converted,
-//     color2Converted,
-//     bckgColor1Converted,
-//     bckgColor2Converted,
-//   ]);
-
-//   //   const source = Skia.RuntimeEffect.Make(`
-//   //     vec3 startColor = vec3(${color1Converted});
-//   //     vec3 endColor = vec3(${color2Converted});
-
-//   //         vec3 backgroundStartColor = vec3(${bckgColor1Converted});
-//   //         vec3 backgroundEndColor = vec3(${bckgColor2Converted});
-
-//   //    ${GECKO_ONLY_TRANSPARENT_SKSL}
-
-//   // `);
-
-//   //   const sourceTwo = Skia.RuntimeEffect.Make(`
-//   //     vec3 startColor = vec3(${color1Converted});
-//   //     vec3 endColor = vec3(${color2Converted});
-
-//   //         vec3 backgroundStartColor = vec3(${bckgColor1Converted});
-//   //         vec3 backgroundEndColor = vec3(${bckgColor2Converted});
-
-//   //    ${MOMENTS_BG_SKSL}
-
-//   // `);
-
-//   if (!source) {
-//     console.error("❌ Shader failed to compile");
-//     return null;
-//   }
-
-//   const start = useRef(Date.now());
-
-//   const NUM_SPINE_JOINTS = 15;
-//   const NUM_TAIL_JOINTS = 13;
-//   const snoutRef = useRef([0, 0]);
-//   const headRef = useRef([0, 0]);
-//   const hintRef = useRef([0, 0]);
-//   const jointsRef = useRef(new Float32Array(NUM_SPINE_JOINTS * 2));
-//   const tailJointsRef = useRef(new Float32Array(NUM_TAIL_JOINTS * 2));
-//   const stepsRef = useRef(new Float32Array(4 * 2));
-//   const elbowsRef = useRef(new Float32Array(4 * 2));
-//   const shouldersRef = useRef(new Float32Array(4 * 2));
-//   const legMusclesRef = useRef(new Float32Array(8 * 2));
-//   const fingersRef = useRef(new Float32Array(20 * 2));
-
-//   const leadUniformRef = useRef(new Float32Array(2));
-//   const soulUniformRef = useRef(new Float32Array(2));
-//   const selectedUniformRef = useRef(new Float32Array(2));
-//   const hintUniformRef = useRef(new Float32Array(2));
-
-//   const snoutUniformRef = useRef(new Float32Array(2));
-//   const headUniformRef = useRef(new Float32Array(2));
-
-//   const MAX_MOMENTS = 40;
-//   // Preallocate uniform arrays once at top-level inside component
-//   const jointsUniform = useRef(new Array(NUM_SPINE_JOINTS * 2).fill(0));
-//   const tailUniform = useRef(new Array(NUM_TAIL_JOINTS * 2).fill(0));
-//   const stepsUniform = useRef(new Array(4 * 2).fill(0));
-//   const elbowsUniform = useRef(new Array(4 * 2).fill(0));
-//   const shouldersUniform = useRef(new Array(4 * 2).fill(0));
-//   const musclesUniform = useRef(new Array(8 * 2).fill(0));
-//   const fingersUniform = useRef(new Array(20 * 2).fill(0));
-//   const momentsUniform = useRef(new Array(MAX_MOMENTS * 2).fill(0));
-
-//   const momentsRef = useRef(new Float32Array(MAX_MOMENTS * 2));
-
-
-//   const geckoPointerRef = useRef<[number, number]>([0, 0]);
-
-//   const [internalReset, setInternalReset] = useState(Date.now());
-//   const handleReset = () => {
-//     setInternalReset(Date.now());
-//   };
-
-//   useEffect(() => {
-//     moments.current.updateAllCoords(momentsData);
-//   }, [momentsData, internalReset]);
-
-//   useEffect(() => {
-//     if (!internalReset && !reset) return;
-//     start.current = Date.now();
-//     setTime(0);
-//     moments.current = new Moments(momentsData, [0.5, 0.5], 0.05);
-//     soul.current = new Soul(restPoint, 0.02);
-//     leadPoint.current = new Mover(startingCoord);
-//     gecko.current = new Gecko(startingCoord, 0.06);
-
-//     momentsRef.current.fill(0);
-//     jointsRef.current.fill(0);
-//     tailJointsRef.current.fill(0);
-//     stepsRef.current.fill(0);
-//     elbowsRef.current.fill(0);
-//     shouldersRef.current.fill(0);
-//     legMusclesRef.current.fill(0);
-//     fingersRef.current.fill(0);
-
-//     userPointSV.value = restPoint; // must be set to where entrance animation leaves off
-//   }, [reset, internalReset]);
-
-
-
-
-
-
-
-
-//   //// A N I M A T I O N 
+
+// //   const handleUpdateCoords = (oldMoments, newMoments) => {
+// //     const formattedData = newMoments.map((moment) => ({
+// //       id: moment.id,
+// //       screen_x: moment.coord[0],
+// //       screen_y: moment.coord[1],
+// //       stored_index: moment.stored_index,
+// //     }));
+// //     handleUpdateMomentCoords(formattedData);
+// //   };
+
+// //   const userPointSV = useSharedValue(restPoint);
+// //   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
+// //   const isDragging = useSharedValue(false);
+
+// //   const onDoublePress = () => {
+// //     handleGetMoment(-1);
+// //     console.log("double press");
+// //   };
+
+// //   const wasTapSV = useSharedValue(false);
+// //   const wasDoubleTapSV = useSharedValue(false);
+
+// //   const panGesture = Gesture.Pan()
+// //     .onTouchesDown((e) => {
+// //       isDragging.value = true;
+// //       const touch = e.changedTouches[0];
+// //       userPointSV.value = [touch.x / size.width, touch.y / size.height];
+// //     })
+// //     .onUpdate((e) => {
+// //       userPointSV.value = [e.x / size.width, e.y / size.height];
+// //     })
+// //     .onEnd(() => {
+// //       isDragging.value = false;
+// //     })
+// //     .onFinalize(() => {
+// //       isDragging.value = false;
+// //     });
+
+// //   const singleTapGesture = Gesture.Tap()
+// //     .numberOfTaps(1)
+// //     .onEnd((_event, success) => {
+// //       if (success) {
+// //         wasTapSV.value = true;
+// //         setTimeout(() => {
+// //           wasTapSV.value = false;
+// //         }, 100);
+// //       }
+// //     });
+
+// //   const doubleTapGesture = Gesture.Tap()
+// //     .numberOfTaps(2)
+// //     .onEnd((_event, success) => {
+// //       if (success) {
+// //         wasDoubleTapSV.value = true;
+// //         runOnJS(onDoublePress)();
+// //         setTimeout(() => {
+// //           wasDoubleTapSV.value = false;
+// //         }, 100);
+// //       }
+// //     });
+
+// //   const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
+// //   const composedGesture = Gesture.Simultaneous(panGesture, taps);
+
+// //   const color1Converted = hexToVec3(color1);
+// //   const color2Converted = hexToVec3(color2);
+// //   const bckgColor1Converted = hexToVec3(bckgColor1);
+// //   const bckgColor2Converted = hexToVec3(bckgColor2);
+
+// //   const soul = useRef(new Soul(restPoint, 0.02));
+// //   const leadPoint = useRef(new Mover(startingCoord));
+// //   const gecko = useRef(new Gecko(startingCoord, 0.06));
+// //   const sleepWalk0 = useRef(
+// //     new SleepWalk0(
+// //       [0.5, 0.3],
+// //       0.3,
+// //       gecko_size,
+// //       manualOnly,
+// //       speedSetting,
+// //       autoPickUp,
+// //       randomMomentIds,
+// //     ),
+// //   );
+// //   const moments = useRef(
+// //     new Moments(momentsData, gecko_size, sleepWalk0, [0.5, 0.5], 0.05),
+// //   );
+
+// //   const handleGetMomentRef = useRef(handleGetMoment);
+
+// //   useEffect(() => {
+// //     handleGetMomentRef.current = handleGetMoment;
+// //   }, [handleGetMoment]);
+
+// //   useEffect(() => {
+// //     if (aspect) {
+// //       moments.current.setAspect(aspect);
+// //       sleepWalk0.current.setAspect(aspect);
+// //     }
+// //   }, [aspect]);
+
+// //   const SHARED_SKSL_PRELUDE = (c1, c2, b1, b2) => `
+// //     vec3 startColor = vec3(${c1});
+// //     vec3 endColor = vec3(${c2});
+// //     vec3 backgroundStartColor = vec3(${b1});
+// //     vec3 backgroundEndColor = vec3(${b2});
+// //   `;
+
+// //   const [geckoColor, setGeckoColor] = useState(color2Converted);
+
+// //   const source = useMemo(() => {
+// //     return Skia.RuntimeEffect.Make(`
+// //       ${SHARED_SKSL_PRELUDE(color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted)}
+// //       ${GECKO_ONLY_TRANSPARENT_SKSL_OPT}
+// //     `);
+// //   }, [color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted]);
+
+// //   const sourceTwo = useMemo(() => {
+// //     return Skia.RuntimeEffect.Make(`
+// //       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
+// //       ${MOMENTS_BG_SKSL_OPT}
+// //     `);
+// //   }, [
+// //     color1Converted,
+// //     color2Converted,
+// //     bckgColor1Converted,
+// //     bckgColor2Converted,
+// //   ]);
+
+// //   if (!source) {
+// //     console.error("❌ Shader failed to compile");
+// //     return null;
+// //   }
+
+// //   const start = useRef(Date.now());
+// //   const hintRef = useRef([0, 0]);
+
+// //   const [internalReset, setInternalReset] = useState(0);
+// //   const handleReset = () => setInternalReset(Date.now());
+
+// //   useEffect(() => {
+// //     console.log("resetting");
+// //     moments.current.updateOrAddMoments(momentsData);
+// //     moments.current.updateAllCoords(momentsData);
+// //   }, [momentsData, reset]);
+
+// //   useEffect(() => {
+// //     if (!internalReset || !reset) {
+// //       console.log("conditions not met for a reset");
+// //       return;
+// //     } else {
+// //       console.log("TRUE RESET");
+// //     }
+
+// //     start.current = Date.now();
+// //     soul.current = new Soul(restPoint, 0.02);
+// //     leadPoint.current = new Mover(startingCoord);
+// //     gecko.current = new Gecko(startingCoord, 0.06);
+
+// //     // Reset buffers
+// //     workingBuffers.soul.fill(0);
+// //     workingBuffers.walk.fill(0);
+// //     workingBuffers.hint.fill(0);
+// //     workingBuffers.lead.fill(0);
+// //     workingBuffers.selected.fill(0);
+// //     workingBuffers.lastSelected.fill(0);
+// //     workingBuffers.heldCoords.fill(0);
+// //     workingBuffers.geckoPoints.fill(0);
+// //     workingBuffers.moments.fill(0);
+
+// //     leadUniformSV.value = [0, 0];
+// //     soulUniformSV.value = [0, 0];
+// //     walk0UniformSV.value = [0, 0];
+// //     selectedUniformSV.value = [0, 0];
+// //     lastSelectedUniformSV.value = [0, 0];
+// //     hintUniformSV.value = [0, 0];
+// //     momentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
+// //     heldMomentUniformSV.value = Array(MAX_HELD * 2).fill(0);
+// //     geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS * 2).fill(0);
+// //     momentsLengthSV.value = 0;
+
+// //     userPointSV.value = restPoint;
+// //     userPoint_geckoSpaceRef.current[0] = startingCoord[0];
+// //     userPoint_geckoSpaceRef.current[1] = startingCoord[1];
+// //   }, [reset, internalReset]);
+
+// //   const frameCountRef = useRef(0);
+// //   const lastTriggeredIdRef = useRef(-1);
+// //   const lastPawsClearedRef = useRef(false);
+// //   const clearAllPawsInUIRef = useRef(() => {});
+// //   const syncPawsInUIRef = useRef<() => void>(() => {});
+
 // //   useEffect(() => {
 // //     let cancelled = false;
 // //     let frame;
+// //     const sleepWalkAfter = 100;
+
+// //     frameCountRef.current = 0;
 
 // //     const animate = () => {
-// //       if (cancelled) return;
-
-// //       if (leadPoint.current.isMoving || isDragging.value) {
-// //         const now = (Date.now() - start.current) / 1000;
-// //         setTime(now);
+// //       if (cancelled || isPausedRef.current) {
+// //         frame = requestAnimationFrame(animate);
+// //         return;
 // //       }
-// //       // const now = (Date.now() - start.current) / 1000;
-// //       // setTime(now);
 
-// //       frame = requestAnimationFrame(animate);
+// //       if (aspect == null || isNaN(aspect)) {
+// //         console.log("aspect is null or NaN! QUITTING the animation", aspect);
+// //         frame = requestAnimationFrame(animate);
+// //         return;
+// //       }
+// // frameBudgetMonitor();
+// //       const shouldClearPaws = moments.current.trigger_remote;
+// //       if (shouldClearPaws && !lastPawsClearedRef.current) {
+// //         lastPawsClearedRef.current = true;
+// //         clearAllPawsInUIRef.current();
+// //       } else if (!shouldClearPaws && lastPawsClearedRef.current) {
+// //         lastPawsClearedRef.current = false;
+// //       }
 
-// //       // soul.current.update(); // moved this inside if because only using it once
+// //       const currentId = moments.current.lastSelected?.id ?? -1;
+// //       if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
+// //         lastTriggeredIdRef.current = currentId;
+// //         handleGetMomentRef.current(currentId);
+// //       }
+
+// //       if (leadPoint.current.isMoving && !gecko.current.sleepWalkMode) {
+// //         frameCountRef.current = 0;
+// //       }
+
+// //       if (isDragging.value && gecko.current.sleepWalkMode) {
+// //         frameCountRef.current = 0;
+// //         gecko.current.updateSleepWalkMode(false);
+// //       }
+
+// //       if (frameCountRef.current < sleepWalkAfter) {
+// //         frameCountRef.current += 1;
+// //       } else if (
+// //         frameCountRef.current === sleepWalkAfter &&
+// //         !gecko.current.sleepWalkMode
+// //       ) {
+// //         gecko.current.updateSleepWalkMode(true);
+// //       }
+
+// //       toGeckoPointerScaled_inPlace(
+// //         userPointSV.value,
+// //         aspect,
+// //         scale,
+// //         gecko_size,
+// //         userPoint_geckoSpaceRef.current,
+// //         0,
+// //       );
+
 // //       if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
 // //         gecko.current.updateEnter(soul.current.done);
 // //       } else {
 // //         soul.current.update();
 // //       }
 
-// //       // if (gecko.current.oneTimeEnterComplete) {
-// //       //   leadPoint.current.update(userPointSV.value);
-// //       // } else {
-// //       //   leadPoint.current.update(soul.current.soul);
-// //       // }
-
-
-// //       if (gecko.current.oneTimeEnterComplete) {
-// // screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerRef.current);
-
-
-// //   leadPoint.current.update(geckoPointerRef.current);
-// // } else {
-// //   leadPoint.current.update(soul.current.soul);
-// // }
-
-// //       // if (leadPoint.current.lastMovingTime) {
-// //       //   // console.log('creature is in Still mode')
-// //       //   return;
-// //       // } else {
-// //       //   // console.log('weeeee creature is moving!')
-// //       // }
-
+// //       if (gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
+// //         leadPoint.current.update(userPoint_geckoSpaceRef.current);
+// //       } else if (!gecko.current.sleepWalkMode) {
+// //         leadPoint.current.update(soul.current.soul);
+// //       } else if (gecko.current.sleepWalkMode) {
+// //         sleepWalk0.current.update(moments);
+// //         leadPoint.current.update(sleepWalk0.current.walk);
+// //       }
 
 // //       gecko.current.update(
 // //         leadPoint.current.lead,
@@ -1194,383 +468,967 @@
 // //         leadPoint.current.isMoving,
 // //       );
 
-// //       // pack spine joints into Float32Array for shader
 // //       const spine = gecko.current.body.spine;
-// //       const tail = gecko.current.body.tail;
-
-// //       const f_steps = gecko.current.legs.frontLegs.stepTargets;
-// //       const b_steps = gecko.current.legs.backLegs.stepTargets;
-
-// //       const f_elbows = gecko.current.legs.frontLegs.elbows;
-// //       const b_elbows = gecko.current.legs.backLegs.elbows;
-
-// //       const f_shoulders = [
-// //         gecko.current.legs.frontLegs.rotatorJoint0,
-// //         gecko.current.legs.frontLegs.rotatorJoint1,
-// //       ];
-// //       const b_shoulders = [
-// //         gecko.current.legs.backLegs.rotatorJoint0,
-// //         gecko.current.legs.backLegs.rotatorJoint1,
-// //       ];
-
-// //       const f_muscles = gecko.current.legs.frontLegs.muscles;
-// //       const b_muscles = gecko.current.legs.backLegs.muscles;
-
-// //       snoutRef.current = spine.unchainedJoints[0] || [0, 0];
-// //       headRef.current = spine.unchainedJoints[1] || [0, 0];
 // //       hintRef.current = spine.hintJoint || [0, 0];
 
+// //       workingBuffers.stepTargets[0] =
+// //         gecko.current.legs.frontLegs.stepTargets[0];
+// //       workingBuffers.stepTargets[1] =
+// //         gecko.current.legs.frontLegs.stepTargets[1];
+// //       workingBuffers.stepTargets[2] =
+// //         gecko.current.legs.backLegs.stepTargets[0];
+// //       workingBuffers.stepTargets[3] =
+// //         gecko.current.legs.backLegs.stepTargets[1];
 
-      
-// //       moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, f_steps[0]);
-
-// //       // Pack in-place
-// //       packVec2Uniform_withRecenter(
-// //         spine.joints,
-// //         jointsRef.current,
-// //         NUM_SPINE_JOINTS,
-// //         aspect,
-// //         gecko_scale,
-// //       );
-// //       for (let i = 0; i < jointsUniform.current.length; i++)
-// //         jointsUniform.current[i] = jointsRef.current[i];
-
-// //       packVec2Uniform_withRecenter(
-// //         tail.joints,
-// //         tailJointsRef.current,
-// //         NUM_TAIL_JOINTS,
-// //         aspect,
-// //         gecko_scale,
-// //       );
-// //       for (let i = 0; i < tailUniform.current.length; i++)
-// //         tailUniform.current[i] = tailJointsRef.current[i];
-
-// //       const allSteps = [...f_steps, ...b_steps];
-// //       packVec2Uniform_withRecenter(
-// //         allSteps,
-// //         stepsRef.current,
-// //         4,
-// //         aspect,
-// //         gecko_scale,
-// //       );
-// //       for (let i = 0; i < stepsUniform.current.length; i++)
-// //         stepsUniform.current[i] = stepsRef.current[i];
-
-// //       const allElbows = [...f_elbows, ...b_elbows];
-// //       packVec2Uniform_withRecenter(
-// //         allElbows,
-// //         elbowsRef.current,
-// //         4,
-// //         aspect,
-// //         gecko_scale,
-// //       );
-// //       for (let i = 0; i < elbowsUniform.current.length; i++)
-// //         elbowsUniform.current[i] = elbowsRef.current[i];
-
-// //       const allShoulders = [...f_shoulders, ...b_shoulders];
-// //       packVec2Uniform_withRecenter(
-// //         allShoulders,
-// //         shouldersRef.current,
-// //         4,
-// //         aspect,
-// //         gecko_scale,
-// //       );
-// //       for (let i = 0; i < shouldersUniform.current.length; i++)
-// //         shouldersUniform.current[i] = shouldersRef.current[i];
-
-// //       const allMuscles = [...f_muscles, ...b_muscles];
-// //       packVec2Uniform_withRecenter(
-// //         allMuscles,
-// //         legMusclesRef.current,
-// //         8,
-// //         aspect,
-// //         gecko_scale,
-// //       );
-// //       for (let i = 0; i < musclesUniform.current.length; i++)
-// //         musclesUniform.current[i] = legMusclesRef.current[i];
-
-// //       packVec2Uniform_withRecenter(
-// //         gecko.current.legs.frontLegs.fingers[0],
-// //         fingersRef.current,
-// //         5,
-// //         aspect,
-// //         gecko_scale,
-// //         0,
-// //       );
-// //       packVec2Uniform_withRecenter(
-// //         gecko.current.legs.frontLegs.fingers[1],
-// //         fingersRef.current,
-// //         5,
-// //         aspect,
-// //         gecko_scale,
-// //         5,
-// //       );
-// //       packVec2Uniform_withRecenter(
-// //         gecko.current.legs.backLegs.fingers[0],
-// //         fingersRef.current,
-// //         5,
-// //         aspect,
-// //         gecko_scale,
-// //         10,
-// //       );
-// //       packVec2Uniform_withRecenter(
-// //         gecko.current.legs.backLegs.fingers[1],
-// //         fingersRef.current,
-// //         5,
-// //         aspect,
-// //         gecko_scale,
-// //         15,
-// //       );
-// //       for (let i = 0; i < fingersUniform.current.length; i++)
-// //         fingersUniform.current[i] = fingersRef.current[i];
-
-// //       packVec2Uniform_withRecenter_moments(
-// //         moments.current.moments,
-// //         momentsRef.current,
-// //         moments.current.momentsLength,
-// //         aspect,
-// //         scale,
-// //       );
-      
-// //       for (let i = 0; i < momentsUniform.current.length; i++)
-// //         momentsUniform.current[i] = momentsRef.current[i];
-
-// //       toShaderSpace_inplace(
+// //       moments.current.update(
+// //         userPointSV.value,
+// //         isDragging.value,
+// //         wasTapSV.value,
+// //         wasDoubleTapSV.value,
 // //         leadPoint.current.lead,
-// //         aspect,
-// //         scale,
-// //         leadUniformRef.current,
-// //         0,
+// //         workingBuffers.stepTargets, // <-- Reused array, no allocation!
 // //       );
+
+// //       if (
+// //         sleepWalk0.current.pickUpNextId !== -1 &&
+// //         sleepWalk0.current.pickUpNextId !== lastTriggeredIdRef.current
+// //       ) {
+// //         syncPawsInUIRef.current();
+// //       }
+
+// //       // ============== ZERO-ALLOCATION BUFFER UPDATES ==============
+// //       // Write to preallocated buffers - NO new allocations here
 
 // //       toShaderSpace_inplace(
 // //         soul.current.soul,
 // //         aspect,
 // //         gecko_scale,
-// //         soulUniformRef.current,
+// //         workingBuffers.soul,
 // //         0,
 // //       );
-
 // //       toShaderSpace_inplace(
-// //         moments.current.selected.coord,
+// //         sleepWalk0.current.walk,
 // //         aspect,
-// //         scale,
-// //         selectedUniformRef.current,
+// //         gecko_scale,
+// //         workingBuffers.walk,
 // //         0,
 // //       );
-
 // //       toShaderSpace_inplace(
 // //         hintRef.current,
 // //         aspect,
 // //         gecko_scale,
-// //         hintUniformRef.current,
+// //         workingBuffers.hint,
+// //         0,
+// //       );
+// //       toShaderModel_inPlace(
+// //         leadPoint.current.lead,
+// //         aspect,
+// //         gecko_scale,
+// //         workingBuffers.lead,
 // //         0,
 // //       );
 
-// //       toShaderModel_inplace(
-// //         snoutRef.current,
+// //       workingBuffers.selected[0] = moments.current.selected.coord[0];
+// //       workingBuffers.selected[1] = moments.current.selected.coord[1];
+
+// //       // Held moments - reuse heldTemp buffer instead of creating new Float32Array each iteration
+// //       for (let i = 0; i < MAX_HELD; i++) {
+// //         toGeckoSpace_inPlace(
+// //           moments.current.holdings[i].coord,
+// //           gecko_scale,
+// //           workingBuffers.heldTemp,
+// //         );
+// //         workingBuffers.heldCoords[i * 2] = workingBuffers.heldTemp[0];
+// //         workingBuffers.heldCoords[i * 2 + 1] = workingBuffers.heldTemp[1];
+// //       }
+
+// //       toGeckoSpace_inPlace(
+// //         moments.current.lastSelected.coord,
 // //         gecko_scale,
-// //         snoutUniformRef.current,
-// //         0,
+// //         workingBuffers.lastSelected,
 // //       );
 
-// //       toShaderModel_inplace(
-// //         headRef.current,
-// //         gecko_scale,
-// //         headUniformRef.current,
-// //         0,
+// //       // Gecko points - reuse the same array, just refill it
+// //       workingBuffers.geckoPoints.fill(0);
+// //       packGeckoOnlyProd(gecko.current, workingBuffers.geckoPoints, gecko_scale);
+
+// //       // Moments - reuse the same array
+// //       workingBuffers.moments.fill(0);
+// //       packVec2Uniform_withRecenter_moments(
+// //         moments.current.moments,
+// //         workingBuffers.moments,
+// //         moments.current.momentsLength,
+// //         aspect,
+// //         scale,
 // //       );
+
+// //       // ============== SHARED VALUE UPDATES ==============
+// //       // These are the ONLY allocations - creating small arrays for SharedValues
+// //       // Total: 9 allocations per frame (down from 23)
+
+// //       soulUniformSV.value = [workingBuffers.soul[0], workingBuffers.soul[1]];
+// //       walk0UniformSV.value = [workingBuffers.walk[0], workingBuffers.walk[1]];
+// //       hintUniformSV.value = [workingBuffers.hint[0], workingBuffers.hint[1]];
+// //       leadUniformSV.value = [workingBuffers.lead[0], workingBuffers.lead[1]];
+// //       selectedUniformSV.value = [
+// //         workingBuffers.selected[0],
+// //         workingBuffers.selected[1],
+// //       ];
+// //       lastSelectedUniformSV.value = [
+// //         workingBuffers.lastSelected[0],
+// //         workingBuffers.lastSelected[1],
+// //       ];
+
+// //       // For larger arrays, we must create new arrays (Reanimated requirement)
+// //       heldMomentUniformSV.value = Array.from(workingBuffers.heldCoords);
+// //       geckoPointsUniformSV.value = [...workingBuffers.geckoPoints];
+// //       momentsUniformSV.value = [...workingBuffers.moments];
+
+// //       momentsLengthSV.value = moments.current.momentsLength;
+
+// //       // Trigger shader update only when moving
+// //       if (leadPoint.current.isMoving || isDragging.value) {
+// //         const now = Date.now();
+// //         if (now - lastRenderRef.current > 16) {
+// //           lastRenderRef.current = now;
+// //           updateTrigger.value += 1;
+// //         }
+// //       }
+
+// //       frame = requestAnimationFrame(animate);
 // //     };
+
 // //     animate();
+
 // //     return () => {
 // //       cancelled = true;
 // //       if (frame) cancelAnimationFrame(frame);
 // //     };
-// //   }, [aspect]);
+// //   }, [aspect, gecko_scale, gecko_size, scale, size.width, size.height]);
 
-// useEffect(() => {
-//   let cancelled = false;
-//   let frame;
+// //   // ============== OPTIMIZED UNIFORMS ==============
+// //   // No Array.from() or spread operators - just pass the values directly
+// //   const uniforms = useDerivedValue(() => {
+// //     updateTrigger.value;
 
-//   const animate = () => {
-//     if (cancelled) return;
+// //     if (!size.width || !size.height) {
+// //       return {
+// //         u_scale: scale,
+// //         u_gecko_scale: gecko_scale,
+// //         u_gecko_size: gecko_size,
+// //         u_time: 0,
+// //         u_resolution: [width, height],
+// //         u_aspect: aspect || 1,
+// //         u_lead: [-100, -100],
+// //         u_soul: [-100, -100],
+// //         u_walk0: [-100, -100],
+// //         u_selected: [-100, -100],
+// //         u_lastSelected: [-100, -100],
+// //         u_hint: [-100, -100],
+// //         u_momentsLength: 0,
+// //         u_moments: momentsUniformSV.value,
+// //         u_heldMoments: heldMomentUniformSV.value,
+// //         u_geckoPoints: geckoPointsUniformSV.value,
+// //       };
+// //     }
 
-//     // Update time if moving
-//     if (leadPoint.current.isMoving || isDragging.value) {
-//       const now = (Date.now() - start.current) / 1000;
-//       setTime(now);
-//       uniformsRef.current.u_time = now;
-//     }
+// //     // Pass shared values directly - no copying!
+// //     return {
+// //       u_scale: scale,
+// //       u_gecko_scale: gecko_scale,
+// //       u_gecko_size: gecko_size,
+// //       u_time: (Date.now() - start.current) / 1000,
+// //       u_resolution: [size.width, size.height],
+// //       u_aspect: aspect || 1,
+// //       u_lead: leadUniformSV.value,
+// //       u_soul: soulUniformSV.value,
+// //       u_walk0: walk0UniformSV.value,
+// //       u_selected: selectedUniformSV.value,
+// //       u_lastSelected: lastSelectedUniformSV.value,
+// //       u_hint: hintUniformSV.value,
+// //       u_momentsLength: momentsLengthSV.value,
+// //       u_moments: momentsUniformSV.value,
+// //       u_heldMoments: heldMomentUniformSV.value,
+// //       u_geckoPoints: geckoPointsUniformSV.value,
+// //     };
+// //   }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
 
-//     frame = requestAnimationFrame(animate);
+// //   return (
+// //     <>
+// //       <GestureDetector gesture={composedGesture}>
+// //         <View style={StyleSheet.absoluteFill}>
+// //           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+// //             <Rect
+// //               x={0}
+// //               y={0}
+// //               width={size.width}
+// //               height={size.height}
+// //               color="lightblue"
+// //             >
+// //               <Shader
+// //                 style={{ backgroundColor: "transparent" }}
+// //                 source={sourceTwo}
+// //                 uniforms={uniforms}
+// //               />
+// //             </Rect>
+// //           </Canvas>
 
-//     // 🔹 Update soul & gecko enter state
-//     if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
-//       gecko.current.updateEnter(soul.current.done);
-//     } else {
-//       soul.current.update();
-//     }
+// //           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+// //             <Rect
+// //               x={0}
+// //               y={0}
+// //               width={size.width}
+// //               height={size.height}
+// //               color="lightblue"
+// //             >
+// //               <Shader
+// //                 style={{ backgroundColor: "transparent" }}
+// //                 source={source}
+// //                 uniforms={uniforms}
+// //               />
+// //             </Rect>
+// //           </Canvas>
+// //         </View>
+// //       </GestureDetector>
 
-//     // 🔹 Update lead point
-//     if (gecko.current.oneTimeEnterComplete) {
-//       screenToGeckoSpace_inPlace(userPointSV.value, aspect, gecko_scale, geckoPointerRef.current);
-//       leadPoint.current.update(geckoPointerRef.current);
-//     } else {
-//       leadPoint.current.update(soul.current.soul);
-//     }
+// //       <View style={styles.pawSetterContainer}>
+// //         <PawSetter
+// //           color={lightDarkTheme.primaryText}
+// //           backgroundColor={lightDarkTheme.primaryBackground}
+// //           borderColor={lightDarkTheme.lighterOverlayBackground}
+// //           momentsData={moments.current.moments}
+// //           lastSelected={moments.current.lastSelected}
+// //           updatePaw={(moment, holdIndex) =>
+// //             moments.current.updateHold(moment, holdIndex)
+// //           }
+// //           clearPaw={(holdIndex) => moments.current.clearHolding(holdIndex)}
+// //           autoUpdatePaw={(holdIndex) =>
+// //             moments.current.updateHold(moment, holdIndex)
+// //           }
+// //           updateSelected={(holdIndex) =>
+// //             moments.current.updateSelected(holdIndex)
+// //           }
+// //           registerClearAll={(fn) => {
+// //             clearAllPawsInUIRef.current = fn;
+// //           }}
+// //           registerSyncPaws={(fn) => {
+// //             syncPawsInUIRef.current = fn;
+// //           }}
+// //           clearAllPaws={() => moments.current.clearAllHoldings()}
+// //           handleGetMoment={handleGetMoment}
+// //         />
+// //       </View>
 
-//     // 🔹 Update gecko body & legs
-//     gecko.current.update(
-//       leadPoint.current.lead,
-//       leadPoint.current.leadDistanceTraveled,
-//       leadPoint.current.isMoving
+// //       <View style={styles.resetterContainer}>
+// //         <MomentDotsResetterMini
+// //           onBackPress={handleUpdateMomentsState}
+// //           onCenterPress={handleRecenterMoments}
+// //           onUndoPress={handleReset}
+// //           primaryColor={lightDarkTheme.primaryText}
+// //           borderColor={lightDarkTheme.lighterOverlayBackground}
+// //           primaryBackground={lightDarkTheme.primaryBackground}
+// //           onPress={handleRescatterMoments}
+// //         />
+// //       </View>
+// //     </>
+// //   );
+// // };
+
+// // const styles = StyleSheet.create({
+// //   pawSetterContainer: { position: "absolute", bottom: 200, left: 16 },
+// //   resetterContainer: { position: "absolute", bottom: 200, right: 16 },
+// // });
+
+// // const MemoizedMomentsSkia = React.memo(MomentsSkia);
+// // export default MemoizedMomentsSkia;
+
+// import { View, StyleSheet } from "react-native";
+// import React, {
+//   useEffect,
+//   useRef,
+//   useCallback,
+//   useState,
+//   useMemo,
+// } from "react";
+// import Soul from "./soulClass";
+// import SleepWalk0 from "./sleepWalkOneClass";
+// import Mover from "./leadPointClass";
+// import Gecko from "./geckoClass";
+// import Moments from "./momentsClass";
+// import { packGeckoOnlyProd, packGeckoOnlyProdCompact56 } from "./animUtils";
+// import PawSetter from "@/app/screens/fidget/PawSetter";
+// import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
+// import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
+// import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
+// import { BackHandler } from "react-native";
+// import { useFocusEffect } from "@react-navigation/native";
+// import MomentDotsResetterMini from "./MomentDotsResetterMini";
+// import {
+//   runOnJS,
+//   useSharedValue,
+//   useDerivedValue,
+// } from "react-native-reanimated";
+
+// import { useWindowDimensions } from "react-native";
+// import {
+//   hexToVec3,
+//   toShaderModel_inPlace,
+//   toShaderSpace_inplace,
+//   toGeckoSpace_inPlace,
+//   toGeckoPointerScaled_inPlace,
+//   packVec2Uniform_withRecenter_moments,
+// } from "./animUtils";
+// import { Gesture, GestureDetector } from "react-native-gesture-handler";
+// import {
+//   Canvas,
+//   useCanvasSize,
+//   Shader,
+//   Rect,
+//   Skia,
+// } from "@shopify/react-native-skia";
+
+// // ---------------------------------------------------------------------------
+// // FPS monitor (prints once/sec). Keep while profiling; remove for production.
+// // ---------------------------------------------------------------------------
+// let _last = global.performance?.now?.() ?? Date.now();
+// let _worst = 0;
+// let _over = 0;
+// let _frames = 0;
+// let _lastReport = _last;
+
+// export function frameBudgetMonitor() {
+//   const now = global.performance?.now?.() ?? Date.now();
+//   const dt = now - _last;
+//   _last = now;
+
+//   _frames++;
+//   if (dt > _worst) _worst = dt;
+//   if (dt > 18) _over++;
+
+//   if (now - _lastReport >= 1000) {
+//     console.log(
+//       `FPS≈${_frames}  over18ms=${_over}  worst=${_worst.toFixed(1)}ms`,
 //     );
+//     _frames = 0;
+//     _over = 0;
+//     _worst = 0;
+//     _lastReport = now;
+//   }
+// }
 
-//     const spine = gecko.current.body.spine;
-//     const tail = gecko.current.body.tail; 
-  
-//     const f_muscles = gecko.current.legs.frontLegs.muscles;
-//     const b_muscles = gecko.current.legs.backLegs.muscles;
- 
-//     snoutRef.current = spine.unchainedJoints[0] || [0, 0];
-//     headRef.current = spine.unchainedJoints[1] || [0, 0];
-//     hintRef.current = spine.hintJoint || [0, 0];
- 
-//     moments.current.update(userPointSV.value, isDragging.value, leadPoint.current.isMoving, gecko.current.legs.frontLegs.stepTargets[0]);
- 
-//     // In place packer
-//     toShaderModel_arrays_inPlace(spine.joints, jointsUniform.current, NUM_SPINE_JOINTS, aspect, gecko_scale);
-//     toShaderModel_arrays_inPlace(tail.joints, tailUniform.current, NUM_TAIL_JOINTS, aspect, gecko_scale);
+// type Props = {
+//   color1: string;
+//   color2: string;
+//   bckgColor1: string;
+//   bckgColor2: string;
+//   momentsData: [];
+//   startingCoord: number[];
+//   restPoint: number[];
+//   scale: number;
+//   reset?: number | null;
+// };
 
-//     // STEPS
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.stepTargets, stepsUniform.current, 2, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.stepTargets, stepsUniform.current, 2, aspect, gecko_scale, 2);
+// const MomentsSkia = ({
+//   handleEditMoment,
+//   handleUpdateMomentCoords,
+//   handleGetMoment,
+//   color1,
+//   color2,
+//   bckgColor1,
+//   bckgColor2,
+//   momentsData = [],
+//   startingCoord,
+//   restPoint,
+//   scale = 1,
+//   gecko_scale = 1,
+//   gecko_size = 1.2,
+//   lightDarkTheme,
+//   handleRescatterMoments,
+//   handleToggleManual,
+//   handleRecenterMoments,
+//   manualOnly,
+//   speedSetting,
+//   autoPickUp,
+//   randomMomentIds,
+//   reset = 0,
+// }: Props) => {
+//   const { width, height } = useWindowDimensions();
+//   const { ref, size } = useCanvasSize();
 
-//     // ELBOWS
-//      toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.elbows, elbowsUniform.current, 2, aspect, gecko_scale, 0);
-//      toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.elbows, elbowsUniform.current, 2, aspect, gecko_scale, 2);
- 
-//      // SHOULDERS (doing individually... should I make a different function for these?)
-//      toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 0);
-//      toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.rotatorJoint1, shouldersUniform.current, 1, aspect, gecko_scale, 1);
-//      toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 2);
-//      toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.rotatorJoint0, shouldersUniform.current, 1, aspect, gecko_scale, 3);
+//   const [aspect, setAspect] = useState<number>(width / height);
 
-   
-//     // const allMuscles = [...f_muscles, ...b_muscles];
-//     // toShaderModel_arrays_inPlace(allMuscles, legMusclesRef.current, 8, aspect, gecko_scale);
-//     // // copy to uniform for shader
-//     // for (let i = 0; i < musclesUniform.current.length; i++) {
-//     //   musclesUniform.current[i] = legMusclesRef.current[i];
-//     // }
+//   useEffect(() => {
+//     if (size && size.width > 0 && size.height > 0) {
+//       const newAspect = size.width / size.height;
+//       setAspect(newAspect);
+//     }
+//   }, [size]);
 
-//      toShaderModel_arrays_inPlace(  gecko.current.legs.frontLegs.muscles,  musclesUniform.current, 4, aspect, gecko_scale, 0);
-//      toShaderModel_arrays_inPlace(  gecko.current.legs.backLegs.muscles,  musclesUniform.current, 4, aspect, gecko_scale, 4); 
-   
+//   const updateTrigger = useSharedValue(0);
+//   const lastRenderRef = useRef(0);
+//   const isPausedRef = useRef(false);
 
+//   const TOTAL_GECKO_POINTS = 71;
+//   const MAX_MOMENTS = 40;
+//   const MAX_HELD = 4;
 
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.fingers[0], fingersUniform.current, 5, aspect, gecko_scale, 0);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.frontLegs.fingers[1], fingersUniform.current, 5, aspect, gecko_scale, 5);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.fingers[0], fingersUniform.current, 5, aspect, gecko_scale, 10);
-//     toShaderModel_arrays_inPlace(gecko.current.legs.backLegs.fingers[1], fingersUniform.current, 5, aspect, gecko_scale, 15);
+//   const TOTAL_GECKO_POINTS_COMPACT = 56;
 
-//     toShaderSpace_inplace(leadPoint.current.lead, aspect, scale, leadUniformRef.current, 0);
-//     toShaderSpace_inplace(soul.current.soul, aspect, gecko_scale, soulUniformRef.current, 0);
-//     toShaderSpace_inplace(moments.current.selected.coord, aspect, scale, selectedUniformRef.current, 0);
-//     toShaderSpace_inplace(hintRef.current, aspect, gecko_scale, hintUniformRef.current, 0);
-//     toShaderModel_inPlace(snoutRef.current, gecko_scale, snoutUniformRef.current, 0);
-//     toShaderModel_inPlace(headRef.current, gecko_scale, headUniformRef.current, 0);
+//   // ============== TRULY PREALLOCATED BUFFERS ==============
+//   // ✅ CHANGE #1: make big buffers typed arrays (no JS array objects)
+//   const workingBuffers = useRef({
+//     soul: new Float32Array(2),
+//     walk: new Float32Array(2),
+//     hint: new Float32Array(2),
+//     lead: new Float32Array(2),
+//     selected: new Float32Array(2),
+//     lastSelected: new Float32Array(2),
 
-//     packVec2Uniform_withRecenter_moments(moments.current.moments, momentsUniform.current, moments.current.momentsLength, aspect, scale);
+//     heldCoords: new Float32Array(MAX_HELD * 2),
+//     heldTemp: new Float32Array(2),
 
+//     // ✅ BIG BUFFERS as Float32Array
+//     // geckoPoints: new Float32Array(TOTAL_GECKO_POINTS * 2),
 
-//     // 🔹 Scalars (can be read in shaders)
-//     uniformsRef.current.u_scale = scale;
-//     uniformsRef.current.u_gecko_scale = gecko_scale;
-//     uniformsRef.current.u_aspect = aspect;
-//     uniformsRef.current.u_resolution[0] = size.width;
-//     uniformsRef.current.u_resolution[1] = size.height;
-//     uniformsRef.current.u_momentsLength = moments.current.momentsLength;
+//     geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
+//     moments: new Float32Array(MAX_MOMENTS * 2),
+
+//     // pass step target refs to moments.update without allocating
+//     stepTargets: [null, null, null, null] as any[],
+//   }).current;
+
+//   // Shared values (small ones as JS arrays)
+//   const leadUniformSV = useSharedValue<number[]>([0, 0]);
+//   const soulUniformSV = useSharedValue<number[]>([0, 0]);
+//   const walk0UniformSV = useSharedValue<number[]>([0, 0]);
+//   const selectedUniformSV = useSharedValue<number[]>([0, 0]);
+//   const lastSelectedUniformSV = useSharedValue<number[]>([0, 0]);
+//   const hintUniformSV = useSharedValue<number[]>([0, 0]);
+
+//   // Big uniforms (still SharedValues, but we will only update them when needed)
+//   const momentsUniformSV = useSharedValue<number[]>(
+//     Array(MAX_MOMENTS * 2).fill(0),
+//   );
+//   const heldMomentUniformSV = useSharedValue<number[]>(
+//     Array(MAX_HELD * 2).fill(0),
+//   );
+//   const geckoPointsUniformSV = useSharedValue<number[]>(
+//     Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0),
+//   );
+//   const momentsLengthSV = useSharedValue(0);
+
+//   useFocusEffect(
+//     useCallback(() => {
+//       isPausedRef.current = false;
+//       updateTrigger.value += 1;
+//       return () => {
+//         isPausedRef.current = true;
+//         isDragging.value = false;
+//       };
+//     }, []),
+//   );
+
+//   useFocusEffect(
+//     useCallback(() => {
+//       const subscription = BackHandler.addEventListener(
+//         "hardwareBackPress",
+//         () => true,
+//       );
+//       return () => subscription.remove();
+//     }, []),
+//   );
+
+//   const handleUpdateMomentsState = () => {
+//     const newMoments = moments.current.moments;
+//     handleUpdateCoords(momentsData, newMoments);
 //   };
 
-//   animate();
-
-//   return () => {
-//     cancelled = true;
-//     if (frame) cancelAnimationFrame(frame);
+//   const handleUpdateCoords = (oldMoments, newMoments) => {
+//     const formattedData = newMoments.map((moment) => ({
+//       id: moment.id,
+//       screen_x: moment.coord[0],
+//       screen_y: moment.coord[1],
+//       stored_index: moment.stored_index,
+//     }));
+//     handleUpdateMomentCoords(formattedData);
 //   };
-// }, [aspect, gecko_scale, scale, size.width, size.height]);
 
+//   const userPointSV = useSharedValue(restPoint);
+//   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
+//   const isDragging = useSharedValue(false);
 
+//   const onDoublePress = () => {
+//     handleGetMoment(-1);
+//     console.log("double press");
+//   };
 
-//   // const uniforms = {
-//   //   u_scale: scale,
-//   //   u_gecko_scale: gecko_scale,
-//   //   u_time: time,
-//   //   u_resolution: [width, height],
-//   //   u_aspect: aspect,
+//   const wasTapSV = useSharedValue(false);
+//   const wasDoubleTapSV = useSharedValue(false);
 
-//   //   u_lead: leadUniformRef.current,
-//   //   u_soul: soulUniformRef.current,
-//   //   u_selected: selectedUniformRef.current,
-//   //   u_lastSelected: moments.current.lastSelected.coord,
+//   const panGesture = Gesture.Pan()
+//     .onTouchesDown((e) => {
+//       isDragging.value = true;
+//       const touch = e.changedTouches[0];
+//       userPointSV.value = [touch.x / size.width, touch.y / size.height];
+//     })
+//     .onUpdate((e) => {
+//       userPointSV.value = [e.x / size.width, e.y / size.height];
+//     })
+//     .onEnd(() => {
+//       isDragging.value = false;
+//     })
+//     .onFinalize(() => {
+//       isDragging.value = false;
+//     });
 
-//   //   u_snout: snoutUniformRef.current,
-//   //   u_head: headUniformRef.current,
-//   //   u_hint: hintUniformRef.current,
-//   //   u_momentsLength: moments.current.momentsLength, 
+//   const singleTapGesture = Gesture.Tap()
+//     .numberOfTaps(1)
+//     .onEnd((_event, success) => {
+//       if (success) {
+//         wasTapSV.value = true;
+//         setTimeout(() => {
+//           wasTapSV.value = false;
+//         }, 100);
+//       }
+//     });
 
-//   //   u_joints: jointsUniform.current,
-//   //   u_tail: tailUniform.current,
-//   //   u_steps: stepsUniform.current,
-//   //   u_elbows: elbowsUniform.current,
-//   //   u_shoulders: shouldersUniform.current,
-//   //   u_muscles: musclesUniform.current,
-//   //   u_fingers: fingersUniform.current,
-//   //   u_moments: momentsUniform.current,
-//   // };
+//   const doubleTapGesture = Gesture.Tap()
+//     .numberOfTaps(2)
+//     .onEnd((_event, success) => {
+//       if (success) {
+//         wasDoubleTapSV.value = true;
+//         runOnJS(onDoublePress)();
+//         setTimeout(() => {
+//           wasDoubleTapSV.value = false;
+//         }, 100);
+//       }
+//     });
 
-//   const uniformsRef = useRef({
-//   u_scale: 1,
-//   u_gecko_scale: 1,
-//   u_time: 0,
-//   u_resolution: [1, 1],
-//   u_aspect: 1,
+//   const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
+//   const composedGesture = Gesture.Simultaneous(panGesture, taps);
 
-//   u_lead: leadUniformRef.current,
-//   u_soul: soulUniformRef.current,
-//   u_selected: selectedUniformRef.current,
-//   u_lastSelected: moments.current.lastSelected.coord,
+//   const color1Converted = hexToVec3(color1);
+//   const color2Converted = hexToVec3(color2);
+//   const bckgColor1Converted = hexToVec3(bckgColor1);
+//   const bckgColor2Converted = hexToVec3(bckgColor2);
 
-//   u_snout: snoutUniformRef.current,
-//   u_head: headUniformRef.current,
-//   u_hint: hintUniformRef.current,
-//   u_momentsLength: 0,
+//   const soul = useRef(new Soul(restPoint, 0.02));
+//   const leadPoint = useRef(new Mover(startingCoord));
+//   const gecko = useRef(new Gecko(startingCoord, 0.06));
+//   const sleepWalk0 = useRef(
+//     new SleepWalk0(
+//       [0.5, 0.3],
+//       0.3,
+//       gecko_size,
+//       manualOnly,
+//       speedSetting,
+//       autoPickUp,
+//       randomMomentIds,
+//     ),
+//   );
+//   const moments = useRef(
+//     new Moments(momentsData, gecko_size, sleepWalk0, [0.5, 0.5], 0.05),
+//   );
 
-//   u_joints: jointsUniform.current,
-//   u_tail: tailUniform.current,
-//   u_steps: stepsUniform.current,
-//   u_elbows: elbowsUniform.current,
-//   u_shoulders: shouldersUniform.current,
-//   u_muscles: musclesUniform.current,
-//   u_fingers: fingersUniform.current,
-//   u_moments: momentsUniform.current,
-// });
+//   const handleGetMomentRef = useRef(handleGetMoment);
+//   useEffect(() => {
+//     handleGetMomentRef.current = handleGetMoment;
+//   }, [handleGetMoment]);
 
+//   useEffect(() => {
+//     if (aspect) {
+//       moments.current.setAspect(aspect);
+//       sleepWalk0.current.setAspect(aspect);
+//     }
+//   }, [aspect]);
+
+//   const SHARED_SKSL_PRELUDE = (c1, c2, b1, b2) => `
+//     vec3 startColor = vec3(${c1});
+//     vec3 endColor = vec3(${c2});
+//     vec3 backgroundStartColor = vec3(${b1});
+//     vec3 backgroundEndColor = vec3(${b2});
+//   `;
+
+//   const [geckoColor, setGeckoColor] = useState(color2Converted);
+
+//   const source = useMemo(() => {
+//     return Skia.RuntimeEffect.Make(`
+//       ${SHARED_SKSL_PRELUDE(color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted)}
+//       ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
+//     `);
+//   }, [color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted]);
+
+//   const sourceTwo = useMemo(() => {
+//     return Skia.RuntimeEffect.Make(`
+//       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
+//       ${MOMENTS_BG_SKSL_OPT}
+//     `);
+//   }, [
+//     color1Converted,
+//     color2Converted,
+//     bckgColor1Converted,
+//     bckgColor2Converted,
+//   ]);
+
+//   if (!source) {
+//     console.error("❌ Shader failed to compile");
+//     return null;
+//   }
+
+//   const start = useRef(Date.now());
+//   const hintRef = useRef([0, 0]);
+
+//   const [internalReset, setInternalReset] = useState(0);
+//   const handleReset = () => setInternalReset(Date.now());
+
+//   useEffect(() => {
+//     console.log("resetting");
+//     moments.current.updateOrAddMoments(momentsData);
+//     moments.current.updateAllCoords(momentsData);
+//   }, [momentsData, reset]);
+
+//   useEffect(() => {
+//     if (!internalReset || !reset) {
+//       console.log("conditions not met for a reset");
+//       return;
+//     } else {
+//       console.log("TRUE RESET");
+//     }
+
+//     start.current = Date.now();
+//     soul.current = new Soul(restPoint, 0.02);
+//     leadPoint.current = new Mover(startingCoord);
+//     gecko.current = new Gecko(startingCoord, 0.06);
+
+//     // Reset buffers
+//     workingBuffers.soul.fill(0);
+//     workingBuffers.walk.fill(0);
+//     workingBuffers.hint.fill(0);
+//     workingBuffers.lead.fill(0);
+//     workingBuffers.selected.fill(0);
+//     workingBuffers.lastSelected.fill(0);
+//     workingBuffers.heldCoords.fill(0);
+//     workingBuffers.geckoPoints.fill(0);
+//     workingBuffers.moments.fill(0);
+
+//     // Reset SVs
+//     leadUniformSV.value = [0, 0];
+//     soulUniformSV.value = [0, 0];
+//     walk0UniformSV.value = [0, 0];
+//     selectedUniformSV.value = [0, 0];
+//     lastSelectedUniformSV.value = [0, 0];
+//     hintUniformSV.value = [0, 0];
+
+//     momentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
+//     heldMomentUniformSV.value = Array(MAX_HELD * 2).fill(0);
+//     geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0);
+//     momentsLengthSV.value = 0;
+
+//     userPointSV.value = restPoint;
+//     userPoint_geckoSpaceRef.current[0] = startingCoord[0];
+//     userPoint_geckoSpaceRef.current[1] = startingCoord[1];
+//   }, [reset, internalReset]);
+
+//   const frameCountRef = useRef(0);
+//   const lastTriggeredIdRef = useRef(-1);
+//   const lastPawsClearedRef = useRef(false);
+//   const clearAllPawsInUIRef = useRef(() => {});
+//   const syncPawsInUIRef = useRef<() => void>(() => {});
+
+//   useEffect(() => {
+//     let cancelled = false;
+//     let frame;
+//     const sleepWalkAfter = 100;
+
+//     frameCountRef.current = 0;
+
+//     const animate = () => {
+//       if (cancelled) return;
+
+//       // keep rAF alive but avoid doing work while paused
+//       if (isPausedRef.current) {
+//         frame = requestAnimationFrame(animate);
+//         return;
+//       }
+
+//       if (aspect == null || isNaN(aspect) || !size.width || !size.height) {
+//         frame = requestAnimationFrame(animate);
+//         return;
+//       }
+
+//       frameBudgetMonitor();
+
+//       // ---- UI / side-effects (unchanged) ----
+//       const shouldClearPaws = moments.current.trigger_remote;
+//       if (shouldClearPaws && !lastPawsClearedRef.current) {
+//         lastPawsClearedRef.current = true;
+//         clearAllPawsInUIRef.current();
+//       } else if (!shouldClearPaws && lastPawsClearedRef.current) {
+//         lastPawsClearedRef.current = false;
+//       }
+
+//       const currentId = moments.current.lastSelected?.id ?? -1;
+//       if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
+//         lastTriggeredIdRef.current = currentId;
+//         handleGetMomentRef.current(currentId);
+//       }
+
+//       if (leadPoint.current.isMoving && !gecko.current.sleepWalkMode) {
+//         frameCountRef.current = 0;
+//       }
+
+//       if (isDragging.value && gecko.current.sleepWalkMode) {
+//         frameCountRef.current = 0;
+//         gecko.current.updateSleepWalkMode(false);
+//       }
+
+//       if (frameCountRef.current < sleepWalkAfter) {
+//         frameCountRef.current += 1;
+//       } else if (
+//         frameCountRef.current === sleepWalkAfter &&
+//         !gecko.current.sleepWalkMode
+//       ) {
+//         gecko.current.updateSleepWalkMode(true);
+//       }
+
+//       // ---- pointer transform ----
+//       toGeckoPointerScaled_inPlace(
+//         userPointSV.value,
+//         aspect,
+//         scale,
+//         gecko_size,
+//         userPoint_geckoSpaceRef.current,
+//         0,
+//       );
+
+//       // ---- drive leadpoint ----
+//       if (soul.current.done && !gecko.current.oneTimeEnterComplete) {
+//         gecko.current.updateEnter(soul.current.done);
+//       } else {
+//         soul.current.update();
+//       }
+
+//       if (gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
+//         leadPoint.current.update(userPoint_geckoSpaceRef.current);
+//       } else if (!gecko.current.sleepWalkMode) {
+//         leadPoint.current.update(soul.current.soul);
+//       } else {
+//         sleepWalk0.current.update(moments);
+//         leadPoint.current.update(sleepWalk0.current.walk);
+//       }
+
+//       // ---- sim update ----
+//       gecko.current.update(
+//         leadPoint.current.lead,
+//         leadPoint.current.leadDistanceTraveled,
+//         leadPoint.current.isMoving,
+//       );
+
+//       const spine = gecko.current.body.spine;
+//       hintRef.current = spine.hintJoint || [0, 0];
+
+//       // step targets (no alloc)
+//       workingBuffers.stepTargets[0] =
+//         gecko.current.legs.frontLegs.stepTargets[0];
+//       workingBuffers.stepTargets[1] =
+//         gecko.current.legs.frontLegs.stepTargets[1];
+//       workingBuffers.stepTargets[2] =
+//         gecko.current.legs.backLegs.stepTargets[0];
+//       workingBuffers.stepTargets[3] =
+//         gecko.current.legs.backLegs.stepTargets[1];
+
+//       moments.current.update(
+//         userPointSV.value,
+//         isDragging.value,
+//         wasTapSV.value,
+//         wasDoubleTapSV.value,
+//         leadPoint.current.lead,
+//         workingBuffers.stepTargets,
+//       );
+
+//       if (
+//         sleepWalk0.current.pickUpNextId !== -1 &&
+//         sleepWalk0.current.pickUpNextId !== lastTriggeredIdRef.current
+//       ) {
+//         syncPawsInUIRef.current();
+//       }
+
+//       // ---------------------------------------------------------------------
+//       // ✅ CHANGE #2: ALWAYS update the SMALL uniforms (cheap)
+//       // ---------------------------------------------------------------------
+//       toShaderSpace_inplace(
+//         soul.current.soul,
+//         aspect,
+//         gecko_scale,
+//         workingBuffers.soul,
+//         0,
+//       );
+//       toShaderSpace_inplace(
+//         sleepWalk0.current.walk,
+//         aspect,
+//         gecko_scale,
+//         workingBuffers.walk,
+//         0,
+//       );
+//       toShaderSpace_inplace(
+//         hintRef.current,
+//         aspect,
+//         gecko_scale,
+//         workingBuffers.hint,
+//         0,
+//       );
+//       toShaderModel_inPlace(
+//         leadPoint.current.lead,
+//         aspect,
+//         gecko_scale,
+//         workingBuffers.lead,
+//         0,
+//       );
+
+//       workingBuffers.selected[0] = moments.current.selected.coord[0];
+//       workingBuffers.selected[1] = moments.current.selected.coord[1];
+
+//       for (let i = 0; i < MAX_HELD; i++) {
+//         toGeckoSpace_inPlace(
+//           moments.current.holdings[i].coord,
+//           gecko_scale,
+//           workingBuffers.heldTemp,
+//         );
+//         workingBuffers.heldCoords[i * 2] = workingBuffers.heldTemp[0];
+//         workingBuffers.heldCoords[i * 2 + 1] = workingBuffers.heldTemp[1];
+//       }
+
+//       toGeckoSpace_inPlace(
+//         moments.current.lastSelected.coord,
+//         gecko_scale,
+//         workingBuffers.lastSelected,
+//       );
+
+//       // Update the small SharedValues every frame (tiny allocs, acceptable)
+//       soulUniformSV.value = [workingBuffers.soul[0], workingBuffers.soul[1]];
+//       walk0UniformSV.value = [workingBuffers.walk[0], workingBuffers.walk[1]];
+//       hintUniformSV.value = [workingBuffers.hint[0], workingBuffers.hint[1]];
+//       leadUniformSV.value = [workingBuffers.lead[0], workingBuffers.lead[1]];
+//       selectedUniformSV.value = [
+//         workingBuffers.selected[0],
+//         workingBuffers.selected[1],
+//       ];
+//       lastSelectedUniformSV.value = [
+//         workingBuffers.lastSelected[0],
+//         workingBuffers.lastSelected[1],
+//       ];
+
+//       // ---------------------------------------------------------------------
+//       // ✅ CHANGE #3: Gate BIG uniform packing + copying
+//       // ---------------------------------------------------------------------
+//       const shouldUpdateBigUniforms =
+//         leadPoint.current.isMoving ||
+//         isDragging.value ||
+//         wasTapSV.value ||
+//         wasDoubleTapSV.value ||
+//         moments.current.trigger_remote; // any “moments changed” flag
+
+//       if (shouldUpdateBigUniforms) {
+//         // pack into typed arrays (fast, low GC)
+//         // workingBuffers.geckoPoints.fill(0);
+//         // packGeckoOnlyProd(gecko.current, workingBuffers.geckoPoints as any, gecko_scale);
+
+//         workingBuffers.geckoPoints.fill(0);
+//         packGeckoOnlyProdCompact56(
+//           gecko.current,
+//           workingBuffers.geckoPoints,
+//           gecko_scale,
+//         );
+
+//         workingBuffers.moments.fill(0);
+//         packVec2Uniform_withRecenter_moments(
+//           moments.current.moments,
+//           workingBuffers.moments as any,
+//           moments.current.momentsLength,
+//           aspect,
+//           scale,
+//         );
+
+//         // COPY ONLY WHEN NEEDED (this is where your GC spikes were coming from)
+
+//         heldMomentUniformSV.value = Array.from(workingBuffers.heldCoords);
+
+//         // COPY ONLY WHEN NEEDED (your existing shouldUpdateBigUniforms gate)
+
+//         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
+//         momentsUniformSV.value = Array.from(workingBuffers.moments);
+
+//         momentsLengthSV.value = moments.current.momentsLength;
+
+//         // Trigger shader update (throttle a bit)
+//         const now = Date.now();
+//         if (now - lastRenderRef.current > 16) {
+//           lastRenderRef.current = now;
+//           updateTrigger.value += 1;
+//         }
+//       }
+
+//       frame = requestAnimationFrame(animate);
+//     };
+
+//     animate();
+
+//     return () => {
+//       cancelled = true;
+//       if (frame) cancelAnimationFrame(frame);
+//     };
+//   }, [aspect, gecko_scale, gecko_size, scale, size.width, size.height]);
+
+//   const uniforms = useDerivedValue(() => {
+//     // Reanimated dependency gate
+//     updateTrigger.value;
+
+//     if (!size.width || !size.height) {
+//       return {
+//         u_scale: scale,
+//         u_gecko_scale: gecko_scale,
+//         u_gecko_size: gecko_size,
+//         u_time: 0,
+//         u_resolution: [width, height],
+//         u_aspect: aspect || 1,
+//         u_lead: [-100, -100],
+//         u_soul: [-100, -100],
+//         u_walk0: [-100, -100],
+//         u_selected: [-100, -100],
+//         u_lastSelected: [-100, -100],
+//         u_hint: [-100, -100],
+//         u_momentsLength: 0,
+//         u_moments: momentsUniformSV.value,
+//         u_heldMoments: heldMomentUniformSV.value,
+//         u_geckoPoints: geckoPointsUniformSV.value,
+//       };
+//     }
+
+//     return {
+//       u_scale: scale,
+//       u_gecko_scale: gecko_scale,
+//       u_gecko_size: gecko_size,
+//       u_time: (Date.now() - start.current) / 1000,
+//       u_resolution: [size.width, size.height],
+//       u_aspect: aspect || 1,
+//       u_lead: leadUniformSV.value,
+//       u_soul: soulUniformSV.value,
+//       u_walk0: walk0UniformSV.value,
+//       u_selected: selectedUniformSV.value,
+//       u_lastSelected: lastSelectedUniformSV.value,
+//       u_hint: hintUniformSV.value,
+//       u_momentsLength: momentsLengthSV.value,
+//       u_moments: momentsUniformSV.value,
+//       u_heldMoments: heldMomentUniformSV.value,
+//       u_geckoPoints: geckoPointsUniformSV.value,
+//     };
+//   }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
 
 //   return (
 //     <>
 //       <GestureDetector gesture={composedGesture}>
 //         <View style={StyleSheet.absoluteFill}>
-//           <Canvas
-//             ref={ref}
-//             style={[
-//               StyleSheet.absoluteFill,
-//               {
-//                 alignItems: "center",
-//               },
-//             ]}
-//           >
+//           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
 //             <Rect
 //               x={0}
 //               y={0}
@@ -1581,20 +1439,12 @@
 //               <Shader
 //                 style={{ backgroundColor: "transparent" }}
 //                 source={sourceTwo}
-//                 uniforms={uniformsRef.current}
-//               ></Shader>
+//                 uniforms={uniforms}
+//               />
 //             </Rect>
 //           </Canvas>
 
-//           <Canvas
-//             ref={ref}
-//             style={[
-//               StyleSheet.absoluteFill,
-//               {
-//                 alignItems: "center",
-//               },
-//             ]}
-//           >
+//           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
 //             <Rect
 //               x={0}
 //               y={0}
@@ -1605,12 +1455,41 @@
 //               <Shader
 //                 style={{ backgroundColor: "transparent" }}
 //                 source={source}
-//                 uniforms={uniformsRef.current}
-//               ></Shader>
+//                 uniforms={uniforms}
+//               />
 //             </Rect>
 //           </Canvas>
 //         </View>
 //       </GestureDetector>
+
+//       <View style={styles.pawSetterContainer}>
+//         <PawSetter
+//           color={lightDarkTheme.primaryText}
+//           backgroundColor={lightDarkTheme.primaryBackground}
+//           borderColor={lightDarkTheme.lighterOverlayBackground}
+//           momentsData={moments.current.moments}
+//           lastSelected={moments.current.lastSelected}
+//           updatePaw={(moment, holdIndex) =>
+//             moments.current.updateHold(moment, holdIndex)
+//           }
+//           clearPaw={(holdIndex) => moments.current.clearHolding(holdIndex)}
+//           autoUpdatePaw={(holdIndex) =>
+//             moments.current.updateHold(moment, holdIndex)
+//           }
+//           updateSelected={(holdIndex) =>
+//             moments.current.updateSelected(holdIndex)
+//           }
+//           registerClearAll={(fn) => {
+//             clearAllPawsInUIRef.current = fn;
+//           }}
+//           registerSyncPaws={(fn) => {
+//             syncPawsInUIRef.current = fn;
+//           }}
+//           clearAllPaws={() => moments.current.clearAllHoldings()}
+//           handleGetMoment={handleGetMoment}
+//         />
+//       </View>
+
 //       <View style={styles.resetterContainer}>
 //         <MomentDotsResetterMini
 //           onBackPress={handleUpdateMomentsState}
@@ -1627,11 +1506,9 @@
 // };
 
 // const styles = StyleSheet.create({
+//   pawSetterContainer: { position: "absolute", bottom: 200, left: 16 },
 //   resetterContainer: { position: "absolute", bottom: 200, right: 16 },
- 
 // });
-
-// // export default MomentsSkia;
 
 // const MemoizedMomentsSkia = React.memo(MomentsSkia);
 // export default MemoizedMomentsSkia;

@@ -755,7 +755,7 @@ import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
-import { packGeckoOnlyProd, packGeckoOnlyProdCompact56 } from "./animUtils";
+import { packGeckoOnlyProd, packGeckoOnlyProdCompact40 } from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
@@ -872,7 +872,7 @@ const MomentsSkia = ({
   const MAX_MOMENTS = 40;
   const MAX_HELD = 4;
 
-  const TOTAL_GECKO_POINTS_COMPACT = 56;
+  const TOTAL_GECKO_POINTS_COMPACT = 40;
 
   // ============== TRULY PREALLOCATED BUFFERS ==============
   // ✅ CHANGE #1: make big buffers typed arrays (no JS array objects)
@@ -1334,7 +1334,7 @@ const MomentsSkia = ({
         // packGeckoOnlyProd(gecko.current, workingBuffers.geckoPoints as any, gecko_scale);
 
         workingBuffers.geckoPoints.fill(0);
-        packGeckoOnlyProdCompact56(
+        packGeckoOnlyProdCompact40(
           gecko.current,
           workingBuffers.geckoPoints,
           gecko_scale,

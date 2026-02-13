@@ -1338,6 +1338,33 @@ export function solveFingers_Opt(stepTarget, fingers, fingerLen, is1, manualAdj,
 }
 
 
+// Optimized: Only calculates the first finger (for shader-based finger calculation)
+export function solveFirstFingerOnly_Opt(stepTarget, fingerLen, is1, manualAdj, stepAngle) {
+  // Base angle for the gap
+  let gapCenterAngle = stepAngle;
+
+  // Flip the angle to correct the backward gap
+  gapCenterAngle += Math.PI;
+
+  // Side offset: fingers point slightly outward depending on hand
+  const sideOffset = Math.PI / manualAdj;
+  gapCenterAngle += is1 ? sideOffset : -sideOffset;
+
+  // Gap for the arm/wrist (adjustable)
+  const gapAngle = (2 * Math.PI) / 1.7;
+
+  const fanStart = gapCenterAngle + gapAngle / 2;
+  
+  // Only calculate the first finger (t = 0)
+  const angle = fanStart;
+
+  // Convert polar to Cartesian
+  const x = stepTarget[0] + Math.cos(angle) * fingerLen;
+  const y = stepTarget[1] + Math.sin(angle) * fingerLen;
+
+  return [x, y];
+}
+
 
 // gapoCenterAngle is forwardAngle of step which gets attached to stepTarget and passed in separately as gapCenterAngle
 // we flip the angle 180 degrees for this

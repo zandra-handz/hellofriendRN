@@ -268,6 +268,221 @@ packVec2Named(
 
 
 
+export function packGeckoOnlyProdCompact40(
+  gecko: any,
+  out: Float32Array | number[],
+  scale: number = 1,
+) {
+  let i = 0;
+
+  const packVec2Safe = (p: [number, number] | null | undefined) => {
+    if (p) {
+      out[i++] = (p[0] - 0.5) / scale;
+      out[i++] = (p[1] - 0.5) / scale;
+    } else {
+      out[i++] = 0;
+      out[i++] = 0;
+    }
+  };
+
+  const spine = gecko.body.spine;
+  const tail = gecko.body.tail;
+  const frontLegs = gecko.legs.frontLegs;
+  const backLegs = gecko.legs.backLegs;
+
+  // ─────────────────────────────────────────────
+  // COMPACT LAYOUT (40 vec2 = 80 floats)
+  // Body(12) + Tail(12) + Steps(4) + Elbows(4) + 
+  // Muscles(4) + FirstFingers(4)
+  // ─────────────────────────────────────────────
+
+  // Body points (12 vec2)
+  packVec2Safe(spine.unchainedJoints?.[0]);
+  packVec2Safe(spine.unchainedJoints?.[1]);
+  packVec2Safe(spine.joints?.[1]);
+  packVec2Safe(spine.joints?.[2]);
+  packVec2Safe(spine.joints?.[3]);
+  packVec2Safe(spine.joints?.[4]);
+  packVec2Safe(spine.joints?.[5]);
+  packVec2Safe(spine.joints?.[6]);
+  packVec2Safe(spine.joints?.[7]);
+  packVec2Safe(spine.joints?.[8]);
+  packVec2Safe(spine.joints?.[9]);
+  packVec2Safe(spine.joints?.[13]);
+
+  // Tail points (12 vec2)
+  for (let j = 0; j < 12; j++) {
+    packVec2Safe(tail.joints?.[j]);
+  }
+
+  // Steps (4 vec2)
+  packVec2Safe(frontLegs.stepTargets?.[0]);
+  packVec2Safe(frontLegs.stepTargets?.[1]);
+  packVec2Safe(backLegs.stepTargets?.[0]);
+  packVec2Safe(backLegs.stepTargets?.[1]);
+
+  // Elbows (4 vec2)
+  packVec2Safe(frontLegs.elbows?.[0]);
+  packVec2Safe(frontLegs.elbows?.[1]);
+  packVec2Safe(backLegs.elbows?.[0]);
+  packVec2Safe(backLegs.elbows?.[1]);
+
+  // Muscles (4 vec2)
+  packVec2Safe(frontLegs.muscles?.[1]);
+  packVec2Safe(frontLegs.muscles?.[3]);
+  packVec2Safe(backLegs.muscles?.[1]);
+  packVec2Safe(backLegs.muscles?.[3]);
+
+  // First fingers (4 vec2) - shader calculates the other 16!
+  if (frontLegs.fingers?.[0]) {
+    out[i++] = (frontLegs.fingers[0][0] - 0.5) / scale;
+    out[i++] = (frontLegs.fingers[0][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  if (frontLegs.fingers?.[1]) {
+    out[i++] = (frontLegs.fingers[1][0] - 0.5) / scale;
+    out[i++] = (frontLegs.fingers[1][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  if (backLegs.fingers?.[0]) {
+    out[i++] = (backLegs.fingers[0][0] - 0.5) / scale;
+    out[i++] = (backLegs.fingers[0][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  if (backLegs.fingers?.[1]) {
+    out[i++] = (backLegs.fingers[1][0] - 0.5) / scale;
+    out[i++] = (backLegs.fingers[1][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  // 40 vec2 * 2 floats = 80 floats
+  if (i !== 80) {
+    console.error(`Expected 80 floats (40 vec2), packed ${i}`);
+  }
+
+  return out;
+}
+
+
+export function packGeckoOnlyProdCompact42(
+  gecko: any,
+  out: Float32Array | number[],
+  scale: number = 1,
+) {
+  let i = 0;
+
+  const packVec2Safe = (p: [number, number] | null | undefined) => {
+    if (p) {
+      out[i++] = (p[0] - 0.5) / scale;
+      out[i++] = (p[1] - 0.5) / scale;
+    } else {
+      out[i++] = 0;
+      out[i++] = 0;
+    }
+  };
+
+  const spine = gecko.body.spine;
+  const tail = gecko.body.tail;
+  const frontLegs = gecko.legs.frontLegs;
+  const backLegs = gecko.legs.backLegs;
+
+  // ─────────────────────────────────────────────
+  // COMPACT LAYOUT (42 vec2 = 84 floats)
+  // Body(12) + Tail(12) + Steps(4) + Elbows(4) + 
+  // Muscles(4) + FirstFingers(4)
+  // ─────────────────────────────────────────────
+
+  // Body points (12 vec2)
+  packVec2Safe(spine.unchainedJoints?.[0]);
+  packVec2Safe(spine.unchainedJoints?.[1]);
+  packVec2Safe(spine.joints?.[1]);
+  packVec2Safe(spine.joints?.[2]);
+  packVec2Safe(spine.joints?.[3]);
+  packVec2Safe(spine.joints?.[4]);
+  packVec2Safe(spine.joints?.[5]);
+  packVec2Safe(spine.joints?.[6]);
+  packVec2Safe(spine.joints?.[7]);
+  packVec2Safe(spine.joints?.[8]);
+  packVec2Safe(spine.joints?.[9]);
+  packVec2Safe(spine.joints?.[13]);
+
+  // Tail points (12 vec2)
+  for (let j = 0; j < 12; j++) {
+    packVec2Safe(tail.joints?.[j]);
+  }
+
+  // Steps (4 vec2)
+  packVec2Safe(frontLegs.stepTargets?.[0]);
+  packVec2Safe(frontLegs.stepTargets?.[1]);
+  packVec2Safe(backLegs.stepTargets?.[0]);
+  packVec2Safe(backLegs.stepTargets?.[1]);
+
+  // Elbows (4 vec2)
+  packVec2Safe(frontLegs.elbows?.[0]);
+  packVec2Safe(frontLegs.elbows?.[1]);
+  packVec2Safe(backLegs.elbows?.[0]);
+  packVec2Safe(backLegs.elbows?.[1]);
+
+  // Muscles (4 vec2)
+  packVec2Safe(frontLegs.muscles?.[1]);
+  packVec2Safe(frontLegs.muscles?.[3]);
+  packVec2Safe(backLegs.muscles?.[1]);
+  packVec2Safe(backLegs.muscles?.[3]);
+
+  // ✅ FIXED: First fingers (4 vec2) - pack directly from Float32Array
+  // fingers[0] is a Float32Array(2), so access [0] and [1] directly
+  if (frontLegs.fingers?.[0]) {
+    out[i++] = (frontLegs.fingers[0][0] - 0.5) / scale;
+    out[i++] = (frontLegs.fingers[0][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  if (frontLegs.fingers?.[1]) {
+    out[i++] = (frontLegs.fingers[1][0] - 0.5) / scale;
+    out[i++] = (frontLegs.fingers[1][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  if (backLegs.fingers?.[0]) {
+    out[i++] = (backLegs.fingers[0][0] - 0.5) / scale;
+    out[i++] = (backLegs.fingers[0][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  if (backLegs.fingers?.[1]) {
+    out[i++] = (backLegs.fingers[1][0] - 0.5) / scale;
+    out[i++] = (backLegs.fingers[1][1] - 0.5) / scale;
+  } else {
+    out[i++] = 0;
+    out[i++] = 0;
+  }
+
+  // 42 vec2 * 2 floats = 84 floats
+  if (i !== 84) {
+    console.error(`Expected 84 floats (42 vec2), packed ${i}`);
+  }
+
+  return out;
+}
+
+
 
 export function packGeckoOnlyProdCompact56(
   gecko: any,
