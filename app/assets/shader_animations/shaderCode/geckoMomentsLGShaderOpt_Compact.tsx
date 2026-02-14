@@ -290,8 +290,8 @@ uniform float  u_scale;
 uniform float u_gecko_scale; 
 uniform float u_gecko_size;
 uniform float u_time;
-uniform vec2 u_soul;
-uniform vec2 u_lead; 
+// uniform vec2 u_soul;
+// uniform vec2 u_lead; 
 uniform vec2 u_hint; 
 
 // COMPACT: only 40 vec2 (was 56)

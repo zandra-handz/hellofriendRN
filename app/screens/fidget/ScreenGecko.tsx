@@ -157,6 +157,8 @@ useEffect(() => {
 
 
 const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
+
+  console.log(`TYPE INDEX`,typeIndex);
   const result = new Array(count).fill(-1);
   
   if (!moments || moments.length === 0) {
@@ -196,7 +198,7 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
 
   // Sort by the specific score field in descending order
   const sorted = [...withScores].sort((a, b) => b[scoreKey] - a[scoreKey]);
-  console.log(sorted)
+  console.log(sorted.map((moment) => moment.capsule))
 
   // Take top N
   for (let i = 0; i < Math.min(sorted.length, count); i++) {

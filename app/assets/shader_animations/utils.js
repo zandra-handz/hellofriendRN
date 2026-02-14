@@ -821,60 +821,133 @@ export function getBackFrontStepDistance(frontStep, backStep) {
   return dist;
 }
 
+export function getFrontStepsSagTrans_inPlace(step, otherStep, out, tempLineDir, tempPerpDir) {
+  // Remove the allocations:
+  // const tempLineDir = [0, 0];  // ❌ DELETE
+  // const tempPerpDir = [0, 0];  // ❌ DELETE
 
+  // Center point
+  _getCenterPoint_inPlace(step, otherStep, out.tCenter);
 
-export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
-  // out must be:
-  // {
-  //   tCenter: Float32Array(2),
-  //   tLineStart: Float32Array(2),
-  //   tLineEnd: Float32Array(2),
-  //   sLineStart: Float32Array(2),
-  //   sLineEnd: Float32Array(2),
-  //   tDistanceApart: number,
-  //   sAngle: number,
-  //   tAngle: number,
-  // }
+  // Distance
+  out.tDistanceApart = _getDistanceScalar(step, otherStep);
 
-  // --- EXACTLY LIKE OLD: center, distance, dirs ---
-  // NOTE: your _getCenterPoint_inPlace API seems inconsistent in your codebase,
-  // so we support both "returns vec" and "writes to provided out".
-  let centerPoint = _getCenterPoint_inPlace(step, otherStep, out.tCenter);
-  if (centerPoint && centerPoint !== out.tCenter) {
-    out.tCenter[0] = centerPoint[0];
-    out.tCenter[1] = centerPoint[1];
-    centerPoint = out.tCenter;
-  } else {
-    centerPoint = out.tCenter;
-  }
+  // Direction vectors (in-place)
+  _getDirVec_inPlace(step, otherStep, tempLineDir);
+  _turnDirVec90ClockW_inPlace(tempLineDir, tempPerpDir);
 
-  const tDistanceApart = _getDistanceScalar(step, otherStep);
-  const lineDir = _getDirVec(step, otherStep);
-  const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
+  // Angles
+  out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(tempPerpDir));
+  out.tAngle = _getAngleFromXAxis(tempLineDir);
 
-  // --- EXACTLY LIKE OLD: angles ---
-  out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
-  out.tAngle = _getAngleFromXAxis(lineDir);
-  out.tDistanceApart = tDistanceApart;
-
-  // --- EXACTLY LIKE OLD: tLine shape, just split into start/end ---
+  // tLine endpoints (already in-place)
   out.tLineStart[0] = step[0];
   out.tLineStart[1] = step[1];
   out.tLineEnd[0] = otherStep[0];
   out.tLineEnd[1] = otherStep[1];
 
-  // --- EXACTLY LIKE OLD: sLine via makeLineOverACenter(center, perpDir, 0.2) ---
-  // This preserves whatever ordering / internal behavior your old version had.
-  const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
-
-  // sLine is expected to be: [ [x0,y0], [x1,y1] ]
-  out.sLineStart[0] = sLine[0][0];
-  out.sLineStart[1] = sLine[0][1];
-  out.sLineEnd[0] = sLine[1][0];
-  out.sLineEnd[1] = sLine[1][1];
+  // sLine endpoints (in-place)
+  makeLineOverACenter_inPlace(
+    out.tCenter,
+    tempPerpDir,
+    0.2,
+    out.sLineStart,
+    out.sLineEnd
+  );
 
   return out;
 }
+
+export function getFrontStepsSagTrans_inPlaceOld(step, otherStep, out) {
+  // Reuse buffers (add these to your out object or as temp vars)
+  const tempLineDir = [0, 0];
+  const tempPerpDir = [0, 0];
+
+  // Center point
+  _getCenterPoint_inPlace(step, otherStep, out.tCenter);
+
+  // Distance
+  out.tDistanceApart = _getDistanceScalar(step, otherStep);
+
+  // Direction vectors (in-place)
+  _getDirVec_inPlace(step, otherStep, tempLineDir);
+  _turnDirVec90ClockW_inPlace(tempLineDir, tempPerpDir);
+
+  // Angles
+  out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(tempPerpDir));
+  out.tAngle = _getAngleFromXAxis(tempLineDir);
+
+  // tLine endpoints (already in-place)
+  out.tLineStart[0] = step[0];
+  out.tLineStart[1] = step[1];
+  out.tLineEnd[0] = otherStep[0];
+  out.tLineEnd[1] = otherStep[1];
+
+  // sLine endpoints (in-place)
+  makeLineOverACenter_inPlace(
+    out.tCenter,
+    tempPerpDir,
+    0.2,
+    out.sLineStart,
+    out.sLineEnd
+  );
+
+  return out;
+}
+
+
+// export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
+//   // out must be:
+//   // {
+//   //   tCenter: Float32Array(2),
+//   //   tLineStart: Float32Array(2),
+//   //   tLineEnd: Float32Array(2),
+//   //   sLineStart: Float32Array(2),
+//   //   sLineEnd: Float32Array(2),
+//   //   tDistanceApart: number,
+//   //   sAngle: number,
+//   //   tAngle: number,
+//   // }
+
+//   // --- EXACTLY LIKE OLD: center, distance, dirs ---
+//   // NOTE: your _getCenterPoint_inPlace API seems inconsistent in your codebase,
+//   // so we support both "returns vec" and "writes to provided out".
+//   let centerPoint = _getCenterPoint_inPlace(step, otherStep, out.tCenter);
+//   if (centerPoint && centerPoint !== out.tCenter) {
+//     out.tCenter[0] = centerPoint[0];
+//     out.tCenter[1] = centerPoint[1];
+//     centerPoint = out.tCenter;
+//   } else {
+//     centerPoint = out.tCenter;
+//   }
+
+//   const tDistanceApart = _getDistanceScalar(step, otherStep);
+//   const lineDir = _getDirVec(step, otherStep);
+//   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
+
+//   // --- EXACTLY LIKE OLD: angles ---
+//   out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
+//   out.tAngle = _getAngleFromXAxis(lineDir);
+//   out.tDistanceApart = tDistanceApart;
+
+//   // --- EXACTLY LIKE OLD: tLine shape, just split into start/end ---
+//   out.tLineStart[0] = step[0];
+//   out.tLineStart[1] = step[1];
+//   out.tLineEnd[0] = otherStep[0];
+//   out.tLineEnd[1] = otherStep[1];
+
+//   // --- EXACTLY LIKE OLD: sLine via makeLineOverACenter(center, perpDir, 0.2) ---
+//   // This preserves whatever ordering / internal behavior your old version had.
+//   const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
+
+//   // sLine is expected to be: [ [x0,y0], [x1,y1] ]
+//   out.sLineStart[0] = sLine[0][0];
+//   out.sLineStart[1] = sLine[0][1];
+//   out.sLineEnd[0] = sLine[1][0];
+//   out.sLineEnd[1] = sLine[1][1];
+
+//   return out;
+// }
 
 
 
@@ -954,30 +1027,30 @@ export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
 
 
 
-export function getFrontStepsSagTrans(step, otherStep) {
-  const centerPoint = _getCenterPoint_inPlace(step, otherStep);
-  const tDistanceApart = _getDistanceScalar(step, otherStep);
-  const lineDir = _getDirVec(step, otherStep);
-  const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
+// export function getFrontStepsSagTrans(step, otherStep) {
+//   const centerPoint = _getCenterPoint_inPlace(step, otherStep);
+//   const tDistanceApart = _getDistanceScalar(step, otherStep);
+//   const lineDir = _getDirVec(step, otherStep);
+//   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
 
-  // Legs.chestAngle
-  const sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
+//   // Legs.chestAngle
+//   const sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
 
-  const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
-  const tAngle = _getAngleFromXAxis(lineDir);
+//   const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
+//   const tAngle = _getAngleFromXAxis(lineDir);
 
-  return {
-    tCenter: centerPoint,
-    tLine: [
-      [step[0], step[1]],
-      [otherStep[0], otherStep[1]],
-    ],
-    tDistanceApart: tDistanceApart,
-    sLine: sLine,
-    sAngle: sAngle,
-    tAngle: tAngle,
-  };
-}
+//   return {
+//     tCenter: centerPoint,
+//     tLine: [
+//       [step[0], step[1]],
+//       [otherStep[0], otherStep[1]],
+//     ],
+//     tDistanceApart: tDistanceApart,
+//     sLine: sLine,
+//     sAngle: sAngle,
+//     tAngle: tAngle,
+//   };
+// }
 
 // LEGS
 
@@ -1070,10 +1143,146 @@ export function updateShoulderRotator(
   rotator[1] = newRotationPoint[1];
 }
 
+
+
+
+
+
+export function _solveShoulder_inPlace(
+  rotator, // Write directly to output buffer
+  radius,
+  range,
+  phase,
+  centerPoint0,
+  centerPoint1,
+  centerAngle,
+  is1,
+  isFollower,
+  goingBackwards = false,
+) {
+  const perpDirection = goingBackwards ? -1 : 1;
+  const perp = is1 ? -Math.PI / 2 * perpDirection : Math.PI / 2 * perpDirection;
+  const side = isFollower ? 1 : -1;
+  const ang = centerAngle + perp;
+
+  // inline perpDirVec calculation
+  const perpX = Math.cos(ang) * radius;
+  const perpY = Math.sin(ang) * radius;
+
+  // inline spineDirVec calculation
+  const spineX = Math.cos(centerAngle);
+  const spineY = Math.sin(centerAngle);
+
+  // inline bob calculation
+  const bobAmount = radius * range;
+  const bobX = spineX * bobAmount * phase * side;
+  const bobY = spineY * bobAmount * phase * side;
+
+  // ✅ Write directly to output - zero allocations
+  rotator[0] = centerPoint0 + perpX + bobX;
+  rotator[1] = centerPoint1 + perpY + bobY;
+}
+
+ 
+
+
 export function getArmMuscles(muscles, elbow, rotator, stepTarget) {
   muscles[0] = _getCenterPoint_inPlace(stepTarget, elbow);
   muscles[1] = _getCenterPoint_inPlace(elbow, rotator);
 }
+
+// // Sets elbow coords
+// export function solveElbowIK(
+//   rotator,
+//   elbow,
+//   stepTarget,
+//   upperArmLength,
+//   forearmLength,
+//   is1,
+// ) {
+//   const { dist: dist, angle: baseAngle } = _getDistanceScalar_andAngle(
+//     rotator,
+//     stepTarget,
+//   );
+
+//   // Clamp distance to reachable range
+//   const d = Math.min(
+//     Math.max(dist, Math.abs(upperArmLength - forearmLength)),
+//     upperArmLength + forearmLength,
+//   );
+
+//   // Side: right = bend outwards, left = bend inwards
+//   const bendDir = is1 ? 1 : -1;
+
+//   const shoulderToElbowAngle =
+//     baseAngle +
+//     bendDir *
+//       Math.acos(
+//         (upperArmLength * upperArmLength +
+//           d * d -
+//           forearmLength * forearmLength) /
+//           (2 * upperArmLength * d),
+//       );
+
+//   elbow[0] = rotator[0] + Math.cos(shoulderToElbowAngle) * upperArmLength;
+//   elbow[1] = rotator[1] + Math.sin(shoulderToElbowAngle) * upperArmLength;
+
+//   elbow.stepAngle = _getAngleBetweenPoints(stepTarget, elbow);
+//   rotator.stepAngle = baseAngle;
+// }
+
+// // Sets elbow coords
+// export function solveBackElbowIK(
+//   rotator,
+//   elbow,
+//   stepTarget,
+//   upperArmLength,
+//   forearmLength,
+//   is1, 
+// ) {
+//   const { dist: dist, angle: baseAngle } = _getDistanceScalar_andAngle(
+//     rotator,
+//     stepTarget,
+//   );
+
+//   // Clamp distance to reachable range
+//   const d = Math.min(
+//     Math.max(dist, Math.abs(upperArmLength - forearmLength)),
+//     upperArmLength + forearmLength,
+//   );
+
+//   // Side: right = bend outwards, left = bend inwards
+//   const bendDir = !is1 ? 1 : -1;
+
+//   const shoulderToElbowAngle =
+//     baseAngle +
+//     bendDir *
+//       Math.acos(
+//         (upperArmLength * upperArmLength +
+//           d * d -
+//           forearmLength * forearmLength) /
+//           (2 * upperArmLength * d),
+//       );
+
+//   elbow[0] = rotator[0] + Math.cos(shoulderToElbowAngle) * upperArmLength;
+//   elbow[1] = rotator[1] + Math.sin(shoulderToElbowAngle) * upperArmLength;
+// }
+
+// export function getPivotedStep(step, pivot, pivotSize, distanceOut, is1) {
+//   const angle = is1 ? -pivotSize : pivotSize;
+
+//   const x = step[0] - pivot[0];
+//   const y = step[1] - pivot[1];
+
+//   const cosA = Math.cos(angle);
+//   const sinA = Math.sin(angle);
+
+//   const newX = x * cosA - y * sinA + pivot[0];
+//   const newY = x * sinA + y * cosA + pivot[1];
+
+//   return [newX, newY];
+// }
+
 
 // Sets elbow coords
 export function solveElbowIK(
@@ -1084,10 +1293,11 @@ export function solveElbowIK(
   forearmLength,
   is1,
 ) {
-  const { dist: dist, angle: baseAngle } = _getDistanceScalar_andAngle(
-    rotator,
-    stepTarget,
-  );
+  // Inline distance and angle calculation - zero allocations
+  const dx = stepTarget[0] - rotator[0];
+  const dy = stepTarget[1] - rotator[1];
+  const dist = Math.hypot(dx, dy);
+  const baseAngle = Math.atan2(dy, dx);
 
   // Clamp distance to reachable range
   const d = Math.min(
@@ -1111,8 +1321,8 @@ export function solveElbowIK(
   elbow[0] = rotator[0] + Math.cos(shoulderToElbowAngle) * upperArmLength;
   elbow[1] = rotator[1] + Math.sin(shoulderToElbowAngle) * upperArmLength;
 
-  elbow.stepAngle = _getAngleBetweenPoints(stepTarget, elbow);
-  rotator.stepAngle = baseAngle;
+  // elbow.stepAngle = _getAngleBetweenPoints(stepTarget, elbow);
+  // rotator.stepAngle = baseAngle;
 }
 
 // Sets elbow coords
@@ -1123,12 +1333,12 @@ export function solveBackElbowIK(
   upperArmLength,
   forearmLength,
   is1,
-  backwards = false,
 ) {
-  const { dist: dist, angle: baseAngle } = _getDistanceScalar_andAngle(
-    rotator,
-    stepTarget,
-  );
+  // Inline distance and angle calculation - zero allocations
+  const dx = stepTarget[0] - rotator[0];
+  const dy = stepTarget[1] - rotator[1];
+  const dist = Math.hypot(dx, dy);
+  const baseAngle = Math.atan2(dy, dx);
 
   // Clamp distance to reachable range
   const d = Math.min(
@@ -1151,21 +1361,8 @@ export function solveBackElbowIK(
 
   elbow[0] = rotator[0] + Math.cos(shoulderToElbowAngle) * upperArmLength;
   elbow[1] = rotator[1] + Math.sin(shoulderToElbowAngle) * upperArmLength;
-}
+ 
 
-export function getPivotedStep(step, pivot, pivotSize, distanceOut, is1) {
-  const angle = is1 ? -pivotSize : pivotSize;
-
-  const x = step[0] - pivot[0];
-  const y = step[1] - pivot[1];
-
-  const cosA = Math.cos(angle);
-  const sinA = Math.sin(angle);
-
-  const newX = x * cosA - y * sinA + pivot[0];
-  const newY = x * sinA + y * cosA + pivot[1];
-
-  return [newX, newY];
 }
 
 // export function getCalcStep(

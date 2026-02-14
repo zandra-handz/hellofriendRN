@@ -187,12 +187,13 @@ export default class Moments {
     }
 
     const holding = this.holdings[holdIndex];
-    if (!holding.id) return this.holdings;
+    if (!holding?.id) return this.holdings;
 
     // const moment = this.moments.find((m) => m.id === holding.id);
 
     const idx = this.momentIndexById.get(holding.id);
     const moment = idx !== undefined ? this.moments[idx] : null;
+
     if (!moment) {
       // console.log("no matching moment found");
       return this.holdings;

@@ -183,9 +183,7 @@
 
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
-import useUser from "@/src/hooks/useUser";
-import Demo from "@/app/components/headers/SkiaDemo";
-import PChainSkia from "@/app/assets/shader_animations/PChainSkia";
+import useUser from "@/src/hooks/useUser"; 
 import SignInButton from "@/app/components/user/SignInButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
@@ -195,7 +193,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+ 
 import MemoizedGeckoSkia from "@/app/assets/shader_animations/GeckoSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -210,7 +208,7 @@ const ScreenWelcome = () => {
 
   useEffect(() => {
     if (!isInitializing && !user?.id) {
-      console.log("resetting friend");
+      // console.log("resetting friend");
       resetFriend();
     }
   }, [user?.id, isInitializing]);
@@ -303,13 +301,16 @@ const ScreenWelcome = () => {
                   <Pressable
                     onPress={() => setResetAnimation(Date.now())}
                     style={{
-                      width: 40,
+                      width: 'auto',
+                      alignItems: 'center',
+                      padding: 10,
                       height: 40,
                       borderRadius: 999,
                       alignSelf: "center",
+                      backgroundColor: 'pink',
                       marginVertical: 40,
                     }}
-                  ></Pressable>
+                  ><Text style={{fontSize:16, fontWeight: 'bold', color: lightDarkTheme.primaryBackground}}>[DEBUG] Resetter</Text></Pressable>
                   <SignInButton
                     onPress={() => handleNavigateToAuthScreen(false)}
                   />

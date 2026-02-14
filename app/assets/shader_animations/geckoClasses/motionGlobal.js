@@ -111,12 +111,15 @@ export default class MotionGlobal {
     );
   }
 
+
+
   update_mirroredFrontStepsData(data) {
-  //  console.log(data)
+    // console.log(data)
 
          let dScalar = this.valuesForReversing.goingBackwards ? 0 : this.dilutionScalar;
 
-    this.frontSteps_sDistFromIntrs = data.sDistFromSteps;
+         //DON'T DELETE, REMOVED FOR TEMP ? OPT
+   // this.frontSteps_sDistFromIntrs = data.sDistFromSteps;
 
     this.mir_frontStepsSCenter = data.mSCenter;
     // this.mir_frontSteps_tDistanceApart = 0; // just use original, they will always be the same
