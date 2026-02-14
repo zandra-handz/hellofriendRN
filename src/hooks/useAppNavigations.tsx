@@ -296,6 +296,7 @@ type NavToMomentFocusWithTextProp = {
 type NavToGeckoProp = {
   selection?: number | null;
   autoPick?: boolean | null;
+  timstampe?: string | null;
 };
 
 type NavToGeckoSelectSettingsProp = {
@@ -333,7 +334,7 @@ interface hookReturns {
     screenCameFrom,
     momentText,
   }: NavToMomentFocusWithTextProp) => void;
-  navigateToGecko: ({ selection, autoPick }: NavToGeckoProp) => void;
+  navigateToGecko: ({ selection, autoPick, timestamp }: NavToGeckoProp) => void;
   navigateToGeckoSelectSettings: ({
     selection,
   }: NavToGeckoSelectSettingsProp) => void;
@@ -414,9 +415,9 @@ const useAppNavigations = (): hookReturns => {
   };
 
   const navigateToGecko = (
-    { selection = 0, autoPick = false}: NavToGeckoProp = {}
+    { selection = 0, autoPick = false, timestamp}: NavToGeckoProp = {}
   ) => {
-    navigation.navigate("Gecko", { selection, autoPick });
+    navigation.navigate("Gecko", { selection, autoPick, timestamp});
   };
 
   const navigateToGeckoSelectSettings = ({

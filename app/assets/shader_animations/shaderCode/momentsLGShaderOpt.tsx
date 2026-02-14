@@ -4,6 +4,7 @@ uniform float2 u_resolution;
 uniform float  u_aspect;
 uniform float  u_scale;
 uniform float2 u_walk0;
+uniform float u_time;
 uniform float u_gecko_scale;
 uniform float u_gecko_size;
 uniform float2 u_moments[40];
@@ -227,11 +228,31 @@ float3 applyGlassDotSq(
     return mix(baseColor, dotColor, circle * 0.8);
 }
 
- 
+  
 
+float3 applyGlowingHeldMoment(float2 fragCoord, float2 heldPx, float3 baseColor) {
+    float d = length(fragCoord - heldPx);
 
+    float pulseSpeed  = 2.5;
+    float pulseAmount = 0.15;
 
+    float outerPulse = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+    float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+    float corePulse = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
 
+    // Pixel radii
+    float outerR  = 21.0 * outerPulse;
+    float middleR = 11.0 * middlePulse;
+    float coreR   =  8.0 * corePulse;
+
+    float outerGlow = smoothstep(outerR, 0.0, d) * 0.45;
+    float middleRing = smoothstep(middleR, middleR * 0.70, d) * 0.70;
+    float coreDot = smoothstep(coreR, 0.0, d) * 1.00;
+
+    // Add light directly (no endColor)
+    float intensity = outerGlow + middleRing + coreDot;
+    return baseColor + float3(intensity);
+}
 
 
 
@@ -318,26 +339,70 @@ if (length(u_lastSelected) > 0.0001) {
 }
 
 
+// for (int i = 0; i < 4; i++) {
+//     vec2 holding_uv = u_heldMoments[i];
+    
+//     vec2 holding_screen = holding_uv / (s * u_gecko_size);
+//     holding_screen.x /= u_aspect;
+//     holding_screen += 0.5;
+//     float2 holding_px = holding_screen * u_resolution;
+    
+//     if (length(u_heldMoments[i]) > 0.0001) {
+//         color = applyGlass(
+//             fragCoord,
+//             holding_px,
+//             10.0,
+//             10.0,
+//             1.8,
+//             color
+//         );
+//     }
+// }
+
 for (int i = 0; i < 4; i++) {
     vec2 holding_uv = u_heldMoments[i];
-    
+ 
+    // If your "empty" slots are (-100,-100), this is the correct skip.
+    if (abs(holding_uv.x) > 50.0 || abs(holding_uv.y) > 50.0) continue;
+ 
     vec2 holding_screen = holding_uv / (s * u_gecko_size);
     holding_screen.x /= u_aspect;
     holding_screen += 0.5;
     float2 holding_px = holding_screen * u_resolution;
-    
-    if (length(u_heldMoments[i]) > 0.0001) {
-        color = applyGlass(
-            fragCoord,
-            holding_px,
-            20.0,
-            10.0,
-            1.8,
-            color
-        );
-    }
-}
  
+    color = applyGlowingHeldMoment(fragCoord, holding_px, color);
+}
+
+// // ------------------------------------------------
+// //  SIMPLIFIED: Static glowing held moments (in gecko space)
+// // ------------------------------------------------
+// for (int i = 0; i < 4; i++) {
+//     vec2 heldPos = u_heldMoments[i];
+    
+//     // Skip if invalid position (-100, -100)
+//     if (abs(heldPos.x) > 50.0 || abs(heldPos.y) > 50.0) {
+//         continue;
+//     }
+    
+//     vec3 glowColor = endColor;
+//     float dist = length(gecko_uv - heldPos);
+    
+//     // Simple three-layer glow (no pulsing)
+//     // Outer glow
+//     float outerGlow = smoothstep(0.025, 0.0, dist);
+//     vec3 outerLayer = glowColor * outerGlow * 0.4;
+    
+//     // Middle ring
+//     float middleGlow = smoothstep(0.015, 0.010, dist);
+//     vec3 middleLayer = glowColor * middleGlow * 0.6;
+    
+//     // Core dot
+//     float coreGlow = smoothstep(0.008, 0.0, dist);
+//     vec3 coreLayer = glowColor * coreGlow;
+    
+//     // Add all layers to color
+//     color = color + outerLayer + middleLayer + coreLayer;
+// }
 
 // vec2 holding0_uv = u_holding0;
 

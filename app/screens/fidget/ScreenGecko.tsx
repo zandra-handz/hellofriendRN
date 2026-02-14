@@ -4,8 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Text,
-  Vibration,
-  Alert,
+  Vibration, 
 } from "react-native";
 import React, {
   useState,
@@ -17,17 +16,15 @@ import React, {
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import useEditMoment from "@/src/hooks/CapsuleCalls/useEditMoment";
+import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
-import manualGradientColors from "@/app/styles/StaticColors";
-import HelpButton from "@/app/components/alerts/HelpButton";
+import manualGradientColors from "@/app/styles/StaticColors"; 
 import SvgIcon from "@/app/styles/SvgIcons";
 import SpeedButtons from "./SpeedButtons";
 import AutoPickUpButton from "./AutoPickUpButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
@@ -43,6 +40,7 @@ const ScreenGecko = (props: Props) => {
   const route = useRoute();
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
+    const timestamp = route.params?.timestamp ?? null;
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
@@ -81,41 +79,38 @@ const ScreenGecko = (props: Props) => {
     return AUTO_SELECT_TYPES[type] ?? AUTO_SELECT_TYPES[0];
   }
 
-  // useEffect(() => {
- 
-  //   if (
-  //     autoPick !== undefined &&
-  //     selection !== undefined
-  //   ) {
-  //     console.log('setting acceptPawClear to', autoPick)
-  //     console.log('setting autoselecttype to', selection)
-  //     setAcceptPawClear(autoPick);
-  //     setAutoSelectType(selection);
-  //   }
-  // }, [selection, autoPick]);
-
-
-  const timestamp = route.params?.timestamp ?? null;  
-
-useEffect(() => {
-  if (autoPick !== undefined && selection !== undefined) {
-    console.log('setting acceptPawClear to', autoPick)
-    console.log('setting autoselecttype to', selection)
-    setAcceptPawClear(autoPick);
-    setAutoSelectType(selection);
-  }
-}, [selection, autoPick, timestamp]); 
 
 
   useEffect(() => {
- 
+    console.log(`AUTOPICK`,autoPick);
+    console.log(``,selection);
+    if (autoPick !== undefined && selection !== undefined) {
+      console.log("setting acceptPawClear to", autoPick);
+      console.log("setting autoselecttype to", selection);
+  
+      setAutoSelectType(selection);
+          setAcceptPawClear(autoPick);
+    }
+  }, [selection, autoPick, timestamp]);
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log('=== SCREEN FOCUSED ===');
+      console.log('route.params?.autoPick:', route.params?.autoPick);
+      console.log('route.params?.selection:', route.params?.selection);
+      console.log('route.params?.timestamp:', route.params?.timestamp);
+      console.log('current autoSelectType:', autoSelectType);
+      console.log('current autoPickUp:', autoPickUp);
+      console.log('=====================');
+    }, [route.params, autoSelectType, autoPickUp])
+  );
+
+  useEffect(() => {
     if (acceptPawClear) {
- 
       setAutoPickUp(true);
       autoPickUpRef.current = true;
       setAcceptPawClear(false);
-    } 
- 
+    }
 
     // else {
     //   console.log('acceptPawClear not true. value: ', acceptPawClear)
@@ -123,13 +118,6 @@ useEffect(() => {
   }, [acceptPawClear]);
 
   //const currentLabel = getAutoSelectLabel(autoSelectType);
-
-
-
-  const { handleEditMoment, editMomentMutation } = useEditMoment({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
 
   const { handleUpdateMomentCoords, updateMomentCoordsMutation } =
     useUpdateMomentCoords({
@@ -155,58 +143,58 @@ useEffect(() => {
   //   }));
   // }, [capsuleList]);
 
+  const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
+    console.log(`TYPE INDEX`, typeIndex);
+    const result = new Array(count).fill(-1);
 
-const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
-
-  console.log(`TYPE INDEX`,typeIndex);
-  const result = new Array(count).fill(-1);
-  
-  if (!moments || moments.length === 0) {
-    return result;
-  }
-
-  // Handle RANDOM separately (index 0)
-  if (typeIndex === 0) {
-    const shuffled = [...moments].sort(() => Math.random() - 0.5);
-    for (let i = 0; i < Math.min(shuffled.length, count); i++) {
-      result[i] = shuffled[i].id;
+    if (!moments || moments.length === 0) {
+      return result;
     }
-    return result;
-  }
 
-  // Map type index to the corresponding score field
-  const scoreFieldMap = {
-    1: "generic_score",     // BALANCED
-    2: "hard_score",        // HARD MODE
-    3: "easy_score",        // EASY MODE
-    4: "quick_score",       // QUICK SHARES
-    5: "long_score",        // FILL THE TIME
-    6: "unique_score",      // MORE SPECIFIC TO FRIEND
-    7: "generic_score",     // MORE GENERAL
-    8: "relevant_score",    // RELEVANT TO THEIR INTERESTS
-    9: "random_score",      // RANDOM MY INTERESTS
+    // Handle RANDOM separately (index 0)
+    if (typeIndex === 0) {
+      const shuffled = [...moments].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < Math.min(shuffled.length, count); i++) {
+        result[i] = shuffled[i].id;
+      }
+      return result;
+    }
+
+    // Map type index to the corresponding score field
+    const scoreFieldMap = {
+      1: "generic_score", // BALANCED
+      2: "hard_score", // HARD MODE
+      3: "easy_score", // EASY MODE
+      4: "quick_score", // QUICK SHARES
+      5: "long_score", // FILL THE TIME
+      6: "unique_score", // MORE SPECIFIC TO FRIEND
+      7: "generic_score", // MORE GENERAL
+      8: "relevant_score", // RELEVANT TO THEIR INTERESTS
+      9: "random_score", // RANDOM MY INTERESTS
+    };
+
+    const scoreKey = scoreFieldMap[typeIndex];
+
+    // Filter moments that have a valid score for this key
+    const withScores = moments.filter(
+      (m) => m && typeof m[scoreKey] === "number",
+    );
+
+    if (withScores.length === 0) {
+      return result;
+    }
+
+    // Sort by the specific score field in descending order
+    const sorted = [...withScores].sort((a, b) => b[scoreKey] - a[scoreKey]);
+    // console.log(sorted.map((moment) => moment.capsule));
+
+    // Take top N
+    for (let i = 0; i < Math.min(sorted.length, count); i++) {
+      result[i] = sorted[i].id;
+    }
+
+    return result;
   };
-
-  const scoreKey = scoreFieldMap[typeIndex];
-  
-  // Filter moments that have a valid score for this key
-  const withScores = moments.filter(m => m && typeof m[scoreKey] === 'number');
-  
-  if (withScores.length === 0) {
-    return result;
-  }
-
-  // Sort by the specific score field in descending order
-  const sorted = [...withScores].sort((a, b) => b[scoreKey] - a[scoreKey]);
-  console.log(sorted.map((moment) => moment.capsule))
-
-  // Take top N
-  for (let i = 0; i < Math.min(sorted.length, count); i++) {
-    result[i] = sorted[i].id;
-  }
-
-  return result;
-};
 
   const MAX_MOMENTS = 40;
 
@@ -250,29 +238,25 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
 
   const randomMomentIdsRef = useRef<string[]>([]);
 
- 
   useEffect(() => {
     randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
   }, [capsuleList]);
 
-
-    useEffect(() => {
-      console.log('autoselect !!!')
-      if (autoSelectType === 0) {
-           randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
-
-      } else if (autoSelectType < 8) {
-        randomMomentIdsRef.current = pickTopScoredMomentIds(capsuleList, autoSelectType, 4);
-      }
-
-      console.log(randomMomentIdsRef.current)
- 
+  useEffect(() => {
+    // console.log('autoselect !!!')
+    if (autoSelectType === 0) {
+      randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+    } else if (autoSelectType < 8) {
+      randomMomentIdsRef.current = pickTopScoredMomentIds(
+        capsuleList,
+        autoSelectType,
+        4,
+      );
+    }
   }, [autoSelectType]);
 
-
-  const selectLabel = useMemo(()=>{
-    return getAutoSelectLabel(autoSelectType)
-
+  const selectLabel = useMemo(() => {
+    return getAutoSelectLabel(autoSelectType);
   }, [autoSelectType]);
 
   const regenerateRandomMoments = () => {
@@ -281,6 +265,7 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
     randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
 
     console.log("🔄 regenerated random ids:", randomMomentIdsRef.current);
+ 
   };
 
   const handleChangeSpeed = (newSpeedFromButton) => {
@@ -288,52 +273,27 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
     setSpeedSetting(newSpeedFromButton);
   };
 
+  //   const handleNavToSelect = useCallback(() => {
+  //   if (autoPickUp) {
+  //     setAutoPickUp(false);
+  //     autoPickUpRef.current = false;
 
-    const handleNavToSelect = useCallback(() => {
+  //   } else {
+
+  //     navigateToGeckoSelectSettings({ selection: autoSelectType });
+  //   }
+  // }, [autoPickUp, autoSelectType]);
+
+  const handleNavToSelect = useCallback(() => {
     if (autoPickUp) {
       setAutoPickUp(false);
       autoPickUpRef.current = false;
-
     } else {
-
+      // Reset autoSelectType before navigating so it will always trigger when coming back
+      // setAutoSelectType(-1); // or any value that's not in your normal range
       navigateToGeckoSelectSettings({ selection: autoSelectType });
     }
   }, [autoPickUp, autoSelectType]);
-
-  // const handleToggleAutoPickUp = () => {
-  //   const newValue = !autoPickUp;
-  //   console.log("handle toggle auto pickup");
-
-  //   // If turning ON and there are moments in paws, show alert
-  //   if (newValue) {
-  //     setAutoPickUp(true);
-  //     autoPickUpRef.current = true;
-  //     // // handleNavToSelect();
-  //     // Alert.alert(
-  //     //   "Auto Pick-Up",
-  //     //   "This will drop any currently held moments. Continue?",
-  //     //   [
-  //     //     {
-  //     //       text: "Cancel",
-  //     //       style: "cancel",
-
-  //     //     },
-  //     //     {
-  //     //       text: "Continue",
-  //     //       onPress: () => {
-  //     //         setAutoPickUp(true);
-  //     //         autoPickUpRef.current = true;
-  //     //       },
-  //     //     },
-  //     //   ],
-  //     //   { cancelable: true }
-  //     // );
-  //   } else {
-  //     // Just turn it off without alert
-  //     setAutoPickUp(false);
-  //     autoPickUpRef.current = false;
-  //   }
-  // };
 
   useEffect(() => {
     if (!manualOnly) {
@@ -411,22 +371,6 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
     id: null,
   });
 
-  // might need to go in momentSkia instead, handled/kept track of in momentsClass
-  // set this in momentsClass constructor
-  // const hold = (id) => {
-  // console.log('hold', id);
-
-  // };
-
-  // const drop = (id) => {
-  //   console.log('drop', id);
-  // };
-
-  // useEffect(() => {
-  //   console.log(`SCREENGECKO CAPSULES: `, capsuleList.length);
-
-  // }, [capsuleList]);
-
   const handleGetMoment = useCallback(
     (id) => {
       // console.log('handleGetMoment', id)
@@ -474,10 +418,6 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
-  // useEffect(() => {
-  //   console.log(`spinner viewing: `, spinnerViewing);
-  // }, [spinnerViewing]);
-
   return (
     <PreAuthSafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
@@ -492,15 +432,8 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
         justifyContent: "flex-end",
       }}
     >
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-
-          // { backgroundColor: lightDarkTheme?.primaryBackground },
-        ]}
-      >
+      <View style={[StyleSheet.absoluteFill]}>
         <MomentsSkia
-          handleEditMoment={handleEditMoment}
           handleUpdateMomentCoords={handleUpdateMomentCoords}
           handleGetMoment={handleGetMoment}
           color1={manualGradientColors.lightColor}
@@ -520,7 +453,7 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
           handleRescatterMoments={handleRescatterMoments}
           handleRecenterMoments={handleRecenterMoments}
           // setScatteredMoments={setScatteredMoments}
-          handleToggleManual={handleToggleManual}
+          // handleToggleManual={handleToggleManual}
           manualOnly={manualOnlyRef}
           speedSetting={speedSettingRef}
           autoPickUp={autoPickUpRef}
@@ -590,29 +523,35 @@ const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
             onPress={handleNavToSelect}
           />
 
-                       {autoPickUp && (
-          <View
-            style={{
-              width: 'auto',
-              flexGrow: 1,
-              minWidth: 110,
-              
-              //minWidth: 200,
-              flexDirection: 'row',
-              height: 40,
-              marginTop: 10,
-              borderRadius: 16,
-              padding: 10,
-              alignItems: 'center',
-              alignContent: 'center',
-              //paddingVertical: 10,
-              backgroundColor: lightDarkTheme.lighterOverlayBackground
-            }}
-          >
-            <Text numberOfLines={1} style={[styles.typeText, {color: lightDarkTheme.primaryBackground}]}>
-            {selectLabel}
-            </Text>
-          </View>
+          {autoPickUp && (
+            <View
+              style={{
+                width: "auto",
+                flexGrow: 1,
+                minWidth: 110,
+
+                //minWidth: 200,
+                flexDirection: "row",
+                height: 40,
+                marginTop: 10,
+                borderRadius: 16,
+                padding: 10,
+                alignItems: "center",
+                alignContent: "center",
+                //paddingVertical: 10,
+                backgroundColor: lightDarkTheme.lighterOverlayBackground,
+              }}
+            >
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.typeText,
+                  { color: lightDarkTheme.primaryBackground },
+                ]}
+              >
+                {selectLabel}
+              </Text>
+            </View>
           )}
         </View>
       )}
@@ -753,8 +692,7 @@ const styles = StyleSheet.create({
 
   typeText: {
     fontSize: 14,
-    fontWeight: 'bold'
-
+    fontWeight: "bold",
   },
   movementSettingsRow: {
     flexDirection: "row",

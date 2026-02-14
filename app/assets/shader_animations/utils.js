@@ -858,42 +858,42 @@ export function getFrontStepsSagTrans_inPlace(step, otherStep, out, tempLineDir,
   return out;
 }
 
-export function getFrontStepsSagTrans_inPlaceOld(step, otherStep, out) {
-  // Reuse buffers (add these to your out object or as temp vars)
-  const tempLineDir = [0, 0];
-  const tempPerpDir = [0, 0];
+// export function getFrontStepsSagTrans_inPlaceOld(step, otherStep, out) {
+//   // Reuse buffers (add these to your out object or as temp vars)
+//   const tempLineDir = [0, 0];
+//   const tempPerpDir = [0, 0];
 
-  // Center point
-  _getCenterPoint_inPlace(step, otherStep, out.tCenter);
+//   // Center point
+//   _getCenterPoint_inPlace(step, otherStep, out.tCenter);
 
-  // Distance
-  out.tDistanceApart = _getDistanceScalar(step, otherStep);
+//   // Distance
+//   out.tDistanceApart = _getDistanceScalar(step, otherStep);
 
-  // Direction vectors (in-place)
-  _getDirVec_inPlace(step, otherStep, tempLineDir);
-  _turnDirVec90ClockW_inPlace(tempLineDir, tempPerpDir);
+//   // Direction vectors (in-place)
+//   _getDirVec_inPlace(step, otherStep, tempLineDir);
+//   _turnDirVec90ClockW_inPlace(tempLineDir, tempPerpDir);
 
-  // Angles
-  out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(tempPerpDir));
-  out.tAngle = _getAngleFromXAxis(tempLineDir);
+//   // Angles
+//   out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(tempPerpDir));
+//   out.tAngle = _getAngleFromXAxis(tempLineDir);
 
-  // tLine endpoints (already in-place)
-  out.tLineStart[0] = step[0];
-  out.tLineStart[1] = step[1];
-  out.tLineEnd[0] = otherStep[0];
-  out.tLineEnd[1] = otherStep[1];
+//   // tLine endpoints (already in-place)
+//   out.tLineStart[0] = step[0];
+//   out.tLineStart[1] = step[1];
+//   out.tLineEnd[0] = otherStep[0];
+//   out.tLineEnd[1] = otherStep[1];
 
-  // sLine endpoints (in-place)
-  makeLineOverACenter_inPlace(
-    out.tCenter,
-    tempPerpDir,
-    0.2,
-    out.sLineStart,
-    out.sLineEnd
-  );
+//   // sLine endpoints (in-place)
+//   makeLineOverACenter_inPlace(
+//     out.tCenter,
+//     tempPerpDir,
+//     0.2,
+//     out.sLineStart,
+//     out.sLineEnd
+//   );
 
-  return out;
-}
+//   return out;
+// }
 
 
 // export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {

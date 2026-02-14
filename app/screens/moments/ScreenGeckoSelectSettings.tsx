@@ -72,14 +72,20 @@ const ScreenGeckoSelectSettings = (props: Props) => {
     "Random My Interests",
   ];
 
-  const handleNavToGecko = useCallback((index=0) => {
-    console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
-    opacity.value = withTiming(0, { duration: 100 });
-    setTimeout(() => {
-      navigateToGecko({ selection: index, autoPick: acceptPawClear, timestamp: Date.now()  });
-    }, 100);
-  }, [selected, acceptPawClear, navigateToGecko, opacity]);
-
+const handleNavToGecko = useCallback((index=0) => {
+  console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
+  const timestamp = Date.now(); // Create timestamp before setTimeout
+  console.log('timestamp being sent:', timestamp);
+  
+  opacity.value = withTiming(0, { duration: 100 });
+  setTimeout(() => {
+    navigateToGecko({ 
+      selection: index, 
+      autoPick: acceptPawClear, 
+      timestamp: timestamp  // Use the captured timestamp
+    });
+  }, 100);
+}, [selected, acceptPawClear, navigateToGecko, opacity]);
   const handleAccept = () => {
     translateY.value = withSpring(-1000, { damping: 20, stiffness: 90 });
     opacity.value = withTiming(0, { duration: 300 });

@@ -265,7 +265,45 @@ export default class Moments {
 
 
 
-  updateHold(moment, holdIndex) {
+//   updateHold(moment, holdIndex) {
+//   if (!moment || holdIndex < 0 || holdIndex >= 4) {
+//     console.log('updateHold not updated')
+//     return this.holdings;
+//   }
+
+//   const momentIndex = this.moments.findIndex((m) => m.id === moment.id);
+//   if (momentIndex === -1) return this.holdings;
+
+//   const m = this.moments[momentIndex];
+//   const currentHoldIndex = m.stored_index;
+
+//   // Move this check AFTER defining currentHoldIndex
+//   if (currentHoldIndex === holdIndex) {
+//     return this.holdings;
+//   }
+
+//   // If the moment is in a different holding, clear that old slot
+//   if (currentHoldIndex != null && currentHoldIndex !== holdIndex) {
+//     this.clearHolding(currentHoldIndex);
+//   }
+
+//   const targetHolding = this.holdings[holdIndex];
+
+//   // If the holding is occupied by a different moment, do nothing
+//   if (targetHolding.id != null && targetHolding.id !== moment.id) {
+//     return this.holdings;
+//   }
+
+//   // Assign the moment to this holding
+//   targetHolding.id = moment.id;
+//   targetHolding.stored_index = holdIndex;
+//   m.stored_index = holdIndex;
+//   console.log("updated hold");
+//   return this.holdings;
+// }
+
+
+updateHold(moment, holdIndex) {
   if (!moment || holdIndex < 0 || holdIndex >= 4) {
     return this.holdings;
   }
@@ -276,9 +314,16 @@ export default class Moments {
   const m = this.moments[momentIndex];
   const currentHoldIndex = m.stored_index;
 
-  // Move this check AFTER defining currentHoldIndex
+  // Early return if already in the right slot
   if (currentHoldIndex === holdIndex) {
     return this.holdings;
+  }
+
+  // ✅ NEW: Clear ANY moment that thinks it's in this slot
+  for (let i = 0; i < this.moments.length; i++) {
+    if (this.moments[i].stored_index === holdIndex) {
+      this.moments[i].stored_index = null;
+    }
   }
 
   // If the moment is in a different holding, clear that old slot
@@ -288,69 +333,149 @@ export default class Moments {
 
   const targetHolding = this.holdings[holdIndex];
 
-  // If the holding is occupied by a different moment, do nothing
-  if (targetHolding.id != null && targetHolding.id !== moment.id) {
-    return this.holdings;
+  // Clear whatever's in the target holding
+  if (targetHolding.id != null) {
+    this.clearHolding(holdIndex);
   }
 
   // Assign the moment to this holding
   targetHolding.id = moment.id;
   targetHolding.stored_index = holdIndex;
   m.stored_index = holdIndex;
+  
   console.log("updated hold");
   return this.holdings;
 }
 
+clearAllHoldings() {
+  if (!this.aspect) {
+    return this.holdings;
+  }
 
-  clearAllHoldings() {
-    if (!this.aspect) {
-      return this.holdings;
+  this.sleepWalk0.current.pawsCleared();
+  if (this.trigger_remote) {
+    this.trigger_remote = false;
+  }
+
+  // ✅ NEW: Clear stored_index for ALL moments, not just held ones
+  for (let i = 0; i < this.moments.length; i++) {
+    if (this.moments[i].stored_index !== null) {
+      this.moments[i].stored_index = null;
     }
+  }
 
-    console.log(
-      this.sleepWalk0.current.auto_pick_up.current,
-      this.sleepWalk0.current.paws_cleared_for_auto,
-    );
-
-    // ✅ Set the flag FIRST, before any early returns
-    this.sleepWalk0.current.pawsCleared();
-    if (this.trigger_remote) {
-      this.trigger_remote = false;
-    }
-    console.log("momentsClass clearAllHoldings: paws cleared flag set");
-
-    // Clear all 4 holdings
-    for (let i = 0; i < 4; i++) {
-      const holding = this.holdings[i];
-
-      if (!holding.id) continue; // Skip empty holdings
-
+  // Clear all 4 holdings
+  for (let i = 0; i < 4; i++) {
+    const holding = this.holdings[i];
+    
+    if (holding.id) {
       const idx = this.momentIndexById.get(holding.id);
       const moment = idx !== undefined ? this.moments[idx] : null;
 
-      if (!moment) continue;
-
-      // Clear the moment's stored_index
-      moment.stored_index = null;
-
-      // Convert Gecko space → Moment space
-      geckoToMoment_inPlace(
-        holding.coord,
-        this.aspect,
-        this.gecko_size,
-        moment.coord,
-        0,
-      );
-
-      // Clear the holding
-      holding.id = null;
-      holding.stored_index = null;
-      holding.coord[0] = -100;
-      holding.coord[1] = -100;
+      if (moment) {
+        // Convert Gecko space → Moment space
+        geckoToMoment_inPlace(
+          holding.coord,
+          this.aspect,
+          this.gecko_size,
+          moment.coord,
+          0,
+        );
+      }
     }
 
-    return this.holdings;
+    // Clear the holding
+    holding.id = null;
+    holding.stored_index = null;
+    holding.coord[0] = -100;
+    holding.coord[1] = -100;
   }
+
+  return this.holdings;
+}
+//   clearAllHoldings() {
+//   console.log("🔵 clearAllHoldings() CALLED");
+  
+//   if (!this.aspect) {
+//     console.log("❌ EARLY RETURN: aspect is falsy:", this.aspect);
+//     return this.holdings;
+//   }
+//   console.log("✅ aspect check passed:", this.aspect);
+
+//   console.log("📊 Initial state:");
+//   console.log("  - auto_pick_up:", this.sleepWalk0.current.auto_pick_up.current);
+//   console.log("  - paws_cleared_for_auto:", this.sleepWalk0.current.paws_cleared_for_auto);
+//   console.log("  - trigger_remote:", this.trigger_remote);
+//   console.log("  - holdings before clear:", this.holdings.map(h => ({ id: h.id, coord: [...h.coord] })));
+
+//   // ✅ Set the flag FIRST, before any early returns
+//   this.sleepWalk0.current.pawsCleared();
+//   console.log("✅ pawsCleared() called");
+  
+//   if (this.trigger_remote) {
+//     console.log("🔄 Clearing trigger_remote (was true)");
+//     this.trigger_remote = false;
+//   } else {
+//     console.log("ℹ️  trigger_remote was already false");
+//   }
+
+//   console.log("🔁 Starting loop through 4 holdings...");
+  
+//   // Clear all 4 holdings
+//   for (let i = 0; i < 4; i++) {
+//     console.log(`\n--- Processing holding[${i}] ---`);
+//     const holding = this.holdings[i];
+//     console.log(`  holding.id: ${holding.id}`);
+//     console.log(`  holding.coord: [${holding.coord[0]}, ${holding.coord[1]}]`);
+
+//     if (!holding.id) {
+//       console.log(`  ⏭️  SKIP: holding[${i}] has no id`);
+//       continue;
+//     }
+
+//     const idx = this.momentIndexById.get(holding.id);
+//     console.log(`  momentIndexById lookup for id ${holding.id}: ${idx}`);
+    
+//     const moment = idx !== undefined ? this.moments[idx] : null;
+    
+//     if (!moment) {
+//       console.log(`  ❌ SKIP: No moment found for holding[${i}] (idx: ${idx})`);
+//       continue;
+//     }
+    
+//     console.log(`  ✅ Found moment: id=${moment.id}, current coord=[${moment.coord[0]}, ${moment.coord[1]}]`);
+
+//     // Clear the moment's stored_index
+//     console.log(`  🧹 Clearing moment.stored_index (was: ${moment.stored_index})`);
+//     moment.stored_index = null;
+
+//     // Convert Gecko space → Moment space
+//     console.log(`   Converting gecko→moment space...`);
+//     console.log(`    Before: moment.coord = [${moment.coord[0]}, ${moment.coord[1]}]`);
+//     geckoToMoment_inPlace(
+//       holding.coord,
+//       this.aspect,
+//       this.gecko_size,
+//       moment.coord,
+//       0,
+//     );
+//     console.log(`    After: moment.coord = [${moment.coord[0]}, ${moment.coord[1]}]`);
+
+//     // Clear the holding
+//     console.log(`  🧹 Clearing holding[${i}]...`);
+//     holding.id = null;
+//     holding.stored_index = null;
+//     holding.coord[0] = -100;
+//     holding.coord[1] = -100;
+//     console.log(`  holding[${i}] cleared: id=${holding.id}, coord=[${holding.coord[0]}, ${holding.coord[1]}]`);
+//   }
+
+//   console.log("\n🏁 clearAllHoldings() COMPLETE");
+//   console.log("Final holdings state:", this.holdings.map(h => ({ id: h.id, coord: [...h.coord] })));
+//   console.log(" Final paws_cleared_for_auto:", this.sleepWalk0.current.paws_cleared_for_auto);
+  
+//   return this.holdings;
+// }
 
   updateSelected(holdIndex) {
     if (holdIndex < 0 || holdIndex >= 4) return null;

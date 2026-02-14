@@ -8,6 +8,7 @@ export type RootStackParamList = {
     Gecko: {
       selection?: number | null;
       autoPick?: false | null;
+      timestamp?: string | null;
     }
     
   GeckoSelectSettings: {

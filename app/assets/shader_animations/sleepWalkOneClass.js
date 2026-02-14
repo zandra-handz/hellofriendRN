@@ -100,13 +100,24 @@ updateCurrentPos(momentsRef, aspect, scale) {
     }
 
     // Only assign pickUpNextId if the current moment is valid AND in randomMomentIds
-    if (
-      this.auto_pick_up.current &&
-      Array.isArray(this.randomMomentIds.current) &&
-      this.randomMomentIds.current.includes(currentMoment.id)
-    ) {
-      this.pickUpNextId = currentMoment.id;
-    }
+    // if (
+    //   this.auto_pick_up.current &&
+    //   Array.isArray(this.randomMomentIds.current) &&
+    //   this.randomMomentIds.current.includes(currentMoment.id)
+    // ) {
+    //   this.pickUpNextId = currentMoment.id;
+    // }
+
+    // Only assign pickUpNextId if the current moment is valid, in randomMomentIds, 
+// AND is different from the last one we picked up
+if (
+  this.auto_pick_up.current &&
+  Array.isArray(this.randomMomentIds.current) &&
+  this.randomMomentIds.current.includes(currentMoment.id) &&
+  this.pickUpNextId !== currentMoment.id // ← ADD THIS LINE
+) {
+  this.pickUpNextId = currentMoment.id;
+}
 
     // Set the coordinates
     this.autoSelectId = currentMoment.id;
@@ -196,6 +207,8 @@ updateCurrentPos(momentsRef, aspect, scale) {
  if (!this.auto_pick_up.current) {
   this.paws_cleared_for_auto = false;
  }
+ 
+
  
   
   if (!this.paused.current) {

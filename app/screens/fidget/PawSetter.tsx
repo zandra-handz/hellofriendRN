@@ -58,6 +58,7 @@ const PawSetter = ({
     if (!registerSyncPaws) return;
 
     registerSyncPaws(() => {
+  
       const newPaws = [false, false, false, false];
       momentsData.forEach((moment) => {
         if (
@@ -68,6 +69,7 @@ const PawSetter = ({
           newPaws[moment.stored_index] = true;
         }
       });
+        console.log('setting local paws in pawsetter!!', Date.now())
       setLocalPaws(newPaws);
     });
   }, [registerSyncPaws, momentsData]);
