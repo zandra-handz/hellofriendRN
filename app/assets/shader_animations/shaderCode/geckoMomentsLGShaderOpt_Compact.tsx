@@ -345,7 +345,7 @@ float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, floa
 // ------------------------------------------------
 vec2 calculateFinger(vec2 stepTarget, vec2 firstFinger, int fingerIndex) {
     const int numFingers = 5;
-    const float fingerLen = 0.02;
+    const float fingerLen = 0.024;
     
     // Calculate the base angle from the first finger's position
     vec2 diff = firstFinger - stepTarget;
