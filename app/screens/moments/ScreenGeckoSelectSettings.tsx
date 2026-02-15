@@ -55,7 +55,7 @@ const ScreenGeckoSelectSettings = (props: Props) => {
   }));
 
   const updateSelected = (update: number) => {
-    console.log(update)
+    // console.log(update)
     setSelected(update);
   };
 
@@ -73,9 +73,9 @@ const ScreenGeckoSelectSettings = (props: Props) => {
   ];
 
 const handleNavToGecko = useCallback((index=0) => {
-  console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
+  // console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
   const timestamp = Date.now(); // Create timestamp before setTimeout
-  console.log('timestamp being sent:', timestamp);
+  // console.log('timestamp being sent:', timestamp);
   
   opacity.value = withTiming(0, { duration: 100 });
   setTimeout(() => {

@@ -744,7 +744,7 @@ const styles = StyleSheet.create({
     width: 100,
     left: 0,
     padding: 20,
-    bottom: 310,
+    bottom: 270,
     position: "absolute",
   },
   noMomentWrapper: {

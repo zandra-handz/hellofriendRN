@@ -34,7 +34,7 @@ const PawSetter = ({
   updateSelected,
   handleGetMoment,
 }: Props) => {
-  const iconSize = 26;
+  const iconSize = 18;
   const highlightColor = color || "#FFD700"; // Use accent or gold as highlight
 
   const [localPaws, setLocalPaws] = useState([false, false, false, false]);
@@ -107,52 +107,7 @@ const PawSetter = ({
     );
   };
 
- 
-  // useEffect(() => {
-  //   if (triggerClearPaws) {
-  //     console.log("clearing all paws in paw setter");
-  //     handleClearAllPaws();
-  //   }
-  // }, [triggerClearPaws]);
-
-  // const handlePawPress = (index: number) => {
-  //   if (!lastSelected.id) {
-  //     // console.log("no lastSelect");
-  //     return;
-  //   }
-
-  //   if (localPaws[index]) {
-  //     // console.log("one is held here");
-
-  //     Alert.alert(
-  //       "Are you sure?",
-  //       "Select new moment?",
-  //       [
-  //         {
-  //           text: "Oops no!",
-  //           style: "cancel",
-  //         },
-  //         {
-  //           text: "Yes please",
-  //           onPress: () => {
-  //             Vibration.vibrate(50);
-  //             const last_selected = updateSelected(index);
-  //             //  console.log(last_selected)
-  //             handleGetMoment(last_selected.id);
-  //           },
-  //         },
-  //       ],
-  //       { cancelable: true },
-  //     );
-  //     return;
-  //   }
-  //   // console.log(lastSelected);
-  //   const updatedHoldings = updatePaw(lastSelected, index);
-
-  //   // Map holdings to boolean array for icon display
-  //   setLocalPaws(updatedHoldings.map((h) => h.id !== null));
-  //   // console.log(localPaws);
-  // };
+  
 
   const handlePawPress = (index: number) => {
     if (!lastSelected.id) {
@@ -204,8 +159,7 @@ const PawSetter = ({
     }
   }, [registerClearAll, clearAllPaws]);
 
-  const getPawColor = (index: number) => {
-    // console.log('paw color updating', index, lastSelected.id)
+  const getPawColor = (index: number) => { 
     const moment = momentsData.find((m) => m.stored_index === index);
     if (moment && lastSelected && moment.id === lastSelected.id) {
       return highlightColor;
@@ -239,7 +193,7 @@ const PawSetter = ({
           style={styles.buttonContainer}
         >
           <SvgIcon
-            name={localPaws[0] ? `paw` : `paw_outline`}
+            name={localPaws[0] ? `circle` : `circle_outline`}
             size={iconSize}
             color={getPawColor(0)}
           />
@@ -250,7 +204,7 @@ const PawSetter = ({
           style={styles.buttonContainer}
         >
           <SvgIcon
-            name={localPaws[1] ? `paw` : `paw_outline`}
+            name={localPaws[1] ? `circle` : `circle_outline`}
             size={iconSize}
             color={getPawColor(1)}
           />
@@ -263,7 +217,7 @@ const PawSetter = ({
           style={styles.buttonContainer}
         >
           <SvgIcon
-            name={localPaws[2] ? `paw` : `paw_outline`}
+            name={localPaws[2] ? `circle` : `circle_outline`}
             size={iconSize}
             color={getPawColor(2)}
           />
@@ -274,7 +228,7 @@ const PawSetter = ({
           style={styles.buttonContainer}
         >
           <SvgIcon
-            name={localPaws[3] ? `paw` : `paw_outline`}
+            name={localPaws[3] ? `circle` : `circle_outline`}
             size={iconSize}
             color={getPawColor(3)}
           />
@@ -288,10 +242,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
-    height: 120,
-    paddingTop: 18,
-    paddingBottom: 20,
-    width: 120,
+    height: 80,
+    width: 90,
+    padding: 10,
+ 
     alignItems: "center",
     borderRadius: 30,
     borderWidth: 1,
