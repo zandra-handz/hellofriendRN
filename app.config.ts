@@ -14,6 +14,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
       userInterfaceStyle: 'automatic',
 
       ios: {
+        jsEngine: "hermes",  
         bundleIdentifier: 'com.badrainbowz.sampleproject',
         buildNumber: '1.0.0',
         supportsTablet: true,
@@ -28,6 +29,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
       },
 
       android: {
+        jsEngine: "hermes",  
         permissions: [
           'android.permission.READ_MEDIA_IMAGES',
           'android.permission.READ_MEDIA_VIDEO',
