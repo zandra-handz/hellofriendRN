@@ -17,7 +17,7 @@ import {   packGeckoOnlyProdCompact40 } from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 // import { GECKO_ONLY_TRANSPARENT_SKSL_OPT } from "./shaderCode/geckoMomentsLGShaderOpt";
-import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
+import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT, GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MomentDotsResetterMini from "./MomentDotsResetterMini";
@@ -313,7 +313,7 @@ const MomentsSkia = ({
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
+      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS}
     `);
   }, [color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted]);
 
