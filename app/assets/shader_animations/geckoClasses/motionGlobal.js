@@ -1,25 +1,25 @@
 // just data that all motions use
 // nothing specific to lengths/chains/etc
-import { _makeDistancePoint_inPlace, _getDirVec_inPlace, _makeLerpAngle } from "../utils.js";
+import {
+  _makeDistancePoint_inPlace,
+  _getDirVec_inPlace,
+  _makeLerpAngle,
+} from "../utils.js";
 
-
-
-export function getDilutedAngle(angle, referenceAngle, blendScalar){
+export function getDilutedAngle(angle, referenceAngle, blendScalar) {
   return _makeLerpAngle(angle, referenceAngle, blendScalar);
-};
-
+}
 
 export default class MotionGlobal {
   constructor(
-   
     state,
     valuesForReversing,
     dilutionScalar = 0.4,
-    mir_dilutionScalar = 0.4,  
+    mir_dilutionScalar = 0.4,
   ) {
     this.TAU = Math.PI * 2;
- 
-    this.state = state; 
+
+    this.state = state;
     this.valuesForReversing = valuesForReversing;
 
     this.frontSteps_aheadJointAngle = 0;
@@ -30,15 +30,13 @@ export default class MotionGlobal {
     this.frontStepsTAngle = 0;
     this.frontStepsTLine = [
       [0.5, 0.5],
-      [0.6, 0.5]
+      [0.6, 0.5],
     ];
-
- 
 
     this.frontStepsSAngle = 0;
     this.frontStepsSLine = [
       [0.5, 0.5],
-      [0.6, 0.5]   
+      [0.6, 0.5],
     ];
 
     this.frontStepsDilutedAngle = 0;
@@ -59,26 +57,24 @@ export default class MotionGlobal {
     this.mir_frontStepsSLine = [];
 
     this.mir_frontStepsDilutedAngle = 0;
- 
+
     this.realignmentAngle1 = 0;
     this.realignmentAngle2 = 0;
     this.realignmentAngle3 = 0;
- 
-    this.movingSnout = [0.5, 0.5]; 
-    this.movingHead = [0.5, 0.5];
 
-     
-  
+    this.movingSnout = [0.5, 0.5];
+    this.movingHead = [0.5, 0.5];
   }
 
   // updated in frontLegs solve pair steps
   update_frontStepsData(data) {
+    //  console.log(data);
 
-  //  console.log(data);
+    let dScalar = this.valuesForReversing.goingBackwards
+      ? 0
+      : this.dilutionScalar;
 
-        let dScalar = this.valuesForReversing.goingBackwards ? 0 : this.dilutionScalar;
-
-// OR JUST USE  this.dilutionScalar  to remove
+    // OR JUST USE  this.dilutionScalar  to remove
     this.frontStepsTCenter = data.frontStepsTCenter;
     this.frontSteps_tDistanceApart = data.frontSteps_tDistanceApart;
     this.frontStepsTAngle = data.frontStepsTAngle;
@@ -91,57 +87,62 @@ export default class MotionGlobal {
     this.frontStepsDilutedAngle = getDilutedAngle(
       this.frontSteps_spineJointAngle,
       this.frontStepsSAngle,
-      dScalar, // < --  HERE this.dilutionScalar  
+      dScalar, // < --  HERE this.dilutionScalar
     );
     this.realignmentAngle1 = this.frontStepsDilutedAngle;
- 
- 
   }
 
   // updated in body because goes off of radii set there
   update_headPosition(sumRadii) {
     let dist = 0.01;
-    let dirVec = _getDirVec_inPlace(this.frontStepsTCenter, this.frontStepsSLine[1]);
-    this.movingHead = _makeDistancePoint_inPlace(this.frontStepsTCenter, dirVec, dist);
+    let dirVec = _getDirVec_inPlace(
+      this.frontStepsTCenter,
+      this.frontStepsSLine[1],
+    );
+    this.movingHead = _makeDistancePoint_inPlace(
+      this.frontStepsTCenter,
+      dirVec,
+      dist,
+    );
 
     this.movingSnout = _makeDistancePoint_inPlace(
       this.frontStepsTCenter,
       dirVec,
-      dist + 0.02
+      dist + 0.02,
     );
   }
 
+  // update_mirroredFrontStepsData(data) {
+  //   console.log(data);
 
+  //   let dScalar = this.valuesForReversing.goingBackwards
+  //     ? 0
+  //     : this.dilutionScalar;
+
+  //   //DON'T DELETE, REMOVED FOR TEMP ? OPT
+  //   // this.frontSteps_sDistFromIntrs = data.sDistFromSteps;
+
+  //   this.mir_frontStepsSCenter = data.mSCenter;
+  //   // this.mir_frontSteps_tDistanceApart = 0; // just use original, they will always be the same
+  //   // this.mir_frontStepsTAngle = 0; //function isn't returning this yet
+  //   this.mir_frontStepsTLine = data.mTLine;
+
+  //   this.mir_frontStepsSAngle = data.mSAngle;
+  //   this.mir_frontStepsSLine = data.mSLine;
+
+  //   this.centerIntersection = data.intersectionPoint;
+  //   // this.mirrored_frontStepsAngle = this.mir_frontStepsSAngle;
+  //   this.mir_frontStepsDilutedAngle = getDilutedAngle(
+  //     this.frontSteps_spineJointAngle,
+  //     this.mir_frontStepsSAngle,
+  //     dScalar, // < --  HERE this.dilutionScalar
+  //   );
+
+  //   this.realignmentAngle2 = this.mir_frontStepsSAngle;
+  // }
 
   update_mirroredFrontStepsData(data) {
-    // console.log(data)
-
-         let dScalar = this.valuesForReversing.goingBackwards ? 0 : this.dilutionScalar;
-
-         //DON'T DELETE, REMOVED FOR TEMP ? OPT
-   // this.frontSteps_sDistFromIntrs = data.sDistFromSteps;
-
-    this.mir_frontStepsSCenter = data.mSCenter;
-    // this.mir_frontSteps_tDistanceApart = 0; // just use original, they will always be the same
-    // this.mir_frontStepsTAngle = 0; //function isn't returning this yet
-    this.mir_frontStepsTLine = data.mTLine;
-
-    this.mir_frontStepsSAngle = data.mSAngle;
-    this.mir_frontStepsSLine = data.mSLine;
-
-    this.centerIntersection = data.intersectionPoint;
-    // this.mirrored_frontStepsAngle = this.mir_frontStepsSAngle;
-    this.mir_frontStepsDilutedAngle = getDilutedAngle(
-      this.frontSteps_spineJointAngle,
-      this.mir_frontStepsSAngle,
-       dScalar, // < --  HERE this.dilutionScalar  
-    );
-
-    this.realignmentAngle2 = this.mir_frontStepsSAngle; 
-
- 
- 
-  }
- 
- 
+  this.centerIntersection = data.intersectionPoint;
+  this.realignmentAngle2 = data.mSAngle;
+}
 }

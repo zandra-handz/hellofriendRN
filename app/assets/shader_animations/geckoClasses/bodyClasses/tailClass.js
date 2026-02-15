@@ -3,7 +3,8 @@
 // }
 import {
   getSpineSagTrans_inPlace,
-  intersectLines_inPlace,
+  // intersectLines_inPlace_tail,
+  intersectLines_inPlace_tail_minimal,
 } from "../../utils.js";
 
 import {
@@ -104,6 +105,10 @@ export default class Tail {
     // FIXED (was 0 before — that was wrong)
     this.center = new Float32Array(2);
 
+    // for intesection calculation
+    this._line1Buffer = [null, null];
+    // this._line2Buffer = [null, null];
+
     // -------------------------
     // Preallocated Sag Result
     // -------------------------
@@ -177,14 +182,17 @@ export default class Tail {
       this._spineSagTransResult
     );
 
+  this._line1Buffer[0] = this._spineSagTransResult.tStart;
+  this._line1Buffer[1] = this._spineSagTransResult.tEnd;
+ 
+
+
+
     // Intersection calculation (in-place)
-    intersectLines_inPlace(
-      [
-        this._spineSagTransResult.tStart,
-        this._spineSagTransResult.tEnd,
-      ],
+    intersectLines_inPlace_tail_minimal(
+     this._line1Buffer,
       this._spineSagTransResult.tAngle,
-      this.motion.frontSteps_tDistanceApart,
+      // this.motion.frontSteps_tDistanceApart,
       this.motion.frontStepsSLine,
       this.motion.frontStepsSAngle,
       this._intersectResult

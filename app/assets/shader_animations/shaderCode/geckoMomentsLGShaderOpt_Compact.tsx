@@ -292,7 +292,7 @@ uniform float u_gecko_size;
 uniform float u_time;
 // uniform vec2 u_soul;
 // uniform vec2 u_lead; 
-uniform vec2 u_hint; 
+// uniform vec2 u_hint; 
 
 // COMPACT: only 40 vec2 (was 56)
 uniform vec2 u_geckoPoints[40];
@@ -601,7 +601,7 @@ uniform float  u_scale;
 uniform float u_gecko_scale; 
 uniform float u_gecko_size;
 uniform float u_time;
-uniform vec2 u_hint; 
+// uniform vec2 u_hint; 
 
 // COMPACT: only 40 vec2 (was 56)
 uniform vec2 u_geckoPoints[40];
@@ -800,6 +800,120 @@ half4 main(float2 fragCoord) {
     float geckoSDF = buildGeckoSDF(gecko_uv, s);
     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
     vec3 geckoColor = endColor * geckoMask;
+    color = mix(color, geckoColor, geckoMask);
+
+    return half4(color, geckoMask);
+}
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const GECKO_DEBUG_DOTS_SKSL = `  
+uniform float2 u_resolution;
+uniform float  u_aspect;
+uniform float  u_scale; 
+
+uniform float u_gecko_scale; 
+uniform float u_gecko_size;
+uniform float u_time;
+uniform vec2 u_hint; 
+
+uniform vec2 u_geckoPoints[40];
+
+// ------------------------------------------------
+// Bare-bones SDF: just circles, no smoothMin
+// ------------------------------------------------
+float distFCircle(vec2 uv, vec2 center, float radius) {
+    return length(uv - center) - radius;
+}
+
+// ------------------------------------------------
+// MAIN
+// ------------------------------------------------
+half4 main(float2 fragCoord) {
+    float3 color = float3(0.0, 0.0, 0.0);
+
+    vec2 uv = fragCoord / u_resolution;
+    uv -= 0.5;
+    uv.x *= u_aspect;  
+    float s = 1.0 / u_gecko_scale;
+    vec2 gecko_uv = uv * s * u_gecko_size;
+
+    float circleSizeDiv = .8;
+
+    // Body (0-11) — plain min chain
+    float d = distFCircle(gecko_uv, u_geckoPoints[0],  0.003  * s / circleSizeDiv);
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[1],  0.019  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[3],  0.001  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[4],  0.004  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[5],  0.004  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[6],  0.004  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[7],  0.004  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[8],  0.003  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[9],  0.003  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[10], 0.003  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[11], 0.002  * s / circleSizeDiv));
+
+    // Tail (12-23)
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[12], 0.002  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[13], 0.005  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[14], 0.004  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[15], 0.0042 * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[16], 0.005  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[17], 0.005  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[18], 0.005  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[19], 0.004  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[20], 0.0027 * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[21], 0.002  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[22], 0.001  * s / circleSizeDiv));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[23], 0.0001 * s / circleSizeDiv));
+
+    // Arms — just dots at elbows (28-31) and feet (24-27), no line segments
+    float armR = 0.005 * s;
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[24], 0.009 * s));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[25], 0.009 * s));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[26], 0.009 * s));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[27], 0.009 * s));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[28], armR));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[29], armR));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[30], armR));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[31], armR));
+
+    // Muscles (32-35)
+    float muscleR = 0.005 * s;
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[32], muscleR));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[33], muscleR));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[34], muscleR));
+    d = min(d, distFCircle(gecko_uv, u_geckoPoints[35], muscleR));
+
+    // Simple hard-edge mask
+    float geckoMask = smoothstep(0.0, 0.002, -d);
+    float3 geckoColor = float3(1.0, 1.0, 1.0) * geckoMask;
     color = mix(color, geckoColor, geckoMask);
 
     return half4(color, geckoMask);

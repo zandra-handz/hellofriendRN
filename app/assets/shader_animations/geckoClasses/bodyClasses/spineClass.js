@@ -1,21 +1,7 @@
 import { solveProcJoint_inPlace } from "./utils_otherJoints.js";
-import { intersectLines } from "./utils_motionCalcs.js";
 import { solveFirst_withBackwardsDetect } from "./utils_firstJoint.js";
-
-import {
-  _getCenterPoint,
-  _makeDistancePoint,
-  _makeDistancePoint_inPlace,
-  _getDirVec_inPlace,
-  _getCenterPoint_inPlace,
-  _makeOffscreenPoint,
-  _makeOffscreenPoint_inPlace,
-  _getDistanceScalar,
-} from "../../utils.js";
-import {
-  // getStartAndEndPoints_inPlace,
-  // intersectLines,
-  // intersectLines_inPlace,
+ 
+import { 
   intersectLines_inPlace_Opt,
   getSpineSagTrans_inPlace,
 } from "../../utils.js"; 
@@ -153,11 +139,9 @@ export default class Spine {
 
       this.joints.push(joint);
     }
-
-    // Create buffer for directions
+ 
     this.jointDirectionsBuffer = new Float32Array((totalNumJoints + 1) * 2);
-
-    // Create array of views into the buffer
+ 
     this.jointDirections = [];
     for (let i = 0; i <= totalNumJoints; i++) {
       const direction = this.jointDirectionsBuffer.subarray(i * 2, i * 2 + 2);
@@ -170,12 +154,9 @@ export default class Spine {
     // this.firstAngle = this.jointAngles[0];
     this.bodyLength = 0.13;
     this.currentLength = 0; //stored in spineMotion as well
-    this.currentJointLength = this.segmentEnd + 1 - this.segmentStart;
+    this.currentJointLength = this.segmentEnd + 1 - this.segmentStart; 
 
-    // this.centerFlanks = [new Float32Array(2), new Float32Array(2)];
-    // this.intersectionFlanks = [new Float32Array(2), new Float32Array(2)];
-
-    this.manualAdjust = 2; // start mirrored angle animation later in the joint chain than midway
+    this.manualAdjust = 2;  
 
     this.segmentCenterIndex =
       Math.ceil((this.segmentEnd + 1 - this.segmentStart) / 2) +
@@ -211,51 +192,7 @@ export default class Spine {
   updateMotionFirstAngle() {
     this.motionFirstAngle = this.motion.realignmentAngle1;
   }
-
-  // update_unchainedJoints(leadPoint_lead) {
-  //   const midPoint = _getCenterPoint_inPlace(
-  //     this.motion.frontStepsSLine[1],
-  //     leadPoint_lead,
-  //     this._midPointBuffer, // Reuse buffer
-  //   );
-
-  //   const dirVec = _getDirVec_inPlace(
-  //     this.joints[this.unchainedAnchorIndex],
-  //     midPoint,
-  //     this._dirVecBuffer, // Reuse buffer
-  //   );
-  //   // Update head & snout in place
-  //   this.head = _makeDistancePoint_inPlace(
-  //     this.joints[this.unchainedAnchorIndex],
-  //     dirVec,
-  //     this.unchainedDist,
-  //     this.unchainedJoints[1],
-  //   ); // head
-  //   this.snout = _makeDistancePoint_inPlace(
-  //     this.unchainedJoints[1],
-  //     dirVec,
-  //     this.snoutDist,
-  //     this.unchainedJoints[0],
-  //   ); // snout
-
-  //   if (!this.isMoving) {
-  //     if (this.hintDist >= this.hintDistEnd) {
-  //       this.hintDist = this.hintDistStart;
-  //     } else {
-  //       this.hintDist += this.hintMoveSpeed;
-  //     }
-
-  //     this.hint = _makeDistancePoint_inPlace(
-  //       this.unchainedJoints[0],
-  //       dirVec,
-  //       this.hintDist,
-  //       this.hintJoint,
-  //     );
-  //   } else {
-  //     this.hint = _makeOffscreenPoint_inPlace(this.hintJoint);
-  //   }
-  // }
-
+ 
 
   update_unchainedJoints(leadPoint_lead) {
     const anchorJoint = this.joints[this.unchainedAnchorIndex];
@@ -303,54 +240,7 @@ export default class Spine {
       this.hintJoint[1] = -1;
     }
   }
-
-
-  // updateCurrentLength() {
-  //   const length = _getDistanceScalar(
-  //     this.joints[this.segmentEnd],
-  //     this.joints[this.segmentStart],
-  //   );
-  //   this.currentLength = length;
-
-  //   _getCenterPoint_inPlace(
-  //     this.joints[this.segmentEnd],
-  //     this.joints[this.segmentStart],
-  //     this.center,
-  //   );
-
-  //   // No assignment needed - writes directly to this._spineSagTransResult
-  //   getSpineSagTrans_inPlace(
-  //     this.joints[this.segmentEnd],
-  //     this.joints[this.segmentStart],
-  //     this._spineSagTransResult,
-  //   );
-
-  //   this._line1Buffer[0] = this._spineSagTransResult.tStart;
-  //   this._line1Buffer[1] = this._spineSagTransResult.tEnd;
-  //   this._line2Buffer[0] = this.motion.frontStepsTCenter;
-  //   this._line2Buffer[1] = this.motion.frontStepsSLine[1];
-
-  //   // No assignment needed - writes directly to this._intersectResult
-  //   intersectLines_inPlace_Opt(
-  //     this._line1Buffer,
-  //     this._spineSagTransResult.tAngle,
-  //     this.motion.frontSteps_tDistanceApart,
-  //     this._line2Buffer,
-  //     this.motion.frontStepsSAngle,
-  //     this._intersectResult,
-  //   );
-
-  //   if (this.updatesGlobalMotion) {
-  //     this.motion.update_mirroredFrontStepsData(this._intersectResult);
-  //   }
-
-  //   this.intersectionPoint = this._intersectResult.position;
-
-  //   if (this.motion.centerIntersection != null) {
-  //     this.motionSecondAngle = this.motion.realignmentAngle2;
-  //   }
-  // }
-
+ 
     updateCurrentLength() {
     const endJoint = this.joints[this.segmentEnd];
     const startJoint = this.joints[this.segmentStart];
@@ -401,7 +291,7 @@ export default class Spine {
     }
   }
 
-  update(leadPoint_lead, leadPoint_isMoving) {
+  update(leadPoint_lead, leadPoint_angles, leadPoint_isMoving) {
     this.isMoving = leadPoint_isMoving;
 
     // this.updateMotionFirstAngle();
@@ -415,6 +305,7 @@ export default class Spine {
       this.motion.frontSteps_tDistanceApart,
       this.valuesForReversing,
       leadPoint_lead,
+      leadPoint_angles,
       this.first,
       this.jointRadii,
       this.jointIndices,

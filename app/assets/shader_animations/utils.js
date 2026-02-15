@@ -52,7 +52,11 @@ export function _getCenterPoint(pointA, pointB) {
 }
 
 export function _getCenterPoint_inPlace(pointA, pointB, out = null) {
-  if (!out) out = [0, 0]; // fallback if no array provided
+  if (!out) {
+    out[0] = 0;
+    out[1] = 0;
+    
+  } 
   out[0] = (pointA[0] + pointB[0]) / 2;
   out[1] = (pointA[1] + pointB[1]) / 2;
   return out;
@@ -144,6 +148,8 @@ export function _getDirVec_inPlace(start, end, out = null) {
 export function _subtractVec(a, b) {
   return [a[0] - b[0], a[1] - b[1]];
 }
+
+
 
 export function _subtractVec_inPlace(a, b, out) {
   out[0] = a[0] - b[0];
@@ -246,9 +252,28 @@ export function _getMirrorAngleWithAngleRef(angleA, angleRef) {
 }
 
 export function _getForwardAngle(startPoint, distPoint) {
+
   const forwardVec = _subtractVec(distPoint, startPoint);
   return _getAngleFromXAxis(forwardVec);
 }
+
+
+// export function _getAngleFromXAxis_inPlace(dx, dy) {
+//   return Math.atan2(dy, dx);
+// }
+
+export function _getForwardAngle_Opt(startPoint, distPoint) {
+
+  // subtract vecs
+  // const start = distPoint[0] - startPoint[0];
+  // const end = distPoint[1] - startPoint[1];
+
+  return _getAngleFromXAxis_inPlace( distPoint[0] - startPoint[0],distPoint[1] - startPoint[1]);
+
+  // const forwardVec = _subtractVec(distPoint, startPoint);
+  // return _getAngleFromXAxis(forwardVec);
+}
+
 
 // COMBINED OUTPUT
 
@@ -352,7 +377,8 @@ export function makeLineFromAPoint_inPlace(
   lineEndOut[0] = startingPoint[0] + extensionVector[0] * length;
   lineEndOut[1] = startingPoint[1] + extensionVector[1] * length;
 
-  return [startingPoint, lineEndOut];
+  return;
+  // return [startingPoint, lineEndOut];
 }
 
 export function getIntersectionPoint(aLine, bLine) {
@@ -452,83 +478,7 @@ export function getStartAndEndPoints_inPlace(
 }
 
 
-
-// export function intersectLines_inPlace_Opt(
-//   line1,
-//   line1Angle,
-//   line1DistanceApart,
-//   line2,
-//   line2Angle,
-//   result // pre-allocated result object
-// ) {
-//   // Get intersection point
-//   getIntersectionPoint_inPlace(line1, line2, result.position);
-  
-//   // Calculate mirrored angle without object allocation
-//   const diff = _getNormAglDiff(line1Angle, line2Angle);
-//   result.mirroredAngle = _normalizeToNegPItoPI(_add180(line1Angle - diff));
-  
-//   // Calculate direction vector from angle
-//   result.mirroredDir[0] = Math.cos(result.mirroredAngle);
-//   result.mirroredDir[1] = Math.sin(result.mirroredAngle);
-  
-//   // Make mirrored line end
-//   makeLineFromAPoint_inPlace(
-//     result.position,
-//     result.mirroredDir,
-//     0.24,
-//     result.mirroredLineEnd,
-//   );
-  
-//   // Calculate distance
-//   result.distFromSteps = _getDistanceScalar(result.position, line2[0]);
-  
-//   // Make mirrored steps point
-//   _makeDistancePoint_inPlace(
-//     result.position,
-//     result.mirroredDir,
-//     result.distFromSteps,
-//     result.mirroredStepsPoint,
-//   );
-  
-//   // Calculate transverse line
-//   _turnDirVec90ClockW_inPlace(result.mirroredDir, result.transverseLine);
-  
-//   // Make mirrored step line
-//   makeLineOverACenter_inPlace(
-//     result.mirroredStepsPoint,
-//     result.transverseLine,
-//     line1DistanceApart,
-//     result.mirroredStepLineStart,
-//     result.mirroredStepLineEnd,
-//   );
-  
-//   // Make projected steps point
-//   _makeDistancePoint_inPlace(
-//     result.position,
-//     result.mirroredDir,
-//     result.distFromSteps,
-//     result.projectedStepsPoint,
-//   );
-  
-//   // Make projected line
-//   makeLineOverACenter_inPlace(
-//     result.projectedStepsPoint,
-//     result.transverseLine,
-//     line1DistanceApart,
-//     result.projectedLineStart,
-//     result.projectedLineEnd,
-//   );
-  
-//   // Store line endpoints for mSLine
-//   result.mSLineStart[0] = result.position[0];
-//   result.mSLineStart[1] = result.position[1];
-//   result.mSLineEnd[0] = result.mirroredLineEnd[0];
-//   result.mSLineEnd[1] = result.mirroredLineEnd[1];
-  
-//   return result;
-// }
-
+ 
 
 export function intersectLines_inPlace_Opt(
   line1,
@@ -752,7 +702,24 @@ export function getSpineSagTrans_inPlace(startJoint, endJoint, result) {
   // No return!
 }
 
-export function intersectLines_inPlace(
+
+
+export function intersectLines_inPlace_tail_minimal(
+  line1,
+  line1Angle,
+  line2,
+  line2Angle,
+  result
+) {
+  getIntersectionPoint_inPlace(line1, line2, result.position);
+  
+  const diff = _getNormAglDiff(line1Angle, line2Angle);
+  result.mirroredAngle = _normalizeToNegPItoPI(_add180(line1Angle - diff));
+  
+  // Everything else was dead code
+}
+
+export function intersectLines_inPlace_tail(
   line1,
   line1Angle,
   line1DistanceApart,
@@ -760,6 +727,7 @@ export function intersectLines_inPlace(
   line2Angle,
   result
 ) {
+
   getIntersectionPoint_inPlace(line1, line2, result.position);
   
   const diff = _getNormAglDiff(line1Angle, line2Angle);
@@ -858,293 +826,9 @@ export function getFrontStepsSagTrans_inPlace(step, otherStep, out, tempLineDir,
   return out;
 }
 
-// export function getFrontStepsSagTrans_inPlaceOld(step, otherStep, out) {
-//   // Reuse buffers (add these to your out object or as temp vars)
-//   const tempLineDir = [0, 0];
-//   const tempPerpDir = [0, 0];
-
-//   // Center point
-//   _getCenterPoint_inPlace(step, otherStep, out.tCenter);
-
-//   // Distance
-//   out.tDistanceApart = _getDistanceScalar(step, otherStep);
-
-//   // Direction vectors (in-place)
-//   _getDirVec_inPlace(step, otherStep, tempLineDir);
-//   _turnDirVec90ClockW_inPlace(tempLineDir, tempPerpDir);
-
-//   // Angles
-//   out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(tempPerpDir));
-//   out.tAngle = _getAngleFromXAxis(tempLineDir);
-
-//   // tLine endpoints (already in-place)
-//   out.tLineStart[0] = step[0];
-//   out.tLineStart[1] = step[1];
-//   out.tLineEnd[0] = otherStep[0];
-//   out.tLineEnd[1] = otherStep[1];
-
-//   // sLine endpoints (in-place)
-//   makeLineOverACenter_inPlace(
-//     out.tCenter,
-//     tempPerpDir,
-//     0.2,
-//     out.sLineStart,
-//     out.sLineEnd
-//   );
-
-//   return out;
-// }
-
-
-// export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
-//   // out must be:
-//   // {
-//   //   tCenter: Float32Array(2),
-//   //   tLineStart: Float32Array(2),
-//   //   tLineEnd: Float32Array(2),
-//   //   sLineStart: Float32Array(2),
-//   //   sLineEnd: Float32Array(2),
-//   //   tDistanceApart: number,
-//   //   sAngle: number,
-//   //   tAngle: number,
-//   // }
-
-//   // --- EXACTLY LIKE OLD: center, distance, dirs ---
-//   // NOTE: your _getCenterPoint_inPlace API seems inconsistent in your codebase,
-//   // so we support both "returns vec" and "writes to provided out".
-//   let centerPoint = _getCenterPoint_inPlace(step, otherStep, out.tCenter);
-//   if (centerPoint && centerPoint !== out.tCenter) {
-//     out.tCenter[0] = centerPoint[0];
-//     out.tCenter[1] = centerPoint[1];
-//     centerPoint = out.tCenter;
-//   } else {
-//     centerPoint = out.tCenter;
-//   }
-
-//   const tDistanceApart = _getDistanceScalar(step, otherStep);
-//   const lineDir = _getDirVec(step, otherStep);
-//   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
-
-//   // --- EXACTLY LIKE OLD: angles ---
-//   out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
-//   out.tAngle = _getAngleFromXAxis(lineDir);
-//   out.tDistanceApart = tDistanceApart;
-
-//   // --- EXACTLY LIKE OLD: tLine shape, just split into start/end ---
-//   out.tLineStart[0] = step[0];
-//   out.tLineStart[1] = step[1];
-//   out.tLineEnd[0] = otherStep[0];
-//   out.tLineEnd[1] = otherStep[1];
-
-//   // --- EXACTLY LIKE OLD: sLine via makeLineOverACenter(center, perpDir, 0.2) ---
-//   // This preserves whatever ordering / internal behavior your old version had.
-//   const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
-
-//   // sLine is expected to be: [ [x0,y0], [x1,y1] ]
-//   out.sLineStart[0] = sLine[0][0];
-//   out.sLineStart[1] = sLine[0][1];
-//   out.sLineEnd[0] = sLine[1][0];
-//   out.sLineEnd[1] = sLine[1][1];
-
-//   return out;
-// }
-
-
-
-
-
-
-
-
-
-
-// export function getFrontStepsSagTrans_inPlace(step, otherStep, out) {
-//   // ---- center point (MUST populate out.tCenter) ----
-//   // Support both possible APIs:
-//   // 1) _getCenterPoint_inPlace(step, otherStep, out.tCenter) writes into out.tCenter
-//   // 2) _getCenterPoint_inPlace(step, otherStep) returns a vec2
-//   let c = _getCenterPoint_inPlace(step, otherStep, out.tCenter);
-//   if (c && c !== out.tCenter) {
-//     // if it returned a center vec, copy it
-//     out.tCenter[0] = c[0];
-//     out.tCenter[1] = c[1];
-//   }
-
-//   // ---- distance (compute once) ----
-//   const tDistanceApart = _getDistanceScalar(step, otherStep);
-//   out.tDistanceApart = tDistanceApart;
-
-//   // ---- t-line endpoints ----
-//   out.tLineStart[0] = step[0];
-//   out.tLineStart[1] = step[1];
-//   out.tLineEnd[0] = otherStep[0];
-//   out.tLineEnd[1] = otherStep[1];
-
-//   // ---- directions ----
-//   const lineDir = _getDirVec(step, otherStep);
-//   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
-
-//   // ---- angles (same as original) ----
-//   out.sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
-//   out.tAngle = _getAngleFromXAxis(lineDir);
-
-
-//   // sagittal line endpoints (same length as before)
-// const halfLen = 0.1;
-
-// // compute raw endpoints from perpDir
-// let sx0 = out.tCenter[0] - perpDir[0] * halfLen;
-// let sy0 = out.tCenter[1] - perpDir[1] * halfLen;
-// let sx1 = out.tCenter[0] + perpDir[0] * halfLen;
-// let sy1 = out.tCenter[1] + perpDir[1] * halfLen;
-
-// // ENFORCE STABLE ORDER:
-// // make sLineEnd be the one that lies in +perpDir direction from center
-// // (dot((endpoint - center), perpDir) should be >= 0 for the "end")
-// const v0x = sx0 - out.tCenter[0];
-// const v0y = sy0 - out.tCenter[1];
-// const d0 = v0x * perpDir[0] + v0y * perpDir[1];
-
-// // if start is actually the +perp side, swap so end is +perp
-// if (d0 > 0) {
-//   const tx = sx0; const ty = sy0;
-//   sx0 = sx1; sy0 = sy1;
-//   sx1 = tx;  sy1 = ty;
-// }
-
-// out.sLineStart[0] = sx0;
-// out.sLineStart[1] = sy0;
-// out.sLineEnd[0] = sx1;
-// out.sLineEnd[1] = sy1;
  
-
-//   return out;
-// }
-
-
  
-
-
-
-
-// export function getFrontStepsSagTrans(step, otherStep) {
-//   const centerPoint = _getCenterPoint_inPlace(step, otherStep);
-//   const tDistanceApart = _getDistanceScalar(step, otherStep);
-//   const lineDir = _getDirVec(step, otherStep);
-//   const perpDir = _turnDirVec90ClockW(lineDir); // VERY IMPORTANT TO GO CLOCKWISE
-
-//   // Legs.chestAngle
-//   const sAngle = _normalizeToNegPItoPI(_getAngleFromXAxis(perpDir));
-
-//   const sLine = makeLineOverACenter(centerPoint, perpDir, 0.2);
-//   const tAngle = _getAngleFromXAxis(lineDir);
-
-//   return {
-//     tCenter: centerPoint,
-//     tLine: [
-//       [step[0], step[1]],
-//       [otherStep[0], otherStep[1]],
-//     ],
-//     tDistanceApart: tDistanceApart,
-//     sLine: sLine,
-//     sAngle: sAngle,
-//     tAngle: tAngle,
-//   };
-// }
-
-// LEGS
-
-//joint will be the rotation joint when this is called in the update function
-
-// UPDATES ROTATOR JOINT
-// export function _solveShoulder(
-//   radius,
-//   range,
-//   phase,
-//   centerPoint,
-//   centerAngle,
-//   is1,
-//   isFollower
-// ) {
-//   const perp = is1 ? -Math.PI / 2 : Math.PI / 2;
-//   const side = isFollower ? 1 : -1;
-//   const ang = centerAngle + perp;
-
-//   const perpDirVec = _getScaledAngleDirVec(ang, radius);
-//   const spineDirVec = _getAngleDirVec(centerAngle);
-
-//   const bobAmount = radius * range;
-//   const bob = _scaleDirVec(spineDirVec, bobAmount * phase * side);
-
-//   //new rotator data
-//   return [
-//     centerPoint[0] + perpDirVec[0] + bob[0],
-//     centerPoint[1] + perpDirVec[1] + bob[1],
-//   ];
-// }
-
-//  allocation reduced version
-export function _solveShoulder(
-  radius,
-  range,
-  phase,
-  centerPoint,
-  centerAngle,
-  is1,
-  isFollower,
-    goingBackwards = false,
-) {
-    const perpDirection = goingBackwards ? -1 : 1;
-  const perp = is1 ? -Math.PI / 2 * perpDirection : Math.PI / 2 * perpDirection;
-  // const perp = is1 ? -Math.PI / 2 : Math.PI / 2;
-  const side = isFollower ? 1 : -1;
-  const ang = centerAngle + perp;
-
-  // inline perpDirVec calculation (was _getScaledAngleDirVec)
-  const perpX = Math.cos(ang) * radius;
-  const perpY = Math.sin(ang) * radius;
-
-  // inline spineDirVec calculation (was _getAngleDirVec)
-  const spineX = Math.cos(centerAngle);
-  const spineY = Math.sin(centerAngle);
-
-  // inline bob calculation (was _scaleDirVec)
-  const bobAmount = radius * range;
-  const bobX = spineX * bobAmount * phase * side;
-  const bobY = spineY * bobAmount * phase * side;
-
-  return [centerPoint[0] + perpX + bobX, centerPoint[1] + perpY + bobY];
-}
-
-export function updateShoulderRotator(
-  rotator,
-  radius,
-  range,
-  phase,
-  centerPoint,
-  centerAngle,
-  is1,
-  isFollower,
-  goingBackwards = false
-) {
-  let newRotationPoint = _solveShoulder(
-    radius,
-    range,
-    phase,
-    centerPoint,
-    centerAngle,
-    is1,
-    isFollower,
-    goingBackwards 
-  );
-
-  // WHERE DATA GETS CHANGED
-  rotator[0] = newRotationPoint[0];
-  rotator[1] = newRotationPoint[1];
-}
-
-
-
+ 
 
 
 
@@ -1190,100 +874,7 @@ export function getArmMuscles(muscles, elbow, rotator, stepTarget) {
   muscles[0] = _getCenterPoint_inPlace(stepTarget, elbow);
   muscles[1] = _getCenterPoint_inPlace(elbow, rotator);
 }
-
-// // Sets elbow coords
-// export function solveElbowIK(
-//   rotator,
-//   elbow,
-//   stepTarget,
-//   upperArmLength,
-//   forearmLength,
-//   is1,
-// ) {
-//   const { dist: dist, angle: baseAngle } = _getDistanceScalar_andAngle(
-//     rotator,
-//     stepTarget,
-//   );
-
-//   // Clamp distance to reachable range
-//   const d = Math.min(
-//     Math.max(dist, Math.abs(upperArmLength - forearmLength)),
-//     upperArmLength + forearmLength,
-//   );
-
-//   // Side: right = bend outwards, left = bend inwards
-//   const bendDir = is1 ? 1 : -1;
-
-//   const shoulderToElbowAngle =
-//     baseAngle +
-//     bendDir *
-//       Math.acos(
-//         (upperArmLength * upperArmLength +
-//           d * d -
-//           forearmLength * forearmLength) /
-//           (2 * upperArmLength * d),
-//       );
-
-//   elbow[0] = rotator[0] + Math.cos(shoulderToElbowAngle) * upperArmLength;
-//   elbow[1] = rotator[1] + Math.sin(shoulderToElbowAngle) * upperArmLength;
-
-//   elbow.stepAngle = _getAngleBetweenPoints(stepTarget, elbow);
-//   rotator.stepAngle = baseAngle;
-// }
-
-// // Sets elbow coords
-// export function solveBackElbowIK(
-//   rotator,
-//   elbow,
-//   stepTarget,
-//   upperArmLength,
-//   forearmLength,
-//   is1, 
-// ) {
-//   const { dist: dist, angle: baseAngle } = _getDistanceScalar_andAngle(
-//     rotator,
-//     stepTarget,
-//   );
-
-//   // Clamp distance to reachable range
-//   const d = Math.min(
-//     Math.max(dist, Math.abs(upperArmLength - forearmLength)),
-//     upperArmLength + forearmLength,
-//   );
-
-//   // Side: right = bend outwards, left = bend inwards
-//   const bendDir = !is1 ? 1 : -1;
-
-//   const shoulderToElbowAngle =
-//     baseAngle +
-//     bendDir *
-//       Math.acos(
-//         (upperArmLength * upperArmLength +
-//           d * d -
-//           forearmLength * forearmLength) /
-//           (2 * upperArmLength * d),
-//       );
-
-//   elbow[0] = rotator[0] + Math.cos(shoulderToElbowAngle) * upperArmLength;
-//   elbow[1] = rotator[1] + Math.sin(shoulderToElbowAngle) * upperArmLength;
-// }
-
-// export function getPivotedStep(step, pivot, pivotSize, distanceOut, is1) {
-//   const angle = is1 ? -pivotSize : pivotSize;
-
-//   const x = step[0] - pivot[0];
-//   const y = step[1] - pivot[1];
-
-//   const cosA = Math.cos(angle);
-//   const sinA = Math.sin(angle);
-
-//   const newX = x * cosA - y * sinA + pivot[0];
-//   const newY = x * sinA + y * cosA + pivot[1];
-
-//   return [newX, newY];
-// }
-
-
+ 
 // Sets elbow coords
 export function solveElbowIK(
   rotator,
@@ -1364,94 +955,7 @@ export function solveBackElbowIK(
  
 
 }
-
-// export function getCalcStep(
-//   centerJoint,
-//   forwardAngle,
-//   distanceOut,
-//   stepWideness,
-//   is1,
-// ) {
-//   const piMultiplier = is1 ? 1 : -1;
-//   const offset = (piMultiplier * Math.PI) / stepWideness;
-
-//   const xNext = centerJoint[0] + Math.cos(forwardAngle + offset) * distanceOut;
-//   const yNext = centerJoint[1] + Math.sin(forwardAngle + offset) * distanceOut;
-
-//   let nextStep = [xNext, yNext];
-//   nextStep.angle = forwardAngle; // FOR FINGER PLACEMENT. finger placement should be decided here because should only change when step changes
-
-//   return nextStep;
-// }
-
-// export function getCalcStepNew(
-//   centerJoint,
-//   forwardAngle,
-//   backwardAngle,
-//   distanceOut,
-//   stepWideness,
-//   is1,
-//   goingBackwards = false,
-// ) {
-//   // if (goingBackwards) {
-//   //   console.log('going backwards!!');
-//   // }
-
-//   const piMultiplier = is1 ? 1 : -1;
-//   const offset = (piMultiplier * Math.PI) / stepWideness;
-
-//   // When going backwards, add/subtract 90 degrees based on which side
-//   const backwardsOffset = goingBackwards
-//     ? is1
-//       ? Math.PI / 3
-//       : -Math.PI / 3
-//     : 0;
-
-//   const angle = goingBackwards ? backwardAngle : forwardAngle;
-//   const effectiveAngle = forwardAngle + backwardsOffset;
-
-//   const xNext =
-//     centerJoint[0] + Math.cos(effectiveAngle + offset) * distanceOut;
-//   const yNext =
-//     centerJoint[1] + Math.sin(effectiveAngle + offset) * distanceOut;
-
-//   let nextStep = [xNext, yNext];
-//   nextStep.angle = forwardAngle;
-
-//   return nextStep;
-// }
-
-export function getCalcStep_inPlace(
-  outStep, // pre-allocated array [x, y]
-  centerJoint,
-  forwardAngle,
-  backwardAngle,
-  distanceOut,
-  stepWideness,
-  is1,
-  goingBackwards = false,
-) {
-  const piMultiplier = is1 ? 1 : -1;
-  const offset = (piMultiplier * Math.PI) / stepWideness;
-
-  // When going backwards, add/subtract 90 degrees based on which side
-  const backwardsOffset = goingBackwards
-    ? is1
-      ? Math.PI / 3
-      : -Math.PI / 3
-    : 0;
-
- // const angle = goingBackwards ? backwardAngle : forwardAngle;
-  const effectiveAngle = forwardAngle + backwardsOffset;
-
-  outStep[0] = centerJoint[0] + Math.cos(effectiveAngle + offset) * distanceOut;
-  outStep[1] = centerJoint[1] + Math.sin(effectiveAngle + offset) * distanceOut;
-
-  outStep.angle = forwardAngle;
-
-  return outStep;
-}
-
+  
 
 
 

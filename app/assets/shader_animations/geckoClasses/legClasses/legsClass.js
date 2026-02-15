@@ -1,14 +1,9 @@
  
 
-import {
-  _getPointTowardB,
-  _getCenterPoint,
+import { 
   _getCenterPoint_inPlace,
-  _getDistanceScalar,
-  _getDotScalar,
-  _subtractVec,
-  _getAngleFromXAxis,
-  _getForwardAngle, 
+  _getDistanceScalar,   
+  _getForwardAngle_Opt,
   getFrontStepsSagTrans_inPlace,
 } from "../../utils.js";
 
@@ -180,14 +175,14 @@ this._tempPerpDir = new Float32Array(2);
   }
 
   updateForwardAngle() {
-    this.centerToAheadAngle = _getForwardAngle(
+    this.centerToAheadAngle = _getForwardAngle_Opt(
       this.stepCenterJoint,
       this.stepAheadJoint,
     );
   }
 
   updateBackwardAngle() {
-    this.centerToBehindAngle = _getForwardAngle(
+    this.centerToBehindAngle = _getForwardAngle_Opt(
       this.stepCenterJoint,
       this.stepBehindJoint,
     );

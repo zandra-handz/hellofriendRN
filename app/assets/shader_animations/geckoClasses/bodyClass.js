@@ -185,10 +185,10 @@ this.tail = new Tail(
  
   //   this.tail.update();
   // }
-  update(leadPoint_lead, leadPoint_isMoving) {
+  update(leadPoint_lead, leadPoint_angles, leadPoint_isMoving) {
   // this.motion.update_headPosition(this.headRadiiSum);
   this.motion.update_headPosition();
-  this.spine.update(leadPoint_lead, leadPoint_isMoving);
+  this.spine.update(leadPoint_lead, leadPoint_angles, leadPoint_isMoving);
   
   this.tail.update( 
   );

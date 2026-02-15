@@ -134,7 +134,7 @@
 //   const TOTAL_GECKO_POINTS_COMPACT = 40;
 
 //   // ============== TRULY PREALLOCATED BUFFERS ==============
-//   // ✅ CHANGE #1: make big buffers typed arrays (no JS array objects)
+//   //  CHANGE #1: make big buffers typed arrays (no JS array objects)
 //   const workingBuffers = useRef({
 //     soul: new Float32Array(2),
 //     walk: new Float32Array(2),
@@ -832,6 +832,7 @@ import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import {
   GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT,
   GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS,
+  GECKO_DEBUG_DOTS_SKSL
 } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -844,8 +845,7 @@ import {
 
 import { useWindowDimensions } from "react-native";
 import {
-  hexToVec3,
-  toShaderSpace_inplace,
+  hexToVec3, 
   toGeckoSpace_inPlace,
   toGeckoPointerScaled_inPlace,
   packVec2Uniform_withRecenter_moments,
@@ -945,12 +945,14 @@ const MomentsSkia = ({
     }
   }, [size]);
 
+
+ 
   const updateTrigger = useSharedValue(0);
   const lastRenderRef = useRef(0);
   const isPausedRef = useRef(false);
   const lastAutoPickupIdRef = useRef(-1);
 
-  const TOTAL_GECKO_POINTS = 71;
+  // const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 40;
   const MAX_HELD = 4;
 
@@ -959,8 +961,8 @@ const MomentsSkia = ({
   // ============== TRULY PREALLOCATED BUFFERS ==============
   const workingBuffers = useRef({
     soul: new Float32Array(2),
-    walk: new Float32Array(2),
-    hint: new Float32Array(2),
+    // walk: new Float32Array(2),
+    // hint: new Float32Array(2),
     lead: new Float32Array(2),
     selected: new Float32Array(2),
     lastSelected: new Float32Array(2),
@@ -975,10 +977,11 @@ const MomentsSkia = ({
   }).current;
 
   // Shared values (simple arrays, created fresh when needed)
-  const walk0UniformSV = useSharedValue<number[]>([0, 0]);
+  // const walk0UniformSV = useSharedValue<number[]>([0, 0]);
+  // const hintUniformSV = useSharedValue<number[]>([0, 0]);
   const selectedUniformSV = useSharedValue<number[]>([0, 0]);
   const lastSelectedUniformSV = useSharedValue<number[]>([0, 0]);
-  const hintUniformSV = useSharedValue<number[]>([0, 0]);
+
 
   // Big uniforms (still SharedValues, but we will only update them when needed)
   const momentsUniformSV = useSharedValue<number[]>(
@@ -1124,14 +1127,14 @@ const MomentsSkia = ({
     vec3 backgroundEndColor = vec3(${b2});
   `;
 
-  const [geckoColor, setGeckoColor] = useState(color2Converted);
+  // const [geckoColor, setGeckoColor] = useState(color2Converted);
 
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
-      ${SHARED_SKSL_PRELUDE(color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS}
+      ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
+      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
     `);
-  }, [color1Converted, geckoColor, bckgColor1Converted, bckgColor2Converted]);
+  }, [color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted]);
 
   const sourceTwo = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
@@ -1151,6 +1154,10 @@ const MomentsSkia = ({
   }
 
   const start = useRef(Date.now());
+
+ 
+
+
   const hintRef = useRef([0, 0]);
 
   const [internalReset, setInternalReset] = useState(0);
@@ -1177,8 +1184,8 @@ const MomentsSkia = ({
 
     // Reset buffers
     workingBuffers.soul.fill(0);
-    workingBuffers.walk.fill(0);
-    workingBuffers.hint.fill(0);
+    // workingBuffers.walk.fill(0);
+    // workingBuffers.hint.fill(0);
     workingBuffers.selected.fill(0);
     workingBuffers.lastSelected.fill(0);
     workingBuffers.heldCoords.fill(0);
@@ -1186,10 +1193,11 @@ const MomentsSkia = ({
     workingBuffers.moments.fill(0);
 
     // Reset SVs
-    walk0UniformSV.value = [0, 0];
+    // walk0UniformSV.value = [0, 0];
+    // hintUniformSV.value = [0, 0];
     selectedUniformSV.value = [0, 0];
     lastSelectedUniformSV.value = [0, 0];
-    hintUniformSV.value = [0, 0];
+
 
     momentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
     heldMomentUniformSV.value = Array(MAX_HELD * 2).fill(0);
@@ -1216,6 +1224,7 @@ const MomentsSkia = ({
 
     const animate = () => {
       if (cancelled) return;
+ 
 
       // keep rAF alive but avoid doing work while paused
       if (isPausedRef.current) {
@@ -1229,6 +1238,8 @@ const MomentsSkia = ({
       }
       // DON'T DELETE
       // frameBudgetMonitor();
+
+ 
 
       // ---- UI / side-effects (unchanged) ----
       if (moments.current.trigger_remote && !lastPawsClearedRef.current) {
@@ -1283,17 +1294,18 @@ const MomentsSkia = ({
       }
 
       if (gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
-        leadPoint.current.update(userPoint_geckoSpaceRef.current);
+        leadPoint.current.update(userPoint_geckoSpaceRef.current);//, dt, now);
       } else if (!gecko.current.sleepWalkMode) {
         leadPoint.current.update(soul.current.soul);
       } else {
         sleepWalk0.current.update(moments);
-        leadPoint.current.update(sleepWalk0.current.walk);
+        leadPoint.current.update(sleepWalk0.current.walk);//, dt, now);
       }
 
       // ---- sim update ----
       gecko.current.update(
         leadPoint.current.lead,
+        leadPoint.current.angles,
         leadPoint.current.leadDistanceTraveled,
         leadPoint.current.isMoving,
       );
@@ -1331,27 +1343,27 @@ const MomentsSkia = ({
       // ---------------------------------------------------------------------
       // Calculate transforms into buffers (always do this, cheap)
       // ---------------------------------------------------------------------
-      toShaderSpace_inplace(
-        soul.current.soul,
-        aspect,
-        gecko_scale,
-        workingBuffers.soul,
-        0,
-      );
-      toShaderSpace_inplace(
-        sleepWalk0.current.walk,
-        aspect,
-        gecko_scale,
-        workingBuffers.walk,
-        0,
-      );
-      toShaderSpace_inplace(
-        hintRef.current,
-        aspect,
-        gecko_scale,
-        workingBuffers.hint,
-        0,
-      );
+      // toShaderSpace_inplace(
+      //   soul.current.soul,
+      //   aspect,
+      //   gecko_scale,
+      //   workingBuffers.soul,
+      //   0,
+      // );
+      // toShaderSpace_inplace(
+      //   sleepWalk0.current.walk,
+      //   aspect,
+      //   gecko_scale,
+      //   workingBuffers.walk,
+      //   0,
+      // );
+      // toShaderSpace_inplace(
+      //   hintRef.current,
+      //   aspect,
+      //   gecko_scale,
+      //   workingBuffers.hint,
+      //   0,
+      // );
 
       workingBuffers.selected[0] = moments.current.selected.coord[0];
       workingBuffers.selected[1] = moments.current.selected.coord[1];
@@ -1384,8 +1396,8 @@ const MomentsSkia = ({
 
       if (shouldUpdateBigUniforms) {
         // Update small uniforms (creates new arrays, but only when moving)
-        walk0UniformSV.value = [workingBuffers.walk[0], workingBuffers.walk[1]];
-        hintUniformSV.value = [workingBuffers.hint[0], workingBuffers.hint[1]];
+        // walk0UniformSV.value = [workingBuffers.walk[0], workingBuffers.walk[1]];
+        // hintUniformSV.value = [workingBuffers.hint[0], workingBuffers.hint[1]];
         selectedUniformSV.value = [
           workingBuffers.selected[0],
           workingBuffers.selected[1],
@@ -1449,10 +1461,10 @@ const MomentsSkia = ({
         u_time: 0,
         u_resolution: [width, height],
         u_aspect: aspect || 1,
-        u_walk0: [-100, -100],
+        // u_walk0: [-100, -100],
         u_selected: [-100, -100],
         u_lastSelected: [-100, -100],
-        u_hint: [-100, -100],
+        // u_hint: [-100, -100],
         u_momentsLength: 0,
         u_moments: momentsUniformSV.value,
         u_heldMoments: heldMomentUniformSV.value,
@@ -1464,13 +1476,14 @@ const MomentsSkia = ({
       u_scale: scale,
       u_gecko_scale: gecko_scale,
       u_gecko_size: gecko_size,
-      u_time: (Date.now() - start.current) / 1000,
+     u_time: (Date.now() - start.current) / 1000,
+    // u_time: timeSV.value,
       u_resolution: [size.width, size.height],
       u_aspect: aspect || 1,
-      u_walk0: walk0UniformSV.value,
+      // u_walk0: walk0UniformSV.value,
       u_selected: selectedUniformSV.value,
       u_lastSelected: lastSelectedUniformSV.value,
-      u_hint: hintUniformSV.value,
+      // u_hint: hintUniformSV.value,
       u_momentsLength: momentsLengthSV.value,
       u_moments: momentsUniformSV.value,
       u_heldMoments: heldMomentUniformSV.value,
@@ -1496,7 +1509,7 @@ const MomentsSkia = ({
                 uniforms={uniforms}
               />
             </Rect>
-          </Canvas> */}
+          </Canvas>  */}
 
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect

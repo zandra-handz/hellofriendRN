@@ -3,7 +3,7 @@ export const MOMENTS_BG_SKSL_OPT = `
 uniform float2 u_resolution;
 uniform float  u_aspect;
 uniform float  u_scale;
-uniform float2 u_walk0;
+// uniform float2 u_walk0;
 uniform float u_time;
 uniform float u_gecko_scale;
 uniform float u_gecko_size;

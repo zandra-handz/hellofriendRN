@@ -119,7 +119,7 @@ export default class Gecko {
 
   }
 
-  update(leadPoint_lead, leadPoint_distanceTraveled, leadPoint_isMoving) {
+  update(leadPoint_lead, leadPoint_angles, leadPoint_distanceTraveled, leadPoint_isMoving) {
     // if (this.sleepWalkMode) {
     //   console.log('gecko is in sleep mode')
     // }
@@ -131,6 +131,6 @@ export default class Gecko {
   
     this.gait.update(leadPoint_distanceTraveled, this.valuesForReversing.goingBackwards); 
     this.legs.update();
-    this.body.update(leadPoint_lead, leadPoint_isMoving);
+    this.body.update(leadPoint_lead, leadPoint_angles, leadPoint_isMoving);
   }
 }

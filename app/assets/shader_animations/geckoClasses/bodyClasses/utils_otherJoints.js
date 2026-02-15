@@ -1,12 +1,9 @@
-import { dist } from "@shopify/react-native-skia";
+ 
 import {
-  dot,
-  minus,
+  dot, 
   _subtractVec,
   _subtractVec_inPlace,
-  _getAngleBetweenPoints,
-  _getAngleFromXAxis,
-  _getAngleFromXAxis_inPlace,
+  _getAngleBetweenPoints, 
 } from "../../utils";
 
 

@@ -1,12 +1,8 @@
-import {
-  _getPointTowardB,
-  _getCenterPoint,
+import {  
   _getCenterPoint_inPlace,
-  _getDistanceScalar,
-  _getDotScalar,
-  _subtractVec,
-  _getAngleFromXAxis,
-  _getForwardAngle,
+  _getDistanceScalar,  
+  // _getForwardAngle,
+  _getForwardAngle_Opt,
 } from "../../utils.js";
 
 import { 
@@ -143,7 +139,7 @@ export default class FollowerLegs {
   }
 
   updateBackwardAngle() {
-    this.centerToBehindAngle = _getForwardAngle(
+    this.centerToBehindAngle = _getForwardAngle_Opt(
       this.stepCenterJoint,
       this.stepBehindJoint,
     );
@@ -207,8 +203,8 @@ export default class FollowerLegs {
     this._forwardPoint1, //   Reuse buffer
   );
 
-  this.forwardAngle0 = _getForwardAngle(this.stepCenterJoint, this._forwardPoint0);
-  this.forwardAngle1 = _getForwardAngle(this.stepCenterJoint, this._forwardPoint1);
+  this.forwardAngle0 = _getForwardAngle_Opt(this.stepCenterJoint, this._forwardPoint0);
+  this.forwardAngle1 = _getForwardAngle_Opt(this.stepCenterJoint, this._forwardPoint1);
 }
 
 solveStepTargetsBackPaired() {
