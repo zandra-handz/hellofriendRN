@@ -13,7 +13,7 @@ import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
-import { packGeckoOnlyProdCompact40 } from "./animUtils";
+import { packGeckoOnlyProdCompact40, packGeckoOnlyProdCompact_56} from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import {
@@ -152,7 +152,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
   const MAX_MOMENTS = 40;
   const MAX_HELD = 4;
 
-  const TOTAL_GECKO_POINTS_COMPACT = 40;
+  const TOTAL_GECKO_POINTS_COMPACT = 56;
 
   // ============== TRULY PREALLOCATED BUFFERS ==============
   const workingBuffers = useRef({
@@ -624,7 +624,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
 
         // Pack big uniforms
         workingBuffers.geckoPoints.fill(0);
-        packGeckoOnlyProdCompact40(
+        packGeckoOnlyProdCompact_56(
           gecko.current,
           workingBuffers.geckoPoints,
           gecko_scale,

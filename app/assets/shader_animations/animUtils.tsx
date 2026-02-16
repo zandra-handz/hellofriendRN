@@ -268,6 +268,216 @@ packVec2Named(
 
 
 
+export function packGeckoOnlyProdCompact_56_withLogging(
+ 
+  gecko: any,
+  out: Float32Array | number[],
+  scale: number = 1,
+) {
+  let i = 0;
+  let vec2Index = 0;
+
+  const packVec2Safe = (p: [number, number] | Float32Array | null | undefined, name: string) => {
+    const startIndex = i;
+    if (p) {
+      out[i++] = (p[0] - 0.5) / scale;
+      out[i++] = (p[1] - 0.5) / scale;
+      console.log(`[${vec2Index}] ${name} | floats ${startIndex}-${startIndex + 1} | value: [${p[0].toFixed(4)}, ${p[1].toFixed(4)}]`);
+    } else {
+      out[i++] = 0;
+      out[i++] = 0;
+      console.log(`[${vec2Index}] ${name} | floats ${startIndex}-${startIndex + 1} | value: NULL/UNDEFINED`);
+    }
+    vec2Index++;
+  };
+
+  const spine = gecko.body.spine;
+  const tail = gecko.body.tail;
+  const frontLegs = gecko.legs.frontLegs;
+  const backLegs = gecko.legs.backLegs;
+
+  console.log('\n========== PACKING GECKO UNIFORMS ==========');
+
+  // Body points (12 vec2) - indices 0-11
+  packVec2Safe(spine.unchainedJoints?.[0], 'BODY: snout');
+  packVec2Safe(spine.unchainedJoints?.[1], 'BODY: head');
+  packVec2Safe(spine.joints?.[1], 'BODY: spine[1]');
+  packVec2Safe(spine.joints?.[2], 'BODY: spine[2]');
+  packVec2Safe(spine.joints?.[3], 'BODY: spine[3]');
+  packVec2Safe(spine.joints?.[4], 'BODY: spine[4]');
+  packVec2Safe(spine.joints?.[5], 'BODY: spine[5]');
+  packVec2Safe(spine.joints?.[6], 'BODY: spine[6]');
+  packVec2Safe(spine.joints?.[7], 'BODY: spine[7]');
+  packVec2Safe(spine.joints?.[8], 'BODY: spine[8]');
+  packVec2Safe(spine.joints?.[9], 'BODY: spine[9]');
+  packVec2Safe(spine.joints?.[13], 'BODY: spine[13]');
+
+  // Tail points (12 vec2) - indices 12-23
+  for (let j = 0; j < 12; j++) {
+    packVec2Safe(tail.joints?.[j], `TAIL: tail[${j}]`);
+  }
+
+  // Steps (4 vec2) - indices 24-27
+  packVec2Safe(frontLegs.stepTargets?.[0], 'STEP: Front Left');
+  packVec2Safe(frontLegs.stepTargets?.[1], 'STEP: Front Right');
+  packVec2Safe(backLegs.stepTargets?.[0], 'STEP: Back Left');
+  packVec2Safe(backLegs.stepTargets?.[1], 'STEP: Back Right');
+
+  // Elbows (4 vec2) - indices 28-31
+  packVec2Safe(frontLegs.elbows?.[0], 'ELBOW: Front Left');
+  packVec2Safe(frontLegs.elbows?.[1], 'ELBOW: Front Right');
+  packVec2Safe(backLegs.elbows?.[0], 'ELBOW: Back Left');
+  packVec2Safe(backLegs.elbows?.[1], 'ELBOW: Back Right');
+
+  // Muscles (4 vec2) - indices 32-35
+  packVec2Safe(frontLegs.muscles?.[1], 'MUSCLE: Front Left');
+  packVec2Safe(frontLegs.muscles?.[3], 'MUSCLE: Front Right');
+  packVec2Safe(backLegs.muscles?.[1], 'MUSCLE: Back Left');
+  packVec2Safe(backLegs.muscles?.[3], 'MUSCLE: Back Right');
+
+  console.log('\n--- FRONT FINGERS ---');
+  // Front Left leg (5 fingers) - indices 36-40
+  for (let f = 0; f < 5; f++) {
+    packVec2Safe(frontLegs.fingers?.[0]?.[f], `FINGER: Front Left [${f}]`);
+  }
+  
+  // Front Right leg (5 fingers) - indices 41-45
+  for (let f = 0; f < 5; f++) {
+    packVec2Safe(frontLegs.fingers?.[1]?.[f], `FINGER: Front Right [${f}]`);
+  }
+  
+  console.log('\n--- BACK FINGERS ---');
+  console.log('backLegs.fingers structure:', backLegs.fingers);
+  console.log('backLegs.fingers[0]:', backLegs.fingers?.[0]);
+  console.log('backLegs.fingers[1]:', backLegs.fingers?.[1]);
+  
+  // Back Left leg (5 fingers) - indices 46-50
+  for (let f = 0; f < 5; f++) {
+    const finger = backLegs.fingers?.[0]?.[f];
+    console.log(`  backLegs.fingers[0][${f}]:`, finger);
+    packVec2Safe(finger, `FINGER: Back Left [${f}]`);
+  }
+  
+  // Back Right leg (5 fingers) - indices 51-55
+  for (let f = 0; f < 5; f++) {
+    const finger = backLegs.fingers?.[1]?.[f];
+    console.log(`  backLegs.fingers[1][${f}]:`, finger);
+    packVec2Safe(finger, `FINGER: Back Right [${f}]`);
+  }
+
+  // Hint (1 vec2) - index 56
+  packVec2Safe(spine.hintJoint, 'HINT');
+
+  console.log('\n========== END PACKING ==========');
+  console.log(`Total packed: ${i} floats (${vec2Index} vec2)\n`);
+
+  // 57 vec2 * 2 floats = 114 floats
+  if (i !== 114) {
+    console.error(`Expected 114 floats (57 vec2), packed ${i}`);
+  }
+
+  return out;
+}
+
+
+export function packGeckoOnlyProdCompact_56(
+  gecko: any,
+  out: Float32Array | number[],
+  scale: number = 1,
+) {
+  let i = 0;
+
+  const packVec2Safe = (p: [number, number] | Float32Array | null | undefined) => {
+    if (p) {
+      out[i++] = (p[0] - 0.5) / scale;
+      out[i++] = (p[1] - 0.5) / scale;
+    } else {
+      out[i++] = 0;
+      out[i++] = 0;
+    }
+  };
+
+  const spine = gecko.body.spine;
+  const tail = gecko.body.tail;
+  const frontLegs = gecko.legs.frontLegs;
+  const backLegs = gecko.legs.backLegs;
+
+  // ─────────────────────────────────────────────
+  // NEW COMPACT LAYOUT (60 vec2 = 120 floats)
+  // Body(12) + Tail(12) + Steps(4) + Elbows(4) + 
+  // Muscles(4) + AllFingers(20) + Hint(1)
+  // ─────────────────────────────────────────────
+
+  // Body points (12 vec2) - indices 0-11
+  packVec2Safe(spine.unchainedJoints?.[0]); // snout
+  packVec2Safe(spine.unchainedJoints?.[1]); // head
+  packVec2Safe(spine.joints?.[1]);
+  packVec2Safe(spine.joints?.[2]);
+  packVec2Safe(spine.joints?.[3]);
+  packVec2Safe(spine.joints?.[4]);
+  packVec2Safe(spine.joints?.[5]);
+  packVec2Safe(spine.joints?.[6]);
+  packVec2Safe(spine.joints?.[7]);
+  packVec2Safe(spine.joints?.[8]);
+  packVec2Safe(spine.joints?.[9]);
+  packVec2Safe(spine.joints?.[13]);
+
+  // Tail points (12 vec2) - indices 12-23
+  for (let j = 0; j < 12; j++) {
+    packVec2Safe(tail.joints?.[j]);
+  }
+
+  // Steps (4 vec2) - indices 24-27
+  packVec2Safe(frontLegs.stepTargets?.[0]);
+  packVec2Safe(frontLegs.stepTargets?.[1]);
+  packVec2Safe(backLegs.stepTargets?.[0]);
+  packVec2Safe(backLegs.stepTargets?.[1]);
+
+  // Elbows (4 vec2) - indices 28-31
+  packVec2Safe(frontLegs.elbows?.[0]);
+  packVec2Safe(frontLegs.elbows?.[1]);
+  packVec2Safe(backLegs.elbows?.[0]);
+  packVec2Safe(backLegs.elbows?.[1]);
+
+  // Muscles (4 vec2) - indices 32-35
+  packVec2Safe(frontLegs.muscles?.[1]);
+  packVec2Safe(frontLegs.muscles?.[3]);
+  packVec2Safe(backLegs.muscles?.[1]);
+  packVec2Safe(backLegs.muscles?.[3]);
+
+  // ALL FINGERS (20 vec2) - indices 36-55
+  // Front Left leg (5 fingers) - indices 36-40
+  for (let f = 0; f < 5; f++) {
+    packVec2Safe(frontLegs.fingers?.[0]?.[f]);
+  }
+  
+  // Front Right leg (5 fingers) - indices 41-45
+  for (let f = 0; f < 5; f++) {
+    packVec2Safe(frontLegs.fingers?.[1]?.[f]);
+  }
+  
+  // Back Left leg (5 fingers) - indices 46-50
+  for (let f = 0; f < 5; f++) {
+    packVec2Safe(backLegs.fingers?.[0]?.[f]);
+  }
+  
+  // Back Right leg (5 fingers) - indices 51-55
+  for (let f = 0; f < 5; f++) {
+    packVec2Safe(backLegs.fingers?.[1]?.[f]);
+  }
+
+  // Hint (1 vec2) - index 56
+  packVec2Safe(spine.hintJoint);
+
+  // 57 vec2 * 2 floats = 114 floats
+  if (i !== 114) {
+    console.error(`Expected 114 floats (57 vec2), packed ${i}`);
+  }
+
+  return out;
+}
+
+
 export function packGeckoOnlyProdCompact40(
   gecko: any,
   out: Float32Array | number[],

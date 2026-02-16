@@ -10,6 +10,7 @@ import {
   getCalcStep_inPlace_Opt,
   _solveShoulder_inPlace,
   solveFirstFingerOnly_Opt,
+  solveFingers_Opt
 } from "../../utils.js";
 
 export default class FollowerLegs {
@@ -98,14 +99,36 @@ export default class FollowerLegs {
       this.muscleBuffer.subarray(i * 2, i * 2 + 2),
     );
 
-    // ✅ OPTIMIZED: Only store first finger for each leg (2 legs × 2 floats = 4 floats)
-    this.fingerBuffer = new Float32Array(4);
+    // // OPTIMIZED: Only store first finger for each leg (2 legs × 2 floats = 4 floats)
+    // this.fingerBuffer = new Float32Array(4);
 
-    // ✅ OPTIMIZED: Just 2 Float32Array views (one per leg)
-    this.fingers = [
-      this.fingerBuffer.subarray(0, 2), // First finger leg 0
-      this.fingerBuffer.subarray(2, 4), // First finger leg 1
-    ];
+    // // OPTIMIZED: Just 2 Float32Array views (one per leg)
+    // this.fingers = [
+    //   this.fingerBuffer.subarray(0, 2), // First finger leg 0
+    //   this.fingerBuffer.subarray(2, 4), // First finger leg 1
+    // ];
+
+
+    this.fingerBuffer = new Float32Array(20); // 2 legs × 5 fingers × 2 coords = 20
+this.fingers = [
+  // Leg 0 fingers (indices 0-9)
+  [
+    this.fingerBuffer.subarray(0, 2),   // finger 0
+    this.fingerBuffer.subarray(2, 4),   // finger 1
+    this.fingerBuffer.subarray(4, 6),   // finger 2
+    this.fingerBuffer.subarray(6, 8),   // finger 3
+    this.fingerBuffer.subarray(8, 10),  // finger 4
+  ],
+  // Leg 1 fingers (indices 10-19)
+  [
+    this.fingerBuffer.subarray(10, 12), // finger 0
+    this.fingerBuffer.subarray(12, 14), // finger 1
+    this.fingerBuffer.subarray(14, 16), // finger 2
+    this.fingerBuffer.subarray(16, 18), // finger 3
+    this.fingerBuffer.subarray(18, 20), // finger 4
+  ],
+];
+
 
     this.fingerLen = fingerLen;
     this.fingerAngleOffset = 3;
@@ -346,25 +369,46 @@ solveStepTargetsBackPaired() {
       this.muscles[3],
     );
 
-    // OPTIMIZED: Only calculate first finger, write directly to buffer
-    const firstFinger0 = solveFirstFingerOnly_Opt(
-      this.stepTargets[0],
-      this.fingerLen,
-      false,
-      this.fingerAngleOffset,
-      this.stepTargetAngles[0],
-    );
-    this.fingers[0][0] = firstFinger0[0];
-    this.fingers[0][1] = firstFinger0[1];
+    // // OPTIMIZED: Only calculate first finger, write directly to buffer
+    // const firstFinger0 = solveFirstFingerOnly_Opt(
+    //   this.stepTargets[0],
+    //   this.fingerLen,
+    //   false,
+    //   this.fingerAngleOffset,
+    //   this.stepTargetAngles[0],
+    // );
+    // this.fingers[0][0] = firstFinger0[0];
+    // this.fingers[0][1] = firstFinger0[1];
 
-    const firstFinger1 = solveFirstFingerOnly_Opt(
-      this.stepTargets[1],
-      this.fingerLen,
-      true,
-      this.fingerAngleOffset,
-      this.stepTargetAngles[1],
-    );
-    this.fingers[1][0] = firstFinger1[0];
-    this.fingers[1][1] = firstFinger1[1];
+    // const firstFinger1 = solveFirstFingerOnly_Opt(
+    //   this.stepTargets[1],
+    //   this.fingerLen,
+    //   true,
+    //   this.fingerAngleOffset,
+    //   this.stepTargetAngles[1],
+    // );
+    // this.fingers[1][0] = firstFinger1[0];
+    // this.fingers[1][1] = firstFinger1[1];
+
+
+
+    // Replace the solveFirstFingerOnly_Opt calls with:
+solveFingers_Opt(
+  this.stepTargets[0],
+  this.fingers[0],
+  this.fingerLen,
+  false,
+  this.fingerAngleOffset,
+  this.stepTargetAngles[0],  // CORRECT - use the array
+);
+
+solveFingers_Opt(
+  this.stepTargets[1],
+  this.fingers[1],
+  this.fingerLen,
+  true,
+  this.fingerAngleOffset,
+  this.stepTargetAngles[1],  // CORRECT - use the array
+);
   }
 }

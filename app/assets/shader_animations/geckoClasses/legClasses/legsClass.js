@@ -12,6 +12,7 @@ import {
   solveElbowIK, 
   getCalcStep_inPlace_Opt, 
   solveFirstFingerOnly_Opt,
+  solveFingers_Opt,
 } from "../../utils.js";
 
 export default class Legs {
@@ -102,14 +103,36 @@ export default class Legs {
       this.muscleBuffer.subarray(i * 2, i * 2 + 2),
     );
 
-    // OPTIMIZED: Only store first finger for each leg (2 legs × 2 floats = 4 floats)
-    this.fingerBuffer = new Float32Array(4);
+    // // OPTIMIZED: Only store first finger for each leg (2 legs × 2 floats = 4 floats)
+    // this.fingerBuffer = new Float32Array(4);
 
-    //  OPTIMIZED: Just 2 Float32Array views (one per leg)
-    this.fingers = [
-      this.fingerBuffer.subarray(0, 2),  // First finger leg 0
-      this.fingerBuffer.subarray(2, 4),  // First finger leg 1
-    ];
+    // //  OPTIMIZED: Just 2 Float32Array views (one per leg)
+    // this.fingers = [
+    //   this.fingerBuffer.subarray(0, 2),  // First finger leg 0
+    //   this.fingerBuffer.subarray(2, 4),  // First finger leg 1
+    // ];
+
+
+
+    this.fingerBuffer = new Float32Array(20); // 2 legs × 5 fingers × 2 coords = 20
+this.fingers = [
+  // Leg 0 fingers (indices 0-9)
+  [
+    this.fingerBuffer.subarray(0, 2),   // finger 0
+    this.fingerBuffer.subarray(2, 4),   // finger 1
+    this.fingerBuffer.subarray(4, 6),   // finger 2
+    this.fingerBuffer.subarray(6, 8),   // finger 3
+    this.fingerBuffer.subarray(8, 10),  // finger 4
+  ],
+  // Leg 1 fingers (indices 10-19)
+  [
+    this.fingerBuffer.subarray(10, 12), // finger 0
+    this.fingerBuffer.subarray(12, 14), // finger 1
+    this.fingerBuffer.subarray(14, 16), // finger 2
+    this.fingerBuffer.subarray(16, 18), // finger 3
+    this.fingerBuffer.subarray(18, 20), // finger 4
+  ],
+];
 
     this._frontStepsSagTransResult = {
       tCenter: new Float32Array(2),
@@ -361,26 +384,49 @@ this._tempPerpDir = new Float32Array(2);
       this.muscles[3],
     );
 
- // optimized approach, calculate the rest in the shader
-    const firstFinger0 = solveFirstFingerOnly_Opt(
-      this.stepTargets[0],
-      this.fingerLen,
-      false,
-      this.fingerAngleOffset,
-      this.stepTargetAngle0,
-    );
-    this.fingers[0][0] = firstFinger0[0];
-    this.fingers[0][1] = firstFinger0[1];
+//  // optimized approach, calculate the rest in the shader
+//     const firstFinger0 = solveFirstFingerOnly_Opt(
+//       this.stepTargets[0],
+//       this.fingerLen,
+//       false,
+//       this.fingerAngleOffset,
+//       this.stepTargetAngle0,
+//     );
+//     this.fingers[0][0] = firstFinger0[0];
+//     this.fingers[0][1] = firstFinger0[1];
 
-    const firstFinger1 = solveFirstFingerOnly_Opt(
-      this.stepTargets[1],
-      this.fingerLen,
-      true,
-      this.fingerAngleOffset,
-      this.stepTargetAngle1,
-    );
-    this.fingers[1][0] = firstFinger1[0];
-    this.fingers[1][1] = firstFinger1[1];
+//     const firstFinger1 = solveFirstFingerOnly_Opt(
+//       this.stepTargets[1],
+//       this.fingerLen,
+//       true,
+//       this.fingerAngleOffset,
+//       this.stepTargetAngle1,
+//     );
+//     this.fingers[1][0] = firstFinger1[0];
+//     this.fingers[1][1] = firstFinger1[1];
+
+
+
+    // Replace the solveFirstFingerOnly_Opt calls with:
+solveFingers_Opt(
+  this.stepTargets[0],
+  this.fingers[0], // array of 5 Float32Array views
+  this.fingerLen,
+  false,
+  this.fingerAngleOffset,
+  this.stepTargetAngle0,
+);
+
+solveFingers_Opt(
+  this.stepTargets[1],
+  this.fingers[1], // array of 5 Float32Array views
+  this.fingerLen,
+  true,
+  this.fingerAngleOffset,
+  this.stepTargetAngle1,
+);
+
+ 
   }
 }
 
