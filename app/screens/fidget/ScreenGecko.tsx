@@ -95,17 +95,25 @@ const ScreenGecko = (props: Props) => {
     }
   }, [selection, autoPick, timestamp]);
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log('=== SCREEN FOCUSED ===');
-      console.log('route.params?.autoPick:', route.params?.autoPick);
-      console.log('route.params?.selection:', route.params?.selection);
-      console.log('route.params?.timestamp:', route.params?.timestamp);
-      console.log('current autoSelectType:', autoSelectType);
-      console.log('current autoPickUp:', autoPickUp);
-      console.log('=====================');
-    }, [route.params, autoSelectType, autoPickUp])
-  );
+
+    const [moment, setMoment] = useState({
+    category: null,
+    capsule: null,
+    uniqueIndex: null,
+    id: null,
+  });
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     console.log('=== SCREEN FOCUSED ===');
+  //     console.log('route.params?.autoPick:', route.params?.autoPick);
+  //     console.log('route.params?.selection:', route.params?.selection);
+  //     console.log('route.params?.timestamp:', route.params?.timestamp);
+  //     console.log('current autoSelectType:', autoSelectType);
+  //     console.log('current autoPickUp:', autoPickUp);
+  //     console.log('=====================');
+  //   }, [route.params, autoSelectType, autoPickUp])
+  // );
 
   useEffect(() => {
     if (acceptPawClear) {
@@ -313,6 +321,12 @@ const ScreenGecko = (props: Props) => {
     setManualOnly((prev) => !prev);
     manualOnlyRef.current = !manualOnlyRef.current;
   };
+    useEffect(() => {
+    // console.log(momentCoords);
+    setScatteredMoments(momentCoords);
+    setResetSkia(Date.now());
+  }, [momentCoords]);
+
 
   useEffect(() => {
     setMoment({
@@ -324,11 +338,6 @@ const ScreenGecko = (props: Props) => {
   }, [resetSkia]);
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
-  useEffect(() => {
-    console.log(momentCoords);
-    setScatteredMoments(momentCoords);
-    setResetSkia(Date.now());
-  }, [momentCoords]);
 
   // Function to randomize/scatter moments
   const handleRescatterMoments = () => {
@@ -366,12 +375,7 @@ const ScreenGecko = (props: Props) => {
 
   //  const [count, setCount] = useState(0);
 
-  const [moment, setMoment] = useState({
-    category: null,
-    capsule: null,
-    uniqueIndex: null,
-    id: null,
-  });
+
 
   const handleGetMoment = useCallback(
     (id) => {

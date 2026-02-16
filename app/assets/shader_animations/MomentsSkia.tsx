@@ -330,7 +330,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_DEBUG_DOTS_SKSL}
+      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
     `);
   }, [color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted]);
 
@@ -710,7 +710,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
     <>
       <GestureDetector gesture={composedGesture}>
         <View style={StyleSheet.absoluteFill}>
-          {/* <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+          <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
               x={0}
               y={0}
@@ -724,7 +724,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
                 uniforms={uniforms}
               />
             </Rect>
-          </Canvas>  */}
+          </Canvas>  
 
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
