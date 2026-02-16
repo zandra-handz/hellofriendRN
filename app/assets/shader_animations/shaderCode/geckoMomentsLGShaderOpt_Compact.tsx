@@ -841,7 +841,7 @@ uniform float  u_scale;
 uniform float u_gecko_scale; 
 uniform float u_gecko_size;
 uniform float u_time;
-uniform vec2 u_hint; 
+// uniform vec2 u_hint; 
 
 uniform vec2 u_geckoPoints[40];
 

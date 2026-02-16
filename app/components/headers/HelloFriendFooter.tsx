@@ -201,8 +201,7 @@ const HelloFriendFooter = ({
           {
             backgroundColor: lightDarkTheme.darkerOverlayBackground,
             height: footerHeight,
-            paddingBottom: footerPaddingBottom,
-            paddingBottom: footerPaddingBottom,
+            paddingBottom: footerPaddingBottom, 
             opacity: 0.94,
             // backgroundColor: manualGradientColors.homeLightColor,
           },

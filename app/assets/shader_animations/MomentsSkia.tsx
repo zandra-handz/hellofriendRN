@@ -330,7 +330,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
+      ${GECKO_DEBUG_DOTS_SKSL}
     `);
   }, [color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted]);
 
@@ -710,7 +710,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
     <>
       <GestureDetector gesture={composedGesture}>
         <View style={StyleSheet.absoluteFill}>
-          <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+          {/* <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
               x={0}
               y={0}
@@ -724,7 +724,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
                 uniforms={uniforms}
               />
             </Rect>
-          </Canvas> 
+          </Canvas>  */}
 
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
@@ -747,7 +747,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
       <View style={styles.pawSetterContainer}>
         <PawSetter
           color={lightDarkTheme.primaryText}
-          backgroundColor={lightDarkTheme.primaryBackground}
+          backgroundColor={lightDarkTheme.darkerOverlayBackground}
           borderColor={lightDarkTheme.lighterOverlayBackground}
           momentsData={moments.current.moments}
           lastSelected={moments.current.lastSelected}
@@ -779,7 +779,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
           onUndoPress={handleReset}
           primaryColor={lightDarkTheme.primaryText}
           borderColor={lightDarkTheme.lighterOverlayBackground}
-          primaryBackground={lightDarkTheme.primaryBackground}
+          primaryBackground={lightDarkTheme.darkerOverlayBackground}
           onPress={handleRescatterMoments}
         />
       </View>
@@ -788,8 +788,8 @@ const lastFrameMsRef = useRef(startMsRef.current);
 };
 
 const styles = StyleSheet.create({
-  pawSetterContainer: { position: "absolute", bottom: 200, left: 16 },
-  resetterContainer: { position: "absolute", bottom: 200, right: 16 },
+  pawSetterContainer: { position: "absolute", bottom: 176, left: 16 },
+  resetterContainer: { position: "absolute", bottom: 176, right: 16 },
 });
 
 const MemoizedMomentsSkia = React.memo(MomentsSkia);

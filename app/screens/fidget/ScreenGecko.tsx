@@ -13,6 +13,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -25,6 +26,7 @@ import AutoPickUpButton from "./AutoPickUpButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
+import GlassPreviewBottom from "./GlassPreviewBottom";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
@@ -523,7 +525,7 @@ const ScreenGecko = (props: Props) => {
             onPress={handleNavToSelect}
           />
 
-          {autoPickUp && (
+          {/* {autoPickUp && (
             <View
               style={{
                 width: "auto",
@@ -552,10 +554,10 @@ const ScreenGecko = (props: Props) => {
                 {selectLabel}
               </Text>
             </View>
-          )}
+          )} */}
         </View>
       )}
-
+{/* 
       <View style={styles.previewOuter}>
         <View
           style={[
@@ -624,7 +626,20 @@ const ScreenGecko = (props: Props) => {
             </Pressable>
           )}
         </View>
-      </View>
+      </View> */}
+
+
+      <GlassPreviewBottom
+  color={lightDarkTheme.primaryText}
+  backgroundColor={lightDarkTheme.darkerOverlayBackground}
+  // borderColor={selectedFriend.darkColor}
+  borderColor={'transparent'}
+  moment={moment.id ? moment : null}
+  hasContent={scatteredMoments.length > 0}
+  noContentText={BLANK_WINDOW_MESSAGE}
+  onPressEdit={handleNavigateToMoment}
+  onPressNew={handleNavigateToCreateNew}
+/>
     </PreAuthSafeViewAndGradientBackground>
   );
 };
@@ -744,7 +759,7 @@ const styles = StyleSheet.create({
     width: 100,
     left: 0,
     padding: 20,
-    bottom: 270,
+    bottom: 246,
     position: "absolute",
   },
   noMomentWrapper: {

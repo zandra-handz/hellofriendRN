@@ -120,14 +120,7 @@ export default class Moments {
     this.initializeHoldings();
   }
 
-  // updateAllCoords(updatedData) {
-  //   for (let i = 0; i < updatedData.length; i++) {
-  //     const m = updatedData[i];
-  //     this.moments[i].coord[0] = m.coord[0];
-  //     this.moments[i].coord[1] = m.coord[1];
-  //   }
-  //   this.momentsLength = updatedData.length;
-  // }
+ 
 
   updateOrAddMoments(momentsData) {
     for (let i = 0; i < momentsData.length; i++) {
@@ -224,84 +217,7 @@ export default class Moments {
     return this.holdings;
   }
 
-  // updateHold(moment, holdIndex) {
-  //   if (!moment || holdIndex < 0 || holdIndex >= 4) {
-  //     return this.holdings;
-  //   }
-
-  //   if (currentHoldIndex === holdIndex) {
-  //     return this.holdings;
-  //   }
-
-  //   const momentIndex = this.moments.findIndex((m) => m.id === moment.id);
-  //   if (momentIndex === -1) return this.holdings;
-
-  //   const m = this.moments[momentIndex];
-  //   const currentHoldIndex = m.stored_index;
-
-  //   // If the moment is in a different holding, clear that old slot
-  //   if (currentHoldIndex != null && currentHoldIndex !== holdIndex) {
-  //     this.clearHolding(currentHoldIndex);
-  //   }
-
-  //   const targetHolding = this.holdings[holdIndex];
-
-  //   // If the holding is occupied by a different moment, do nothing
-  //   if (targetHolding.id != null && targetHolding.id !== moment.id) {
-  //     return this.holdings;
-  //   }
-
-  //   // Assign the moment to this holding
-  //   targetHolding.id = moment.id;
-  //   targetHolding.stored_index = holdIndex;
-  //   m.stored_index = holdIndex;
-  //   // console.log("updated hold");
-  //   return this.holdings;
-  // }
-
-
-
-
-
-
-
-//   updateHold(moment, holdIndex) {
-//   if (!moment || holdIndex < 0 || holdIndex >= 4) {
-//     console.log('updateHold not updated')
-//     return this.holdings;
-//   }
-
-//   const momentIndex = this.moments.findIndex((m) => m.id === moment.id);
-//   if (momentIndex === -1) return this.holdings;
-
-//   const m = this.moments[momentIndex];
-//   const currentHoldIndex = m.stored_index;
-
-//   // Move this check AFTER defining currentHoldIndex
-//   if (currentHoldIndex === holdIndex) {
-//     return this.holdings;
-//   }
-
-//   // If the moment is in a different holding, clear that old slot
-//   if (currentHoldIndex != null && currentHoldIndex !== holdIndex) {
-//     this.clearHolding(currentHoldIndex);
-//   }
-
-//   const targetHolding = this.holdings[holdIndex];
-
-//   // If the holding is occupied by a different moment, do nothing
-//   if (targetHolding.id != null && targetHolding.id !== moment.id) {
-//     return this.holdings;
-//   }
-
-//   // Assign the moment to this holding
-//   targetHolding.id = moment.id;
-//   targetHolding.stored_index = holdIndex;
-//   m.stored_index = holdIndex;
-//   console.log("updated hold");
-//   return this.holdings;
-// }
-
+  
 
 updateHold(moment, holdIndex) {
   if (!moment || holdIndex < 0 || holdIndex >= 4) {
