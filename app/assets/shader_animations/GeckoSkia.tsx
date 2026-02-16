@@ -787,6 +787,7 @@ const GeckoSkia = ({
       // BODY AND LEGS
       gecko.current.update(
         leadPoint.current.lead,
+        leadPoint.current.angles,
         leadPoint.current.leadDistanceTraveled,
         leadPoint.current.isMoving
       );
