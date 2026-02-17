@@ -1396,6 +1396,654 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export const GECKO_ONLY_TRANSPARENT_SKSL_OPT = `  
+// uniform float2 u_resolution;
+// uniform float  u_aspect;
+// uniform float  u_scale; 
+
+// uniform float u_gecko_scale;
+// uniform float u_gecko_size;
+// uniform float u_time;
+// uniform vec2 u_hint;
+
+// // COMPACT: 56 vec2 total
+// // Body(12) + Tail(12) + Steps(4) + Elbows(4) + Muscles(4) + Fingers(20)
+// uniform vec2 u_geckoPoints[56];
+
+// float TWO_PI = 6.28318530718;
+
+// // ------------------------------------------------
+// // SDF helpers
+// // ------------------------------------------------
+// float distFCircle(vec2 uv, vec2 center, float radius) {
+//     return length(uv - center) - radius;
+// }
+
+// float smoothMin(float a, float b, float k) {
+//     float h = clamp(0.5 + 0.5*(b - a)/k, 0.0, 1.0);
+//     return mix(b, a, h) - k*h*(1.0 - h);
+// }
+
+// float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
+//     vec2 pa = p - a;
+//     vec2 ba = b - a;
+//     float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
+//     return length(pa - ba*h);
+// }
+
+// float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, float radius, float influence) {
+//     vec2 diff = uv - fingerPos;
+//     if (length(diff) < influence) {
+//         float fingerLine = lineSegmentSDF(uv, fingerPos, stepPos) - thickness;
+//         float fingerTip  = distFCircle(uv, fingerPos, radius);
+//         return min(fingerLine, fingerTip);
+//     }
+//     return 1.0;
+// }
+
+// // ------------------------------------------------
+// // Triangle SDF for arrow (pointing right in local space)
+// // ------------------------------------------------
+// float triangleSDF(vec2 p, float size) {
+//     vec2 p0 = vec2(size, 0.0);
+//     vec2 p1 = vec2(-size * 0.5, -size * 0.6);
+//     vec2 p2 = vec2(-size * 0.5, size * 0.6);
+    
+//     vec2 e0 = p1 - p0;
+//     vec2 e1 = p2 - p1;
+//     vec2 e2 = p0 - p2;
+//     vec2 v0 = p - p0;
+//     vec2 v1 = p - p1;
+//     vec2 v2 = p - p2;
+    
+//     vec2 pq0 = v0 - e0*clamp(dot(v0,e0)/dot(e0,e0), 0.0, 1.0);
+//     vec2 pq1 = v1 - e1*clamp(dot(v1,e1)/dot(e1,e1), 0.0, 1.0);
+//     vec2 pq2 = v2 - e2*clamp(dot(v2,e2)/dot(e2,e2), 0.0, 1.0);
+    
+//     float s = sign(e0.x*e2.y - e0.y*e2.x);
+//     vec2 d = min(min(vec2(dot(pq0,pq0), s*(v0.x*e0.y-v0.y*e0.x)),
+//                      vec2(dot(pq1,pq1), s*(v1.x*e1.y-v1.y*e1.x))),
+//                      vec2(dot(pq2,pq2), s*(v2.x*e2.y-v2.y*e2.x)));
+    
+//     return -sqrt(d.x)*sign(d.y);
+// }
+
+// vec2 rotate2D(vec2 v, float angle) {
+//     float s = sin(angle);
+//     float c = cos(angle);
+//     return vec2(c * v.x - s * v.y, s * v.x + c * v.y);
+// }
+
+// float3 sampleBackground(float2 fragCoord) {
+//     return float3(0.0, 0.0, 0.0);
+// }
+
+// // ------------------------------------------------
+// // Gecko SDF Construction
+// // ------------------------------------------------
+// float buildGeckoSDF(vec2 gecko_uv, float s) {
+//     // ✅ EARLY EXIT - Skip expensive calculations for pixels far from gecko
+//     float quickDist = length(gecko_uv);
+//     if (quickDist > 0.15) {
+//         return quickDist - 0.05;  // Return simple distance, no detailed gecko
+//     }
+    
+//     float circleSizeDiv = .8;
+
+//     // Main body circles (0-11)
+//     float circle0  = distFCircle(gecko_uv, u_geckoPoints[0],  0.003 * s / circleSizeDiv);
+//     float circle1  = distFCircle(gecko_uv, u_geckoPoints[1],  0.019 * s / circleSizeDiv);
+//     float circle1b = distFCircle(gecko_uv, u_geckoPoints[2],  0.0   / circleSizeDiv);
+//     float circle2  = distFCircle(gecko_uv, u_geckoPoints[3],  0.001 * s / circleSizeDiv);
+//     float circle3  = distFCircle(gecko_uv, u_geckoPoints[4],  0.004 * s / circleSizeDiv);
+//     float circle4  = distFCircle(gecko_uv, u_geckoPoints[5],  0.004 * s / circleSizeDiv);
+//     float circle5  = distFCircle(gecko_uv, u_geckoPoints[6],  0.004 * s / circleSizeDiv);
+//     float circle6  = distFCircle(gecko_uv, u_geckoPoints[7],  0.004 * s / circleSizeDiv);
+//     float circle7  = distFCircle(gecko_uv, u_geckoPoints[8],  0.003 * s / circleSizeDiv);
+//     float circle8  = distFCircle(gecko_uv, u_geckoPoints[9],  0.003 * s / circleSizeDiv);
+//     float circle9  = distFCircle(gecko_uv, u_geckoPoints[10], 0.003 * s / circleSizeDiv);
+//     float circle13 = distFCircle(gecko_uv, u_geckoPoints[11], 0.002 * s / circleSizeDiv);
+
+//     float circleMerge = smoothMin(
+//         smoothMin(circle0, circle1, 0.03),
+//         smoothMin(circle1b, circle2, 0.05),
+//         0.005
+//     );
+
+//     float spineBlend = .054 * s;
+//     circleMerge = smoothMin(circleMerge, circle3, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle4, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle5, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle6, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle7, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle8, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle9, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle13, spineBlend);
+
+//     // Tail circles (12-23)
+//     float tailCircle0  = distFCircle(gecko_uv, u_geckoPoints[12], 0.002  * s / circleSizeDiv);
+//     float tailCircle1  = distFCircle(gecko_uv, u_geckoPoints[13], 0.005  * s / circleSizeDiv);
+//     float tailCircle2  = distFCircle(gecko_uv, u_geckoPoints[14], 0.004  * s / circleSizeDiv);
+//     float tailCircle3  = distFCircle(gecko_uv, u_geckoPoints[15], 0.0042 * s / circleSizeDiv);
+//     float tailCircle4  = distFCircle(gecko_uv, u_geckoPoints[16], 0.005  * s / circleSizeDiv);
+//     float tailCircle5  = distFCircle(gecko_uv, u_geckoPoints[17], 0.005  * s / circleSizeDiv);
+//     float tailCircle6  = distFCircle(gecko_uv, u_geckoPoints[18], 0.005  * s / circleSizeDiv);
+//     float tailCircle7  = distFCircle(gecko_uv, u_geckoPoints[19], 0.004  * s / circleSizeDiv);
+//     float tailCircle8  = distFCircle(gecko_uv, u_geckoPoints[20], 0.0027 * s / circleSizeDiv);
+//     float tailCircle9  = distFCircle(gecko_uv, u_geckoPoints[21], 0.002  * s / circleSizeDiv);
+//     float tailCircle10 = distFCircle(gecko_uv, u_geckoPoints[22], 0.001  * s / circleSizeDiv);
+//     float tailCircle11 = distFCircle(gecko_uv, u_geckoPoints[23], 0.0001 * s / circleSizeDiv);
+
+//     float tailCircleMerge = smoothMin(
+//         smoothMin(tailCircle0, tailCircle1, 0.03),
+//         smoothMin(tailCircle2, tailCircle3, 0.05),
+//         0.005
+//     );
+
+//     float blendAmt = 0.054 * s;
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle4,  blendAmt + 0.04);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle5,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle6,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle7,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle8,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle9,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle10, blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle11, blendAmt);
+
+//     float bodySDF = smoothMin(circleMerge, tailCircleMerge, 0.0003 * s);
+
+//     // Arms
+//     float armThickness = 0.005 * s;
+//     float backArmThickness = .007 * s;
+//     float shoulderBlend = 0.01 * s;
+
+//     // Steps (24-27), Elbows (28-31)
+//     float arm0Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[3],  u_geckoPoints[28]);
+//     float arm0Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[28], u_geckoPoints[24]);
+//     float arm1Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[3],  u_geckoPoints[29]);
+//     float arm1Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[29], u_geckoPoints[25]);
+//     float arm2Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[11], u_geckoPoints[30]);
+//     float arm2Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[30], u_geckoPoints[26]);
+//     float arm3Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[11], u_geckoPoints[31]);
+//     float arm3Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[31], u_geckoPoints[27]);
+
+//     float arm0SDF = min(arm0Upper, arm0Lower) - armThickness;
+//     float arm1SDF = min(arm1Upper, arm1Lower) - armThickness;
+//     float arm2SDF = min(arm2Upper, arm2Lower) - backArmThickness;
+//     float arm3SDF = min(arm3Upper, arm3Lower) - backArmThickness;
+
+//     bodySDF = smoothMin(bodySDF, arm0SDF, shoulderBlend);
+//     bodySDF = smoothMin(bodySDF, arm1SDF, shoulderBlend);
+//     bodySDF = smoothMin(bodySDF, arm2SDF, shoulderBlend);
+//     bodySDF = smoothMin(bodySDF, arm3SDF, shoulderBlend);
+
+//     // Muscles (32-35)
+//     float muscleBlend = 0.024 * s;
+//     float backMuscleBlend = .03 * s;
+//     float upperMuscleRadius = 0.005 * s;
+
+//     float musclesSDF1 = distFCircle(gecko_uv, u_geckoPoints[32], upperMuscleRadius);
+//     float musclesSDF3 = distFCircle(gecko_uv, u_geckoPoints[33], upperMuscleRadius);
+//     float musclesSDF5 = distFCircle(gecko_uv, u_geckoPoints[34], upperMuscleRadius);
+//     float musclesSDF7 = distFCircle(gecko_uv, u_geckoPoints[35], upperMuscleRadius);
+
+//     bodySDF = smoothMin(bodySDF, musclesSDF1, muscleBlend);
+//     bodySDF = smoothMin(bodySDF, musclesSDF3, muscleBlend);
+//     bodySDF = smoothMin(bodySDF, musclesSDF5, backMuscleBlend);
+//     bodySDF = smoothMin(bodySDF, musclesSDF7, backMuscleBlend);
+
+//     // Step paws (24-27)
+//     float stepBlend = 0.003 * s;
+//     float stepRadius = .009 * s;
+
+//     float stepSDF0 = distFCircle(gecko_uv, u_geckoPoints[24], stepRadius);
+//     float stepSDF1 = distFCircle(gecko_uv, u_geckoPoints[25], stepRadius);
+//     float stepSDF2 = distFCircle(gecko_uv, u_geckoPoints[26], stepRadius);
+//     float stepSDF3 = distFCircle(gecko_uv, u_geckoPoints[27], stepRadius);
+
+//     bodySDF = smoothMin(bodySDF, stepSDF0, stepBlend);
+//     bodySDF = smoothMin(bodySDF, stepSDF1, stepBlend);
+//     bodySDF = smoothMin(bodySDF, stepSDF2, stepBlend);
+//     bodySDF = smoothMin(bodySDF, stepSDF3, stepBlend);
+
+//     // ALL FINGERS from JavaScript - indices 36-55 (20 fingers total)
+//     float fingerThickness = 0.0025 * s;
+//     float fingerRadius = 0.0045 * s;
+//     float fingerInfluence = 0.02;
+    
+//     vec2 stepFL = u_geckoPoints[24];
+//     vec2 stepFR = u_geckoPoints[25];
+//     vec2 stepBL = u_geckoPoints[26];
+//     vec2 stepBR = u_geckoPoints[27];
+    
+//     // Front Left fingers (36-40)
+//     for (int i = 36; i < 41; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepFL, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+    
+//     // Front Right fingers (41-45)
+//     for (int i = 41; i < 46; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepFR, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+    
+//     // Back Left fingers (46-50)
+//     for (int i = 46; i < 51; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepBL, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+    
+//     // Back Right fingers (51-55)
+//     for (int i = 51; i < 56; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepBR, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+
+//     return bodySDF;
+// }
+
+// // ------------------------------------------------
+// // MAIN
+// // ------------------------------------------------
+// half4 main(float2 fragCoord) {
+//     float3 color = sampleBackground(fragCoord);
+
+//     vec2 uv = fragCoord / u_resolution;
+//     uv -= 0.5;
+//     uv.x *= u_aspect; 
+
+//     float s = 1.0 / u_gecko_scale;
+//     vec2 gecko_uv = uv * s * u_gecko_size;
+
+//     // Hint with arrow
+//     vec3 hintColor = endColor;
+//     float hintCircle = distance(gecko_uv, u_hint);
+    
+//     vec2 snout = u_geckoPoints[0];
+//     vec2 head = u_geckoPoints[1];
+//     vec2 directionVector = snout - head;
+//     float arrowAngle = atan(directionVector.y, directionVector.x);
+    
+//     float pulseSpeed = 2.0;
+//     float pulseAmount = 0.2;
+    
+//     float outerPulse = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+//     float outerGlowSize = 0.035 * outerPulse;
+//     float outerGlow = smoothstep(outerGlowSize, 0.0, hintCircle);
+//     vec3 outerGlowColor = hintColor * outerGlow * 0.3;
+    
+//     float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+//     float middleRingSize = 0.015 * middlePulse;
+//     float middleRing = smoothstep(middleRingSize, middleRingSize * 0.7, hintCircle);
+//     vec3 middleRingColor = hintColor * middleRing * 0.5;
+    
+//     float corePulse = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
+//     float coreSize = 0.008 * corePulse;
+//     float coreDot = smoothstep(coreSize, 0.0, hintCircle);
+//     vec3 coreDotColor = hintColor * coreDot;
+    
+//     vec2 localPos = gecko_uv - u_hint;
+//     vec2 rotatedPos = rotate2D(localPos, -arrowAngle);
+    
+//     float arrowSize = 0.018;
+//     float arrowSDF = triangleSDF(rotatedPos, arrowSize);
+//     float arrowMask = step(arrowSDF, 0.0);
+//     vec3 arrowColor = vec3(1.0, 1.0, 1.0) * arrowMask;
+    
+//     vec3 hintOut = outerGlowColor + middleRingColor + coreDotColor + arrowColor;
+
+//     // Render gecko
+//     float geckoSDF = buildGeckoSDF(gecko_uv, s);
+//     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
+//     vec3 geckoColor = endColor * geckoMask;
+//     color = mix(color, geckoColor, geckoMask);
+
+//     return half4(color + hintOut, geckoMask);
+// }
+// `;
+
+// export const GECKO_ONLY_TRANSPARENT_SKSL_OPT = `  
+// uniform float2 u_resolution;
+// uniform float  u_aspect;
+// uniform float  u_scale; 
+
+// uniform float u_gecko_scale;
+// uniform float u_gecko_size;
+// uniform float u_time;
+// uniform vec2 u_hint;
+
+// // COMPACT: 56 vec2 total
+// // Body(12) + Tail(12) + Steps(4) + Elbows(4) + Muscles(4) + Fingers(20)
+// uniform vec2 u_geckoPoints[56];
+
+// float TWO_PI = 6.28318530718;
+
+// // ------------------------------------------------
+// // SDF helpers
+// // ------------------------------------------------
+// float distFCircle(vec2 uv, vec2 center, float radius) {
+//     return length(uv - center) - radius;
+// }
+
+// float smoothMin(float a, float b, float k) {
+//     float h = clamp(0.5 + 0.5*(b - a)/k, 0.0, 1.0);
+//     return mix(b, a, h) - k*h*(1.0 - h);
+// }
+
+// float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
+//     vec2 pa = p - a;
+//     vec2 ba = b - a;
+//     float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
+//     return length(pa - ba*h);
+// }
+
+// float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos,
+//                     float thickness, float radius, float influence) {
+//     vec2 diff = uv - fingerPos;
+
+//     // EARLY EXIT (no sqrt): outside influence -> no finger work
+//     float infl2 = influence * influence;
+//     if (dot(diff, diff) >= infl2) return 1.0;
+
+//     float fingerLine = lineSegmentSDF(uv, fingerPos, stepPos) - thickness;
+//     float fingerTip  = distFCircle(uv, fingerPos, radius);
+//     return min(fingerLine, fingerTip);
+// }
+
+// // ------------------------------------------------
+// // Triangle SDF for arrow (pointing right in local space)
+// // ------------------------------------------------
+// float triangleSDF(vec2 p, float size) {
+//     vec2 p0 = vec2(size, 0.0);
+//     vec2 p1 = vec2(-size * 0.5, -size * 0.6);
+//     vec2 p2 = vec2(-size * 0.5, size * 0.6);
+    
+//     vec2 e0 = p1 - p0;
+//     vec2 e1 = p2 - p1;
+//     vec2 e2 = p0 - p2;
+//     vec2 v0 = p - p0;
+//     vec2 v1 = p - p1;
+//     vec2 v2 = p - p2;
+    
+//     vec2 pq0 = v0 - e0*clamp(dot(v0,e0)/dot(e0,e0), 0.0, 1.0);
+//     vec2 pq1 = v1 - e1*clamp(dot(v1,e1)/dot(e1,e1), 0.0, 1.0);
+//     vec2 pq2 = v2 - e2*clamp(dot(v2,e2)/dot(e2,e2), 0.0, 1.0);
+    
+//     float s = sign(e0.x*e2.y - e0.y*e2.x);
+//     vec2 d = min(min(vec2(dot(pq0,pq0), s*(v0.x*e0.y-v0.y*e0.x)),
+//                      vec2(dot(pq1,pq1), s*(v1.x*e1.y-v1.y*e1.x))),
+//                      vec2(dot(pq2,pq2), s*(v2.x*e2.y-v2.y*e2.x)));
+    
+//     return -sqrt(d.x)*sign(d.y);
+// }
+
+// vec2 rotate2D(vec2 v, float angle) {
+//     float s = sin(angle);
+//     float c = cos(angle);
+//     return vec2(c * v.x - s * v.y, s * v.x + c * v.y);
+// }
+
+// float3 sampleBackground(float2 fragCoord) {
+//     return float3(0.0, 0.0, 0.0);
+// }
+
+// // ------------------------------------------------
+// // Gecko SDF Construction
+// // ------------------------------------------------
+// float buildGeckoSDF(vec2 gecko_uv, float s) {
+//     float circleSizeDiv = .8;
+
+//     // Main body circles (0-11)
+//     float circle0  = distFCircle(gecko_uv, u_geckoPoints[0],  0.003 * s / circleSizeDiv);
+//     float circle1  = distFCircle(gecko_uv, u_geckoPoints[1],  0.019 * s / circleSizeDiv);
+//     float circle1b = distFCircle(gecko_uv, u_geckoPoints[2],  0.0   / circleSizeDiv);
+//     float circle2  = distFCircle(gecko_uv, u_geckoPoints[3],  0.001 * s / circleSizeDiv);
+//     float circle3  = distFCircle(gecko_uv, u_geckoPoints[4],  0.004 * s / circleSizeDiv);
+//     float circle4  = distFCircle(gecko_uv, u_geckoPoints[5],  0.004 * s / circleSizeDiv);
+//     float circle5  = distFCircle(gecko_uv, u_geckoPoints[6],  0.004 * s / circleSizeDiv);
+//     float circle6  = distFCircle(gecko_uv, u_geckoPoints[7],  0.004 * s / circleSizeDiv);
+//     float circle7  = distFCircle(gecko_uv, u_geckoPoints[8],  0.003 * s / circleSizeDiv);
+//     float circle8  = distFCircle(gecko_uv, u_geckoPoints[9],  0.003 * s / circleSizeDiv);
+//     float circle9  = distFCircle(gecko_uv, u_geckoPoints[10], 0.003 * s / circleSizeDiv);
+//     float circle13 = distFCircle(gecko_uv, u_geckoPoints[11], 0.002 * s / circleSizeDiv);
+
+//     float circleMerge = smoothMin(
+//         smoothMin(circle0, circle1, 0.03),
+//         smoothMin(circle1b, circle2, 0.05),
+//         0.005
+//     );
+
+//     float spineBlend = .054 * s;
+//     circleMerge = smoothMin(circleMerge, circle3, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle4, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle5, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle6, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle7, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle8, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle9, spineBlend);
+//     circleMerge = smoothMin(circleMerge, circle13, spineBlend);
+
+//     // Tail circles (12-23)
+//     float tailCircle0  = distFCircle(gecko_uv, u_geckoPoints[12], 0.002  * s / circleSizeDiv);
+//     float tailCircle1  = distFCircle(gecko_uv, u_geckoPoints[13], 0.005  * s / circleSizeDiv);
+//     float tailCircle2  = distFCircle(gecko_uv, u_geckoPoints[14], 0.004  * s / circleSizeDiv);
+//     float tailCircle3  = distFCircle(gecko_uv, u_geckoPoints[15], 0.0042 * s / circleSizeDiv);
+//     float tailCircle4  = distFCircle(gecko_uv, u_geckoPoints[16], 0.005  * s / circleSizeDiv);
+//     float tailCircle5  = distFCircle(gecko_uv, u_geckoPoints[17], 0.005  * s / circleSizeDiv);
+//     float tailCircle6  = distFCircle(gecko_uv, u_geckoPoints[18], 0.005  * s / circleSizeDiv);
+//     float tailCircle7  = distFCircle(gecko_uv, u_geckoPoints[19], 0.004  * s / circleSizeDiv);
+//     float tailCircle8  = distFCircle(gecko_uv, u_geckoPoints[20], 0.0027 * s / circleSizeDiv);
+//     float tailCircle9  = distFCircle(gecko_uv, u_geckoPoints[21], 0.002  * s / circleSizeDiv);
+//     float tailCircle10 = distFCircle(gecko_uv, u_geckoPoints[22], 0.001  * s / circleSizeDiv);
+//     float tailCircle11 = distFCircle(gecko_uv, u_geckoPoints[23], 0.0001 * s / circleSizeDiv);
+
+//     float tailCircleMerge = smoothMin(
+//         smoothMin(tailCircle0, tailCircle1, 0.03),
+//         smoothMin(tailCircle2, tailCircle3, 0.05),
+//         0.005
+//     );
+
+//     float blendAmt = 0.054 * s;
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle4,  blendAmt + 0.04);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle5,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle6,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle7,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle8,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle9,  blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle10, blendAmt);
+//     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle11, blendAmt);
+
+//     float bodySDF = smoothMin(circleMerge, tailCircleMerge, 0.0003 * s);
+
+//     // Arms
+//     float armThickness = 0.005 * s;
+//     float backArmThickness = .007 * s;
+//     float shoulderBlend = 0.01 * s;
+
+//     // Steps (24-27), Elbows (28-31)
+//     float arm0Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[3],  u_geckoPoints[28]);
+//     float arm0Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[28], u_geckoPoints[24]);
+//     float arm1Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[3],  u_geckoPoints[29]);
+//     float arm1Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[29], u_geckoPoints[25]);
+//     float arm2Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[11], u_geckoPoints[30]);
+//     float arm2Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[30], u_geckoPoints[26]);
+//     float arm3Upper = lineSegmentSDF(gecko_uv, u_geckoPoints[11], u_geckoPoints[31]);
+//     float arm3Lower = lineSegmentSDF(gecko_uv, u_geckoPoints[31], u_geckoPoints[27]);
+
+//     float arm0SDF = min(arm0Upper, arm0Lower) - armThickness;
+//     float arm1SDF = min(arm1Upper, arm1Lower) - armThickness;
+//     float arm2SDF = min(arm2Upper, arm2Lower) - backArmThickness;
+//     float arm3SDF = min(arm3Upper, arm3Lower) - backArmThickness;
+
+//     bodySDF = smoothMin(bodySDF, arm0SDF, shoulderBlend);
+//     bodySDF = smoothMin(bodySDF, arm1SDF, shoulderBlend);
+//     bodySDF = smoothMin(bodySDF, arm2SDF, shoulderBlend);
+//     bodySDF = smoothMin(bodySDF, arm3SDF, shoulderBlend);
+
+//     // Muscles (32-35)
+//     float muscleBlend = 0.024 * s;
+//     float backMuscleBlend = .03 * s;
+//     float upperMuscleRadius = 0.005 * s;
+
+//     float musclesSDF1 = distFCircle(gecko_uv, u_geckoPoints[32], upperMuscleRadius);
+//     float musclesSDF3 = distFCircle(gecko_uv, u_geckoPoints[33], upperMuscleRadius);
+//     float musclesSDF5 = distFCircle(gecko_uv, u_geckoPoints[34], upperMuscleRadius);
+//     float musclesSDF7 = distFCircle(gecko_uv, u_geckoPoints[35], upperMuscleRadius);
+
+//     bodySDF = smoothMin(bodySDF, musclesSDF1, muscleBlend);
+//     bodySDF = smoothMin(bodySDF, musclesSDF3, muscleBlend);
+//     bodySDF = smoothMin(bodySDF, musclesSDF5, backMuscleBlend);
+//     bodySDF = smoothMin(bodySDF, musclesSDF7, backMuscleBlend);
+
+//     // Step paws (24-27)
+//     float stepBlend = 0.003 * s;
+//     float stepRadius = .009 * s;
+
+//     float stepSDF0 = distFCircle(gecko_uv, u_geckoPoints[24], stepRadius);
+//     float stepSDF1 = distFCircle(gecko_uv, u_geckoPoints[25], stepRadius);
+//     float stepSDF2 = distFCircle(gecko_uv, u_geckoPoints[26], stepRadius);
+//     float stepSDF3 = distFCircle(gecko_uv, u_geckoPoints[27], stepRadius);
+
+//     bodySDF = smoothMin(bodySDF, stepSDF0, stepBlend);
+//     bodySDF = smoothMin(bodySDF, stepSDF1, stepBlend);
+//     bodySDF = smoothMin(bodySDF, stepSDF2, stepBlend);
+//     bodySDF = smoothMin(bodySDF, stepSDF3, stepBlend);
+
+//     // ALL FINGERS from JavaScript - indices 36-55 (20 fingers total)
+//     float fingerThickness = 0.0025 * s;
+//     float fingerRadius = 0.0045 * s;
+//     float fingerInfluence = 0.02;
+    
+//     vec2 stepFL = u_geckoPoints[24];
+//     vec2 stepFR = u_geckoPoints[25];
+//     vec2 stepBL = u_geckoPoints[26];
+//     vec2 stepBR = u_geckoPoints[27];
+    
+//     // Front Left fingers (36-40)
+//     // for (int i = 36; i < 41; i++) {
+//     //     bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepFL, fingerThickness, fingerRadius, fingerInfluence));
+//     // }
+
+// float fingerMask = 0.0;
+// float fThick = 0.0025 * s;
+// float fRadius = 0.0045 * s;
+
+// for (int i = 36; i < 41; i++) {
+//     float line = lineSegmentSDF(gecko_uv, u_geckoPoints[i], stepFL);
+//     float tip = length(gecko_uv - u_geckoPoints[i]);
+//     fingerMask = max(fingerMask, step(line, fThick));
+//     fingerMask = max(fingerMask, step(tip, fRadius));
+// }
+//     // Front Right fingers (41-45)
+//     for (int i = 41; i < 46; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepFR, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+    
+//     // Back Left fingers (46-50)
+//     for (int i = 46; i < 51; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepBL, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+    
+//     // Back Right fingers (51-55)
+//     for (int i = 51; i < 56; i++) {
+//         bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepBR, fingerThickness, fingerRadius, fingerInfluence));
+//     }
+
+//     return bodySDF;
+// }
+
+// // ------------------------------------------------
+// // MAIN
+// // ------------------------------------------------
+// half4 main(float2 fragCoord) {
+//     float3 color = sampleBackground(fragCoord);
+
+//     vec2 uv = fragCoord / u_resolution;
+//     uv -= 0.5;
+//     uv.x *= u_aspect; 
+
+//     float s = 1.0 / u_gecko_scale;
+//     vec2 gecko_uv = uv * s * u_gecko_size;
+
+//     // Hint with arrow
+//     vec3 hintColor = endColor;
+//     float hintCircle = distance(gecko_uv, u_hint);
+    
+//     vec2 snout = u_geckoPoints[0];
+//     vec2 head = u_geckoPoints[1];
+//     vec2 directionVector = snout - head;
+//     float arrowAngle = atan(directionVector.y, directionVector.x);
+    
+//     float pulseSpeed = 2.0;
+//     float pulseAmount = 0.2;
+    
+//     float outerPulse = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+//     float outerGlowSize = 0.035 * outerPulse;
+//     float outerGlow = smoothstep(outerGlowSize, 0.0, hintCircle);
+//     vec3 outerGlowColor = hintColor * outerGlow * 0.3;
+    
+//     float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+//     float middleRingSize = 0.015 * middlePulse;
+//     float middleRing = smoothstep(middleRingSize, middleRingSize * 0.7, hintCircle);
+//     vec3 middleRingColor = hintColor * middleRing * 0.5;
+    
+//     float corePulse = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
+//     float coreSize = 0.008 * corePulse;
+//     float coreDot = smoothstep(coreSize, 0.0, hintCircle);
+//     vec3 coreDotColor = hintColor * coreDot;
+    
+//     vec2 localPos = gecko_uv - u_hint;
+//     vec2 rotatedPos = rotate2D(localPos, -arrowAngle);
+    
+//     float arrowSize = 0.018;
+//     float arrowSDF = triangleSDF(rotatedPos, arrowSize);
+//     float arrowMask = step(arrowSDF, 0.0);
+//     vec3 arrowColor = vec3(1.0, 1.0, 1.0) * arrowMask;
+    
+//     vec3 hintOut = outerGlowColor + middleRingColor + coreDotColor + arrowColor;
+
+//     // Render gecko
+//     float geckoSDF = buildGeckoSDF(gecko_uv, s);
+//     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
+//     vec3 geckoColor = endColor * geckoMask;
+//     color = mix(color, geckoColor, geckoMask);
+
+//     return half4(color + hintOut, geckoMask);
+// }
+// `;
+
+
 export const GECKO_ONLY_TRANSPARENT_SKSL_OPT = `  
 uniform float2 u_resolution;
 uniform float  u_aspect;
@@ -1429,16 +2077,6 @@ float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
     vec2 ba = b - a;
     float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
     return length(pa - ba*h);
-}
-
-float fingerSDFFunc(vec2 uv, vec2 fingerPos, vec2 stepPos, float thickness, float radius, float influence) {
-    vec2 diff = uv - fingerPos;
-    if (length(diff) < influence) {
-        float fingerLine = lineSegmentSDF(uv, fingerPos, stepPos) - thickness;
-        float fingerTip  = distFCircle(uv, fingerPos, radius);
-        return min(fingerLine, fingerTip);
-    }
-    return 1.0;
 }
 
 // ------------------------------------------------
@@ -1479,7 +2117,7 @@ float3 sampleBackground(float2 fragCoord) {
 }
 
 // ------------------------------------------------
-// Gecko SDF Construction
+// Gecko SDF Construction (body only, no fingers)
 // ------------------------------------------------
 float buildGeckoSDF(vec2 gecko_uv, float s) {
     float circleSizeDiv = .8;
@@ -1540,7 +2178,7 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle6,  blendAmt);
     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle7,  blendAmt);
     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle8,  blendAmt);
-    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle9,  blendAmt);
+    tailCircleMerge = smoothMin(tailCircleMerge, tailCircle9,  blendAmt );
     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle10, blendAmt);
     tailCircleMerge = smoothMin(tailCircleMerge, tailCircle11, blendAmt);
 
@@ -1586,7 +2224,7 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     bodySDF = smoothMin(bodySDF, musclesSDF5, backMuscleBlend);
     bodySDF = smoothMin(bodySDF, musclesSDF7, backMuscleBlend);
 
-    // Step paws (24-27)
+    // // Step paws (24-27)
     float stepBlend = 0.003 * s;
     float stepRadius = .009 * s;
 
@@ -1595,42 +2233,77 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     float stepSDF2 = distFCircle(gecko_uv, u_geckoPoints[26], stepRadius);
     float stepSDF3 = distFCircle(gecko_uv, u_geckoPoints[27], stepRadius);
 
+    
+
     bodySDF = smoothMin(bodySDF, stepSDF0, stepBlend);
     bodySDF = smoothMin(bodySDF, stepSDF1, stepBlend);
     bodySDF = smoothMin(bodySDF, stepSDF2, stepBlend);
     bodySDF = smoothMin(bodySDF, stepSDF3, stepBlend);
 
-    // ALL FINGERS from JavaScript - indices 36-55 (20 fingers total)
-    float fingerThickness = 0.0025 * s;
-    float fingerRadius = 0.0045 * s;
-    float fingerInfluence = 0.02;
     
+
+    return bodySDF;
+}
+
+// ------------------------------------------------
+// Finger mask (cheap lines + dots, no SDF)
+// ------------------------------------------------
+float buildFingerMask(vec2 gecko_uv, float s) {
+    float fingerMask = 0.0;
+    float fThick = 0.0025 * s;
+    float fRadius2 = (0.0045 * s) * (0.0045 * s); // squared, no sqrt needed for tips
+
     vec2 stepFL = u_geckoPoints[24];
     vec2 stepFR = u_geckoPoints[25];
     vec2 stepBL = u_geckoPoints[26];
     vec2 stepBR = u_geckoPoints[27];
-    
+
     // Front Left fingers (36-40)
     for (int i = 36; i < 41; i++) {
-        bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepFL, fingerThickness, fingerRadius, fingerInfluence));
-    }
-    
-    // Front Right fingers (41-45)
-    for (int i = 41; i < 46; i++) {
-        bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepFR, fingerThickness, fingerRadius, fingerInfluence));
-    }
-    
-    // Back Left fingers (46-50)
-    for (int i = 46; i < 51; i++) {
-        bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepBL, fingerThickness, fingerRadius, fingerInfluence));
-    }
-    
-    // Back Right fingers (51-55)
-    for (int i = 51; i < 56; i++) {
-        bodySDF = min(bodySDF, fingerSDFFunc(gecko_uv, u_geckoPoints[i], stepBR, fingerThickness, fingerRadius, fingerInfluence));
+        float line = lineSegmentSDF(gecko_uv, u_geckoPoints[i], stepFL);
+        fingerMask = max(fingerMask, step(line, fThick));
+        vec2 d = gecko_uv - u_geckoPoints[i];
+        fingerMask = max(fingerMask, step(dot(d, d), fRadius2));
     }
 
-    return bodySDF;
+    // Front Right fingers (41-45)
+    for (int i = 41; i < 46; i++) {
+        float line = lineSegmentSDF(gecko_uv, u_geckoPoints[i], stepFR);
+        fingerMask = max(fingerMask, step(line, fThick));
+        vec2 d = gecko_uv - u_geckoPoints[i];
+        fingerMask = max(fingerMask, step(dot(d, d), fRadius2));
+    }
+
+    // Back Left fingers (46-50)
+    for (int i = 46; i < 51; i++) {
+        float line = lineSegmentSDF(gecko_uv, u_geckoPoints[i], stepBL);
+        fingerMask = max(fingerMask, step(line, fThick));
+        vec2 d = gecko_uv - u_geckoPoints[i];
+        fingerMask = max(fingerMask, step(dot(d, d), fRadius2));
+    }
+
+    // Back Right fingers (51-55)
+    for (int i = 51; i < 56; i++) {
+        float line = lineSegmentSDF(gecko_uv, u_geckoPoints[i], stepBR);
+        fingerMask = max(fingerMask, step(line, fThick));
+        vec2 d = gecko_uv - u_geckoPoints[i];
+        fingerMask = max(fingerMask, step(dot(d, d), fRadius2));
+    }
+
+
+
+    // can move steps into here if don't mind no blend from limb to step
+//     float stepRadius2 = (0.009 * s) * (0.009 * s);
+// vec2 d0 = gecko_uv - u_geckoPoints[24];
+// vec2 d1 = gecko_uv - u_geckoPoints[25];
+// vec2 d2 = gecko_uv - u_geckoPoints[26];
+// vec2 d3 = gecko_uv - u_geckoPoints[27];
+// fingerMask = max(fingerMask, step(dot(d0,d0), stepRadius2));
+// fingerMask = max(fingerMask, step(dot(d1,d1), stepRadius2));
+// fingerMask = max(fingerMask, step(dot(d2,d2), stepRadius2));
+// fingerMask = max(fingerMask, step(dot(d3,d3), stepRadius2));
+
+    return fingerMask;
 }
 
 // ------------------------------------------------
@@ -1680,15 +2353,62 @@ half4 main(float2 fragCoord) {
     float arrowSDF = triangleSDF(rotatedPos, arrowSize);
     float arrowMask = step(arrowSDF, 0.0);
     vec3 arrowColor = vec3(1.0, 1.0, 1.0) * arrowMask;
-    
-    vec3 hintOut = outerGlowColor + middleRingColor + coreDotColor + arrowColor;
 
-    // Render gecko
+
+
+    vec3 hintOut = vec3(0.0);
+if (u_hint.x > -50.0) {
+    vec3 hintColor = endColor;
+    float hintCircle = distance(gecko_uv, u_hint);
+    
+    vec2 snout = u_geckoPoints[0];
+    vec2 head = u_geckoPoints[1];
+    vec2 directionVector = snout - head;
+    float arrowAngle = atan(directionVector.y, directionVector.x);
+    
+    float pulseSpeed = 2.0;
+    float pulseAmount = 0.2;
+    
+    float outerPulse = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+    float outerGlowSize = 0.035 * outerPulse;
+    float outerGlow = smoothstep(outerGlowSize, 0.0, hintCircle);
+    vec3 outerGlowColor = hintColor * outerGlow * 0.3;
+    
+    float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+    float middleRingSize = 0.015 * middlePulse;
+    float middleRing = smoothstep(middleRingSize, middleRingSize * 0.7, hintCircle);
+    vec3 middleRingColor = hintColor * middleRing * 0.5;
+    
+    float corePulse = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
+    float coreSize = 0.008 * corePulse;
+    float coreDot = smoothstep(coreSize, 0.0, hintCircle);
+    vec3 coreDotColor = hintColor * coreDot;
+    
+    vec2 localPos = gecko_uv - u_hint;
+    vec2 rotatedPos = rotate2D(localPos, -arrowAngle);
+    
+    float arrowSize = 0.018;
+    float arrowSDF = triangleSDF(rotatedPos, arrowSize);
+    float arrowMask = step(arrowSDF, 0.0);
+    vec3 arrowColor = vec3(1.0, 1.0, 1.0) * arrowMask;
+    
+    hintOut = outerGlowColor + middleRingColor + coreDotColor + arrowColor;
+ 
+}
+    // vec3 hintOut = outerGlowColor + middleRingColor + coreDotColor + arrowColor;
+
+    // Render gecko body (SDF)
     float geckoSDF = buildGeckoSDF(gecko_uv, s);
     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
-    vec3 geckoColor = endColor * geckoMask;
-    color = mix(color, geckoColor, geckoMask);
 
-    return half4(color + hintOut, geckoMask);
+    // Render fingers (cheap mask)
+    float fingerMask = buildFingerMask(gecko_uv, s);
+
+    // Combine
+    float totalMask = max(geckoMask, fingerMask);
+    vec3 geckoColor = endColor * totalMask;
+    color = mix(color, geckoColor, totalMask);
+
+    return half4(color + hintOut, totalMask);
 }
 `;

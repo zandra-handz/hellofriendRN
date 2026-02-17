@@ -19,7 +19,8 @@ import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import {
   GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT,
   GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS,
-  GECKO_DEBUG_DOTS_SKSL
+  GECKO_DEBUG_DOTS_SKSL,
+  GECKO_SKELETON_SKSL
 } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -330,7 +331,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
+      ${GECKO_SKELETON_SKSL}
     `);
   }, [color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted]);
 
@@ -710,7 +711,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
     <>
       <GestureDetector gesture={composedGesture}>
         <View style={StyleSheet.absoluteFill}>
-          <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+        {/*  <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
               x={0}
               y={0}
@@ -724,7 +725,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
                 uniforms={uniforms}
               />
             </Rect>
-          </Canvas>  
+          </Canvas>  */}
 
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
