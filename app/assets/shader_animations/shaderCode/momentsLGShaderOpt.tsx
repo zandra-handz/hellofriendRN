@@ -7,10 +7,10 @@ uniform float  u_scale;
 uniform float u_time;
 uniform float u_gecko_scale;
 uniform float u_gecko_size;
-uniform float2 u_moments[40];
+uniform float2 u_moments[30];
 uniform float2 u_heldMoments[4];
 
-uniform int    u_momentsLength;
+uniform int u_momentsLength;
 
 uniform float2 u_selected;
 uniform float2 u_lastSelected;
@@ -157,14 +157,7 @@ float3 applyGlass(
     float sd = sdfRect(centerPx, size, fragCoord , radius);
     if (sd >= 0.0) return baseColor;
 
-    // float3 normal = getCheapNormal(
-    //     fragCoord,
-    //     centerPx,
-    //     size,
-    //     radius,
-    //     sd,
-    //     thickness
-    // );
+ 
  
     
     float3 normal = getNormal(
@@ -228,6 +221,17 @@ float3 applyGlassDotSq(
     return mix(baseColor, dotColor, circle * 0.8);
 }
 
+
+float3 applyDotSq(float dist2, float radius, float3 baseColor) {
+    float r0 = radius - 1.0;
+    float r1 = radius + 1.0;
+
+    // single soft circle
+    float a = smoothstep(r1*r1, r0*r0, dist2);
+
+    // just brighten slightly
+    return baseColor + float3(a * 0.65);
+}
   
 
 float3 applyGlowingHeldMoment(float2 fragCoord, float2 heldPx, float3 baseColor) {
@@ -442,10 +446,13 @@ for (int i = 0; i < 4; i++) {
 // }
 
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 30; i++) {
         if (i >= u_momentsLength) break;
          
-        if (distance(u_moments[i], u_lastSelected) < 0.001) continue;
+        // if (distance(u_moments[i], u_lastSelected) < 0.001) continue;
+
+        float2 dm = u_moments[i] - u_lastSelected;
+        if (dot(dm, dm) < 1e-6) continue; // (0.001^2)
         
         float2 deNormalizedCenter = u_moments[i] * u_resolution;
         float2 d = fragCoord - deNormalizedCenter;
@@ -453,7 +460,8 @@ for (int i = 0; i < 4; i++) {
         float maxR = 19.0; // radius + edge
         if (dist2 > maxR * maxR) continue;
    
-        color = applyGlassDotSq(dist2, 7.0, color);
+        // color = applyGlassDotSq(dist2, 7.0, color);
+             color = applyDotSq(dist2, 5.0, color);
     }
 
     

@@ -206,7 +206,7 @@ const ScreenGecko = (props: Props) => {
     return result;
   };
 
-  const MAX_MOMENTS = 40;
+  const MAX_MOMENTS = 30;
 
   const momentCoords = useMemo(() => {
     return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
@@ -448,8 +448,11 @@ const ScreenGecko = (props: Props) => {
           bckgColor2={selectedFriend?.darkColor}
           momentsData={scatteredMoments}
           // startingCoord={[0.5, -.3]}
-          startingCoord={[0.1, -0.5]}
-          restPoint={[0.5, 0.6]}
+    
+          startingCoord0={.1}
+          startingCoord1={-.5}
+          restPoint0={.5}
+          restPoint1={.6} 
           scale={1}
           gecko_scale={1}
           gecko_size={1.7}

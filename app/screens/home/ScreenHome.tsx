@@ -15,6 +15,8 @@ import {
   StyleSheet,
 } from "react-native";
 
+import { useRoute } from "@react-navigation/native";
+
 // app state
 // import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -70,7 +72,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
-
+const route = useRoute();
   // const { upcomingHelloes  } = useUpcomingHelloes();
   const { navigateToMomentFocus } = useAppNavigations();
   const handleNavigateToCreateNew = useCallback(() => {
@@ -469,6 +471,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
                           {selectedFriend?.id && (
                             <SelectedFriendHome
+                            canvasKey={route.key}
                               primaryBackground={
                                 lightDarkTheme.primaryBackground
                               }

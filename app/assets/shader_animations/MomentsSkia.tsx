@@ -1,5 +1,3 @@
-
-
 import { View, StyleSheet } from "react-native";
 import React, {
   useEffect,
@@ -13,14 +11,17 @@ import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
-import { packGeckoOnlyProdCompact40, packGeckoOnlyProdCompact_56} from "./animUtils";
+import {
+  // packGeckoOnlyProdCompact40,
+  packGeckoOnlyProdCompact_56,
+} from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
 import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
 import {
   GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT,
-  GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS,
-  GECKO_DEBUG_DOTS_SKSL,
-  GECKO_SKELETON_SKSL
+  // GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS,
+  // GECKO_DEBUG_DOTS_SKSL,
+  // GECKO_SKELETON_SKSL,
 } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -34,7 +35,7 @@ import {
 import { useWindowDimensions } from "react-native";
 import {
   hexToVec3,
-  toShaderSpace_inplace,
+  // toShaderSpace_inplace,
   toGeckoSpace_inPlace,
   toGeckoPointerScaled_inPlace,
   packVec2Uniform_withRecenter_moments,
@@ -85,8 +86,10 @@ type Props = {
   bckgColor1: string;
   bckgColor2: string;
   momentsData: [];
-  startingCoord: number[];
-  restPoint: number[];
+  startingCoord0: number;
+  startingCoord1: number;
+  restPoint0: number;
+  restPoint1: number;
   scale: number;
   gecko_scale: number;
   gecko_size: number;
@@ -108,8 +111,10 @@ const MomentsSkia = ({
   bckgColor1,
   bckgColor2,
   momentsData = [],
-  startingCoord,
-  restPoint,
+  startingCoord0,
+  startingCoord1,
+  restPoint0,
+  restPoint1,
   scale = 1,
   gecko_scale = 1,
   gecko_size = 1.2,
@@ -134,23 +139,19 @@ const MomentsSkia = ({
     }
   }, [size]);
 
-
   const nowMs = () => global.performance?.now?.() ?? Date.now();
- 
- 
 
+  const shaderTimeSV = useSharedValue(0);
+  const startMsRef = useRef(nowMs());
+  const lastFrameMsRef = useRef(startMsRef.current);
 
-const shaderTimeSV = useSharedValue(0);
-const startMsRef = useRef(nowMs());
-const lastFrameMsRef = useRef(startMsRef.current);
- 
   const updateTrigger = useSharedValue(0);
   const lastRenderRef = useRef(0);
   const isPausedRef = useRef(false);
   const lastAutoPickupIdRef = useRef(-1);
 
   // const TOTAL_GECKO_POINTS = 71;
-  const MAX_MOMENTS = 40;
+  const MAX_MOMENTS = 30;
   const MAX_HELD = 4;
 
   const TOTAL_GECKO_POINTS_COMPACT = 56;
@@ -178,7 +179,6 @@ const lastFrameMsRef = useRef(startMsRef.current);
   // const hintUniformSV = useSharedValue<number[]>([0, 0]);
   const selectedUniformSV = useSharedValue<number[]>([0, 0]);
   const lastSelectedUniformSV = useSharedValue<number[]>([0, 0]);
-
 
   // Big uniforms (still SharedValues, but we will only update them when needed)
   const momentsUniformSV = useSharedValue<number[]>(
@@ -228,11 +228,10 @@ const lastFrameMsRef = useRef(startMsRef.current);
     handleUpdateMomentCoords(formattedData);
   };
 
-  const userPointSV = useSharedValue(restPoint);
+  // const userPointSV = useSharedValue(restPoint);
+  const userPointSV = useSharedValue([restPoint0, restPoint1]);
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const isDragging = useSharedValue(false);
-
- 
 
   const onDoublePress = () => {
     handleGetMoment(-1);
@@ -289,9 +288,13 @@ const lastFrameMsRef = useRef(startMsRef.current);
   const bckgColor1Converted = hexToVec3(bckgColor1);
   const bckgColor2Converted = hexToVec3(bckgColor2);
 
-  const soul = useRef(new Soul(restPoint, 0.02));
-  const leadPoint = useRef(new Mover(startingCoord));
-  const gecko = useRef(new Gecko(startingCoord, 0.06));
+  // const soul = useRef(new Soul(restPoint, 0.02));
+  // const leadPoint = useRef(new Mover(startingCoord));
+  // const gecko = useRef(new Gecko(startingCoord, 0.06));
+
+  const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
+  const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
+  const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06));
   const sleepWalk0 = useRef(
     new SleepWalk0(
       [0.5, 0.3],
@@ -331,9 +334,14 @@ const lastFrameMsRef = useRef(startMsRef.current);
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_SKELETON_SKSL}
+      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
     `);
-  }, [color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted]);
+  }, [
+    color1Converted,
+    color2Converted,
+    bckgColor1Converted,
+    bckgColor2Converted,
+  ]);
 
   const sourceTwo = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
@@ -352,13 +360,6 @@ const lastFrameMsRef = useRef(startMsRef.current);
     return null;
   }
 
-  // const start = useRef(Date.now());
-
-
-  const start = useRef(nowMs());
-  
-
-
   const hintRef = useRef([0, 0]);
 
   const [internalReset, setInternalReset] = useState(0);
@@ -375,13 +376,16 @@ const lastFrameMsRef = useRef(startMsRef.current);
       console.log("conditions not met for a reset");
       return;
     } else {
-      console.log("TRUE RESET");
+      console.log("TRUE RESET", startingCoord0, startingCoord1);
     }
 
-    start.current = Date.now();
-    soul.current = new Soul(restPoint, 0.02);
-    leadPoint.current = new Mover(startingCoord);
-    gecko.current = new Gecko(startingCoord, 0.06);
+    // start.current = Date.now();
+    // soul.current = new Soul(restPoint, 0.02);
+    // leadPoint.current = new Mover(startingCoord);
+    // gecko.current = new Gecko(startingCoord, 0.06);
+    soul.current = new Soul(restPoint0, restPoint1, 0.02);
+    leadPoint.current = new Mover(startingCoord0, startingCoord1);
+    gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06);
 
     // Reset buffers
     workingBuffers.soul.fill(0);
@@ -399,15 +403,15 @@ const lastFrameMsRef = useRef(startMsRef.current);
     selectedUniformSV.value = [0, 0];
     lastSelectedUniformSV.value = [0, 0];
 
-
     momentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
     heldMomentUniformSV.value = Array(MAX_HELD * 2).fill(0);
     geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0);
     momentsLengthSV.value = 0;
 
-    userPointSV.value = restPoint;
-    userPoint_geckoSpaceRef.current[0] = startingCoord[0];
-    userPoint_geckoSpaceRef.current[1] = startingCoord[1];
+    userPointSV.value = [restPoint0, restPoint1];
+
+    userPoint_geckoSpaceRef.current[0] = startingCoord0;
+    userPoint_geckoSpaceRef.current[1] = startingCoord1;
   }, [reset, internalReset]);
 
   const frameCountRef = useRef(0);
@@ -425,7 +429,6 @@ const lastFrameMsRef = useRef(startMsRef.current);
 
     const animate = () => {
       if (cancelled) return;
- 
 
       // keep rAF alive but avoid doing work while paused
       if (isPausedRef.current) {
@@ -440,18 +443,18 @@ const lastFrameMsRef = useRef(startMsRef.current);
       // DON'T DELETE
       // frameBudgetMonitor();
 
-  //       // ✅ only compute dt/time AFTER we know we're running
-  // const now = nowMs();
+      //  only compute dt/time AFTER we know we're running
+      // const now = nowMs();
 
-  // // dt in seconds
-  // let dt = (now - lastFrameMsRef.current) / 1000;
-  // if (dt > 0.05) dt = 0.05; // clamp resume spike
-  // if (dt < 0) dt = 0;
+      // // dt in seconds
+      // let dt = (now - lastFrameMsRef.current) / 1000;
+      // if (dt > 0.05) dt = 0.05; // clamp resume spike
+      // if (dt < 0) dt = 0;
 
-  // lastFrameMsRef.current = now;
+      // lastFrameMsRef.current = now;
 
-  // // advance shader time ONLY when running
-  // timeSV.value = (now - startMsRef.current) / 1000;
+      // // advance shader time ONLY when running
+      // timeSV.value = (now - startMsRef.current) / 1000;
 
       // ---- UI / side-effects (unchanged) ----
       if (moments.current.trigger_remote && !lastPawsClearedRef.current) {
@@ -506,12 +509,12 @@ const lastFrameMsRef = useRef(startMsRef.current);
       }
 
       if (gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
-        leadPoint.current.update(userPoint_geckoSpaceRef.current);//, dt, now);
+        leadPoint.current.update(userPoint_geckoSpaceRef.current); //, dt, now);
       } else if (!gecko.current.sleepWalkMode) {
         leadPoint.current.update(soul.current.soul);
       } else {
         sleepWalk0.current.update(moments);
-        leadPoint.current.update(sleepWalk0.current.walk);//, dt, now);
+        leadPoint.current.update(sleepWalk0.current.walk); //, dt, now);
       }
 
       // ---- sim update ----
@@ -597,7 +600,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
       );
 
       // ---------------------------------------------------------------------
-      // ✅ Gate ALL uniform updates (small AND big) when gecko is moving
+      // Gate ALL uniform updates (small AND big) when gecko is moving
       // ---------------------------------------------------------------------
       const shouldUpdateBigUniforms =
         leadPoint.current.isMoving ||
@@ -607,10 +610,9 @@ const lastFrameMsRef = useRef(startMsRef.current);
         moments.current.trigger_remote;
 
       if (shouldUpdateBigUniforms) {
+        shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
-          shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
-
-  // .
+        // .
         // Update small uniforms (creates new arrays, but only when moving)
         // walk0UniformSV.value = [workingBuffers.walk[0], workingBuffers.walk[1]];
         // hintUniformSV.value = [workingBuffers.hint[0], workingBuffers.hint[1]];
@@ -692,8 +694,8 @@ const lastFrameMsRef = useRef(startMsRef.current);
       u_scale: scale,
       u_gecko_scale: gecko_scale,
       u_gecko_size: gecko_size,
- //    u_time: (Date.now() - start.current) / 1000,
-       u_time: shaderTimeSV.value,   
+      //    u_time: (Date.now() - start.current) / 1000,
+      u_time: shaderTimeSV.value,
       u_resolution: [size.width, size.height],
       u_aspect: aspect || 1,
       // u_walk0: walk0UniformSV.value,
@@ -711,7 +713,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
     <>
       <GestureDetector gesture={composedGesture}>
         <View style={StyleSheet.absoluteFill}>
-        {/*  <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+          <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect
               x={0}
               y={0}
@@ -725,7 +727,7 @@ const lastFrameMsRef = useRef(startMsRef.current);
                 uniforms={uniforms}
               />
             </Rect>
-          </Canvas>  */}
+          </Canvas>
 
           <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
             <Rect

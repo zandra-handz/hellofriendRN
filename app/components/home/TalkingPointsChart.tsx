@@ -19,6 +19,7 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
+  canvasKey,
   themeColors,
   categoryColors,
   textColor,
@@ -156,6 +157,7 @@ const TalkingPointsChart = ({
           {isFocused && colors?.colors?.length > 0 && (
             <View style={styles.donutWrapper}>
               <Donut
+              canvasKey={canvasKey}
                 font={skiaFontLarge}
                 smallFont={skiaFontSmall}
                 themeColors={themeColors}

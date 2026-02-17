@@ -16,13 +16,13 @@ import {
   Skia,
   Text,
   Group,
+  Rect,
 } from "@shopify/react-native-skia";
 import SvgIcon from "@/app/styles/SvgIcons";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
-import LeafPath from "./LeafPath"; 
+import LeafPath from "./LeafPath";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
 
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -54,17 +54,17 @@ type Props = {
 };
 
 const DonutChart = ({
- 
+  canvasKey,
   totalJS,
-  positions, 
+  positions,
   onCategoryPress,
   colorsReversed,
-  // onPlusPress,
+  // onPlusPress,  key={canvasKey}
   onCenterPress,
   radius,
   strokeWidth,
   outerStrokeWidth,
-darkerOverlayBackgroundColor,
+  darkerOverlayBackgroundColor,
   backgroundColor,
   font,
   totalValue,
@@ -83,7 +83,7 @@ darkerOverlayBackgroundColor,
   const array = Array.from({ length: n });
   const innerRadius = radius - outerStrokeWidth / 2;
   // const color = lightDarkTheme.primaryText;
-  // const { selectedFriend } = useSelectedFriend(); 
+  // const { selectedFriend } = useSelectedFriend();
 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
@@ -104,7 +104,7 @@ darkerOverlayBackgroundColor,
     fadeInValue.value = withDelay(
       // totalJS * 20,
       0,
-      withTiming(1, { duration: 500 })
+      withTiming(1, { duration: 500 }),
     );
   }, [totalJS]);
 
@@ -123,7 +123,7 @@ darkerOverlayBackgroundColor,
 
   const targetText = useDerivedValue(
     () => `${Math.round(totalValue.value)}`,
-    []
+    [],
   );
 
   // const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
@@ -204,6 +204,7 @@ darkerOverlayBackgroundColor,
   return (
     <View style={styles.container}>
       <Canvas
+        key={canvasKey}
         style={[
           styles.canvasContainer,
           {
@@ -212,6 +213,13 @@ darkerOverlayBackgroundColor,
           },
         ]}
       >
+        <Rect
+          x={0}
+          y={0}
+          width={radius * 2 + 40}
+          height={radius * 2}
+          color={backgroundColor}
+        />
         <LeafPath
           // key={selectedFriend?.id ?? "no-friend"}
           positions={positions}
@@ -259,8 +267,8 @@ darkerOverlayBackgroundColor,
       <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
         {LabelOverlays}
       </Animated.View>
- 
-      {  onCenterPress && (
+
+      {onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <SvgIcon
             name={"leaf"}
@@ -276,7 +284,6 @@ darkerOverlayBackgroundColor,
           />
         </View>
       )}
- 
     </View>
   );
 };
@@ -333,7 +340,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     width: 34,
     height: 34,
- 
+
     alignItems: "center",
     justifyContent: "center",
     opacity: 1,

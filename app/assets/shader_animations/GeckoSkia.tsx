@@ -40,8 +40,10 @@ type Props = {
   bckgColor1: string;
   bckgColor2: string;
   momentsData: [];
-  startingCoord: number[];
-  restPoint: number[];
+  startingCoord0: number;
+  startingCoord1: number;
+  restPoint0: number;
+  restPoint1: number; 
   scale: number;
   reset?: number | null;
 };
@@ -51,8 +53,10 @@ const GeckoSkia = ({
   color2,
   bckgColor1,
   bckgColor2, 
-  startingCoord,
-  restPoint,
+  startingCoord0,
+  startingCoord1,
+  restPoint0,
+  restPoint1, 
   scale = 1,
   gecko_scale = 1, 
   gecko_size = 1.2,
@@ -120,7 +124,7 @@ const GeckoSkia = ({
   //   }, []),
   // );
 
-  const userPointSV = useSharedValue(restPoint); 
+  const userPointSV =  useSharedValue([restPoint0, restPoint1]);
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const isDragging = useSharedValue(false);
 
@@ -157,9 +161,9 @@ const GeckoSkia = ({
   const bckgColor2Converted = hexToVec3(bckgColor2);
 
   // Keep simulation objects as refs (they don't go into uniforms)
-  const soul = useRef(new Soul(restPoint, 0.02));
-  const leadPoint = useRef(new Mover(startingCoord));
-  const gecko = useRef(new Gecko(startingCoord, 0.06)); 
+  const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
+const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
+const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06));
 
   const SHARED_SKSL_PRELUDE = (
     c1: string,
@@ -228,9 +232,9 @@ const GeckoSkia = ({
     start.current = Date.now();
     lastMovementTime.value = Date.now(); // Reset idle timer on reset
  
-    soul.current = new Soul(restPoint, 0.02);
-    leadPoint.current = new Mover(startingCoord);
-    gecko.current = new Gecko(startingCoord, 0.06);
+        soul.current = new Soul(restPoint0, restPoint1, 0.02);
+    leadPoint.current = new Mover(startingCoord0, startingCoord1);
+    gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06);
 
     // Reset buffers
     // workingBuffers.soul.fill(0);
@@ -249,10 +253,10 @@ const GeckoSkia = ({
     // lastSelectedUniformSV.value = [0, 0];
     hintUniformSV.value = [0, 0]; 
     geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0);
-
-    userPointSV.value = restPoint;
-    userPoint_geckoSpaceRef.current[0] = startingCoord[0];
-    userPoint_geckoSpaceRef.current[1] = startingCoord[1];
+    userPointSV.value = [restPoint0, restPoint1];
+    
+    userPoint_geckoSpaceRef.current[0] = startingCoord0;
+    userPoint_geckoSpaceRef.current[1] = startingCoord1;
   }, [reset, internalReset]);
 
   // Cleanup effect for refs

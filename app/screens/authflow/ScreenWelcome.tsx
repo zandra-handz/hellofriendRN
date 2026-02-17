@@ -281,8 +281,10 @@ const ScreenWelcome = () => {
                 color2={manualGradientColors.homeLightColor}
                 bckgColor1={manualGradientColors.lightColor}
                 bckgColor2={manualGradientColors.homeLightColor}
-                startingCoord={[.2,-1.]}
-                restPoint={[.5,.7]}
+                startingCoord0={.2}
+                startingCoord1={-1.}
+                restPoint0={.5}
+                restPoint1={.7} 
                 scale={1}
                 gecko_scale={1}
                 gecko_size={1.6}

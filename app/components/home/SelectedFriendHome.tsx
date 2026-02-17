@@ -29,6 +29,7 @@ interface SelectedFriendHomeProps {
 }
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
+  canvasKey,
   userId,
 
   paddingHorizontal,
@@ -183,6 +184,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 <View style={{ width: "100%", marginTop: 3 }}>
                   {/* {!loadingDash && ( */}
                   <TalkingPointsChart
+                  canvasKey={canvasKey}
                     userId={userId}
                     textColor={primaryColor}
                     overlayColor={primaryOverlayColor}

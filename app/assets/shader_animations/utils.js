@@ -397,7 +397,10 @@ export function getIntersectionPoint(aLine, bLine) {
   if (denominator === 0) {
     console.log("Lines are parallel, no intersection.");
     return null;
-  }
+  } 
+  // else {
+  //   console.log("lines are NOT parallel")
+  // }
 
   const t = ((x2 - x1) * dy2 - (y2 - y1) * dx2) / denominator;
   const intersectionX = x1 + t * dx1;
@@ -1149,4 +1152,20 @@ export function soul_oneshot_enter_top(
   const y = startY + (center[1] - startY) * clampedProgress;
 
   return [x, y];
+}
+
+
+export function soul_oneshot_enter_top_inPlace(
+  center, progress, radius, out
+) {
+  const startX = center[0];
+  const startY = -radius * 2;
+  const p = Math.min(Math.max(progress, 0), 1);
+  out[0] = startX + (center[0] - startX) * p;
+  out[1] = startY + (center[1] - startY) * p;
+}
+
+export function _getPointOnCircle_inPlace(centerPoint, angle, radiusScalar, out) {
+  out[0] = centerPoint[0] + Math.cos(angle) * radiusScalar;
+  out[1] = centerPoint[1] + Math.sin(angle) * radiusScalar;
 }

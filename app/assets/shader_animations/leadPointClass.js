@@ -128,8 +128,8 @@
 
 export default class Mover {
   // frame-based update (dt defaults to 1 just like your old behavior)
-  constructor(lead = [0.0, 0.0], u_debug_lead_point_prefix = "debugLeadPoint") {
-    this.lead = lead;
+  constructor(lead0, lead1, u_debug_lead_point_prefix = "debugLeadPoint") {
+    this.lead = [lead0, lead1];
 
     // [0] = leadFollowerAngle
     this.angles = [0.0];

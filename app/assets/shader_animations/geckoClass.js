@@ -4,7 +4,7 @@ import Body from "./geckoClasses/bodyClass.js";
 import FourLegs from "./geckoClasses/fourLegsClass.js";
 
 export default class Gecko {
-  constructor(startingCoord=[0.,0.], hintDist=.04) {
+  constructor(startingCoord0, startingCoord1, hintDist=.04) {
     this.gaitSpeedScalar = 9;
     this.reverseGaitSpeedScalar = 40;
 
@@ -20,7 +20,7 @@ export default class Gecko {
     this.stepPivotSize = 0.24;
     this.motionDilutionScalar = 0.5;
     this.mir_MotionDilutionScalar = 0.5;
-    this.startingCoord = startingCoord;
+    this.startingCoord = [startingCoord0, startingCoord1];
     this.hintDist = hintDist;
 
  

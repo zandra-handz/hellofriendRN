@@ -11,7 +11,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 
 import DonutChart from "./DonutChart";
-import { calculatePercentage } from "@/src/hooks/GradientColorsUril"; 
+import { calculatePercentage } from "@/src/hooks/GradientColorsUril";
 type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
@@ -33,7 +33,8 @@ type Props = {
 };
 
 const Donut = ({
-  iconColor, 
+  canvasKey,
+  iconColor,
 
   darkerOverlayBackgroundColor,
   onCategoryPress,
@@ -73,7 +74,7 @@ const Donut = ({
   const totalValue = useSharedValue(0);
   const decimalsValue = useSharedValue<number[]>([]);
   const labelsValue = useSharedValue<string[]>([]);
-    const categoryStopsValue = useSharedValue<number[]>([]);
+  const categoryStopsValue = useSharedValue<number[]>([]);
 
   // NEED THIS TO STOP THE 'FLASH' OF OLD SHARED VALUES IN LEAVES WHEN FRIEND CHANGES
   useFocusEffect(
@@ -94,10 +95,10 @@ const Donut = ({
         decimalsValue.value = [];
         labelsValue.value = [];
         categoryStopsValue.value = [];
-       
+
         setPositions([]);
       };
-    }, [])
+    }, []),
   );
   const RADIUS = radius;
   const DIAMETER = RADIUS * 2;
@@ -106,14 +107,12 @@ const Donut = ({
   const GAP = gap;
   //const n = colors?.length;
 
-
-
   const getPieChartDataMetrics = (data) => {
     // console.log("(INSIDE SERIES DATA) GETTING PIE CHART DATA METRICS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
- 
+
     const total = data.reduce(
       (acc, currentValue) => acc + currentValue.size,
-      0
+      0,
     );
 
     const labels = data.map((item) => ({
@@ -121,15 +120,15 @@ const Donut = ({
       user_category: item.user_category,
     }));
     const percentages = calculatePercentage(data, total);
- 
+
     const decimals = percentages.map(
-      (number) => Number(number.toFixed(0)) / 100
+      (number) => Number(number.toFixed(0)) / 100,
     );
     return {
       total,
       labels,
       percentages,
-      decimals, 
+      decimals,
     };
   };
 
@@ -141,16 +140,14 @@ const Donut = ({
     const dataCountList = data.filter((item) => Number(item.size) > 0);
     if (dataCountList.length === 0) return;
 
-      // console.log("GETTING SERIES DATA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    // console.log("GETTING SERIES DATA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     totalValue.value = 0;
     decimalsValue.value = [];
     labelsValue.value = [];
     categoryStopsValue.value = [];
-  
+
     const { total, labels, decimals } = getPieChartDataMetrics(dataCountList);
-
-
 
     totalValue.value = withTiming(total, { duration: 1000 });
     decimalsValue.value = [...decimals];
@@ -166,7 +163,7 @@ const Donut = ({
 
     categoryStopsValue.value = categoryCounts;
   }, [data, colors, totalJS]); //colors  // colors reversed always happens afyer colors
- 
+
   const leafRadius = radius - labelsSize - 20;
   const leafCenterX = radius - labelsSize - 40;
   const leafCenterY = radius / 2;
@@ -175,18 +172,14 @@ const Donut = ({
   const leafYs = useSharedValue<number[]>([]);
   const leafSizes = useSharedValue<number[]>([]);
 
- 
-
   const leafPositionsCombined = useDerivedValue(() => {
     "worklet";
 
-  const decimals = decimalsValue.value;
-  if (!decimals || decimals.length < 1) {
-    runOnJS(setPositions)([]); // clear immediately
-    return [];
-  }
-
- 
+    const decimals = decimalsValue.value;
+    if (!decimals || decimals.length < 1) {
+      runOnJS(setPositions)([]); // clear immediately
+      return [];
+    }
 
     const arr: { x: number; y: number; size: number; color: string }[] = [];
 
@@ -194,15 +187,15 @@ const Donut = ({
     const total = decimals.reduce((a, b) => a + b, 0);
     const normalized = decimals.map((d) => d / total);
 
-  const total2 = totalJS; // use the shared value
-  let cumulative2 = 0;
-  const categoryCounts = decimals.map((d) => {
-    const count = Math.round(total2 * d);
-    cumulative2 += count;
-    return cumulative2;
-  });
+    const total2 = totalJS; // use the shared value
+    let cumulative2 = 0;
+    const categoryCounts = decimals.map((d) => {
+      const count = Math.round(total2 * d);
+      cumulative2 += count;
+      return cumulative2;
+    });
 
-  const n = categoryCounts.length ?? 0;
+    const n = categoryCounts.length ?? 0;
 
     let cumulative = 0;
     const midAngles = normalized.map((v) => {
@@ -251,8 +244,7 @@ const Donut = ({
     runOnJS(setPositions)(arr);
 
     return arr; // can be used as animatedLeaves internally
-  }, [decimalsValue, colorsReversed, totalJS ]);
- 
+  }, [decimalsValue, colorsReversed, totalJS]);
 
   return (
     <View style={styles.container}>
@@ -266,8 +258,9 @@ const Donut = ({
         ]}
       >
         <DonutChart
-          // animatedLeaves={animatedLeaves} 
-      color={color}
+          // animatedLeaves={animatedLeaves}
+          canvasKey={canvasKey}
+          color={color}
           animatedLeaves={leafPositionsCombined}
           positions={positions}
           totalJS={totalJS}
