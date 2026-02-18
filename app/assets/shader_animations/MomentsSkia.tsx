@@ -16,9 +16,9 @@ import {
   packGeckoOnlyProdCompact_56,
 } from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
-import { MOMENTS_BG_SKSL_OPT } from "./shaderCode/momentsLGShaderOpt";
+import { MOMENTS_BG_SKSL_OPT, MOMENTS_BG_SKSL_OPT_BOXED } from "./shaderCode/momentsLGShaderOpt";
 import {
-  GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT,
+  GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX,
   // GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS,
   // GECKO_DEBUG_DOTS_SKSL,
   // GECKO_SKELETON_SKSL,
@@ -334,7 +334,7 @@ const MomentsSkia = ({
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
-      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT}
+      ${GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX}
     `);
   }, [
     color1Converted,
@@ -346,7 +346,7 @@ const MomentsSkia = ({
   const sourceTwo = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
-      ${MOMENTS_BG_SKSL_OPT}
+      ${MOMENTS_BG_SKSL_OPT_BOXED}
     `);
   }, [
     color1Converted,

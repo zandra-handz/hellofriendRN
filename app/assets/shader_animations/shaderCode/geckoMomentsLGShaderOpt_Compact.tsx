@@ -124,7 +124,10 @@ half4 main(float2 fragCoord) {
     return half4(color, mask);
 }
 `;
-export const GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT = `  
+
+
+
+export const GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX = `  
 uniform float2 u_resolution;
 uniform float  u_aspect;
 uniform float  u_scale; 
@@ -353,13 +356,26 @@ float buildFingerMask(vec2 gecko_uv, float s) {
 // MAIN
 // ------------------------------------------------
 half4 main(float2 fragCoord) {
-    float3 color = sampleBackground(fragCoord);
-
     vec2 uv = fragCoord / u_resolution;
     uv -= 0.5;
     uv.x *= u_aspect;  
     float s = 1.0 / u_gecko_scale;
     vec2 gecko_uv = uv * s * u_gecko_size;
+
+    // ------------------------------------------------
+    // Early exit: skip pixels outside bounding box
+    // ------------------------------------------------
+    vec2 boxCenter = u_geckoPoints[10];
+    float halfW = 0.27 * s;
+    float halfH = 0.27 * s;
+    float boxSDF = max(abs(gecko_uv.x - boxCenter.x) - halfW, abs(gecko_uv.y - boxCenter.y) - halfH);
+    
+    if (boxSDF > 0.0) {
+        return half4(0.0, 0.0, 0.0, 0.0);
+    }
+
+    // Everything below only runs for pixels INSIDE the box
+    float3 color = sampleBackground(fragCoord);
 
     // Body SDF
     float geckoSDF = buildGeckoSDF(gecko_uv, s);
@@ -375,7 +391,64 @@ half4 main(float2 fragCoord) {
 
     return half4(color, totalMask);
 }
-`;
+
+ 
+
+
+
+
+
+
+// ------------------------------------------------
+// MAIN
+// ------------------------------------------------
+// half4 main(float2 fragCoord) {
+//     vec2 uv = fragCoord / u_resolution;
+//     uv -= 0.5;
+//     uv.x *= u_aspect;  
+//     float s = 1.0 / u_gecko_scale;
+//     vec2 gecko_uv = uv * s * u_gecko_size;
+
+//     // ------------------------------------------------
+//     // Bounding box params (adjust these)
+//     // ------------------------------------------------
+//     vec2 boxCenter = u_geckoPoints[10];
+//     float halfW = 0.27 * s;
+//     float halfH = 0.27 * s;
+//     float boxSDF = max(abs(gecko_uv.x - boxCenter.x) - halfW, abs(gecko_uv.y - boxCenter.y) - halfH);
+    
+//     // ------------------------------------------------
+//     // Debug: draw box outline (remove when done)
+//     // ------------------------------------------------
+//     float borderThick = 0.002 * s;
+//     float boxOutline = step(boxSDF, 0.0) - step(boxSDF + borderThick, 0.0);
+//     if (boxOutline > 0.0) {
+//         return half4(1.0, 0.0, 0.0, 1.0);  // Red outline
+//     }
+
+//     // Early exit for pixels outside box
+//     if (boxSDF > 0.0) {
+//         return half4(0.0, 0.0, 0.0, 0.0);
+//     }
+
+//     // Everything below only runs for pixels INSIDE the box
+//     float3 color = sampleBackground(fragCoord);
+
+//     // Body SDF
+//     float geckoSDF = buildGeckoSDF(gecko_uv, s);
+//     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
+
+//     // Finger mask (cheap)
+//     float fingerMask = buildFingerMask(gecko_uv, s);
+
+//     // Combine
+//     float totalMask = max(geckoMask, fingerMask);
+//     vec3 geckoColor = endColor * totalMask;
+//     color = mix(color, geckoColor, totalMask);
+
+//     return half4(color, totalMask);
+// }
+// `;
 
 //56 uniform version
 
