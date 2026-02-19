@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   Text,
   Image,
@@ -8,63 +8,50 @@ import {
   ImageSourcePropType,
 } from "react-native";
 
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import manualGradientColors from "@/app/styles/StaticColors";
+import GlobalPressable from "../appwide/button/GlobalPressable"; 
 
 type SignInButtonProps = {
   onPress: (event: GestureResponderEvent) => void;
-  title?: string;
-  shapePositionValue?: number;
-  shapePositionVerticalValue?: number;
+  label?: string;
+  labelColor: string;
+  backgroundColor: string;
 };
+
+const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
 
 const SignInButton: React.FC<SignInButtonProps> = ({
   onPress,
-  title = "Sign in",
+  label = "Sign in",
+  labelColor = "red",
+  backgroundColor = 'yellow'
 }) => {
-  const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
-
-  // const shapeSize: number = 190;
-  // const shapeHorPosition: number = -48;
-  // const shapeVerPosition: number = -23;
-
-  // need to make sure that pressable also works with accessibility stuff
+ 
   return (
     <GlobalPressable
       accessible={true}
       accessibilityLabel="Sign in button"
       accessibilityHint="Press to sign in or create an account"
-      style={style.button}
+      style={[style.button, {backgroundColor: backgroundColor}]}
       onPress={onPress}
       activeOpacity={0.8}
     >
       <Image
         //doesn't need to be accessible, adds nothing apart from the visual
         source={coffeeCupHeartPng}
-        style={{
-          position: "absolute",
-
-          width: 190,
-          height: 190,
-          left: -48,
-          top: -23,
-        }}
+        style={style.imageContainer}
         resizeMode="contain"
       />
-      <View
-        style={style.containerToCenterLabel}
-      >
-        <Text style={[style.label, { color : manualGradientColors.homeDarkColor }]}>{title}</Text>
+      <View style={style.containerToCenterLabel}>
+        <Text style={[style.label, { color: labelColor }]}>{label}</Text>
       </View>
     </GlobalPressable>
   );
 };
 
 const style = StyleSheet.create({
-  button: {
-    backgroundColor: "#ebebeb",
+  button: { 
     height: 50,
-    borderRadius: 30, 
+    borderRadius: 30,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -72,7 +59,7 @@ const style = StyleSheet.create({
     overflow: "hidden",
   },
   containerToCenterLabel: {
-    width: "100%", 
+    width: "100%",
     flex: 1,
     height: "100%",
     alignItems: "center",
@@ -80,8 +67,15 @@ const style = StyleSheet.create({
   },
   label: {
     fontFamily: "Poppins-Bold",
-    fontWeight: 'bold',
-    fontSize: 16, 
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  imageContainer: {
+    position: "absolute",
+    width: 190,
+    height: 190,
+    left: -48,
+    top: -23,
   },
 });
 

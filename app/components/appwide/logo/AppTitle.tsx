@@ -1,23 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 
-const LogoSmaller = () => {
-  // const svgSize = 130;
-  // const homeDarkColor = "#000002";
-
+type Props = {
+  label: string;
+  labelColor: string;
+};
+ 
+const AppTitle = ({
+  label = "Welcome to Hellofriend App!",
+  labelColor,
+}: Props) => {
   return (
     <View style={styles.container}>
-      <View>
-        {/* <GeckoSolidSvg
-          height={130}
-          width={130}
-          color={"#000002"}
-          style={styles.rotateGecko}
-        /> */}
-      </View>
+      <View></View>
       <View style={styles.labelContainer}>
-        <Text style={styles.label}>Welcome to Hellofriend App!</Text>
+        <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
       </View>
     </View>
   );
@@ -28,17 +25,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    // height: "auto",
-  },
-  rotateGecko: {
-    transform: [{ rotate: "190deg" }],
-  },
+  }, 
   label: {
     fontFamily: "Poppins-Regular",
     fontSize: 28,
     lineHeight: 30,
     textAlign: "center",
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   labelContainer: {
     paddingHorizontal: 6,
@@ -47,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LogoSmaller;
+export default AppTitle;

@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Text,
-  Vibration, 
+  Vibration,
 } from "react-native";
 import React, {
   useState,
@@ -17,17 +17,21 @@ import React, {
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
-import manualGradientColors from "@/app/styles/StaticColors"; 
+import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 import SpeedButtons from "./SpeedButtons";
 import AutoPickUpButton from "./AutoPickUpButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
+import AnimatedCounter from "./AnimatedCounter";
+import NoGradientBackground from "@/app/components/appwide/format/NoGradientBackground";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlassPreviewBottom from "./GlassPreviewBottom";
+import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
+import { runOnUI } from "react-native-reanimated";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
   // useKeepAwake,
@@ -35,6 +39,7 @@ import {
   activateKeepAwakeAsync,
   deactivateKeepAwake,
 } from "expo-keep-awake";
+import { useSharedValue } from "react-native-reanimated";
 
 type Props = {};
 
@@ -42,11 +47,12 @@ const ScreenGecko = (props: Props) => {
   const route = useRoute();
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
-    const timestamp = route.params?.timestamp ?? null;
+  const timestamp = route.params?.timestamp ?? null;
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+
   const {
     navigateToMomentView,
     navigateToMomentFocus,
@@ -81,22 +87,19 @@ const ScreenGecko = (props: Props) => {
     return AUTO_SELECT_TYPES[type] ?? AUTO_SELECT_TYPES[0];
   }
 
-
-
   useEffect(() => {
-    console.log(`AUTOPICK`,autoPick);
-    console.log(``,selection);
+    // console.log(`AUTOPICK`, autoPick);
+    // console.log(``, selection);
     if (autoPick !== undefined && selection !== undefined) {
-      console.log("setting acceptPawClear to", autoPick);
-      console.log("setting autoselecttype to", selection);
-  
+      // console.log("setting acceptPawClear to", autoPick);
+      // console.log("setting autoselecttype to", selection);
+
       setAutoSelectType(selection);
-          setAcceptPawClear(autoPick);
+      setAcceptPawClear(autoPick);
     }
   }, [selection, autoPick, timestamp]);
 
-
-    const [moment, setMoment] = useState({
+  const [moment, setMoment] = useState({
     category: null,
     capsule: null,
     uniqueIndex: null,
@@ -145,16 +148,10 @@ const ScreenGecko = (props: Props) => {
     },
     [navigateToMomentView], // optional, if this function comes from props/context
   );
-
-  // const momentCoords = useMemo(() => {
-  //   return capsuleList.map((m) => ({
-  //     id: m.id,
-  //     coord: [m.screen_x, m.screen_y],
-  //   }));
-  // }, [capsuleList]);
+ 
 
   const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
-    console.log(`TYPE INDEX`, typeIndex);
+  
     const result = new Array(count).fill(-1);
 
     if (!moments || moments.length === 0) {
@@ -269,30 +266,18 @@ const ScreenGecko = (props: Props) => {
     return getAutoSelectLabel(autoSelectType);
   }, [autoSelectType]);
 
-  const regenerateRandomMoments = () => {
-    if (!capsuleList || capsuleList.length < 4) return;
+  // const regenerateRandomMoments = () => {
+  //   if (!capsuleList || capsuleList.length < 4) return;
 
-    randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
+  //   randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
 
-    console.log("🔄 regenerated random ids:", randomMomentIdsRef.current);
- 
-  };
+  //   console.log("🔄 regenerated random ids:", randomMomentIdsRef.current);
+  // };
 
   const handleChangeSpeed = (newSpeedFromButton) => {
     speedSettingRef.current = tickTotals[newSpeedFromButton] || 150;
     setSpeedSetting(newSpeedFromButton);
-  };
-
-  //   const handleNavToSelect = useCallback(() => {
-  //   if (autoPickUp) {
-  //     setAutoPickUp(false);
-  //     autoPickUpRef.current = false;
-
-  //   } else {
-
-  //     navigateToGeckoSelectSettings({ selection: autoSelectType });
-  //   }
-  // }, [autoPickUp, autoSelectType]);
+  }; 
 
   const handleNavToSelect = useCallback(() => {
     if (autoPickUp) {
@@ -321,12 +306,11 @@ const ScreenGecko = (props: Props) => {
     setManualOnly((prev) => !prev);
     manualOnlyRef.current = !manualOnlyRef.current;
   };
-    useEffect(() => {
+  useEffect(() => {
     // console.log(momentCoords);
     setScatteredMoments(momentCoords);
     setResetSkia(Date.now());
   }, [momentCoords]);
-
 
   useEffect(() => {
     setMoment({
@@ -375,13 +359,14 @@ const ScreenGecko = (props: Props) => {
 
   //  const [count, setCount] = useState(0);
 
+  const count = useSharedValue(0);
 
+  const loopCount = useRef(0);
+  const pickupCountInCurrentLoop = useRef(0);
 
   const handleGetMoment = useCallback(
     (id) => {
-      // console.log('handleGetMoment', id)
       const moment = capsuleList.find((c) => c.id === id);
-      //  console.log(`setting moment`, moment)
       if (moment?.id) {
         setMoment({
           category: moment.user_category_name,
@@ -390,10 +375,24 @@ const ScreenGecko = (props: Props) => {
           id: moment.id,
         });
 
-        // setCount((prev) => prev + Number(moment?.charCount));
+        const charCount = Number(moment?.charCount);
+        const isSubtracting = loopCount.current % 2 !== 0;
+        const delta = isSubtracting ? -charCount : charCount;
 
-        // --- Vibration ---
-        Vibration.vibrate(50); // vibrate for 50ms
+        // Update shared value on UI thread
+        runOnUI(() => {
+          "worklet";
+          count.value = count.value + delta;
+        })();
+
+        pickupCountInCurrentLoop.current += 1;
+
+        if (pickupCountInCurrentLoop.current >= capsuleList.length) {
+          loopCount.current += 1;
+          pickupCountInCurrentLoop.current = 0;
+        }
+
+        Vibration.vibrate(50);
       } else {
         setMoment({
           category: null,
@@ -405,6 +404,54 @@ const ScreenGecko = (props: Props) => {
     },
     [capsuleList],
   );
+
+
+//   const scoreFieldMap = {
+//   1: "generic_score",
+//   2: "hard_score",
+//   3: "easy_score",
+//   4: "quick_score",
+//   5: "long_score",
+//   6: "unique_score",
+//   7: "generic_score",
+//   8: "relevant_score",
+//   9: "random_score",
+// };
+
+// const handleGetMoment = useCallback(
+//   (id) => {
+//     const moment = capsuleList.find((c) => c.id === id);
+//     if (moment?.id) {
+//       setMoment({
+//         category: moment.user_category_name,
+//         capsule: moment.capsule,
+//         uniqueIndex: moment.uniqueIndex,
+//         id: moment.id,
+//       });
+
+//       // Only add score if this is a top-scored pick (not random mode)
+//       const scoreKey = scoreFieldMap[autoSelectType];
+//       if (randomMomentIdsRef.current.includes(moment.id) && scoreKey) {
+//         const score = moment[scoreKey] ?? 0;
+//         runOnUI(() => {
+//           "worklet";
+//           count.value = count.value + score;
+//         })();
+//       }
+
+//       Vibration.vibrate(50);
+//     } else {
+//       setMoment({
+//         category: null,
+//         capsule: null,
+//         uniqueIndex: null,
+//         id: null,
+//       });
+//     }
+//   },
+//   [capsuleList, autoSelectType],
+// );
+
 
   const primaryColor = lightDarkTheme.priamryText;
 
@@ -425,13 +472,20 @@ const ScreenGecko = (props: Props) => {
   const DAYS_SINCE = friendDash?.days_since || 0;
 
   return (
-    <PreAuthSafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
-      friendColorLight={selectedFriend.darkColor}
-      friendColorDark={selectedFriend.lightColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
+    // <PreAuthSafeViewAndGradientBackground
+    //   startColor={manualGradientColors.lightColor}
+    //   endColor={manualGradientColors.darkColor}
+    //   friendColorLight={selectedFriend.darkColor}
+    //   friendColorDark={selectedFriend.lightColor}
+    //   backgroundOverlayColor={lightDarkTheme.primaryBackground}
+    //   friendId={selectedFriend?.id}
+    //   style={{
+    //     flex: 1,
+    //     flexDirection: "column",
+    //     justifyContent: "flex-end",
+    //   }}
+    // >
+    <NoGradientBackground
       style={{
         flex: 1,
         flexDirection: "column",
@@ -448,11 +502,11 @@ const ScreenGecko = (props: Props) => {
           bckgColor2={selectedFriend?.darkColor}
           momentsData={scatteredMoments}
           // startingCoord={[0.5, -.3]}
-    
-          startingCoord0={.1}
-          startingCoord1={-.5}
-          restPoint0={.5}
-          restPoint1={.6} 
+
+          startingCoord0={0.1}
+          startingCoord1={-0.5}
+          restPoint0={0.5}
+          restPoint1={0.6}
           scale={1}
           gecko_scale={1}
           gecko_size={1.7}
@@ -469,7 +523,7 @@ const ScreenGecko = (props: Props) => {
           randomMomentIds={randomMomentIdsRef}
         />
       </View>
-      <View
+      {/* <View
         style={[
           styles.statsWrapper,
           { backgroundColor: lightDarkTheme.lighterOverlayBackground },
@@ -484,7 +538,24 @@ const ScreenGecko = (props: Props) => {
         <Text style={[styles.statsText, { color: primaryColor }]}>
           Days since: {DAYS_SINCE}
         </Text>
-      </View>
+      </View> */}
+
+      <GlassTopBarLight
+        textColor={primaryColor}
+        backgroundColor={lightDarkTheme.lighterOverlayBackground}
+        friendName={selectedFriend.name}
+        TIME_SCORE={TIME_SCORE}
+        DAYS_SINCE={DAYS_SINCE}
+      />
+              <View style={styles.animatedCounterWrapper}>
+          <AnimatedCounter 
+          addColor={manualGradientColors.lightColor}
+          subtractColor={selectedFriend.darkColor}
+          glowCenterColor={manualGradientColors.whiteColor}
+          glowEdgeColor={selectedFriend.lightColor}
+          
+          countValue={count} />
+        </View>
       <View style={styles.movementSettingsRow}>
         <Pressable
           onPress={handleToggleManual}
@@ -499,6 +570,8 @@ const ScreenGecko = (props: Props) => {
             color={lightDarkTheme.primaryBackground}
           ></SvgIcon>
         </Pressable>
+
+
 
         {!manualOnly && (
           <View style={{ marginHorizontal: 10 }}>
@@ -564,7 +637,7 @@ const ScreenGecko = (props: Props) => {
           )} */}
         </View>
       )}
-{/* 
+      {/* 
       <View style={styles.previewOuter}>
         <View
           style={[
@@ -635,19 +708,18 @@ const ScreenGecko = (props: Props) => {
         </View>
       </View> */}
 
-
       <GlassPreviewBottom
-  color={lightDarkTheme.primaryText}
-  backgroundColor={lightDarkTheme.darkerOverlayBackground}
-  // borderColor={selectedFriend.darkColor}
-  borderColor={'transparent'}
-  moment={moment.id ? moment : null}
-  hasContent={scatteredMoments.length > 0}
-  noContentText={BLANK_WINDOW_MESSAGE}
-  onPressEdit={handleNavigateToMoment}
-  onPressNew={handleNavigateToCreateNew}
-/>
-    </PreAuthSafeViewAndGradientBackground>
+        color={lightDarkTheme.primaryText}
+        backgroundColor={lightDarkTheme.darkerOverlayBackground}
+        // borderColor={selectedFriend.darkColor}
+        borderColor={"transparent"}
+        moment={moment.id ? moment : null}
+        hasContent={scatteredMoments.length > 0}
+        noContentText={BLANK_WINDOW_MESSAGE}
+        onPressEdit={handleNavigateToMoment}
+        onPressNew={handleNavigateToCreateNew}
+      />
+    </NoGradientBackground>
   );
 };
 
@@ -818,6 +890,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
   },
+  animatedCounterWrapper: {
+    position: 'absolute',
+    width: '100%',
+    top: 130,
+    alignItems: 'center',
+  }
 });
 
 export default ScreenGecko;

@@ -44,6 +44,7 @@ import CommentSearchOutlineSvg from "./svgs/comment-search-outline";
 import CompareSvg from "./svgs/compare";
 import DrawPenSvg from "./svgs/draw-pen";
 import FormatFontSizeIncreaseSvg from "./svgs/format-font-size-increase";
+import GeckoMineSvg from "./svgs/gecko-mine";
 import GestureSwipeVerticalSvg from "./svgs/gesture-swipe-vertical";
 import HeartSvg from './svgs/heart';
 import HelpCircleSvg from "./svgs/help-circle";
@@ -180,6 +181,7 @@ const svgIcons = {
   tree: TreeSvg,
   upload_outline: UploadOutlineSvg,
   format_font_size_increase: FormatFontSizeIncreaseSvg,
+  gecko_mine: GeckoMineSvg,
   wrench: WrenchSvg,
   volume_high: VolumeHighSvg,
 };

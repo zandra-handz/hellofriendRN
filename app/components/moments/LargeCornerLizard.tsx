@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from 'react-native'; 
- 
+ import SvgIcon from "@/app/styles/SvgIcons";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 
 const LargeCornerLizard = ({color}) => { 
@@ -12,12 +12,20 @@ const LargeCornerLizard = ({color}) => {
     //     style={appContainerStyles.bigLizardRotate}
     //   />
 
-    <GeckoSvg
-      height={300}
-      width={300}
+    <SvgIcon
+    name={'gecko_mine'}
+       size={320}
+   
       color={color}
-      style={styles.bigGeckoRotate}
+      style={[styles.bigGeckoRotate, {opacity: .5}]}
     />
+
+    // <GeckoSvg
+    //   height={300}
+    //   width={300}
+    //   color={color}
+    //   style={styles.bigGeckoRotate}
+    // />
   );
 };
 
@@ -27,7 +35,7 @@ const styles = StyleSheet.create({
     elevation: 50000,
     position: "absolute",
     zIndex: 0,
-    bottom: -90,
+    bottom: -150,
     left: -90,
     transform: [
       { rotate: "-0deg" },

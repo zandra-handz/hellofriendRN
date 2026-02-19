@@ -10,7 +10,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
       version: '1.0.0',
       orientation: 'portrait',
       newArchEnabled: true,
-      icon: './app/assets/shapes/lizard.png',
+      icon: './app/assets/shapes/gecko-mine.png',
       userInterfaceStyle: 'automatic',
 
       ios: {
@@ -61,9 +61,9 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
       },
 
       splash: {
-        image: './app/assets/shapes/happyskull.png',
+        image: './app/assets/shapes/gecko-mine.png',
         resizeMode: 'contain',
-        backgroundColor: '#000002',
+        backgroundColor: '#4caf50',
       },
 
       assetBundlePatterns: ['**/*'],
