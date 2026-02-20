@@ -14,6 +14,11 @@ export type RootStackParamList = {
   GeckoSelectSettings: {
     selection: number; 
   }
+  QRCode: {
+    selection: number;
+    friendName: string;
+  },
+  
   Moments: {
     scrollTo: number | null;
   };

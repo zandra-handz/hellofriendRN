@@ -32,6 +32,7 @@ import GlassPreviewBottom from "./GlassPreviewBottom";
 import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import { runOnUI } from "react-native-reanimated";
+import QRCodeModal from "./QRCodeModal";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
   // useKeepAwake,
@@ -53,10 +54,21 @@ const ScreenGecko = (props: Props) => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
+  const [qRCodeVisible, setQRCodeVisible] = useState(false);
+
+  const handleOpenQRCode = () => {
+    setQRCodeVisible(true);
+  };
+
+  const handleCloseQRCode = () => {
+    setQRCodeVisible(false);
+  };
+
   const {
     navigateToMomentView,
     navigateToMomentFocus,
     navigateToGeckoSelectSettings,
+    navigateToQRCode,
   } = useAppNavigations();
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
@@ -148,10 +160,8 @@ const ScreenGecko = (props: Props) => {
     },
     [navigateToMomentView], // optional, if this function comes from props/context
   );
- 
 
   const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
-  
     const result = new Array(count).fill(-1);
 
     if (!moments || moments.length === 0) {
@@ -277,7 +287,7 @@ const ScreenGecko = (props: Props) => {
   const handleChangeSpeed = (newSpeedFromButton) => {
     speedSettingRef.current = tickTotals[newSpeedFromButton] || 150;
     setSpeedSetting(newSpeedFromButton);
-  }; 
+  };
 
   const handleNavToSelect = useCallback(() => {
     if (autoPickUp) {
@@ -289,6 +299,15 @@ const ScreenGecko = (props: Props) => {
       navigateToGeckoSelectSettings({ selection: autoSelectType });
     }
   }, [autoPickUp, autoSelectType]);
+
+
+    const handleNavToQRCode = useCallback(() => {
+ 
+      // Reset autoSelectType before navigating so it will always trigger when coming back
+      // setAutoSelectType(-1); // or any value that's not in your normal range
+      navigateToQRCode({ selection: autoSelectType, friendName: selectedFriend.name });
+ 
+  }, [selectedFriend]);
 
   useEffect(() => {
     if (!manualOnly) {
@@ -405,53 +424,51 @@ const ScreenGecko = (props: Props) => {
     [capsuleList],
   );
 
+  //   const scoreFieldMap = {
+  //   1: "generic_score",
+  //   2: "hard_score",
+  //   3: "easy_score",
+  //   4: "quick_score",
+  //   5: "long_score",
+  //   6: "unique_score",
+  //   7: "generic_score",
+  //   8: "relevant_score",
+  //   9: "random_score",
+  // };
 
-//   const scoreFieldMap = {
-//   1: "generic_score",
-//   2: "hard_score",
-//   3: "easy_score",
-//   4: "quick_score",
-//   5: "long_score",
-//   6: "unique_score",
-//   7: "generic_score",
-//   8: "relevant_score",
-//   9: "random_score",
-// };
+  // const handleGetMoment = useCallback(
+  //   (id) => {
+  //     const moment = capsuleList.find((c) => c.id === id);
+  //     if (moment?.id) {
+  //       setMoment({
+  //         category: moment.user_category_name,
+  //         capsule: moment.capsule,
+  //         uniqueIndex: moment.uniqueIndex,
+  //         id: moment.id,
+  //       });
 
-// const handleGetMoment = useCallback(
-//   (id) => {
-//     const moment = capsuleList.find((c) => c.id === id);
-//     if (moment?.id) {
-//       setMoment({
-//         category: moment.user_category_name,
-//         capsule: moment.capsule,
-//         uniqueIndex: moment.uniqueIndex,
-//         id: moment.id,
-//       });
+  //       // Only add score if this is a top-scored pick (not random mode)
+  //       const scoreKey = scoreFieldMap[autoSelectType];
+  //       if (randomMomentIdsRef.current.includes(moment.id) && scoreKey) {
+  //         const score = moment[scoreKey] ?? 0;
+  //         runOnUI(() => {
+  //           "worklet";
+  //           count.value = count.value + score;
+  //         })();
+  //       }
 
-//       // Only add score if this is a top-scored pick (not random mode)
-//       const scoreKey = scoreFieldMap[autoSelectType];
-//       if (randomMomentIdsRef.current.includes(moment.id) && scoreKey) {
-//         const score = moment[scoreKey] ?? 0;
-//         runOnUI(() => {
-//           "worklet";
-//           count.value = count.value + score;
-//         })();
-//       }
-
-//       Vibration.vibrate(50);
-//     } else {
-//       setMoment({
-//         category: null,
-//         capsule: null,
-//         uniqueIndex: null,
-//         id: null,
-//       });
-//     }
-//   },
-//   [capsuleList, autoSelectType],
-// );
-
+  //       Vibration.vibrate(50);
+  //     } else {
+  //       setMoment({
+  //         category: null,
+  //         capsule: null,
+  //         uniqueIndex: null,
+  //         id: null,
+  //       });
+  //     }
+  //   },
+  //   [capsuleList, autoSelectType],
+  // );
 
   const primaryColor = lightDarkTheme.priamryText;
 
@@ -547,15 +564,15 @@ const ScreenGecko = (props: Props) => {
         TIME_SCORE={TIME_SCORE}
         DAYS_SINCE={DAYS_SINCE}
       />
-              <View style={styles.animatedCounterWrapper}>
-          <AnimatedCounter 
+      <View style={styles.animatedCounterWrapper}>
+        <AnimatedCounter
           addColor={manualGradientColors.lightColor}
           subtractColor={selectedFriend.darkColor}
           glowCenterColor={manualGradientColors.whiteColor}
           glowEdgeColor={selectedFriend.lightColor}
-          
-          countValue={count} />
-        </View>
+          countValue={count}
+        />
+      </View>
       <View style={styles.movementSettingsRow}>
         <Pressable
           onPress={handleToggleManual}
@@ -570,10 +587,11 @@ const ScreenGecko = (props: Props) => {
             color={lightDarkTheme.primaryBackground}
           ></SvgIcon>
         </Pressable>
-
-
+ 
+      </View>
 
         {!manualOnly && (
+
           <View style={{ marginHorizontal: 10 }}>
             <SpeedButtons
               // color={lightDarkTheme.primaryBackground}
@@ -588,7 +606,23 @@ const ScreenGecko = (props: Props) => {
             />
           </View>
         )}
-      </View>
+
+       <View style={styles.qRCodeWrapper}>
+          <AutoPickUpButton
+            color={
+              autoPickUp
+                ? selectedFriend.lightColor
+                : lightDarkTheme.primaryText
+            }
+            buttonDiameter={40}
+            buttonPadding={0}
+            iconSize={24}
+            // backgroundColor={lightDarkTheme.lighterOverlayBackground}
+            backgroundColor={lightDarkTheme.primaryBackground}
+            onPress={handleNavToQRCode}
+          />
+        </View>
+
       {!manualOnly && (
         <View style={styles.autoPickUpWrapper}>
           <AutoPickUpButton
@@ -834,6 +868,14 @@ const styles = StyleSheet.create({
 
     padding: 20,
   },
+  qRCodeWrapper: {
+       width: 100,
+    left: 0,
+    padding: 20,
+    bottom: 286,
+    position: "absolute",
+
+  },
   autoPickUpWrapper: {
     width: 100,
     left: 0,
@@ -891,11 +933,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   animatedCounterWrapper: {
-    position: 'absolute',
-    width: '100%',
+    position: "absolute",
+    width: "100%",
     top: 130,
-    alignItems: 'center',
-  }
+    alignItems: "center",
+  },
 });
 
 export default ScreenGecko;

@@ -12,11 +12,30 @@ import { useColorScheme } from "react-native";
 // import { useUserSettings } from "./UserSettingsContext";
 import useUserSettings from "../hooks/useUserSettings";
 
-const LDThemeContext = createContext();
 
-export const useLDTheme = () => useContext(LDThemeContext);
+interface LightDarkThemeType {
+  lightTheme: object;
+  darkTheme: object;
+}
 
-export const LDThemeProvider = ({ children }) => {
+const LDThemeContext = createContext<LightDarkThemeType | undefined>(undefined);
+
+// export const useLDTheme = () => useContext(LDThemeContext);
+
+export const useLDTheme = () => {
+  const context =  useContext(LDThemeContext);
+
+  if (!context) {
+    throw new Error(
+      "useSelectedFriend must be used within a SelectedFriendProvider"
+    );
+  }
+  return context;
+};
+
+interface LightDarkThemeProviderProps { children: React.ReactNode; }
+
+export const LDThemeProvider: React.FC<LightDarkThemeProviderProps> = ({ children }) => {
   const { settings } = useUserSettings(); 
   const colorScheme = useColorScheme();
 

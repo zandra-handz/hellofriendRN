@@ -21,7 +21,7 @@ import { useRoute } from "@react-navigation/native";
 // import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-
+ 
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";

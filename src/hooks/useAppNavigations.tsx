@@ -297,11 +297,19 @@ type NavToGeckoProp = {
   selection?: number | null;
   autoPick?: boolean | null;
   timstampe?: string | null;
+  pollMode?: boolean | null;
 };
 
 type NavToGeckoSelectSettingsProp = {
   selection: number;
 };
+
+type NavToQRCodeProp = {
+  selection: number;
+  friendName: string;
+};
+
+
 
 type NavToAuthProp = {
   usernameEntered: string | null;
@@ -338,6 +346,7 @@ interface hookReturns {
   navigateToGeckoSelectSettings: ({
     selection,
   }: NavToGeckoSelectSettingsProp) => void;
+  navigateToQRCode: ({ selection, friendName}: NavToQRCodeProp) => void;
 
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
   navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
@@ -428,6 +437,17 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
+  
+  const navigateToQRCode = ({
+    selection,
+    friendName,
+  }: NavToQRCodeProp) => {
+    navigation.navigate("QRCode", {
+      selection: selection,
+      friendName: friendName
+    });
+  };
+
   const navigateToMoments = ({ scrollTo = null }: NavToMomentsProp) => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
@@ -488,6 +508,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToMomentFocusWithText,
     navigateToGecko,
     navigateToGeckoSelectSettings,
+    navigateToQRCode,
     navigateToMoments,
     navigateToMomentView,
     navigateToWelcome,

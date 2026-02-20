@@ -30,6 +30,7 @@ import {
 } from "@react-navigation/native";
 
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
+ 
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
@@ -108,6 +109,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 import * as Sentry from "@sentry/react-native";
+import ScreenQRCode from "./app/screens/fidget/ScreenQRCode";
 
 Sentry.init({
   dsn: "https://59c9aeed4bccc9cfaf418f4733827937@o4509079411752960.ingest.us.sentry.io/4509293682360320",
@@ -459,6 +461,14 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                    <Stack.Screen
                     name="GeckoSelectSettings"
                     component={ScreenGeckoSelectSettings}
+                    options={{
+                      headerShown: false,
+                      gestureEnabled: false,
+                    }}
+                  />
+                                    <Stack.Screen
+                    name="QRCode"
+                    component={ScreenQRCode}
                     options={{
                       headerShown: false,
                       gestureEnabled: false,
