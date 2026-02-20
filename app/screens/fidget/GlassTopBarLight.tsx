@@ -14,9 +14,10 @@ type Props = {
     selectedFriend: { name: string };
     TIME_SCORE: number;
     DAYS_SINCE: number;
+    highlight: boolean;
 }
 
-const GlassTopBarLight = ({ textColor, backgroundColor, friendName, TIME_SCORE, DAYS_SINCE }: Props) => {
+const GlassTopBarLight = ({ textColor, backgroundColor, friendName, TIME_SCORE, DAYS_SINCE, highlight }: Props) => {
   const translateY = useSharedValue(-300) // Start off-screen above
   const hasAnimated = useRef(false)
 
@@ -42,7 +43,7 @@ const GlassTopBarLight = ({ textColor, backgroundColor, friendName, TIME_SCORE, 
   }))
 
   return (
-    <Animated.View style={[containerAnimationStyle, styles.statsWrapper, { backgroundColor }]}>
+    <Animated.View style={[containerAnimationStyle, styles.statsWrapper, { backgroundColor: backgroundColor, borderWidth: highlight ? 2 : 0, borderColor: textColor }]}>
       <Text style={[styles.friendText, { color: textColor }]}>
        {friendName}
       </Text>

@@ -1,12 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useState, useCallback, useMemo } from "react";
+import { View, Text, Pressable, StyleSheet, ActivityIndicator, Share, Linking } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { SafeAreaView } from "react-native-safe-area-context";
-import manualGradientColors from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-
 import SvgIcon from "@/app/styles/SvgIcons";
 import QRCode from "react-native-qrcode-skia";
 import Animated, {
@@ -16,6 +13,8 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
+import { createFriendPickSession } from "@/src/calls/api";
+
 type Props = {};
 
 const ScreenQRCode = (props: Props) => {
@@ -23,19 +22,46 @@ const ScreenQRCode = (props: Props) => {
   const { lightDarkTheme } = useLDTheme();
   const { navigateToGecko } = useAppNavigations();
 
-  const [acceptPawClear, setAcceptPawClear] = useState(false);
-  const [showSelectionModal, setShowSelectionModal] = useState(false);
-
   const initialSelection = route.params?.selection ?? 0;
   const friendName = route.params?.friendName ?? null;
-  const [selected, setSelected] = useState<number>(initialSelection);
+  const friendId = route.params?.friendId ?? null;
+  const friendNumber = route.params?.friendNumber ?? null;
+
+  const [isCreating, setIsCreating] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [qrValue, setQrValue] = useState<string | null>(null);
 
   // Animation values
   const translateY = useSharedValue(1000);
   const opacity = useSharedValue(0);
 
+  // Create session on mount
+  useEffect(() => {
+    const createSession = async () => {
+      if (!friendId || !friendName) return;
+
+      setIsCreating(true);
+      try {
+        const session = await createFriendPickSession({
+          friend: friendId,
+          friend_name: friendName,
+        });
+        if (session?.id) {
+          setSessionId(session.id);
+          setQrValue(`https://badrainbowz.com/friends/pick/${session.id}/`);
+        }
+      } catch (e) {
+        console.error("Failed to create session:", e);
+      } finally {
+        setIsCreating(false);
+      }
+    };
+
+    createSession();
+  }, [friendId, friendName]);
+
   // Animate in on mount
-  React.useEffect(() => {
+  useEffect(() => {
     translateY.value = withSpring(0, {
       damping: 90,
       stiffness: 1000,
@@ -43,35 +69,45 @@ const ScreenQRCode = (props: Props) => {
     opacity.value = withTiming(1, { duration: 150 });
   }, []);
 
+  useEffect(() => {
+    if (qrValue) {
+      console.log(qrValue);
+    }
+  }, [qrValue]);
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
     opacity: opacity.value,
   }));
 
-  const handleNavToGecko = useCallback(
-    (index = 0) => {
-      // console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
-      const timestamp = Date.now(); // Create timestamp before setTimeout
-      // console.log('timestamp being sent:', timestamp);
+const handleSendLink = async () => {
+  if (!qrValue) return;
 
-      opacity.value = withTiming(0, { duration: 100 });
-      setTimeout(() => {
-        navigateToGecko({
-          selection: index,
-          autoPick: acceptPawClear,
-          timestamp: timestamp, // Use the captured timestamp
-        });
-      }, 100);
-    },
-    [selected, acceptPawClear, navigateToGecko, opacity],
-  );
+  const message = `Hey ${friendName}! Tap this link when you're ready to pick: ${qrValue}`;
+
+  if (friendNumber) {
+    // Direct SMS if we have their number
+    Linking.openURL(`sms:${friendNumber}?body=${encodeURIComponent(message)}`);
+  } else {
+    // Fall back to share sheet
+    try {
+      await Share.share({ message });
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  }
+};
   const handleAccept = () => {
     translateY.value = withSpring(-1000, { damping: 20, stiffness: 90 });
     opacity.value = withTiming(0, { duration: 300 });
     setTimeout(() => {
-      setAcceptPawClear(true);
-      setShowSelectionModal(true);
-    }, 100);
+      navigateToGecko({
+        selection: initialSelection,
+        autoPick: true,
+        pollMode: true,
+        sessionId: sessionId,
+      });
+    }, 300);
   };
 
   const handleCancel = () => {
@@ -97,16 +133,20 @@ const ScreenQRCode = (props: Props) => {
               Let {friendName} pick
             </Text>
           </View>
-          <View
-            style={{
-              width: "100%",
-              height: 300,
-              justifyContent: "center",
-              alignItems: "center",
-             // backgroundColor: "teal",
-            }}
-          >
-            <QRCode color={lightDarkTheme.primaryText} size={150} value="https://badrainbowz.com/friends/" />
+
+          <View style={styles.qrWrapper}>
+            {isCreating ? (
+              <ActivityIndicator
+                size="large"
+                color={lightDarkTheme.primaryText}
+              />
+            ) : qrValue ? (
+              <QRCode
+                color={lightDarkTheme.primaryText}
+                size={150}
+                value={qrValue}
+              />
+            ) : null}
           </View>
 
           <View style={styles.questionWrapper}>
@@ -116,17 +156,15 @@ const ScreenQRCode = (props: Props) => {
                 { color: lightDarkTheme.primaryText },
               ]}
             >
-    Let Gracie scan the QR code above, or{' '}
-    <Text
-      onPress={() => {
-        // handle send link
-      }}
-      style={{ textDecorationLine: 'underline' }}
-    >
-      send a link instead
-    </Text>
-    . When you are ready, press the checkmark to start!
-  </Text>
+              Let {friendName} scan the QR code above, or{" "}
+              <Text
+                onPress={handleSendLink}
+                style={{ textDecorationLine: "underline" }}
+              >
+                send a link instead
+              </Text>
+              . When you are ready, press the checkmark to start!
+            </Text>
           </View>
 
           <View style={styles.cancelAcceptRow}>
@@ -138,7 +176,7 @@ const ScreenQRCode = (props: Props) => {
               ]}
             >
               <SvgIcon
-                name={`close`}
+                name="close"
                 size={40}
                 color={lightDarkTheme.primaryText}
               />
@@ -151,7 +189,7 @@ const ScreenQRCode = (props: Props) => {
               ]}
             >
               <SvgIcon
-                name={`check`}
+                name="check"
                 size={40}
                 color={lightDarkTheme.primaryText}
               />
@@ -169,7 +207,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "teal",
   },
   headerWrapper: {
     width: "100%",
@@ -183,6 +220,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     padding: 20,
+  },
+  qrWrapper: {
+    width: "100%",
+    height: 300,
+    justifyContent: "center",
+    alignItems: "center",
   },
   cancelAcceptRow: {
     width: "100%",
@@ -203,7 +246,7 @@ const styles = StyleSheet.create({
   cancelAcceptText: {
     fontSize: 18,
     lineHeight: 30,
-    // fontWeight: "bold",
+    textAlign: "center",
   },
   acceptButton: {
     borderRadius: 30,
@@ -211,37 +254,6 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 20,
     textAlign: "center",
-  },
-  sectionContainer: {
-    marginVertical: 6,
-    flexDirection: "row",
-    width: "100%",
-    flexWrap: "wrap",
-  },
-  button: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "center",
-    height: "auto",
-    borderRadius: 10,
-  },
-  text: {
-    borderRadius: 6,
-    padding: 10,
-    textAlign: "center",
-  },
-  infoBox: {
-    marginTop: 6,
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
 });
 

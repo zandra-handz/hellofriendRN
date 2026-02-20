@@ -1605,3 +1605,35 @@ export const fetchLocationDetails = async (locationData: object) => {
     handleApiError(e, "Error during fetchLocationDetails");
   }
 };
+
+
+
+
+// Create a pick session (call this when QR screen mounts)
+export const createFriendPickSession = async (data: {
+  friend: number;
+  friend_name: string;
+}) => {
+  try {
+    const response = await helloFriendApiClient.post(
+      `/friends/pick-session/create/`,
+      data
+    );
+    console.log("API POST createFriendPickSession", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during createFriendPickSession");
+  }
+};
+
+// Check if friend has pressed the button (poll this)
+export const getFriendPickSession = async (sessionId: string) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/friends/pick-session/${sessionId}/`
+    );
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during getFriendPickSession");
+  }
+};

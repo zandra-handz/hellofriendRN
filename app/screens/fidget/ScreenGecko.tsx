@@ -16,6 +16,7 @@ import React, {
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
@@ -32,6 +33,7 @@ import GlassPreviewBottom from "./GlassPreviewBottom";
 import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import { runOnUI } from "react-native-reanimated";
+import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession";
 import QRCodeModal from "./QRCodeModal";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import {
@@ -49,10 +51,44 @@ const ScreenGecko = (props: Props) => {
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
   const timestamp = route.params?.timestamp ?? null;
+  const pollMode = route.params?.pollMode ?? false;
+  const sessionId = route.params?.sessionId ?? null;
+
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+
+
+
+const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+const [isPollMode, setIsPollMode] = useState(false);
+
+useFocusEffect(
+  useCallback(() => {
+    const newSessionId = route.params?.sessionId ?? null;
+    const newPollMode = route.params?.pollMode ?? false;
+    
+    console.log("Screen focused, params:", { newSessionId, newPollMode });
+    
+    setActiveSessionId(newSessionId);
+    setIsPollMode(newPollMode);
+  }, [route.params?.sessionId, route.params?.pollMode])
+);
+
+const {
+  isPressed,
+  isExpired,
+  pressedAt,
+} = useFriendPickSession({
+  friendId: selectedFriend?.id,
+  friendName: selectedFriend?.name,
+  sessionId: activeSessionId,
+  enabled: isPollMode && !!activeSessionId,
+});
+
+ 
+
 
   const [qRCodeVisible, setQRCodeVisible] = useState(false);
 
@@ -70,9 +106,51 @@ const ScreenGecko = (props: Props) => {
     navigateToGeckoSelectSettings,
     navigateToQRCode,
   } = useAppNavigations();
+
+    const handleNavigateToMoment = useCallback(
+    (m) => {
+      navigateToMomentView({ moment: m, index: m.uniqueIndex });
+    },
+    [navigateToMomentView], // optional, if this function comes from props/context
+  );
+
+  const [moment, setMoment] = useState({
+    category: null,
+    capsule: null,
+    uniqueIndex: null,
+    id: null,
+  });
+
+  
+
+
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
+
+  
+useEffect(() => {
+  if (isPressed) {
+    console.log("Friend pressed the button! Timestamp:", pressedAt);
+    
+    // Clear the poll mode to stop polling
+    setIsPollMode(false);
+    setActiveSessionId(null);
+    handleNavigateToMoment(moment);
+    
+    // Do whatever you want with pressedAt timestamp here
+  }
+}, [isPressed, pressedAt, moment]);
+useEffect(() => {
+  if (isExpired) {
+    console.log("Session expired");
+        setIsPollMode(false);
+    setActiveSessionId(null);
+  }
+}, [isExpired]);
+
+
+
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -111,12 +189,6 @@ const ScreenGecko = (props: Props) => {
     }
   }, [selection, autoPick, timestamp]);
 
-  const [moment, setMoment] = useState({
-    category: null,
-    capsule: null,
-    uniqueIndex: null,
-    id: null,
-  });
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -154,12 +226,7 @@ const ScreenGecko = (props: Props) => {
   //   return ((n % m) + m) % m;
   // };
 
-  const handleNavigateToMoment = useCallback(
-    (m) => {
-      navigateToMomentView({ moment: m, index: m.uniqueIndex });
-    },
-    [navigateToMomentView], // optional, if this function comes from props/context
-  );
+
 
   const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
     const result = new Array(count).fill(-1);
@@ -305,7 +372,7 @@ const ScreenGecko = (props: Props) => {
  
       // Reset autoSelectType before navigating so it will always trigger when coming back
       // setAutoSelectType(-1); // or any value that's not in your normal range
-      navigateToQRCode({ selection: autoSelectType, friendName: selectedFriend.name });
+      navigateToQRCode({ selection: autoSelectType, friendName: selectedFriend.name, friendId: selectedFriend.id, friendNumber: friendDash?.suggestion_settings.phone_number });
  
   }, [selectedFriend]);
 
@@ -563,6 +630,7 @@ const ScreenGecko = (props: Props) => {
         friendName={selectedFriend.name}
         TIME_SCORE={TIME_SCORE}
         DAYS_SINCE={DAYS_SINCE}
+        highlight={!!isPollMode}
       />
       <View style={styles.animatedCounterWrapper}>
         <AnimatedCounter
@@ -587,9 +655,7 @@ const ScreenGecko = (props: Props) => {
             color={lightDarkTheme.primaryBackground}
           ></SvgIcon>
         </Pressable>
- 
-      </View>
-
+        
         {!manualOnly && (
 
           <View style={{ marginHorizontal: 10 }}>
@@ -606,6 +672,9 @@ const ScreenGecko = (props: Props) => {
             />
           </View>
         )}
+ 
+      </View>
+
 
        <View style={styles.qRCodeWrapper}>
           <AutoPickUpButton
