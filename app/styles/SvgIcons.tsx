@@ -73,6 +73,7 @@ import PinOutlineSvg from "./svgs/pin-outline";
 import PlusSvg from "./svgs/plus";
 import PulseSvg from "./svgs/pulse";
 import PlusCircleSvg from "./svgs/plus-circle";
+import QRCodeScanSvg from "./svgs/qrcode-scan";
 import RefreshSvg from "./svgs/refresh";
 import CalendarOutlineSvg from "./svgs/calendar-outline";
 import ScatterPlotSvg from "./svgs/scatter-plot";
@@ -136,6 +137,7 @@ const svgIcons = {
   pin_outline: PinOutlineSvg, // friend header
   plus: PlusSvg,
   plus_circle: PlusCircleSvg,
+  qrcode_scan: QRCodeScanSvg,
   calendar_outline: CalendarOutlineSvg, // friend header
   lock_outlne: LockOutlineSvg,
   logout: LogoutSvg,

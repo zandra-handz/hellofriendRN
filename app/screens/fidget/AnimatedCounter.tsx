@@ -1,54 +1,84 @@
-// animated total
-// import { StyleSheet, TextInput } from "react-native";
-// import React, { useEffect } from "react";
-// import Animated, {
+// import React from "react";
+// import { StyleSheet, View } from "react-native";
+// import {
+//   Canvas,
+//   Text,
+//   Group,
+// } from "@shopify/react-native-skia";
+// import {
 //   useSharedValue,
-//   useAnimatedProps,
-//   useAnimatedStyle,
 //   useAnimatedReaction,
 //   withSequence,
 //   withTiming,
-//   interpolateColor,
+//   withDelay,
+//   useDerivedValue,
 // } from "react-native-reanimated";
 // import { SharedValue } from "react-native-reanimated";
+// import type { SkFont } from "@shopify/react-native-skia";
 
-// Animated.addWhitelistedNativeProps({ text: true });
-// const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+// const CANVAS_WIDTH = 200;
+// const CANVAS_HEIGHT = 100;
+// const CENTER_X = CANVAS_WIDTH / 2;
+// const CENTER_Y = CANVAS_HEIGHT / 2;
 
 // type Props = {
 //   countValue: SharedValue<number>;
-//   pause: boolean;
-//   triggerReset: boolean;
+//   addColor: string;
+//   subtractColor: string;
+//   glowCenterColor: string;
+//   glowEdgeColor: string;
+//   fontLarge: SkFont;
+//   fontSmall: SkFont;
 // };
 
-// const AnimatedCounter = ({ countValue, pause, triggerReset }: Props) => {
+// const AnimatedCounter = ({
+//   countValue,
+//   addColor,
+//   subtractColor,
+//   glowCenterColor,
+//   glowEdgeColor,
+//   fontLarge,
+//   fontSmall,
+// }: Props) => {
+//   const baseOpacity = useSharedValue(0);
+//   const overlayOpacity = useSharedValue(0);
+//   const overlayY = useSharedValue(0);
 //   const scale = useSharedValue(1);
-//   const colorProgress = useSharedValue(0);
+//   const displayCount = useSharedValue(0);
+//   const displayDelta = useSharedValue(0);
+//   const isPositive = useSharedValue(true);
 
-//   useEffect(() => {
-//   scale.value = withTiming(1, { duration: 150 });
-//   colorProgress.value = withTiming(0, { duration: 150 });
-// }, [triggerReset]);
+//   useAnimatedReaction(
+//     () => countValue.value,
+//     (current, previous) => {
+//       "worklet";
 
-//   const triggerAnimation = () => {
-//     "worklet";
-//     scale.value = withSequence(
-//       withTiming(1.4, { duration: 150 }),
-//       withTiming(1, { duration: 300 })
-//     );
-//     colorProgress.value = withSequence(
-//       withTiming(1, { duration: 100 }),
-//       withTiming(0, { duration: 400 })
-//     );
-//   };
+//       if (previous === null || previous === undefined) return;
+//       if (current === previous) return;
 
-// useAnimatedReaction(
-//   () => countValue.value,
-//   (current, previous) => {
-//     if (current !== previous && previous !== null) {
-//       const delta = Math.abs(current - (previous ?? current));
-//       const isBig = delta >= 10;
-//       const isTiny = delta < 3;
+//       const delta = current - previous;
+//       const absDelta = Math.abs(delta);
+//       const isBig = absDelta >= 10;
+//       const isTiny = absDelta < 3;
+
+//       displayCount.value = current;
+//       displayDelta.value = delta;
+//       isPositive.value = delta >= 0;
+
+//       baseOpacity.value = withSequence(
+//         withTiming(1, { duration: 100 }),
+//         withDelay(500, withTiming(0, { duration: 800 }))
+//       );
+
+//       overlayOpacity.value = withSequence(
+//         withTiming(1, { duration: 50 }),
+//         withTiming(0, { duration: isBig ? 800 : 500 })
+//       );
+
+//       overlayY.value = 0;
+//       overlayY.value = withTiming(isBig ? -60 : -35, {
+//         duration: isBig ? 800 : 500,
+//       });
 
 //       if (!isTiny) {
 //         scale.value = withSequence(
@@ -56,245 +86,155 @@
 //           withTiming(1, { duration: isBig ? 500 : 300 })
 //         );
 //       }
-
-//       colorProgress.value = withSequence(
-//         withTiming(1, { duration: isBig ? 50 : 100 }),
-//         withTiming(0, { duration: isBig ? 600 : 400 })
-//       );
 //     }
-//   }
-// );
-//   const animatedCount = useAnimatedProps(() => ({
-//     text: `${countValue.value}`,
-//     defaultValue: `${countValue.value}`,
-//   }));
+//   );
 
-//   const animatedStyle = useAnimatedStyle(() => ({
-//     transform: [{ scale: scale.value }],
-//     color: interpolateColor(colorProgress.value, [0, 1], ["white", "yellow"]),
-//   }));
+//   const countText = useDerivedValue(() => `${Math.round(displayCount.value)}`);
+//   const deltaText = useDerivedValue(() => {
+//     const d = Math.round(displayDelta.value);
+//     return d > 0 ? `+${d}` : `${d}`;
+//   });
+
+//   // Calculate centered X position for base text
+//   const baseX = useDerivedValue(() => {
+//     if (!fontLarge) return CENTER_X;
+//     const textWidth = fontLarge.measureText(countText.value).width;
+//     return CENTER_X - textWidth / 2;
+//   });
+
+//   // Calculate centered X position for overlay text
+//   const overlayX = useDerivedValue(() => {
+//     if (!fontSmall) return CENTER_X;
+//     const textWidth = fontSmall.measureText(deltaText.value).width;
+//     return CENTER_X - textWidth / 2;
+//   });
+
+//   const baseColor = useDerivedValue(() => glowCenterColor);
+//   const overlayColor = useDerivedValue(() =>
+//     isPositive.value ? addColor : subtractColor
+//   );
+
+//   // Scale transform with origin at center
+//   const baseTransform = useDerivedValue(() => [
+//     { translateX: CENTER_X },
+//     { translateY: CENTER_Y },
+//     { scale: scale.value },
+//     { translateX: -CENTER_X },
+//     { translateY: -CENTER_Y },
+//   ]);
+
+//   const overlayTransform = useDerivedValue(() => [
+//     { translateX: CENTER_X },
+//     { translateY: CENTER_Y },
+//     { translateY: overlayY.value },
+//     { scale: scale.value },
+//     { translateX: -CENTER_X },
+//     { translateY: -CENTER_Y },
+//   ]);
+
+//   if (!fontLarge || !fontSmall) return null;
 
 //   return (
-//     <Animated.View style={styles.container}>
-//       <AnimatedTextInput
-//         style={animatedStyle}
-//         animatedProps={animatedCount}
-//         editable={false}
-//         defaultValue={""}
-//       />
-//     </Animated.View>
+//     <View style={styles.container}>
+//       <Canvas style={styles.canvas}>
+//         <Group transform={baseTransform}>
+//           <Text
+//             x={baseX}
+//             y={CENTER_Y + 8}
+//             text={countText}
+//             font={fontLarge}
+//             color={baseColor}
+//             opacity={baseOpacity}
+//           />
+//         </Group>
+//         <Group transform={overlayTransform}>
+//           <Text
+//             x={overlayX}
+//             y={CENTER_Y + 6}
+//             text={deltaText}
+//             font={fontSmall}
+//             color={overlayColor}
+//             opacity={overlayOpacity}
+//           />
+//         </Group>
+//       </Canvas>
+//     </View>
 //   );
 // };
 
 // const styles = StyleSheet.create({
 //   container: {
-//     flex: 1,
-//     width: "100%",
-//     height: 60,
-//     padding: 10,
-//     borderRadius: 30,
-//     backgroundColor: "teal",
+//     width: CANVAS_WIDTH,
+//     height: CANVAS_HEIGHT,
 //     alignItems: "center",
 //     justifyContent: "center",
+//   },
+//   canvas: {
+//     width: CANVAS_WIDTH,
+//     height: CANVAS_HEIGHT,
 //   },
 // });
 
 // export default AnimatedCounter;
 
-//animated increment
-// import { StyleSheet, TextInput } from "react-native";
-// import React, { useEffect } from "react";
-// import Animated, {
-//   useSharedValue,
-//   useAnimatedProps,
-//   useAnimatedStyle,
-//   useAnimatedReaction,
-//   withSequence,
-//   withTiming,
-//   interpolateColor,
-// } from "react-native-reanimated";
-// import { SharedValue } from "react-native-reanimated";
 
-// Animated.addWhitelistedNativeProps({ text: true });
-// const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
-// type Props = {
-//   countValue: SharedValue<number>;
-//   pause: boolean;
-//   triggerReset: boolean;
-// };
-
-// const AnimatedCounter = ({ countValue, pause, triggerReset }: Props) => {
-//   const scale = useSharedValue(1);
-//   const colorProgress = useSharedValue(0);
-//   const overlayOpacity = useSharedValue(0);
-//   const overlayTranslateY = useSharedValue(0);
-//   const deltaValue = useSharedValue(0);
-
-//   useEffect(() => {
-//     scale.value = withTiming(1, { duration: 150 });
-//     colorProgress.value = withTiming(0, { duration: 150 });
-//   }, [triggerReset]);
-
-//   useAnimatedReaction(
-//     () => countValue.value,
-//     (current, previous) => {
-//       if (current !== previous && previous !== null) {
-//         const delta = current - (previous ?? current);
-//         const absDelta = Math.abs(delta);
-//         const isBig = absDelta >= 10;
-//         const isTiny = absDelta < 3;
-
-//         // Update delta display value
-//         deltaValue.value = delta;
-
-//         // Overlay: pop up and fade out
-//         overlayOpacity.value = 1;
-//         overlayTranslateY.value = 0;
-//         overlayOpacity.value = withSequence(
-//           withTiming(1, { duration: 50 }),
-//           withTiming(0, { duration: isBig ? 800 : 500 })
-//         );
-//         overlayTranslateY.value = withTiming(isBig ? -60 : -35, {
-//           duration: isBig ? 800 : 500,
-//         });
-
-//         // Base text scale
-//         if (!isTiny) {
-//           scale.value = withSequence(
-//             withTiming(isBig ? 2.2 : 1.4, { duration: isBig ? 200 : 150 }),
-//             withTiming(1, { duration: isBig ? 500 : 300 })
-//           );
-//         }
-
-//         colorProgress.value = withSequence(
-//           withTiming(1, { duration: isBig ? 50 : 100 }),
-//           withTiming(0, { duration: isBig ? 600 : 400 })
-//         );
-//       }
-//     }
-//   );
-
-//   // Base count (static text, no animation)
-//   const baseCountProps = useAnimatedProps(() => ({
-//     text: `${countValue.value}`,
-//     defaultValue: `${countValue.value}`,
-//   }));
-
-//   // Overlay delta (animated)
-//   const overlayCountProps = useAnimatedProps(() => ({
-//     text: deltaValue.value > 0 ? `+${deltaValue.value}` : `${deltaValue.value}`,
-//     defaultValue: "",
-//   }));
-
-//   const baseStyle = useAnimatedStyle(() => ({
-//     color: interpolateColor(colorProgress.value, [0, 1], ["white", "yellow"]),
-//     transform: [{ scale: scale.value }],
-//     fontSize: 22,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   }));
-
-//   const overlayStyle = useAnimatedStyle(() => ({
-//     position: "absolute",
-//     opacity: overlayOpacity.value,
-//     transform: [
-//       { translateY: overlayTranslateY.value },
-//       { scale: scale.value },
-//     ],
-//     color: deltaValue.value >= 0 ? "lime" : "red",
-//     fontSize: 18,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   }));
-
-//   return (
-//     <Animated.View style={styles.container}>
-//       <AnimatedTextInput
-//         style={baseStyle}
-//         animatedProps={baseCountProps}
-//         editable={false}
-//         defaultValue={""}
-//       />
-//       <AnimatedTextInput
-//         style={overlayStyle}
-//         animatedProps={overlayCountProps}
-//         editable={false}
-//         defaultValue={""}
-//         pointerEvents="none"
-//       />
-//     </Animated.View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     width: "100%",
-//     height: 0,
-//     padding: 10,
-//     borderRadius: 30,
-//     backgroundColor: "teal",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });
-
-// export default AnimatedCounter;
-
-import { StyleSheet, TextInput } from "react-native";
-import React, { useEffect } from "react";
-import Animated, {
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import {
+  Canvas,
+  Text,
+  Group,
+} from "@shopify/react-native-skia";
+import {
   useSharedValue,
-  useAnimatedProps,
-  useAnimatedStyle,
   useAnimatedReaction,
   withSequence,
   withTiming,
   withDelay,
-  interpolateColor,
+  useDerivedValue,
 } from "react-native-reanimated";
 import { SharedValue } from "react-native-reanimated";
+import type { SkFont } from "@shopify/react-native-skia";
 
-Animated.addWhitelistedNativeProps({ text: true });
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+const CANVAS_WIDTH = 200;
+const CANVAS_HEIGHT = 100;
+const CENTER_X = CANVAS_WIDTH / 2;
+const CENTER_Y = CANVAS_HEIGHT / 2;
 
 type Props = {
   countValue: SharedValue<number>;
-  pause?: boolean;
-  triggerReset?: boolean;
   addColor: string;
   subtractColor: string;
   glowCenterColor: string;
   glowEdgeColor: string;
-  glowColor: string;
+  fontLarge: SkFont;
+  fontSmall: SkFont;
 };
 
 const AnimatedCounter = ({
   countValue,
-  pause,
-  triggerReset,
   addColor,
   subtractColor,
   glowCenterColor,
   glowEdgeColor,
+  fontLarge,
+  fontSmall,
 }: Props) => {
-  const scale = useSharedValue(1);
-  const colorProgress = useSharedValue(0);
   const baseOpacity = useSharedValue(0);
   const overlayOpacity = useSharedValue(0);
-  const overlayTranslateY = useSharedValue(0);
-  const deltaValue = useSharedValue(0);
-
-  useEffect(() => {
-    scale.value = withTiming(1, { duration: 150 });
-    colorProgress.value = withTiming(0, { duration: 150 });
-    baseOpacity.value = withTiming(0, { duration: 150 });
-  }, [triggerReset]);
+  const overlayScale = useSharedValue(1);
+  const overlayY = useSharedValue(0);
+  const baseScale = useSharedValue(1);
+  const displayCount = useSharedValue(0);
+  const displayDelta = useSharedValue(0);
+  const isPositive = useSharedValue(true);
 
   useAnimatedReaction(
     () => countValue.value,
     (current, previous) => {
+      "worklet";
+
       if (previous === null || previous === undefined) return;
       if (current === previous) return;
 
@@ -303,115 +243,128 @@ const AnimatedCounter = ({
       const isBig = absDelta >= 10;
       const isTiny = absDelta < 3;
 
-      deltaValue.value = delta;
+      displayCount.value = current;
+      displayDelta.value = delta;
+      isPositive.value = delta >= 0;
 
-      // Base count: fade in immediately, fade out after delay
+      // Background number: subtle fade, peaks at 0.3 opacity
       baseOpacity.value = withSequence(
-        withTiming(1, { duration: 100 }),
-        withDelay(500, withTiming(0, { duration: 800 })),
+        withTiming(0.65, { duration: 100 }),
+        withDelay(600, withTiming(0, { duration: 1000 }))
       );
 
-      // Overlay delta: pop up and fade out
-      overlayOpacity.value = 1;
-      overlayTranslateY.value = 0;
+      // Background scale: gentle pulse
+      baseScale.value = withSequence(
+        withTiming(isBig ? 1.3 : 1.15, { duration: isBig ? 200 : 150 }),
+        withTiming(1, { duration: isBig ? 500 : 300 })
+      );
+
+      // Delta overlay: bright and bold, peaks at full opacity
       overlayOpacity.value = withSequence(
         withTiming(1, { duration: 50 }),
-        withTiming(0, { duration: isBig ? 800 : 500 }),
+        withDelay(200, withTiming(0, { duration: isBig ? 1000 : 700 }))
       );
-      overlayTranslateY.value = withTiming(isBig ? -60 : -35, {
-        duration: isBig ? 800 : 500,
+
+      // Delta scale: pop effect
+      overlayScale.value = withSequence(
+        withTiming(isBig ? 2.4 : 2., { duration: isBig ? 150 : 100 }), //1.8, 1.4
+        withTiming(1, { duration: isBig ? 400 : 300 })
+      );
+
+      // Delta Y movement
+      overlayY.value = 0;
+      overlayY.value = withTiming(isBig ? -50 : -30, {
+        duration: isBig ? 1000 : 700,
       });
-
-      if (!isTiny) {
-        scale.value = withSequence(
-          withTiming(isBig ? 2.2 : 1.4, { duration: isBig ? 200 : 150 }),
-          withTiming(1, { duration: isBig ? 500 : 300 }),
-        );
-      }
-
-      colorProgress.value = withSequence(
-        withTiming(1, { duration: isBig ? 50 : 100 }),
-        withTiming(0, { duration: isBig ? 600 : 400 }),
-      );
-    },
+    }
   );
 
-  const baseCountProps = useAnimatedProps(() => ({
-    text: `${countValue.value}`,
-    defaultValue: `${countValue.value}`,
-  }));
+  const countText = useDerivedValue(() => `${Math.round(displayCount.value)}`);
+  const deltaText = useDerivedValue(() => {
+    const d = Math.round(displayDelta.value);
+    return d > 0 ? `+${d}` : `${d}`;
+  });
 
-  const overlayCountProps = useAnimatedProps(() => ({
-    text: deltaValue.value > 0 ? `+${deltaValue.value}` : `${deltaValue.value}`,
-    defaultValue: "",
-  }));
+  // Calculate centered X position for base text
+  const baseX = useDerivedValue(() => {
+    if (!fontLarge) return CENTER_X;
+    const textWidth = fontLarge.measureText(countText.value).width;
+    return CENTER_X - textWidth / 2;
+  });
 
-  const baseStyle = useAnimatedStyle(() => ({
-    color: interpolateColor(colorProgress.value, [0, 1], [glowCenterColor, glowEdgeColor]),
-    transform: [{ scale: scale.value }],
-    opacity: baseOpacity.value,
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-  }));
+  // Calculate centered X position for overlay text
+  const overlayX = useDerivedValue(() => {
+    if (!fontSmall) return CENTER_X;
+    const textWidth = fontSmall.measureText(deltaText.value).width;
+    return CENTER_X - textWidth / 2;
+  });
 
-  const overlayStyle = useAnimatedStyle(() => ({
-    position: "absolute",
-    opacity: overlayOpacity.value,
-    transform: [
-      { translateY: overlayTranslateY.value },
-      { scale: scale.value },
-    ],
-    color: deltaValue.value >= 0 ? addColor : subtractColor,
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  }));
+  const baseColor = useDerivedValue(() => glowCenterColor);
+  const overlayColor = useDerivedValue(() =>
+    isPositive.value ? addColor : subtractColor
+  );
 
-  useEffect(() => {
-    return () => {
-      // Cancel in-flight animations and reset all shared values
-      scale.value = 1;
-      colorProgress.value = 0;
-      baseOpacity.value = 0;
-      overlayOpacity.value = 0;
-      overlayTranslateY.value = 0;
-      deltaValue.value = 0;
-    };
-  }, []);
+  // Background: subtle scale from center
+  const baseTransform = useDerivedValue(() => [
+    { translateX: CENTER_X },
+    { translateY: CENTER_Y },
+    { scale: baseScale.value },
+    { translateX: -CENTER_X },
+    { translateY: -CENTER_Y },
+  ]);
+
+  // Overlay: scale + float up
+  const overlayTransform = useDerivedValue(() => [
+    { translateX: CENTER_X },
+    { translateY: CENTER_Y },
+    { translateY: overlayY.value },
+    { scale: overlayScale.value },
+    { translateX: -CENTER_X },
+    { translateY: -CENTER_Y },
+  ]);
+
+  if (!fontLarge || !fontSmall) return null;
 
   return (
-    <Animated.View style={styles.container}>
-      <AnimatedTextInput
-        style={baseStyle}
-        animatedProps={baseCountProps}
-        editable={false}
-        defaultValue={""}
-      />
-      <AnimatedTextInput
-        style={overlayStyle}
-        animatedProps={overlayCountProps}
-        editable={false}
-        defaultValue={""}
-        pointerEvents="none"
-      />
-    </Animated.View>
+    <View pointerEvents="none" style={styles.container}>
+      <Canvas pointerEvents="none" style={styles.canvas}>
+        {/* Background total - subtle */}
+        <Group transform={baseTransform}>
+          <Text
+            x={baseX}
+            y={CENTER_Y + 8}
+            text={countText}
+            font={fontLarge}
+            color={baseColor}
+            opacity={baseOpacity}
+          />
+        </Group>
+        {/* Delta overlay - prominent */}
+        <Group transform={overlayTransform}>
+          <Text
+            x={overlayX}
+            y={CENTER_Y + 6}
+            text={deltaText}
+            font={fontSmall}
+            color={overlayColor}
+            opacity={overlayOpacity}
+          />
+        </Group>
+      </Canvas>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: 100,
-    height: 80,
-    padding: 10,
-    borderRadius: 30,
-    //  backgroundColor: "teal",
+    width: CANVAS_WIDTH,
+    height: CANVAS_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
-
-    left: 0,
-    right: 0,
+  },
+  canvas: {
+    width: CANVAS_WIDTH,
+    height: CANVAS_HEIGHT,
   },
 });
 

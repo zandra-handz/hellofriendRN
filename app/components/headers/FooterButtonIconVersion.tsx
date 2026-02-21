@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Alert, ColorValue } from "react-native";
+import { Text, View, StyleSheet, Alert, ColorValue } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 
@@ -42,7 +42,9 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
 
   return (
     <GlobalPressable onPress={() => handleOnPress()} style={styles.container}>
+  
       {icon && icon}
+       
       <Text
         style={[
           styles.text,
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: "100%",
-    flex: 1,
+    flex: 1, 
   },
   text: {
     marginTop: 4,

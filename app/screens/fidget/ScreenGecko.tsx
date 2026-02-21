@@ -16,7 +16,7 @@ import React, {
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
@@ -24,6 +24,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 import SpeedButtons from "./SpeedButtons";
 import AutoPickUpButton from "./AutoPickUpButton";
+import QRCodeButton from "./QRCodeButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import AnimatedCounter from "./AnimatedCounter";
@@ -32,10 +33,11 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlassPreviewBottom from "./GlassPreviewBottom";
 import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
-import { runOnUI } from "react-native-reanimated";
+
 import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession";
-import QRCodeModal from "./QRCodeModal";
-import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
+
+// import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
+
 import {
   // useKeepAwake,
   // activateKeepAwake,
@@ -43,10 +45,12 @@ import {
   deactivateKeepAwake,
 } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
+type Props = {
+  skiaFontLarge: SkFont;
+  skiaFontSmall: SkFont;
+};
 
-type Props = {};
-
-const ScreenGecko = (props: Props) => {
+const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const route = useRoute();
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
@@ -59,46 +63,36 @@ const ScreenGecko = (props: Props) => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [isPollMode, setIsPollMode] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      const newSessionId = route.params?.sessionId ?? null;
+      const newPollMode = route.params?.pollMode ?? false;
 
-const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-const [isPollMode, setIsPollMode] = useState(false);
+      console.log("Screen focused, params:", { newSessionId, newPollMode });
 
-useFocusEffect(
-  useCallback(() => {
-    const newSessionId = route.params?.sessionId ?? null;
-    const newPollMode = route.params?.pollMode ?? false;
+      setActiveSessionId(newSessionId);
+      setIsPollMode(newPollMode);
+    }, [route.params?.sessionId, route.params?.pollMode]),
+  );
+
+  const {
+    isPressed,
+    isExpired,
+    pressedAt,
+    pressedMomentId,
+    updatePressedMoment, 
     
-    console.log("Screen focused, params:", { newSessionId, newPollMode });
-    
-    setActiveSessionId(newSessionId);
-    setIsPollMode(newPollMode);
-  }, [route.params?.sessionId, route.params?.pollMode])
-);
+  } = useFriendPickSession({
+    friendId: selectedFriend?.id,
+    friendName: selectedFriend?.name,
+    sessionId: activeSessionId,
+    enabled: isPollMode && !!activeSessionId,
+  });
 
-const {
-  isPressed,
-  isExpired,
-  pressedAt,
-} = useFriendPickSession({
-  friendId: selectedFriend?.id,
-  friendName: selectedFriend?.name,
-  sessionId: activeSessionId,
-  enabled: isPollMode && !!activeSessionId,
-});
-
- 
-
-
-  const [qRCodeVisible, setQRCodeVisible] = useState(false);
-
-  const handleOpenQRCode = () => {
-    setQRCodeVisible(true);
-  };
-
-  const handleCloseQRCode = () => {
-    setQRCodeVisible(false);
-  };
+  console.log(`PICK SESSION VALUES: `, isPressed, isExpired, pressedAt, activeSessionId)
 
   const {
     navigateToMomentView,
@@ -107,7 +101,7 @@ const {
     navigateToQRCode,
   } = useAppNavigations();
 
-    const handleNavigateToMoment = useCallback(
+  const handleNavigateToMoment = useCallback(
     (m) => {
       navigateToMomentView({ moment: m, index: m.uniqueIndex });
     },
@@ -121,34 +115,39 @@ const {
     id: null,
   });
 
-  
-
-
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-  
-useEffect(() => {
-  if (isPressed) {
-    console.log("Friend pressed the button! Timestamp:", pressedAt);
-    
-    // Clear the poll mode to stop polling
-    setIsPollMode(false);
-    setActiveSessionId(null);
-    handleNavigateToMoment(moment);
-    
-    // Do whatever you want with pressedAt timestamp here
-  }
-}, [isPressed, pressedAt, moment]);
-useEffect(() => {
-  if (isExpired) {
-    console.log("Session expired");
-        setIsPollMode(false);
-    setActiveSessionId(null);
-  }
-}, [isExpired]);
+    useEffect(() => {
+    if (isExpired) {
+      console.log("Session expired");
+      setIsPollMode(false);
+      setActiveSessionId(null);
+    }
+  }, [isExpired]);
 
+  useEffect(() => {
+    if (isPressed && sessionId) { // isPressed still isn't resetting properly, but sessionId will stop it from jumping if coming from a different screen
+      // console.log(
+      //   "Friend pressed the button! Timestamp:",
+      //   pressedAt,
+      //   Date.now(),
+      // );
+
+      // Clear the poll mode to stop polling
+      setIsPollMode(false);
+      setActiveSessionId(null);
+      if (moment && !pressedMomentId) {
+          updatePressedMoment(moment?.id);
+        handleNavigateToMoment(moment);
+     
+       
+      }
+
+      // Do whatever you want with pressedAt timestamp here
+    }
+  }, [isPressed, sessionId, pressedAt, moment, pressedMomentId, isExpired]);
 
 
 
@@ -189,7 +188,6 @@ useEffect(() => {
     }
   }, [selection, autoPick, timestamp]);
 
-
   // useFocusEffect(
   //   useCallback(() => {
   //     console.log('=== SCREEN FOCUSED ===');
@@ -225,8 +223,6 @@ useEffect(() => {
   // const mod = (n, m) => {
   //   return ((n % m) + m) % m;
   // };
-
-
 
   const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
     const result = new Array(count).fill(-1);
@@ -367,13 +363,15 @@ useEffect(() => {
     }
   }, [autoPickUp, autoSelectType]);
 
-
-    const handleNavToQRCode = useCallback(() => {
- 
-      // Reset autoSelectType before navigating so it will always trigger when coming back
-      // setAutoSelectType(-1); // or any value that's not in your normal range
-      navigateToQRCode({ selection: autoSelectType, friendName: selectedFriend.name, friendId: selectedFriend.id, friendNumber: friendDash?.suggestion_settings.phone_number });
- 
+  const handleNavToQRCode = useCallback(() => {
+    // Reset autoSelectType before navigating so it will always trigger when coming back
+    // setAutoSelectType(-1); // or any value that's not in your normal range
+    navigateToQRCode({
+      selection: autoSelectType,
+      friendName: selectedFriend.name,
+      friendId: selectedFriend.id,
+      friendNumber: friendDash?.suggestion_settings.phone_number,
+    });
   }, [selectedFriend]);
 
   useEffect(() => {
@@ -409,40 +407,53 @@ useEffect(() => {
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
-  // Function to randomize/scatter moments
-  const handleRescatterMoments = () => {
-    const minY = 0.2; // 10% down from top
-    const maxY = 0.75; // 10% up from bottom
+const handleRescatterMoments = () => {
+  const minY = 0.2;
+  const maxY = 0.75;
+  const minX = 0.05;
+  const maxX = 0.95;
 
-    const minX = 0.05;
-    const maxX = 0.95;
-    // console.log(`scattering moments!`, scatteredMoments);
-    setScatteredMoments((prev) =>
-      prev.map((m) => {
-        const randomX = Math.random() * (maxX - minX) + minX; // clamp X
-        const randomY = Math.random() * (maxY - minY) + minY; // clamp Y
-        const storedIndex = m.stored_index;
-
+  setScatteredMoments((prev) =>
+    prev.map((m) => {
+      // If moment is held, keep it offscreen
+      if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
         return {
           ...m,
-          coord: [randomX, randomY],
-          stored_index: storedIndex,
+          coord: [-100, -100],
+          stored_index: m.stored_index,
         };
-      }),
-    );
-    // console.log(`done!`, scatteredMoments);
-  };
+      }
 
-  const handleRecenterMoments = () => {
-    setScatteredMoments((prev) =>
-      prev.map((m) => ({
+      // Otherwise scatter it
+      const randomX = Math.random() * (maxX - minX) + minX;
+      const randomY = Math.random() * (maxY - minY) + minY;
+
+      return {
         ...m,
-        coord: [0.5, 0.5], // recenter all coords
-      })),
-    );
-    // console.log('All moments recentered to [0.5, 0.5]');
-  };
+        coord: [randomX, randomY],
+        stored_index: m.stored_index,
+      };
+    }),
+  );
+};
+const handleRecenterMoments = () => {
+  setScatteredMoments((prev) =>
+    prev.map((m) => {
+      // If moment is held, keep it offscreen
+      if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
+        return {
+          ...m,
+          coord: [-100, -100],
+        };
+      }
 
+      return {
+        ...m,
+        coord: [0.5, 0.5],
+      };
+    }),
+  );
+};
   //  const [count, setCount] = useState(0);
 
   const count = useSharedValue(0);
@@ -450,47 +461,88 @@ useEffect(() => {
   const loopCount = useRef(0);
   const pickupCountInCurrentLoop = useRef(0);
 
+  // const handleGetMoment = useCallback(
+  //   (id) => {
+  //     const moment = capsuleList.find((c) => c.id === id);
+  //     if (moment?.id) {
+  //       setMoment({
+  //         category: moment.user_category_name,
+  //         capsule: moment.capsule,
+  //         uniqueIndex: moment.uniqueIndex,
+  //         id: moment.id,
+  //       });
+
+  //       const charCount = Number(moment?.charCount);
+  //       const isSubtracting = loopCount.current % 2 !== 0;
+  //       const delta = isSubtracting ? -charCount : charCount;
+
+  //       // Update shared value on UI thread
+  //       runOnUI(() => {
+  //         "worklet";
+  //         count.value = count.value + delta;
+  //       })();
+
+  //       pickupCountInCurrentLoop.current += 1;
+
+  //       if (pickupCountInCurrentLoop.current >= capsuleList.length) {
+  //         loopCount.current += 1;
+  //         pickupCountInCurrentLoop.current = 0;
+  //       }
+
+  //       Vibration.vibrate(50);
+  //     } else {
+  //       setMoment({
+  //         category: null,
+  //         capsule: null,
+  //         uniqueIndex: null,
+  //         id: null,
+  //       });
+  //     }
+  //   },
+  //   [capsuleList],
+  // );
+
   const handleGetMoment = useCallback(
     (id) => {
       const moment = capsuleList.find((c) => c.id === id);
-      if (moment?.id) {
-        setMoment({
-          category: moment.user_category_name,
-          capsule: moment.capsule,
-          uniqueIndex: moment.uniqueIndex,
-          id: moment.id,
-        });
-
-        const charCount = Number(moment?.charCount);
-        const isSubtracting = loopCount.current % 2 !== 0;
-        const delta = isSubtracting ? -charCount : charCount;
-
-        // Update shared value on UI thread
-        runOnUI(() => {
-          "worklet";
-          count.value = count.value + delta;
-        })();
-
-        pickupCountInCurrentLoop.current += 1;
-
-        if (pickupCountInCurrentLoop.current >= capsuleList.length) {
-          loopCount.current += 1;
-          pickupCountInCurrentLoop.current = 0;
-        }
-
-        Vibration.vibrate(50);
-      } else {
+      // console.log(
+      //   `~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HANDLE GET MOMENT ID`,
+      //   moment?.id,
+      // );
+      if (!moment?.id) {
         setMoment({
           category: null,
           capsule: null,
           uniqueIndex: null,
           id: null,
         });
+        return;
       }
-    },
-    [capsuleList],
-  );
 
+      setMoment({
+        category: moment.user_category_name,
+        capsule: moment.capsule,
+        uniqueIndex: moment.uniqueIndex,
+        id: moment.id,
+      });
+
+      const charCount = Number(moment?.charCount) || 0;
+      const isSubtracting = loopCount.current % 2 !== 0;
+      const delta = isSubtracting ? -charCount : charCount;
+
+      // Direct assignment is safer than runOnUI for simple operations
+      count.value = count.value + delta;
+
+      pickupCountInCurrentLoop.current += 1;
+      if (pickupCountInCurrentLoop.current >= capsuleList.length) {
+        loopCount.current += 1;
+        pickupCountInCurrentLoop.current = 0;
+      }
+
+      Vibration.vibrate(50);
+    },
+    [capsuleList, count],
+  );
   //   const scoreFieldMap = {
   //   1: "generic_score",
   //   2: "hard_score",
@@ -625,39 +677,42 @@ useEffect(() => {
       </View> */}
 
       <GlassTopBarLight
-        textColor={primaryColor}
-        backgroundColor={lightDarkTheme.lighterOverlayBackground}
+        textColor={lightDarkTheme.primaryText}
+        backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendName={selectedFriend.name}
         TIME_SCORE={TIME_SCORE}
         DAYS_SINCE={DAYS_SINCE}
         highlight={!!isPollMode}
       />
       <View style={styles.animatedCounterWrapper}>
-        <AnimatedCounter
-          addColor={manualGradientColors.lightColor}
-          subtractColor={selectedFriend.darkColor}
-          glowCenterColor={manualGradientColors.whiteColor}
-          glowEdgeColor={selectedFriend.lightColor}
-          countValue={count}
-        />
+        {selectedFriend && count && (
+          <AnimatedCounter
+            addColor={manualGradientColors.lightColor}
+            subtractColor={selectedFriend.darkColor}
+            glowCenterColor={manualGradientColors.whiteColor}
+            glowEdgeColor={selectedFriend.lightColor}
+            countValue={count}
+            fontLarge={skiaFontLarge}
+            fontSmall={skiaFontSmall}
+          />
+        )}
       </View>
       <View style={styles.movementSettingsRow}>
         <Pressable
           onPress={handleToggleManual}
           style={[
             styles.manualButton,
-            { backgroundColor: lightDarkTheme.lighterOverlayBackground },
+            { backgroundColor: lightDarkTheme.darkerOverlayBackground },
           ]}
         >
           <SvgIcon
             name={manualOnly ? `motion_play_outline` : `motion_pause_outline`}
             size={36}
-            color={lightDarkTheme.primaryBackground}
+            color={lightDarkTheme.primaryText}
           ></SvgIcon>
         </Pressable>
-        
-        {!manualOnly && (
 
+        {!manualOnly && (
           <View style={{ marginHorizontal: 10 }}>
             <SpeedButtons
               // color={lightDarkTheme.primaryBackground}
@@ -672,25 +727,21 @@ useEffect(() => {
             />
           </View>
         )}
- 
       </View>
 
-
-       <View style={styles.qRCodeWrapper}>
-          <AutoPickUpButton
-            color={
-              autoPickUp
-                ? selectedFriend.lightColor
-                : lightDarkTheme.primaryText
-            }
-            buttonDiameter={40}
-            buttonPadding={0}
-            iconSize={24}
-            // backgroundColor={lightDarkTheme.lighterOverlayBackground}
-            backgroundColor={lightDarkTheme.primaryBackground}
-            onPress={handleNavToQRCode}
-          />
-        </View>
+      <View style={styles.qRCodeWrapper}>
+        <QRCodeButton
+          color={
+            isPollMode ? selectedFriend.lightColor : lightDarkTheme.primaryText
+          }
+          buttonDiameter={40}
+          buttonPadding={0}
+          iconSize={24}
+          // backgroundColor={lightDarkTheme.lighterOverlayBackground}
+          backgroundColor={lightDarkTheme.primaryBackground}
+          onPress={handleNavToQRCode}
+        />
+      </View>
 
       {!manualOnly && (
         <View style={styles.autoPickUpWrapper}>
@@ -938,12 +989,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   qRCodeWrapper: {
-       width: 100,
+    width: 100,
     left: 0,
     padding: 20,
     bottom: 286,
     position: "absolute",
-
   },
   autoPickUpWrapper: {
     width: 100,
@@ -1004,7 +1054,7 @@ const styles = StyleSheet.create({
   animatedCounterWrapper: {
     position: "absolute",
     width: "100%",
-    top: 130,
+    top: 140,
     alignItems: "center",
   },
 });

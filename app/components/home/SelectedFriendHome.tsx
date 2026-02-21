@@ -123,7 +123,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
         <SvgIcon
           name={"leaf"}
           size={1200}
-          color={"#8bc34a"}
+          // color={"#8bc34a"}
+               color={themeColors.lightColor}
           style={styles.leafContainer}
         />
         <View

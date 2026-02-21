@@ -169,11 +169,15 @@ const SelectedFriendFooter = ({
         primaryColor={primaryColor}
         label="Visual"
         icon={
+              <View style={{  top: 20, left: 10, overflow: 'hidden'}}>
+           
           <SvgIcon 
-            name={"pulse"} 
-            size={footerIconSize}
+             name={"gecko_mine"} 
+            // name={"pulse"} 
+            size={footerIconSize + 130}
             color={primaryColor}
           />
+          </View>
         } 
        // onPress={() => navigateToGecko({selection: 0})} // can use this too
           onPress={navigateToGecko} 

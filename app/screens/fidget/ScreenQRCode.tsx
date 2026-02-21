@@ -1,4 +1,12 @@
-import { View, Text, Pressable, StyleSheet, ActivityIndicator, Share, Linking } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+  Share,
+  Linking,
+} from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -14,13 +22,27 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { createFriendPickSession } from "@/src/calls/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {};
+
+type Session = {
+  id: string;
+  pressed_at: string | null;
+  is_expired: boolean;
+  expires_on: string;
+  created_on?: string;
+  dark_color?: string;
+  light_color?: string;
+  friend?: number;
+  friend_name?: string;
+};
 
 const ScreenQRCode = (props: Props) => {
   const route = useRoute();
   const { lightDarkTheme } = useLDTheme();
   const { navigateToGecko } = useAppNavigations();
+  const queryClient = useQueryClient();
 
   const initialSelection = route.params?.selection ?? 0;
   const friendName = route.params?.friendName ?? null;
@@ -31,7 +53,6 @@ const ScreenQRCode = (props: Props) => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [qrValue, setQrValue] = useState<string | null>(null);
 
-  // Animation values
   const translateY = useSharedValue(1000);
   const opacity = useSharedValue(0);
 
@@ -42,11 +63,20 @@ const ScreenQRCode = (props: Props) => {
 
       setIsCreating(true);
       try {
-        const session = await createFriendPickSession({
+        // ✅ IMPORTANT: wipe old session/poll state for this friend before creating a new one
+        queryClient.cancelQueries({ queryKey: ["PickSessionPoll"] });
+        queryClient.removeQueries({ queryKey: ["PickSessionPoll"] });
+        queryClient.setQueryData(["PickSession", friendId], null);
+
+        const session = (await createFriendPickSession({
           friend: friendId,
           friend_name: friendName,
-        });
+        })) as Session;
+
         if (session?.id) {
+          // ✅ IMPORTANT: push NEW session into cache so Gecko doesn't see old pressed session
+          queryClient.setQueryData(["PickSession", friendId], session);
+
           setSessionId(session.id);
           setQrValue(`https://badrainbowz.com/friends/pick/${session.id}/`);
         }
@@ -58,21 +88,15 @@ const ScreenQRCode = (props: Props) => {
     };
 
     createSession();
-  }, [friendId, friendName]);
+  }, [friendId, friendName, queryClient]);
 
-  // Animate in on mount
   useEffect(() => {
-    translateY.value = withSpring(0, {
-      damping: 90,
-      stiffness: 1000,
-    });
+    translateY.value = withSpring(0, { damping: 90, stiffness: 1000 });
     opacity.value = withTiming(1, { duration: 150 });
   }, []);
 
   useEffect(() => {
-    if (qrValue) {
-      console.log(qrValue);
-    }
+    if (qrValue) console.log(qrValue);
   }, [qrValue]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -80,26 +104,26 @@ const ScreenQRCode = (props: Props) => {
     opacity: opacity.value,
   }));
 
-const handleSendLink = async () => {
-  if (!qrValue) return;
+  const handleSendLink = async () => {
+    if (!qrValue) return;
 
-  const message = `Hey ${friendName}! Tap this link when you're ready to pick: ${qrValue}`;
+    const message = `Hey ${friendName}! Tap this link when you're ready to pick: ${qrValue}`;
 
-  if (friendNumber) {
-    // Direct SMS if we have their number
-    Linking.openURL(`sms:${friendNumber}?body=${encodeURIComponent(message)}`);
-  } else {
-    // Fall back to share sheet
-    try {
-      await Share.share({ message });
-    } catch (error) {
-      console.error("Error sharing:", error);
+    if (friendNumber) {
+      Linking.openURL(`sms:${friendNumber}?body=${encodeURIComponent(message)}`);
+    } else {
+      try {
+        await Share.share({ message });
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
     }
-  }
-};
+  };
+
   const handleAccept = () => {
     translateY.value = withSpring(-1000, { damping: 20, stiffness: 90 });
     opacity.value = withTiming(0, { duration: 300 });
+
     setTimeout(() => {
       navigateToGecko({
         selection: initialSelection,
@@ -127,40 +151,23 @@ const handleSendLink = async () => {
       {friendName && (
         <Animated.View style={[styles.firstContainer, animatedStyle]}>
           <View style={styles.headerWrapper}>
-            <Text
-              style={[styles.headerText, { color: lightDarkTheme.primaryText }]}
-            >
+            <Text style={[styles.headerText, { color: lightDarkTheme.primaryText }]}>
               Let {friendName} pick
             </Text>
           </View>
 
           <View style={styles.qrWrapper}>
             {isCreating ? (
-              <ActivityIndicator
-                size="large"
-                color={lightDarkTheme.primaryText}
-              />
+              <ActivityIndicator size="large" color={lightDarkTheme.primaryText} />
             ) : qrValue ? (
-              <QRCode
-                color={lightDarkTheme.primaryText}
-                size={150}
-                value={qrValue}
-              />
+              <QRCode color={lightDarkTheme.primaryText} size={150} value={qrValue} />
             ) : null}
           </View>
 
           <View style={styles.questionWrapper}>
-            <Text
-              style={[
-                styles.cancelAcceptText,
-                { color: lightDarkTheme.primaryText },
-              ]}
-            >
+            <Text style={[styles.cancelAcceptText, { color: lightDarkTheme.primaryText }]}>
               Let {friendName} scan the QR code above, or{" "}
-              <Text
-                onPress={handleSendLink}
-                style={{ textDecorationLine: "underline" }}
-              >
+              <Text onPress={handleSendLink} style={{ textDecorationLine: "underline" }}>
                 send a link instead
               </Text>
               . When you are ready, press the checkmark to start!
@@ -175,24 +182,18 @@ const handleSendLink = async () => {
                 { backgroundColor: lightDarkTheme.lighterOverlayBackground },
               ]}
             >
-              <SvgIcon
-                name="close"
-                size={40}
-                color={lightDarkTheme.primaryText}
-              />
+              <SvgIcon name="close" size={40} color={lightDarkTheme.primaryText} />
             </Pressable>
+
             <Pressable
               onPress={handleAccept}
               style={[
                 styles.acceptButton,
                 { backgroundColor: lightDarkTheme.lighterOverlayBackground },
               ]}
+              disabled={!sessionId || isCreating}
             >
-              <SvgIcon
-                name="check"
-                size={40}
-                color={lightDarkTheme.primaryText}
-              />
+              <SvgIcon name="check" size={40} color={lightDarkTheme.primaryText} />
             </Pressable>
           </View>
         </Animated.View>
@@ -233,9 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 30,
   },
-  headerText: {
-    fontSize: 34,
-  },
+  headerText: { fontSize: 34 },
   questionWrapper: {
     height: "auto",
     width: "100%",

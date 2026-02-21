@@ -77,6 +77,36 @@ export default class SleepWalk0 {
 
   }
 
+//   initFromPosition(pos) {
+//   this.walk[0] = pos[0];
+//   this.walk[1] = pos[1];
+//   this.currentPos[0] = pos[0];
+//   this.currentPos[1] = pos[1];
+//   this.tick = 0; // reset tick so it doesn't immediately jump to a new moment
+// }
+
+
+// prevents weird resetting/jumping when walk takes over
+initFromPosition(pos) {
+  const x = pos?.[0];
+  const y = pos?.[1];
+
+  // Single combined check - NaN !== NaN handles isNaN, and -100 is offscreen
+  if (!(x > -99 && y > -99)) {
+    this.walk[0] = 0.5;
+    this.walk[1] = 0.5;
+    this.currentPos[0] = 0.5;
+    this.currentPos[1] = 0.5;
+  } else {
+    this.walk[0] = x;
+    this.walk[1] = y;
+    this.currentPos[0] = x;
+    this.currentPos[1] = y;
+  }
+  
+  this.tick = 0;
+}
+
 updateCurrentPos(momentsRef, aspect, scale) {
   const moments = momentsRef.current.moments;
   if (!moments || moments.length === 0 || !aspect) return;
@@ -146,55 +176,7 @@ if (
 }
 
 
-
-
-// updateCurrentPos(momentsRef, aspect, scale) {
-//   const moments = momentsRef.current.moments;
-//   if (!moments || moments.length === 0 || !aspect) return;
-
-//   let tries = 0;
-
-//   while (tries < moments.length) {
-//     const currentMoment = moments[this.currentIndex];
-
-//     // Check if currentMoment and coord exist
-//     if (!currentMoment || !currentMoment.coord) {
-//       this.currentIndex = (this.currentIndex + 1) % moments.length;
-//       tries++;
-//       continue;
-//     }
-
-//     if (currentMoment.coord[0] === -100) {
-//       this.currentIndex = (this.currentIndex + 1) % moments.length;
-//       tries++;
-//       continue;
-//     }
-
-//     this.autoSelectId = currentMoment.id;
-//     this.autoSelectCoord[0] = currentMoment.coord[0];
-//     this.autoSelectCoord[1] = currentMoment.coord[1];
-
-//     toGeckoPointerScaled_inPlace(
-//       currentMoment.coord,
-//       aspect,
-//       scale,
-//       this.gecko_size,
-//       this.currentPos,
-//       0,
-//     );
-
-//     this.currentIndex = (this.currentIndex + 1) % moments.length;
-//     return;
-//   }
-
-//   // If all moments are invalid, default to off-screen
-//   this.autoSelectCoord[0] = -100;
-//   this.autoSelectCoord[1] = -100;
-//   this.currentPos[0] = -100;
-//   this.currentPos[1] = -100;
-// }
  
-
   resetTick() {
     this.tick = 0;
   } 
@@ -220,8 +202,7 @@ if (
 
     if (this.tick === 0) {
       this.updateCurrentPos(momentsRef, this.aspect, scale);
-    }
-// console.log(this.currentPos);
+    } 
  
     this.tick += 1;
        this.walk = this.currentPos;

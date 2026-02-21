@@ -6,6 +6,7 @@ import React, {
   useState,
   useMemo,
 } from "react";
+import { workletMonitor } from "./WorkletDebugger";
 import Soul from "./soulClass";
 import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
@@ -16,7 +17,10 @@ import {
   packGeckoOnlyProdCompact_56,
 } from "./animUtils";
 import PawSetter from "@/app/screens/fidget/PawSetter";
-import { MOMENTS_BG_SKSL_OPT, MOMENTS_BG_SKSL_OPT_BOXED } from "./shaderCode/momentsLGShaderOpt";
+import {
+  MOMENTS_BG_SKSL_OPT,
+  MOMENTS_BG_SKSL_OPT_BOXED,
+} from "./shaderCode/momentsLGShaderOpt";
 import {
   GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX,
   // GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_NO_FINGERS,
@@ -143,12 +147,23 @@ const MomentsSkia = ({
 
   const shaderTimeSV = useSharedValue(0);
   const startMsRef = useRef(nowMs());
-  const lastFrameMsRef = useRef(startMsRef.current);
+  // const lastFrameMsRef = useRef(startMsRef.current);
 
   const updateTrigger = useSharedValue(0);
   const lastRenderRef = useRef(0);
   const isPausedRef = useRef(false);
   const lastAutoPickupIdRef = useRef(-1);
+
+
+
+
+  const handleRescatterMoments_withUpdateTrigger = () => {
+    handleRescatterMoments();
+    // updateTrigger.value += 1;
+    // console.log(updateTrigger.value)
+
+
+  };
 
   // const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 30;
@@ -212,6 +227,7 @@ const MomentsSkia = ({
       return () => subscription.remove();
     }, []),
   );
+
 
   const handleUpdateMomentsState = () => {
     const newMoments = moments.current.moments;
@@ -313,6 +329,10 @@ const MomentsSkia = ({
   const handleGetMomentRef = useRef(handleGetMoment);
   useEffect(() => {
     handleGetMomentRef.current = handleGetMoment;
+    console.log(
+      `handleGetMoment triggered handleGetMomentRef`,
+      handleGetMomentRef.current,
+    );
   }, [handleGetMoment]);
 
   useEffect(() => {
@@ -365,11 +385,40 @@ const MomentsSkia = ({
   const [internalReset, setInternalReset] = useState(0);
   const handleReset = () => setInternalReset(Date.now());
 
+  // useEffect(() => {
+  //   console.log("resetting");
+  //   moments.current.updateOrAddMoments(momentsData);
+  //   moments.current.updateAllCoords(momentsData);
+  //   updateTrigger.value += 1; // need this to update the moments 
+  // }, [momentsData, reset]);
+
+
+
+  // THIS WAS GIVEN TO ME BY CHATGPT TO ENSURE MOMENT RESCATTERING UPDATES OUTSIDE OF ANIMATION LOOP (WHEN GECKO IS STILL)
   useEffect(() => {
-    console.log("resetting");
-    moments.current.updateOrAddMoments(momentsData);
-    moments.current.updateAllCoords(momentsData);
-  }, [momentsData, reset]);
+  console.log("resetting");
+
+  moments.current.updateOrAddMoments(momentsData);
+  moments.current.updateAllCoords(momentsData);
+
+  // ✅ PACK + COPY the moments uniform RIGHT NOW
+  if (aspect && size.width && size.height) {
+    workingBuffers.moments.fill(0);
+
+    packVec2Uniform_withRecenter_moments(
+      moments.current.moments,                 // <-- IMPORTANT: pack from the class
+      workingBuffers.moments as any,
+      moments.current.momentsLength,
+      aspect,
+      scale,
+    );
+
+    momentsUniformSV.value = Array.from(workingBuffers.moments);
+    momentsLengthSV.value = moments.current.momentsLength;
+  }
+
+  updateTrigger.value += 1;
+}, [momentsData, reset, aspect, scale, size.width, size.height]);
 
   useEffect(() => {
     if (!internalReset || !reset) {
@@ -409,6 +458,7 @@ const MomentsSkia = ({
     momentsLengthSV.value = 0;
 
     userPointSV.value = [restPoint0, restPoint1];
+    console.log("userPointSv reset!", userPointSV.value);
 
     userPoint_geckoSpaceRef.current[0] = startingCoord0;
     userPoint_geckoSpaceRef.current[1] = startingCoord1;
@@ -440,8 +490,13 @@ const MomentsSkia = ({
         frame = requestAnimationFrame(animate);
         return;
       }
+
+ 
       // DON'T DELETE
       // frameBudgetMonitor();
+
+      // DON'T DELETE
+      // workletMonitor();
 
       //  only compute dt/time AFTER we know we're running
       // const now = nowMs();
@@ -468,6 +523,7 @@ const MomentsSkia = ({
       }
 
       const currentId = moments.current.lastSelected?.id ?? -1;
+      // console.log(`CURRENT ID`, currentId);
       if (currentId !== -1 && currentId !== lastTriggeredIdRef.current) {
         lastTriggeredIdRef.current = currentId;
         handleGetMomentRef.current(currentId);
@@ -482,12 +538,22 @@ const MomentsSkia = ({
         gecko.current.updateSleepWalkMode(false);
       }
 
+      // if (frameCountRef.current < sleepWalkAfter) {
+      //   frameCountRef.current += 1;
+      // } else if (
+      //   frameCountRef.current === sleepWalkAfter &&
+      //   !gecko.current.sleepWalkMode
+      // ) {
+      //   gecko.current.updateSleepWalkMode(true);
+      // }
+
       if (frameCountRef.current < sleepWalkAfter) {
         frameCountRef.current += 1;
       } else if (
         frameCountRef.current === sleepWalkAfter &&
         !gecko.current.sleepWalkMode
       ) {
+        sleepWalk0.current.initFromPosition(userPoint_geckoSpaceRef.current);
         gecko.current.updateSleepWalkMode(true);
       }
 
@@ -508,11 +574,15 @@ const MomentsSkia = ({
         soul.current.update();
       }
 
-      if (gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
-        leadPoint.current.update(userPoint_geckoSpaceRef.current); //, dt, now);
-      } else if (!gecko.current.sleepWalkMode) {
+      if (!gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
         leadPoint.current.update(soul.current.soul);
+      } else if (
+        gecko.current.oneTimeEnterComplete &&
+        !gecko.current.sleepWalkMode
+      ) { 
+        leadPoint.current.update(userPoint_geckoSpaceRef.current); //, dt, now);
       } else {
+    
         sleepWalk0.current.update(moments);
         leadPoint.current.update(sleepWalk0.current.walk); //, dt, now);
       }
@@ -671,6 +741,7 @@ const MomentsSkia = ({
     // Reanimated dependency gate
     updateTrigger.value;
 
+
     if (!size.width || !size.height) {
       return {
         u_scale: scale,
@@ -783,7 +854,7 @@ const MomentsSkia = ({
           primaryColor={lightDarkTheme.primaryText}
           borderColor={lightDarkTheme.lighterOverlayBackground}
           primaryBackground={lightDarkTheme.darkerOverlayBackground}
-          onPress={handleRescatterMoments}
+          onPress={handleRescatterMoments_withUpdateTrigger}
         />
       </View>
     </>

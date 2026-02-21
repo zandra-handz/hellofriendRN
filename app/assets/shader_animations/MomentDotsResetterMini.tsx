@@ -28,11 +28,16 @@ const MomentDotsResetterMini = ({
 }: Props) => {
   const { navigateBack } = useAppNavigations();
 
-  const onGoBack = async () => {
+  const onGoBack =  () => {
     if (onBackPress) {
-      await onBackPress();
+      onBackPress();
     }
     navigateBack();
+  };
+  const handleOnPress = () => {
+    onPress();
+    
+
   };
 
   const iconSize = 24;

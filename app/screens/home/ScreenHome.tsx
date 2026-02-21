@@ -504,7 +504,7 @@ const route = useRoute();
                     onPress={handleNavigateToCreateNew}
                     backgroundColor={manualGradientColors.lightColor}
                     iconColor={manualGradientColors.homeDarkColor}
-                    spaceFromBottom={100}
+                    spaceFromBottom={140}
                   />
                 )}
               </>

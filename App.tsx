@@ -450,14 +450,30 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                       />
                     )}
                   </Stack.Screen>
-                  <Stack.Screen
+                  {/* <Stack.Screen
                     name="Gecko"
                     component={ScreenGecko}
                     options={{
                       headerShown: false,
                       gestureEnabled: false,
                     }}
-                  />
+                  /> */}
+
+                  <Stack.Screen
+  name="Gecko"
+  options={{
+    headerShown: false,
+    gestureEnabled: false,
+  }}
+>
+  {(props) => (
+    <ScreenGecko
+      {...props}
+      skiaFontLarge={skiaFontLarge}
+      skiaFontSmall={skiaFontSmall}
+    />
+  )}
+</Stack.Screen>
                    <Stack.Screen
                     name="GeckoSelectSettings"
                     component={ScreenGeckoSelectSettings}

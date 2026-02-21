@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createFriendPickSession,
@@ -43,6 +43,19 @@ const useFriendPickSession = ({ friendId, friendName, sessionId, enabled = true 
   // Use sessionId prop if provided, otherwise use cached session id
   const activeSessionId = sessionId || cachedSession?.id;
 
+const [momentId, setMomentId] = useState<string | null>(null);
+
+const updatePressedMoment = useCallback((id: string) => {
+  setMomentId(id);
+
+}, []);
+useEffect(() => {
+  // whenever a new poll session starts, clear pressed moment
+  setMomentId(null);
+  
+}, [activeSessionId]);
+
+ 
 // Poll for updates
 const pollSession = useQuery({
   queryKey: ["PickSessionPoll", activeSessionId],
@@ -94,17 +107,21 @@ const pollSession = useQuery({
     createSessionMutation.mutate();
   }, [friendId, queryClient]);
 
+ 
+
   return {
     session,
     sessionId: activeSessionId,
     isCreating: createSessionMutation.isPending,
     isPolling: pollSession.isFetching,
     isPressed: !!session?.pressed_at,
+    pressedMomentId: momentId,
     isExpired: session?.is_expired ?? false,
     pressedAt: session?.pressed_at ? new Date(session.pressed_at).getTime() : null,
     qrValue: activeSessionId ? `https://badrainbowz.com/friends/pick/${activeSessionId}/` : null,
     regenerateSession,
     createSessionMutation,
+    updatePressedMoment, 
   };
 };
 

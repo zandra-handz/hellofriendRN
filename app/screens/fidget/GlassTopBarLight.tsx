@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
     borderRadius: 70,
   },
   statsText: {
-    fontWeight: "bold",
+    // fontWeight: "bold",
     fontSize: 16,
     lineHeight: 22,
   },
   friendText: {
     fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 18,
     lineHeight: 32,
   },
 });

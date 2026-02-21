@@ -343,7 +343,7 @@ interface hookReturns {
     screenCameFrom,
     momentText,
   }: NavToMomentFocusWithTextProp) => void;
-  navigateToGecko: ({ selection, autoPick, timestamp }: NavToGeckoProp) => void;
+  navigateToGecko: ({ selection, autoPick, timestamp, sessionId }: NavToGeckoProp) => void;
   navigateToGeckoSelectSettings: ({
     selection,
   }: NavToGeckoSelectSettingsProp) => void;
