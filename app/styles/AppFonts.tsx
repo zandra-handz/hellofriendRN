@@ -16,6 +16,10 @@ export const AppFontStyles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     textTransform: 'uppercase',
   },
+  logoText: {
+      fontFamily: 'Poppins_700Bold',
+
+  },
   welcomeText: {
     fontSize: 32,
     lineHeight: 34,

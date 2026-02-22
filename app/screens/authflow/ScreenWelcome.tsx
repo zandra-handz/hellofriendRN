@@ -115,23 +115,29 @@ const ScreenWelcome = () => {
             {confirmedUserNotSignedIn && !user?.id && (
               <>
                 <View style={styles.logoContainer}>
-                  <AppTitle label={"Welcome to Hellofriend App!"} labelColor={manualGradientColors.homeDarkColor} />
+                  <AppTitle  labelColor={manualGradientColors.homeDarkColor} />
                 </View>
                 <View style={styles.signInButtonContainer}>
-                  {/* <Pressable
+                   <Pressable
                     onPress={() => setResetAnimation(Date.now())}
                     style={{
                       width: 'auto',
+                      width: 200,
                       alignItems: 'center',
                       padding: 10,
                       height: 40,
                       borderRadius: 999,
                       alignSelf: "center",
-                      backgroundColor: 'pink',
+                    //  backgroundColor: 'pink',
                       marginVertical: 40,
                     }}
-                  ><Text style={{fontSize:16, fontWeight: 'bold', color: lightDarkTheme.primaryBackground}}>[DEBUG] Resetter</Text></Pressable>
-                 */}
+                  >
+                    {/* <Text style={{fontSize:16, fontWeight: 'bold', color: lightDarkTheme.primaryBackground}}>[DEBUG] Resetter</Text> */}
+                    
+                    
+                    
+                    </Pressable>
+                 
                   <SignInButton
                     onPress={() => handleNavigateToAuthScreen(false)}
                     labelColor={manualGradientColors.homeDarkColor}

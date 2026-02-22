@@ -458,7 +458,7 @@ const MomentsSkia = ({
     momentsLengthSV.value = 0;
 
     userPointSV.value = [restPoint0, restPoint1];
-    console.log("userPointSv reset!", userPointSV.value);
+ 
 
     userPoint_geckoSpaceRef.current[0] = startingCoord0;
     userPoint_geckoSpaceRef.current[1] = startingCoord1;

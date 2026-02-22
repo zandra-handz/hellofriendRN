@@ -214,6 +214,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   //const currentLabel = getAutoSelectLabel(autoSelectType);
 
+  // updates on backend
   const { handleUpdateMomentCoords, updateMomentCoordsMutation } =
     useUpdateMomentCoords({
       userId: user?.id,
@@ -279,6 +280,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const MAX_MOMENTS = 30;
 
   const momentCoords = useMemo(() => {
+    console.log('momentsCoords recalculated, triggered by capsuleList')
     return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
       id: m.id,
       coord: [m.screen_x, m.screen_y],

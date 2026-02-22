@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 type Props = {
   label: string;
@@ -7,14 +8,18 @@ type Props = {
 };
  
 const AppTitle = ({
-  label = "Welcome to Hellofriend App!",
+  label = "Welcome to the FriendKeeper App!",
   labelColor,
 }: Props) => {
+
+  const welcomeText = AppFontStyles.logoText;
   return (
+
+  
     <View style={styles.container}>
       <View></View>
       <View style={styles.labelContainer}>
-        <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
+        <Text style={[ welcomeText,styles.label, { color: labelColor }]}>{label}</Text>
       </View>
     </View>
   );
@@ -26,12 +31,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   }, 
-  label: {
-    fontFamily: "Poppins-Regular",
-    fontSize: 28,
-    lineHeight: 30,
+  label: {  
+    fontSize: 24,
+    lineHeight: 36,
     textAlign: "center",
-    fontWeight: "bold",
+   // fontWeight: "bold",
   },
   labelContainer: {
     paddingHorizontal: 6,
