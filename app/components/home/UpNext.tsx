@@ -1,102 +1,97 @@
+// UpNext.tsx
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React from "react";
-import manualGradientColors from "@/app/styles/StaticColors";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import React from "react"; 
 import { AppFontStyles } from "@/app/styles/AppFonts";
+
 type Props = {
-  upcomingHelloes: object[];
+  friendName: string | null;
+  futureDateInWords: string | null;
+  textColor: string;
   onPress: () => void;
 };
 
-const UpNext = ({ upcomingHelloes, onPress }: Props) => {
-  const HEADER = `Up next`;
+const UpNext = ({
+  friendName,
+  futureDateInWords,
+  textColor,
+  onPress,
+}: Props) => { 
   const HEIGHT = 200;
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
-  if (!upcomingHelloes) {
-    return <View style={{ width: "100%", height: HEIGHT }}></View>;
-  }
+ 
+
   return (
-    <Animated.View
-      entering={FadeIn}
-      exiting={FadeOut}
-      style={{ width: "100%", height: 200  }}
-    >
-      <Pressable onPress={onPress} style={[styles.textContainer]}>
+ 
+      <Pressable onPress={onPress} style={styles.container}>
         <Text
           style={[
             subWelcomeTextStyle,
+            styles.headerText,
             {
-              fontSize: 20,
-              fontWeight: 'bold',
-              lineHeight: 26,
-              paddingLeft: 4,
-              color: manualGradientColors.homeDarkColor,
+              color: textColor,
             },
           ]}
         >
-          {HEADER}
+          Up next
         </Text>
 
         <Text
           numberOfLines={1}
           style={[
             welcomeTextStyle,
+            styles.friendNameText,
             {
-              fontSize: 40,
-              lineHeight: 50,
-              color: manualGradientColors.homeDarkColor,
-              marginBottom: 10,
+              color: textColor,
             },
           ]}
         >
-          {upcomingHelloes &&
-          // friendList?.length > 0 &&
-
-          upcomingHelloes[0]
-            ? upcomingHelloes[0].friend.name
-            : "Please add a friend to use this feature!"}
+          {friendName || "Please add a friend to use this feature!"}
         </Text>
 
         <Text
           style={[
-            styles.subtitleText,
+        
             subWelcomeTextStyle,
+                styles.subtitleText,
             {
-              fontSize: 22,
-              lineHeight: 32,
-              // marginTop: 20,
-              color: manualGradientColors.homeDarkColor,
+              color: textColor,
             },
           ]}
         >
-          Say hi on{" "}
-          {upcomingHelloes && upcomingHelloes[0]
-            ? upcomingHelloes[0].future_date_in_words
-            : ""}
-          !
+          Say hi on {futureDateInWords || ""}!
         </Text>
       </Pressable>
-    </Animated.View>
+ 
   );
 };
 
 const styles = StyleSheet.create({
-  textContainer: {
+  container: {
     zIndex: 5,
-    position: "absolute",
-    width: "78%",
-
-    flexWrap: "flex",
-    flexDirection: "column",
-    height: "100%",
-    paddingVertical: 10,
-    paddingBottom: 30,
-
-    flexDirection: "column",
-    justifyContent: "flex-end",
+    justifyContent: 'center',
+    textAlign: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+   
+  
+    
+  
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    lineHeight: 26, 
+  },
+  friendNameText: {
+    fontSize: 40,
+    lineHeight: 50,
+  },
+  subtitleText: {
+    fontSize: 16,
+    lineHeight: 32,
   },
 });
 
-export default UpNext;
+export default React.memo(UpNext);

@@ -16,13 +16,16 @@ import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import TalkingPointsChart from "./TalkingPointsChart";
+import TalkingPointsChart from "./TalkingPointsChart"; 
+ 
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 // import ItemFooterHelloes from "../appwide/statusbar/ItemFooterHelloes";
 // import { useFocusEffect } from "@react-navigation/native";
 // import { useCallback } from "react";
 
+import { Image } from "react-native";
+const LeafImage = require("@/app/styles/pngs/leaf.png");
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -36,8 +39,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   primaryColor,
   primaryOverlayColor,
   darkGlassBackground,
-  darkerGlassBackground,
-  darkerOverlayBackgroundColor,
+  darkerGlassBackground, 
   categoryColorsArray,
   // darkerOverlayBackgroundColor,
   primaryBackground,
@@ -102,7 +104,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
   return (
     <>
-      <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
+      {/* <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
         <View
           style={[
             styles.darkGlassBackgroundContainer,
@@ -111,7 +113,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             },
           ]}
         ></View>
-      </Animated.View>
+      </Animated.View> */}
       <View
         style={[
           styles.container,
@@ -120,13 +122,19 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           },
         ]}
       >
-        <SvgIcon
+        {/* <SvgIcon
           name={"leaf"}
           size={1200}
           // color={"#8bc34a"}
                color={themeColors.lightColor}
           style={styles.leafContainer}
-        />
+        /> */}
+      
+<Image  
+  source={LeafImage}
+  style={styles.leafContainer}
+  tintColor={themeColors.lightColor}
+/>
         <View
           style={styles.itemsContainer}
         >
@@ -182,8 +190,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               </View>
 
               <View style={styles.itemsContainer}>
+
                 <View style={{ width: "100%", marginTop: 3 }}>
                   {/* {!loadingDash && ( */}
+                
                   <TalkingPointsChart
                   canvasKey={canvasKey}
                     userId={userId}
@@ -258,8 +268,12 @@ const styles = StyleSheet.create({
   leafContainer: {
     position: "absolute",
     top: -750, // 740
-    left: -470,
+    left: -410,
     opacity: 0.8,
+
+  width: 1100,   // 👈 change this
+  height: 1100,  // 👈 change this
+  resizeMode: "contain",
     transform: [{ rotate: "200deg" }, { scaleX: -1 }],
   },
   containerOverScrollView: {

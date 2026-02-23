@@ -27,6 +27,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   darkerOverlayColor,
   lighterOverlayColor,
   handleSelectFriend,
+  onPress,
   startAtIndex = 1,
   height,
   maxHeight = 130,
@@ -61,7 +62,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       // const selectedFriend = id === null ? null : { id: id, name: name };
 
       // const friend = friendList.find((friend) => friend.id === id);
-      handleSelectFriend(id);
+      // handleSelectFriend(id);
+      onPress(id);
     },
     [
       // friendList,
@@ -113,18 +115,18 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "flex-start",
+            justifyContent: "center",
             width: "100%",
             marginBottom: 10,
           }}
         >
-          <Text style={{ fontWeight: "bold", fontSize: 20, lineHeight: 24 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 20, lineHeight: 24, color: primaryColor }}>
             Soon
           </Text>
         </View>
         {upcomingHelloes?.length > 0 && (
           <Animated.FlatList
-            data={upcomingHelloes.slice(0).slice(startAtIndex, 7)}
+            data={upcomingHelloes.slice(0).slice(startAtIndex, 5)}
             renderItem={renderListItem}
             keyExtractor={extractItemKey}
             initialNumToRender={10}

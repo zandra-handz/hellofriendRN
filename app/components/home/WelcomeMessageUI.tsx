@@ -1,7 +1,6 @@
 import { View, Pressable, StyleSheet } from "react-native";
 import React, { useEffect, useMemo } from "react";
 import Animated, {
- 
   useSharedValue,
   withTiming,
   withDelay,
@@ -12,7 +11,6 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import SvgIcon from "@/app/styles/SvgIcons";
 import MFeatureWriteButton from "./MFeatureWriteButton";
-
 
 interface WelcomeMessageUIProps {
   username: string;
@@ -30,8 +28,6 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   primaryBackground,
   paddingHorizontal = 10,
   darkerGlassBackground,
-  username = "",
-  isNewUser = false,
   borderBottomRightRadius = 10,
   borderBottomLeftRadius = 10,
   backgroundColor = "red",
@@ -50,7 +46,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
       opacityValue.value = withTiming(0, { duration: fadeLength });
       scaleValue.value = withDelay(
         200,
-        withTiming(0, { duration: fadeLength })
+        withTiming(0, { duration: fadeLength }),
       );
     } else {
       opacityValue.value = withTiming(1, { duration: 100 });
@@ -58,20 +54,13 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
     }
   }, [isKeyboardVisible]);
 
-  const animatedScaleStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scaleValue.value }],
-    };
-  });
-
   const animatedFadeStyle = useAnimatedStyle(() => {
     return {
       opacity: opacityValue.value,
     };
   });
 
-
-    const oppositeFadeStyle = useAnimatedStyle(() => {
+  const oppositeFadeStyle = useAnimatedStyle(() => {
     return {
       opacity: 1 - opacityValue.value,
     };
@@ -95,16 +84,6 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
   return (
     <>
-      <Animated.View
-        style={[
-          // animatedScaleStyle,
-          styles.absoluteColorSquareContainer,
-          {
-            backgroundColor: darkerGlassBackground,
-          },
-        ]}
-      ></Animated.View>
-
       <AnimatedPressable
         onPress={onPress}
         // layout={SlideInUp}
@@ -146,16 +125,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
         <Animated.View style={[animatedFadeStyle, { width: "100%" }]}>
           <View
-            style={{
-              width: "100%",
-              alignItems: "center",
-              height: 130,
-              marginBottom: 6,
-              paddingTop: 10,
-              justifyContent: "center",
-              // backgroundColor: "orange",
-            }}
-          >
+            style={styles.mFeatureButtonWrapper}>
             <MFeatureWriteButton
               onPress={onPress}
               leafColor={primaryColor}
@@ -210,6 +180,14 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 8,
     borderRadius: 999,
+  },
+  mFeatureButtonWrapper: {
+    width: "100%",
+    alignItems: "center",
+    height: 130,
+    marginBottom: 6,
+    paddingTop: 10,
+    justifyContent: "center",
   },
 
   leaf: {

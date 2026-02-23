@@ -28,9 +28,7 @@ type Props = {
 const HelloFriendFooter = ({
   userId,
   username,
-  lightDarkTheme,
-  friendListLength,
-  themeColors,
+  lightDarkTheme, 
 }: Props) => {
   const dividerStyle = lightDarkTheme.divider;
 
@@ -148,7 +146,7 @@ const HelloFriendFooter = ({
 
   const RenderCategoryButton = useCallback(
     () => <CategoryFooterButton onPress={() => handleCenterButtonToggle()} />,
-    [themeColors],
+    [], // was theme colors but I'm not sure why
   );
 
   const RenderAboutAppButton = useCallback(
@@ -211,27 +209,27 @@ const HelloFriendFooter = ({
           <RenderSignOutButton />
         </View>
 
-        <View style={[styles.divider, dividerStyle]} />
+        {/* <View style={[styles.divider, dividerStyle]} /> */}
         <>
           <View style={styles.section}>
             <RenderSettingsButton />
           </View>
         </>
 
-        <View style={[styles.divider, dividerStyle]} />
+        {/* <View style={[styles.divider, dividerStyle]} /> */}
         <>
           <View style={styles.section}>
             <RenderCategoryButton />
           </View>
         </>
 
-        <View style={[styles.divider, dividerStyle]} />
+        {/* <View style={[styles.divider, dividerStyle]} /> */}
 
         <View style={styles.section}>
           <RenderReportIssueButton />
         </View>
 
-        <View style={[styles.divider, dividerStyle]} />
+        {/* <View style={[styles.divider, dividerStyle]} /> */}
         <>
           <View style={styles.section}>
             <RenderAboutAppButton />

@@ -1,18 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, TextInput, StyleSheet  } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
 
 // app spinner
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
-
-// app context
-// import { useUser } from "@/src/context/UserContext";
-
-import { useLDTheme } from "@/src/context/LDThemeContext";
-
-// app hooks
-import useUser from "@/src/hooks/useUser";
-
+ 
 //app sibling
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
@@ -21,7 +13,7 @@ import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 // app components
-import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
+import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
@@ -32,20 +24,19 @@ import manualGradientColors from "@/app/styles/StaticColors";
 
 //app types
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
- 
 
 // const ScreenAuth = () => {
-  const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
+const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
   // const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const usernameEntered = route.params?.usernameEntered ?? false;
 
-  const { refetch } = useUser();
-  const { onSignIn, signinMutation } = useSignIn({ refetchUser: onAuthSuccess });
+  const { onSignIn, signinMutation } = useSignIn({
+    refetchUser: onAuthSuccess,
+  });
 
   const { navigateToNewAccount, navigateToRecoverCredentials } =
     useAppNavigations();
 
-  const { lightDarkTheme } = useLDTheme();
   const [username, setUsername] = useState(usernameEntered);
   const [password, setPassword] = useState("");
 
@@ -81,7 +72,7 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
         setUsername(usernameEntered);
         handleFocusUsername();
       }
-    }, [usernameEntered, signinMutation.isSuccess])
+    }, [usernameEntered, signinMutation.isSuccess]),
   );
 
   useEffect(() => {
@@ -139,16 +130,7 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
         label={"Signing in"}
       />
 
-      <PreAuthSafeViewAndGradientBackground
-        startColor={manualGradientColors.darkColor}
-        endColor={manualGradientColors.lightColor}
-        friendColorLight={null}
-        friendColorDark={null}
-        friendId={null}
-        includeCustomStatusBar={false}
-        backgroundOverlayColor={lightDarkTheme.primaryBackground}
-        style={styles.container}
-      >
+      <SafeViewAppDefault style={styles.container}>
         {!signinMutation.isPending && (
           <View style={styles.outerContainer}>
             <AuthScreenTopTray
@@ -230,11 +212,7 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
           </View>
         )}
         <View
-          style={{
-            width: "100%",
-            bottom: 0,
-            paddingHorizontal: 4,
-          }}
+          style={styles.buttomButtonWrapper}
         >
           {username && password && !signinMutation.isPending && (
             <AuthBottomButton
@@ -246,7 +224,7 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
             />
           )}
         </View>
-      </PreAuthSafeViewAndGradientBackground>
+      </SafeViewAppDefault>
     </>
   );
 };
@@ -269,13 +247,13 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: "Poppins-Regular",
     borderWidth: 2.6,
-    padding: 10,
-    paddingTop: 10,
-    borderRadius: 10,
+    padding: 20,
+    paddingTop: 20,
+    borderRadius: 30,
     alignContent: "center",
     justifyContent: "center",
     borderColor: "black",
-    fontSize: 15,
+    fontSize: 18,
   },
   inputFocused: {
     fontFamily: "Poppins-Regular",
@@ -286,6 +264,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: "Poppins-Bold",
     textAlign: "center",
+  },
+  buttomButtonWrapper: {
+    width: "100%",
+    bottom: 0,
+    paddingHorizontal: 4,
   },
 });
 

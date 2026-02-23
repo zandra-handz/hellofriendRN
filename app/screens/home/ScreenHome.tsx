@@ -14,18 +14,18 @@ import {
   Platform,
   StyleSheet,
 } from "react-native";
-
+ 
 import { useRoute } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 
 // app state
 // import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
- 
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
-import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
 // app utils
@@ -41,111 +41,83 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import { useShareIntentContext } from "expo-share-intent";
 import { File } from "expo-file-system";
 
-// import { useFocusEffect } from "@react-navigation/native";
-import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
-// app components 
+// app components
 import SafeViewHome from "@/app/components/appwide/format/SafeViewHome";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import AllHome from "@/app/components/home/AllHome";
-import SelectedFriendHome from "@/app/components/home/SelectedFriendHome";
-// import TopBarHome from "@/app/components/home/TopBarHome";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
-import { useCategoryColors } from "@/src/context/CategoryColorsContext";
 import KeyboardCoasters from "@/app/components/home/KeyboardCoasters";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-// import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import manualGradientColors from "@/app/styles/StaticColors";
+
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-
-// import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
-// import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
-// import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import useCategories from "@/src/hooks/useCategories";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import WriteButton from "@/app/components/home/WriteButton";
-
+ 
 const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { user } = useUser();
   const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
-const route = useRoute();
+  // const route = useRoute();
   // const { upcomingHelloes  } = useUpcomingHelloes();
-  const { navigateToMomentFocus } = useAppNavigations();
-  const handleNavigateToCreateNew = useCallback(() => {
-    navigateToMomentFocus({ screenCameFrom: 1 });
-  }, [navigateToMomentFocus]);
+  const { navigateToFriendHome } = useAppNavigations();
+    const isFocused = useIsFocused();
+
+ 
+ 
 
   const { autoSelectFriend } = useAutoSelector();
-  const { userCategories } = useCategories({ userId: user?.id });
 
-  const { selectedFriend, setToAutoFriend } = useSelectedFriend();
-  const { categoryColors, handleSetCategoryColors } = useCategoryColors();
+  const { selectedFriend } = useSelectedFriend();
 
-  const categoryIds = useMemo(
-    () => userCategories.map((c) => c.id), // or c.category_id
-    [userCategories]
+  console.log(
+    "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~HOMES SCREEN RERENDERED",
   );
 
-  useEffect(() => {
-    if (
-      userCategories?.length > 0 &&
-      selectedFriend?.lightColor &&
-      selectedFriend?.darkColor
-    ) {
-      const array = generateGradientColors(
-        categoryIds,
-        selectedFriend.lightColor,
-        selectedFriend.darkColor
-      );
-      handleSetCategoryColors(array);
-    }
-  }, [categoryIds, selectedFriend]);
-
-  useEffect(() => {
-    // does not need friendlist, autoselect friend object has the same data
-    // friendist currently getting called async/around the same time but separately
-    console.log("AUTOSELECTING FRIEND");
-
-    if (autoSelectFriend?.customFriend !== "pending" && !selectedFriend?.id) {
-      if (
-        autoSelectFriend.customFriend?.id &&
-        autoSelectFriend.customFriend?.id !== -1
-      ) {
-        setToAutoFriend({
-          friend: autoSelectFriend.customFriend,
-          preConditionsMet: autoSelectFriend.customFriend !== "pending",
-        });
-      } else if (
-        autoSelectFriend.nextFriend?.id &&
-        autoSelectFriend.nextFriend?.id !== -1
-      ) {
-        setToAutoFriend({
-          friend: autoSelectFriend.nextFriend?.id,
-
-          // preConditionsMet: autoSelectFriend.nextFriend !== undefined,
-          preConditionsMet: autoSelectFriend.nextFriend !== "pending",
-        });
-      } else {
-        setToAutoFriend({ friend: { id: null }, preConditionsMet: true });
-      }
-    } else {
-      console.log("already set");
-    }
-  }, [autoSelectFriend]);
-
-  const { friendListAndUpcoming, isLoading, friendListAndUpcomingIsSuccess } =
+  const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user?.id });
 
   const { setUpNextCache } = useUpNextCache({
     userId: user?.id,
     friendListAndUpcoming: friendListAndUpcoming,
   });
+  // if WEIRD BUGS AFTER 2/22 CHECK THIS
+  // BAD - runs on every render
+  // setUpNextCache();
 
+  // GOOD - move to useEffect
+  // useEffect(() => {
+  //   setUpNextCache();
+  // }, [friendListAndUpcoming]);
+
+
+  // Skip cache update when not focused
+useEffect(() => {
+  if (!isFocused) return;
   setUpNextCache();
+}, [friendListAndUpcoming, isFocused]);
+
+  const isLoading =
+    autoSelectFriend?.nextFriend === "pending" ||
+    autoSelectFriend?.customFriend === "pending" ||
+    !selectedFriend?.isReady ||
+    !friendListAndUpcomingIsSuccess;
+
+  // Navigate to friend screen when loading finishes AND friend is selected
+  // useEffect(() => {
+  //   if (!isLoading && selectedFriend?.id) {
+   
+  //     navigateToFriendHome();
+  //   }
+  // }, [isLoading, selectedFriend?.id]);
+
+  // Skip navigation when not focused
+useEffect(() => {
+  if (!isFocused) return;
+  if (!isLoading && selectedFriend?.id) {
+    navigateToFriendHome();
+  }
+}, [isLoading, selectedFriend?.id, isFocused]);
 
   // logQueryCacheSize(queryClient);
   const friendList = friendListAndUpcoming?.friends;
@@ -200,7 +172,7 @@ const route = useRoute();
         showFlashMessage(
           `length in shared text but data structure passed here is not valid`,
           true,
-          2000
+          2000,
         );
       }
     }
@@ -222,7 +194,7 @@ const route = useRoute();
           } else {
             Alert.alert(
               "Unsupported File",
-              "The shared file is not a valid image."
+              "The shared file is not a valid image.",
             );
           }
         } else {
@@ -232,7 +204,7 @@ const route = useRoute();
         console.error("Error processing shared file:", error);
         Alert.alert(
           "Error",
-          "An error occurred while processing the shared file."
+          "An error occurred while processing the shared file.",
         );
       }
     }
@@ -258,11 +230,11 @@ const route = useRoute();
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
+      () => setIsKeyboardVisible(true),
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
+      () => setIsKeyboardVisible(false),
     );
 
     return () => {
@@ -278,7 +250,7 @@ const route = useRoute();
   };
 
   const clearNewMomentText = () => {
-    setNewMomentText(""); 
+    setNewMomentText("");
   };
 
   const navigateToAddMomentScreen = useCallback(() => {
@@ -297,23 +269,12 @@ const route = useRoute();
     }
   };
 
-  const themeColors = useMemo(
-    () => ({
-      lightColor: selectedFriend?.lightColor,
-      darkColor: selectedFriend?.darkColor,
-      fontColorSecondary: selectedFriend?.fontColorSecondary,
-    }),
-    [
-      selectedFriend?.lightColor,
-      selectedFriend?.darkColor,
-      selectedFriend?.fontColorSecondary,
-    ]
-  );
+ 
 
   return (
     <>
       <LocalPeacefulGradientSpinner
-        loading={ 
+        loading={
           autoSelectFriend?.nextFriend === "pending" ||
           autoSelectFriend?.customFriend === "pending" ||
           !selectedFriend?.isReady ||
@@ -324,22 +285,16 @@ const route = useRoute();
       {autoSelectFriend?.customFriend !== "pending" &&
         autoSelectFriend?.nextFriend !== "pending" &&
         selectedFriend?.isReady &&
+     
         friendListAndUpcomingIsSuccess && (
           <SafeViewHome
-            friendColorLight={selectedFriend.lightColor}
-            friendColorDark={selectedFriend.darkColor}
-            backgroundOverlayColor={
-              friendListLength > 0
-                ? lightDarkTheme.primaryBackground
-                : lightDarkTheme.overlayBackground
-            }
-            friendId={selectedFriend?.id}
-            backgroundOverlayHeight={
-              selectedFriend?.id ? "" : isKeyboardVisible ? "100%" : ""
-            }
-            useSolidOverlay={selectedFriend?.id ? false : !isKeyboardVisible}
-            backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-            backgroundOverlayBottomRadius={0}
+            backgroundColor0={lightDarkTheme.primaryBackground}
+            backgroundColor1={lightDarkTheme.primaryBackground}
+            // backgroundColor={lightDarkTheme.primaryBackground}
+            style={{
+              flex: 1,
+            }}
+            useCustomStatus={false}
           >
             <>
               <>
@@ -369,6 +324,8 @@ const route = useRoute();
 
                               {friendListLength > 0 && (
                                 <>
+                                <View style={styles.mainActionsWrapper}>
+                                  
                                   <WelcomeMessageUI
                                     userId={user?.id}
                                     darkerGlassBackground={
@@ -383,15 +340,17 @@ const route = useRoute();
                                     isNewUser={isNewUser}
                                     friendId={selectedFriend?.id}
                                     friendName={selectedFriend?.name}
-                                    themeColors={themeColors}
+                               
                                     backgroundColor={
                                       lightDarkTheme.primaryBackground
                                     }
                                     borderBottomLeftRadius={0}
-                                    borderBottomRightRadius={0} 
+                                    borderBottomRightRadius={0}
                                     onPress={handleFocusPress}
                                     isKeyboardVisible={isKeyboardVisible}
                                   />
+                                  
+                                </View>
 
                                   <QuickWriteMoment
                                     focusMode={settings?.simplify_app_for_focus}
@@ -432,7 +391,6 @@ const route = useRoute();
                           )}
 
                           {!isKeyboardVisible &&
-                            !selectedFriend?.id &&
                             friendListLength > 0 && ( // loadingDash internally spins the components between friend selects
                               <View style={styles.allHomeWrapper}>
                                 <View
@@ -441,6 +399,9 @@ const route = useRoute();
                                     paddingHorizontal: PADDING_HORIZONTAL,
                                   }}
                                 >
+                                  {!selectedFriend?.id && (
+
+                             
                                   <AllHome
                                     userId={user?.id}
                                     friendId={selectedFriend?.id}
@@ -453,88 +414,42 @@ const route = useRoute();
                                     darkerOverlayColor={
                                       lightDarkTheme.darkerOverlayBackground
                                     }
-                                    isLoading={isLoading}
-                                    onPress={navigateToAddMomentScreen}
+                                    isLoading={isLoading} 
+                                    navigateToFriendHome={navigateToFriendHome}
                                     borderRadius={10}
                                     height={"100%"}
-                                    primaryColor={lightDarkTheme.primaryText}
+                                    textColor={lightDarkTheme.primaryText}
                                     overlayColor={
                                       lightDarkTheme.overlayBackground
                                     }
                                     primaryBackground={
                                       lightDarkTheme?.primaryBackground
                                     }
+
                                   />
+                                       )}
                                 </View>
                               </View>
                             )}
-
-                          {selectedFriend?.id && (
-                            <SelectedFriendHome
-                            canvasKey={route.key}
-                              primaryBackground={
-                                lightDarkTheme.primaryBackground
-                              }
-                              darkGlassBackground={
-                                lightDarkTheme.darkGlassBackground
-                              }
-                              darkerGlassBackground={
-                                lightDarkTheme.darkerGlassBackground
-                              }
-                              categoryColorsArray={categoryColors}
-                              skiaFontLarge={skiaFontLarge}
-                              skiaFontSmall={skiaFontSmall}
-                              paddingHorizontal={PADDING_HORIZONTAL}
-                              userId={user?.id}
-                              primaryColor={lightDarkTheme.primaryText}
-                              primaryOverlayColor={
-                                lightDarkTheme.overlayBackground
-                              }
-                              themeColors={themeColors}
-                              selectedFriendId={selectedFriend?.id}
-                              selectedFriendName={selectedFriend?.name}
-                            />
-                          )}
                         </View>
                       )
                   }
                 </KeyboardAvoidingView>
-                {selectedFriend?.id && (
-                  <WriteButton
-                    onPress={handleNavigateToCreateNew}
-                    backgroundColor={manualGradientColors.lightColor}
-                    iconColor={manualGradientColors.homeDarkColor}
-                    spaceFromBottom={140}
-                  />
-                )}
               </>
-              {!selectedFriend?.id && (
-                <HelloFriendFooter
-                  userId={user?.id}
-                  username={user?.username}
-                  settings={settings}
-                  friendId={selectedFriend?.id}
-                  friendName={selectedFriend?.name}
-                  themeColors={themeColors} 
-                  lightDarkTheme={lightDarkTheme}
-                  friendListLength={friendListLength}
-                  overlayColor={
-                    friendListLength > 0
-                      ? lightDarkTheme.overlayBackground
-                      : lightDarkTheme.primaryBackground
-                  }
-                />
-              )}
-
-              {selectedFriend?.id && upcomingHelloes?.length && (
-                <SelectedFriendFooter
-                  userId={user?.id}
-                  friendName={selectedFriend?.name}
-                  lightDarkTheme={lightDarkTheme}
-                  overlayColor={lightDarkTheme.overlayBackground}
-                  themeColors={themeColors}
-                />
-              )}
+              <HelloFriendFooter
+                userId={user?.id}
+                username={user?.username}
+                settings={settings}
+                friendId={selectedFriend?.id}
+                friendName={selectedFriend?.name}
+            
+                lightDarkTheme={lightDarkTheme} 
+                overlayColor={
+                  friendListLength > 0
+                    ? lightDarkTheme.overlayBackground
+                    : lightDarkTheme.primaryBackground
+                }
+              />
             </>
           </SafeViewHome>
         )}
@@ -554,6 +469,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
+  },
+  mainActionsWrapper: {
+    // backgroundColor: 'pink',
+    
+
   },
   mainContainer: {
     flex: 1,

@@ -6,74 +6,154 @@ import { getCurrentUser } from "@/src/calls/api";
 // import isEqual from "lodash.isequal";
 import * as SecureStore from "expo-secure-store";
 
-export interface CategoryType {
-  id: number;
-  name: string;
-  // add other fields here if needed
-}
+// export interface CategoryType {
+//   id: number;
+//   name: string;
+//   // add other fields here if needed
+// }
 
-type Props = {
-  userId: number;
-  isInitializing?: boolean;
+// type Props = {
+//   userId: number;
+//   isInitializing?: boolean;
 
-  enabled: boolean;
-};
+//   enabled: boolean;
+// };
+
+// const useUser = () => {
+//   const queryClient = useQueryClient(); 
+
+//   const {
+//     data: user,
+//     isError,
+//     isPending, //this is just pre-fetch
+//     isLoading,
+//     refetch,
+//   } = useQuery({
+//     queryKey: ["currentUser"],
+//     queryFn: getCurrentUser,
+//     enabled: false, // never auto-run
+//     retry: 3,
+//   });
+
+
+//   const onSignOutContextVersion = async () => { //leaving 'context' in for right now, technically it is 'hook' version
+     
+//     await signout();
+
+//     queryClient.resetQueries(["currentUser"], {
+//       exact: true,
+//       refetchActive: false,
+//     });
+
+//     queryClient.removeQueries({ exact: false }); // removes all queries
+//     queryClient.cancelQueries();
+//   };
+
+//     useEffect(() => {
+//       if (isError) {
+//         onSignOutContextVersion();
+//         // onSignOut();
+//       }
+//     }, [isError]);
+
+//       // useEffect(() => {
+//       //   (async () => {
+//       //     const storedToken = await SecureStore.getItemAsync("accessToken");
+//       //     if (storedToken) {
+//       //        console.log('refetching!')
+//       //       await refetch();
+//       //     } else {
+//       //       // console.log('not refetching')
+//       //       // onSignOut();
+//       //       onSignOutContextVersion();
+//       //     }
+//       //   })();
+//       // }, []);
+
+//       useEffect(() => {
+//   (async () => {
+//     console.log(user)
+//     // Skip if we already have user data
+//     if (user) return;
+
+//     const storedToken = await SecureStore.getItemAsync("accessToken");
+//     if (storedToken) {
+//       console.log("refetching!");
+//       await refetch();
+//     } else {
+//       onSignOutContextVersion();
+//     }
+//   })();
+// }, []); // Remove refetch from deps, only run once on mount
+
+//   return {
+//      user,
+//       isInitializing: isLoading,
+//       refetch,
+//   };
+// };
+
+// export default useUser;
+
+
+
 
 const useUser = () => {
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
 
   const {
     data: user,
     isError,
-    isPending, //this is just pre-fetch
+    isPending,
     isLoading,
     refetch,
   } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
-    enabled: false, // never auto-run
+    enabled: false,
     retry: 3,
+    staleTime: 1000 * 60 * 60, // 1 hour
   });
 
-
-  const onSignOutContextVersion = async () => { //leaving 'context' in for right now, technically it is 'hook' version
-     
+  const onSignOutContextVersion = async () => {
     await signout();
-
     queryClient.resetQueries(["currentUser"], {
       exact: true,
       refetchActive: false,
     });
-
-    queryClient.removeQueries({ exact: false }); // removes all queries
+    queryClient.removeQueries({ exact: false });
     queryClient.cancelQueries();
   };
 
-    useEffect(() => {
-      if (isError) {
-        onSignOutContextVersion();
-        // onSignOut();
-      }
-    }, [isError]);
+  useEffect(() => {
+    if (isError) {
+      onSignOutContextVersion();
+    }
+  }, [isError]);
 
-      useEffect(() => {
-        (async () => {
-          const storedToken = await SecureStore.getItemAsync("accessToken");
-          if (storedToken) {
-            // console.log('refetching!')
-            await refetch();
-          } else {
-            // console.log('not refetching')
-            // onSignOut();
-            onSignOutContextVersion();
-          }
-        })();
-      }, []);
+  useEffect(() => {
+    (async () => {
+      // Check cache first - skip if already have data
+      const cachedUser = queryClient.getQueryData(["currentUser"]);
+      if (cachedUser) {
+        console.log("User already cached, skipping refetch");
+        return;
+      }
+
+      const storedToken = await SecureStore.getItemAsync("accessToken");
+      if (storedToken) {
+        console.log("refetching!");
+        await refetch();
+      } else {
+        onSignOutContextVersion();
+      }
+    })();
+  }, []);
 
   return {
-     user,
-      isInitializing: isLoading,
-      refetch,
+    user,
+    isInitializing: isLoading,
+    refetch,
   };
 };
 

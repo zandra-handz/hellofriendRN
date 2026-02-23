@@ -38,7 +38,7 @@ const SelectedFriendFooter = ({
   const friendId = selectedFriend?.id;
   const { friendDash } = useFriendDash({ userId: userId, friendId: friendId });
   const { autoSelectFriend } = useAutoSelector();
-  const { navigateToGecko } = useAppNavigations();
+  const { navigateToGecko, navigateToHome } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
 
@@ -77,6 +77,35 @@ const SelectedFriendFooter = ({
     deselectFriend,
   ]);
 
+
+    const handleDeselect_withNavigate = useCallback(() => {
+    const goHome = deselectFriendFunction({
+      userId,
+      queryClient,
+      updateSettings,
+      friendId,
+      autoSelectFriend,
+      setToFriend,
+      deselectFriend,
+    });
+
+    console.log(!!goHome)
+
+    if (!!goHome) {
+      navigateToHome();
+
+    }  
+  }, [
+    userId,
+    queryClient,
+    autoSelectFriend,
+    updateSettings,
+    friendId,
+    setToFriend,
+    deselectFriend,
+    navigateToHome
+  ]);
+
   // const addCheckToDeselect = useCallback(() => {
   //   console.log(`addCheckToDeselect`, upNextId, friendId, lockedInNext);
   //   if (lockedInNext && Number(upNextId) === Number(friendId)) {
@@ -104,7 +133,7 @@ const SelectedFriendFooter = ({
             color={primaryColor}
           />
         }
-        onPress={() => handleDeselect()}
+        onPress={() => handleDeselect_withNavigate()}
       />
     ),
     [primaryColor, friendId, autoSelectFriend, queryClient]

@@ -10,6 +10,7 @@ import { useFont } from "@shopify/react-native-skia";
 import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
+import AutoSelectFriendHandler from "./src/handlers/AutoSelectFriendHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
 import {
   useShareIntentContext,
@@ -30,20 +31,13 @@ import {
 } from "@react-navigation/native";
 
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
- 
+
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-// import { UserProvider, useUser } from "./src/context/UserContext";
-import { UserProvider } from "./src/context/UserContext";
-// import {
-//   UserSettingsProvider,
-//   useUserSettings,
-// } from "./src/context/UserSettingsContext";
-
-import useUserSettings from "./src/hooks/useUserSettings";
+  
+// import useUserSettings from "./src/hooks/useUserSettings";
 import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
 
 // import { UserStatsProvider } from "./src/context/UserStatsContext";
@@ -56,7 +50,7 @@ import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
 // import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 
-import { CategoriesProvider } from "./src/context/CategoriesContext";
+// import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 // import { FriendDashProvider } from "./src/context/FriendDashContext";
@@ -71,6 +65,7 @@ import * as MediaLibrary from "expo-media-library";
 import useUser from "./src/hooks/useUser";
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
+import ScreenFriendHome from "./app/screens/home/ScreenFriendHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
 import ScreenReload from "./app/screens/helloes/ScreenReload";
@@ -188,7 +183,7 @@ export default Sentry.wrap(function App() {
         // console.log("Notification received in foreground:", notification);
         Alert.alert(
           notification.request.content.title,
-          notification.request.content.body
+          notification.request.content.body,
         );
       });
     return () => notificationSubscription.remove();
@@ -284,7 +279,7 @@ const linking = {
     if (path.includes(`dataUrl=${getShareExtensionKey()}`)) {
       // redirect to the ShareIntent Screen to handle data with the hook
       console.debug(
-        "react-navigation[getStateFromPath] redirect to ShareIntent screen"
+        "react-navigation[getStateFromPath] redirect to ShareIntent screen",
       );
       return {
         routes: [
@@ -304,7 +299,7 @@ const linking = {
         // REQUIRED FOR iOS WHEN APP IS IN BACKGROUND
         console.debug(
           "react-navigation[onReceiveURL] Redirect to ShareIntent-- NOW HOME-- Screen",
-          url
+          url,
         );
         listener(`${getScheme()}://home`);
       } else {
@@ -318,12 +313,12 @@ const linking = {
         // REQUIRED FOR ANDROID WHEN APP IS IN BACKGROUND
         console.debug(
           "react-navigation[subscribe] shareIntentStateListener",
-          event.value
+          event.value,
         );
         if (event.value === "pending") {
           listener(`${getScheme()}://home`);
         }
-      }
+      },
     );
     const shareIntentValueSubscription = ShareIntentModule?.addListener(
       "onChange",
@@ -331,13 +326,13 @@ const linking = {
         // REQUIRED FOR IOS WHEN APP IS IN BACKGROUND
         console.debug(
           "react-navigation[subscribe] shareIntentValueListener",
-          event.value
+          event.value,
         );
         const url = await Linking.getInitialURL();
         if (url) {
           onReceiveURL({ url });
         }
-      }
+      },
     );
 
     const urlEventSubscription = Linking.addEventListener("url", onReceiveURL);
@@ -353,11 +348,11 @@ const linking = {
     console.debug("react-navigation[getInitialURL] ?");
     // REQUIRED FOR ANDROID FIRST LAUNCH
     const needRedirect = ShareIntentModule?.hasShareIntent(
-      getShareExtensionKey()
+      getShareExtensionKey(),
     );
     console.debug(
       "react-navigation[getInitialURL] redirect to ShareIntent screen:",
-      needRedirect
+      needRedirect,
     );
     if (needRedirect) {
       return `${Constants.expoConfig?.scheme}://home`;
@@ -402,35 +397,36 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
     //  <AutoSelectorProvider userId={user?.id} settings={settings}>
     <AutoSelectorProvider userId={user?.id} settings={settings}>
       <CapsuleListProvider userId={user?.id} isInitializing={isInitializing}>
-        <NavigationContainer ref={navigationRef} linking={linking}>
-          <PeacefulGradientSpinner
-            userId={user?.id}
-            isInitializing={isInitializing}
-          />
-          <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
-          <QuickActionsHandler
-            userId={user?.id}
-            settings={settings}
-            navigationRef={navigationRef}
-          />
-          <TopLevelNavigationHandler
-            userId={user?.id}
-            isInitializing={isInitializing}
-          >
-            <Stack.Navigator
-              screenOptions={{
-                // headerShown: true,
-                // headerMode: "screen",
-
-                contentContainerStyle: { flexGrow: 1 },
-                cardStyle: { backgroundColor: "#000002" },
-              }}
+        <AutoSelectFriendHandler>
+          <NavigationContainer ref={navigationRef} linking={linking}>
+            <PeacefulGradientSpinner
+              userId={user?.id}
+              isInitializing={isInitializing}
+            />
+            <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
+            <QuickActionsHandler
+              userId={user?.id}
+              settings={settings}
+              navigationRef={navigationRef}
+            />
+            <TopLevelNavigationHandler
+              userId={user?.id}
+              isInitializing={isInitializing}
             >
-              {user?.id ? (
-                //  && settings?.id
-                // user.app_setup_complete || !user.app_setup_complete ? (
-                <>
-                  {/* <Stack.Screen
+              <Stack.Navigator
+                screenOptions={{
+                  // headerShown: true,
+                  // headerMode: "screen",
+
+                  contentContainerStyle: { flexGrow: 1 },
+                  cardStyle: { backgroundColor: "#000002" },
+                }}
+              >
+                {user?.id ? (
+                  //  && settings?.id
+                  // user.app_setup_complete || !user.app_setup_complete ? (
+                  <>
+                    {/* <Stack.Screen
                 name="hellofriend"
                 component={ScreenHome}
                 initialParams={{ skiaFontLarge, skiaFontSmall }}
@@ -438,19 +434,32 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                   headerShown: false,
                 }}
               /> */}
-                  <Stack.Screen
-                    name="hellofriend"
-                    options={{ headerShown: false }}
-                  >
-                    {(props) => (
-                      <ScreenHome
-                        {...props}
-                        skiaFontLarge={skiaFontLarge}
-                        skiaFontSmall={skiaFontSmall}
-                      />
-                    )}
-                  </Stack.Screen>
-                  {/* <Stack.Screen
+                    <Stack.Screen
+                      name="hellofriend"
+                      options={{ headerShown: false }}
+                    >
+                      {(props) => (
+                        <ScreenHome
+                          {...props}
+                          skiaFontLarge={skiaFontLarge}
+                          skiaFontSmall={skiaFontSmall}
+                        />
+                      )}
+                    </Stack.Screen>
+
+                    <Stack.Screen
+                      name="FriendHome"
+                      options={{ headerShown: false }}
+                    >
+                      {(props) => (
+                        <ScreenFriendHome
+                          {...props}
+                          skiaFontLarge={skiaFontLarge}
+                          skiaFontSmall={skiaFontSmall}
+                        />
+                      )}
+                    </Stack.Screen>
+                    {/* <Stack.Screen
                     name="Gecko"
                     component={ScreenGecko}
                     options={{
@@ -459,84 +468,84 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                     }}
                   /> */}
 
-                  <Stack.Screen
-  name="Gecko"
-  options={{
-    headerShown: false,
-    gestureEnabled: false,
-  }}
->
-  {(props) => (
-    <ScreenGecko
-      {...props}
-      skiaFontLarge={skiaFontLarge}
-      skiaFontSmall={skiaFontSmall}
-    />
-  )}
-</Stack.Screen>
-                   <Stack.Screen
-                    name="GeckoSelectSettings"
-                    component={ScreenGeckoSelectSettings}
-                    options={{
-                      headerShown: false,
-                      gestureEnabled: false,
-                    }}
-                  />
-                                    <Stack.Screen
-                    name="QRCode"
-                    component={ScreenQRCode}
-                    options={{
-                      headerShown: false,
-                      gestureEnabled: false,
-                    }}
-                  />
+                    <Stack.Screen
+                      name="Gecko"
+                      options={{
+                        headerShown: false,
+                        gestureEnabled: false,
+                      }}
+                    >
+                      {(props) => (
+                        <ScreenGecko
+                          {...props}
+                          skiaFontLarge={skiaFontLarge}
+                          skiaFontSmall={skiaFontSmall}
+                        />
+                      )}
+                    </Stack.Screen>
+                    <Stack.Screen
+                      name="GeckoSelectSettings"
+                      component={ScreenGeckoSelectSettings}
+                      options={{
+                        headerShown: false,
+                        gestureEnabled: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="QRCode"
+                      component={ScreenQRCode}
+                      options={{
+                        headerShown: false,
+                        gestureEnabled: false,
+                      }}
+                    />
 
-                  <Stack.Screen
-                    name="MomentFocus"
-                    component={ScreenMomentFocus}
-                    options={{
-                      gestureEnabled: false,
-                      animation: "none",
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Moments"
-                    component={ScreenMoments}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="PreAdded"
-                    component={ScreenPreAdded}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Finalize"
-                    component={ScreenFinalize}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Reload"
-                    component={ScreenReload}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
+                    <Stack.Screen
+                      name="MomentFocus"
+                      component={ScreenMomentFocus}
+                      options={{
+                        gestureEnabled: false,
+                        animation: "none",
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Moments"
+                      component={ScreenMoments}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="PreAdded"
+                      component={ScreenPreAdded}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Finalize"
+                      component={ScreenFinalize}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Reload"
+                      component={ScreenReload}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
 
-                  <Stack.Screen
-                    name="MomentView"
-                    component={ScreenMomentView}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  {/* REINSTATE
+                    <Stack.Screen
+                      name="MomentView"
+                      component={ScreenMomentView}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    {/* REINSTATE
                <Stack.Screen
                 name="Images"
                 component={ScreenImages}
@@ -544,117 +553,117 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                   headerShown: false,
                 }}
               /> */}
-                  <Stack.Screen
-                    name="ImageView"
-                    component={ScreenImageView}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="History"
-                    component={ScreenHistory}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Helloes"
-                    component={ScreenHelloes}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="HelloView"
-                    component={ScreenHelloView}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
+                    <Stack.Screen
+                      name="ImageView"
+                      component={ScreenImageView}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="History"
+                      component={ScreenHistory}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Helloes"
+                      component={ScreenHelloes}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="HelloView"
+                      component={ScreenHelloView}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
 
-                  <Stack.Screen
-                    name="LocationSend"
-                    component={ScreenLocationSend}
-                    options={({ route }) => ({
-                      headerShown: false,
-                    })}
-                  />
-                  <Stack.Screen
-                    name="LocationEdit"
-                    component={ScreenLocationEdit}
-                    options={() => ({
-                      headerShown: false,
-                    })}
-                  />
-                  <Stack.Screen
-                    name="LocationCreate"
-                    component={ScreenLocationCreate}
-                    options={() => ({
-                      headerShown: false,
-                    })}
-                  />
-                  <Stack.Screen
-                    name="LocationSearch"
-                    component={ScreenLocationSearch}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="MidpointLocationSearch"
-                    component={ScreenMidpointLocationSearch}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="AddImage"
-                    component={ScreenAddImage}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="AddHello"
-                    component={ScreenAddHello}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="SelectFriend"
-                    component={ScreenSelectFriend}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="AddFriend"
-                    component={ScreenAddFriend}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Fidget"
-                    component={ScreenFidget}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <Stack.Screen
-                    name="Welcome"
-                    component={ScreenWelcome}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
+                    <Stack.Screen
+                      name="LocationSend"
+                      component={ScreenLocationSend}
+                      options={({ route }) => ({
+                        headerShown: false,
+                      })}
+                    />
+                    <Stack.Screen
+                      name="LocationEdit"
+                      component={ScreenLocationEdit}
+                      options={() => ({
+                        headerShown: false,
+                      })}
+                    />
+                    <Stack.Screen
+                      name="LocationCreate"
+                      component={ScreenLocationCreate}
+                      options={() => ({
+                        headerShown: false,
+                      })}
+                    />
+                    <Stack.Screen
+                      name="LocationSearch"
+                      component={ScreenLocationSearch}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="MidpointLocationSearch"
+                      component={ScreenMidpointLocationSearch}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="AddImage"
+                      component={ScreenAddImage}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="AddHello"
+                      component={ScreenAddHello}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="SelectFriend"
+                      component={ScreenSelectFriend}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="AddFriend"
+                      component={ScreenAddFriend}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Fidget"
+                      component={ScreenFidget}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Stack.Screen
+                      name="Welcome"
+                      component={ScreenWelcome}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
 
-                  {/* <Stack.Screen
+                    {/* <Stack.Screen
                 name="Auth"
                 component={ScreenAuth}
                 options={{
@@ -662,30 +671,31 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                 }}
               /> */}
 
-                  <Stack.Screen name="Auth" options={{ headerShown: false }}>
-                    {(props) => (
-                      <ScreenAuth {...props} onAuthSuccess={refetch} />
-                    )}
-                  </Stack.Screen>
-                  <Stack.Screen
-                    name="NewAccount"
-                    component={ScreenNewAccount}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="RecoverCredentials"
-                    component={ScreenRecoverCredentials}
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                </>
-              )}
-            </Stack.Navigator>
-          </TopLevelNavigationHandler>
-        </NavigationContainer>
+                    <Stack.Screen name="Auth" options={{ headerShown: false }}>
+                      {(props) => (
+                        <ScreenAuth {...props} onAuthSuccess={refetch} />
+                      )}
+                    </Stack.Screen>
+                    <Stack.Screen
+                      name="NewAccount"
+                      component={ScreenNewAccount}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="RecoverCredentials"
+                      component={ScreenRecoverCredentials}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                  </>
+                )}
+              </Stack.Navigator>
+            </TopLevelNavigationHandler>
+          </NavigationContainer>
+        </AutoSelectFriendHandler>
       </CapsuleListProvider>
     </AutoSelectorProvider>
   );

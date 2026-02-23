@@ -28,7 +28,7 @@ const TalkingPointsChart = ({
   skiaFontSmall,
   darkerOverlayBackgroundColor,
 }: Props) => {
-  console.log("TALKING POINTS COMP RERENDERED");
+  // console.log("TALKING POINTS COMP RERENDERED");
 // const { userCategories} = useCategories();
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   // const { userCategories } = useCategories();

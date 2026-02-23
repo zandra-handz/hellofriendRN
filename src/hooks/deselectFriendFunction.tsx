@@ -9,7 +9,8 @@ export const findFriendInList = (id, friendList) => {
 };
 
 //add hello deselect needs to be handled differently because the nextUpId might change
-export const deselectFriendFunction = async ({
+// can use a return value of true to navigate to home screen
+export const deselectFriendFunction =   ({
   userId,
   queryClient, 
   updateSettings,
@@ -18,12 +19,13 @@ export const deselectFriendFunction = async ({
  
   setToFriend,
   deselectFriend,
+  
 }) => {
   if (!updateSettings || !friendId || !autoSelectFriend) {
-    return;
+    return false;
   }
 
- 
+  
   if (
     autoSelectFriend?.customFriend === 'pending' ||
     autoSelectFriend?.nextFriend === 'pending'
@@ -31,7 +33,7 @@ export const deselectFriendFunction = async ({
     console.log("autos not ready yet...");
     // selectFriend(null);
     // resetTheme(null);
-    return;
+    return false;
   }
 
   if (autoSelectFriend?.customFriend?.id && autoSelectFriend.customFriend?.id !== -1 && autoSelectFriend.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1) {
@@ -49,14 +51,14 @@ export const deselectFriendFunction = async ({
         ...autoToNext,
       };
     });
-    return;
+    return false;
   }
 
   if (
     autoSelectFriend?.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1 &&
     Number(friendId) === Number(autoSelectFriend?.nextFriend?.id)
   ) {
-    // console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
+   console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
     deselectFriend();
   
 
@@ -70,7 +72,7 @@ export const deselectFriendFunction = async ({
         ...autoOff,
       };
     });
-    return;
+    return true;
   }
 
   if (
@@ -80,10 +82,11 @@ export const deselectFriendFunction = async ({
     setToFriend({friend: autoSelectFriend?.customFriend, preConditionsMet: true});
  
 
-    return;
+    return false;
   }
+console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!T$#RDFVI$RFKER K                          3otrekmfd')
 
-  deselectFriend();
+deselectFriend();
  
-  return;
+  return true; // not sure about this one
 };

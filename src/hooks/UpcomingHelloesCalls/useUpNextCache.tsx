@@ -12,6 +12,7 @@ const useUpNextCache = ({ userId, friendListAndUpcoming }: Props) => {
 
   const setUpNextCache = () => {
 
+    console.log('`````````````````````````````````````````````````````````````````````````upnext cache')
     if (!friendListAndUpcoming?.length) {
       return;
     }

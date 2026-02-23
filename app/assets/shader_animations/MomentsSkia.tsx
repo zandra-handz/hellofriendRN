@@ -98,8 +98,8 @@ type Props = {
   gecko_scale: number;
   gecko_size: number;
   lightDarkTheme: any;
-  handleRescatterMoments: any;
-  handleRecenterMoments: any;
+  // handleRescatterMoments: any;
+  // handleRecenterMoments: any;
   manualOnly: any;
   speedSetting: any;
   autoPickUp: any;
@@ -123,13 +123,15 @@ const MomentsSkia = ({
   gecko_scale = 1,
   gecko_size = 1.2,
   lightDarkTheme,
-  handleRescatterMoments,
-  handleRecenterMoments,
+  // handleRescatterMoments,
+  // handleRecenterMoments,
   manualOnly,
   speedSetting,
   autoPickUp,
   randomMomentIds,
   reset = 0,
+  handleRescatterMomentsInternal,
+  handleRecenterMomentsInternal
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -157,12 +159,16 @@ const MomentsSkia = ({
 
 
 
-  const handleRescatterMoments_withUpdateTrigger = () => {
-    handleRescatterMoments();
-    // updateTrigger.value += 1;
-    // console.log(updateTrigger.value)
+  const handleRescatterMoments_useMomentClass = () => {
+    handleRescatterMomentsInternal(moments.current.moments);
+ 
 
 
+  };
+
+  const handleRecenterMoments_useMomentClass = () => {
+
+    handleRecenterMomentsInternal(moments.current.moments);
   };
 
   // const TOTAL_GECKO_POINTS = 71;
@@ -234,7 +240,7 @@ const MomentsSkia = ({
     handleUpdateCoords(momentsData, newMoments);
   };
 
-  const handleUpdateCoords = (oldMoments, newMoments) => {
+  const handleUpdateCoords = ( newMoments) => {
     const formattedData = newMoments.map((moment) => ({
       id: moment.id,
       screen_x: moment.coord[0],
@@ -401,7 +407,7 @@ const MomentsSkia = ({
   moments.current.updateOrAddMoments(momentsData);
   moments.current.updateAllCoords(momentsData);
 
-  // ✅ PACK + COPY the moments uniform RIGHT NOW
+  //  PACK + COPY the moments uniform RIGHT NOW
   if (aspect && size.width && size.height) {
     workingBuffers.moments.fill(0);
 
@@ -469,6 +475,10 @@ const MomentsSkia = ({
   const lastPawsClearedRef = useRef(false);
   const clearAllPawsInUIRef = useRef(() => {});
   const syncPawsInUIRef = useRef<() => void>(() => {});
+
+
+  // triggers animation to update when updateHold or clearHolding run in momentsClass
+  const lastHoldingsVersionRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -672,14 +682,20 @@ const MomentsSkia = ({
       // ---------------------------------------------------------------------
       // Gate ALL uniform updates (small AND big) when gecko is moving
       // ---------------------------------------------------------------------
+
+      const holdingsVersion = moments.current.holdingsVersion;
+
+      
       const shouldUpdateBigUniforms =
         leadPoint.current.isMoving ||
         isDragging.value ||
         wasTapSV.value ||
         wasDoubleTapSV.value ||
-        moments.current.trigger_remote;
+        moments.current.trigger_remote || 
+        holdingsVersion !== lastHoldingsVersionRef.current;
 
       if (shouldUpdateBigUniforms) {
+          lastHoldingsVersionRef.current = holdingsVersion;
         shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
         // .
@@ -849,12 +865,12 @@ const MomentsSkia = ({
       <View style={styles.resetterContainer}>
         <MomentDotsResetterMini
           onBackPress={handleUpdateMomentsState}
-          onCenterPress={handleRecenterMoments}
+          onCenterPress={handleRecenterMoments_useMomentClass}
           onUndoPress={handleReset}
           primaryColor={lightDarkTheme.primaryText}
           borderColor={lightDarkTheme.lighterOverlayBackground}
           primaryBackground={lightDarkTheme.darkerOverlayBackground}
-          onPress={handleRescatterMoments_withUpdateTrigger}
+          onPress={handleRescatterMoments_useMomentClass}
         />
       </View>
     </>

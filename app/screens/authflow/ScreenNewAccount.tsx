@@ -18,7 +18,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useUser from "@/src/hooks/useUser";
 import manualGradientColors  from "@/app/styles/StaticColors";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
+import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
 
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
@@ -237,14 +237,7 @@ const ScreenNewAccount = () => {
   const handlePasswordBlur = () => setIsPasswordFocused(false);
 
   return (
-    <PreAuthSafeViewAndGradientBackground
-      settings={null}
-      startColor={manualGradientColors.darkColor}
-      endColor={manualGradientColors.lightColor}
-      friendColorLight={null}
-      friendColorDark={null}
-      friendId={null}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+    <SafeViewAppDefault
       style={{
         flex: 1,
         //paddingTop: 40, // TEMPORARY
@@ -449,7 +442,7 @@ const ScreenNewAccount = () => {
             )}
         </View> 
       )}
-    </PreAuthSafeViewAndGradientBackground>
+    </SafeViewAppDefault>
   );
 };
 

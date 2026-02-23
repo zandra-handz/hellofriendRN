@@ -218,7 +218,7 @@ const ContentAddHello = ({ userId,  primaryColor, backgroundColor }) => {
   };
 
   const navigateToMainScreen = () => {
-    navigation.navigate("hellofriend");
+    navigation.navigate("FriendHome");
   };
 
   const updateNoteEditString = (text) => {

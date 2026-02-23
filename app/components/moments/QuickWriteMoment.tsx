@@ -146,7 +146,7 @@ const QuickWriteMoment = forwardRef(
       scrollRef.current?.scrollToEnd({ animated: false });
     }, [allButLast, lastChar]); // update dependencies whenever content changes
 
-    const addIconSize = 22;
+ 
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -322,6 +322,7 @@ type NavToNewAccountProp = {
 
 interface hookReturns {
   navigateToHome: () => void;
+  navigateToFriendHome: () => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
@@ -365,6 +366,10 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToHome = () => {
     navigation.navigate("hellofriend");
+  };
+
+    const navigateToFriendHome = (idToSelect=null) => {
+    navigation.navigate("FriendHome", {idToSelect});
   };
 
   const navigateToAddFriend = () => {
@@ -501,6 +506,7 @@ const useAppNavigations = (): hookReturns => {
 
   return {
     navigateToHome,
+    navigateToFriendHome,
     navigateToAddFriend,
     navigateToSelectFriend,
     navigateToFinalize,

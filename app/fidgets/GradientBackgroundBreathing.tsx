@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import manualGradientColors from "@/app/styles/StaticColors";
- 
+ import gradientDirections from "../styles/GradientDirections";
 import GradientBackgroundForFidget from "../components/appwide/display/GradientBackgroundForFidget";
 type Props = {
   friendColorDark: string;
@@ -23,21 +23,17 @@ const GradientBackgroundBreathing = ({
   // const [changeColors, setChangeColors] = useState(false);
 
   const OGDirectionSet = [
-    [0, 0, 1, 0], // startX, startY, endX, endY //00 TOP LEFT  // 11 BOTTOM RIGHT
-    //start: X, Y
-    //end:   X, Y
-
-    // HORIZONTAL LEFT TO RIGHT
-    [0, 1, 1, 0], //DIAGONAL TOP RIGHT TO BOTTOM LEFT
+    [0, 0, 1, 0],  
+    [0, 1, 1, 0],  
   ];
 
   const horizontalSet = [
-    //creates almost a revolving feeling
-    [0, 0, 1, 0],
-    [1, 1, 0, 1],
+    gradientDirections.topLeftToTopRight,
+    gradientDirections.bottomRightToBottomLeft
+   
   ];
 
-  const verticalSet = [[0, 0, 0, 1]];
+  const verticalSet = [gradientDirections.topLeftToBottomLeft];
 
   const directions =
     direction === "vertical"

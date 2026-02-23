@@ -1,4 +1,4 @@
-import React, {   ReactNode, useMemo, useEffect, useState } from "react";
+import React, { ReactNode, useMemo, useEffect, useState } from "react";
 import { View, ViewStyle, StyleProp, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ColorValue } from "react-native";
@@ -30,10 +30,10 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
 }) => {
   const startColor = manualGradientColors.lightColor;
   const endColor = manualGradientColors.darkColor;
-
+ 
   const direction = useMemo(() => {
     // if (useFriendColors) return [0, 0, 1, 0];
-      if (useFriendColors) return [0, 0, 0, 1];
+    if (useFriendColors) return [0, 0, 0, 1];
     return [0, 1, 1, 0];
   }, [useFriendColors]);
 
@@ -45,38 +45,38 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const [currentColors, setCurrentColors] = useState(initialColors);
   const [previousColors, setPreviousColors] = useState(initialColors);
 
-  const transition = useSharedValue(1);
+  const transition = useSharedValue(1); 
 
   useEffect(() => {
-    const newColors: [ColorValue, ColorValue] = [
-      friendColorDark ?? startColor,
-      friendColorLight ?? endColor,
-    ];
+  const newColors: [ColorValue, ColorValue] = [
+    friendColorDark ?? startColor,
+    friendColorLight ?? endColor,
+  ];
 
-    if (!currentColors.every((c, i) => c === newColors[i])) {
-      // Update previous colors first
-      setPreviousColors(currentColors);
+  if (!currentColors.every((c, i) => c === newColors[i])) {
+    setPreviousColors(currentColors);
 
-      // Reset opacity immediately the moment previousColors is updated
+    // Only animate if staying in friend colors mode
+    if (useFriendColors) {
       transition.value = 0;
-
-      // Update current colors in the next frame
       requestAnimationFrame(() => {
         setCurrentColors(newColors);
-
-        // Animate opacity to fade in the new gradient
         transition.value = withTiming(1, { duration: 400 });
       });
+    } else {
+      // Instant switch when going back to default
+      setCurrentColors(newColors);
+      transition.value = 1;
     }
-  }, [friendColorDark, friendColorLight]);
+  }
+}, [friendColorDark, friendColorLight, useFriendColors]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: transition.value,
   }));
- 
+
   return (
- 
-        <View style={[styles.container, additionalStyles]}> 
+    <View style={[styles.container, additionalStyles]}>
       <LinearGradient
         colors={previousColors}
         start={{ x: direction[0], y: direction[1] }}
@@ -90,7 +90,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         style={[StyleSheet.absoluteFill, animatedStyle]}
       />
       {children}
-      </View> 
+    </View>
   );
 };
 

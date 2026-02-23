@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
- 
+import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
 import { useNavigation } from "@react-navigation/native";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
@@ -124,14 +124,7 @@ const ScreenRecoverCredentials = () => {
   };
 
   return (
-    <PreAuthSafeViewAndGradientBackground
-      settings={null}
-      startColor={manualGradientColors.darkColor}
-      endColor={manualGradientColors.lightColor}
-      friendColorLight={null}
-      friendColorDark={null}
-      friendId={null}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+    <SafeViewAppDefault 
       style={{
         flex: 1,
         //paddingTop: 40, // TEMPORARY
@@ -276,7 +269,7 @@ const ScreenRecoverCredentials = () => {
           </View>
         </View>
       )}
-    </PreAuthSafeViewAndGradientBackground>
+    </SafeViewAppDefault>
   );
 };
 

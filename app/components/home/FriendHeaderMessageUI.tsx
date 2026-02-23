@@ -1,6 +1,5 @@
-import { StyleSheet, View, Pressable } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -13,14 +12,14 @@ import Animated, {
   useSharedValue,
   // useDerivedValue,
   // useAnimatedReaction,
-} from "react-native-reanimated"; 
+} from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SuggestedHello from "./SuggestedHello";
-import LoadingPage from "../appwide/spinner/LoadingPage"; 
+import LoadingPage from "../appwide/spinner/LoadingPage";
 interface FriendHeaderMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
@@ -38,16 +37,18 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   height,
   userId,
   primaryColor,
- primaryBackground,
+  primaryBackground,
+  darkGlassBackground,
   darkerGlassBackground,
+  backgroundColor,
   welcomeTextStyle,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
-  const { friendDash, loadingDash } = useFriendDash({userId: userId, friendId: friendId});
+  const { friendDash, loadingDash } = useFriendDash({
+    userId: userId,
+    friendId: friendId,
+  });
 
-  
-
-  const loadingNewFriend = loadingDash;
   const isFocused = useSharedValue(false);
 
   const opacityValue = useSharedValue(0);
@@ -55,59 +56,15 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   const secondOpacityValue = useSharedValue(0);
   const secondScaleValue = useSharedValue(0);
- 
+
   useFocusEffect(
     useCallback(() => {
       isFocused.value = true;
       return () => {
         isFocused.value = false;
       };
-    }, [])
+    }, []),
   );
-
-  // ✅ useDerivedValue declared at top level
-  // useDerivedValue(() => {
-  //   if (isFocused.value) {
-  //     // Runs every time screen focuses
-  //     verticalValue.value = withSpring(0, {
-  //       stiffness: 400, // default ~100
-  //       damping: 10, // default ~10
-  //       mass: 0.5, // default 1
-  //     });
-  //   }
-  // });
-
-  // const animatedVerticalStyle = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [{ translateY: verticalValue.value }],
-  //     // opacity: opacityValue.value,
-  //   };
-  // });
-
-//   const opacity = useSharedValue(0);
-//   const scale = useSharedValue(0);
-// useAnimatedReaction(
-//   () => isFocused.value, // watch shared value
-//   (focused, prevFocused) => {
-//     if (focused && !loadingDash) {
-//       // fade + scale in with delay
-//       opacity.value = withDelay(capsuleListLength * 80, withTiming(1, { duration: 1000 }));
-//       scale.value = withDelay(capsuleListLength * 80, withTiming(1, { duration: 400 }));
-//     } else {
-//       // fade + scale out
-//       opacity.value = withTiming(0, { duration: 2000 });
-//       scale.value = withTiming(0, { duration: 1000 });
-//     }
-//   },
-//   [loadingDash] // this is JS state, so it goes in deps
-// );
-
-  // const animatedOpacityStyle = useAnimatedStyle(() => {
-  //   return {
-  //      transform: [{ scale: scale.value }],
-  //   //  opacity: opacity.value,
-  //   };
-  // });
 
   const animatedPinStyle = useAnimatedStyle(() => {
     return {
@@ -138,12 +95,12 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
       opacityValue.value = withTiming(1, { duration: 100 });
       scaleValue.value = withSequence(
         withTiming(1.3, { duration: 100 }),
-        withTiming(1, { duration: 300 })
+        withTiming(1, { duration: 300 }),
       );
     } else {
       scaleValue.value = withSequence(
         withTiming(1.2, { duration: 200 }),
-        withTiming(0, { duration: 100 })
+        withTiming(0, { duration: 100 }),
       );
     }
   }, [isLockedOn]);
@@ -153,12 +110,12 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
       secondOpacityValue.value = withTiming(1, { duration: 100 });
       secondScaleValue.value = withSequence(
         withTiming(1.3, { duration: 100 }),
-        withTiming(1, { duration: 300 })
+        withTiming(1, { duration: 300 }),
       );
     } else {
       secondScaleValue.value = withSequence(
         withTiming(1.2, { duration: 200 }),
-        withTiming(0, { duration: 100 })
+        withTiming(0, { duration: 100 }),
       );
     }
   }, [isUpNext]);
@@ -184,11 +141,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
       Vibration.vibrate(100);
       showFlashMessage(`${selectedFriendName} pinned!`, false, 1000);
     }
-  }, [
-    friendId,
-    selectedFriendName,
-    autoSelectFriend?.customFriend?.id,
-  ]);
+  }, [friendId, selectedFriendName, autoSelectFriend?.customFriend?.id]);
 
   const handleOnPress = () => {
     // verticalValue.value = withSpring(-370, {
@@ -199,12 +152,12 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     isFocused.value = false;
     handleNavigateToSelectFriend();
   };
- 
-  const SELECTED_FRIEND_CARD_PADDING = 20; 
+
+  const SELECTED_FRIEND_CARD_PADDING = 20;
 
   return (
     <>
-      <View style={[{ height: height }]}>
+      <View style={[{ height: 220 }]}>
         <Pressable
           onPress={handleOnPress}
           onLongPress={toggleLockOnFriend}
@@ -243,19 +196,15 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
               />
             </Animated.View>
           </View>
-          <View
-            style={[
-              styles.labelContainer,
-              {
-                // backgroundColor: cardBackgroundColor, // semi-transparent background
 
-                alignItems: "center",
-                alignContent: "center",
-              },
-            ]}
-          >
-            {loadingDash && (
-              <View style={styles.loadingWrapper}>
+          <View style={[styles.topContainer]}>
+            <View
+              style={[
+                styles.labelContainer,
+                { backgroundColor: backgroundColor },
+              ]}
+            >
+              {loadingDash && (
                 <LoadingPage
                   loading={true}
                   color={friendDarkColor}
@@ -263,39 +212,34 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
                   spinnerSize={30}
                   includeLabel={false}
                 />
-              </View>
-            )}
-
-            {!loadingDash && (
-              <Animated.Text
-                numberOfLines={2}
-                style={[
-                  welcomeTextStyle,
-                  {
-                    color: primaryColor,
-                
-                  },
-                  styles.label,
-                ]}
-              >
-                {friendId &&
-                  !loadingNewFriend &&
-                  selectedFriendName}
-              </Animated.Text>
-            )}
+              )}
+              {!loadingDash && (
+                <Text
+                  numberOfLines={2}
+                  style={[
+                    welcomeTextStyle,
+                    {
+                      color: primaryColor,
+                    },
+                    styles.label,
+                  ]}
+                >
+                  {friendId && !loadingDash && selectedFriendName}
+                </Text>
+              )}
+            </View>
           </View>
         </Pressable>
 
         {/* <Animated.View style={animatedOpacityStyle}> */}
-          <SuggestedHello
-            loadingDash={loadingDash} 
-            futureDate={friendDash?.date} 
-            darkerGlassBackground={darkerGlassBackground}
-            primaryColor={primaryColor}
-            primaryBackground={primaryBackground}
-            padding={SELECTED_FRIEND_CARD_PADDING}
-       
-          />
+        <SuggestedHello
+          loadingDash={loadingDash}
+          futureDate={friendDash?.date}
+          darkerGlassBackground={darkerGlassBackground}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          padding={SELECTED_FRIEND_CARD_PADDING}
+        />
         {/* </Animated.View> */}
       </View>
     </>
@@ -312,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     backgroundColor: "transparent",
-    marginBottom: 24,
+    marginBottom: 10,
     zIndex: 30000,
   },
   innerContainer: {
@@ -334,26 +278,40 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
     overflow: "hidden",
   },
-  labelContainer: {
-    paddingVertical: 0,
-    paddingTop: 20,
+  topContainer: {
+    flexDirection: "row",
     width: "100%",
-    height: "100%",
-    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+ 
+    marginTop: 30,
+    marginBottom: 4,
+  },
+  labelContainer: { 
+   // flexWrap: "wrap",
+    minWidth:80,
+flexDirection: 'row',
+    width: "auto",
+    maxWidth: "70%",
+    flexShrink: 1,
     borderRadius: 10,
     justifyContent: "center",
-    paddingHorizontal: 20,
-    // backgroundColor: "pink",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    height: 100,
+    alignItems: "center",
+     padding: 20,
+    // paddingHorizontal: 10,
+    // paddingVertical: 14,
+    borderRadius: 50,
+    minHeight: 76,
+ 
   },
+
+  labelBackground: {},
 
   label: {
     width: "100%",
-    fontSize: 37,
-    
-    lineHeight: 38,
+    fontSize: 28,
+
+    lineHeight: 30,
 
     textAlign: "center",
   },
@@ -363,6 +321,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     alignContent: "flex-start",
+    minHeight: 76,
   },
 });
 

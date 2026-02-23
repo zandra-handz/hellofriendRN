@@ -34,6 +34,9 @@ export default class Moments {
     this.lastAutoPickUpId = -1;
     this.lastHoldingIndex = -1;
 
+    // ONLY HERE TO INCREMENT WHEN THIS CHANGES SO THAT ANIMATION UPDATES
+    this.holdingsVersion = 0;
+
     this.center = center;
     this.radius = radius;
     this.radiusSquared = radius * radius;
@@ -162,7 +165,7 @@ export default class Moments {
     // Update the length
     this.momentsLength = this.moments.length;
 
-    // ✅ Rebuild the index map
+    // Rebuild the index map
     this.momentIndexById.clear();
     for (let i = 0; i < this.moments.length; i++) {
       this.momentIndexById.set(this.moments[i].id, i);
@@ -204,7 +207,7 @@ export default class Moments {
 
     moment.stored_index = null;
 
-    // 🔹 Convert Gecko space → Moment space
+    //   Convert Gecko space → Moment space
     geckoToMoment_inPlace(
       holding.coord, // input Gecko coord
       this.aspect,
@@ -218,6 +221,9 @@ export default class Moments {
     holding.stored_index = null;
     holding.coord[0] = -100;
     holding.coord[1] = -100;
+
+    // trigger to make animation update
+    this.holdingsVersion++;
 
     return this.holdings;
   }
@@ -264,8 +270,10 @@ export default class Moments {
     targetHolding.id = moment.id;
     targetHolding.stored_index = holdIndex;
     m.stored_index = holdIndex;
-    
-    console.log("updated hold");
+     
+
+    // trigger to make animation update
+    this.holdingsVersion++;
     return this.holdings;
   }
 

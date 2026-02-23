@@ -496,7 +496,7 @@ export const fetchFriendList = async () => {
 
 
 export const fetchMomentsAPI = async (friendId: number) => {
-  console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`
@@ -803,9 +803,9 @@ export const fetchFriendDashboard = async (friendId: number) => {
     const endTime = Date.now(); // TIMER END
     const duration = endTime - startTime;
 
-    console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
+    // console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
-    console.log(response.data[0])
+    // console.log(response.data[0])
 
     return response.data[0] || null;
   } catch (error) {
@@ -1502,7 +1502,7 @@ export const fetchFriendImagesByCategory = async (friendId: number) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/images/by-category/`
     );
-    console.log("API GET CALL fetchFriendImagesByCategory");
+    // console.log("API GET CALL fetchFriendImagesByCategory");
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendImagesByCategory");

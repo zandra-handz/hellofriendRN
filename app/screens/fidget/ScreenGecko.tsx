@@ -1,11 +1,4 @@
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Text,
-  Vibration,
-} from "react-native";
+import { View, StyleSheet, Pressable, Vibration } from "react-native";
 import React, {
   useState,
   useRef,
@@ -83,8 +76,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     isExpired,
     pressedAt,
     pressedMomentId,
-    updatePressedMoment, 
-    
+    updatePressedMoment,
   } = useFriendPickSession({
     friendId: selectedFriend?.id,
     friendName: selectedFriend?.name,
@@ -92,7 +84,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     enabled: isPollMode && !!activeSessionId,
   });
 
-  console.log(`PICK SESSION VALUES: `, isPressed, isExpired, pressedAt, activeSessionId)
+  console.log(
+    `PICK SESSION VALUES: `,
+    isPressed,
+    isExpired,
+    pressedAt,
+    activeSessionId,
+  );
 
   const {
     navigateToMomentView,
@@ -119,7 +117,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (isExpired) {
       console.log("Session expired");
       setIsPollMode(false);
@@ -128,7 +126,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   }, [isExpired]);
 
   useEffect(() => {
-    if (isPressed && sessionId) { // isPressed still isn't resetting properly, but sessionId will stop it from jumping if coming from a different screen
+    if (isPressed && sessionId) {
+      // isPressed still isn't resetting properly, but sessionId will stop it from jumping if coming from a different screen
       // console.log(
       //   "Friend pressed the button! Timestamp:",
       //   pressedAt,
@@ -139,17 +138,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       setIsPollMode(false);
       setActiveSessionId(null);
       if (moment && !pressedMomentId) {
-          updatePressedMoment(moment?.id);
+        updatePressedMoment(moment?.id);
         handleNavigateToMoment(moment);
-     
-       
       }
 
       // Do whatever you want with pressedAt timestamp here
     }
   }, [isPressed, sessionId, pressedAt, moment, pressedMomentId, isExpired]);
-
-
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -221,9 +216,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       friendId: selectedFriend?.id,
     });
 
-  // const mod = (n, m) => {
-  //   return ((n % m) + m) % m;
-  // };
+ 
 
   const pickTopScoredMomentIds = (moments, typeIndex, count = 4) => {
     const result = new Array(count).fill(-1);
@@ -264,12 +257,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     if (withScores.length === 0) {
       return result;
     }
-
-    // Sort by the specific score field in descending order
+ 
     const sorted = [...withScores].sort((a, b) => b[scoreKey] - a[scoreKey]);
-    // console.log(sorted.map((moment) => moment.capsule));
-
-    // Take top N
+  
     for (let i = 0; i < Math.min(sorted.length, count); i++) {
       result[i] = sorted[i].id;
     }
@@ -280,7 +270,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const MAX_MOMENTS = 30;
 
   const momentCoords = useMemo(() => {
-    console.log('momentsCoords recalculated, triggered by capsuleList')
+    console.log("momentsCoords recalculated, triggered by capsuleList");
     return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
       id: m.id,
       coord: [m.screen_x, m.screen_y],
@@ -409,53 +399,111 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
-const handleRescatterMoments = () => {
-  const minY = 0.2;
-  const maxY = 0.75;
-  const minX = 0.05;
-  const maxX = 0.95;
+  // no longer using
+  // DON'T DELETE JUST YET
+  // const handleRescatterMoments = () => {
+  //   const minY = 0.2;
+  //   const maxY = 0.75;
+  //   const minX = 0.05;
+  //   const maxX = 0.95;
 
-  setScatteredMoments((prev) =>
-    prev.map((m) => {
-      // If moment is held, keep it offscreen
-      if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
+  //   setScatteredMoments((prev) =>
+  //     prev.map((m) => {
+  //       // If moment is held, keep it offscreen
+  //       if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
+  //         return {
+  //           ...m,
+  //           coord: [-100, -100],
+  //           stored_index: m.stored_index,
+  //         };
+  //       }
+
+  //       // Otherwise scatter it
+  //       const randomX = Math.random() * (maxX - minX) + minX;
+  //       const randomY = Math.random() * (maxY - minY) + minY;
+
+  //       return {
+  //         ...m,
+  //         coord: [randomX, randomY],
+  //         stored_index: m.stored_index,
+  //       };
+  //     }),
+  //   );
+  // };
+
+  // this one resets the parent state with data from momentsClass
+  // this prevents mismatches when moments are picked up or dropped
+  const handleRescatterMoments_insideMS = (newData) => {
+    const minY = 0.2;
+    const maxY = 0.75;
+    const minX = 0.05;
+    const maxX = 0.95;
+
+    setScatteredMoments(
+      newData.map((m) => {
+        if (
+          m.stored_index !== null &&
+          m.stored_index >= 0 &&
+          m.stored_index < 4
+        ) {
+          return {
+            ...m,
+            coord: [-100, -100],
+          };
+        }
+
+        const randomX = Math.random() * (maxX - minX) + minX;
+        const randomY = Math.random() * (maxY - minY) + minY;
+
         return {
           ...m,
-          coord: [-100, -100],
-          stored_index: m.stored_index,
+          coord: [randomX, randomY],
         };
-      }
+      }),
+    );
+  };
 
-      // Otherwise scatter it
-      const randomX = Math.random() * (maxX - minX) + minX;
-      const randomY = Math.random() * (maxY - minY) + minY;
+  // DON'T DELETE JUST YET
+  // const handleRecenterMoments = () => {
+  //   setScatteredMoments((prev) =>
+  //     prev.map((m) => {
+  //       // If moment is held, keep it offscreen
+  //       if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
+  //         return {
+  //           ...m,
+  //           coord: [-100, -100],
+  //         };
+  //       }
 
-      return {
-        ...m,
-        coord: [randomX, randomY],
-        stored_index: m.stored_index,
-      };
-    }),
-  );
-};
-const handleRecenterMoments = () => {
-  setScatteredMoments((prev) =>
-    prev.map((m) => {
-      // If moment is held, keep it offscreen
-      if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
+  //       return {
+  //         ...m,
+  //         coord: [0.5, 0.5],
+  //       };
+  //     }),
+  //   );
+  // };
+
+  const handleRecenterMoments_insideMS = (newData) => {
+    setScatteredMoments(
+      newData.map((m) => {
+        if (
+          m.stored_index !== null &&
+          m.stored_index >= 0 &&
+          m.stored_index < 4
+        ) {
+          return {
+            ...m,
+            coord: [-100, -100],
+          };
+        }
+
         return {
           ...m,
-          coord: [-100, -100],
+          coord: [0.5, 0.5],
         };
-      }
-
-      return {
-        ...m,
-        coord: [0.5, 0.5],
-      };
-    }),
-  );
-};
+      }),
+    );
+  };
   //  const [count, setCount] = useState(0);
 
   const count = useSharedValue(0);
@@ -463,54 +511,10 @@ const handleRecenterMoments = () => {
   const loopCount = useRef(0);
   const pickupCountInCurrentLoop = useRef(0);
 
-  // const handleGetMoment = useCallback(
-  //   (id) => {
-  //     const moment = capsuleList.find((c) => c.id === id);
-  //     if (moment?.id) {
-  //       setMoment({
-  //         category: moment.user_category_name,
-  //         capsule: moment.capsule,
-  //         uniqueIndex: moment.uniqueIndex,
-  //         id: moment.id,
-  //       });
-
-  //       const charCount = Number(moment?.charCount);
-  //       const isSubtracting = loopCount.current % 2 !== 0;
-  //       const delta = isSubtracting ? -charCount : charCount;
-
-  //       // Update shared value on UI thread
-  //       runOnUI(() => {
-  //         "worklet";
-  //         count.value = count.value + delta;
-  //       })();
-
-  //       pickupCountInCurrentLoop.current += 1;
-
-  //       if (pickupCountInCurrentLoop.current >= capsuleList.length) {
-  //         loopCount.current += 1;
-  //         pickupCountInCurrentLoop.current = 0;
-  //       }
-
-  //       Vibration.vibrate(50);
-  //     } else {
-  //       setMoment({
-  //         category: null,
-  //         capsule: null,
-  //         uniqueIndex: null,
-  //         id: null,
-  //       });
-  //     }
-  //   },
-  //   [capsuleList],
-  // );
-
   const handleGetMoment = useCallback(
     (id) => {
       const moment = capsuleList.find((c) => c.id === id);
-      // console.log(
-      //   `~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HANDLE GET MOMENT ID`,
-      //   moment?.id,
-      // );
+
       if (!moment?.id) {
         setMoment({
           category: null,
@@ -545,53 +549,6 @@ const handleRecenterMoments = () => {
     },
     [capsuleList, count],
   );
-  //   const scoreFieldMap = {
-  //   1: "generic_score",
-  //   2: "hard_score",
-  //   3: "easy_score",
-  //   4: "quick_score",
-  //   5: "long_score",
-  //   6: "unique_score",
-  //   7: "generic_score",
-  //   8: "relevant_score",
-  //   9: "random_score",
-  // };
-
-  // const handleGetMoment = useCallback(
-  //   (id) => {
-  //     const moment = capsuleList.find((c) => c.id === id);
-  //     if (moment?.id) {
-  //       setMoment({
-  //         category: moment.user_category_name,
-  //         capsule: moment.capsule,
-  //         uniqueIndex: moment.uniqueIndex,
-  //         id: moment.id,
-  //       });
-
-  //       // Only add score if this is a top-scored pick (not random mode)
-  //       const scoreKey = scoreFieldMap[autoSelectType];
-  //       if (randomMomentIdsRef.current.includes(moment.id) && scoreKey) {
-  //         const score = moment[scoreKey] ?? 0;
-  //         runOnUI(() => {
-  //           "worklet";
-  //           count.value = count.value + score;
-  //         })();
-  //       }
-
-  //       Vibration.vibrate(50);
-  //     } else {
-  //       setMoment({
-  //         category: null,
-  //         capsule: null,
-  //         uniqueIndex: null,
-  //         id: null,
-  //       });
-  //     }
-  //   },
-  //   [capsuleList, autoSelectType],
-  // );
-
-  const primaryColor = lightDarkTheme.priamryText;
 
   const BLANK_WINDOW_MESSAGE = useMemo(() => {
     if (!scatteredMoments || scatteredMoments.length < 1) {
@@ -610,25 +567,8 @@ const handleRecenterMoments = () => {
   const DAYS_SINCE = friendDash?.days_since || 0;
 
   return (
-    // <PreAuthSafeViewAndGradientBackground
-    //   startColor={manualGradientColors.lightColor}
-    //   endColor={manualGradientColors.darkColor}
-    //   friendColorLight={selectedFriend.darkColor}
-    //   friendColorDark={selectedFriend.lightColor}
-    //   backgroundOverlayColor={lightDarkTheme.primaryBackground}
-    //   friendId={selectedFriend?.id}
-    //   style={{
-    //     flex: 1,
-    //     flexDirection: "column",
-    //     justifyContent: "flex-end",
-    //   }}
-    // >
     <NoGradientBackground
-      style={{
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "flex-end",
-      }}
+      style={styles.backgroundContainer}
     >
       <View style={[StyleSheet.absoluteFill]}>
         <MomentsSkia
@@ -638,8 +578,7 @@ const handleRecenterMoments = () => {
           color2={manualGradientColors.homeDarkColor}
           bckgColor1={selectedFriend?.lightColor}
           bckgColor2={selectedFriend?.darkColor}
-          momentsData={scatteredMoments}
-          // startingCoord={[0.5, -.3]}
+          momentsData={scatteredMoments} 
 
           startingCoord0={0.1}
           startingCoord1={-0.5}
@@ -650,33 +589,16 @@ const handleRecenterMoments = () => {
           gecko_size={1.7}
           lightDarkTheme={lightDarkTheme}
           reset={resetSkia}
-          // handleRescatterMoments={handleRescatterMomentsNormalizedSpace}
-          handleRescatterMoments={handleRescatterMoments}
-          handleRecenterMoments={handleRecenterMoments}
-          // setScatteredMoments={setScatteredMoments}
-          // handleToggleManual={handleToggleManual}
+          // handleRescatterMoments={handleRescatterMoments}
+          // handleRecenterMoments={handleRecenterMoments}
           manualOnly={manualOnlyRef}
           speedSetting={speedSettingRef}
           autoPickUp={autoPickUpRef}
           randomMomentIds={randomMomentIdsRef}
+          handleRescatterMomentsInternal={handleRescatterMoments_insideMS}
+          handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
         />
       </View>
-      {/* <View
-        style={[
-          styles.statsWrapper,
-          { backgroundColor: lightDarkTheme.lighterOverlayBackground },
-        ]}
-      >
-        <Text style={[styles.friendText, { color: primaryColor }]}>
-          Friend: {selectedFriend.name}
-        </Text>
-        <Text style={[styles.statsText, { color: primaryColor }]}>
-          Health: {TIME_SCORE}%
-        </Text>
-        <Text style={[styles.statsText, { color: primaryColor }]}>
-          Days since: {DAYS_SINCE}
-        </Text>
-      </View> */}
 
       <GlassTopBarLight
         textColor={lightDarkTheme.primaryText}
@@ -760,109 +682,8 @@ const handleRecenterMoments = () => {
             backgroundColor={lightDarkTheme.primaryBackground}
             onPress={handleNavToSelect}
           />
-
-          {/* {autoPickUp && (
-            <View
-              style={{
-                width: "auto",
-                flexGrow: 1,
-                minWidth: 110,
-
-                //minWidth: 200,
-                flexDirection: "row",
-                height: 40,
-                marginTop: 10,
-                borderRadius: 16,
-                padding: 10,
-                alignItems: "center",
-                alignContent: "center",
-                //paddingVertical: 10,
-                backgroundColor: lightDarkTheme.lighterOverlayBackground,
-              }}
-            >
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.typeText,
-                  { color: lightDarkTheme.primaryBackground },
-                ]}
-              >
-                {selectLabel}
-              </Text>
-            </View>
-          )} */}
         </View>
       )}
-      {/* 
-      <View style={styles.previewOuter}>
-        <View
-          style={[
-            styles.previewWrapper,
-            {
-              backgroundColor: lightDarkTheme.darkerOverlayBackground,
-              borderColor: selectedFriend.darkColor,
-            },
-          ]}
-        >
-          {scatteredMoments.length > 0 && (
-            <Pressable
-              onPress={() => handleNavigateToMoment(moment)}
-              style={styles.momentViewButton}
-            >
-              <SvgIcon
-                name={`chevron_double_right`}
-                size={28}
-                color={lightDarkTheme.primaryText}
-              />
-            </Pressable>
-          )}
-          {moment.id && (
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Text
-                style={[
-                  styles.previewHeader,
-                  { color: lightDarkTheme.primaryText },
-                ]}
-              >
-                {moment.category}
-              </Text>
-
-              <Text
-                style={[
-                  styles.previewText,
-                  { color: lightDarkTheme.primaryText },
-                ]}
-              >
-                {moment.capsule}
-              </Text>
-            </ScrollView>
-          )}
-          {!moment.id && (
-            <Pressable
-              onPress={handleNavigateToCreateNew}
-              style={styles.noMomentWrapper}
-            >
-              <Text
-                style={[
-                  styles.noMomentText,
-                  { color: lightDarkTheme.primaryText },
-                ]}
-              >
-                {BLANK_WINDOW_MESSAGE}{" "}
-                <Text
-                  style={[
-                    styles.buttonText,
-                    { color: lightDarkTheme.primaryText },
-                  ]}
-                >
-                  {" "}
-                  Add one?
-                </Text>
-              </Text>
-            </Pressable>
-          )}
-        </View>
-      </View> */}
 
       <GlassPreviewBottom
         color={lightDarkTheme.primaryText}
@@ -880,6 +701,11 @@ const handleRecenterMoments = () => {
 };
 
 const styles = StyleSheet.create({
+  backgroundContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+  },
   statsWrapper: {
     // width: "100%",
     height: 106,
@@ -920,13 +746,7 @@ const styles = StyleSheet.create({
     //   shadowOpacity: 0.3,
     //   shadowRadius: 4.65,
     //  elevation: 8,
-  },
-
-  friendText: {
-    fontWeight: "bold",
-    fontSize: 17,
-    lineHeight: 26,
-  },
+  }, 
   buttonText: {
     fontWeight: "bold",
     fontSize: 16,
@@ -934,12 +754,7 @@ const styles = StyleSheet.create({
   statsText: {
     fontWeight: "bold",
     fontSize: 16,
-  },
-  scoreText: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-
+  }, 
   typeText: {
     fontSize: 14,
     fontWeight: "bold",
@@ -974,22 +789,7 @@ const styles = StyleSheet.create({
     //   shadowOpacity: 0.3,
     //   shadowRadius: 4.65,
     //  elevation: 1,
-  },
-  previewOuter: {
-    width: "100%",
-    paddingHorizontal: 20,
-    bottom: 10,
-    height: 140,
-  },
-  previewWrapper: {
-    width: "100%",
-    height: 140,
-    // backgroundColor: 'red',
-    borderWidth: 2,
-    borderRadius: 40,
-
-    padding: 20,
-  },
+  },  
   qRCodeWrapper: {
     width: 100,
     left: 0,
