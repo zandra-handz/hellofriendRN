@@ -1,9 +1,6 @@
-import { StyleSheet, Text, View, DimensionValue } from "react-native";
+import { StyleSheet, Text, View, DimensionValue, FlatList } from "react-native";
 import React, { useCallback } from "react";
-import Animated from // SlideInDown,
-// SlideOutDown,
-// FadeIn,
-// FadeOut,
+import Animated from // FadeOut, // FadeIn, // SlideOutDown, // SlideInDown,
 "react-native-reanimated";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SoonItemButton from "./SoonItemButton";
@@ -21,6 +18,7 @@ interface HomeScrollSoonProps {
 const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   upcomingHelloes,
   isLoading,
+  itemListLength,
   friendList,
   primaryColor = "orange",
   overlayColor,
@@ -49,7 +47,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       // friendList,
       handleSelectFriend,
       navigation,
-    ]
+    ],
   );
 
   const handlePress = useCallback(
@@ -70,21 +68,19 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       //  getThemeAheadOfLoading,
       handleSelectFriend,
       //  navigation
-    ]
+    ],
   );
 
   const renderListItem = useCallback(
-    ({ item, index }) => ( 
-      <View
-        style={styles.listItemContainer}
-      >
+    ({ item, index }) => (
+      <View style={styles.listItemContainer}>
         <SoonItemButton
           textColor={primaryColor}
           backgroundColor={elementBackgroundColor}
           darkerOverlayColor={darkerOverlayColor}
           lighterOverlayColor={lighterOverlayColor}
           friendList={friendList}
-          overlayColor={overlayColor} 
+          overlayColor={overlayColor}
           height={"100%"}
           friendName={item.friend.name}
           friendId={item.friend.id}
@@ -93,7 +89,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           width={"100%"}
           onPress={() => handlePress(item)}
           onDoublePress={() => handleDoublePress(item)}
-        /> 
+        />
       </View>
     ),
     [
@@ -103,7 +99,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       darkerOverlayColor,
       itemColor,
       elementBackgroundColor,
-    ]
+    ],
   );
 
   const extractItemKey = (item, index) =>
@@ -112,26 +108,23 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   const renderUpcomingHelloes = () => {
     return (
       <>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            width: "100%",
-            marginBottom: 10,
-          }}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 20, lineHeight: 24, color: primaryColor }}>
+        <View style={styles.headerWrapper}>
+          <Text
+            style={[styles.headerText, { 
+              color: primaryColor,
+            }]}
+          >
             Soon
           </Text>
         </View>
         {upcomingHelloes?.length > 0 && (
-          <Animated.FlatList
+          <FlatList
             data={upcomingHelloes.slice(0).slice(startAtIndex, 5)}
             renderItem={renderListItem}
             keyExtractor={extractItemKey}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={10}
+            initialNumToRender={6}
+            maxToRenderPerBatch={6}
+            windowSize={6}
             removeClippedSubviews={true}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={() => <View style={{ height: 500 }} />}
@@ -192,11 +185,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 0,
     borderColor: "black",
-  },
-  text: {
-    fontSize: 16,
-    fontFamily: "Poppins-Regular",
-  },
+  }, 
   noFriendsTextContainer: {
     flex: 1,
     flexDirection: "row",
@@ -205,21 +194,7 @@ const styles = StyleSheet.create({
     paddingLeft: "2%",
     // paddingRight: '16%',
     width: "100%",
-  },
-  loadingWrapper: {
-    flex: 1,
-    width: "100%",
-  },
-  headerContainer: {
-    width: "100%",
-    paddingVertical: "0%",
-  },
-  headerText: {
-    fontFamily: "Poppins-Bold",
-    paddingLeft: "3%",
-
-    fontSize: 18,
-  },
+  }, 
   buttonContainer: {
     flex: 1,
     flexDirection: "column",
@@ -233,6 +208,17 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     flexDirection: "row",
+  },
+  headerWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+    marginBottom: 10,
+  },
+  headerText: {
+    fontWeight: "bold",
+    fontSize: 20,
+    lineHeight: 24,
   },
 });
 

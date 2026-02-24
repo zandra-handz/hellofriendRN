@@ -144,11 +144,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   }, [friendId, selectedFriendName, autoSelectFriend?.customFriend?.id]);
 
   const handleOnPress = () => {
-    // verticalValue.value = withSpring(-370, {
-    //   stiffness: 100,
-    //   damping: 2,
-    //   mass: 0.3,
-    // });
+ 
     isFocused.value = false;
     handleNavigateToSelectFriend();
   };

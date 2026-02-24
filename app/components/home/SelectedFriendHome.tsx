@@ -16,10 +16,13 @@ import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import TalkingPointsChart from "./TalkingPointsChart"; 
- 
+import TalkingPointsChart from "./TalkingPointsChart";
+import TalkingPointsBubble from "./TalkingPointsBubble";
+
+import History from "./History";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
+import Moments from "./Moments";
 // import ItemFooterHelloes from "../appwide/statusbar/ItemFooterHelloes";
 // import { useFocusEffect } from "@react-navigation/native";
 // import { useCallback } from "react";
@@ -39,7 +42,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   primaryColor,
   primaryOverlayColor,
   darkGlassBackground,
-  darkerGlassBackground, 
+  darkerGlassBackground,
   categoryColorsArray,
   // darkerOverlayBackgroundColor,
   primaryBackground,
@@ -129,15 +132,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                color={themeColors.lightColor}
           style={styles.leafContainer}
         /> */}
-      
-<Image  
-  source={LeafImage}
-  style={styles.leafContainer}
-  tintColor={themeColors.lightColor}
-/>
-        <View
-          style={styles.itemsContainer}
-        >
+
+        <Image
+          source={LeafImage}
+          style={styles.leafContainer}
+          tintColor={themeColors.lightColor}
+        />
+        <View style={styles.itemsContainer}>
           <View style={styles.containerOverScrollView}>
             <Animated.View
               style={[
@@ -191,11 +192,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
               <View style={styles.itemsContainer}>
 
-                <View style={{ width: "100%", marginTop: 3 }}>
-                  {/* {!loadingDash && ( */}
-                
-                  <TalkingPointsChart
-                  canvasKey={canvasKey}
+                                                           <View style={{ width: "100%" }}>
+                  <TalkingPointsBubble
+                    canvasKey={canvasKey}
                     userId={userId}
                     textColor={primaryColor}
                     overlayColor={primaryOverlayColor}
@@ -206,6 +205,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     skiaFontSmall={skiaFontSmall}
                   />
                 </View>
+    
+  
+  
 
                 <View style={{ width: "100%", marginBottom: 6 }}>
                   <Pics
@@ -224,6 +226,26 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     friendId={selectedFriendId}
                   />
                 </View>
+                              <View style={{ width: "100%", marginBottom: 6 }}>
+                  <History
+                    primaryColor={primaryColor}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
+                    userId={userId}
+                    friendId={selectedFriendId}
+                  />
+                </View>
+                              {/* <View style={{ width: "100%", marginBottom: 6 }}>
+                  <Moments
+                    primaryColor={primaryColor}
+                    primaryOverlayColor={ELEMENTS_BACKGROUND}
+                    userId={userId}
+                    friendId={selectedFriendId}
+                  />
+                </View> */}
+
+
+
+ 
 
                 <View style={{ width: "100%", height: 330 }}></View>
               </View>
@@ -271,9 +293,9 @@ const styles = StyleSheet.create({
     left: -410,
     opacity: 0.8,
 
-  width: 1100,   // 👈 change this
-  height: 1100,  // 👈 change this
-  resizeMode: "contain",
+    width: 1100,  
+    height: 1100,  
+    resizeMode: "contain",
     transform: [{ rotate: "200deg" }, { scaleX: -1 }],
   },
   containerOverScrollView: {

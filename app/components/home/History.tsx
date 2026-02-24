@@ -14,13 +14,11 @@ type Props = {
   primaryOverlayColor: string; 
 };
 
-const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
+const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
  
  
-  const { navigateToImages } = useAppNavigations();
+  const {   navigateToHistory } = useAppNavigations();
     const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
-  const { imageList } = useImages({ userId: userId, friendId: friendId, enabled: !loadingDash});
-  const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
  
   return (
     <>
@@ -38,15 +36,11 @@ const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) =>
               <View style={styles.rowSpaceBetween}>
                 <Pressable
                   hitSlop={10}
-                  onPress={
-                    imageList && imageList.length > 0
-                      ? navigateToImages
-                      : () => {}
-                  }
+                  onPress={navigateToHistory}
                   style={styles.row}
                 >
                   <SvgIcon
-                    name="image_multiple_outline"
+                    name="pie_chart"
                     size={20}
                     color={primaryColor} // dynamic
                     style={styles.icon}
@@ -57,40 +51,11 @@ const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) =>
                       { color: primaryColor }, // dynamic
                     ]}
                   >
-                    Pics ({imageList && imageList.length})
+                    History  
                   </Text>
                 </Pressable>
 
-                <View style={styles.rightButtonGroup}>
-                  <Pressable hitSlop={10} onPress={handleCaptureImage}>
-                    <Text
-                      style={[
-                        styles.actionText,
-                        { color: primaryColor }, // dynamic
-                      ]}
-                    >
-                      Camera
-                    </Text>
-                  </Pressable>
-
-                  <View
-                    style={[
-                      styles.divider,
-                      { backgroundColor: primaryColor }, // dynamic
-                    ]}
-                  />
-
-                  <Pressable hitSlop={10} onPress={handleSelectImage}>
-                    <Text
-                      style={[
-                        styles.actionText,
-                        { color: primaryColor }, // dynamic
-                      ]}
-                    >
-                      Upload
-                    </Text>
-                  </Pressable>
-                </View>
+         
               </View>
             )}
           </View>
@@ -151,4 +116,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Pics;
+export default History;

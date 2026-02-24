@@ -106,11 +106,11 @@ const ScreenSelectFriend = (
   ]);
 
   const locale = "en-US";
-  const { navigateBack, navigateToHome } = useAppNavigations();
+  const { navigateBack, navigateToHome, navigateToFriendHome } = useAppNavigations();
 
-  const handleNavAfterSelect = useCallback(() => {
-    if (!useNavigateBack) {
-      navigateToHome();
+  const handleNavAfterSelect = useCallback((friendId) => {
+    if (!useNavigateBack && friendId) {
+      navigateToFriendHome(friendId)
     } else {
       navigateBack();
     }

@@ -42,6 +42,8 @@ const UpcomingFriendPressable = ({
   const gradientScale = useSharedValue(0);
   const transition = useSharedValue(0);
 
+  console.log('UPCOMING FRIENDS BUTTON RERENDERED')
+
   const friendColors = friendList.find(
     (friend) => Number(friendId) === Number(friend.id)
   );

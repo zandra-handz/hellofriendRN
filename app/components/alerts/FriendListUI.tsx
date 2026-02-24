@@ -7,10 +7,10 @@ import {
 } from "react-native";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
+import ButtonSelectedFriend from "../buttons/friends/ButtonSelectedFriend";
 import { Vibration } from "react-native";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import { Friend } from "@/src/types/FriendTypes";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -44,11 +44,11 @@ const FriendListUI = ({
   onLongPress,
 }: FriendListUIProps) => {
   const itemColor = lightDarkTheme.primaryText;
- const elementBackgroundColor = lightDarkTheme.overlayBackground;
- // const elementBackgroundColor = lightDarkTheme.darkGlassBackground;
+  const elementBackgroundColor = lightDarkTheme.overlayBackground;
+  // const elementBackgroundColor = lightDarkTheme.darkGlassBackground;
   // const primaryBackground = lightDarkTheme.primaryBackground;
   // const backgroundColor = lightDarkTheme.darkGlassBackground;
- const backgroundColor = lightDarkTheme.primaryBackground;
+  const backgroundColor = lightDarkTheme.primaryBackground;
 
   const { navigateToAddFriend } = useAppNavigations();
 
@@ -62,7 +62,6 @@ const FriendListUI = ({
   const ITEM_BORDER_RADIUS = 999;
 
   const selectedId = friendId; //can be null
- 
 
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
@@ -105,58 +104,64 @@ const FriendListUI = ({
 
         {item && "id" in item && item.id !== selectedId && (
           <>
-          <FriendTintPressable
-          dividerColor={lightDarkTheme.primaryColor}
-            touchLocationX={touchLocationX}
-            touchLocationY={touchLocationY}
-            visibility={visibility}
-            scaleValue={scale}
-            screenDiagonal={screenDiagonal}
-            setGradientColors={setGradientColors}
-            friendColorValues={friendColors}
-            friendList={friendList}
-            startingColor={elementBackgroundColor}
-            style={styles.friendContainer}
-            friendId={item.id}
-            onPress={() => onPress(item.id)}
-            handleNavAfterSelect={handleNavAfterSelect}
-            useNavigateBack={useNavigateBack}
-            onLongPress={() => handleLongPress(item.id)}
-          >
-            <ButtonSelectFriend
-              themeTextColor={lightDarkTheme.primaryText}
-              backgroundOverlayColor={elementBackgroundColor}
-              friendId={friendId}
-              themeColors={themeColors}
-              borderRadius={ITEM_BORDER_RADIUS}
-              backgroundColor={backgroundColor}
-              color={lightDarkTheme.primaryText}
-              friend={item}
-              height={ITEM_HEIGHT}
-            />
-         
-          </FriendTintPressable>
-             <View style={[styles.divider,
-             {backgroundColor: lightDarkTheme.primaryText}]}>
-
-            </View>
-            </>
+            <FriendTintPressable
+              dividerColor={lightDarkTheme.primaryColor}
+              touchLocationX={touchLocationX}
+              touchLocationY={touchLocationY}
+              visibility={visibility}
+              scaleValue={scale}
+              screenDiagonal={screenDiagonal}
+              setGradientColors={setGradientColors}
+              friendColorValues={friendColors}
+              friendList={friendList}
+              startingColor={elementBackgroundColor}
+              style={styles.friendContainer}
+              friendId={item.id}
+              onPress={() => onPress(item.id)}
+              handleNavAfterSelect={handleNavAfterSelect}
+              useNavigateBack={useNavigateBack}
+              onLongPress={() => handleLongPress(item.id)}
+            >
+              <ButtonSelectFriend
+                themeTextColor={lightDarkTheme.primaryText}
+                backgroundOverlayColor={elementBackgroundColor}
+                friendId={friendId}
+                themeColors={themeColors}
+                borderRadius={ITEM_BORDER_RADIUS}
+                backgroundColor={backgroundColor}
+                color={lightDarkTheme.primaryText}
+                friend={item}
+                height={ITEM_HEIGHT}
+              />
+            </FriendTintPressable>
+            <View
+              style={[
+                styles.divider,
+                { backgroundColor: lightDarkTheme.primaryText },
+              ]}
+            ></View>
+          </>
         )}
 
         {item && "id" in item && item.id === selectedId && (
-          <GlobalPressable
-            onLongPress={handleDeselect}
-            style={styles.friendContainer}
-          >
-            <ButtonSelectFriend
+  <>
+            <ButtonSelectedFriend
               borderRadius={ITEM_BORDER_RADIUS}
-              backgroundColor={elementBackgroundColor}
+              backgroundColor={backgroundColor}
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
+              style={styles.friendContainer}
               fontColor={themeColors.fontColor}
-            />
-          </GlobalPressable>
+                onLongPress={handleDeselect}
+            /> 
+                     <View
+              style={[
+                styles.divider,
+                { backgroundColor: lightDarkTheme.primaryText },
+              ]}
+            ></View>
+            </>
         )}
 
         {!("id" in item) && friendList.length < 20 && (
@@ -177,7 +182,13 @@ const FriendListUI = ({
         )}
       </View>
     ),
-    [onPress, itemColor, themeColors?.fontColor, elementBackgroundColor, autoSelectFriend]
+    [
+      onPress,
+      itemColor,
+      themeColors?.fontColor,
+      elementBackgroundColor,
+      autoSelectFriend,
+    ],
   );
 
   const extractItemKey = (item: FriendListItem, index: number) =>
@@ -203,7 +214,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     position: "absolute",
     right: 0,
-    height: "100%", 
+    height: "100%",
     flexDirection: "column",
   },
   itemInnerContainer: {
@@ -222,7 +233,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     // borderRadius: 10,
-   
   },
   pressedStyle: {
     opacity: 0.2,
@@ -231,7 +241,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
- 
   },
   animatedViewContainer: {
     flex: 1,
@@ -242,12 +251,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   divider: {
-    width: '100%',
+    width: "100%",
     height: 1,
-    opacity: .1,
+    opacity: 0.1,
     marginVertical: 4,
-   
-  }
+  },
 });
 
 export default FriendListUI;

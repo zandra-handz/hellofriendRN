@@ -1,0 +1,364 @@
+import { View, StyleSheet, Pressable } from "react-native";
+import React, { useEffect, useState } from "react";
+import Animated, {
+  withDelay,
+  withTiming,
+  SharedValue,
+  useDerivedValue,
+  useSharedValue,
+  useAnimatedStyle,
+  runOnJS,
+} from "react-native-reanimated";
+import {
+  Canvas,
+  Path,
+  SkFont,
+  Skia,
+  Text,
+  Group,
+  Rect,
+} from "@shopify/react-native-skia";
+import SvgIcon from "@/app/styles/SvgIcons";
+
+import NotDonutPath from "./NotDonutPath";
+import { Text as RNText } from "react-native";
+
+import NotLeafPath from "./NotLeafPath";
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+
+type Props = {
+  onCategoryPress: () => void;
+  onCategoryLongPress: () => void;
+  onCenterPress: () => void;
+  // onPlusPress: () => void;
+  radius: number;
+  strokeWidth: number;
+  outerStrokeWidth: number;
+  font: SkFont;
+  smallFont: SkFont;
+  color: string;
+  iconColor: string;
+  backgroundColor: string;
+  totalValue: SharedValue<number>;
+  n: number;
+  gap: number;
+  labelsValue: SharedValue<object[]>;
+  labelsJS: object[];
+  decimalsValue: SharedValue<number[]>;
+  categoryStopsValue: SharedValue<number[]>;
+  colors: string[];
+  labelsSize: number;
+  labelsDistanceFromCenter: number;
+  labelsSliceEnd: number;
+};
+
+const NotDonutChart = ({
+  canvasKey,
+  totalJS,
+  positions,
+  onCategoryPress,
+  colorsReversed,
+  // onPlusPress,  key={canvasKey}
+  onCenterPress,
+  radius,
+  strokeWidth,
+  outerStrokeWidth,
+  darkerOverlayBackgroundColor,
+  backgroundColor,
+  font,
+  totalValue,
+  n,
+  gap,
+  decimalsValue,
+  labelsValue,
+  color,
+
+  colors,
+  labelsSize,
+  labelsDistanceFromCenter,
+  labelsSliceEnd,
+}: Props) => {
+  // const { lightDarkTheme } = useLDTheme();
+  const array = Array.from({ length: n });
+  const innerRadius = radius - outerStrokeWidth / 2;
+  // const color = lightDarkTheme.primaryText;
+  // const { selectedFriend } = useSelectedFriend();
+
+  const [labelsJS, setLabelsJS] = useState([]);
+  const [decimalsJS, setDecimalsJS] = useState([]);
+
+  const fadeInValue = useSharedValue(0);
+
+  // const LabelOverlayStyle = useAnimatedStyle(() => {
+  //   return {
+  //     opacity: fadeInValue.value,
+  //     zIndex: 4,
+  //   };
+  // }, [fadeInValue]);
+
+  useEffect(() => {
+    if (!totalJS) {
+      return;
+    }
+
+    fadeInValue.value = withDelay(
+      // totalJS * 20,
+      0,
+      withTiming(1, { duration: 500 }),
+    );
+  }, [totalJS]);
+
+  useDerivedValue(() => {
+    const labelsSnapshot = labelsValue.value;
+    runOnJS(setLabelsJS)(labelsSnapshot);
+  }, [labelsValue]);
+
+  useDerivedValue(() => {
+    const decimalsSnapshot = decimalsValue.value;
+    runOnJS(setDecimalsJS)(decimalsSnapshot);
+  }, [decimalsValue]);
+
+  const path = Skia.Path.Make();
+  path.addCircle(radius, radius, innerRadius);
+
+  const targetText = useDerivedValue(
+    () => `${Math.round(totalValue.value)}`,
+    [],
+  );
+
+  // const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
+
+  // useEffect(() => {
+  //   // Update shared value whenever selectedFriend changes
+  //   friendIdValue.value = selectedFriend?.id ?? -1;
+  // }, [selectedFriend?.id]);
+
+  // const textX = useDerivedValue(() => {
+  //   const _fontSize = font.measureText(targetText.value);
+  //   return radius - _fontSize.width / 1.8 + 170;
+  // });
+
+  // const LabelOverlays = array.map((_, index) => {
+  //   const categoryLabel = labelsJS[index]?.name || "";
+  //   // const categoryId = labelsJS[index]?.user_category || "";
+  //   const decimal = decimalsJS[index];
+  //   if (!decimal) return null;
+
+  //   const centerX = radius;
+  //   const centerY = radius;
+
+  //   const start = decimalsJS.slice(0, index).reduce((acc, v) => acc + v, 0);
+
+  //   const end = start + decimal;
+
+  //   const midAngle = ((start + end) / 2) * 2 * Math.PI;
+  //   const labelRadius = radius + labelsDistanceFromCenter;
+
+  //   const x = centerX + labelRadius * Math.cos(midAngle);
+  //   const y = centerY + labelRadius * Math.sin(midAngle);
+
+  //   const labelText = categoryLabel.slice(0, labelsSliceEnd);
+
+  //   const approxCharWidth = labelsSize * 0.55; // works well for Poppins-Regular
+  //   const textWidth = labelText.length * approxCharWidth;
+  //   const textHeight = labelsSize;
+
+  //   // console.log(colors);
+
+  //   return (
+  //     <Pressable
+  //       onPress={() => onCategoryPress(categoryLabel)}
+  //       key={index}
+  //       style={({ pressed }) => [
+  //         styles.categoryLabelsContainer,
+  //         {
+  //           left: x,
+  //           top: y,
+  //           transform: [
+  //             { translateX: -textWidth / 1.4 },
+  //             { translateY: -textHeight / 1 }, // /2
+  //             ...(pressed ? [{ scale: 0.7 }] : [{ scale: 1 }]),
+  //           ],
+  //           backgroundColor: pressed ? "#ddd" : "transparent",
+  //           shadowOpacity: pressed ? 0.2 : 0,
+  //         },
+  //       ]}
+  //     >
+  //       <RNText
+  //         style={[
+  //           styles.RNText,
+  //           {
+  //             color: color,
+  //             fontSize: labelsSize,
+  //             backgroundColor: darkerOverlayBackgroundColor,
+  //             paddingVertical: 6,
+  //           },
+  //         ]}
+  //       >
+  //         {labelText}
+  //       </RNText>
+  //     </Pressable>
+  //   );
+  // });
+
+  return (
+    <View style={styles.container}>
+      <Canvas
+        key={canvasKey}
+        style={[
+          styles.canvasContainer,
+          {
+            width: radius * 2 + 40 + 20 + 10,
+            height: radius * 2 + 20 + 10,
+            // width: radius * 2 + 40 + 20, // the + 40 here just adds space on the left without changing the position of the chart for the total text
+            // height: radius * 2 + 20,
+          },
+        ]}
+      >
+        <Rect
+          x={0}
+          y={0}
+          width={radius * 2 + 40 + 20 + 100}
+          height={radius * 2 + 20 + 10}
+          color={backgroundColor}
+        />
+        <NotLeafPath
+          // key={selectedFriend?.id ?? "no-friend"}
+          positions={positions}
+          colorsReversed={colorsReversed}
+        />
+        <Group transform={[{ translateX: 5 }, { translateY: 5 }]}>
+          <Path
+            path={path}
+            color={backgroundColor}
+            style={"stroke"}
+            strokeWidth={outerStrokeWidth}
+            strokeCap="round"
+            strokeJoin="round"
+            start={0}
+            end={1}
+          />
+
+         {/* {array.map((_, index) => {
+            return (
+              <React.Fragment key={index}>
+                <NotDonutPath
+                  // key={selectedFriend?.id ?? "no-friend"}
+                  radius={radius}
+                  strokeWidth={strokeWidth}
+                  outerStrokeWidth={outerStrokeWidth}
+                  color={colors[index]}
+                  decimalsValue={decimalsValue}
+                  index={index}
+                  gap={gap}
+                />
+              </React.Fragment>
+            );
+          })}  */}
+          {/* <Text
+            x={textX}
+            y={300}
+            text={targetText}
+            font={font}
+            color={color}
+            opacity={1}
+          /> */}
+        </Group>
+      </Canvas>
+
+      {/* <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
+        {LabelOverlays}
+      </Animated.View> */}
+
+      {onCenterPress && (
+        <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
+          <SvgIcon
+            name={"leaf"}
+            style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
+            size={200}
+            color={color}
+          />
+
+          <Pressable
+            onPress={onCenterPress}
+            hitSlop={10}
+            style={styles.centerCenterButton}
+          />
+        </View>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    zIndex: 2,
+  },
+  canvasContainer: {
+    flex: 1,
+    zIndex: 2,
+
+    // backgroundColor: "pink",
+  },
+  categoryLabelsContainer: {
+    zIndex: 66666,
+    elevation: 66666,
+    position: "absolute",
+    padding: 4,
+    borderRadius: 10,
+  },
+  centerWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centerCenterButton: {
+    zIndex: 1000000,
+    elevation: 1000000,
+    position: "absolute",
+    width: 130,
+    height: 130,
+
+    top: "50%",
+    left: "50%",
+    // backgroundColor: "red",
+    borderRadius: 999,
+    transform: [{ translateX: -70 }, { translateY: -70 }], // BASED ON CIRCLE DIAMETER
+  },
+  centerButton: {
+    position: "absolute",
+    padding: 0,
+
+    zIndex: 1000000,
+    elevation: 1000000,
+    backgroundColor: "red",
+    //borderRadius: 999,
+    borderRadius: 0,
+    // zIndex: 2,
+
+    right: -10,
+    bottom: 30,
+    zIndex: 2,
+    borderRadius: 999,
+    width: 34,
+    height: 34,
+
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: 1,
+  },
+  RNText: {
+    fontFamily: "Poppins-Regular",
+    // fontWeight: "bold",
+
+    alignSelf: "center",
+    padding: 20,
+    borderRadius: 30,
+    paddingHorizontal: 20,
+  },
+});
+
+export default NotDonutChart;

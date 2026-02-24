@@ -31,14 +31,14 @@ export const calculatePercentage = (
   numbers: number[],
   total: number,
 ): number[] => {
+  if (!numbers || !Array.isArray(numbers) || total === 0) return [];
+  
   const percentageArray: number[] = [];
-
   numbers.forEach(number => {
     const percentage = Math.round((number.size / total) * 100);
     percentageArray.push(percentage);
   });
 
   console.log(`calculating percentages: `, percentageArray);
-
   return percentageArray;
 };

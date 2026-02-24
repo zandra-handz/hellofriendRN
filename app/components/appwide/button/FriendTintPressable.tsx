@@ -71,7 +71,7 @@ const FriendTintPressable = ({
 
     setPressed(true);
     const { pageX, pageY } = event.nativeEvent;
-    console.log(`FRRRRRRRRRRRRRRRRRRRRRRRRRRINED`,pageY);
+    // console.log(`FRRRRRRRRRRRRRRRRRRRRRRRRRRINED`,pageY);
     touchLocationX.value = pageX;
     touchLocationY.value = pageY;
     visibility.value = withTiming(1, { duration: 160 });
@@ -97,7 +97,7 @@ const FriendTintPressable = ({
       { duration: 180 }, // 280
       (finished) => {
         if (finished) {
-          runOnJS(handleNavAfterSelect)();
+          runOnJS(handleNavAfterSelect)(friendId);
           // runOnJS(onPress)(); // use runOnJS to safely call JS code from the UI thread
         }
       }
@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 50000, 
+    height: 50,
   }, 
   divider: {
     width: '100%',

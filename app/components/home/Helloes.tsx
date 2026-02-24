@@ -1,11 +1,9 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, { useMemo } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-// import { useHelloes } from "@/src/context/HelloesContext";
+import SvgIcon from "@/app/styles/SvgIcons";
 import useHelloes from "@/src/hooks/useHelloes";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
 
 type Props = {
@@ -14,13 +12,20 @@ type Props = {
   friendId: string;
 };
 
-const Helloes = ({ primaryColor, primaryOverlayColor, userId, friendId }: Props) => {
-  const { helloesList } = useHelloes({userId: userId, friendId: friendId});
-  const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
+const Helloes = ({
+  primaryColor,
+  primaryOverlayColor,
+  userId,
+  friendId,
+}: Props) => {
+  const { helloesList } = useHelloes({ userId: userId, friendId: friendId });
+  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
   const isLoading = loadingDash;
 
   const trueHelloesInList = useMemo(() => {
-    return helloesList?.filter((hello) => hello.manual_reset === undefined) ?? [];
+    return (
+      helloesList?.filter((hello) => hello.manual_reset === undefined) ?? []
+    );
   }, [helloesList]);
 
   const { navigateToHelloes } = useAppNavigations();
@@ -31,7 +36,9 @@ const Helloes = ({ primaryColor, primaryOverlayColor, userId, friendId }: Props)
         <View
           style={[
             styles.outerContainer,
-            { backgroundColor: isLoading ? "transparent" : primaryOverlayColor },
+            {
+              backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
+            },
           ]}
         >
           <View style={styles.innerContainer}>
@@ -46,20 +53,14 @@ const Helloes = ({ primaryColor, primaryOverlayColor, userId, friendId }: Props)
                   }
                   style={styles.row}
                 >
-                  <MaterialCommunityIcons
-                    name="calendar-heart"
+                  <SvgIcon
+                    name="calendar"
                     size={20}
                     color={primaryColor}
                     style={styles.icon}
                   />
                   <Text style={[styles.titleText, { color: primaryColor }]}>
                     Helloes ({trueHelloesInList && trueHelloesInList.length})
-                  </Text>
-                </Pressable>
-
-                <Pressable hitSlop={10} onPress={navigateToHelloes}>
-                  <Text style={[styles.actionText, { color: primaryColor }]}>
-                    Details
                   </Text>
                 </Pressable>
               </View>

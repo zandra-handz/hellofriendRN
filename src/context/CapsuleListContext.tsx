@@ -127,6 +127,8 @@ export const CapsuleListProvider = ({ children, userId, isInitializing }: Capsul
       }
     });
 
+    
+
     const sortedList = Array.from(categorySizeMap.entries())
       .map(([user_category, { name, size }]) => ({
         user_category,
@@ -150,6 +152,8 @@ export const CapsuleListProvider = ({ children, userId, isInitializing }: Capsul
     return { capsules, allCapsules: sortedAll, preAdded, categorySizes, capsuleCategorySet };
   }, [data, getPreAdded]);
 
+
+  
  
   const contextValue = useMemo(() => ({
     capsuleList: sortedCapsuleList.capsules,

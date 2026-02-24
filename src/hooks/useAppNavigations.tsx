@@ -267,6 +267,10 @@ type NavToAddImageProps = {
   imageUri: string;
 };
 
+type NavToImagesProps = {
+  startingIndex: number;
+}
+
 type NavToSelectFriendProps = {
   useNavigateBack?: boolean;
 };
@@ -333,6 +337,7 @@ interface hookReturns {
     inPersonFilter,
   }: NavToHelloViewProps) => void;
   navigateToAddImage: ({ imageUri }: NavToAddImageProps) => void;
+  navigateToImages: ({startingIndex}: NavToImagesProps) => void;
 
   navigateToLocationSearch: () => void;
   navigateToLocationEdit: ({
@@ -400,6 +405,12 @@ const useAppNavigations = (): hookReturns => {
   const navigateToAddImage = ({ imageUri }: NavToAddImageProps) => {
     navigation.navigate("AddImage", { imageUri });
   };
+
+
+  const navigateToImages = ({startingIndex=0}: NavToImagesProps) => {
+      navigation.navigate("ImageView", { startingIndex });
+
+  }
 
   const navigateToLocationEdit = ({
     location,
@@ -514,6 +525,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToHelloes,
     navigateToHelloView,
     navigateToAddImage,
+    navigateToImages,
     navigateToLocationEdit,
     navigateToLocationSearch,
     navigateToMomentFocus,
@@ -529,7 +541,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToRecoverCredentials,
     navigateToFidget,
     navigateBack,
-    resetParams, // ✅ Added to return
+    resetParams, //  Added to return
   };
 };
 
