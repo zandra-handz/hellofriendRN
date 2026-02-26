@@ -105,21 +105,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 13,
     fontWeight: "bold",
-  },
-  rightButtonGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  actionText: {
-    fontWeight: "bold",
-    fontSize: 13,
-  },
-  divider: {
-    width: 1,
-    height: "100%",
-    opacity: 0.7,
-    marginHorizontal: 10,
-  },
+  }, 
 });
 
 export default Helloes;

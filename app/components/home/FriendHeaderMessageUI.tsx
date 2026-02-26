@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "transparent",
     marginBottom: 10,
-    zIndex: 30000,
+    zIndex: 2,
   },
   innerContainer: {
     position: "absolute",
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   animatedContainer: {
     padding: 4,
     borderRadius: 999,
-    zIndex: 9000,
+    zIndex: 3,
     alignItems: "center",
     justifyContent: "center",
     // marginBottom: 10,

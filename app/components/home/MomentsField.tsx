@@ -1,8 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useCallback, useMemo, useRef  } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
- 
 // import { AppState, AppStateStatus } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
@@ -10,7 +9,7 @@ import { useIsFocused } from "@react-navigation/native";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import NotDonut from "../headers/NotDonut";
- 
+
 // import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
 type Props = {
@@ -19,7 +18,7 @@ type Props = {
   outerPadding: DimensionValue;
 };
 
-const TalkingPointsBubble = ({
+const MomentsField = ({
   canvasKey,
   themeColors,
   categoryColors,
@@ -28,25 +27,24 @@ const TalkingPointsBubble = ({
   skiaFontLarge,
   skiaFontSmall,
   darkerOverlayBackgroundColor,
-}: Props) => { 
+  handleToggleColoredDots,
+  coloredDotsModeValue,
+}: Props) => {
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
- 
- 
+
   const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
     useCapsuleList();
 
-    const capsuleChartData = useMemo(() => {
-  return capsuleList.map((c) => ({
-    name: c.capsule?.slice(0, 20) ?? 'untitled', // or whatever label you want
-    size: c.charCount ?? c.capsule?.length ?? 1,
-    user_category: Number(c.user_category),
-    value: c.charCount ?? c.capsule?.length ?? 1,
-  }));
-}, [capsuleList]);
+  const capsuleChartData = useMemo(() => {
+    return capsuleList.map((c) => ({
+      name: c.capsule?.slice(0, 20) ?? "untitled", // or whatever label you want
+      size: c.charCount ?? c.capsule?.length ?? 1,
+      user_category: Number(c.user_category),
+      value: c.charCount ?? c.capsule?.length ?? 1,
+    }));
+  }, [capsuleList]);
 
   const capsuleListCount = capsuleList?.length;
- 
-
 
   const colorsRef = useRef<{
     colors: string[];
@@ -59,47 +57,53 @@ const TalkingPointsBubble = ({
   });
 
   // Only update colorsRef if we have data and are not pending
-//   if (capsuleCategorySet?.size && !isPending && categoryColors?.length) {
-//     const filteredColors = categoryColors
-//       .filter((item) => capsuleCategorySet.has(item.user_category))
-//       .map((item) => item.color);
+  //   if (capsuleCategorySet?.size && !isPending && categoryColors?.length) {
+  //     const filteredColors = categoryColors
+  //       .filter((item) => capsuleCategorySet.has(item.user_category))
+  //       .map((item) => item.color);
 
-//     const friend = categoryColors[0]?.friend ?? null;
+  //     const friend = categoryColors[0]?.friend ?? null;
 
-//     colorsRef.current = {
-//       colors: filteredColors,
-//       colorsReversed: filteredColors.slice().reverse(),
-//       friend,
-//     };
-//   }
+  //     colorsRef.current = {
+  //       colors: filteredColors,
+  //       colorsReversed: filteredColors.slice().reverse(),
+  //       friend,
+  //     };
+  //   }
 
-  if (capsuleCategorySet?.size && !isPending && categoryColors?.length && capsuleList?.length) {
-  // build a map of user_category -> color
-  const categoryColorMap = new Map(
-    categoryColors
-      .filter((item) => capsuleCategorySet.has(item.user_category))
-      .map((item) => [item.user_category, item.color])
-  );
+  if (
+    capsuleCategorySet?.size &&
+    !isPending &&
+    categoryColors?.length &&
+    capsuleList?.length
+  ) {
+    // build a map of user_category -> color
+    const categoryColorMap = new Map(
+      categoryColors
+        .filter((item) => capsuleCategorySet.has(item.user_category))
+        .map((item) => [item.user_category, item.color]),
+    );
 
-  // one color per capsule, mapped by their category
-  const filteredColors = capsuleList.map(
-    (capsule) => categoryColorMap.get(Number(capsule.user_category)) ?? categoryColors[0]?.color
-  );
+    // one color per capsule, mapped by their category
+    const filteredColors = capsuleList.map(
+      (capsule) =>
+        categoryColorMap.get(Number(capsule.user_category)) ??
+        categoryColors[0]?.color,
+    );
 
-  const friend = categoryColors[0]?.friend ?? null;
+    const friend = categoryColors[0]?.friend ?? null;
 
-  colorsRef.current = {
-    colors: filteredColors,
-    colorsReversed: filteredColors.slice().reverse(),
-    friend,
-  };
-}
+    colorsRef.current = {
+      colors: filteredColors,
+      colorsReversed: filteredColors.slice().reverse(),
+      friend,
+    };
+  }
 
   // Use the persistent value
   const colors = colorsRef.current;
 
-  const { navigateToMoments, navigateToMomentView } =
-    useAppNavigations();
+  const { navigateToMoments, navigateToMomentView } = useAppNavigations();
   // const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
   // const appState = useRef(AppState.currentState);
@@ -108,56 +112,62 @@ const TalkingPointsBubble = ({
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
-  const GAP = 0.00;
+  const GAP = 0.0;
   const LABELS_SIZE = 12;
   const LABELS_DISTANCE_FROM_CENTER = 4;
   const LABELS_SLICE_END = 20;
 
-  const handleMomentViewScrollTo = useCallback(
-    (categoryLabel) => {
-      if (categoryLabel && categorySizes.categoryStartIndices) {
-        navigateToMomentView({
-          index: categorySizes.categoryStartIndices[categoryLabel],
-        });
-      }
-    },
-    [navigateToMomentView, categorySizes.categoryStartIndices]
-  );
+  // const handleMomentViewScrollTo = useCallback(
+  //   (categoryLabel) => {
+  //     if (categoryLabel && categorySizes.categoryStartIndices) {
+  //       navigateToMomentView({
+  //         index: categorySizes.categoryStartIndices[categoryLabel],
+  //       });
+  //     }
+  //   },
+  //   [navigateToMomentView, categorySizes.categoryStartIndices]
+  // );
 
   const handleMomentScreenNoScroll = useCallback(() => {
     navigateToMoments({ scrollTo: null });
   }, [navigateToMoments]);
- 
+
   const memoizedData = useMemo(
     () => categorySizes.sortedList,
-    [categorySizes.sortedList]
+    [categorySizes.sortedList],
   );
+
+  // const [ coloredDotsMode, setColoredDotsMode ] = useState(false);
+
+
+  // const handleToggleColoredDots = () => {
+  //   setColoredDotsMode((prev) => !prev);
+
+  // };
 
 
   const memoizedColors = useMemo(() => colors?.colors, [colors?.colors]);
   const memoizedColorsReversed = useMemo(
     () => colors?.colorsReversed,
-    [colors?.colorsReversed]
+    [colors?.colorsReversed],
   );
 
   const isFocused = useIsFocused();
 
   return (
     <>
-  
-
       <View
         style={[
           styles.container,
           {
             height: HEIGHT,
             minHeight: HEIGHT,
-           // backgroundColor: overlayColor,
+            // backgroundColor: overlayColor,
           },
         ]}
       >
         <>
-          <View style={styles.labelContainer}>
+          {/* <Pressable style={styles.labelContainer}>
             <Text
               style={[
                 {
@@ -170,20 +180,20 @@ const TalkingPointsBubble = ({
                 },
               ]}
             >
-              Topics
+              Moments
             </Text>
-          </View>
+          </Pressable> */}
 
           {isFocused && colors?.colors?.length > 0 && (
             <View style={styles.donutWrapper}>
               <NotDonut
-              canvasKey={canvasKey}
-                font={skiaFontLarge}
+                canvasKey={canvasKey}
+                 font={skiaFontLarge}
                 smallFont={skiaFontSmall}
                 themeColors={themeColors}
-                  categoryData={memoizedData} 
+                categoryData={memoizedData}
                 iconColor={themeColors.lightColor}
-                onCategoryPress={handleMomentViewScrollTo}
+                // onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
                 totalJS={capsuleListCount}
                 radius={CHART_RADIUS}
@@ -192,16 +202,15 @@ const TalkingPointsBubble = ({
                 gap={GAP}
                 labelsSize={LABELS_SIZE}
                 labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-                labelsSliceEnd={LABELS_SLICE_END}
-                // data={[...categories.sortedList]} // new array reference every render
-                // colors={[...colors?.colors]}
-                // colorsReversed={[...colors?.colorsReversed]}
+                labelsSliceEnd={LABELS_SLICE_END} 
                 color={textColor}
                 darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-
                 data={capsuleChartData}
                 colors={memoizedColors}
                 colorsReversed={memoizedColorsReversed}
+                handleToggleColoredDots={handleToggleColoredDots}
+                    coloredDotsModeValue={coloredDotsModeValue}
+                
                 // centerTextSize={CENTER_TEXT_SIZE}
               />
             </View>
@@ -217,11 +226,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     flexGrow: 1,
     flex: 1,
-    padding: 10, // PADDING 
-
+    padding: 10, // PADDING
+zIndex: 100000,
     paddingVertical: 20,
     borderRadius: 20,
-  }, 
+  },
   labelContainer: {
     borderRadius: 20,
     height: 26,
@@ -238,4 +247,4 @@ const styles = StyleSheet.create({
   donutWrapper: {},
 });
 
-export default React.memo(TalkingPointsBubble);
+export default React.memo(MomentsField);

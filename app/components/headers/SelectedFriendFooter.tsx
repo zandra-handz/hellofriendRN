@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     // borderTopLeftRadius: 20,
     borderRadius: 999,
     bottom: 0,
-    zIndex: 50000,
+    zIndex: 4,
   },
   section: {
     flex: 1,

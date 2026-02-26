@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   Text,
@@ -6,18 +6,23 @@ import {
   View,
   ScrollView,
   DimensionValue,
+  Pressable,
 } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useDerivedValue, runOnJS } from "react-native-reanimated";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
+
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import AnimatedClimber from "@/app/screens/fidget/AnimatedClimber";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import TalkingPointsChart from "./TalkingPointsChart";
-import TalkingPointsBubble from "./TalkingPointsBubble";
+// import TalkingPointsChart from "./TalkingPointsChart";
+import MomentsField from "./MomentsField";
 
 import History from "./History";
 import Pics from "./Pics";
@@ -28,6 +33,7 @@ import Moments from "./Moments";
 // import { useCallback } from "react";
 
 import { Image } from "react-native";
+import { color } from "react-native-elements/dist/helpers";
 const LeafImage = require("@/app/styles/pngs/leaf.png");
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -51,6 +57,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   skiaFontLarge,
   skiaFontSmall,
   themeColors,
+  handleToggleColoredDots,
+  coloredDotsModeValue,
 }) => {
   // console.log("selected friend home rerendered");
   const headerRef = useRef(null);
@@ -61,9 +69,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
 
   const MESSAGE_HEADER_HEIGHT = 240;
-
+  const { capsuleList } = useCapsuleList();
   // const scrollRef = useRef<ScrollView | null>(null);
+  const [coloredDotsMode, setColoredDotsMode] = useState(false);
 
+  useDerivedValue(() => {
+    runOnJS(setColoredDotsMode)(coloredDotsModeValue.value);
+  }, [coloredDotsModeValue]);
   // useFocusEffect(
   //   useCallback(() => {
   //     // This runs when screen gains focus (you can do nothing here)
@@ -90,6 +102,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     });
   };
 
+  const scrollRef = useRef<ScrollView>(null);
+  const momentsFieldY = useRef<number>(0);
+  const momentsFieldRef = useRef<View>(null);
+
   const smallHeaderVisibility = useSharedValue(0);
 
   const smallHeaderAnimationStyle = useAnimatedStyle(() => {
@@ -98,25 +114,22 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     };
   });
 
-  const crescentMoonAnimationStyle = useAnimatedStyle(() => {
-    return {
-      opacity: 1 - smallHeaderVisibility.value, // inverse of small header visibility
-    };
-  });
   const ELEMENTS_BACKGROUND = "transparent";
-
+  useEffect(() => {
+    if (coloredDotsMode && scrollRef.current && momentsFieldRef.current) {
+      momentsFieldRef.current.measureLayout(
+        scrollRef.current,
+        (x, y) => {
+          scrollRef.current?.scrollTo({ y, animated: true });
+        },
+        () => console.log("measure failed"),
+      );
+    } else if (!coloredDotsMode && scrollRef.current) {
+      scrollRef.current.scrollTo({ y: 0, animated: true });
+    }
+  }, [coloredDotsMode]);
   return (
     <>
-      {/* <Animated.View style={[crescentMoonAnimationStyle, styles.moonWrapper]}>
-        <View
-          style={[
-            styles.darkGlassBackgroundContainer,
-            {
-              backgroundColor: darkGlassBackground,
-            },
-          ]}
-        ></View>
-      </Animated.View> */}
       <View
         style={[
           styles.container,
@@ -125,27 +138,24 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           },
         ]}
       >
-        {/* <SvgIcon
-          name={"leaf"}
-          size={1200}
-          // color={"#8bc34a"}
-               color={themeColors.lightColor}
-          style={styles.leafContainer}
-        /> */}
-
         <Image
           source={LeafImage}
           style={styles.leafContainer}
           tintColor={themeColors.lightColor}
         />
+
         <View style={styles.itemsContainer}>
           <View style={styles.containerOverScrollView}>
+            {/* {!coloredDotsMode && (
+
+       
             <Animated.View
               style={[
                 smallHeaderAnimationStyle,
                 styles.smallerHeaderContainer,
                 {
                   backgroundColor: primaryOverlayColor,
+                 
                 },
               ]}
             >
@@ -153,13 +163,15 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 {selectedFriendName}
               </Text>
             </Animated.View>
+                 )} */}
 
             <ScrollView
+              ref={scrollRef}
               // ref={scrollRef}
               onScroll={handleScroll}
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
-              style={{ width: "100%" }}
+              style={{ width: "100%", zIndex: 9 }}
               contentContainerStyle={{
                 paddingHorizontal: 0,
                 alignItems: "center",
@@ -170,6 +182,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   flex: 1,
                   height: MESSAGE_HEADER_HEIGHT, // EYEBALL
                   width: "100%",
+                  opacity: coloredDotsMode ? 0 : 1,
                 }}
                 ref={headerRef}
               >
@@ -191,9 +204,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               </View>
 
               <View style={styles.itemsContainer}>
-
-                                                           <View style={{ width: "100%" }}>
-                  <TalkingPointsBubble
+                <View
+                  ref={momentsFieldRef}
+                  style={{ width: "100%", zIndex: 2000, elevation: 2000 }}
+                >
+                  {" "}
+                  <MomentsField
                     canvasKey={canvasKey}
                     userId={userId}
                     textColor={primaryColor}
@@ -203,38 +219,48 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     categoryColors={categoryColorsArray}
                     skiaFontLarge={skiaFontLarge}
                     skiaFontSmall={skiaFontSmall}
-                  />
-                </View>
-    
-  
-  
-
-                <View style={{ width: "100%", marginBottom: 6 }}>
-                  <Pics
-                    primaryColor={primaryColor}
-                    primaryOverlayColor={ELEMENTS_BACKGROUND}
-                    userId={userId}
-                    friendId={selectedFriendId}
+                    handleToggleColoredDots={handleToggleColoredDots}
+                    coloredDotsModeValue={coloredDotsModeValue}
                   />
                 </View>
 
-                <View style={{ width: "100%", marginVertical: 4 }}>
-                  <Helloes
-                    userId={userId}
-                    primaryColor={primaryColor}
-                    primaryOverlayColor={ELEMENTS_BACKGROUND}
-                    friendId={selectedFriendId}
-                  />
+                {capsuleList && !coloredDotsMode && (
+                  <AnimatedClimber
+                    total={capsuleList.length}
+                    skiaFont={skiaFontLarge}
+                  ></AnimatedClimber>
+                )}
+
+                {/* {!coloredDotsMode && ( */}
+                <View style={{ opacity: coloredDotsMode ? 0 : 1 }}>
+                  <View style={{ width: "100%", marginBottom: 6, zIndex: 2 }}>
+                    <Pics
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={ELEMENTS_BACKGROUND}
+                      userId={userId}
+                      friendId={selectedFriendId}
+                    />
+                  </View>
+
+                  <View style={{ width: "100%", marginVertical: 4, zIndex: 2 }}>
+                    <Helloes
+                      userId={userId}
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={ELEMENTS_BACKGROUND}
+                      friendId={selectedFriendId}
+                    />
+                  </View>
+                  <View style={{ width: "100%", marginBottom: 6, zIndex: 2 }}>
+                    <History
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={ELEMENTS_BACKGROUND}
+                      userId={userId}
+                      friendId={selectedFriendId}
+                    />
+                  </View>
                 </View>
-                              <View style={{ width: "100%", marginBottom: 6 }}>
-                  <History
-                    primaryColor={primaryColor}
-                    primaryOverlayColor={ELEMENTS_BACKGROUND}
-                    userId={userId}
-                    friendId={selectedFriendId}
-                  />
-                </View>
-                              {/* <View style={{ width: "100%", marginBottom: 6 }}>
+                {/* )} */}
+                {/* <View style={{ width: "100%", marginBottom: 6 }}>
                   <Moments
                     primaryColor={primaryColor}
                     primaryOverlayColor={ELEMENTS_BACKGROUND}
@@ -243,13 +269,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   />
                 </View> */}
 
-
-
- 
-
                 <View style={{ width: "100%", height: 330 }}></View>
               </View>
             </ScrollView>
+            <View style={{ borderRadius: 40,   height: 100}}>
+
+            </View>
           </View>
         </View>
       </View>
@@ -261,22 +286,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    padding: 0,
-
     height: "100%",
     justifyContent: "space-between",
-  },
-  fullViewContainer: {
-    zIndex: 30000,
-    height: "100%",
-    width: "100%",
-  },
-  darkGlassBackgroundContainer: {
-    height: 275,
-    width: "100%",
-    top: -100,
-    alignSelf: "center",
-    position: "absolute",
+    // zIndex: 3,
   },
   smallerHeaderContainer: {
     position: "absolute",
@@ -284,8 +296,8 @@ const styles = StyleSheet.create({
     top: 0,
     height: "auto",
     padding: 6,
-    zIndex: 5000,
-    elevation: 5000,
+    zIndex: 3,
+    elevation: 3,
   },
   leafContainer: {
     position: "absolute",
@@ -293,8 +305,8 @@ const styles = StyleSheet.create({
     left: -410,
     opacity: 0.8,
 
-    width: 1100,  
-    height: 1100,  
+    width: 1100,
+    height: 1100,
     resizeMode: "contain",
     transform: [{ rotate: "200deg" }, { scaleX: -1 }],
   },
@@ -302,32 +314,12 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     flex: 1,
-    overflow: "hidden",
-    borderWidth: 0,
+    // overflow: "hidden",
     borderColor: "black",
   },
   itemsContainer: {
-    zIndex: 30000,
     height: "100%",
     width: "100%",
-  },
-  moonWrapper: {
-    zIndex: 1,
-  },
-  textContainer: {
-    zIndex: 5,
-    width: "100%",
-    flexWrap: "wrap",
-    height: "100%",
-    textAlign: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  loadingWrapper: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 

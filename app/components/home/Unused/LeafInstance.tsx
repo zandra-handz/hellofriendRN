@@ -158,6 +158,7 @@
 //   );
 // }
 
+
 import React, { useEffect, useState } from "react";
 import { Path, usePathValue, processTransform2d, SkPath } from "@shopify/react-native-skia";
 import { useSharedValue, withTiming, withDelay, Easing, SharedValue, runOnJS } from "react-native-reanimated";
@@ -170,6 +171,7 @@ export function LeafInstance({
   index,
   color,
   isSleeping,
+  useColors,
 }: {
   leafPath: SkPath;
   x: number;
@@ -178,6 +180,7 @@ export function LeafInstance({
   index: number;
   color: string;
   isSleeping: SharedValue<boolean>;
+  useColors: boolean;
 }) {
   const scale = useSharedValue(0);
   const [sleeping, setSleeping] = useState(false);
@@ -185,18 +188,13 @@ export function LeafInstance({
 
   useEffect(() => {
     scale.value = 0;
-    const groupSize = 5; // how many appear at once
-const group = Math.floor(index / groupSize);
-const delay = group * 50;
+    const groupSize = 5;
+    const group = Math.floor(index / groupSize);
+    const delay = group * 50;
 
-// scale.value = withDelay(
-//   delay,
-//   withTiming(1, { duration: 500, easing: Easing.out(Easing.exp) })
-// );
-
-scale.value = withDelay(
-  delay,
-  withTiming(1, { duration: 500, easing: Easing.out(Easing.exp) },
+    scale.value = withDelay(
+      delay,
+      withTiming(1, { duration: 500, easing: Easing.out(Easing.exp) },
         (finished) => {
           if (finished) {
             const pathCopy = leafPath.copy();
@@ -215,88 +213,27 @@ scale.value = withDelay(
     path.transform(processTransform2d([{ scale: scale.value }]));
   }, leafPath);
 
+  const leafColor = useColors ? color : "rgba(220,220,235,0.6)";
 
   return (
-  <>
-    {sleeping && finalPath ? (
-      <Path
-        path={finalPath}
-        color="rgba(220,220,235,0.6)"
-        style="fill"     opacity={.3}
-        transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-      />
-    ) : (
-      <Path
-        path={clip}
-        color="rgba(220,220,235,0.6)"
-        opacity={.3}
-        style="fill"
-        transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-      />
-    )}
-  </>
-);
-//   return (
-//   <>
-//     {sleeping && finalPath ? (
-//       <>
-//         <Path
-//           path={finalPath}
-//           color={color}
-//              opacity={0.2}
-//           style="fill"
-//           transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-//         />
-//         {/* <Path
-//           path={finalPath}
-//           // color="rgba(0,0,0,0.3)"
-//           // color="rgba(10,10,30,0.7)"
-//           color="rgba(0,0,0,0.6)"
-//           opacity={0.2}
-//           style="fill"
-//           transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-//         /> */}
-//       </>
-//     ) : (
-//       <>
-//         <Path
-//           path={clip}
-//           color={color}
-//           style="fill"
-//                opacity={0.2}
-//           transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-//         />
-//         {/* <Path
-//           path={clip}
-//           // color="rgba(0,0,0,0.3)"
-//           // color="rgba(10,10,30,0.7)"
-//           color="rgba(0,0,0,0.6)"
-//              opacity={0.2}
-//           style="fill"
-//           transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-//         /> */}
-//       </>
-//     )}
-//   </>
-// );
-
-  // return (
-  //   <>
-  //     {sleeping && finalPath ? (
-  //       <Path
-  //         path={finalPath}
-  //         color={color}
-  //         style="fill"
-  //         transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-  //       />
-  //     ) : (
-  //       <Path
-  //         path={clip}
-  //         color={color}
-  //         style="fill"
-  //         transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
-  //       />
-  //     )}
-  //   </>
-  // );
+    <>
+      {sleeping && finalPath ? (
+        <Path
+          path={finalPath}
+          color={leafColor}
+          style="fill"
+          opacity={0.3}
+          transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
+        />
+      ) : (
+        <Path
+          path={clip}
+          color={leafColor}
+          opacity={0.3}
+          style="fill"
+          transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
+        />
+      )}
+    </>
+  );
 }

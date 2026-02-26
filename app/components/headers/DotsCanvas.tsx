@@ -1,5 +1,7 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+
+
 import Animated, {
   withDelay,
   withTiming,
@@ -18,13 +20,15 @@ import {
   Group,
   Rect,
 } from "@shopify/react-native-skia";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+
 import SvgIcon from "@/app/styles/SvgIcons";
 
 import NotDonutPath from "./NotDonutPath";
 import { Text as RNText } from "react-native";
 
-import NotLeafPath from "./NotLeafPath";
-// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import DotPaths from "./DotPaths";
+ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -44,6 +48,7 @@ type Props = {
   backgroundColor: string;
   totalValue: SharedValue<number>;
   n: number;
+  catN: number;
   gap: number;
   labelsValue: SharedValue<object[]>;
   labelsJS: object[];
@@ -55,49 +60,73 @@ type Props = {
   labelsSliceEnd: number;
 };
 
-const NotDonutChart = ({
+const DotsCanvas = ({
   canvasKey,
   totalJS,
   positions,
-  onCategoryPress,
-  colorsReversed,
+   onCategoryPress,
+  // colorsReversed,
+  // colors,
   // onPlusPress,  key={canvasKey}
   onCenterPress,
+  categoryStopsValue,
   radius,
-  strokeWidth,
+  // strokeWidth,
   outerStrokeWidth,
-  darkerOverlayBackgroundColor,
+   darkerOverlayBackgroundColor,
   backgroundColor,
   font,
   totalValue,
   n,
-  gap,
+  catN,
+  // gap,
   decimalsValue,
   labelsValue,
   color,
 
-  colors,
-  labelsSize,
-  labelsDistanceFromCenter,
+  // colors,
+   labelsSize,
+ labelsDistanceFromCenter,
   labelsSliceEnd,
+  handleToggleColoredDots,
+  coloredDotsModeValue,
 }: Props) => {
   // const { lightDarkTheme } = useLDTheme();
-  const array = Array.from({ length: n });
+ const array = Array.from({ length: n });
+ const catArray = Array.from({length: catN});
   const innerRadius = radius - outerStrokeWidth / 2;
   // const color = lightDarkTheme.primaryText;
-  // const { selectedFriend } = useSelectedFriend();
+   const { selectedFriend } = useSelectedFriend();
 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
 
+ 
+const [coloredDotsMode, setColoredDotsMode] = useState(false);
+
+useDerivedValue(() => {
+  runOnJS(setColoredDotsMode)(coloredDotsModeValue.value);
+}, [coloredDotsModeValue]);
+
+ 
   const fadeInValue = useSharedValue(0);
 
-  // const LabelOverlayStyle = useAnimatedStyle(() => {
-  //   return {
-  //     opacity: fadeInValue.value,
-  //     zIndex: 4,
-  //   };
-  // }, [fadeInValue]);
+  const LabelOverlayStyle = useAnimatedStyle(() => {
+    return {
+      opacity: fadeInValue.value,
+      zIndex: 4,
+    };
+  }, [fadeInValue]);
+
+  // const [coloredDotsMode, setColoredDotsMode] = useState(false);
+
+  const [ highLightedColor, setHighlightedColor ] = useState(null);
+    const [ highlightCatID, setHighlightID] = useState(null);
+
+  // const handleToggleColoredDots = () => {
+  
+  //   setColoredDotsMode((prev) => !prev);
+  // };
 
   useEffect(() => {
     if (!totalJS) {
@@ -124,24 +153,18 @@ const NotDonutChart = ({
   const path = Skia.Path.Make();
   path.addCircle(radius, radius, innerRadius);
 
-  const targetText = useDerivedValue(
-    () => `${Math.round(totalValue.value)}`,
-    [],
-  );
+ 
 
-  // const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
+   const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
 
-  // useEffect(() => {
-  //   // Update shared value whenever selectedFriend changes
-  //   friendIdValue.value = selectedFriend?.id ?? -1;
-  // }, [selectedFriend?.id]);
+  useEffect(() => {
+    // Update shared value whenever selectedFriend changes
+    friendIdValue.value = selectedFriend?.id ?? -1;
+  }, [selectedFriend?.id]);
 
-  // const textX = useDerivedValue(() => {
-  //   const _fontSize = font.measureText(targetText.value);
-  //   return radius - _fontSize.width / 1.8 + 170;
-  // });
+ 
 
-  // const LabelOverlays = array.map((_, index) => {
+  // const LabelOverlays = catArray.map((_, index) => {
   //   const categoryLabel = labelsJS[index]?.name || "";
   //   // const categoryId = labelsJS[index]?.user_category || "";
   //   const decimal = decimalsJS[index];
@@ -204,45 +227,111 @@ const NotDonutChart = ({
   //   );
   // });
 
+  const onDotDoublePress = () => {
+    console.log('doulbe press!')
+
+  };
+
+  const onDotPress = useCallback((hit) => {
+    console.log(hit);
+    if (hit) {
+      setHighlightID(hit.catId);
+        setHighlightedColor(hit.color);
+    } else {
+      console.log('none')
+      setHighlightID(null);
+      setHighlightedColor(null);
+    }
+}, []);
+
+const tap = Gesture.Tap()
+  .enabled(coloredDotsMode)
+  .numberOfTaps(1)
+  .onStart(({ x, y }) => {
+    const hit = positions.find((p) => {
+      const dx = p.x - x;
+      const dy = p.y - y;
+      return Math.sqrt(dx * dx + dy * dy) < 20;
+    });
+    if (hit) runOnJS(onDotPress)(hit);
+  });
+
+const doubleTap = Gesture.Tap()
+  .enabled(coloredDotsMode)
+  .numberOfTaps(2)
+  .onStart(({ x, y }) => {
+    const hit = positions.find((p) => {
+      const dx = p.x - x;
+      const dy = p.y - y;
+      return Math.sqrt(dx * dx + dy * dy) < 20;
+    });
+    if (hit) runOnJS(onDotDoublePress)(hit);
+  });
+
+// Compose them - single tap waits to confirm it's not a double tap
+const gesture = Gesture.Exclusive(doubleTap, tap);
+ 
+
   return (
     <View style={styles.container}>
-      <Canvas
-        key={canvasKey}
-        style={[
-          styles.canvasContainer,
-          {
-            width: radius * 2 + 40 + 20 + 10,
-            height: radius * 2 + 20 + 10,
-            // width: radius * 2 + 40 + 20, // the + 40 here just adds space on the left without changing the position of the chart for the total text
-            // height: radius * 2 + 20,
-          },
-        ]}
-      >
-        <Rect
-          x={0}
-          y={0}
-          width={radius * 2 + 40 + 20 + 100}
-          height={radius * 2 + 20 + 10}
-          color={backgroundColor}
-        />
-        <NotLeafPath
-          // key={selectedFriend?.id ?? "no-friend"}
-          positions={positions}
-          colorsReversed={colorsReversed}
-        />
-        <Group transform={[{ translateX: 5 }, { translateY: 5 }]}>
-          <Path
-            path={path}
-            color={backgroundColor}
-            style={"stroke"}
-            strokeWidth={outerStrokeWidth}
-            strokeCap="round"
-            strokeJoin="round"
-            start={0}
-            end={1}
-          />
+      
+      {/* <Pressable
+        onPress={handleToggleColoredDots}
+        style={{ width: 100, height: 30, zIndex: 2000, backgroundColor: "limegreen" }}
+      ></Pressable> */}
+ 
+      {/* {coloredDotsMode && (
+        <View style={[StyleSheet.absoluteFill, styles.backdrop]}>
 
-         {/* {array.map((_, index) => {
+
+        </View>
+      )} */}
+
+      {/* {coloredDotsMode && ( */}
+        {/* <GestureDetector gesture={tap}> */}
+          <GestureDetector gesture={gesture}>
+          <Canvas
+            key={canvasKey}
+            style={[
+              styles.canvasContainer,
+              {
+                width: radius * 2 + 40 + 20 + 10,
+                height: radius * 2 + 20 + 10,
+                // width: radius * 2 + 40 + 20, // the + 40 here just adds space on the left without changing the position of the chart for the total text
+                // height: radius * 2 + 20,
+              },
+            ]}
+          >
+            <Rect
+              x={0}
+              y={0}
+              width={radius * 2 + 40 + 20 + 100}
+              height={radius * 2 + 20 + 10}
+              color={backgroundColor}
+            />
+            <DotPaths
+              // key={selectedFriend?.id ?? "no-friend"}
+              positions={positions}
+              // colorsReversed={colorsReversed}
+              // colors={colors}
+              useColors={coloredDotsMode}
+              highlightColor={highLightedColor}
+              highlightCatID={highlightCatID}
+            />
+
+            <Group transform={[{ translateX: 5 }, { translateY: 5 }]}>
+              <Path
+                path={path}
+                color={backgroundColor}
+                style={"stroke"}
+                strokeWidth={outerStrokeWidth}
+                strokeCap="round"
+                strokeJoin="round"
+                start={0}
+                end={1}
+              />
+
+              {/* {array.map((_, index) => {
             return (
               <React.Fragment key={index}>
                 <NotDonutPath
@@ -258,7 +347,7 @@ const NotDonutChart = ({
               </React.Fragment>
             );
           })}  */}
-          {/* <Text
+              {/* <Text
             x={textX}
             y={300}
             text={targetText}
@@ -266,14 +355,63 @@ const NotDonutChart = ({
             color={color}
             opacity={1}
           /> */}
-        </Group>
-      </Canvas>
+            </Group>
+          </Canvas>
+        </GestureDetector>
+      {/* )} */}
 
-      {/* <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
+      {/* {!coloredDotsMode && (
+        <Canvas
+          key={canvasKey}
+          style={[
+            styles.canvasContainer,
+            {
+              width: radius * 2 + 40 + 20 + 10,
+              height: radius * 2 + 20 + 10,
+              // width: radius * 2 + 40 + 20, // the + 40 here just adds space on the left without changing the position of the chart for the total text
+              // height: radius * 2 + 20,
+            },
+          ]}
+        >
+          <Rect
+            x={0}
+            y={0}
+            width={radius * 2 + 40 + 20 + 100}
+            height={radius * 2 + 20 + 10}
+            color={backgroundColor}
+          />
+          <DotPaths
+            // key={selectedFriend?.id ?? "no-friend"}
+            positions={positions}
+            colorsReversed={colorsReversed}
+            useColors={false}
+          />
+
+          <Group transform={[{ translateX: 5 }, { translateY: 5 }]}>
+            <Path
+              path={path}
+              color={backgroundColor}
+              style={"stroke"}
+              strokeWidth={outerStrokeWidth}
+              strokeCap="round"
+              strokeJoin="round"
+              start={0}
+              end={1}
+            />
+          </Group>
+        </Canvas>
+      )} */}
+
+      {/* {coloredDotsMode && (
+
+
+
+      <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
         {LabelOverlays}
-      </Animated.View> */}
+      </Animated.View>
+            )} */}
 
-      {onCenterPress && (
+      {onCenterPress && !coloredDotsMode && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <SvgIcon
             name={"leaf"}
@@ -296,11 +434,14 @@ const NotDonutChart = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    zIndex: 2,
+    zIndex: 200000,
+   
+
   },
   canvasContainer: {
     flex: 1,
-    zIndex: 2,
+      zIndex: 200000,
+  
 
     // backgroundColor: "pink",
   },
@@ -334,7 +475,7 @@ const styles = StyleSheet.create({
 
     zIndex: 1000000,
     elevation: 1000000,
-    backgroundColor: "red",
+   // backgroundColor: "red",
     //borderRadius: 999,
     borderRadius: 0,
     // zIndex: 2,
@@ -359,6 +500,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingHorizontal: 20,
   },
+  backdrop: {
+    backgroundColor: 'red',
+    position: 'absolute',
+
+  }
 });
 
-export default NotDonutChart;
+export default DotsCanvas;

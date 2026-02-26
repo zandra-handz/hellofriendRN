@@ -1,14 +1,21 @@
 //import * as Sentry from "@sentry/react-native";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { View, Alert, StyleSheet } from "react-native";
+import { View, Alert, StyleSheet, Pressable } from "react-native";
 
 import { useRoute } from "@react-navigation/native";
+
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 // app state
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
+
+import MomentsField from "@/app/components/home/MomentsField";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -100,6 +107,13 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
+  // In ScreenFriendHome or wherever the backdrop lives
+  const coloredDotsModeValue = useSharedValue(false);
+
+  const handleToggleColoredDots = () => {
+    coloredDotsModeValue.value = !coloredDotsModeValue.value;
+  };
+
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
   const { lightDarkTheme } = useLDTheme();
@@ -189,6 +203,11 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   //   }
   // }, [imageUri]);
 
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: coloredDotsModeValue.value ? 1 : 0,
+    pointerEvents: coloredDotsModeValue.value ? "auto" : "none",
+  }));
+
   const themeColors = useMemo(
     () => ({
       lightColor: selectedFriend?.lightColor,
@@ -204,21 +223,31 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
   return (
     <>
-      {
-        autoSelectFriend?.customFriend !== "pending" &&   // not sure if need all this here
-          autoSelectFriend?.nextFriend !== "pending" &&
-          selectedFriend?.isReady &&
-          // selectedFriend?.id &&
-        friendListAndUpcomingIsSuccess &&
-        <SafeViewFriendHome
-          friendColorLight={selectedFriend.lightColor}
-          friendColorDark={selectedFriend.darkColor}
-          backgroundOverlayColor={lightDarkTheme.primaryBackground}
-          friendId={selectedFriend?.id}
-        >
-          <View style={[{ flex: 1 }]}>
-            {settings?.id && upcomingHelloes?.length && user?.id   && (
-              <View style={styles.mainContainer}>
+      {autoSelectFriend?.customFriend !== "pending" && // not sure if need all this here
+        autoSelectFriend?.nextFriend !== "pending" &&
+        selectedFriend?.isReady &&
+        // selectedFriend?.id &&
+        friendListAndUpcomingIsSuccess && (
+          <SafeViewFriendHome
+            friendColorLight={selectedFriend.lightColor}
+            friendColorDark={selectedFriend.darkColor}
+            backgroundOverlayColor={lightDarkTheme.primaryBackground}
+            friendId={selectedFriend?.id}
+          >
+  
+            <Pressable
+              onPress={handleToggleColoredDots}
+              style={{
+                width: 100,
+                height: 30,
+                zIndex: 200000,
+
+                backgroundColor: "limegreen",
+              }}
+            ></Pressable>
+
+            {settings?.id && upcomingHelloes?.length && user?.id && (
+           
                 <SelectedFriendHome
                   canvasKey={route.key}
                   primaryBackground={lightDarkTheme.primaryBackground}
@@ -234,55 +263,39 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
                   themeColors={themeColors}
                   selectedFriendId={selectedFriend?.id}
                   selectedFriendName={selectedFriend?.name}
-                />
-              </View>
+                  handleToggleColoredDots={handleToggleColoredDots}
+                  coloredDotsModeValue={coloredDotsModeValue}
+                /> 
             )}
-          </View>
-          {selectedFriend?.id && (
-            <WriteButton
-              onPress={handleNavigateToCreateNew}
-              backgroundColor={manualGradientColors.lightColor}
-              iconColor={manualGradientColors.homeDarkColor}
-              spaceFromBottom={140}
+                      <Animated.View
+              style={[
+                StyleSheet.absoluteFillObject,
+                backdropStyle,
+                { backgroundColor: "rgba(0,0,0,.85)", zIndex: 5 },
+              ]}
             />
-          )}
+            {selectedFriend?.id && (
+              <WriteButton
+                onPress={handleNavigateToCreateNew}
+                backgroundColor={manualGradientColors.lightColor}
+                iconColor={manualGradientColors.homeDarkColor}
+                spaceFromBottom={140}
+              />
+            )}
 
-          <SelectedFriendFooter
-            userId={user?.id}
-            friendName={selectedFriend?.name}
-            lightDarkTheme={lightDarkTheme}
-            overlayColor={lightDarkTheme.overlayBackground}
-            themeColors={themeColors}
-          />
-        </SafeViewFriendHome>
-      }
+            <SelectedFriendFooter
+              userId={user?.id}
+              friendName={selectedFriend?.name}
+              lightDarkTheme={lightDarkTheme}
+              overlayColor={lightDarkTheme.overlayBackground}
+              themeColors={themeColors}
+            />
+          </SafeViewFriendHome>
+        )}
     </>
   );
 };
 
-const styles = StyleSheet.create({
-  loadingContainer: {
-    zIndex: 100000,
-    elevation: 100000,
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    flex: 1,
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-  },
-  mainContainer: {
-    flex: 1,
-    justifyContent: "space-between",
-    flexDirection: "column",
-  },
-  allHomeWrapper: {
-    alignItems: "center",
-    flex: 1,
-    width: "100%",
-  },
-});
+ 
 
 export default ScreenFriendHome;

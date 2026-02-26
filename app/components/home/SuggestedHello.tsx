@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   textContainer: {
-    zIndex: 5,
+    zIndex: 2,
     width: "70%",
     flexGrow: 1,
     flexWrap: "wrap",
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: "100%",
     right: 0, // need this
-    zIndex: 9000,
+    zIndex: 9,
   },
 });
 
