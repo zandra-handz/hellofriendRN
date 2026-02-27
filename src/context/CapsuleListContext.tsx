@@ -138,14 +138,36 @@ export const CapsuleListProvider = ({ children, userId, isInitializing }: Capsul
       }))
       .sort((a, b) => b.size - a.size);
 
-    const categorySizes = {
-      sortedList,
-      lookupMap: categorySizeMap,
-      categoryStartIndices,
-      categoryNames,
-    };
+    // const categorySizes = {
+    //   sortedList,
+    //   lookupMap: categorySizeMap,
+    //   categoryStartIndices,
+    //   categoryNames,
+    // };
 
     const capsuleCategorySet = new Set(sortedList.map(item => item.user_category));
+
+
+
+const catTotal = sortedList.reduce((acc, item) => acc + item.size, 0);
+const catLabels = categoryNames.map(({ category, categoryId }) => ({
+  name: category,
+  user_category: categoryId,
+}));
+const catDecimals = categoryNames.map(({ category, categoryId }) => {
+  const size = categorySizeMap.get(categoryId)?.size ?? 0;
+  return Number(((size / catTotal) * 100).toFixed(0)) / 100;
+});
+
+const categorySizes = {
+  sortedList,
+  lookupMap: categorySizeMap,
+  categoryStartIndices,
+  categoryNames,
+  catTotal,        // add
+  catLabels,    // add
+  catDecimals,  // add
+};
 
   
 

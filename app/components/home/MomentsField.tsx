@@ -8,7 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 // import { useCategories } from "@/src/context/CategoriesContext";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import NotDonut from "../headers/NotDonut";
+import DotsPositionLayer from "../headers/DotsPositionLayer";
 
 // import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
@@ -29,8 +29,9 @@ const MomentsField = ({
   darkerOverlayBackgroundColor,
   handleToggleColoredDots,
   coloredDotsModeValue,
-}: Props) => {
-  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  canvasHeight,
+  heightFull
+}: Props) => { 
 
   const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
     useCapsuleList();
@@ -55,21 +56,7 @@ const MomentsField = ({
     colorsReversed: [],
     friend: null,
   });
-
-  // Only update colorsRef if we have data and are not pending
-  //   if (capsuleCategorySet?.size && !isPending && categoryColors?.length) {
-  //     const filteredColors = categoryColors
-  //       .filter((item) => capsuleCategorySet.has(item.user_category))
-  //       .map((item) => item.color);
-
-  //     const friend = categoryColors[0]?.friend ?? null;
-
-  //     colorsRef.current = {
-  //       colors: filteredColors,
-  //       colorsReversed: filteredColors.slice().reverse(),
-  //       friend,
-  //     };
-  //   }
+ 
 
   if (
     capsuleCategorySet?.size &&
@@ -132,19 +119,20 @@ const MomentsField = ({
     navigateToMoments({ scrollTo: null });
   }, [navigateToMoments]);
 
-  const memoizedData = useMemo(
-    () => categorySizes.sortedList,
-    [categorySizes.sortedList],
+ 
+
+    const memoizedCatLabels = useMemo(
+    () => categorySizes.catLabels,
+    [categorySizes.catLabels],
   );
 
-  // const [ coloredDotsMode, setColoredDotsMode ] = useState(false);
 
-
-  // const handleToggleColoredDots = () => {
-  //   setColoredDotsMode((prev) => !prev);
-
-  // };
-
+      const memoizedCatDecimals = useMemo(
+    () => categorySizes.catDecimals,
+    [categorySizes.catDecimals],
+  );
+ 
+ 
 
   const memoizedColors = useMemo(() => colors?.colors, [colors?.colors]);
   const memoizedColorsReversed = useMemo(
@@ -166,32 +154,20 @@ const MomentsField = ({
           },
         ]}
       >
-        <>
-          {/* <Pressable style={styles.labelContainer}>
-            <Text
-              style={[
-                {
-                  fontSize: subWelcomeTextStyle.fontSize + 5,
-
-                  paddingLeft: 10,
-                  fontWeight: "bold",
-                  color: textColor,
-                  opacity: 0.9,
-                },
-              ]}
-            >
-              Moments
-            </Text>
-          </Pressable> */}
+        <> 
 
           {isFocused && colors?.colors?.length > 0 && (
-            <View style={styles.donutWrapper}>
-              <NotDonut
+           
+              <DotsPositionLayer
                 canvasKey={canvasKey}
                  font={skiaFontLarge}
                 smallFont={skiaFontSmall}
-                themeColors={themeColors}
-                categoryData={memoizedData}
+                themeColors={themeColors} 
+                catLabels={memoizedCatLabels}
+                catDecimals={memoizedCatDecimals}
+                canvasHeight={canvasHeight}
+                heightFull={heightFull}
+          
                 iconColor={themeColors.lightColor}
                 // onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
@@ -212,8 +188,7 @@ const MomentsField = ({
                     coloredDotsModeValue={coloredDotsModeValue}
                 
                 // centerTextSize={CENTER_TEXT_SIZE}
-              />
-            </View>
+              /> 
           )}
         </>
       </View>
@@ -228,8 +203,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10, // PADDING
 zIndex: 100000,
-    paddingVertical: 20,
-    borderRadius: 20,
+  //  paddingVertical: 20,
+   // borderRadius: 20,
   },
   labelContainer: {
     borderRadius: 20,
@@ -243,8 +218,7 @@ zIndex: 100000,
   historyLabelWrapper: {
     fontFamily: "Poppins-Regular",
     fontSize: 13,
-  },
-  donutWrapper: {},
+  }, 
 });
 
 export default React.memo(MomentsField);

@@ -204,13 +204,31 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               </View>
 
               <View style={styles.itemsContainer}>
+                {capsuleList && !coloredDotsMode && (
+                  <View
+                    pointerEvents="none"
+                    style={styles.animatedClimberWrapper}
+                  >
+                    <AnimatedClimber
+                      total={capsuleList.length}
+                      skiaFont={skiaFontLarge}
+                    />
+                  </View>
+                )}
+
                 <View
                   ref={momentsFieldRef}
-                  style={{ width: "100%", zIndex: 2000, elevation: 2000 }}
+                  style={{
+                    width: "100%",
+                    zIndex: 2000,
+                    elevation: 2000, 
+                    height: coloredDotsMode ? 600 : 380,
+                  }}
                 >
-                  {" "}
                   <MomentsField
                     canvasKey={canvasKey}
+                    canvasHeight={300}
+                    heightFull={600}
                     userId={userId}
                     textColor={primaryColor}
                     overlayColor={primaryOverlayColor}
@@ -223,13 +241,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     coloredDotsModeValue={coloredDotsModeValue}
                   />
                 </View>
-
-                {capsuleList && !coloredDotsMode && (
-                  <AnimatedClimber
-                    total={capsuleList.length}
-                    skiaFont={skiaFontLarge}
-                  ></AnimatedClimber>
-                )}
 
                 {/* {!coloredDotsMode && ( */}
                 <View style={{ opacity: coloredDotsMode ? 0 : 1 }}>
@@ -272,9 +283,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 <View style={{ width: "100%", height: 330 }}></View>
               </View>
             </ScrollView>
-            <View style={{ borderRadius: 40,   height: 100}}>
-
-            </View>
+            <View style={{ borderRadius: 40, height: 100 }}></View>
           </View>
         </View>
       </View>
@@ -310,6 +319,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     transform: [{ rotate: "200deg" }, { scaleX: -1 }],
   },
+
   containerOverScrollView: {
     width: "100%",
     flexDirection: "column",
@@ -320,6 +330,16 @@ const styles = StyleSheet.create({
   itemsContainer: {
     height: "100%",
     width: "100%",
+  },
+  animatedClimberWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99999,
   },
 });
 
