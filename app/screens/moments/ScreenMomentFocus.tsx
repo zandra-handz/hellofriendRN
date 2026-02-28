@@ -5,12 +5,12 @@ import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import useUserSettings from "@/src/hooks/useUserSettings"; 
 import useFriendDash from "@/src/hooks/useFriendDash";
-
+import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
- 
+ import { useSharedValue, withTiming } from "react-native-reanimated";
 import useUser from "@/src/hooks/useUser";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import Animated from "react-native-reanimated";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
+import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
@@ -19,8 +19,10 @@ const ScreenMomentFocus = () => {
   const { lightDarkTheme } = useLDTheme();
   const momentText = route.params?.momentText ?? null;
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
+
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
+  const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
   const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -28,6 +30,17 @@ const ScreenMomentFocus = () => {
   });
 
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
+
+
+
+
+const ActivateBackdrop = useSharedValue(prevScreenHasBackdrop ? 1 : 0);
+
+useEffect(() => {
+  if (!prevScreenHasBackdrop) {
+    ActivateBackdrop.value = withTiming(1, { duration: 600 });
+  }
+}, []);
 
   const [triggerMessage, setTriggerMessage] = useState<number>(0);
 
@@ -64,26 +77,14 @@ const ScreenMomentFocus = () => {
   }, [triggerSaveFromLateral]);
 
   return (
-    <SafeViewAndGradientBackground
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      addColorChangeDelay={true}
-      forceFullOpacity={true}
-      useSolidOverlay={false}
-      useOverlayFade={false}
-      backgroundOverlayHeight={"10%"}
-      includeBackgroundOverlay={catCreatorVisible}
-      styles={{ flex: 1 }}
-    >
-      <Animated.View
-        style={{
-          width: "100%",
-          flex: 1,
-          marginTop: SPACER_BETWEEN_BAR_AND_CARD,
-        }}
-      >
+          <SafeViewFriendHome
+            friendColorLight={selectedFriend.lightColor}
+            friendColorDark={selectedFriend.darkColor}
+            backgroundOverlayColor={lightDarkTheme.primaryBackground}
+            friendId={selectedFriend?.id}
+          >
+     <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={0} isVisibleValue={ActivateBackdrop} />
+   
         <MomentWriteEditView
           paddingHorizontal={PADDING_HORIZONTAL}
           defaultCategory={settings?.user_default_category}
@@ -112,11 +113,10 @@ const ScreenMomentFocus = () => {
           existingMomentObject={existingMomentObject}
           escortBarSpacer={SPACER_BETWEEN_BAR_AND_CARD + CARD_PADDING}
           cardPaddingVertical={CARD_PADDING}
-        />
-      </Animated.View>
+        /> 
 
       <TinyFlashMessage triggerMessage={triggerMessage} />
-    </SafeViewAndGradientBackground>
+    </SafeViewFriendHome>
   );
 };
 

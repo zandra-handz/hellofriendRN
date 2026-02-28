@@ -4,10 +4,11 @@ export type RootStackParamList = {
   MomentFocus: {
     screenCameFrom: number;
     momentText?: string | null;
+    prevScreenBackdrop?: boolean | null;
   };
     Gecko: {
       selection?: number | null;
-      autoPick?: false | null;
+       autoPick?: boolean | null;
       timestamp?: string | null;
     }
     

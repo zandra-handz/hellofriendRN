@@ -14,13 +14,13 @@ import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
-
 import MomentsField from "@/app/components/home/MomentsField";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 // import { logQueryCacheSize } from "@/src/utils/logQueryCacheSize";
 
 // app hooks
@@ -76,7 +76,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   // const { upcomingHelloes  } = useUpcomingHelloes();
   const { navigateToMomentFocus, navigateToHome } = useAppNavigations();
   const handleNavigateToCreateNew = useCallback(() => {
-    navigateToMomentFocus({ screenCameFrom: 1 });
+    navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: coloredDotsModeValue.value });
   }, [navigateToMomentFocus]);
 
   const { autoSelectFriend } = useAutoSelector();
@@ -203,10 +203,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   //   }
   // }, [imageUri]);
 
-  const backdropStyle = useAnimatedStyle(() => ({
-    opacity: coloredDotsModeValue.value ? 1 : 0,
-    pointerEvents: coloredDotsModeValue.value ? "auto" : "none",
-  }));
+ 
 
   const themeColors = useMemo(
     () => ({
@@ -234,7 +231,6 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
             backgroundOverlayColor={lightDarkTheme.primaryBackground}
             friendId={selectedFriend?.id}
           >
-  
             <Pressable
               onPress={handleToggleColoredDots}
               style={{
@@ -247,33 +243,28 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
             ></Pressable>
 
             {settings?.id && upcomingHelloes?.length && user?.id && (
-           
-                <SelectedFriendHome
-                  canvasKey={route.key}
-                  primaryBackground={lightDarkTheme.primaryBackground}
-                  darkGlassBackground={lightDarkTheme.darkGlassBackground}
-                  darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
-                  categoryColorsArray={categoryColors}
-                  skiaFontLarge={skiaFontLarge}
-                  skiaFontSmall={skiaFontSmall}
-                  paddingHorizontal={PADDING_HORIZONTAL}
-                  userId={user?.id}
-                  primaryColor={lightDarkTheme.primaryText}
-                  primaryOverlayColor={lightDarkTheme.overlayBackground}
-                  themeColors={themeColors}
-                  selectedFriendId={selectedFriend?.id}
-                  selectedFriendName={selectedFriend?.name}
-                  handleToggleColoredDots={handleToggleColoredDots}
-                  coloredDotsModeValue={coloredDotsModeValue}
-                /> 
+              <SelectedFriendHome
+                canvasKey={route.key}
+                primaryBackground={lightDarkTheme.primaryBackground}
+                darkGlassBackground={lightDarkTheme.darkGlassBackground}
+                darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
+                categoryColorsArray={categoryColors}
+                skiaFontLarge={skiaFontLarge}
+                skiaFontSmall={skiaFontSmall}
+                paddingHorizontal={PADDING_HORIZONTAL}
+                userId={user?.id}
+                primaryColor={lightDarkTheme.primaryText}
+                primaryOverlayColor={lightDarkTheme.overlayBackground}
+                themeColors={themeColors}
+                selectedFriendId={selectedFriend?.id}
+                selectedFriendName={selectedFriend?.name}
+                handleToggleColoredDots={handleToggleColoredDots}
+                coloredDotsModeValue={coloredDotsModeValue}
+              />
             )}
-                      <Animated.View
-              style={[
-                StyleSheet.absoluteFillObject,
-                backdropStyle,
-                { backgroundColor: "rgba(0,0,0,.85)", zIndex: 5 },
-              ]}
-            />
+
+            <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={coloredDotsModeValue} />
+   
             {selectedFriend?.id && (
               <WriteButton
                 onPress={handleNavigateToCreateNew}
@@ -295,7 +286,5 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
     </>
   );
 };
-
- 
 
 export default ScreenFriendHome;

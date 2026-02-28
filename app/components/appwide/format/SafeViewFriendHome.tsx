@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
-import { DimensionValue, ViewStyle, StyleSheet } from "react-native";
+import { DimensionValue, ViewStyle, StyleSheet, Image } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import GradientBackground from "../display/GradientBackground";
@@ -8,6 +8,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+const LeafImage = require("@/app/styles/pngs/leaf.png");
+ 
 
 type Props = {
   children: ReactElement;
@@ -68,6 +70,18 @@ const SafeViewFriendHome = ({
             ]}
           ></Animated.View>
 
+
+        <Image
+          source={LeafImage}
+          style={styles.leafContainer}
+          tintColor={friendColorLight}
+        />
+
+
+
+
+
+
           {children}
         </>
       </SafeAreaView>
@@ -89,6 +103,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
+  },
+    leafContainer: { 
+    position: "absolute",
+    top: -654, // 740
+    left: -410,
+    opacity: 0.8,
+
+    width: 1100,
+    height: 1100,
+    resizeMode: "contain",
+    transform: [{ rotate: "200deg" }, { scaleX: -1 }],
   },
 });
 

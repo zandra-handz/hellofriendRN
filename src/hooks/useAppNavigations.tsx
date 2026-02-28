@@ -291,6 +291,7 @@ type NavToMomentViewProps = {
 
 type NavToMomentFocusProp = {
   screenCameFrom: number; // 0 = nav back after moment save, 1 = stay after moment save
+  prevScreenBackdrop?: boolean;
 };
 type NavToMomentFocusWithTextProp = {
   screenCameFrom: number; // 0 = nav back after moment save, 1 = stay after moment save
@@ -424,9 +425,10 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
-  const navigateToMomentFocus = ({ screenCameFrom }: NavToMomentFocusProp) => {
+  const navigateToMomentFocus = ({ screenCameFrom, prevScreenBackdrop=false }: NavToMomentFocusProp) => {
     navigation.navigate("MomentFocus", {
       screenCameFrom: screenCameFrom,
+      prevScreenBackdrop: prevScreenBackdrop
     });
   };
 

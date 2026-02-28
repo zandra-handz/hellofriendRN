@@ -197,7 +197,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             <View
               style={[
                 styles.labelContainer,
-                { backgroundColor: backgroundColor },
+                { backgroundColor: darkerGlassBackground },
               ]}
             >
               {loadingDash && (

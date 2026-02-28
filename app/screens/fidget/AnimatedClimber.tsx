@@ -16,7 +16,7 @@ type Props = {
   skiaFont: SkFont;
 };
 
-const AnimatedClimber = ({ total, skiaFont }: Props) => {
+const AnimatedClimber = ({ total, skiaFont, textColor }: Props) => {
   const totalValue = useSharedValue(0);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const AnimatedClimber = ({ total, skiaFont }: Props) => {
             y={50}
             text={targetText}
             font={skiaFont}
-            color={"white"}
+            color={textColor}
             opacity={1}
           />
         </Group>

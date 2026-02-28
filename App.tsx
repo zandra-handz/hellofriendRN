@@ -505,7 +505,7 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
                       component={ScreenMomentFocus}
                       options={{
                         gestureEnabled: false,
-                        animation: "none",
+                        // animation: "none",
                         headerShown: false,
                       }}
                     />

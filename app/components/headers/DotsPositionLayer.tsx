@@ -20,7 +20,7 @@ const DotsPositionLayer = ({
   darkerOverlayBackgroundColor,
   catDecimals,
 catLabels, 
-  // onCategoryPress,
+   onCategoryPress,
   // onCategoryLongPress,
   onCenterPress,
   totalJS, 
@@ -246,7 +246,7 @@ const leafPositionsCombined = useDerivedValue(() => {
           totalJS={totalJS}
             canvasWidth={screenWidth}
           darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-          // onCategoryPress={onCategoryPress}
+            onCategoryPress={onCategoryPress}
           // onCategoryLongPress={onCategoryLongPress}
           onCenterPress={onCenterPress}
           radius={RADIUS}

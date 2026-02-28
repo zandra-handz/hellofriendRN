@@ -104,16 +104,16 @@ const MomentsField = ({
   const LABELS_DISTANCE_FROM_CENTER = 4;
   const LABELS_SLICE_END = 20;
 
-  // const handleMomentViewScrollTo = useCallback(
-  //   (categoryLabel) => {
-  //     if (categoryLabel && categorySizes.categoryStartIndices) {
-  //       navigateToMomentView({
-  //         index: categorySizes.categoryStartIndices[categoryLabel],
-  //       });
-  //     }
-  //   },
-  //   [navigateToMomentView, categorySizes.categoryStartIndices]
-  // );
+  const handleMomentViewScrollTo = useCallback(
+    (categoryLabel) => {
+      if (categoryLabel && categorySizes.categoryStartIndices) {
+        navigateToMomentView({
+          index: categorySizes.categoryStartIndices[categoryLabel],
+        });
+      }
+    },
+    [navigateToMomentView, categorySizes.categoryStartIndices]
+  );
 
   const handleMomentScreenNoScroll = useCallback(() => {
     navigateToMoments({ scrollTo: null });
@@ -169,7 +169,7 @@ const MomentsField = ({
                 heightFull={heightFull}
           
                 iconColor={themeColors.lightColor}
-                // onCategoryPress={handleMomentViewScrollTo}
+                onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
                 totalJS={capsuleListCount}
                 radius={CHART_RADIUS}

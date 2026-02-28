@@ -6,6 +6,7 @@ const manualGradientColors = {
   homeDarkColor: "#000002",
   homeLightColor: "#163805",
   whiteColor: "#ebebeb"
+
 };
 
 

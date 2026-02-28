@@ -5,9 +5,10 @@ import {
   TouchableWithoutFeedback,
   Alert,
   StyleSheet,
+  Text
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-
+ 
 import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
@@ -394,14 +395,14 @@ const MomentWriteEditView = ({
           ]}
         >
           <View style={styles.innerContainer}>
-            <View
-              style={[
-                styles.card,
-                {
-                  backgroundColor: darkGlassBackground,
-                },
-              ]}
-            >
+         
+              <View style={styles.headerWrapper}>
+                
+              <Text style={[welcomeTextStyle, {color: primaryColor, fontSize: 26}]}>
+                Add new
+              </Text>
+              
+              </View>
               <MomentFocusTray
                 userId={userId}
                 userDefaultCategory={defaultCategory}
@@ -453,8 +454,7 @@ const MomentWriteEditView = ({
               )}
             </View>
           </View>
-        </View>
-      </View>
+        </View> 
     </TouchableWithoutFeedback>
   );
 };
@@ -473,15 +473,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: "100%",
     zIndex: 1,
-  },
-  card: {
-    borderRadius: 40,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    width: "100%",
-    flex: 1,
-    zIndex: 1,
-    overflow: "hidden",
+  }, 
+  headerWrapper: {
+    paddingHorizontal: 20,
+
   },
   rowContainer: { flexDirection: "row" },
   labelWrapper: {},

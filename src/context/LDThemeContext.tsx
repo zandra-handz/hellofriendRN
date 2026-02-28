@@ -123,6 +123,7 @@ darkerGlassBackground: "rgba(230, 230, 245, 0.83)", // slightly deeper frost
     borderBottomWidth: 1,
   },
   headerTextColor: "#121212",
+  backdropColor: "rgba(255,255,255,.85)"
  
 };
 
@@ -152,6 +153,7 @@ export const darkTheme = {
     borderBottomWidth: 1,
   },
   headerTextColor: "#d3d3d3",
+  backdropColor: "rgba(0,0,0,.85) "
 
  
 }; 

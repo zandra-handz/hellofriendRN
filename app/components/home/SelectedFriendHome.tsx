@@ -137,12 +137,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             paddingHorizontal: paddingHorizontal,
           },
         ]}
-      >
-        <Image
-          source={LeafImage}
-          style={styles.leafContainer}
-          tintColor={themeColors.lightColor}
-        />
+      > 
 
         <View style={styles.itemsContainer}>
           <View style={styles.containerOverScrollView}>
@@ -212,6 +207,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     <AnimatedClimber
                       total={capsuleList.length}
                       skiaFont={skiaFontLarge}
+                      textColor={primaryColor}
                     />
                   </View>
                 )}
@@ -307,18 +303,7 @@ const styles = StyleSheet.create({
     padding: 6,
     zIndex: 3,
     elevation: 3,
-  },
-  leafContainer: {
-    position: "absolute",
-    top: -750, // 740
-    left: -410,
-    opacity: 0.8,
-
-    width: 1100,
-    height: 1100,
-    resizeMode: "contain",
-    transform: [{ rotate: "200deg" }, { scaleX: -1 }],
-  },
+  }, 
 
   containerOverScrollView: {
     width: "100%",

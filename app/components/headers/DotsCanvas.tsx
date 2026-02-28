@@ -23,7 +23,6 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 
-import NotDonutPath from "./NotDonutPath";
 import { Text as RNText } from "react-native";
 
 import DotPaths from "./DotPaths";
@@ -105,8 +104,8 @@ const DotsCanvas = ({
   const [catDecimalsJS, setCatDecimalsJS] = useState([]);
 
   useDerivedValue(() => {
-  runOnJS(setCatDecimalsJS)(catDecimalsValue.value);
-}, [catDecimalsValue]);
+    runOnJS(setCatDecimalsJS)(catDecimalsValue.value);
+  }, [catDecimalsValue]);
 
   const [coloredDotsMode, setColoredDotsMode] = useState(false);
 
@@ -132,18 +131,14 @@ const DotsCanvas = ({
     y: number;
   } | null>(null);
 
-
   useEffect(() => {
-  if (!coloredDotsMode) {
-    setHighlightedColor(null);
-    setHighlightID(null);
-    setHighlightPosition(null);
-  }
-}, [coloredDotsMode]);
-  // const handleToggleColoredDots = () => {
-
-  //   setColoredDotsMode((prev) => !prev);
-  // };
+    if (!coloredDotsMode) {
+      setHighlightedColor(null);
+      setHighlightID(null);
+      setHighlightPosition(null);
+    }
+  }, [coloredDotsMode]);
+ 
 
   useEffect(() => {
     if (!totalJS) {
@@ -295,12 +290,8 @@ const DotsCanvas = ({
           style={[
             styles.canvasContainer,
             {
-              // width: radius * 2 + 40 + 20 + 10,
               width: canvasWidth, // full screen width
               height: canvasHeight,
-              // backgroundColor: 'pink'
-              // width: radius * 2 + 40 + 20, // the + 40 here just adds space on the left without changing the position of the chart for the total text
-              // height: radius * 2 + 20,
             },
           ]}
         >
@@ -314,122 +305,73 @@ const DotsCanvas = ({
           <DotPaths
             // key={selectedFriend?.id ?? "no-friend"}
             positions={positions}
-            // colorsReversed={colorsReversed}
-            // colors={colors}
             useColors={coloredDotsMode}
             highlightColor={highLightedColor}
             highlightCatID={highlightCatID}
           />
 
-          <Group transform={[{ translateX: 5 }, { translateY: 5 }]}>
-            {/* <Path
-                path={path}
-                color={backgroundColor}
-                style={"stroke"}
-                strokeWidth={outerStrokeWidth}
-                strokeCap="round"
-                strokeJoin="round"
-                start={0}
-                end={1}
-              /> */}
-
-            {/* {array.map((_, index) => {
-            return (
-              <React.Fragment key={index}>
-                <NotDonutPath
-                  // key={selectedFriend?.id ?? "no-friend"}
-                  radius={radius}
-                  strokeWidth={strokeWidth}
-                  outerStrokeWidth={outerStrokeWidth}
-                  color={colors[index]}
-                  decimalsValue={decimalsValue}
-                  index={index}
-                  gap={gap}
-                />
-              </React.Fragment>
-            );
-          })}  */}
-            {/* <Text
-            x={textX}
-            y={300}
-            text={targetText}
-            font={font}
-            color={color}
-            opacity={1}
-          /> */}
-          </Group>
+          <Group transform={[{ translateX: 5 }, { translateY: 5 }]}></Group>
         </Canvas>
       </GestureDetector>
-{coloredDotsMode && (
-  <View style={{
-    width: canvasWidth,
-    height: 250,
-    // backgroundColor: "lightblue",
-    paddingVertical: 60,
-    paddingHorizontal: 10,
-    marginTop: 10,
-  }}>
-    {[...labelsJS.map((label, index) => ({ label, decimal: catDecimalsJS[index] ?? 0 }))]
-  .sort((a, b) => b.decimal - a.decimal)
-  .map(({ label, decimal }, index) => {
-    const percentage = decimal ? Math.round(decimal * 100) : 0;
-    const isHighlighted = label.user_category === highlightCatID;
+      {coloredDotsMode && (
+        <View
+          style={{
+            width: canvasWidth,
+            height: 250,
+            paddingVertical: 60,
+            paddingHorizontal: 10,
+            marginTop: 10,
+          }}
+        >
+          {[
+            ...labelsJS.map((label, index) => ({
+              label,
+              decimal: catDecimalsJS[index] ?? 0,
+            })),
+          ]
+            .sort((a, b) => b.decimal - a.decimal)
+            .map(({ label, decimal }, index) => {
+              const percentage = decimal ? Math.round(decimal * 100) : 0;
+              const isHighlighted = label.user_category === highlightCatID;
 
-    return (
-      <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-        <RNText style={{ 
-          color: isHighlighted ? highLightedColor : color, 
-          lineHeight: 30,  
-          opacity: isHighlighted ? 1 : 0.8, 
-          fontFamily: 'Poppins-Regular', 
-          fontSize: 13 
-        }}>
-          {label.name}
-        </RNText>
-        <RNText style={{ 
-          color: isHighlighted ? highLightedColor : color, 
-          lineHeight: 30, 
-          opacity: isHighlighted ? 1 : 0.8, 
-          fontFamily: 'Poppins-Regular', 
-          fontSize: 18 
-        }}>
-          {percentage}%
-        </RNText>
-      </View>
-    );
-  })}
-{/* {labelsJS.map((label, index) => {
-  const decimal = catDecimalsJS[index];
-  const percentage = decimal ? Math.round(decimal * 100) : 0;
-  const isHighlighted = label.user_category === highlightCatID;
+              return (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
+                >
 
-  return (
-    <View key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-      <RNText style={{ 
-        color: isHighlighted ? highLightedColor : color, 
-        lineHeight: 30,  
-        opacity: isHighlighted ? 1 : 0.8, 
-        fontFamily: 'Poppins-Regular', 
-        fontSize: 13 
-      }}>
-        {label.name}
-      </RNText>
-      <RNText style={{ 
-        color: isHighlighted ? highLightedColor : color, 
-        lineHeight: 30, 
-        opacity: isHighlighted ? 1 : 0.8, 
-        fontFamily: 'Poppins-Regular', 
-        fontSize: 18 
-      }}>
-        {percentage}%
-      </RNText>
-    </View>
-  );
-})} */}
-  </View>
-)}
-      {/* )} */}
-
+                  <RNText
+                  onPress={() => onCategoryPress(label.name)}
+                    style={{
+                      color: isHighlighted ? highLightedColor : color,
+                      lineHeight: 30,
+                      opacity: isHighlighted ? 1 : 0.8,
+                      fontFamily: "Poppins-Regular", // fix
+                      fontSize: 13,
+                    }}
+                  >
+                    {label.name}
+                  </RNText>
+                  <RNText
+                    style={{
+                      color: isHighlighted ? highLightedColor : color,
+                      lineHeight: 30,
+                      opacity: isHighlighted ? 1 : 0.8,
+                      fontFamily: "Poppins-Regular", // fix
+                      fontSize: 18,
+                    }}
+                  >
+                    {percentage}%
+                  </RNText>
+                </View>
+              );
+            })}
+        </View>
+      )}
       {coloredDotsMode &&
         highlightCatID !== null &&
         highlightPosition &&
@@ -457,7 +399,6 @@ const DotsCanvas = ({
                 zIndex: 999999,
               }}
             >
-
               <RNText
                 style={{
                   color: color,
