@@ -5,9 +5,12 @@ import ThemedDialog from "react-native-elements/dist/dialog/Dialog.js";
 
 let backUpLegLen = 0.05;
 let backLowLegLen = 0.02;
-let backFingerLen = 0.026;
+// let backFingerLen = 0.026;
 
-let fingerLen = 0.026;
+// let fingerLen = 0.026; // logo still based on these
+let backFingerLen = 0.02;
+
+let fingerLen = 0.02;
 
 export default class FourLegs {
   constructor(

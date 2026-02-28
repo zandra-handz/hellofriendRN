@@ -2,7 +2,6 @@ import { View, StyleSheet, DimensionValue } from "react-native";
 import React, { useState, useEffect } from "react";
 import {
   useSharedValue,
-  withTiming,
   useDerivedValue,
   runOnJS,
 } from "react-native-reanimated";
@@ -35,6 +34,7 @@ catLabels,
   heightFull,
  
   labelsSize = 8,  
+  handleToggleColoredDots,
   coloredDotsModeValue,
 
    labelsDistanceFromCenter = -17,
@@ -97,8 +97,7 @@ const { width: screenWidth } = useWindowDimensions();
     categoryIdsValue.value = data.map((d) => d.user_category);
   }, [data]);
 
-  const RADIUS = radius;
-  const DIAMETER = RADIUS * 2;
+  const RADIUS = radius; 
   const STROKE_WIDTH = strokeWidth;
   const OUTER_STROKE_WIDTH = outerStrokeWidth;
 
@@ -226,16 +225,7 @@ const leafPositionsCombined = useDerivedValue(() => {
 
   return (
     <View style={[styles.container, {height: heightFull, overflow: 'visible', width: '100%'}]}>
-      {/* <View
-        style={{
-          height: canvasHeight,
-          width: '100%',
-          //borderRadius: RADIUS,
-          overflow: "visible",
-              alignItems: 'center',  // add this
-          backgroundColor: 'pink'
-        }}
-      > */}
+     
         <DotsCanvas
           canvasKey={canvasKey}
           canvasHeight={canvasHeight}
@@ -249,6 +239,7 @@ const leafPositionsCombined = useDerivedValue(() => {
             onCategoryPress={onCategoryPress}
           // onCategoryLongPress={onCategoryLongPress}
           onCenterPress={onCenterPress}
+                handleToggleColoredDots={handleToggleColoredDots}
           radius={RADIUS}
           strokeWidth={STROKE_WIDTH}
           outerStrokeWidth={OUTER_STROKE_WIDTH}
@@ -274,8 +265,7 @@ const leafPositionsCombined = useDerivedValue(() => {
            labelsDistanceFromCenter={labelsDistanceFromCenter}
            labelsSliceEnd={labelsSliceEnd} 
             coloredDotsModeValue={coloredDotsModeValue}
-        />
-      {/* </View> */}
+        /> 
     </View>
   );
 };

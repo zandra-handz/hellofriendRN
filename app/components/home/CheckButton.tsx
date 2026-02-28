@@ -1,9 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import SvgIcon from "@/app/styles/SvgIcons";
-import manualGradientColors from "@/app/styles/StaticColors";
-import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
+import SvgIcon from "@/app/styles/SvgIcons"; 
 //
 type Props = {
   onPress: () => void;
@@ -12,7 +10,7 @@ type Props = {
   spaceFromBottom: number;
 };
 
-const WriteButton = ({
+const CheckButton = ({
   onPress,
   backgroundColor = "orange",
   iconColor,
@@ -80,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(WriteButton);
+export default React.memo(CheckButton);

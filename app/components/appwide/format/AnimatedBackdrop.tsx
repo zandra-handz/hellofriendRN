@@ -6,16 +6,23 @@ import Animated, {
   useDerivedValue,
   withTiming,
 } from "react-native-reanimated";
-
+import animationTimings from "@/app/styles/AnimationTimings";
 type Props = {
   color: string;
   zIndex: number;
   isVisibleValue: SharedValue<boolean>;
+   startsVisibleValue?: SharedValue<boolean>;
 };
 
-const AnimatedBackdrop = ({ color, zIndex = 5, isVisibleValue }: Props) => {
+const AnimatedBackdrop = ({ color, zIndex = 5, isVisibleValue, startsVisibleValue }: Props) => {
+
+  console.log('startsvisible value: ', startsVisibleValue)
+
+
+  const timing = animationTimings.screenFade;
+
   const opacity = useDerivedValue(() =>
-    withTiming(isVisibleValue.value ? 1 : 0, { duration: 400 })
+    withTiming(isVisibleValue.value ? 1 : 0, { duration: timing })
   );
 
   const backdropStyle = useAnimatedStyle(() => ({

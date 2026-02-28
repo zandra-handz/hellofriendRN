@@ -1,5 +1,7 @@
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import useDoublePress from "../buttons/useDoublePress";
+import CategoryTooltip from "./CategoryTooltip";
 
 import Animated, {
   withDelay,
@@ -21,15 +23,10 @@ import {
 } from "@shopify/react-native-skia";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
-import SvgIcon from "@/app/styles/SvgIcons";
-
 import { Text as RNText } from "react-native";
 
 import DotPaths from "./DotPaths";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 type Props = {
   onCategoryPress: () => void;
@@ -88,6 +85,7 @@ const DotsCanvas = ({
   labelsSize,
   labelsDistanceFromCenter,
   labelsSliceEnd,
+  handleToggleColoredDots,
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
@@ -98,6 +96,11 @@ const DotsCanvas = ({
   const innerRadius = radius - outerStrokeWidth / 2;
   // const color = lightDarkTheme.primaryText;
   const { selectedFriend } = useSelectedFriend();
+
+  const { handleDoublePress } = useDoublePress({
+    onSinglePress: handleToggleColoredDots,
+    onDoublePress: onCenterPress,
+  });
 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
@@ -138,7 +141,6 @@ const DotsCanvas = ({
       setHighlightPosition(null);
     }
   }, [coloredDotsMode]);
- 
 
   useEffect(() => {
     if (!totalJS) {
@@ -171,69 +173,6 @@ const DotsCanvas = ({
     // Update shared value whenever selectedFriend changes
     friendIdValue.value = selectedFriend?.id ?? -1;
   }, [selectedFriend?.id]);
-
-  // const LabelOverlays = catArray.map((_, index) => {
-  //   const categoryLabel = labelsJS[index]?.name || "";
-  //   // const categoryId = labelsJS[index]?.user_category || "";
-  //   const decimal = decimalsJS[index];
-  //   if (!decimal) return null;
-
-  //   const centerX = radius;
-  //   const centerY = radius;
-
-  //   const start = decimalsJS.slice(0, index).reduce((acc, v) => acc + v, 0);
-
-  //   const end = start + decimal;
-
-  //   const midAngle = ((start + end) / 2) * 2 * Math.PI;
-  //   const labelRadius = radius + labelsDistanceFromCenter;
-
-  //   const x = centerX + labelRadius * Math.cos(midAngle);
-  //   const y = centerY + labelRadius * Math.sin(midAngle);
-
-  //   const labelText = categoryLabel.slice(0, labelsSliceEnd);
-
-  //   const approxCharWidth = labelsSize * 0.55; // works well for Poppins-Regular
-  //   const textWidth = labelText.length * approxCharWidth;
-  //   const textHeight = labelsSize;
-
-  //   // console.log(colors);
-
-  //   return (
-  //     <Pressable
-  //       onPress={() => onCategoryPress(categoryLabel)}
-  //       key={index}
-  //       style={({ pressed }) => [
-  //         styles.categoryLabelsContainer,
-  //         {
-  //           left: x,
-  //           top: y,
-  //           transform: [
-  //             { translateX: -textWidth / 1.4 },
-  //             { translateY: -textHeight / 1 }, // /2
-  //             ...(pressed ? [{ scale: 0.7 }] : [{ scale: 1 }]),
-  //           ],
-  //           backgroundColor: pressed ? "#ddd" : "transparent",
-  //           shadowOpacity: pressed ? 0.2 : 0,
-  //         },
-  //       ]}
-  //     >
-  //       <RNText
-  //         style={[
-  //           styles.RNText,
-  //           {
-  //             color: color,
-  //             fontSize: labelsSize,
-  //             backgroundColor: darkerOverlayBackgroundColor,
-  //             paddingVertical: 6,
-  //           },
-  //         ]}
-  //       >
-  //         {labelText}
-  //       </RNText>
-  //     </Pressable>
-  //   );
-  // });
 
   const onDotDoublePress = () => {
     console.log("doulbe press!");
@@ -315,61 +254,57 @@ const DotsCanvas = ({
       </GestureDetector>
       {coloredDotsMode && (
         <View
-          style={{
-            width: canvasWidth,
-            height: 250,
-            paddingVertical: 60,
-            paddingHorizontal: 10,
-            marginTop: 10,
-          }}
+          style={[
+            styles.percentagesOutContainer,
+            {
+              width: canvasWidth,
+            },
+          ]}
         >
-          {[
-            ...labelsJS.map((label, index) => ({
-              label,
-              decimal: catDecimalsJS[index] ?? 0,
-            })),
-          ]
-            .sort((a, b) => b.decimal - a.decimal)
-            .map(({ label, decimal }, index) => {
-              const percentage = decimal ? Math.round(decimal * 100) : 0;
-              const isHighlighted = label.user_category === highlightCatID;
+          <ScrollView>
+            {[
+              ...labelsJS.map((label, index) => ({
+                label,
+                decimal: catDecimalsJS[index] ?? 0,
+              })),
+            ]
+              .sort((a, b) => b.decimal - a.decimal)
+              .map(({ label, decimal }, index) => {
+                const percentage = decimal ? Math.round(decimal * 100) : 0;
+                const isHighlighted = label.user_category === highlightCatID;
 
-              return (
-                <View
-                  key={index}
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginBottom: 8,
-                  }}
-                >
-
-                  <RNText
-                  onPress={() => onCategoryPress(label.name)}
-                    style={{
-                      color: isHighlighted ? highLightedColor : color,
-                      lineHeight: 30,
-                      opacity: isHighlighted ? 1 : 0.8,
-                      fontFamily: "Poppins-Regular", // fix
-                      fontSize: 13,
-                    }}
+                return (
+                  <View
+                    key={index}
+                    style={styles.percentagesRow}
                   >
-                    {label.name}
-                  </RNText>
-                  <RNText
-                    style={{
-                      color: isHighlighted ? highLightedColor : color,
-                      lineHeight: 30,
-                      opacity: isHighlighted ? 1 : 0.8,
-                      fontFamily: "Poppins-Regular", // fix
-                      fontSize: 18,
-                    }}
-                  >
-                    {percentage}%
-                  </RNText>
-                </View>
-              );
-            })}
+                    <RNText
+                      onPress={() => onCategoryPress(label.name)}
+                      style={{
+                        color: isHighlighted ? highLightedColor : color,
+                        lineHeight: 30,
+                        opacity: isHighlighted ? 1 : 0.8,
+                        fontFamily: "Poppins-Regular", // fix
+                        fontSize: 13,
+                      }}
+                    >
+                      {label.name}
+                    </RNText>
+                    <RNText
+                      style={{
+                        color: isHighlighted ? highLightedColor : color,
+                        lineHeight: 30,
+                        opacity: isHighlighted ? 1 : 0.8,
+                        fontFamily: "Poppins-Regular", // fix
+                        fontSize: 18,
+                      }}
+                    >
+                      {percentage}%
+                    </RNText>
+                  </View>
+                );
+              })}
+          </ScrollView>
         </View>
       )}
       {coloredDotsMode &&
@@ -383,48 +318,40 @@ const DotsCanvas = ({
           const approxWidth = labelText.length * 7 + 16; // +16 for paddingHorizontal * 2
 
           return (
-            <View
-              pointerEvents="none"
-              style={{
-                position: "absolute",
-                left:
-                  highlightPosition.x + (isLeftSide ? 8 : -(approxWidth + 8)),
-                top: highlightPosition.y - 14,
-                borderWidth: 2,
-                borderColor: highLightedColor,
-                backgroundColor: darkerOverlayBackgroundColor,
-                paddingHorizontal: 14,
-                paddingVertical: 8,
-                borderRadius: 30,
-                zIndex: 999999,
-              }}
-            >
-              <RNText
-                style={{
-                  color: color,
-                  fontSize: 12,
-                  fontFamily: "Poppins-Regular",
-                }}
-              >
-                {labelText}
-              </RNText>
-            </View>
+<CategoryTooltip
+  label={labelText}
+  color={color}
+  borderColor={highLightedColor}
+  backgroundColor={darkerOverlayBackgroundColor}
+  containerStyle={{
+    position: "absolute",
+    left: highlightPosition.x + (isLeftSide ? 8 : -(approxWidth + 8)),
+    top: highlightPosition.y - 14,
+    zIndex: 999999,
+  }}
+/>
           );
         })()}
 
-      {onCenterPress && !coloredDotsMode && (
-        <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
-          <SvgIcon
+      {handleDoublePress && !coloredDotsMode && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            styles.centerWrapper,
+            { height: canvasHeight },
+          ]}
+        >
+          {/* <SvgIcon
             name={"leaf"}
             style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
             size={200}
             color={color}
-          />
+          /> */}
 
           <Pressable
-            onPress={onCenterPress}
+            onPress={handleDoublePress}
             hitSlop={10}
-            style={styles.centerCenterButton}
+            style={styles.buttonArea}
           />
         </View>
       )}
@@ -442,8 +369,6 @@ const styles = StyleSheet.create({
   canvasContainer: {
     // flex: 1,
     zIndex: 200000,
-
-    // backgroundColor: "pink",
   },
   categoryLabelsContainer: {
     zIndex: 66666,
@@ -455,8 +380,11 @@ const styles = StyleSheet.create({
   centerWrapper: {
     justifyContent: "center",
     alignItems: "center",
+    flex: 1,
+    height: "100%",
+    // backgroundColor: "limegreen",
   },
-  centerCenterButton: {
+  buttonArea: {
     zIndex: 1000000,
     elevation: 1000000,
     position: "absolute",
@@ -499,6 +427,17 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 30,
     paddingHorizontal: 20,
+  },
+  percentagesOutContainer: {
+    height: 300,
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+    marginTop: 10,
+  },
+  percentagesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
 });
 

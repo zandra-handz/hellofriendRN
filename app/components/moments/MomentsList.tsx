@@ -11,10 +11,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import EscortBarMinusWidth from "./EscortBarMinusWidth";
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
+import TopLayerButton from "../home/TopLayerButton";
+import CheckButton from "../home/CheckButton";
 import MomentSearcher from "./MomentSearcher";
 import MomentItem from "./MomentItem";
+import manualGradientColors from "@/app/styles/StaticColors";
 import LargeCornerLizard from "./LargeCornerLizard";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import FadeDisappear from "./FadeDisappear";
 import SwipeDown from "./SwipeDown";
 import Animated, {
   JumpingTransition,
@@ -43,6 +47,9 @@ const MomentsList = ({
   friendId,
   scrollToIndex,
   categoryColorsMap,
+  handleNavigateToCreateNew,
+  categoryNavigatorVisible,
+  handleToggleCatNav
 }) => {
   useEffect(() => {
     if (scrollToIndex) {
@@ -50,7 +57,7 @@ const MomentsList = ({
     }
   }, [scrollToIndex]);
 
-  const ITEM_HEIGHT = 80;
+  const ITEM_HEIGHT = 160;
   const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
@@ -79,8 +86,8 @@ const MomentsList = ({
   const pressedIndex = useSharedValue(null);
   const pulseValue = useSharedValue(0);
 
-  const [categoryNavigatorVisible, setCategoryNavigatorVisible] =
-    useState(false);
+  // const [categoryNavigatorVisible, setCategoryNavigatorVisible] =
+  //   useState(false);
 
   const scrollToMoment = (moment) => {
     console.log("scroll to moment: ", moment);
@@ -133,21 +140,40 @@ const MomentsList = ({
 
   const viewableItemsArray = useSharedValue<ViewToken[]>([]);
 
+  // const memoizedMomentData = useMemo(() => {
+  //   return capsuleList.map((item) => {
+  //     const rawDate = item?.created || "";
+  //     const date = new Date(rawDate);
+
+  //     const formattedDate = !isNaN(date.getTime())
+  //       ? new Intl.DateTimeFormat("en-US", {
+  //           month: "short",
+  //           day: "numeric",
+  //         }).format(date)
+  //       : "lol";
+
+  //     return { ...item, formattedDate };
+  //   });
+  // }, [capsuleList]);
   const memoizedMomentData = useMemo(() => {
-    return capsuleList.map((item) => {
-      const rawDate = item?.created || "";
-      const date = new Date(rawDate);
+  let lastCategory: string | null = null;
+ let currentSide: "left" | "right" = "right";
 
-      const formattedDate = !isNaN(date.getTime())
-        ? new Intl.DateTimeFormat("en-US", {
-            month: "short",
-            day: "numeric",
-          }).format(date)
-        : "lol";
+  return capsuleList.map((item) => {
+    const rawDate = item?.created || "";
+    const date = new Date(rawDate);
+    const formattedDate = !isNaN(date.getTime())
+      ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date)
+      : "lol";
 
-      return { ...item, formattedDate };
-    });
-  }, [capsuleList]);
+    if (String(item.user_category) !== lastCategory) {
+      lastCategory = String(item.user_category);
+      currentSide = currentSide === "left" ? "right" : "left";
+    }
+
+    return { ...item, formattedDate, tooltipSide: currentSide };
+  });
+}, [capsuleList]);
 
   useEffect(() => {
     if (capsuleList.length < 1) {
@@ -217,9 +243,9 @@ const MomentsList = ({
     },
   });
 
-  const handleCloseCategoryNav = () => {
-    setCategoryNavigatorVisible(false);
-  };
+  // const handleCloseCategoryNav = () => {
+  //   setCategoryNavigatorVisible(false);
+  // };
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <Pressable
@@ -232,7 +258,7 @@ const MomentsList = ({
 
           height: ITEM_HEIGHT,
           marginBottom: ITEM_BOTTOM_MARGIN,
-          paddingHorizontal: 4,
+          paddingHorizontal: 30,
           opacity: pressed ? 0.6 : 1,
         })}
       >
@@ -243,6 +269,7 @@ const MomentsList = ({
           lighterOverlayColor={lighterOverlayColor}
           friendColor={friendColor}
           momentData={item}
+            categorySide={item.tooltipSide}
           combinedHeight={COMBINED_HEIGHT}
           index={index} //ADD to component if want to alternative moment item layout
           momentDate={item.formattedDate}
@@ -271,8 +298,12 @@ const MomentsList = ({
   };
 
   return (
-    <View style={styles.outerContainer}>
-      <View style={styles.swipeDownContainer}>
+    <>
+  
+    <View style={styles.outerContainer}>   
+
+
+      {/* <View style={styles.swipeDownContainer}>
         <SwipeDown
           label={`Undo`}
           flipLabel={`Back`}
@@ -280,12 +311,12 @@ const MomentsList = ({
           primaryColor={primaryColor}
           primaryOverlayColor={primaryOverlayColor}
         />
-      </View>
-      {!categoryNavigatorVisible && (
+      </View> */}
+      {/* {!categoryNavigatorVisible && (
         <View style={styles.geckoWrapper}>
           <LargeCornerLizard color={darkerOverlayColor} />
         </View>
-      )}
+      )} */}
 
       <MomentsAdded
         overlayBackgroundColor={primaryOverlayColor}
@@ -344,7 +375,7 @@ const MomentsList = ({
             <CategoryNavigator
               primaryColor={primaryColor}
               backgroundColor={primaryBackgroundColor}
-              onClose={handleCloseCategoryNav}
+              onClose={handleToggleCatNav}
               visibilityValue={listVisibility}
               viewableItemsArray={viewableItemsArray}
               categoryNames={categoryNames}
@@ -353,29 +384,32 @@ const MomentsList = ({
               categoryColorsMap={categoryColorsMap}
             />
           )}
-        <View style={styles.bottomBarContainer}>
-          {!categoryNavigatorVisible && (
-            <View style={styles.geckoToHelloButtonContainer}>
-              <GeckoToHelloButton />
-            </View>
-          )}
 
-          {!categoryNavigatorVisible && (
+
+        <View style={styles.bottomBarContainer}>
+ 
+
+          {!categoryNavigatorVisible && ( 
             <>
-              <MomentSearcher onSearchPress={scrollToMoment} />
+                   
+              {/* <MomentSearcher onSearchPress={scrollToMoment} /> */}
 
               <EscortBarMinusWidth
                 backgroundColor={primaryBackgroundColor}
                 overlayColor={primaryOverlayColor}
                 primaryColor={primaryColor}
                 navigateBack={navigateBack}
-                onPress={() => setCategoryNavigatorVisible(true)}
+                onPress={handleToggleCatNav}
               />
-            </>
+              </>
+          
           )}
         </View>
+ 
       </>
-    </View>
+
+    </View> 
+           </>
   );
 };
 

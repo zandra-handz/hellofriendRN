@@ -45,7 +45,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import useCategories from "@/src/hooks/useCategories";
 // import { useCategories } from "@/src/context/CategoriesContext";
-import WriteButton from "@/app/components/home/WriteButton";
+import TopLayerButton from "@/app/components/home/TopLayerButton";
 
 const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { user } = useUser();
@@ -55,7 +55,9 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const route = useRoute();
 
   const idToSelect = route?.params?.idToSelect ?? null;
-  console.log(idToSelect);
+    const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
+    // console.log(prevScreenHasBackdrop);
+  // console.log(idToSelect);
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user?.id });
   const friendList = friendListAndUpcoming?.friends;
@@ -65,6 +67,16 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
     friendList,
   });
 
+  const prevHadBackdrop = useSharedValue(false);
+
+  useEffect(() => {
+    if (prevScreenHasBackdrop === true) {
+      prevHadBackdrop.value = true;
+    } else {
+      prevHadBackdrop.value = false;
+    }
+    
+  }, [prevScreenHasBackdrop]);
   // Select friend when screen mounts with idToSelect param
   useEffect(() => {
     if (idToSelect && friendList?.length && !selectedFriend?.id) {
@@ -74,10 +86,18 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [idToSelect, friendList?.length, selectedFriend?.id]);
 
   // const { upcomingHelloes  } = useUpcomingHelloes();
-  const { navigateToMomentFocus, navigateToHome } = useAppNavigations();
+  const { navigateToMomentFocus, navigateToMoments, navigateToHome } = useAppNavigations();
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: coloredDotsModeValue.value });
   }, [navigateToMomentFocus]);
+
+
+    const handleMomentScreenNoScroll = useCallback(() => {
+      setTurnOn(true);
+      navigateToMoments({ scrollTo: null });
+    }, [navigateToMoments]);
+  
+   
 
   const { autoSelectFriend } = useAutoSelector();
   const { userCategories } = useCategories({ userId: user?.id });
@@ -109,6 +129,23 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
   // In ScreenFriendHome or wherever the backdrop lives
   const coloredDotsModeValue = useSharedValue(false);
+
+
+  const turnBackdropOnValue = useSharedValue(false);
+
+  const [turnOn, setTurnOn ] = useState(false);
+
+
+  useEffect(() => {
+    if (turnOn) {
+      turnBackdropOnValue.value = true;
+    } else {
+      turnBackdropOnValue.value = false;
+    }
+
+  }, [turnOn]);
+
+  
 
   const handleToggleColoredDots = () => {
     coloredDotsModeValue.value = !coloredDotsModeValue.value;
@@ -231,7 +268,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
             backgroundOverlayColor={lightDarkTheme.primaryBackground}
             friendId={selectedFriend?.id}
           >
-            <Pressable
+            {/* <Pressable
               onPress={handleToggleColoredDots}
               style={{
                 width: 100,
@@ -240,7 +277,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
                 backgroundColor: "limegreen",
               }}
-            ></Pressable>
+            ></Pressable> */}
 
             {settings?.id && upcomingHelloes?.length && user?.id && (
               <SelectedFriendHome
@@ -260,17 +297,19 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
                 selectedFriendName={selectedFriend?.name}
                 handleToggleColoredDots={handleToggleColoredDots}
                 coloredDotsModeValue={coloredDotsModeValue}
+                handleMomentScreenNoScroll={handleMomentScreenNoScroll}
               />
             )}
 
-            <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={coloredDotsModeValue} />
+            <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={coloredDotsModeValue  } />
    
             {selectedFriend?.id && (
-              <WriteButton
+              <TopLayerButton
                 onPress={handleNavigateToCreateNew}
                 backgroundColor={manualGradientColors.lightColor}
                 iconColor={manualGradientColors.homeDarkColor}
-                spaceFromBottom={140}
+                spaceFromBottom={120}
+                hidden={false}
               />
             )}
 

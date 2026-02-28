@@ -8,7 +8,7 @@ import {
   Text
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
- 
+ import TextHeader from "../appwide/format/TextHeader";
 import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
@@ -396,13 +396,9 @@ const MomentWriteEditView = ({
         >
           <View style={styles.innerContainer}>
          
-              <View style={styles.headerWrapper}>
+              <TextHeader label={!updateExistingMoment ? `Add new`: `Edit`} color={primaryColor} fontStyle={welcomeTextStyle}/>
                 
-              <Text style={[welcomeTextStyle, {color: primaryColor, fontSize: 26}]}>
-                Add new
-              </Text>
-              
-              </View>
+            
               <MomentFocusTray
                 userId={userId}
                 userDefaultCategory={defaultCategory}

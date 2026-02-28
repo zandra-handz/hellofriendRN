@@ -30,7 +30,8 @@ const MomentsField = ({
   handleToggleColoredDots,
   coloredDotsModeValue,
   canvasHeight,
-  heightFull
+  heightFull,
+  handleMomentScreenNoScroll
 }: Props) => { 
 
   const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
@@ -115,9 +116,9 @@ const MomentsField = ({
     [navigateToMomentView, categorySizes.categoryStartIndices]
   );
 
-  const handleMomentScreenNoScroll = useCallback(() => {
-    navigateToMoments({ scrollTo: null });
-  }, [navigateToMoments]);
+  // const handleMomentScreenNoScroll = useCallback(() => {
+  //   navigateToMoments({ scrollTo: null });
+  // }, [navigateToMoments]);
 
  
 

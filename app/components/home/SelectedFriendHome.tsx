@@ -15,11 +15,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { useDerivedValue, runOnJS } from "react-native-reanimated";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-
+import AnimatedToggler from "../buttons/AnimatedToggler";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import AnimatedClimber from "@/app/screens/fidget/AnimatedClimber";
 
-import SvgIcon from "@/app/styles/SvgIcons";
+import animationTimings from "@/app/styles/AnimationTimings";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 // import TalkingPointsChart from "./TalkingPointsChart";
 import MomentsField from "./MomentsField";
@@ -27,14 +27,7 @@ import MomentsField from "./MomentsField";
 import History from "./History";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import Moments from "./Moments";
-// import ItemFooterHelloes from "../appwide/statusbar/ItemFooterHelloes";
-// import { useFocusEffect } from "@react-navigation/native";
-// import { useCallback } from "react";
-
-import { Image } from "react-native";
-import { color } from "react-native-elements/dist/helpers";
-const LeafImage = require("@/app/styles/pngs/leaf.png");
+import Moments from "./Moments"; 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -59,14 +52,15 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   themeColors,
   handleToggleColoredDots,
   coloredDotsModeValue,
+  handleMomentScreenNoScroll,
 }) => {
   // console.log("selected friend home rerendered");
+
   const headerRef = useRef(null);
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-
-  const CARD_BACKGROUND = "rgba(0,0,0,0.8)";
+  const timing = animationTimings.toggleRotate;
 
   const MESSAGE_HEADER_HEIGHT = 240;
   const { capsuleList } = useCapsuleList();
@@ -115,19 +109,26 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   });
 
   const ELEMENTS_BACKGROUND = "transparent";
-  useEffect(() => {
-    if (coloredDotsMode && scrollRef.current && momentsFieldRef.current) {
-      momentsFieldRef.current.measureLayout(
-        scrollRef.current,
-        (x, y) => {
-          scrollRef.current?.scrollTo({ y, animated: true });
-        },
-        () => console.log("measure failed"),
-      );
-    } else if (!coloredDotsMode && scrollRef.current) {
-      scrollRef.current.scrollTo({ y: 0, animated: true });
-    }
-  }, [coloredDotsMode]);
+const [scrollLocked, setScrollLocked] = useState(false);
+
+useEffect(() => {
+  if (coloredDotsMode && scrollRef.current && momentsFieldRef.current) {
+    momentsFieldRef.current.measureLayout(
+      scrollRef.current,
+      (x, y) => {
+        scrollRef.current?.scrollTo({ y, animated: true });
+    
+        setTimeout(() => setScrollLocked(true), 300);
+      },
+      () => console.log("measure failed"),
+    );
+  } else if (!coloredDotsMode && scrollRef.current) {
+    setScrollLocked(false);  
+    scrollRef.current.scrollTo({ y: 0, animated: true });
+  }
+}, [coloredDotsMode]);
+
+
   return (
     <>
       <View
@@ -137,8 +138,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             paddingHorizontal: paddingHorizontal,
           },
         ]}
-      > 
-
+      >
         <View style={styles.itemsContainer}>
           <View style={styles.containerOverScrollView}>
             {/* {!coloredDotsMode && (
@@ -162,6 +162,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
             <ScrollView
               ref={scrollRef}
+                scrollEnabled={!scrollLocked}
               // ref={scrollRef}
               onScroll={handleScroll}
               scrollEventThrottle={16}
@@ -186,7 +187,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
                   userId={userId}
                   friendId={selectedFriendId}
-                  cardBackgroundColor={CARD_BACKGROUND}
                   darkGlassBackground={darkGlassBackground}
                   darkerGlassBackground={darkerGlassBackground}
                   selectedFriendName={`${selectedFriendName}`}
@@ -214,17 +214,35 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View
                   ref={momentsFieldRef}
-                  style={{
-                    width: "100%",
-                    zIndex: 2000,
-                    elevation: 2000, 
-                    height: coloredDotsMode ? 600 : 380,
-                  }}
+                  style={[
+                    styles.momentsFieldContainer,
+                    {
+                      height: coloredDotsMode ? 620 : 380,
+                    },
+                  ]}
                 >
+                  <View style={styles.momentsFieldTopBar}>
+                    <AnimatedToggler
+                      labelA={`Categories`}
+                      labelB={``}
+                      fontStyle={subWelcomeTextStyle}
+                      iconAName={`eye`}
+                      iconBName={`chevron_left`}
+                      rotationAtoB={-90}
+                      rotationBtoA={90}
+                      valueAB={!!coloredDotsMode}
+                      timing={timing+200}
+                      colorA={primaryColor}
+                       colorB={primaryColor}
+                      onPressA={handleToggleColoredDots}
+                      onPressB={handleToggleColoredDots}
+                    />
+                  </View>
+
                   <MomentsField
                     canvasKey={canvasKey}
                     canvasHeight={300}
-                    heightFull={600}
+                    heightFull={620}
                     userId={userId}
                     textColor={primaryColor}
                     overlayColor={primaryOverlayColor}
@@ -235,12 +253,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     skiaFontSmall={skiaFontSmall}
                     handleToggleColoredDots={handleToggleColoredDots}
                     coloredDotsModeValue={coloredDotsModeValue}
+                    handleMomentScreenNoScroll={handleMomentScreenNoScroll}
                   />
                 </View>
 
                 {/* {!coloredDotsMode && ( */}
                 <View style={{ opacity: coloredDotsMode ? 0 : 1 }}>
-                  <View style={{ width: "100%", marginBottom: 6, zIndex: 2 }}>
+                  <View style={{ width: "100%", marginBottom: 6, zIndex: 10000 }}>
                     <Pics
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
@@ -276,10 +295,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   />
                 </View> */}
 
-                <View style={{ width: "100%", height: 330 }}></View>
+                <View style={styles.scrollViewSpacer}></View>
               </View>
             </ScrollView>
-            <View style={{ borderRadius: 40, height: 100 }}></View>
+            <View style={styles.belowScrollViewSpacer}></View>
           </View>
         </View>
       </View>
@@ -303,7 +322,7 @@ const styles = StyleSheet.create({
     padding: 6,
     zIndex: 3,
     elevation: 3,
-  }, 
+  },
 
   containerOverScrollView: {
     width: "100%",
@@ -316,6 +335,24 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
+  momentsFieldTopBar: {
+    height: 30,
+    width: "100%", 
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    paddingHorizontal: 10,
+  },
+  toggleCategoryViewWrapper: {
+    width: 100,
+    height: 30,
+    zIndex: 200000,
+    backgroundColor: "limegreen",
+  },
+  momentsFieldContainer: {
+    width: "100%",
+    zIndex: 2000,
+    elevation: 2000,
+  },
   animatedClimberWrapper: {
     position: "absolute",
     top: 0,
@@ -325,6 +362,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 99999,
+  },
+  scrollViewSpacer: {
+    width: "100%",
+    height: 330,
+  },
+  belowScrollViewSpacer: {
+    //?
+    borderRadius: 40,
+    height: 100,
   },
 });
 

@@ -223,12 +223,10 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
                   {friendId && !loadingDash && selectedFriendName}
                 </Text>
               )}
+
             </View>
           </View>
-        </Pressable>
-
-        {/* <Animated.View style={animatedOpacityStyle}> */}
-        <SuggestedHello
+    <SuggestedHello
           loadingDash={loadingDash}
           futureDate={friendDash?.date}
           darkerGlassBackground={darkerGlassBackground}
@@ -236,6 +234,17 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           primaryBackground={primaryBackground}
           padding={SELECTED_FRIEND_CARD_PADDING}
         />
+        </Pressable>
+
+        {/* <Animated.View style={animatedOpacityStyle}> */}
+        {/* <SuggestedHello
+          loadingDash={loadingDash}
+          futureDate={friendDash?.date}
+          darkerGlassBackground={darkerGlassBackground}
+          primaryColor={primaryColor}
+          primaryBackground={primaryBackground}
+          padding={SELECTED_FRIEND_CARD_PADDING}
+        /> */}
         {/* </Animated.View> */}
       </View>
     </>

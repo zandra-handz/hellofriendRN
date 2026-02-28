@@ -399,37 +399,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
-  // no longer using
-  // DON'T DELETE JUST YET
-  // const handleRescatterMoments = () => {
-  //   const minY = 0.2;
-  //   const maxY = 0.75;
-  //   const minX = 0.05;
-  //   const maxX = 0.95;
-
-  //   setScatteredMoments((prev) =>
-  //     prev.map((m) => {
-  //       // If moment is held, keep it offscreen
-  //       if (m.stored_index !== null && m.stored_index >= 0 && m.stored_index < 4) {
-  //         return {
-  //           ...m,
-  //           coord: [-100, -100],
-  //           stored_index: m.stored_index,
-  //         };
-  //       }
-
-  //       // Otherwise scatter it
-  //       const randomX = Math.random() * (maxX - minX) + minX;
-  //       const randomY = Math.random() * (maxY - minY) + minY;
-
-  //       return {
-  //         ...m,
-  //         coord: [randomX, randomY],
-  //         stored_index: m.stored_index,
-  //       };
-  //     }),
-  //   );
-  // };
+ 
 
   // this one resets the parent state with data from momentsClass
   // this prevents mismatches when moments are picked up or dropped
