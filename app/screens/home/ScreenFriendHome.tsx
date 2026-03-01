@@ -54,8 +54,9 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
   const route = useRoute();
 
-  const idToSelect = route?.params?.idToSelect ?? null;
-    const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
+  const idToSelect = route?.params?.idToSelect ?? null; 
+
+    const backdropTimestamp = route.params?.backdropTimestamp ?? null;
     // console.log(prevScreenHasBackdrop);
   // console.log(idToSelect);
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
@@ -67,16 +68,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
     friendList,
   });
 
-  const prevHadBackdrop = useSharedValue(false);
-
-  useEffect(() => {
-    if (prevScreenHasBackdrop === true) {
-      prevHadBackdrop.value = true;
-    } else {
-      prevHadBackdrop.value = false;
-    }
-    
-  }, [prevScreenHasBackdrop]);
+ 
   // Select friend when screen mounts with idToSelect param
   useEffect(() => {
     if (idToSelect && friendList?.length && !selectedFriend?.id) {
@@ -92,10 +84,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [navigateToMomentFocus]);
 
 
-    const handleMomentScreenNoScroll = useCallback(() => {
-      setTurnOn(true);
-      navigateToMoments({ scrollTo: null });
-    }, [navigateToMoments]);
+
   
    
 
@@ -136,14 +125,35 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const [turnOn, setTurnOn ] = useState(false);
 
 
-  useEffect(() => {
-    if (turnOn) {
-      turnBackdropOnValue.value = true;
-    } else {
-      turnBackdropOnValue.value = false;
-    }
+  
+useEffect(() => {
+  if (backdropTimestamp) {
+    turnBackdropOnValue.value = false;
+  }
+}, [backdropTimestamp]);
 
-  }, [turnOn]);
+
+  // useEffect(() => {
+  //   if (turnOn) {
+  //     turnBackdropOnValue.value = true;
+  //   } else {
+  //     console.log('turning OFF')
+  //     turnBackdropOnValue.value = false;
+  //   }
+
+  // }, [turnOn]);
+
+
+    //   const handleMomentScreenNoScroll = useCallback(() => {
+    //   setTurnOn(true);
+    //   navigateToMoments({ scrollTo: null });
+    // }, [navigateToMoments, turnOn]);
+
+
+    const handleMomentScreenNoScroll = useCallback(() => {
+  turnBackdropOnValue.value = true;
+  navigateToMoments({ scrollTo: null });
+}, [navigateToMoments]);
 
   
 
@@ -302,6 +312,10 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
             )}
 
             <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={coloredDotsModeValue  } />
+   
+
+
+       <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={turnBackdropOnValue  } />
    
             {selectedFriend?.id && (
               <TopLayerButton

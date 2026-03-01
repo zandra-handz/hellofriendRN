@@ -111,7 +111,7 @@ useEffect(() => {
   const unsubscribe = navigation.addListener('beforeRemove', (e) => {
     e.preventDefault();
     unsubscribe(); // remove listener first to prevent loop
-    navigateToFriendHome(null, true);
+    navigateToFriendHome(null, Date.now());
   });
   return unsubscribe;
 }, [navigation]);

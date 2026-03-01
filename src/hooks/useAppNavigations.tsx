@@ -374,8 +374,8 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("hellofriend");
   };
 
-    const navigateToFriendHome = (idToSelect=null, prevScreenBackdrop=false) => {
-    navigation.navigate("FriendHome", {idToSelect, prevScreenBackdrop});
+    const navigateToFriendHome = (idToSelect=null,backdropTimestamp=null) => {
+    navigation.navigate("FriendHome", {idToSelect, backdropTimestamp});
   };
 
   const navigateToAddFriend = () => {

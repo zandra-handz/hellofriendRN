@@ -14,9 +14,9 @@ type Props = {
    startsVisibleValue?: SharedValue<boolean>;
 };
 
-const AnimatedBackdrop = ({ color, zIndex = 5, isVisibleValue, startsVisibleValue }: Props) => {
+const AnimatedBackdrop = ({ color, zIndex = 5, isVisibleValue  }: Props) => {
 
-  console.log('startsvisible value: ', startsVisibleValue)
+ 
 
 
   const timing = animationTimings.screenFade;
