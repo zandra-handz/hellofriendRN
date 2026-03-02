@@ -40,8 +40,15 @@ const useCategories = ({
     return data;
   }, [data]);
 
+  const categoryIds = useMemo(
+  () => userCategories.map((c) => c.id),
+  [userCategories],
+);
+
+
   return {
     userCategories,
+    categoryIds,
     isLoading,
     isSuccess,
   };

@@ -3,37 +3,27 @@ import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
-import { useLDTheme } from "@/src/context/LDThemeContext";
-import manualGradientColors  from "@/app/styles/StaticColors";
+import { useLDTheme } from "@/src/context/LDThemeContext"; 
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 const ScreenAddFriend = () => {
   const { lightDarkTheme } = useLDTheme(); 
-  const { selectedFriend } = useSelectedFriend();
+  // const { selectedFriend } = useSelectedFriend();
  
   const { user } = useUser();
     const { friendListAndUpcoming} = useFriendListAndUpcoming({userId: user?.id});
   const friendList = friendListAndUpcoming?.friends;
 
   return (
-    <SafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={true}
-      style={{ flex: 1 }}
+    <SafeAreaView
+      style={[
+        styles.safeAreaStyle,
+        { backgroundColor: lightDarkTheme.primaryBackground },
+      ]}
     >
       <View style={[styles.container]}>
         <View style={styles.mainContainer}>
@@ -46,7 +36,7 @@ const ScreenAddFriend = () => {
           />
         </View>
       </View>
-    </SafeViewAndGradientBackground>
+    </SafeAreaView>
   );
 };
 
@@ -58,6 +48,12 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     paddingBottom: 10,
+  },
+    safeAreaStyle: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
   },
 });
 

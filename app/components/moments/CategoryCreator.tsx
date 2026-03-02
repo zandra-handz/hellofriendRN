@@ -4,7 +4,6 @@ import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet, Pressable } from "react-native";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import AddNewCategory from "../headers/AddNewCategory";
 // import { useCategories } from "@/src/context/CategoriesContext";
@@ -13,7 +12,7 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 import { useCategoryColors } from "@/src/context/CategoryColorsContext";
-import FiveValueSlider from "../friends/FiveValueSlider";
+import ValueSlider from "../friends/ValueSlider";
 type Props = {
   userId: number;
   freezeCategory: boolean;
@@ -44,25 +43,22 @@ const CategoryCreator = ({
   existingId,
 
   onClose,
-    yTranslateValue,
-    scoresObject,
-    handleScoreChange,
+  yTranslateValue,
+  scoresObject,
+  handleScoreChange,
 }: Props) => {
   const { categoryColors, handleSetCategoryColors } = useCategoryColors();
 
-
-    
   const categoryColorsMap = useMemo(() => {
     if (!categoryColors || !Array.isArray(categoryColors)) {
       // fallback to empty object if data is not ready
       return {};
     }
-  
+
     return Object.fromEntries(
-      categoryColors.map(({ user_category, color }) => [user_category, color])
+      categoryColors.map(({ user_category, color }) => [user_category, color]),
     );
   }, [categoryColors]);
-  
 
   const animatedYTranslateStyle = useAnimatedStyle(() => {
     return {
@@ -70,7 +66,7 @@ const CategoryCreator = ({
     };
   });
 
-  const { userCategories } = useCategories({userId: userId});
+  const { userCategories } = useCategories({ userId: userId });
 
   const { categorySizes } = useMomentSortingFunctions({
     listData: capsuleList,
@@ -89,45 +85,45 @@ const CategoryCreator = ({
 
   const [selectedId, setSelectedId] = useState(null);
   const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>(
-    []
+    [],
   );
   const [pressedOnce, setPressedOnce] = useState(false);
 
-// type MomentScores = {
-//   easy_score: number;
-//   hard_score: number;
-//   quick_score: number;
-//   long_score: number;
-//   relevant_score: number;
-//   random_score: number;
-//   unique_score: number;
-//   generic_score: number;
-// };
+  // type MomentScores = {
+  //   easy_score: number;
+  //   hard_score: number;
+  //   quick_score: number;
+  //   long_score: number;
+  //   relevant_score: number;
+  //   random_score: number;
+  //   unique_score: number;
+  //   generic_score: number;
+  // };
 
-// const DEFAULT_SCORES: MomentScores = {
-//   easy_score: 2,
-//   hard_score: 2,
-//   quick_score: 2,
-//   long_score: 2,
-//   relevant_score: 2,
-//   random_score: 2,
-//   unique_score: 2,
-//   generic_score: 2,
-// };
+  // const DEFAULT_SCORES: MomentScores = {
+  //   easy_score: 2,
+  //   hard_score: 2,
+  //   quick_score: 2,
+  //   long_score: 2,
+  //   relevant_score: 2,
+  //   random_score: 2,
+  //   unique_score: 2,
+  //   generic_score: 2,
+  // };
 
-// // In your component:
-// const [scoresObject, setScoresObject] = useState<MomentScores>(DEFAULT_SCORES);
+  // // In your component:
+  // const [scoresObject, setScoresObject] = useState<MomentScores>(DEFAULT_SCORES);
 
-// // Update individual score:
-// const handleScoreChange = (field: keyof MomentScores, value: number) => {
-//   setScoresObject(prev => ({
-//     ...prev,
-//     [field]: value
-//   }));
-// };
+  // // Update individual score:
+  // const handleScoreChange = (field: keyof MomentScores, value: number) => {
+  //   setScoresObject(prev => ({
+  //     ...prev,
+  //     [field]: value
+  //   }));
+  // };
 
-// Usage example:
-// handleScoreChange('easy_score', 4);
+  // Usage example:
+  // handleScoreChange('easy_score', 4);
 
   const HORIZONTAL_PADDING = 10;
 
@@ -147,7 +143,7 @@ const CategoryCreator = ({
         return;
       }
       setCategoriesSortedList(categories.sortedList);
-    }, [capsuleList])
+    }, [capsuleList]),
   );
 
   const handleOnPress = ({ name: name, id: id }) => {
@@ -195,9 +191,8 @@ const CategoryCreator = ({
       userCategories.length > 0
     ) {
       const find = userCategories.findIndex(
-        (category) => category.id === existingId
+        (category) => category.id === existingId,
       );
-    
 
       setSelectedId(existingId);
 
@@ -207,11 +202,10 @@ const CategoryCreator = ({
     if (friendDefaultCategory && userCategories && userCategories.length > 0) {
       const friendDefault = friendDefaultCategory;
       const name = userCategories.find(
-        (category) => category.id === friendDefault
+        (category) => category.id === friendDefault,
       );
 
-      if (name) { 
-
+      if (name) {
         onPress({ name: name.name, id: name.id });
         setSelectedId(name.id);
         return;
@@ -221,8 +215,6 @@ const CategoryCreator = ({
     if (!categoriesSortedList || !(categoriesSortedList.length > 0)) {
       return;
     }
-
-
 
     let largest = categoriesSortedList[0]?.user_category;
     let largestName = categoriesSortedList[0]?.name;
@@ -275,7 +267,7 @@ const CategoryCreator = ({
       onPress,
       selectedId,
       freezeCategory,
-    ]
+    ],
   );
 
   return (
@@ -308,89 +300,95 @@ const CategoryCreator = ({
           </View>
         )}
         <View style={styles.capsuleScoresPanel}>
+          <View style={styles.capsuleScoresPanel}>
+            <ValueSlider
+              label="Easy"
+              value={scoresObject.easy_score}
+              onValueChange={(value) => handleScoreChange("easy_score", value)}
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
 
-        <View style={styles.capsuleScoresPanel}>
-  <FiveValueSlider 
-    label="Easy"
-    value={scoresObject.easy_score}
-    onValueChange={(value) => handleScoreChange('easy_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Hard"
-    value={scoresObject.hard_score}
-    onValueChange={(value) => handleScoreChange('hard_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Quick"
-    value={scoresObject.quick_score}
-    onValueChange={(value) => handleScoreChange('quick_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Long"
-    value={scoresObject.long_score}
-    onValueChange={(value) => handleScoreChange('long_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Relevant"
-    value={scoresObject.relevant_score}
-    onValueChange={(value) => handleScoreChange('relevant_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Random"
-    value={scoresObject.random_score}
-    onValueChange={(value) => handleScoreChange('random_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Unique"
-    value={scoresObject.unique_score}
-    onValueChange={(value) => handleScoreChange('unique_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-  
-  <FiveValueSlider 
-    label="Generic"
-    value={scoresObject.generic_score}
-    onValueChange={(value) => handleScoreChange('generic_score', value)}
-    labelColor={primaryColor}
-    barColor={friendLightColor}
-    pointColor={friendDarkColor}
-    trackColor={'transparent'}
-  />
-</View>
+            <ValueSlider
+              label="Hard"
+              value={scoresObject.hard_score}
+              onValueChange={(value) => handleScoreChange("hard_score", value)}
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
 
+            <ValueSlider
+              label="Quick"
+              value={scoresObject.quick_score}
+              onValueChange={(value) => handleScoreChange("quick_score", value)}
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
+
+            <ValueSlider
+              label="Long"
+              value={scoresObject.long_score}
+              onValueChange={(value) => handleScoreChange("long_score", value)}
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
+
+            <ValueSlider
+              label="Relevant"
+              value={scoresObject.relevant_score}
+              onValueChange={(value) =>
+                handleScoreChange("relevant_score", value)
+              }
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
+
+            <ValueSlider
+              label="Random"
+              value={scoresObject.random_score}
+              onValueChange={(value) =>
+                handleScoreChange("random_score", value)
+              }
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
+
+            <ValueSlider
+              label="Unique"
+              value={scoresObject.unique_score}
+              onValueChange={(value) =>
+                handleScoreChange("unique_score", value)
+              }
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
+
+            <ValueSlider
+              label="Generic"
+              value={scoresObject.generic_score}
+              onValueChange={(value) =>
+                handleScoreChange("generic_score", value)
+              }
+              labelColor={primaryColor}
+              barColor={friendLightColor}
+              pointColor={friendDarkColor}
+              trackColor={"transparent"}
+            />
+          </View>
         </View>
         <Pressable onPress={onClose} style={styles.bottomButtonContainer}>
           <SvgIcon
@@ -419,7 +417,7 @@ const styles = StyleSheet.create({
 
   categoryNavigatorContainer: {
     position: "absolute",
-   // top: -70, //20
+    // top: -70, //20
     top: -460,
 
     paddingTop: 0,
@@ -431,10 +429,9 @@ const styles = StyleSheet.create({
     selfAlign: "center",
   },
   capsuleScoresPanel: {
-   // backgroundColor: 'red',
+    // backgroundColor: 'red',
     height: 390,
     marginTop: 10,
-
   },
   scrollContainer: {
     maxHeight: 400,
@@ -463,7 +460,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 70,
-    paddingBottom: 10, 
+    paddingBottom: 10,
   },
 });
 

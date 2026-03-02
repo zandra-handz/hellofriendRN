@@ -19,8 +19,8 @@ type Props = {
 };
 
 const MomentsField = ({
-  canvasKey,
-  themeColors,
+  canvasKey, 
+  friendColor,
   categoryColors,
   textColor,
   overlayColor,
@@ -100,7 +100,7 @@ const MomentsField = ({
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
-  const GAP = 0.0;
+  // const GAP = 0.0;
   const LABELS_SIZE = 12;
   const LABELS_DISTANCE_FROM_CENTER = 4;
   const LABELS_SLICE_END = 20;
@@ -161,22 +161,21 @@ const MomentsField = ({
            
               <DotsPositionLayer
                 canvasKey={canvasKey}
-                 font={skiaFontLarge}
-                smallFont={skiaFontSmall}
-                themeColors={themeColors} 
+                     iconColor={friendColor} 
+                smallFont={skiaFontSmall} 
                 catLabels={memoizedCatLabels}
                 catDecimals={memoizedCatDecimals}
                 canvasHeight={canvasHeight}
                 heightFull={heightFull}
           
-                iconColor={themeColors.lightColor}
+           
                 onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
                 totalJS={capsuleListCount}
                 radius={CHART_RADIUS}
                 strokeWidth={CHART_STROKE_WIDTH}
                 outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-                gap={GAP}
+                // gap={GAP}
                 labelsSize={LABELS_SIZE}
                 labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
                 labelsSliceEnd={LABELS_SLICE_END} 

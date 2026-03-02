@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ColorValue } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import ToggleButton from "../appwide/button/ToggleButton";
 
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 6,
     alignItems: "center",
+    
   },
 
   iconWrapper: {

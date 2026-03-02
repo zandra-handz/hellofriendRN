@@ -106,11 +106,12 @@ const ScreenSelectFriend = (
   ]);
 
   const locale = "en-US";
-  const { navigateBack, navigateToHome, navigateToFriendHome } = useAppNavigations();
+  const { navigateBack, navigateToHome, navigateToFriendHome, navigateToGecko } = useAppNavigations();
 
   const handleNavAfterSelect = useCallback((friendId) => {
     if (!useNavigateBack && friendId) {
-      navigateToFriendHome(friendId)
+     navigateToFriendHome(friendId)
+     // navigateToGecko();
     } else {
       navigateBack();
     }

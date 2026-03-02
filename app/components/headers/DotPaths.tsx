@@ -18,6 +18,11 @@ interface NotLeafPathProps {
   delayMs?: number; // optional delay in milliseconds
 }
 
+  const dotSvgString = Skia.Path.MakeFromSVGString(
+    "M 0,-8 A 8,8 0 1,0 0,8 A 8,8 0 1,0 0,-8 Z",
+  );
+
+
 export default function DotPaths({
   // colorsReversed,
   // colors,
@@ -28,9 +33,9 @@ export default function DotPaths({
 }: NotLeafPathProps) {
   const isSleeping = useSharedValue(false);
 
-  const dotSvgString = Skia.Path.MakeFromSVGString(
-    "M 0,-8 A 8,8 0 1,0 0,8 A 8,8 0 1,0 0,-8 Z",
-  );
+  // const dotSvgString = Skia.Path.MakeFromSVGString(
+  //   "M 0,-8 A 8,8 0 1,0 0,8 A 8,8 0 1,0 0,-8 Z",
+  // );
 
   useEffect(() => {
     const lastLeafFinish = (positions.length - 1) * 120 + 500;

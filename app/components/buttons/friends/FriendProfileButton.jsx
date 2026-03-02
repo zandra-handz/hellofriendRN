@@ -8,8 +8,9 @@ import useFriendDash from "@/src/hooks/useFriendDash";
 import manualGradientColors from "@/app/styles/StaticColors";
 const FriendProfileButton = ({
   userId,
-  friendId, 
-  themeColors, 
+  friendId,  
+  friendLightColor,
+  friendDarkColor,
   onPress,
 }) => {
   const { loadingDash } = useFriendDash({
@@ -24,7 +25,7 @@ const FriendProfileButton = ({
     return (
       <View
         style={{
-          backgroundColor: themeColors.lightColor,
+          backgroundColor: friendLightColor,
           borderRadius: 999,
           width: circleSize + 20,
           height: circleSize + 20,
@@ -53,7 +54,7 @@ const FriendProfileButton = ({
         <View style={styles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
             loading={true}
-            color={themeColors.darkColor}
+            color={friendDarkColor}
             spinnerType="flow"
             spinnerSize={30}
             includeLabel={false}

@@ -164,27 +164,31 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   return (
     <>
       <Modal
-        transparent={!isFullscreen}
+        statusBarTranslucent={true}
+       transparent={!isFullscreen}
         visible={isVisible}
-        style={{}}
+        style={{ backgroundColor: "orange" }}
         //   style={modalAnimationStyle}
         animationType="slide"
+        presentationStyle="fullScreen"
       >
-        <SafeAreaView style={{ flex: 1 }}>
-          {handleRenderHelperMessage()}
+        {handleRenderHelperMessage()}
 
-          {handleRenderQuickView()}
+        {handleRenderQuickView()}
 
-          <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
-            <Animated.View //if you put padding here it will affect the info item
-              style={[
-                styles.modalContent,
+        <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
+          <Animated.View //if you put padding here it will affect the info item
+            style={[
+              styles.modalContent,
 
-                {
-                  backgroundColor: primaryBackground,
-                  borderRadius: borderRadius,
-                },
-              ]}
+              {
+                backgroundColor: primaryBackground,
+                borderRadius: borderRadius,
+              },
+            ]}
+          >
+            <SafeAreaView
+              style={{ backgroundColor: primaryBackground, flex: 1 }}
             >
               <Animated.View
                 style={[
@@ -233,39 +237,39 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                   )}
                 </View>
               </Animated.View>
-            </Animated.View>
-
-            {!isKeyboardVisible && (
-              <Animated.View
-                entering={FadeInUp.duration(800)}
-                exiting={FadeOutUp.duration(0)}
-                style={{
-                  height: bottomSpacer,
-                  //   position: 'absolute',
-                  bottom: 0,
-
-                  width: "100%",
-                  backgroundColor:
-                    friendTheme === undefined
-                      ? manualGradientColors.lightColor
-                      : friendTheme.lightColor, //to match friend profile button circle color
-                  borderRadius: 10,
-                }}
-              >
-                <TreeModalBigButton
-                  onClose={handleCustomClose}
-                  label={buttonTitle}
-                  labelColor={
-                    friendTheme === undefined
-                      ? manualGradientColors.homeDarkColor
-                      : friendTheme.fontColorSecondary
-                  }
-                  rightSideElement={rightSideButtonItem}
-                />
-              </Animated.View>
-            )}
+            </SafeAreaView>
           </Animated.View>
-        </SafeAreaView>
+
+          {!isKeyboardVisible && (
+            <Animated.View
+              entering={FadeInUp.duration(800)}
+              exiting={FadeOutUp.duration(0)}
+              style={{
+                height: bottomSpacer,
+                //   position: 'absolute',
+                bottom: 0,
+
+                width: "100%",
+                backgroundColor:
+                  friendTheme === undefined
+                    ? manualGradientColors.lightColor
+                    : friendTheme.lightColor, //to match friend profile button circle color
+                borderRadius: 10,
+              }}
+            >
+              <TreeModalBigButton
+                onClose={handleCustomClose}
+                label={buttonTitle}
+                labelColor={
+                  friendTheme === undefined
+                    ? manualGradientColors.homeDarkColor
+                    : friendTheme.fontColorSecondary
+                }
+                rightSideElement={rightSideButtonItem}
+              />
+            </Animated.View>
+          )}
+        </Animated.View>
       </Modal>
     </>
   );

@@ -18,7 +18,7 @@ const DotsPositionLayer = ({
   iconColor,
   darkerOverlayBackgroundColor,
   catDecimals,
-catLabels, 
+   catLabels, 
    onCategoryPress,
   // onCategoryLongPress,
   onCenterPress,
@@ -39,7 +39,7 @@ catLabels,
 
    labelsDistanceFromCenter = -17,
    labelsSliceEnd = 1,
-  font,
+ 
   smallFont,
 }) => {
   const [positions, setPositions] = useState<
@@ -146,9 +146,7 @@ useEffect(() => {
  
  
 
-  const leafXs = useSharedValue<number[]>([]);
-  const leafYs = useSharedValue<number[]>([]);
-  const leafSizes = useSharedValue<number[]>([]);
+ 
 
  
 const leafPositionsCombined = useDerivedValue(() => {
@@ -230,8 +228,7 @@ const leafPositionsCombined = useDerivedValue(() => {
           canvasKey={canvasKey}
           canvasHeight={canvasHeight}
           heightFull={heightFull}
-          color={color}
-          animatedLeaves={leafPositionsCombined}
+          color={color} 
           positions={positions}
           totalJS={totalJS}
             canvasWidth={screenWidth}
@@ -240,30 +237,16 @@ const leafPositionsCombined = useDerivedValue(() => {
           // onCategoryLongPress={onCategoryLongPress}
           onCenterPress={onCenterPress}
                 handleToggleColoredDots={handleToggleColoredDots}
-          radius={RADIUS}
-          strokeWidth={STROKE_WIDTH}
-          outerStrokeWidth={OUTER_STROKE_WIDTH}
-          // totalValue={totalValue}
-          // categoryStopsValue={categoryStopsValue}
-          // colorsReversed={colorsReversed}
-          // colors={colors}
-          // font={font}
-          smallFont={smallFont}
-          leafXs={leafXs}
-          leafYs={leafYs}
-          leafSizes={leafSizes}
+      
+      
+       
+ 
+          smallFont={smallFont} 
           iconColor={iconColor}
-          backgroundColor={"transparent"}
-          n={colors?.length}
-          catN={catLabels?.length}
-          // gap={GAP}
-          decimalsValue={decimalsValue}
+          backgroundColor={"transparent"} 
           catDecimalsValue={catDecimalsValue}
           labelsValue={labelsValue}
-          // colors={colors}
-           labelsSize={labelsSize}
-           labelsDistanceFromCenter={labelsDistanceFromCenter}
-           labelsSliceEnd={labelsSliceEnd} 
+     
             coloredDotsModeValue={coloredDotsModeValue}
         /> 
     </View>

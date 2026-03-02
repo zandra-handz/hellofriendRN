@@ -1,14 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useReadableColors from "@/src/hooks/useReadableColors";
 import ColorSwatchesSvg from "../../friends/ColorSwatchesSvg";
 import useUpdateFaveTheme from "@/src/hooks/SelectedFriendCalls/useUpdateFavesTheme";
 import FormFriendColorThemeUpdate from "@/src/forms/FormFriendColorThemeUpdate";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
-
 import Toggle from "../../user/Toggle";
 
 const EditTheme = ({
@@ -23,24 +21,21 @@ const EditTheme = ({
   manualThemeOn,
 }) => {
   const { handleSetTheme } = useSelectedFriend();
-  // console.log(handleSetTheme)
 
   const { updateFriendListColorsExcludeSaved } = useUpdateFriendListColors({
     userId: userId,
     setThemeState: handleSetTheme,
   });
-  const { handleUpdateFavesTheme } = useUpdateFaveTheme({
+
+  const { handleTurnOffManual, handleTurnOnManual, handleUpdateManualColors } = useUpdateFaveTheme({
     userId: userId,
     friendId: friendId,
   });
 
-  // const [isMakingCall, setIsMakingCall] = useState(false);
-  const formRef = useRef(null);
-  const { getSavedColorTheme, getFontColor, getFontColorSecondary } =
-    useReadableColors(friendList, friendId);
+  const { getSavedColorTheme, getFontColor, getFontColorSecondary } = useReadableColors(friendList, friendId);
 
-  // console.log(friendDashboardData);
   const [manualTheme, setManualTheme] = useState<boolean>(!!manualThemeOn);
+  const [showEdit, setShowEdit] = useState(false);
 
   const toggleUseFriendColorTheme = async () => {
     const newValue = !manualTheme;
@@ -48,87 +43,43 @@ const EditTheme = ({
     await updateColorThemeSetting(newValue);
   };
 
-  const updateColorThemeSetting = async (setting) => {
-    // setIsMakingCall(true);
-
+const updateColorThemeSetting = async (setting) => {
     if (manualTheme) {
-      // if state before toggling Color Theme is off
       console.log("turning manual off");
       try {
-        await handleUpdateFavesTheme({
- 
-          manualThemeOn: false,
+        handleTurnOffManual({
+          appDarkColor: "#4caf50",
+          appLightColor: "#a0f143",
+          fontColor: "#000000",
+          fontColorSecondary: "#000000",
         });
-
-        updateFriendListColorsExcludeSaved(
-          friendId,
-          "#4caf50",
-          "#a0f143",
-          "#000000",
-          "#000000"
-        );
-      } finally {
-        // setIsMakingCall(false);
-      }
+        updateFriendListColorsExcludeSaved(friendId, "#4caf50", "#a0f143", "#000000", "#000000");
+      } finally {}
     } else {
       try {
         console.log("turning manual on");
-        const response = getSavedColorTheme();
-        const fontColor = getFontColor(
-          response.savedDarkColor,
-          response.savedLightColor,
-          false
-        );
-        const fontColorSecondary = getFontColorSecondary(
-          response.savedDarkColor,
-          response.savedLightColor,
-          false
-        );
- 
+        const data = await handleTurnOnManual();
+        // console.log(data)
+        const fontColor = getFontColor(data.dark_color, data.light_color, false);
+        const fontColorSecondary = getFontColorSecondary(data.dark_color, data.light_color, false);
 
-        // await updateFriendFavesColorThemeSetting(
-        await handleUpdateFavesTheme({
-          savedDarkColor: response.savedDarkColor,
-
-          savedLightColor: response.savedLightColor,
-          manualThemeOn: true,
-        });
-
-        //This also includes setThemeAheadOfLoading
         updateFriendListColorsExcludeSaved(
           friendId,
-          response.savedDarkColor,
-          response.savedLightColor,
+          data.dark_color,
+          data.light_color,
           fontColor,
-          fontColorSecondary
+          fontColorSecondary,
         );
- 
-      } finally { 
-      }
+      } finally {}
     }
   };
-
-  const [showEdit, setShowEdit] = useState(false);
-
-  const toggleThemeEdit = () => {
-    setShowEdit((prev) => !prev);
-  };
-
-  const handleSaveNewTheme = async () => {
-    if (formRef.current) {
-      // setIsMakingCall(true);
-      await formRef.current.submit();
-      // setIsMakingCall(false);
-      toggleThemeEdit(); // Toggle invisible after submission completes
-    }
-  };
+  const toggleThemeEdit = () => setShowEdit((prev) => !prev);
 
   return (
     <View
       style={{
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-
         width: "100%",
         alignSelf: "flex-start",
         backgroundColor: showEdit ? lighterOverlayColor : "transparent",
@@ -141,76 +92,37 @@ const EditTheme = ({
         primaryColor={primaryColor}
         backgroundColor={backgroundColor}
         label="Manual theme"
-        icon={
-          <MaterialCommunityIcons
-            name={"palette"}
-            size={20}
-            color={primaryColor}
-          />
-        }
+        icon={<MaterialCommunityIcons name={"palette"} size={20} color={primaryColor} />}
         value={manualTheme}
         onPress={toggleUseFriendColorTheme}
       />
 
       {manualTheme && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginVertical: 6,
-            alignItems: "center",
-          }}
-        >
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 6, alignItems: "center" }}>
           <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
-            <View
-              style={{
-                width: 40,
-                alignItems: "center",
-                justifyContent: "flex-start",
-                flexDirection: "row",
-              }}
-            ></View>
-            <Text style={[styles.label, { color: primaryColor }]}></Text>
+            <View style={{ width: 40, alignItems: "center", justifyContent: "flex-start", flexDirection: "row" }} />
+            <Text style={[styles.label, { color: primaryColor }]} />
           </View>
 
           {!showEdit && (
             <Pressable onPress={toggleThemeEdit}>
-              <ColorSwatchesSvg
-                onPress={toggleThemeEdit}
-                darkColor={themeColors.darkColor}
-                lightColor={themeColors.lightColor}
-              />
+              <ColorSwatchesSvg onPress={toggleThemeEdit} darkColor={themeColors.darkColor} lightColor={themeColors.lightColor} />
             </Pressable>
           )}
 
           {showEdit && (
-            <>
-              <Pressable onPress={toggleThemeEdit} style={{ marginRight: 10 }}>
-                <MaterialCommunityIcons
-                  name={"cancel"}
-                  size={20}
-                  color={primaryColor}
-                />
-              </Pressable>
-              <Pressable onPress={handleSaveNewTheme}>
-                <MaterialCommunityIcons
-                  name={"check"}
-                  size={20}
-                  color={primaryColor}
-                />
-              </Pressable>
-            </>
+            <Pressable onPress={toggleThemeEdit} style={{ marginRight: 10 }}>
+              <MaterialCommunityIcons name={"cancel"} size={20} color={primaryColor} />
+            </Pressable>
           )}
         </View>
       )}
+
       {showEdit && (
         <View style={{ flex: 1 }}>
           <FormFriendColorThemeUpdate
-            ref={formRef}
-            // onMakingCallChange={(false) => {
-            //   // setIsMakingCall(isMakingCall);
-            //   // console.log("Is making callaaa:", isMakingCall);
-            // }}
+            handleUpdateManualColors={handleUpdateManualColors}
+            onSaveComplete={toggleThemeEdit}
           />
         </View>
       )}
@@ -219,27 +131,12 @@ const EditTheme = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: 38,
-    height: "auto",
-    borderRadius: 15,
-    justifyContent: "center",
-    paddingHorizontal: ".5%",
-    paddingVertical: ".5%",
-    alignItems: "center",
-  },
+  container: { width: 38, height: "auto", borderRadius: 15, justifyContent: "center", paddingHorizontal: ".5%", paddingVertical: ".5%", alignItems: "center" },
   pressedStyle: {},
-  on: {
-    backgroundColor: "#4cd137",
-  },
-  off: {
-    backgroundColor: "#dcdde1",
-  },
-  circle: {
-    width: 15,
-    height: 15,
-    borderRadius: 15 / 2,
-  },
+  on: { backgroundColor: "#4cd137" },
+  off: { backgroundColor: "#dcdde1" },
+  circle: { width: 15, height: 15, borderRadius: 15 / 2 },
+  label: {},
 });
 
 export default EditTheme;

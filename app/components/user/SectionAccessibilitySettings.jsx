@@ -20,19 +20,7 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings, backgrou
       showFlashMessage("Success!", false, 1000); // modal covers this, need different approach
     }
   }, [updateSettingsMutation.isSuccess]);
-
-  // const updateSetting = async (setting) => {
-  //   console.error("update settings in section");
-
-  //   try {
-  //     const newSettings = { ...settings, ...setting };
-  //     await updateSettingsMutation.mutateAsync({
-  //       setting: newSettings,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error updating user settings:", error);
-  //   }
-  // };
+ 
 
   const updateHighContrastMode = () => {
     updateSettings({ high_contrast_mode: !settings.high_contrast_mode });
@@ -87,10 +75,7 @@ const SectionAccessibilitySettings = ({ userId, primaryColor, settings, backgrou
 
   return (
     <View
-      style={{
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        padding: 0,
+      style={{ 
         width: "100%",
         alignSelf: "flex-start",
       }}

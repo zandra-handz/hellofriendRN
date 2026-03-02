@@ -25,11 +25,7 @@ type Props = {
   lightDarkTheme: LDTheme;
   friendListLength: number;
 };
-const HelloFriendFooter = ({
-  userId,
-  username,
-  lightDarkTheme, 
-}: Props) => {
+const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
   const dividerStyle = lightDarkTheme.divider;
 
   const { onSignOut } = useSignOut();
@@ -199,7 +195,7 @@ const HelloFriendFooter = ({
           {
             backgroundColor: lightDarkTheme.darkerOverlayBackground,
             height: footerHeight,
-            paddingBottom: footerPaddingBottom, 
+            paddingBottom: footerPaddingBottom,
             opacity: 0.94,
             // backgroundColor: manualGradientColors.homeLightColor,
           },
@@ -244,7 +240,8 @@ const HelloFriendFooter = ({
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
-            lightDarkTheme={lightDarkTheme}
+            textColor={lightDarkTheme.primaryText}
+            backgroundColor={lightDarkTheme.primaryBackground}
           />
         </View>
       )}

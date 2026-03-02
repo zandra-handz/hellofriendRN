@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { useNavigation } from "@react-navigation/native";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
@@ -10,19 +12,24 @@ import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import AnimatedReverseBackdrop from "@/app/components/appwide/format/AnimatedReverseBackdrop";
 import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
-
+import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
 const ScreenMomentFocus = () => {
   const route = useRoute();
   const { user } = useUser();
   const { settings } = useUserSettings();
   const { lightDarkTheme } = useLDTheme();
+  const { navigateToFriendHome } = useAppNavigations();
+  const navigation = useNavigation();
+
   const momentText = route.params?.momentText ?? null;
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
 
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
   const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
+  const triggerReverseBackdrop = route.params?.triggerReverseBackdrop ?? false;
   const { selectedFriend } = useSelectedFriend();
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -32,12 +39,32 @@ const ScreenMomentFocus = () => {
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
 
   const ActivateBackdrop = useSharedValue(prevScreenHasBackdrop ? 1 : 0);
+  const ReverseBackdrop = useSharedValue(triggerReverseBackdrop ? 1 : 0);
 
   useEffect(() => {
     if (!prevScreenHasBackdrop) {
       ActivateBackdrop.value = withTiming(1, { duration: 600 });
     }
   }, []);
+
+  useEffect(() => {
+    if (triggerReverseBackdrop) {
+      ReverseBackdrop.value = withTiming(1, { duration: 600 });
+    }
+  }, []);
+
+  useEffect(() => {
+    // wrap in conditional to prevent rerouting when navigating back after using home screen flow
+    if (selectedFriend?.id) {
+      const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+        unsubscribe();
+
+        navigateToFriendHome(null, Date.now());
+      });
+      return unsubscribe;
+    }
+  }, [navigation, selectedFriend]);
 
   const [triggerMessage, setTriggerMessage] = useState<number>(0);
 
@@ -79,11 +106,19 @@ const ScreenMomentFocus = () => {
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
     >
-      <AnimatedBackdrop
+      <StaticBackdrop
         color={lightDarkTheme.backdropColor}
         zIndex={0}
         isVisibleValue={ActivateBackdrop}
+        startsVisible={!!selectedFriend?.id}
       />
+
+      {triggerReverseBackdrop && (
+        <AnimatedReverseBackdrop
+          color={lightDarkTheme.primaryBackground}
+          isVisibleValue={ReverseBackdrop}
+        />
+      )}
 
       <MomentWriteEditView
         paddingHorizontal={PADDING_HORIZONTAL}

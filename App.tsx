@@ -32,11 +32,13 @@ import {
 
 import ScreenNewAccount from "./app/screens/authflow/ScreenNewAccount";
 
+import { FriendCategoryColorsProvider } from "./src/context/FriendCategoryColorsContext";
+
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-  
+
 // import useUserSettings from "./src/hooks/useUserSettings";
 import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
 
@@ -46,8 +48,6 @@ import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
 import { AutoSelectorProvider } from "./src/context/AutoSelectorContext";
 
 // import { FriendStyleProvider } from "./src/context/FriendStyleContext";
-// import { HelloesProvider } from "./src/context/HelloesContext";
-// import { LocationsProvider } from "./src/context/LocationsContext";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 
 // import { CategoriesProvider } from "./src/context/CategoriesContext";
@@ -225,14 +225,16 @@ export default Sentry.wrap(function App() {
             <LDThemeProvider>
               <SelectedFriendProvider>
                 <CategoryColorsProvider>
-                  <RootSiblingParent>
-                    <DeviceLocationProvider>
-                      <Layout
-                        skiaFontLarge={skiaFontLarge}
-                        skiaFontSmall={skiaFontSmall}
-                      />
-                    </DeviceLocationProvider>
-                  </RootSiblingParent>
+                  <FriendCategoryColorsProvider>
+                    <RootSiblingParent>
+                      <DeviceLocationProvider>
+                        <Layout
+                          skiaFontLarge={skiaFontLarge}
+                          skiaFontSmall={skiaFontSmall}
+                        />
+                      </DeviceLocationProvider>
+                    </RootSiblingParent>
+                  </FriendCategoryColorsProvider>
                 </CategoryColorsProvider>
               </SelectedFriendProvider>
             </LDThemeProvider>

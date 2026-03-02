@@ -14,7 +14,7 @@ import {
   Platform,
   StyleSheet,
 } from "react-native";
- 
+
 import { useRoute } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -52,7 +52,7 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
- 
+
 const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const { user } = useUser();
   const { settings } = useUserSettings(); // MUST GO AT TOP OTHERWISE SOMETHING ELSE WILL RERENDER THE SCREEN FIRST AND THIS WILL HAVE OLD VALUES
@@ -61,10 +61,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   // const route = useRoute();
   // const { upcomingHelloes  } = useUpcomingHelloes();
   const { navigateToFriendHome } = useAppNavigations();
-    const isFocused = useIsFocused();
-
- 
- 
+  const isFocused = useIsFocused();
 
   const { autoSelectFriend } = useAutoSelector();
 
@@ -90,12 +87,11 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall }) => {
   //   setUpNextCache();
   // }, [friendListAndUpcoming]);
 
-
   // Skip cache update when not focused
-useEffect(() => {
-  if (!isFocused) return;
-  setUpNextCache();
-}, [friendListAndUpcoming, isFocused]);
+  useEffect(() => {
+    if (!isFocused) return;
+    setUpNextCache();
+  }, [friendListAndUpcoming, isFocused]);
 
   const isLoading =
     autoSelectFriend?.nextFriend === "pending" ||
@@ -106,18 +102,18 @@ useEffect(() => {
   // Navigate to friend screen when loading finishes AND friend is selected
   // useEffect(() => {
   //   if (!isLoading && selectedFriend?.id) {
-   
+
   //     navigateToFriendHome();
   //   }
   // }, [isLoading, selectedFriend?.id]);
 
   // Skip navigation when not focused
-useEffect(() => {
-  if (!isFocused) return;
-  if (!isLoading && selectedFriend?.id) {
-    navigateToFriendHome();
-  }
-}, [isLoading, selectedFriend?.id, isFocused]);
+  useEffect(() => {
+    if (!isFocused) return;
+    if (!isLoading && selectedFriend?.id) {
+      navigateToFriendHome();
+    }
+  }, [isLoading, selectedFriend?.id, isFocused]);
 
   // logQueryCacheSize(queryClient);
   const friendList = friendListAndUpcoming?.friends;
@@ -146,6 +142,8 @@ useEffect(() => {
     new Date(userCreatedOn).toDateString() === new Date().toDateString();
 
   const PADDING_HORIZONTAL = 6;
+
+  console.log(selectedFriend)
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -257,6 +255,7 @@ useEffect(() => {
     if (newMomentText?.length > 0) {
       navigateToMomentFocusWithText({
         screenCameFrom: 0,
+        triggerReverseBackdrop: true,
         momentText: newMomentText,
       });
       clearNewMomentText();
@@ -268,8 +267,6 @@ useEffect(() => {
       newMomentTextRef.current.focus();
     }
   };
-
- 
 
   return (
     <>
@@ -285,7 +282,6 @@ useEffect(() => {
       {autoSelectFriend?.customFriend !== "pending" &&
         autoSelectFriend?.nextFriend !== "pending" &&
         selectedFriend?.isReady &&
-     
         friendListAndUpcomingIsSuccess && (
           <SafeViewHome
             backgroundColor0={lightDarkTheme.primaryBackground}
@@ -324,33 +320,30 @@ useEffect(() => {
 
                               {friendListLength > 0 && (
                                 <>
-                                <View style={styles.mainActionsWrapper}>
-                                  
-                                  <WelcomeMessageUI
-                                    userId={user?.id}
-                                    darkerGlassBackground={
-                                      lightDarkTheme.darkerGlassBackground
-                                    }
-                                    paddingHorizontal={PADDING_HORIZONTAL}
-                                    primaryColor={lightDarkTheme.primaryText}
-                                    primaryBackground={
-                                      lightDarkTheme.primaryBackground
-                                    }
-                                    username={user?.username}
-                                    isNewUser={isNewUser}
-                                    friendId={selectedFriend?.id}
-                                    friendName={selectedFriend?.name}
-                               
-                                    backgroundColor={
-                                      lightDarkTheme.primaryBackground
-                                    }
-                                    borderBottomLeftRadius={0}
-                                    borderBottomRightRadius={0}
-                                    onPress={handleFocusPress}
-                                    isKeyboardVisible={isKeyboardVisible}
-                                  />
-                                  
-                                </View>
+                                  <View style={styles.mainActionsWrapper}>
+                                    <WelcomeMessageUI
+                                      userId={user?.id}
+                                      darkerGlassBackground={
+                                        lightDarkTheme.darkerGlassBackground
+                                      }
+                                      paddingHorizontal={PADDING_HORIZONTAL}
+                                      primaryColor={lightDarkTheme.primaryText}
+                                      primaryBackground={
+                                        lightDarkTheme.primaryBackground
+                                      }
+                                      username={user?.username}
+                                      isNewUser={isNewUser}
+                                      friendId={selectedFriend?.id}
+                                      friendName={selectedFriend?.name}
+                                      backgroundColor={
+                                        lightDarkTheme.primaryBackground
+                                      }
+                                      borderBottomLeftRadius={0}
+                                      borderBottomRightRadius={0}
+                                      onPress={handleFocusPress}
+                                      isKeyboardVisible={isKeyboardVisible}
+                                    />
+                                  </View>
 
                                   <QuickWriteMoment
                                     focusMode={settings?.simplify_app_for_focus}
@@ -400,34 +393,33 @@ useEffect(() => {
                                   }}
                                 >
                                   {!selectedFriend?.id && (
-
-                             
-                                  <AllHome
-                                    userId={user?.id}
-                                    friendId={selectedFriend?.id}
-                                    lockInCustomString={
-                                      settings?.lock_in_custom_string
-                                    }
-                                    lighterOverlayColor={
-                                      lightDarkTheme.lighterOverlayBackground
-                                    }
-                                    darkerOverlayColor={
-                                      lightDarkTheme.darkerOverlayBackground
-                                    }
-                                    isLoading={isLoading} 
-                                    navigateToFriendHome={navigateToFriendHome}
-                                    borderRadius={10}
-                                    height={"100%"}
-                                    textColor={lightDarkTheme.primaryText}
-                                    overlayColor={
-                                      lightDarkTheme.overlayBackground
-                                    }
-                                    primaryBackground={
-                                      lightDarkTheme?.primaryBackground
-                                    }
-
-                                  />
-                                       )}
+                                    <AllHome
+                                      userId={user?.id}
+                                      friendId={selectedFriend?.id}
+                                      lockInCustomString={
+                                        settings?.lock_in_custom_string
+                                      }
+                                      lighterOverlayColor={
+                                        lightDarkTheme.lighterOverlayBackground
+                                      }
+                                      darkerOverlayColor={
+                                        lightDarkTheme.darkerOverlayBackground
+                                      }
+                                      isLoading={isLoading}
+                                      navigateToFriendHome={
+                                        navigateToFriendHome
+                                      }
+                                      borderRadius={10}
+                                      height={"100%"}
+                                      textColor={lightDarkTheme.primaryText}
+                                      overlayColor={
+                                        lightDarkTheme.overlayBackground
+                                      }
+                                      primaryBackground={
+                                        lightDarkTheme?.primaryBackground
+                                      }
+                                    />
+                                  )}
                                 </View>
                               </View>
                             )}
@@ -442,8 +434,7 @@ useEffect(() => {
                 settings={settings}
                 friendId={selectedFriend?.id}
                 friendName={selectedFriend?.name}
-            
-                lightDarkTheme={lightDarkTheme} 
+                lightDarkTheme={lightDarkTheme}
                 overlayColor={
                   friendListLength > 0
                     ? lightDarkTheme.overlayBackground
@@ -472,8 +463,6 @@ const styles = StyleSheet.create({
   },
   mainActionsWrapper: {
     // backgroundColor: 'pink',
-    
-
   },
   mainContainer: {
     flex: 1,

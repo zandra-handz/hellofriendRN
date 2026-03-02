@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet } from "react-native"; 
+import { View, StyleSheet } from "react-native";
 
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app components
@@ -13,7 +13,7 @@ import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import FriendThemeModal from "./FriendThemeModal";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 
-import SvgIcon from "@/app/styles/SvgIcons"; 
+import SvgIcon from "@/app/styles/SvgIcons";
 
 // import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
@@ -29,9 +29,11 @@ const SelectedFriendFooter = ({
   friendName,
 
   lightDarkTheme,
-  
+
   dividerStyle,
   themeColors,
+  friendLightColor,
+  friendDarkColor,
 }) => {
   const { setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
 
@@ -77,8 +79,7 @@ const SelectedFriendFooter = ({
     deselectFriend,
   ]);
 
-
-    const handleDeselect_withNavigate = useCallback(() => {
+  const handleDeselect_withNavigate = useCallback(() => {
     const goHome = deselectFriendFunction({
       userId,
       queryClient,
@@ -89,12 +90,11 @@ const SelectedFriendFooter = ({
       deselectFriend,
     });
 
-    console.log(!!goHome)
+    console.log(!!goHome);
 
     if (!!goHome) {
       navigateToHome();
-
-    }  
+    }
   }, [
     userId,
     queryClient,
@@ -103,7 +103,7 @@ const SelectedFriendFooter = ({
     friendId,
     setToFriend,
     deselectFriend,
-    navigateToHome
+    navigateToHome,
   ]);
 
   // const addCheckToDeselect = useCallback(() => {
@@ -127,7 +127,7 @@ const SelectedFriendFooter = ({
         // label="Deselect"
         label="Back"
         icon={
-          <SvgIcon 
+          <SvgIcon
             name={"account_arrow_left_outline"}
             size={footerIconSize}
             color={primaryColor}
@@ -136,7 +136,7 @@ const SelectedFriendFooter = ({
         onPress={() => handleDeselect_withNavigate()}
       />
     ),
-    [primaryColor, friendId, autoSelectFriend, queryClient]
+    [primaryColor, friendId, autoSelectFriend, queryClient],
   );
 
   const RenderSettingsButton = useCallback(
@@ -154,7 +154,7 @@ const SelectedFriendFooter = ({
         onPress={() => setSettingsModalVisible(true)}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
   const RenderColorThemeButton = useCallback(
     () => (
@@ -171,7 +171,7 @@ const SelectedFriendFooter = ({
         onPress={() => setColorsModalVisible(true)}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
 
   const handleCenterButtonToggle = () => {
@@ -185,11 +185,12 @@ const SelectedFriendFooter = ({
         friendId={friendId}
         friendName={friendName}
         primaryColor={primaryColor}
-        themeColors={themeColors}
+        friendLightColor={friendLightColor}
+        friendDarkColor={friendDarkColor}
         onPress={() => handleCenterButtonToggle()}
       />
     ),
-    [themeColors, primaryColor, friendId, friendName]
+    [friendLightColor, friendDarkColor, primaryColor, friendId, friendName],
   );
 
   const RenderFidgetButton = useCallback(
@@ -198,21 +199,20 @@ const SelectedFriendFooter = ({
         primaryColor={primaryColor}
         label="Visual"
         icon={
-              <View style={{  top: 20, left: 10, overflow: 'hidden'}}>
-           
-          <SvgIcon 
-             name={"gecko_mine"} 
-            // name={"pulse"} 
-            size={footerIconSize + 130}
-            color={primaryColor}
-          />
+          <View style={{ top: 20, left: 10, overflow: "hidden" }}>
+            <SvgIcon
+              name={"gecko_mine"}
+              // name={"pulse"}
+              size={footerIconSize + 130}
+              color={primaryColor}
+            />
           </View>
-        } 
-       // onPress={() => navigateToGecko({selection: 0})} // can use this too
-          onPress={navigateToGecko} 
+        }
+        // onPress={() => navigateToGecko({selection: 0})} // can use this too
+        onPress={navigateToGecko}
       />
     ),
-    [primaryColor]
+    [primaryColor],
   );
 
   return (
@@ -271,15 +271,14 @@ const SelectedFriendFooter = ({
       </View>
 
       {settingsModalVisible && userId && (
-        <View>
-          <UserSettingsModal
-            userId={userId}
-            isVisible={settingsModalVisible}
-            bottomSpacer={footerHeight - 30} //for safe view
-            closeModal={() => setSettingsModalVisible(false)}
-            lightDarkTheme={lightDarkTheme}
-          />
-        </View>
+        <UserSettingsModal
+          userId={userId}
+          isVisible={settingsModalVisible}
+          bottomSpacer={footerHeight - 30} //for safe view
+          closeModal={() => setSettingsModalVisible(false)}
+          textColor={lightDarkTheme.primaryText}
+          backgroundColor={lightDarkTheme.primaryBackground}
+        />
       )}
 
       {friendSettingsModalVisible && !!friendId && (
@@ -288,9 +287,13 @@ const SelectedFriendFooter = ({
             userId={userId}
             handleDeselectFriend={handleDeselect}
             lightDarkTheme={lightDarkTheme}
+            textColor={lightDarkTheme.primaryText}
+            backgroundColor={lightDarkTheme.primaryBackground}
             userId={userId}
             isVisible={friendSettingsModalVisible}
             themeColors={themeColors}
+            friendLightColor={friendLightColor}
+            friendDarkColor={friendDarkColor}
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}
@@ -338,7 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   divider: {
-    marginVertical: 10, 
+    marginVertical: 10,
   },
 });
 

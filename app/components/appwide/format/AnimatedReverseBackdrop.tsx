@@ -7,26 +7,22 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import animationTimings from "@/app/styles/AnimationTimings";
+
 type Props = {
   color: string;
-  zIndex: number;
+  zIndex?: number;
   isVisibleValue: SharedValue<boolean>;
-  // startsVisible: boolean;
 };
 
-
-
-// use StaticBackdrop.tsx, perhaps in conditional wrapper, instead of startsVisible here
-const AnimatedBackdrop = ({
+const AnimatedReverseBackdrop = ({
   color,
   zIndex = 5,
   isVisibleValue,
-  // startsVisible,
 }: Props) => {
   const timing = animationTimings.screenFade;
 
   const opacity = useDerivedValue(() =>
-    withTiming(isVisibleValue.value ? 1 : 0, { duration: timing }),
+    withTiming(isVisibleValue.value ? 0 : 1, { duration: timing }),
   );
 
   const backdropStyle = useAnimatedStyle(() => ({
@@ -45,4 +41,4 @@ const AnimatedBackdrop = ({
   );
 };
 
-export default AnimatedBackdrop;
+export default AnimatedReverseBackdrop;

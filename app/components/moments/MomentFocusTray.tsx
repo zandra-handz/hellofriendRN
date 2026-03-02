@@ -1,13 +1,11 @@
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet} from "react-native";
 import React from "react";
 import SwitchFriend from "../home/SwitchFriend";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import SelectedCategoryButton from "./SelectedCategoryButton";
-// import { useFriendDash } from "@/src/context/FriendDashContext";
+import SelectedCategoryButton from "./SelectedCategoryButton"; 
 import useFriendDash from "@/src/hooks/useFriendDash";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-import ActionAndBack from "./ActionAndBack";
-import SvgIcon from "@/app/styles/SvgIcons";
+ 
 
 type Props = {
   updateExistingMoment: boolean;
@@ -26,12 +24,12 @@ type Props = {
 const MomentFocusTray = ({
   userId,
   userDefaultCategory,
-  handleSave,
+ 
   themeColors,
   primaryColor,
   primaryBackground,
   lighterOverlayColor,
-  navigateBack,
+ 
   capsuleList,
  
 
@@ -52,19 +50,10 @@ const MomentFocusTray = ({
   const welcomeTextStyle = AppFontStyles.welcomeText;
   return (
     <View style={styles.container}>
-      <View
-        style={styles.innerContainer}
-      >
-        <Pressable
-          hitSlop={10}
-          style={styles.backButtonWrapper}
-          onPress={navigateBack}
-        >
-          <SvgIcon name={"chevron_left"} size={20} color={primaryColor} />
-        </Pressable>
-
         {loadingDash && (
-          <View style={{}}>
+          <View style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
+            <View>
+
             <LoadingPage
               loading={true}
               color={themeColors.darkColor}
@@ -72,12 +61,17 @@ const MomentFocusTray = ({
               spinnerSize={30}
               includeLabel={false}
             />
+            </View>
           </View>
         )}
 
-        {!loadingDash && (
-          <>
-          <View style={{ maxWidth: "80%" }}>
+
+   {!loadingDash && (
+      <View
+        style={styles.innerContainer}
+      >
+  
+          <View style={{ maxWidth: "100%" }}>
               <SwitchFriend
               lighterOverlayColor={lighterOverlayColor}
               nameLabel={friendName}
@@ -89,7 +83,7 @@ const MomentFocusTray = ({
                 iconSize={ICON_SIZE}
               />
             </View>
-            <View style={{ maxWidth: "35%", flexShrink: 1 }}>
+            <View style={{ maxWidth: "65%", flexShrink: 1 }}>
               <SelectedCategoryButton
                 userId={userId}
                 friendId={friendId}
@@ -110,12 +104,10 @@ const MomentFocusTray = ({
                 iconSize={ICON_SIZE}
               />
             </View>
-          </>
-        )}
-        <View style={styles.saveButtonWrapper}>
-          <ActionAndBack onPress={handleSave} rounded={true} />
-        </View>
+         
+    
       </View>
+           )}
     </View>
   );
 };
@@ -126,9 +118,8 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: "row",
     justifyContent: "flex-end",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    marginVertical: 10,
+    alignItems: "center", 
+
   },
   innerContainer: {
     width: "100%",
@@ -137,16 +128,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  saveButtonWrapper: {
-    paddingHorizontal: 10,
-  },
-  backButtonWrapper: {
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    padding: 4,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  
 });
 
 export default MomentFocusTray;

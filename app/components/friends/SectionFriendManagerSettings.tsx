@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
   container: {
         width: "100%",
         alignSelf: "flex-start",
+        
   },
   friendSettingsRow: {
     flexDirection: "row",

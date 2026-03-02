@@ -5,13 +5,17 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 //import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash"; 
+import useFriendDash from "@/src/hooks/useFriendDash";
 import { useNavigation } from "@react-navigation/native";
 
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
+import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
+
+
+import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import manualGradientColors from "@/app/styles/StaticColors";
 // import { useCategories } from "@/src/context/CategoriesContext";
@@ -19,6 +23,7 @@ import useCategories from "@/src/hooks/useCategories";
 // import { useFriendList } from "@/src/context/FriendListContext";
 import FadeDisappear from "@/app/components/moments/FadeDisappear";
 import TopLayerButton from "@/app/components/home/TopLayerButton";
+import TopLayerButtonSharedV from "@/app/components/home/TopLayerButtonSharedV";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 // import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
@@ -42,6 +47,7 @@ const ScreenMoments = () => {
   const navigation = useNavigation();
   const { user } = useUser();
   const { selectedFriend, selectFriend } = useSelectedFriend();
+  const { friendCategoryColorsMap } = useFriendCategoryColors();
   const { capsuleList, preAdded } = useCapsuleList();
 
   const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
@@ -52,6 +58,7 @@ const ScreenMoments = () => {
   const handleToggleCatNav = () => {
     setCategoryNavigatorVisible((prev) => !prev);
   };
+  const topCategoryColor = useSharedValue(manualGradientColors.lightColor); // default color
 
   const ActivateBackdrop = useSharedValue(prevScreenHasBackdrop ? 1 : 0);
 
@@ -70,8 +77,13 @@ const ScreenMoments = () => {
     listData: capsuleList,
   });
 
-  const { navigateToMomentView, navigateToMomentFocus, navigateToFinalize, navigateBack, navigateToFriendHome} =
-    useAppNavigations();
+  const {
+    navigateToMomentView,
+    navigateToMomentFocus,
+    navigateToFinalize,
+    navigateBack,
+    navigateToFriendHome,
+  } = useAppNavigations();
   const TIME_SCORE = 100;
 
   const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming({
@@ -97,24 +109,21 @@ const ScreenMoments = () => {
   });
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
-  const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
+  // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const { handleSelectFriend } = useSelectFriend({
     userId: user?.id,
     friendList: friendList,
   });
 
-
- 
- 
-useEffect(() => {
-  const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-    e.preventDefault();
-    unsubscribe(); // remove listener first to prevent loop
-    navigateToFriendHome(null, Date.now());
-  });
-  return unsubscribe;
-}, [navigation]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      unsubscribe(); // remove listener first to prevent loop
+      navigateToFriendHome(null, Date.now());
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: true });
@@ -148,22 +157,22 @@ useEffect(() => {
   // prefetchUserAddresses();
   // prefetchFriendAddresses();
 
-  useEffect(() => {
-    if (
-      selectedFriend?.lightColor &&
-      selectedFriend?.darkColor &&
-      userCategories &&
-      userCategories.length > 0
-    ) {
-      setCategoryColorsMap(
-        generateGradientColorsMap(
-          userCategories,
-          selectedFriend.lightColor,
-          selectedFriend.darkColor,
-        ),
-      );
-    }
-  }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
+  // useEffect(() => {
+  //   if (
+  //     selectedFriend?.lightColor &&
+  //     selectedFriend?.darkColor &&
+  //     userCategories &&
+  //     userCategories.length > 0
+  //   ) {
+  //     setCategoryColorsMap(
+  //       generateGradientColorsMap(
+  //         userCategories,
+  //         selectedFriend.lightColor,
+  //         selectedFriend.darkColor,
+  //       ),
+  //     );
+  //   }
+  // }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
   return (
     <SafeViewFriendHome
@@ -172,40 +181,37 @@ useEffect(() => {
       backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
     >
-      <AnimatedBackdrop
+      {/* <AnimatedBackdrop
         color={lightDarkTheme.backdropColor}
         zIndex={0}
         isVisibleValue={ActivateBackdrop}
-      />
+      /> */}
 
-      {/* <View style={StyleSheet.absoluteFillObject}>
-        <GradientBackgroundBreathing
-          secondColorSetDark={selectedFriend.lightColor}
-          secondColorSetLight={selectedFriend.darkColor}
-          // firstColorSetDark={manualGradientColors.lightColor}
-          // firstColorSetLight={selectedFriend.darkColor}
-          firstColorSetDark={selectedFriend.lightColor}
-          firstColorSetLight={selectedFriend.darkColor}
-          // firstColorSetDark={manualGradientColors.lightColor}
-          // firstColorSetLight={manualGradientColors.darkColor}
-          timeScore={TIME_SCORE}
-          speed={5000}
-          style={{ flexDirection: "column", justifyContent: "flex-end" }}
-          direction={"vertical"}
-        ></GradientBackgroundBreathing>
-      </View> */}
+      <StaticBackdrop
+        color={lightDarkTheme.backdropColor}
+        zIndex={0}
+        isVisibleValue={ActivateBackdrop}
+        startsVisible={!!selectedFriend?.id}
+      />
 
       <TextHeader
         label={`All notes`}
         color={lightDarkTheme.primaryText}
         fontStyle={welcomeTextStyle}
+        showNext={true}
+        nextEnabled={true}
+        nextIconName={`arrow_right`}
+        onNext={navigateToFinalize}
+        nextColor={lightDarkTheme.primaryText}
+        nextBackgroundColor={'transparent'}
       />
 
       {selectedFriend && !loadingDash && (
         <>
           <View style={{ flex: 1 }}>
-            {capsuleList && categoryColorsMap && (
+            {capsuleList && friendCategoryColorsMap && (
               <MomentsList
+                topCategoryColorValue={topCategoryColor}
                 capsuleList={capsuleList}
                 preAdded={preAdded}
                 updateCapsule={handlePreAddMoment}
@@ -223,7 +229,7 @@ useEffect(() => {
                 primaryOverlayColor={lightDarkTheme.overlayBackground}
                 friendId={selectedFriend?.id}
                 scrollToIndex={scrollTo}
-                categoryColorsMap={categoryColorsMap}
+                categoryColorsMap={friendCategoryColorsMap}
                 handleNavigateToCreateNew={handleNavigateToCreateNew}
                 categoryNavigatorVisible={categoryNavigatorVisible}
                 handleToggleCatNav={handleToggleCatNav}
@@ -234,7 +240,7 @@ useEffect(() => {
       )}
       {selectedFriend?.id && (
         <TopLayerButton
-        iconName={`draw_pen`}
+          iconName={`draw_pen`}
           onPress={handleNavigateToCreateNew}
           backgroundColor={manualGradientColors.lightColor}
           iconColor={manualGradientColors.homeDarkColor}
@@ -242,12 +248,20 @@ useEffect(() => {
           spaceFromBottom={120}
         />
       )}
-            {selectedFriend?.id && (
-        <TopLayerButton
-        iconName={`arrow_right`}
-          onPress={navigateToFinalize}
-          backgroundColor={lightDarkTheme.lighterOverlayBackground}
-          iconColor={lightDarkTheme.primaryText}
+      {selectedFriend?.id && (
+        <TopLayerButtonSharedV
+          iconName="rose_compass" 
+          onPress={handleToggleCatNav}
+          backgroundColorValue={topCategoryColor}
+          colors={
+            Object.values(friendCategoryColorsMap).length > 1
+              ? Object.values(friendCategoryColorsMap)
+              : [
+                  manualGradientColors.lightColor,
+                  manualGradientColors.lightColor,
+                ]
+          } // fallback with 2 values
+          iconColor={manualGradientColors.homeDarkColor}
           hidden={categoryNavigatorVisible}
           spaceFromBottom={44}
         />

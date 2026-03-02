@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
   StyleSheet,
-  Text
+  Text,
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
- import TextHeader from "../appwide/format/TextHeader";
+import TextHeader from "../appwide/format/TextHeader";
 import TextMomentBox from "./TextMomentBox";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
@@ -215,6 +215,12 @@ const MomentWriteEditView = ({
     extractScoresFromMoment(existingMomentObject),
   );
 
+
+  const textLength = useMemo(() => {
+    console.log('textLength: ', momentTextToSave?.length)
+    return momentTextToSave?.length;
+
+  }, [momentTextToSave]);
   // Update individual score:
   const handleScoreChange = (field: keyof MomentScores, value: number) => {
     setScoresObject((prev) => ({
@@ -229,7 +235,7 @@ const MomentWriteEditView = ({
   };
 
   const handleSave = async () => {
-    console.log(scoresObject);
+    // console.log(scoresObject);
     if (!selectedUserCategory) {
       Alert.alert(`DEV MODE`, `Oops! SelectedUserCategory is null`, [
         {
@@ -240,7 +246,7 @@ const MomentWriteEditView = ({
       ]);
       return;
     }
-    const textLength = momentTextToSave.length;
+    // const textLength = momentTextToSave.length;
 
     if (!textLength) {
       Alert.alert(
@@ -395,62 +401,72 @@ const MomentWriteEditView = ({
           ]}
         >
           <View style={styles.innerContainer}>
-         
-              <TextHeader label={!updateExistingMoment ? `Add new`: `Edit`} color={primaryColor} fontStyle={welcomeTextStyle}/>
-                
-            
-              <MomentFocusTray
-                userId={userId}
-                userDefaultCategory={defaultCategory}
-                themeColors={themeColors}
-                primaryColor={primaryColor}
-                lighterOverlayColor={lighterOverlayColor}
-                primaryBackground={primaryBackground}
-                capsuleList={capsuleList}
-                navigateBack={navigateBack}
-                handleSave={handleSave}
-                paddingTop={TOPPER_PADDING_TOP}
-                friendDefaultCategory={
-                  friendFaves?.friend_default_category || null
-                }
-                updateExistingMoment={updateExistingMoment}
-                freezeCategory={userChangedCategory}
-                onPress={handleOpenCat}
-                label={selectedCategory}
-                categoryId={selectedUserCategory}
-                friendId={friendId}
-                friendName={friendName}
-              />
-              {createMomentMutation.isPending && (
-                <View
-                  style={{
-                    width: "100%",
-                    height: "50%", //the height value repositions the spinner to be in the centerish of the screen when keyboard is up
-                  }}
-                >
-                  <LoadingPage
-                    loading={true}
-                    spinnerType="circle"
-                    spinnerSize={40} // same as FSMainSpinner
-                  />
-                </View>
-              )}
-              {!createMomentMutation.isPending && (
-                <View style={{ padding: 10 }}>
-                  <TextMomentBox
-                    ref={momentTextRef}
-                    value={momentTextToSave}
-                    onTextChange={updateMomentText}
-                    triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
-                    isKeyboardVisible={isKeyboardVisible}
-                    welcomeTextStyle={welcomeTextStyle}
-                    primaryColor={primaryColor}
-                  />
-                </View>
-              )}
-            </View>
+            <TextHeader
+              label={!updateExistingMoment ? `Add new` : `Edit`}
+              color={primaryColor}
+              fontStyle={welcomeTextStyle}
+              showNext={true}
+              nextEnabled={!!(textLength && selectedCategory)}
+              onNext={handleSave}
+
+              nextColor={manualGradientColors.homeDarkColor}
+              nextBackgroundColor={manualGradientColors.lightColor}
+              nextDisabledColor={primaryBackground}
+              nextDisabledBackgroundColor={'transparent'}
+            />
+
+            <MomentFocusTray
+              userId={userId}
+              userDefaultCategory={defaultCategory}
+              themeColors={themeColors}
+              primaryColor={primaryColor}
+              lighterOverlayColor={lighterOverlayColor}
+              primaryBackground={primaryBackground}
+              capsuleList={capsuleList}
+              navigateBack={navigateBack}
+              handleSave={handleSave}
+              paddingTop={TOPPER_PADDING_TOP}
+              friendDefaultCategory={
+                friendFaves?.friend_default_category || null
+              }
+              updateExistingMoment={updateExistingMoment}
+              freezeCategory={userChangedCategory}
+              onPress={handleOpenCat}
+              label={selectedCategory}
+              categoryId={selectedUserCategory}
+              friendId={friendId}
+              friendName={friendName}
+            />
+            {createMomentMutation.isPending && (
+              <View
+                style={{
+                  width: "100%",
+                  height: "50%", //the height value repositions the spinner to be in the centerish of the screen when keyboard is up
+                }}
+              >
+                <LoadingPage
+                  loading={true}
+                  spinnerType="circle"
+                  spinnerSize={40} // same as FSMainSpinner
+                />
+              </View>
+            )}
+            {!createMomentMutation.isPending && (
+              <View style={{ padding: 10 }}>
+                <TextMomentBox
+                  ref={momentTextRef}
+                  value={momentTextToSave}
+                  onTextChange={updateMomentText}
+                  triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
+                  isKeyboardVisible={isKeyboardVisible}
+                  welcomeTextStyle={welcomeTextStyle}
+                  primaryColor={primaryColor}
+                />
+              </View>
+            )}
           </View>
-        </View> 
+        </View>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
@@ -469,10 +485,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: "100%",
     zIndex: 1,
-  }, 
+  },
   headerWrapper: {
     paddingHorizontal: 20,
-
   },
   rowContainer: { flexDirection: "row" },
   labelWrapper: {},

@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import manualGradientColors from "@/app/styles/StaticColors";
 
-import HalfScreenModal from "../alerts/HalfScreenModal";
+import AppModal from "../alerts/AppModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
@@ -62,7 +62,7 @@ const PickHelloDate = ({
       </Pressable>
 
       {modalVisible && (
-        <HalfScreenModal
+        <AppModal
           primaryColor={primaryColor}
           backgroundColor={"orange"}
           isFullscreen={false}

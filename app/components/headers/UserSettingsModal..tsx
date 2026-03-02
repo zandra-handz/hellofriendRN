@@ -1,14 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-// import { AccessibilityInfo } from "react-native";
+import { View,   ScrollView, StyleSheet } from "react-native";
  
-import SvgIcon from "@/app/styles/SvgIcons";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
-import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
+import AppModal from "../alerts/AppModal";
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import { LDTheme } from "@/src/types/LDThemeTypes";
@@ -16,74 +14,57 @@ interface Props {
   userId: number;
   isVisible: boolean;
   bottomSpacer: number;
-  closeModal: () => void;
-  lightDarkTheme: LDTheme;
+  closeModal: () => void; 
+  textColor: string;
+  backgroundColor: string;
 }
 
 const UserSettingsModal: React.FC<Props> = ({
   userId,
- 
-  isVisible,
-  bottomSpacer,
-  closeModal,
-  lightDarkTheme, 
-}) => { 
-  
- const { settings } = useUserSettings();
+
+  isVisible, 
+  closeModal, 
+  textColor,
+  backgroundColor,
+}) => {
+  const { settings } = useUserSettings();
 
   return (
-    <ModalScaleLikeTree
-      bottomSpacer={bottomSpacer}
+    <AppModal
+      primaryColor={textColor}
+      backgroundColor={backgroundColor}
+      isFullscreen={false}
+      modalIsTransparent={false}
       isVisible={isVisible}
-      headerIcon={
-        <SvgIcon
-          name={"wrench"}
-          size={30}
-          color={lightDarkTheme.primaryText}
-        />
-      }
-      buttonTitle="Settings"
-      useModalBar={true}
-      rightSideButtonItem={
-        <SvgIcon
-          name={`wrench`}
-          size={50}
-          color={manualGradientColors.homeDarkColor}
-        />
-      }
-      children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
-          {/* // <View style={styles.bodyContainer}> */}
-
-          <View style={styles.sectionContainer}>
-            <SectionAccessibilitySettings 
-            backgroundColor={lightDarkTheme.primaryBackground}
-              userId={userId}
-              primaryColor={lightDarkTheme.primaryText}
-              settings={settings}
-            />
-          </View>
-          <View style={styles.sectionContainer}>
-            <SectionFriendManagerSettings
-                 backgroundColor={lightDarkTheme.primaryBackground}
-              userId={userId}
-              settings={settings}
-              primaryColor={lightDarkTheme.primaryText}
-              manualGradientColors={manualGradientColors}
-            />
-          </View>
-
-          <View style={styles.headerContainer}>
-            <SectionAccountSettings primaryColor={lightDarkTheme.primaryText} />
-          </View>
-          <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: lightDarkTheme.primaryText}]}>
-              © Badrainbowz Studio 2025
-            </Text>
-          </View> 
-        </ScrollView>
-      }
+      questionText="User settings"
       onClose={closeModal}
+      useCloseButton={true}
+      children={
+        <View style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+            {/* // <View style={styles.bodyContainer}> */}
+ 
+              <SectionAccessibilitySettings
+                backgroundColor={backgroundColor}
+                userId={userId}
+                primaryColor={textColor}
+                settings={settings}
+              />
+          
+              <SectionFriendManagerSettings
+                backgroundColor={backgroundColor}
+                userId={userId}
+                settings={settings}
+                primaryColor={textColor}
+                manualGradientColors={manualGradientColors}
+              />
+         
+              <SectionAccountSettings
+                primaryColor={textColor}
+              /> 
+          </ScrollView>
+        </View>
+      }
     />
   );
 };
@@ -92,13 +73,16 @@ const styles = StyleSheet.create({
   bodyContainer: {
     width: "100%",
     textAlign: "left",
-
+ 
   },
   headerContainer: {
     margin: "2%",
   },
-  sectionContainer: {
-    margin: "2%",
+  scrollViewContainer: {
+    marginVertical: 6,
+    flexDirection: "row",
+    width: "100%",
+    flexWrap: "wrap",
   },
   headerText: {
     fontWeight: "bold",

@@ -6,20 +6,14 @@ import React, {
   useMemo,
 } from "react";
 import { View, ViewToken, Pressable, StyleSheet } from "react-native";
-import GeckoToHelloButton from "./GeckoToHelloButton";
+ 
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBarMinusWidth from "./EscortBarMinusWidth";
 import MomentsAdded from "./MomentsAdded";
-import CategoryNavigator from "./CategoryNavigator";
-import TopLayerButton from "../home/TopLayerButton";
-import CheckButton from "../home/CheckButton";
-import MomentSearcher from "./MomentSearcher";
-import MomentItem from "./MomentItem";
-import manualGradientColors from "@/app/styles/StaticColors";
-import LargeCornerLizard from "./LargeCornerLizard";
+import CategoryNavigator from "./CategoryNavigator"; 
+import MomentItem from "./MomentItem"; 
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import FadeDisappear from "./FadeDisappear";
-import SwipeDown from "./SwipeDown";
+ 
 import Animated, {
   JumpingTransition,
   useSharedValue,
@@ -49,7 +43,8 @@ const MomentsList = ({
   categoryColorsMap,
   handleNavigateToCreateNew,
   categoryNavigatorVisible,
-  handleToggleCatNav
+  handleToggleCatNav,
+  topCategoryColorValue
 }) => {
   useEffect(() => {
     if (scrollToIndex) {
@@ -61,23 +56,71 @@ const MomentsList = ({
   const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
-  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+  // const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+  //   viewableItemsArray.value = viewableItems;
+  // }, []);
+const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+  viewableItemsArray.value = viewableItems;
+  
+  // Update the parent's color value
+  const topMoment = viewableItems[0]?.item;
+  if (topMoment && categoryColorsMap[topMoment.user_category]) {
+    topCategoryColorValue.value = categoryColorsMap[topMoment.user_category];
+  }
+}, [categoryColorsMap]);
+
+
+
+
+
+
+
+const onViewableItemsChangedRef = useRef(({ viewableItems }) => {
+  viewableItemsArray.value = viewableItems;
+});
+
+// Update the ref when dependencies change
+useEffect(() => {
+  onViewableItemsChangedRef.current = ({ viewableItems }) => {
     viewableItemsArray.value = viewableItems;
-  }, []);
+    
+    const topMoment = viewableItems[0]?.item;
+    if (topMoment && categoryColorsMap[topMoment.user_category]) {
+      topCategoryColorValue.value = categoryColorsMap[topMoment.user_category];
+    }
+  };
+}, [categoryColorsMap, topCategoryColorValue]);
 
-  const viewabilityConfig = useRef({
-    minimumViewTime: 40,
-    itemVisiblePercentThreshold: 5,
-    //viewAreaCoveragePercentThreshold: 50,
-    waitForInteraction: false,
-  }).current;
-
-  const viewabilityConfigCallbackPairs = useRef([
-    {
-      viewabilityConfig,
-      onViewableItemsChanged,
+const viewabilityConfigCallbackPairs = useRef([
+  {
+    viewabilityConfig: {
+      minimumViewTime: 40,
+      itemVisiblePercentThreshold: 5,
+      waitForInteraction: false,
     },
-  ]);
+    onViewableItemsChanged: (info) => onViewableItemsChangedRef.current(info),
+  },
+]);
+
+
+
+
+
+
+
+  // const viewabilityConfig = useRef({
+  //   minimumViewTime: 40,
+  //   itemVisiblePercentThreshold: 5,
+  //   //viewAreaCoveragePercentThreshold: 50,
+  //   waitForInteraction: false,
+  // }).current;
+
+  // const viewabilityConfigCallbackPairs = useRef([
+  //   {
+  //     viewabilityConfig,
+  //     onViewableItemsChanged,
+  //   },
+  // ]);
 
   const flatListRef = useAnimatedRef(null);
 
@@ -302,22 +345,7 @@ const MomentsList = ({
   
     <View style={styles.outerContainer}>   
 
-
-      {/* <View style={styles.swipeDownContainer}>
-        <SwipeDown
-          label={`Undo`}
-          flipLabel={`Back`}
-          visibilityValue={listVisibility}
-          primaryColor={primaryColor}
-          primaryOverlayColor={primaryOverlayColor}
-        />
-      </View> */}
-      {/* {!categoryNavigatorVisible && (
-        <View style={styles.geckoWrapper}>
-          <LargeCornerLizard color={darkerOverlayColor} />
-        </View>
-      )} */}
-
+ 
       <MomentsAdded
         overlayBackgroundColor={primaryOverlayColor}
         primaryColor={primaryColor}
@@ -384,27 +412,7 @@ const MomentsList = ({
               categoryColorsMap={categoryColorsMap}
             />
           )}
-
-
-        <View style={styles.bottomBarContainer}>
  
-
-          {!categoryNavigatorVisible && ( 
-            <>
-                   
-              {/* <MomentSearcher onSearchPress={scrollToMoment} /> */}
-
-              <EscortBarMinusWidth
-                backgroundColor={primaryBackgroundColor}
-                overlayColor={primaryOverlayColor}
-                primaryColor={primaryColor}
-                navigateBack={navigateBack}
-                onPress={handleToggleCatNav}
-              />
-              </>
-          
-          )}
-        </View>
  
       </>
 
@@ -419,20 +427,7 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 1,
     elevation: 1,
-  },
-  swipeDownContainer: {
-    position: "absolute",
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
-  geckoWrapper: {
-    flex: 1,
-    position: "absolute",
-    bottom: 0,
-  },
+  }, 
   flatlistOuterWrapper: {
     alignContent: "center",
     alignSelf: "center",
@@ -444,23 +439,7 @@ const styles = StyleSheet.create({
   flatlistWrapper: {
     flex: 1,
     alignItems: "center",
-  },
-  bottomBarContainer: {
-    position: "absolute",
-    bottom: 10,
-    width: "100%",
-    paddingHorizontal: 10,
-  },
-  geckoToHelloButtonContainer: {
-    flexDirection: "row",
-    position: "absolute",
-    bottom: 6,
-    right: 18,
-    zIndex: 50000,
-    height: 38,
-    width: 60,
-    justifyContent: "flex-end",
-  }
+  }, 
 });
 
 export default MomentsList;

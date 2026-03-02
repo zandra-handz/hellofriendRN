@@ -1,7 +1,7 @@
 import { View, Text, Modal } from "react-native";
 import React from "react";
 import QRCode from "react-native-qrcode-skia";
-import HalfScreenModal from "@/app/components/alerts/HalfScreenModal";
+import AppModal from "@/app/components/alerts/AppModal";
 import SvgIcon from "@/app/styles/SvgIcons";
 type Props = {
   textColor: string;
@@ -19,7 +19,7 @@ const QRCodeModal = ({
   return (
     <>
       {isVisible && (
-        <HalfScreenModal
+        <AppModal
           primaryColor={textColor}
           backgroundColor={backgroundColor}
           isFullscreen={false}
@@ -32,7 +32,7 @@ const QRCodeModal = ({
           modalIsTransparent={false}
         >
           <Text>QRCodeModal</Text>
-        </HalfScreenModal>
+        </AppModal>
       )}
     </>
   );

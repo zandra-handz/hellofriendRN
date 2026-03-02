@@ -48,8 +48,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   selectedFriendId,
   selectedFriendName,
   skiaFontLarge,
-  skiaFontSmall,
-  themeColors,
+  skiaFontSmall, 
+  friendLightColor,
+  friendDarkColor,
   handleToggleColoredDots,
   coloredDotsModeValue,
   handleMomentScreenNoScroll,
@@ -190,7 +191,7 @@ useEffect(() => {
                   darkGlassBackground={darkGlassBackground}
                   darkerGlassBackground={darkerGlassBackground}
                   selectedFriendName={`${selectedFriendName}`}
-                  friendDarkColor={themeColors.darkColor}
+                  friendDarkColor={friendDarkColor}
                   primaryColor={primaryColor}
                   welcomeTextStyle={welcomeTextStyle}
                   backgroundColor={primaryOverlayColor}
@@ -247,7 +248,8 @@ useEffect(() => {
                     textColor={primaryColor}
                     overlayColor={primaryOverlayColor}
                     darkerOverlayBackgroundColor={darkerGlassBackground}
-                    themeColors={themeColors}
+               
+                    friendColor={friendLightColor}
                     categoryColors={categoryColorsArray}
                     skiaFontLarge={skiaFontLarge}
                     skiaFontSmall={skiaFontSmall}

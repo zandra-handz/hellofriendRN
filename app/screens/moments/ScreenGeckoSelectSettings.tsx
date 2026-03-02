@@ -9,7 +9,7 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import SvgIcon from "@/app/styles/SvgIcons";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
-import HalfScreenModal from "@/app/components/alerts/HalfScreenModal";
+import AppModal from "@/app/components/alerts/AppModal";
 import Animated, {
   useAnimatedStyle,
   withSpring,
@@ -161,7 +161,7 @@ const handleNavToGecko = useCallback((index=0) => {
       )}
 
       {showSelectionModal && (
-        <HalfScreenModal
+        <AppModal
           primaryColor={lightDarkTheme.primaryText}
           backgroundColor={lightDarkTheme.primaryBackground}
           isFullscreen={false}
@@ -240,7 +240,7 @@ const handleNavToGecko = useCallback((index=0) => {
               );
             })}
           </View>
-        </HalfScreenModal>
+        </AppModal>
       )}
     </SafeAreaView>
   );

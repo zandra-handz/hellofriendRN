@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import {   StyleSheet, View,   Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import HalfScreenModal from "../alerts/HalfScreenModal";
+import AppModal from "../alerts/AppModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -68,19 +68,13 @@ const GoOptionsModal = ({
     return getStaggeredDelays(count, speed);
   }, [count, speed]);
   return (
-    <HalfScreenModal
+    <AppModal
       primaryColor={primaryColor}
       backgroundColor={modalBackgroundColor}
       isFullscreen={false}
       modalIsTransparent={false}
       isVisible={isVisible}
-      headerIcon={
-        <MaterialCommunityIcons
-          name={"storefront-outline"}
-          size={30}
-          color={primaryColor}
-        />
-      }
+ 
       questionText="What would you like to do?"
       children={
         <View style={{ flex: 1 }}>

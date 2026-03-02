@@ -4,6 +4,8 @@ import * as SecureStore from "expo-secure-store";
 //export const API_URL = 'http://167.99.233.148:8000/';
 //export const API_URL = 'https://badrainbowz.com/';
 import { helloFriendApiClientPublic } from "./helloFriendApiClientPublic";
+
+
 import { helloFriendApiClient, setAuthHeader } from "./helloFriendApiClient";
 import axios from "axios";
 import { MomentFromBackendType } from "../types/MomentContextTypes";
@@ -913,6 +915,7 @@ export const updateFriendFavesColorThemeSetting = async ({
   manualTheme: boolean;
 }) => {
   try {
+
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/faves/`,
       {
@@ -924,7 +927,7 @@ export const updateFriendFavesColorThemeSetting = async ({
       }
     );
 
-    console.log("API PATCH CALL updateFriendFavesColorThemeSetting");
+    console.log("API PATCH CALL updateFriendFavesColorThemeSetting", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during updateFriendFavesColorThemeSetting");
@@ -1011,6 +1014,21 @@ export const updateFriendFavesColorTheme = async (
   }
 };
 
+export const enableManualColorTheme = async (
+  friendId: number,
+) => {
+  try {
+    const response = await helloFriendApiClient.patch(
+      `/friends/${friendId}/faves/saved-toggle-on/`,
+      {}
+    );
+    console.log("Manual color theme enabled: ", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during enableManualColorTheme");
+  }
+};
+
 //this will update the theme colors in Friend Faves and Friend but will
 //leave the saved colors in Friend untouched, so that they can be used later
 // export const resetFriendFavesColorThemeToDefaultOld = async (
@@ -1073,7 +1091,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
     const response = await helloFriendApiClient.get(
       "/friends/upcoming/friends-included/"
     );
-  // console.error(`NEW ENDPOINT`, response.data )
+ // console.error(`NEW ENDPOINT`, response.data )
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");

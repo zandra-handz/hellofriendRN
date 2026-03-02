@@ -14,7 +14,7 @@ import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
-import MomentsField from "@/app/components/home/MomentsField";
+ 
 import useUserSettings from "@/src/hooks/useUserSettings";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -33,13 +33,15 @@ import { useShareIntentContext } from "expo-share-intent";
 import { File } from "expo-file-system";
 
 // import { useFocusEffect } from "@react-navigation/native";
-import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
+// import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
+
 // app components
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 
-import SelectedFriendHome from "@/app/components/home/SelectedFriendHome";
-import { useCategoryColors } from "@/src/context/CategoryColorsContext";
+import SelectedFriendHome from "@/app/components/home/SelectedFriendHome"; 
 
+
+import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 // import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
@@ -53,7 +55,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
   const route = useRoute();
-
+const { friendCategoryColors}= useFriendCategoryColors();
   const idToSelect = route?.params?.idToSelect ?? null; 
 
     const backdropTimestamp = route.params?.backdropTimestamp ?? null;
@@ -78,41 +80,20 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [idToSelect, friendList?.length, selectedFriend?.id]);
 
   // const { upcomingHelloes  } = useUpcomingHelloes();
-  const { navigateToMomentFocus, navigateToMoments, navigateToHome } = useAppNavigations();
-  const handleNavigateToCreateNew = useCallback(() => {
-    navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: coloredDotsModeValue.value });
-  }, [navigateToMomentFocus]);
-
-
-
+  const { navigateToMomentFocus, navigateToMoments  } = useAppNavigations();
+const handleNavigateToCreateNew = useCallback(() => {
+  navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: coloredDotsModeValue.value });
+  // setTimeout(() => {
+    turnBackdropOnValue.value = true;
+  // }, 50);
+}, [navigateToMomentFocus]);
   
    
 
-  const { autoSelectFriend } = useAutoSelector();
-  const { userCategories } = useCategories({ userId: user?.id });
+  const { autoSelectFriend } = useAutoSelector(); 
 
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
-  const { categoryColors, handleSetCategoryColors } = useCategoryColors();
-
-  const categoryIds = useMemo(
-    () => userCategories.map((c) => c.id), // or c.category_id
-    [userCategories],
-  );
-
-  useEffect(() => {
-    if (
-      userCategories?.length > 0 &&
-      selectedFriend?.lightColor &&
-      selectedFriend?.darkColor
-    ) {
-      const array = generateGradientColors(
-        categoryIds,
-        selectedFriend.lightColor,
-        selectedFriend.darkColor,
-      );
-      handleSetCategoryColors(array);
-    }
-  }, [categoryIds, selectedFriend]);
+ 
 
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
@@ -122,10 +103,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
   const turnBackdropOnValue = useSharedValue(false);
 
-  const [turnOn, setTurnOn ] = useState(false);
-
-
-  
+ 
 useEffect(() => {
   if (backdropTimestamp) {
     turnBackdropOnValue.value = false;
@@ -267,11 +245,16 @@ useEffect(() => {
 
   return (
     <>
-      {autoSelectFriend?.customFriend !== "pending" && // not sure if need all this here
-        autoSelectFriend?.nextFriend !== "pending" &&
-        selectedFriend?.isReady &&
-        // selectedFriend?.id &&
-        friendListAndUpcomingIsSuccess && (
+      {
+      
+      // autoSelectFriend?.customFriend !== "pending" && // not sure if need all this here
+      //   autoSelectFriend?.nextFriend !== "pending" &&
+      //   selectedFriend?.isReady && 
+      //   friendListAndUpcomingIsSuccess && (
+
+
+friendListAndUpcomingIsSuccess && user?.id && (
+          
           <SafeViewFriendHome
             friendColorLight={selectedFriend.lightColor}
             friendColorDark={selectedFriend.darkColor}
@@ -295,14 +278,16 @@ useEffect(() => {
                 primaryBackground={lightDarkTheme.primaryBackground}
                 darkGlassBackground={lightDarkTheme.darkGlassBackground}
                 darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
-                categoryColorsArray={categoryColors}
+                categoryColorsArray={friendCategoryColors}
                 skiaFontLarge={skiaFontLarge}
                 skiaFontSmall={skiaFontSmall}
                 paddingHorizontal={PADDING_HORIZONTAL}
                 userId={user?.id}
                 primaryColor={lightDarkTheme.primaryText}
                 primaryOverlayColor={lightDarkTheme.overlayBackground}
-                themeColors={themeColors}
+             
+                friendLightColor={selectedFriend?.lightColor}
+              friendDarkColor={selectedFriend?.darkColor}
                 selectedFriendId={selectedFriend?.id}
                 selectedFriendName={selectedFriend?.name}
                 handleToggleColoredDots={handleToggleColoredDots}
@@ -333,6 +318,8 @@ useEffect(() => {
               lightDarkTheme={lightDarkTheme}
               overlayColor={lightDarkTheme.overlayBackground}
               themeColors={themeColors}
+              friendLightColor={selectedFriend?.lightColor}
+              friendDarkColor={selectedFriend?.darkColor}
             />
           </SafeViewFriendHome>
         )}

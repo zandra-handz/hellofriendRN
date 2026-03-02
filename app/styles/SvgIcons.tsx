@@ -34,6 +34,7 @@ import CircleOutlineSvg from "./svgs/circle-outline";
 import CheckSvg from "./svgs/check";
 import CheckCircleSvg from "./svgs/check-circle";
 import ChevronLeftSvg from "./svgs/chevron-left";
+import ChevronRightSvg from "./svgs/chevron-right";
 import ChevronDownSvg from "./svgs/chevron-down";
 import ChevronUpSvg from "./svgs/chevron-up";
 import ChevronDoubleRightSvg from "./svgs/chevron-double-right";
@@ -42,6 +43,7 @@ import CloseSvg from "./svgs/close";
 import CloseOutlineSvg from "./svgs/close-outline"; //IonIcons
 import CommentSearchOutlineSvg from "./svgs/comment-search-outline";
 import CompareSvg from "./svgs/compare";
+import CompassRoseSvg from "./svgs/compass-rose";
 import DrawPenSvg from "./svgs/draw-pen";
 import FormatFontSizeIncreaseSvg from "./svgs/format-font-size-increase";
 import GeckoMineSvg from "./svgs/gecko-mine";
@@ -121,6 +123,7 @@ const svgIcons = {
   close: CloseSvg,
   close_outline: CloseOutlineSvg,
   compare: CompareSvg,
+  compass_rose: CompassRoseSvg,
   comment_search_outline: CommentSearchOutlineSvg, 
   eye: EyeSvg,
   eye_closed: EyeClosedSvg,
@@ -145,6 +148,7 @@ const svgIcons = {
   send: SendSvg,
   send_circle_outline: SendCircleOutlineSvg, // location map screen button
   chevron_left: ChevronLeftSvg,
+  chevron_right: ChevronRightSvg,
   chevron_down: ChevronDownSvg,
   chevron_up: ChevronUpSvg,
   chevron_double_left: ChevronDoubleLeftSvg,

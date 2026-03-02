@@ -296,6 +296,7 @@ type NavToMomentFocusProp = {
 type NavToMomentFocusWithTextProp = {
   screenCameFrom: number; // 0 = nav back after moment save, 1 = stay after moment save
   momentText?: string | null;
+  triggerReverseBackdrop?: boolean | null;
 };
 
 type NavToGeckoProp = {
@@ -435,10 +436,12 @@ const useAppNavigations = (): hookReturns => {
   const navigateToMomentFocusWithText = ({
     screenCameFrom,
     momentText,
+    triggerReverseBackdrop=false,
   }: NavToMomentFocusWithTextProp) => {
     navigation.navigate("MomentFocus", {
       screenCameFrom: screenCameFrom,
       momentText: momentText,
+      triggerReverseBackdrop: triggerReverseBackdrop
     });
   };
 

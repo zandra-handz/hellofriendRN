@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import React, { useEffect, useCallback } from "react";
-import HalfScreenModal from "../alerts/HalfScreenModal";
+import AppModal from "../alerts/AppModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 type Props = {
   primaryColor: string;
@@ -61,7 +61,7 @@ const HelloNotes = ({
       </Pressable>
 
       {modalVisible && (
-        <HalfScreenModal
+        <AppModal
           primaryColor={primaryColor}
           backgroundColor={"orange"}
           isFullscreen={false}

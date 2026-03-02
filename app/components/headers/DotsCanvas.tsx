@@ -32,10 +32,7 @@ type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
-  // onPlusPress: () => void;
-  radius: number;
-  strokeWidth: number;
-  outerStrokeWidth: number;
+  // onPlusPress: () => void; 
   font: SkFont;
   smallFont: SkFont;
   color: string;
@@ -61,40 +58,19 @@ const DotsCanvas = ({
   positions,
   canvasWidth,
   onCategoryPress,
-  catDecimalsValue,
-  // colorsReversed,
-  // colors,
-  // onPlusPress,  key={canvasKey}
-  onCenterPress,
-  // categoryStopsValue,
-  radius,
-  // strokeWidth,
-  outerStrokeWidth,
+  catDecimalsValue, 
+  onCenterPress,  
   darkerOverlayBackgroundColor,
   backgroundColor,
-  // font,
-  // totalValue,
-  n,
-  catN,
-  // gap,
-  decimalsValue,
+ 
   labelsValue,
   color,
-
-  // colors,
-  labelsSize,
-  labelsDistanceFromCenter,
-  labelsSliceEnd,
+ 
   handleToggleColoredDots,
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
-}: Props) => {
-  // const { lightDarkTheme } = useLDTheme();
-  const array = Array.from({ length: n });
-  const catArray = Array.from({ length: catN });
-  const innerRadius = radius - outerStrokeWidth / 2;
-  // const color = lightDarkTheme.primaryText;
+}: Props) => { 
   const { selectedFriend } = useSelectedFriend();
 
   const { handleDoublePress } = useDoublePress({
@@ -103,7 +79,7 @@ const DotsCanvas = ({
   });
 
   const [labelsJS, setLabelsJS] = useState([]);
-  const [decimalsJS, setDecimalsJS] = useState([]);
+  // const [decimalsJS, setDecimalsJS] = useState([]);
   const [catDecimalsJS, setCatDecimalsJS] = useState([]);
 
   useDerivedValue(() => {
@@ -118,14 +94,13 @@ const DotsCanvas = ({
 
   const fadeInValue = useSharedValue(0);
 
-  const LabelOverlayStyle = useAnimatedStyle(() => {
-    return {
-      opacity: fadeInValue.value,
-      zIndex: 4,
-    };
-  }, [fadeInValue]);
-
-  // const [coloredDotsMode, setColoredDotsMode] = useState(false);
+  // const LabelOverlayStyle = useAnimatedStyle(() => {
+  //   return {
+  //     opacity: fadeInValue.value,
+  //     zIndex: 4,
+  //   };
+  // }, [fadeInValue]);
+ 
 
   const [highLightedColor, setHighlightedColor] = useState(null);
   const [highlightCatID, setHighlightID] = useState(null);
@@ -159,13 +134,13 @@ const DotsCanvas = ({
     runOnJS(setLabelsJS)(labelsSnapshot);
   }, [labelsValue]);
 
-  useDerivedValue(() => {
-    const decimalsSnapshot = decimalsValue.value;
-    runOnJS(setDecimalsJS)(decimalsSnapshot);
-  }, [decimalsValue]);
+  // useDerivedValue(() => {
+  //   const decimalsSnapshot = decimalsValue.value;
+  //   runOnJS(setDecimalsJS)(decimalsSnapshot);
+  // }, [decimalsValue]);
 
-  const path = Skia.Path.Make();
-  path.addCircle(radius, radius, innerRadius);
+  // const path = Skia.Path.Make();
+  // path.addCircle(radius, radius, innerRadius);
 
   const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
 
@@ -340,13 +315,7 @@ const DotsCanvas = ({
             styles.centerWrapper,
             { height: canvasHeight },
           ]}
-        >
-          {/* <SvgIcon
-            name={"leaf"}
-            style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
-            size={200}
-            color={color}
-          /> */}
+        > 
 
           <Pressable
             onPress={handleDoublePress}

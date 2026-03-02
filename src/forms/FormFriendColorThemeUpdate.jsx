@@ -1,119 +1,34 @@
-import React, {
-  useState, 
-  forwardRef,
-  useImperativeHandle,
-} from "react";
-import { View, Button, StyleSheet, Text, TouchableOpacity } from "react-native";
-import ColorPicker, { Panel1, HueSlider } from "reanimated-color-picker"; // Correct import
-import { updateFriendFavesColorTheme } from "@/src/calls/api"; // Import the updateFriendFavesColorTheme function
-// import { useUser } from "@/src/context/UserContext";
-import useUser from "../hooks/useUser";
+import React, { useState } from "react";
+import { View, StyleSheet, Text, TouchableOpacity, Pressable } from "react-native";
+import ColorPicker, { Panel1, HueSlider } from "reanimated-color-picker";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import useUpdateFriendListColors from "../hooks/useUpdateFriendListColors";
- 
-// import tinycolor from "tinycolor2";
+import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
+import useUser from "@/src/hooks/useUser";
 
-const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
-  const { user } = useUser(); 
-  const { selectedFriend,  handleSetTheme } = useSelectedFriend();
-  const { updateFriendListColors } = useUpdateFriendListColors({userId: user?.id, setThemeState: handleSetTheme });
+const FormFriendColorThemeUpdate = ({ handleUpdateManualColors, onSaveComplete }) => {
+  const { user } = useUser();
+  const { selectedFriend, handleSetTheme } = useSelectedFriend();
+  const { updateFriendListColors } = useUpdateFriendListColors({ userId: user?.id, setThemeState: handleSetTheme });
 
-  const [darkColor, setDarkColor] = useState(
-    selectedFriend.darkColor || "#000000"
-  ); 
-  const [lightColor, setLightColor] = useState(
-    selectedFriend.lightColor || "#FFFFFF"
-  );  
+  const [darkColor, setDarkColor] = useState(selectedFriend.darkColor || "#000000");
+  const [lightColor, setLightColor] = useState(selectedFriend.lightColor || "#FFFFFF");
 
-  const showInHouseSaveButton = false;
-
-  const getFontColor = (baseColor, targetColor, isInverted) => {
-    let fontColor = targetColor;
-
-    // if (
-    //   !tinycolor.isReadable(baseColor, targetColor, {
-    //     level: "AA",
-    //     size: "small",
-    //   })
-    // ) {
-    //   fontColor = isInverted ? "#ffffff" : "#000000";
-
-    //   if (
-    //     !tinycolor.isReadable(baseColor, fontColor, {
-    //       level: "AA",
-    //       size: "small",
-    //     })
-    //   ) {
-    //     // If not readable, switch to the opposite color
-    //     fontColor = fontColor === "#ffffff" ? "#000000" : "#ffffff";
-    //   }
-    // }
-
-    return fontColor; 
-  };
-
-  const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
-    let fontColorSecondary = baseColor;
- 
-    // if (
-    //   !tinycolor.isReadable(targetColor, baseColor, {
-    //     level: "AA",
-    //     size: "small",
-    //   })
-    // ) {
-    //   // If not readable, switch to black or white based on isInverted
-    //   fontColorSecondary = isInverted ? "#000000" : "#ffffff";
-
-    //   if (
-    //     !tinycolor.isReadable(targetColor, fontColorSecondary, {
-    //       level: "AA",
-    //       size: "small",
-    //     })
-    //   ) {
-    //     // If not readable, switch to the opposite color
-    //     fontColorSecondary =
-    //       fontColorSecondary === "#000000" ? "#ffffff" : "#000000";
-    //   }
-    // }
-
-    return fontColorSecondary;
-  };
-
-  // useEffect(() => {
-  //   if (props.onMakingCallChange) {
-  //     props.onMakingCallChange(isMakingCall);
-  //   }
-  // }, [isMakingCall, props]);
-
-  useImperativeHandle(ref, () => ({
-    submit: handleSubmit,
-  }));
-
-  // When picking new colors
   const handleSwapColors = () => {
-    const newLightColor = darkColor;
-    const newDarkColor = lightColor;
-    setDarkColor(newDarkColor);
-    setLightColor(newLightColor);
+    setDarkColor(lightColor);
+    setLightColor(darkColor);
   };
 
   const handleSubmit = async () => {
-    const fontColor = getFontColor(darkColor, lightColor, false);
-    const fontColorSecondary = getFontColorSecondary(
-      darkColor,
-      lightColor,
-      false
-    );
+    const fontColor = lightColor;
+    const fontColorSecondary = darkColor;
 
     try {
-      await updateFriendFavesColorTheme(
-        user.id,
-        selectedFriend.id,
+      await handleUpdateManualColors({
         darkColor,
         lightColor,
         fontColor,
-        fontColorSecondary
-      );
+        fontColorSecondary,
+      });
 
       updateFriendListColors(
         selectedFriend.id,
@@ -123,115 +38,53 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
         fontColorSecondary
       );
 
-      setTimeout(() => {}, 3000);
+      onSaveComplete?.();
     } catch (error) {
       console.error("Error updating friend color theme:", error);
     }
   };
-  const onSelectLightColor = (color) => {
-    const hexColor = color.hex.slice(0, 7);
-    setLightColor(hexColor);
-  };
 
-  const onSelectDarkColor = (color) => {
-    const hexColor = color.hex.slice(0, 7);
-    setDarkColor(hexColor);
-  };
+  const onSelectLightColor = (color) => setLightColor(color.hex.slice(0, 7));
+  const onSelectDarkColor = (color) => setDarkColor(color.hex.slice(0, 7));
 
   return (
     <View style={styles.container}>
       <View style={{ width: "100%" }}>
         <View style={styles.inputContainer}>
-          <Text style={[styles.colorValue, { color: 'orange'}]}>
-            Dark Color:{" "}
-          </Text> 
-            <View
-              style={[
-                styles.colorBlock,
-                {
-                  backgroundColor: darkColor,
-          
-                },
-              ]}
-            /> 
+          <Text style={[styles.colorValue, { color: "orange" }]}>Dark Color:</Text>
+          <View style={[styles.colorBlock, { backgroundColor: darkColor }]} />
         </View>
         <View style={styles.pickerContainer}>
-          <ColorPicker
-            style={{ width: "100%" }}
-            value={darkColor}
-            onCompleteJS={onSelectDarkColor}
-          >
-            <Panel1
-              style={{
-                borderRadius: 20,
-                borderWidth: 1,
-       
-              }}
-            />
-            <HueSlider
-              style={{
-                borderRadius: 20,
-                paddingTop: 6,
-                borderWidth: 1,
-             
-              }}
-            />
+          <ColorPicker style={{ width: "100%" }} value={darkColor} onCompleteJS={onSelectDarkColor}>
+            <Panel1 style={{ borderRadius: 20, borderWidth: 1 }} />
+            <HueSlider style={{ borderRadius: 20, paddingTop: 6, borderWidth: 1 }} />
           </ColorPicker>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.swapButtonContainer}
-        onPress={handleSwapColors}
-      >
+
+      <TouchableOpacity style={styles.swapButtonContainer} onPress={handleSwapColors}>
         <Text style={styles.swapButtonText}>SWAP</Text>
       </TouchableOpacity>
 
       <View style={{ width: "100%" }}>
         <View style={styles.inputContainer}>
-          <Text style={[styles.colorValue, {color: 'orange'}]}>
-            Light Color:{" "}
-          </Text> 
-            <View
-              style={[
-                styles.colorBlock,
-                {
-                  backgroundColor: lightColor,
-           
-                },
-              ]}
-            /> 
+          <Text style={[styles.colorValue, { color: "orange" }]}>Light Color:</Text>
+          <View style={[styles.colorBlock, { backgroundColor: lightColor }]} />
         </View>
         <View style={styles.pickerContainer}>
-          <ColorPicker
-            style={{ width: "100%" }}
-            value={lightColor}
-            onCompleteJS={onSelectLightColor}
-          >
-            <Panel1
-              style={{
-                borderRadius: 20,
-                borderWidth: 1,
-      
-              }}
-            />
-            <HueSlider
-              style={{
-                borderRadius: 20,
-                paddingTop: 6,
-                borderWidth: 1,
-              
-              }}
-            />
+          <ColorPicker style={{ width: "100%" }} value={lightColor} onCompleteJS={onSelectLightColor}>
+            <Panel1 style={{ borderRadius: 20, borderWidth: 1 }} />
+            <HueSlider style={{ borderRadius: 20, paddingTop: 6, borderWidth: 1 }} />
           </ColorPicker>
         </View>
       </View>
 
-      {showInHouseSaveButton && (
-        <Button title="Save Colors" onPress={handleSubmit} />
-      )}
+      <Pressable style={styles.saveButtonContainer} onPress={handleSubmit}>
+        <Text style={styles.saveButtonText}>SAVE</Text>
+      </Pressable>
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -241,12 +94,8 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 0,
   },
-  saveMessage: {
-    color: "green",
-  },
   swapButtonContainer: {
     width: "100%",
-    textAlign: "center",
     alignContent: "center",
     justifyContent: "center",
     flexDirection: "row",
@@ -254,6 +103,17 @@ const styles = StyleSheet.create({
   swapButtonText: {
     fontFamily: "Poppins-Bold",
     color: "white",
+  },
+  saveButtonContainer: {
+    width: "100%",
+    alignContent: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  saveButtonText: {
+    fontFamily: "Poppins-Bold",
+    color: "orange",
   },
   inputContainer: {
     width: "100%",

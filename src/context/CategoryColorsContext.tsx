@@ -1,37 +1,8 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
-
-import useCategories from "../hooks/useCategories";
+ 
 import { isEqual } from "date-fns";
 
-
-
-
-// // array → map
-// used for talking points // when need full list of colors
-// const categoryColorsMap = Object.fromEntries(
-//   categoryColors.map(({ user_category, color }) => [user_category, color])
-// );
-
-
-// const categoryColorsMap = useMemo(() => {
-//   return Object.fromEntries(
-//     categoryColors.map(({ user_category, color }) => [user_category, color])
-//   );
-// }, [categoryColors]);
-
-
-// // map → array
-// used for one-offs /individual selections
-// const categoryColors = Object.entries(categoryColorsMap).map(
-//   ([user_category, color]) => ({ user_category: Number(user_category), color })
-// );
-
-// const categoryColors = useMemo(() => {
-//   return Object.entries(categoryColorsMap).map(
-//     ([user_category, color]) => ({ user_category: Number(user_category), color })
-//   );
-// }, [categoryColorsMap]);
-
+ 
 interface CategoryColorsType {}
 
 const CategoryColorsContext = createContext<CategoryColorsType | undefined>(

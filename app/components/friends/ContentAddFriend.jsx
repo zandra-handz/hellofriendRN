@@ -1,17 +1,9 @@
-//WHAT EVEN IS THIS
-//need to RQ
-
 import React, { useState, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import useUpdateFriend from "@/src/hooks/useUpdateFriend";
 import InputAddFriendName from "./InputAddFriendName";
-
-import SliderAddFriendEffort from "@/app/components/foranimations/SliderAddFriendEffort";
-import SliderAddFriendPriority from "@/app/components/foranimations/SliderAddFriendPriority";
 import PickerAddFriendLastDate from "@/app/components/selectors/PickerAddFriendLastDate";
- 
 import MessagePage from "../alerts/MessagePage";
- 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateFriend from "@/src/hooks/FriendCalls/useCreateFriend";
@@ -19,10 +11,20 @@ import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefet
 import useAddToFriendList from "@/src/hooks/FriendListCalls/useAddToFriendList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import AuthInputWrapper from "../user/AuthInputWrapper";
-import manualGradientColors  from "@/app/styles/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 import EscortBar from "../moments/EscortBar";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-// import { useUser } from "@/src/context/UserContext";
+import ValueSlider from "@/app/components/friends/ValueSlider";
+
+const effortMessages = [
+  "Check in twice a year",
+  "Check in every 60-90 days",
+  "Check in every month",
+  "Check in every two weeks",
+  "Check in every few days",
+];
+
+const priorityMessages = ["Unworried", "Medium", "High"];
 
 const ContentAddFriend = ({
   userId,
@@ -49,9 +51,6 @@ const ContentAddFriend = ({
   const [isFriendNameUnique, setIsFriendNameUnique] = useState(false);
   const [revealRest, setRevealRest] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-
-  const [saveInProgress, setSaveInProgress] = useState(false);
 
   const { addToFriendList } = useAddToFriendList({ userId: userId });
 
@@ -67,11 +66,7 @@ const ContentAddFriend = ({
     setFriendName("");
     setFriendEffort(3);
     setFriendPriority(2);
-    setRevealRest(false); //this turns true after checking the inputted name against the friendList names
-  };
-
-  const toggleReviewModal = () => {
-    setIsReviewModalVisible(!isReviewModalVisible);
+    setRevealRest(false);
   };
 
   useEffect(() => {
@@ -95,11 +90,7 @@ const ContentAddFriend = ({
   }, [createFriendMutation.isError]);
 
   useEffect(() => {
-    if (friendList && friendList.length < 20) {
-      setIsFriendLimitReached(false);
-    } else {
-      setIsFriendLimitReached(true);
-    }
+    setIsFriendLimitReached(friendList && friendList.length >= 20);
   }, [friendList]);
 
   const handleSave = async () => {
@@ -114,11 +105,6 @@ const ContentAddFriend = ({
         priority_level: friendPriority,
       };
       await handleCreateFriend(postData);
-
-      // if (!user.app_setup_complete) {
-      //   //move this into RQ onSuccess when refactoring?
-      //   await updateAppSetup();
-      // }
     } catch (error) {
       console.error("Failed to save data:", error);
     }
@@ -133,23 +119,15 @@ const ContentAddFriend = ({
       },
       { text: `Yes`, onPress: () => handleSave() },
     ]);
-
-    // setIsDoubleCheckerVisible(true);
   };
 
   return (
-    <View
-      style={[
-        {
-          flex: 1,
-        },
-      ]}
-    >
-      <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
         <Text style={[fontStyle, { color: primaryColor }]}>New friend</Text>
       </View>
 
-      <View style={{ flex: 1, paddingHorizontal: 4, paddingVertical: 10 }}>
+      <View style={styles.bodyContainer}>
         <View style={{ flex: 1 }}>
           {isFriendLimitReached && (
             <View style={{ flex: 1, marginHorizontal: 0 }}>
@@ -190,40 +168,48 @@ const ContentAddFriend = ({
                     labelSize={16}
                     labelColor={primaryColor}
                     children={
-                      <SliderAddFriendEffort
-                        friendEffort={friendEffort}
-                        setFriendEffort={setFriendEffort}
-                        primaryColor={primaryColor}
+                      <ValueSlider
+                        label="Effort"
+                        value={friendEffort}
+                        onValueChange={setFriendEffort}
+                        labelColor={primaryColor}
+                        barColor={manualGradientColors.lightColor}
+                        pointColor={manualGradientColors.darkColor}
+                        trackColor="transparent"
+                        minValue={1}
+                        maxValue={5}
+                        step={1}
+                        valueLabels={effortMessages}
                       />
                     }
                   />
 
                   <AuthInputWrapper
-                    condition={friendEffort}
-                    label={"Effort needed to maintain relationship"}
+                    condition={friendPriority}
+                    label={"Priority placed on friendship"}
                     labelColor={primaryColor}
                     labelSize={16}
                     children={
-                      <SliderAddFriendPriority
-                        friendPriority={friendPriority}
-                        setFriendPriority={setFriendPriority}
-                        primaryColor={primaryColor}
+                      <ValueSlider
+                        label="Priority"
+                        value={friendPriority}
+                        onValueChange={setFriendPriority}
+                        labelColor={primaryColor}
+                        barColor={manualGradientColors.lightColor}
+                        pointColor={manualGradientColors.darkColor}
+                        trackColor="transparent"
+                        minValue={1}
+                        maxValue={3}
+                        invert={true}
+                        step={1}
+                        valueLabels={priorityMessages}
                       />
                     }
                   />
-                  <View
-                    style={{
-                      width: "100%",
-                      height: 100,
-                      backgroundColor: "pink",
-                    }}
-                  >
+
+                  <View style={styles.dateContainer}>
                     <Pressable
-                      style={{
-                        width: "100%",
-                        height: 30,
-                        backgroundColor: "teal",
-                      }}
+                      style={styles.dateButton}
                       onPress={() => setShowDatePicker((prev) => !prev)}
                     >
                       <Text style={{ color: primaryColor }}>
@@ -267,10 +253,23 @@ const ContentAddFriend = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginBottom: 0,
+  },
+  headerContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  bodyContainer: {
+    flex: 1,
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+  },
+  dateContainer: {
+    width: "100%",
+    height: 100,
+  },
+  dateButton: {
+    width: "100%",
+    height: 30,
   },
 });
 
