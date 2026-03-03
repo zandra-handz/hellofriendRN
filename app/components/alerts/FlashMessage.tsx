@@ -1,94 +1,119 @@
 // FlashMessage.tsx
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  Easing,
+  cancelAnimation,
 } from "react-native-reanimated";
-import PlainSafeView from "../appwide/format/PlainSafeView"; 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PlainSafeView from "../appwide/format/PlainSafeView";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { MaterialIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import manualGradientColors  from "@/app/styles/StaticColors";
+import manualGradientColors from "@/app/styles/StaticColors";
 
 const FlashMessage = ({
-
   message,
   isInsideModal = false,
   iconName = "playlist-add-check-circle",
-  error = true,
+  error = false,
   duration = 2000,
   onClose,
 }: {
   message: string;
-    isInsideModal?: boolean;
+  isInsideModal?: boolean;
+  iconName?: string;
   error?: boolean;
   duration?: number;
   onClose: () => void;
 }) => {
-  const scale = useSharedValue(0);
-  const fade = useSharedValue(1);
-  const {lightDarkTheme } = useLDTheme(); 
+  // start a bit higher so movement is obvious but still fast
+  const translateY = useSharedValue(-18);
+  const opacity = useSharedValue(0);
+
+  const { lightDarkTheme } = useLDTheme();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    fade.value = 1;
-    scale.value = withTiming(1, { duration: 300 });
-    //    fade.value = withTiming(0, { duration: 1200});
-    const timeout = setTimeout(() => {
-      scale.value = withTiming(0, { duration: 300 });
+    // stop any previous animations if message retriggers quickly
+    cancelAnimation(translateY);
+    cancelAnimation(opacity);
 
-      setTimeout(onClose, 300);
+    // ENTER (fast)
+    translateY.value = withTiming(0, {
+      duration: 140,
+      easing: Easing.out(Easing.cubic),
+    });
+    opacity.value = withTiming(1, {
+      duration: 110,
+      easing: Easing.out(Easing.quad),
+    });
+
+    const timeout = setTimeout(() => {
+      // EXIT (fast)
+      translateY.value = withTiming(-18, {
+        duration: 120,
+        easing: Easing.in(Easing.cubic),
+      });
+      opacity.value = withTiming(0, {
+        duration: 100,
+        easing: Easing.in(Easing.quad),
+      });
+
+      // close right after the exit finishes
+      const closeTimeout = setTimeout(onClose, 130);
+      return () => clearTimeout(closeTimeout);
     }, duration);
+
     return () => clearTimeout(timeout);
-  }, [error]);
+  }, [message, error, duration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: fade.value,
-    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
   }));
 
-  useEffect(() => {
-    console.log("change in error in flashmessage:", error);
-  }, [error]);
+  const pillBg = error
+    ? lightDarkTheme.darkerBackground
+    : manualGradientColors.lightColor;
+
+  const textColor = error
+    ? lightDarkTheme.dangerZoneText
+    : manualGradientColors.homeDarkColor;
 
   return (
-        <PlainSafeView
-      turnSafeOff={isInsideModal}
-      style={[StyleSheet.absoluteFillObject, styles.overlay]}
-    > 
-        
+    <PlainSafeView
+      turnSafeOff={true}
+      style={[
+        StyleSheet.absoluteFillObject,
+        styles.overlay,
+        { paddingTop: insets.top + 8 },
+      ]}
+      pointerEvents="none"
+    >
       <Animated.View
-        style={[
-          styles.messageContainer,
-          animatedStyle,
-          
-          { backgroundColor: lightDarkTheme.primaryBackground, borderRadius: 10, marginTop: 0 },
-        ]}
+        style={[styles.pill, animatedStyle, { backgroundColor: pillBg }]}
       >
-        {/* {!updateFriendDefaultCategoryMutation.isError && <Text style={styles.messageText}>{message}</Text>}
-        {updateFriendDefaultCategoryMutation.isError && <Text style={styles.messageText}>Error</Text>} */}
+        <Text
+          style={[
+            AppFontStyles.subWelcomeText,
+            styles.messageText,
+            { color: textColor, fontFamily: "Poppins_700Bold" },
+          ]}
+          numberOfLines={2}
+        >
+          {error ? "Something went wrong" : message}
+        </Text>
 
-        {!error && (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={[ AppFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
-            {" "}
-            {message}
-          </Text>
-          <MaterialIcons
-          name={iconName}
-          style={{marginLeft: 10}}
-          size={24}
-          color={manualGradientColors.lightColor}
-          />
-          
-            </View>
-        )}
-        {error && (
-          <Text style={[ AppFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
-            Error
-          </Text>
-        )}
+        <SvgIcon
+          name={error ? "error-outline" : iconName}
+          size={20}
+          color={textColor}
+          style={styles.icon}
+        />
       </Animated.View>
     </PlainSafeView>
   );
@@ -97,18 +122,28 @@ const FlashMessage = ({
 const styles = StyleSheet.create({
   overlay: {
     flexDirection: "column",
-
     justifyContent: "flex-start",
     alignItems: "center",
     zIndex: 999999,
+    pointerEvents: "none",
   },
-  messageContainer: {
-    padding: 20, 
-    maxWidth: "80%",
-    textAlign: "center",
+  pill: {
     flexDirection: "row",
-    justifyContent: "center",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "88%",
+    paddingVertical: 13,
+    paddingHorizontal: 22,
+    borderRadius: 50,
+    gap: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
+  messageText: { flex: 1 },
+  icon: { flexShrink: 0 },
 });
 
 export default FlashMessage;

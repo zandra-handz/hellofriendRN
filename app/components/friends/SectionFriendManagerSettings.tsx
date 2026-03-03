@@ -1,53 +1,62 @@
-import React, { useMemo } from "react";
-import { View,  StyleSheet, ColorValue } from "react-native";
+import React, { useMemo, useEffect } from "react";
+import { View, StyleSheet, ColorValue } from "react-native";
 import Reset from "../appwide/button/Reset";
-import Toggle from "../user/Toggle"; 
- 
+import Toggle from "../user/Toggle";
+
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
- 
+
 import SvgIcon from "@/app/styles/SvgIcons";
 import { UserSettings } from "@/src/types/UserSettingsTypes";
-
+import { FlashMessageData, settingsUpdateSuccess, settingsUpdateError } from "../alerts/AllFlashMessages";
 
 type Props = {
   userId: number;
   settings: UserSettings;
   primaryColor: ColorValue;
-}
+  backgroundColor?: string;
+  setFlashMessage: (msg: FlashMessageData | null) => void;
+};
 
-const SectionFriendManagerSettings = ({
+const SectionFriendManagerSettings: React.FC<Props> = ({
   userId,
   settings,
-  primaryColor, 
-  backgroundColor='red',
-}: Props) => {
-  const { updateSettings } = useUpdateSettings({
+  primaryColor,
+  backgroundColor = "red",
+  setFlashMessage,
+}) => {
+  const { updateSettingsMutation, updateSettings } = useUpdateSettings({
     userId: userId,
   });
+
+  useEffect(() => {
+    if (updateSettingsMutation.isSuccess) {
+      setFlashMessage(settingsUpdateSuccess);
+    }
+  }, [updateSettingsMutation.isSuccess]);
+
+  useEffect(() => {
+    if (updateSettingsMutation.isError) {
+      setFlashMessage(settingsUpdateError);
+    }
+  }, [updateSettingsMutation.isError]);
 
   const toggleLockInNext = () => {
     updateSettings({ lock_in_next: !settings.lock_in_next });
   };
 
-    const lockInNext = useMemo(() => {
-      if (!settings) return false;
-      return settings.lock_in_next == true;
-    }, [settings]);
+  const lockInNext = useMemo(() => {
+    if (!settings) return false;
+    return settings.lock_in_next == true;
+  }, [settings]);
 
   return (
-    <View
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <Toggle
-      backgroundColor={backgroundColor}
+        backgroundColor={backgroundColor}
         primaryColor={primaryColor}
         label="Autoselect Next Friend"
         icon={
-          <SvgIcon
-            name={"account"}
-            size={20}
-            color={primaryColor}
-          />
+          <SvgIcon name={"account"} size={20} color={primaryColor} />
         }
         value={lockInNext}
         onPress={toggleLockInNext}
@@ -57,13 +66,9 @@ const SectionFriendManagerSettings = ({
         userId={userId}
         label="Reset all hello dates"
         icon={
-          <SvgIcon
-            name={"timer_sync"}
-            size={20}
-            color={primaryColor}
-          />
+          <SvgIcon name={"timer_sync"} size={20} color={primaryColor} />
         }
-        primaryColor={primaryColor} 
+        primaryColor={primaryColor}
       />
     </View>
   );
@@ -71,9 +76,8 @@ const SectionFriendManagerSettings = ({
 
 const styles = StyleSheet.create({
   container: {
-        width: "100%",
-        alignSelf: "flex-start",
-        
+    width: "100%",
+    alignSelf: "flex-start",
   },
   friendSettingsRow: {
     flexDirection: "row",

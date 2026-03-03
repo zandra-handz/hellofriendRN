@@ -1,16 +1,18 @@
 import React from "react";
-import { View, StyleSheet, ColorValue } from "react-native"; 
+import { View, StyleSheet, ColorValue } from "react-native";
 import NoToggle from "./NoToggle";
 import SvgIcon from "@/app/styles/SvgIcons";
-
+import { FlashMessageData } from "../alerts/AllFlashMessages";
 
 type Props = {
   primaryColor: ColorValue;
-}
+  setFlashMessage: (msg: FlashMessageData | null) => void;
+};
 
-const SectionAccountSettings = ({ primaryColor }: Props) => {
- 
-
+const SectionAccountSettings: React.FC<Props> = ({
+  primaryColor,
+  setFlashMessage,
+}) => {
   return (
     <View style={styles.container}>
       <NoToggle
@@ -21,13 +23,13 @@ const SectionAccountSettings = ({ primaryColor }: Props) => {
       />
 
       <NoToggle
-         primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label="Password"
         icon={<SvgIcon name={"lock_outline"} size={20} color={primaryColor} />}
         onPress={() => console.log("nothing here yet")}
       />
       <NoToggle
-         primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label="Delete Account"
         icon={<SvgIcon name={"delete"} size={20} color={primaryColor} />}
         onPress={() => console.log("nothing here yet")}

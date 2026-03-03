@@ -1,3 +1,4 @@
+// FriendHeaderMessageUI.tsx
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import React, { useCallback, useMemo, useEffect } from "react";
 import useFriendDash from "@/src/hooks/useFriendDash";
@@ -6,89 +7,72 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
 import Animated, {
   withTiming,
-  // withDelay,
   withSequence,
   useAnimatedStyle,
   useSharedValue,
-  // useDerivedValue,
-  // useAnimatedReaction,
 } from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import SuggestedHello from "./SuggestedHello";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-interface FriendHeaderMessageUIProps {
-  borderBottomRightRadius: number;
-  borderBottomLeftRadius: number;
-  backgroundColor: string;
-  // selectedFriendName: string;
-  loadingNewFriend: boolean;
-  // isKeyboardVisible: boolean; // indirect condition to change message to friend picker
-  onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
-}
+import GoOptionsModal from "../headers/GoOptionsModal";
+import GeckoGoButton from "./GeckoGoButton";
+import { useState } from "react";
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
 
-const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
+// Hardcoded for testing — swap to lightDarkTheme values later
+const PILL_BG = "rgba(0, 0, 0, 0.82)";
+
+const FriendHeaderMessageUI: React.FC<any> = ({
   friendId,
   selectedFriendName,
   friendDarkColor,
-  height,
   userId,
   primaryColor,
   primaryBackground,
-  darkGlassBackground,
-  darkerGlassBackground,
-  backgroundColor,
   welcomeTextStyle,
 }) => {
   const { autoSelectFriend } = useAutoSelector();
-  const { friendDash, loadingDash } = useFriendDash({
-    userId: userId,
-    friendId: friendId,
-  });
+  const { friendDash, loadingDash } = useFriendDash({ userId, friendId });
+  const { navigateToSelectFriend, navigateToFinalize } = useAppNavigations();
+  const { updateSettings } = useUpdateSettings({ userId });
+
+  const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
   const isFocused = useSharedValue(false);
-
   const opacityValue = useSharedValue(0);
   const scaleValue = useSharedValue(0);
-
   const secondOpacityValue = useSharedValue(0);
   const secondScaleValue = useSharedValue(0);
 
   useFocusEffect(
     useCallback(() => {
       isFocused.value = true;
-      return () => {
-        isFocused.value = false;
-      };
+      return () => { isFocused.value = false; };
     }, []),
   );
 
-  const animatedPinStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scaleValue.value }],
-      opacity: opacityValue.value,
-    };
-  });
+  const animatedPinStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleValue.value }],
+    opacity: opacityValue.value,
+  }));
 
-  const animatedSecondPinStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: secondScaleValue.value }],
-      opacity: secondOpacityValue.value,
-    };
-  });
+  const animatedSecondPinStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: secondScaleValue.value }],
+    opacity: secondOpacityValue.value,
+  }));
 
-  const isLockedOn = useMemo(() => {
-    // console.log("use memoooooooooooooooooooooo");
-    return friendId === autoSelectFriend?.customFriend?.id;
-  }, [friendId, autoSelectFriend?.customFriend?.id]);
+  const isLockedOn = useMemo(() =>
+    friendId === autoSelectFriend?.customFriend?.id,
+    [friendId, autoSelectFriend?.customFriend?.id],
+  );
 
-  const isUpNext = useMemo(() => {
-    // console.log("use memoooooooooooooooooooooo");
-    return friendId === autoSelectFriend?.nextFriend?.id;
-  }, [friendId, autoSelectFriend?.nextFriend?.id]);
+  const isUpNext = useMemo(() =>
+    friendId === autoSelectFriend?.nextFriend?.id,
+    [friendId, autoSelectFriend?.nextFriend?.id],
+  );
 
   useEffect(() => {
     if (isLockedOn) {
@@ -120,18 +104,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     }
   }, [isUpNext]);
 
-  const { updateSettings } = useUpdateSettings({ userId });
-
-  const { navigateToSelectFriend } = useAppNavigations();
-
-  const handleNavigateToSelectFriend = () => {
-    navigateToSelectFriend({ useNavigateBack: false });
-  };
-
   const toggleLockOnFriend = useCallback(() => {
-    if (!friendId) {
-      return;
-    }
+    if (!friendId) return;
     if (friendId === autoSelectFriend?.customFriend?.id) {
       updateSettings({ lock_in_custom_string: null });
       Vibration.vibrate(100);
@@ -144,189 +118,162 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   }, [friendId, selectedFriendName, autoSelectFriend?.customFriend?.id]);
 
   const handleOnPress = () => {
- 
     isFocused.value = false;
-    handleNavigateToSelectFriend();
+    navigateToSelectFriend({ useNavigateBack: false });
   };
 
-  const SELECTED_FRIEND_CARD_PADDING = 20;
+  const helloDate = useMemo(() =>
+    formatDayOfWeekAbbrevMonth(friendDash?.date),
+    [friendDash?.date],
+  );
 
   return (
-    <>
-      <View style={[{ height: 220 }]}>
-        <Pressable
-          onPress={handleOnPress}
-          onLongPress={toggleLockOnFriend}
-          style={styles.container}
+    <View style={styles.wrapper}>
+      {/* Animated pin icons — absolutely positioned top right */}
+      <View style={styles.iconsContainer} pointerEvents="none">
+        <Animated.View
+          style={[animatedPinStyle, styles.animatedIcon,
+            { backgroundColor: manualGradientColors.lightColor }]}
         >
-          <View style={styles.innerContainer}>
-            <Animated.View
-              style={[
-                animatedPinStyle,
-                {
-                  backgroundColor: manualGradientColors.lightColor,
-                },
-                styles.animatedContainer,
-              ]}
-            >
-              <SvgIcon
-                name={"pin_outline"}
-                size={22}
-                color={manualGradientColors.homeDarkColor}
-              />
-            </Animated.View>
-
-            <Animated.View
-              style={[
-                animatedSecondPinStyle,
-                {
-                  backgroundColor: manualGradientColors.lightColor,
-                },
-                styles.animatedContainer,
-              ]}
-            >
-              <SvgIcon
-                name={"calendar_outline"}
-                size={22}
-                color={manualGradientColors.homeDarkColor}
-              />
-            </Animated.View>
-          </View>
-
-          <View style={[styles.topContainer]}>
-            <View
-              style={[
-                styles.labelContainer,
-                { backgroundColor: darkerGlassBackground },
-              ]}
-            >
-              {loadingDash && (
-                <LoadingPage
-                  loading={true}
-                  color={friendDarkColor}
-                  spinnerType="flow"
-                  spinnerSize={30}
-                  includeLabel={false}
-                />
-              )}
-              {!loadingDash && (
-                <Text
-                  numberOfLines={2}
-                  style={[
-                    welcomeTextStyle,
-                    {
-                      color: primaryColor,
-                    },
-                    styles.label,
-                  ]}
-                >
-                  {friendId && !loadingDash && selectedFriendName}
-                </Text>
-              )}
-
-            </View>
-          </View>
-    <SuggestedHello
-          loadingDash={loadingDash}
-          futureDate={friendDash?.date}
-          darkerGlassBackground={darkerGlassBackground}
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-          padding={SELECTED_FRIEND_CARD_PADDING}
-        />
-        </Pressable>
-
-        {/* <Animated.View style={animatedOpacityStyle}> */}
-        {/* <SuggestedHello
-          loadingDash={loadingDash}
-          futureDate={friendDash?.date}
-          darkerGlassBackground={darkerGlassBackground}
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-          padding={SELECTED_FRIEND_CARD_PADDING}
-        /> */}
-        {/* </Animated.View> */}
+          <SvgIcon name="pin_outline" size={22} color={manualGradientColors.homeDarkColor} />
+        </Animated.View>
+        <Animated.View
+          style={[animatedSecondPinStyle, styles.animatedIcon,
+            { backgroundColor: manualGradientColors.lightColor }]}
+        >
+          <SvgIcon name="calendar_outline" size={22} color={manualGradientColors.homeDarkColor} />
+        </Animated.View>
       </View>
-    </>
+
+      {/* Single combined pill */}
+      <Pressable
+        onPress={handleOnPress}
+        onLongPress={toggleLockOnFriend}
+        style={[styles.pill, { backgroundColor: PILL_BG }]}
+      >
+        {loadingDash ? (
+          <LoadingPage
+            loading={true}
+            color={friendDarkColor}
+            spinnerType="flow"
+            spinnerSize={30}
+            includeLabel={false}
+          />
+        ) : (
+          <>
+            {/* Friend name */}
+            <Text
+              numberOfLines={1}
+              style={[styles.friendName, { color: primaryColor }]}
+            >
+              {selectedFriendName}
+            </Text>
+
+            {/* Divider */}
+            <View style={[styles.divider, { backgroundColor: primaryColor }]} />
+
+            {/* Say hi row */}
+            <View style={styles.helloRow}>
+              <View style={styles.helloTextContainer}>
+                <Text style={[styles.helloLabel, { color: primaryColor }]}>
+                  {helloDate ? "Say hi on" : "No date set"}
+                </Text>
+                <Text style={[styles.helloDate, { color: primaryColor }]}>
+                  {helloDate}
+                </Text>
+              </View>
+
+              <GeckoGoButton
+                onSinglePress={() => setOptionsModalVisible(true)}
+                onDoublePress={navigateToFinalize}
+                color={primaryColor}
+                backgroundColor={'transparent'}
+              />
+            </View>
+          </>
+        )}
+      </Pressable>
+
+      {optionsModalVisible && (
+        <GoOptionsModal
+          primaryColor={primaryColor}
+          backgroundColor="red"
+          modalBackgroundColor={primaryBackground}
+          isVisible={optionsModalVisible}
+          closeModal={() => setOptionsModalVisible(false)}
+        />
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignText: "center",
-    flexWrap: "wrap",
+  wrapper: {
     width: "100%",
-    marginBottom: 2,
-    borderRadius: 4,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    backgroundColor: "transparent",
+    marginTop: 30,
     marginBottom: 10,
-    zIndex: 2,
-  },
-  innerContainer: {
-    position: "absolute",
-    right: 0,
-    height: "100%",
-    width: "auto",
-    padding: 20,
-    flexDirection: "column",
-    justifyContent: "space-between",
     alignItems: "center",
   },
-  animatedContainer: {
+  iconsContainer: {
+    position: "absolute",
+    right: 10,
+    top: 0,
+    zIndex: 10,
+    flexDirection: "column",
+    gap: 6,
+    alignItems: "center",
+  },
+  animatedIcon: {
     padding: 4,
     borderRadius: 999,
-    zIndex: 3,
     alignItems: "center",
     justifyContent: "center",
-    // marginBottom: 10,
     overflow: "hidden",
   },
-  topContainer: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
- 
-    marginTop: 30,
-    marginBottom: 4,
+  pill: {
+    width: "92%",
+    borderRadius: 999,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  labelContainer: { 
-   // flexWrap: "wrap",
-    minWidth:80,
-flexDirection: 'row',
-    width: "auto",
-    maxWidth: "70%",
-    flexShrink: 1,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-     padding: 20,
-    // paddingHorizontal: 10,
-    // paddingVertical: 14,
-    borderRadius: 50,
-    minHeight: 76,
- 
-  },
-
-  labelBackground: {},
-
-  label: {
-    width: "100%",
-    fontSize: 28,
-
-    lineHeight: 30,
-
+  friendName: {
+    fontFamily: "Poppins_400",
+    fontSize: 32,
     textAlign: "center",
+    lineHeight: 32,
   },
-  loadingWrapper: {
-    flex: 0.4,
-    paddingRight: 0,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    alignContent: "flex-start",
-    minHeight: 76,
+  divider: {
+    width: "40%",
+    height: 1,
+    alignSelf: "center",
+    marginVertical: 8,
+    opacity: 0.2,
+  },
+  helloRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  helloTextContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  helloLabel: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 14,
+    opacity: 0.8,
+    lineHeight: 20,
+  },
+  helloDate: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 18,
+    lineHeight: 28,
+    opacity: 0.9,
   },
 });
 

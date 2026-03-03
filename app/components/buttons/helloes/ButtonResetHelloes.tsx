@@ -1,44 +1,57 @@
 import React from "react";
-import { Alert, StyleSheet, Pressable, DimensionValue } from "react-native";
+import { Alert, StyleSheet, Pressable } from "react-native";
 import { useRemixUpcomingHelloes } from "@/src/hooks/useRemixUpcomingHelloes";
 import SvgIcon from "@/app/styles/SvgIcons";
-import manualGradientColors from "@/app/styles/StaticColors";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 
 type Props = {
   userId: number;
-  iconSize: DimensionValue;
-}
-const ButtonResetHelloes = ({ userId, iconSize = 15 }: Props) => {
-  const { handleRemixAllNextHelloes } = useRemixUpcomingHelloes({ userId }); // MOVE TO CONTEXT
+  iconSize?: number;
+};
+
+const ButtonResetHelloes = ({ userId, iconSize = 16 }: Props) => {
+  const { theme } = useLDTheme();
+  const isDark = theme === "dark";
+
+  const { handleRemixAllNextHelloes } =
+    useRemixUpcomingHelloes({ userId });
 
   const handleOnPress = () => {
     Alert.alert(
       "Warning!",
       "Reset all suggested hello dates? (You can run this reset three times a day.)",
       [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
+        { text: "Cancel", style: "cancel" },
         { text: "Reset", onPress: () => handleRemixAllNextHelloes() },
       ]
     );
   };
+
+  const borderColor = isDark
+    ? "rgba(255,255,255,0.15)"
+    : "rgba(0,0,0,0.15)";
+
+  const iconColor = isDark
+    ? "rgba(255,255,255,0.85)"
+    : "rgba(0,0,0,0.85)";
+
   return (
     <Pressable
       onPress={handleOnPress}
       style={({ pressed }) => [
         styles.container,
-        { backgroundColor: manualGradientColors.lightColor },
-        pressed && styles.pressedStyle,
+        {
+          borderColor,
+          backgroundColor: pressed
+            ? "rgba(255,255,255,0.08)"
+            : "transparent",
+        },
       ]}
     >
       <SvgIcon
-        name={"refresh"}
+        name="refresh"
         size={iconSize}
-        color={manualGradientColors.homeDarkColor}
+        color={iconColor}
       />
     </Pressable>
   );
@@ -46,25 +59,12 @@ const ButtonResetHelloes = ({ userId, iconSize = 15 }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 38,
-    height: "auto",
-    borderRadius: 15,
+  width: 28,
+  height: 28,
+  borderRadius: 10,
     justifyContent: "center",
-    paddingHorizontal: ".5%",
-    paddingVertical: ".5%",
     alignItems: "center",
-  },
-  pressedStyle: {},
-  on: {
-    backgroundColor: "#4cd137",
-  },
-  off: {
-    backgroundColor: "#dcdde1",
-  },
-  circle: {
-    width: 15,
-    height: 15,
-    borderRadius: 15 / 2,
+    borderWidth: 1,
   },
 });
 

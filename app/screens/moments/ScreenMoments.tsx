@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 //import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -10,8 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
-import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
-import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
+import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome"; 
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
 
 
@@ -21,7 +19,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 // import { useCategories } from "@/src/context/CategoriesContext";
 import useCategories from "@/src/hooks/useCategories";
 // import { useFriendList } from "@/src/context/FriendListContext";
-import FadeDisappear from "@/app/components/moments/FadeDisappear";
+ 
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 import TopLayerButtonSharedV from "@/app/components/home/TopLayerButtonSharedV";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";

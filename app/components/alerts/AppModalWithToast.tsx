@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Modal, Text, Pressable } from "react-native";
+ 
+import SvgIcon from "@/app/styles/SvgIcons"; 
+import { ItemViewProps } from "@/src/types/MiscTypes"; 
+import { SafeAreaView } from "react-native-safe-area-context";
+import FlashMessage from "./FlashMessage";
 
-import SvgIcon from "@/app/styles/SvgIcons";
-import PlainSafeView from "../appwide/format/PlainSafeView";
+interface FlashMessageData {
+  text: string;
+  error: boolean;
+  duration: number;
+}
 
 interface Props {
   isVisible: boolean;
@@ -15,9 +23,16 @@ interface Props {
   backgroundColor: string;
   contentPadding?: number;
   onClose: () => void;
+  quickView?: ItemViewProps | null;
+  flashMessage?: FlashMessageData | null;
+  setFlashMessage?: (msg: FlashMessageData | null) => void;
+  modalIsTransparent?: boolean;
+  padding?: number;
+  useCloseButton?: boolean;
+  closeButtonColor?: string | null;
 }
 
-const AppModal: React.FC<Props> = ({
+const AppModalWithToast: React.FC<Props> = ({
   isVisible,
   primaryColor,
   backgroundColor,
@@ -25,15 +40,36 @@ const AppModal: React.FC<Props> = ({
   children,
   borderRadius = 40,
   contentPadding = 10,
-
+  flashMessage = null,
+  setFlashMessage,
   onClose,
   modalIsTransparent = true,
   padding = 10,
   useCloseButton = false,
+  closeButtonColor='red'
 }) => {
+  const [trigger, setTrigger] = useState(null);
+
+ 
+
+  const testFlash = () => {
+    setTrigger(Date.now());
+  };
+
+  useEffect(() => {
+    if (trigger) {
+      console.log("setting flash message!");
+      setFlashMessage({
+        text: `Oops! Not added`,
+        error: true,
+        duration: 1000,
+      });
+    }
+  }, [trigger]);
+
   return (
     <Modal
-      transparent={modalIsTransparent} 
+      transparent={modalIsTransparent}
       statusBarTranslucent={true}
       visible={isVisible}
       backdropColor={backgroundColor}
@@ -44,7 +80,18 @@ const AppModal: React.FC<Props> = ({
       }}
     >
       <View style={[styles.modalContainer]}>
-        <PlainSafeView style={{ flex: 1 }}>
+       <SafeAreaView style={{flex: 1}}>
+        
+{flashMessage && (
+  <FlashMessage
+    isInsideModal={false}
+    message={flashMessage.text}
+    error={flashMessage.error}
+    onClose={() => setFlashMessage?.(null)}
+  />
+)}
+      
+
           <View
             style={[
               styles.modalContent,
@@ -64,6 +111,8 @@ const AppModal: React.FC<Props> = ({
                 },
               ]}
             >
+
+
               {questionText && (
                 <Text style={[styles.questionText, { color: primaryColor }]}>
                   {questionText}
@@ -74,12 +123,15 @@ const AppModal: React.FC<Props> = ({
           </View>
           {useCloseButton && (
             <View style={styles.closeButtonWrapper}>
-              <Pressable onPress={onClose} style={styles.closeButton}>
+              <Pressable onPress={onClose} style={[styles.closeButton, {backgroundColor: closeButtonColor}]}>
                 <SvgIcon name={`close`} color={primaryColor} size={24} />
               </Pressable>
+        
             </View>
+            
           )}
-        </PlainSafeView>
+
+       </SafeAreaView>
       </View>
     </Modal>
   );
@@ -91,7 +143,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   closeButtonWrapper: {
     width: "100%",
@@ -105,7 +157,15 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   closeButton: {
-    backgroundColor: "red",
+
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 60,
+    height: 60,
+  },
+  testButton: {
+    backgroundColor: "green",
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
@@ -114,7 +174,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "100%",
- 
+
     flex: 1,
 
     alignItems: "center",
@@ -144,4 +204,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppModal;
+export default AppModalWithToast;

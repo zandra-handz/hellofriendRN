@@ -23,9 +23,9 @@ const MFeatureWriteButton = ({
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       {/* <GlobalPressable style={{ flexDirection: "row" }} onPress={onPress}> */}
-      <Text style={[welcomeTextStyle, { color: fontColor, fontSize: 40 }]}>
+      {/* <Text style={[welcomeTextStyle, { color: fontColor, fontSize: 40 }]}>
         Add{"  "} 
-      </Text>
+      </Text> */}
       <View>
         <SvgIcon
         //   name={"pencil_circle"}
@@ -42,7 +42,7 @@ const MFeatureWriteButton = ({
           }}
         />
         <SvgIcon
-          name={"leaf"}
+          name={"draw_pen"}
           color={leafColor}
           size={80}
           style={{ opacity: 0.9 }}

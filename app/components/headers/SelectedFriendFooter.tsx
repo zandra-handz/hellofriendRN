@@ -278,6 +278,7 @@ const SelectedFriendFooter = ({
           closeModal={() => setSettingsModalVisible(false)}
           textColor={lightDarkTheme.primaryText}
           backgroundColor={lightDarkTheme.primaryBackground}
+          // closeButtonColor={friendLightColor}
         />
       )}
 
@@ -286,12 +287,9 @@ const SelectedFriendFooter = ({
           <FriendSettingsModal
             userId={userId}
             handleDeselectFriend={handleDeselect}
-            lightDarkTheme={lightDarkTheme}
             textColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.primaryBackground}
-            userId={userId}
             isVisible={friendSettingsModalVisible}
-            themeColors={themeColors}
             friendLightColor={friendLightColor}
             friendDarkColor={friendDarkColor}
             friendId={friendId}
@@ -308,6 +306,10 @@ const SelectedFriendFooter = ({
           <FriendThemeModal
             userId={userId}
             lightDarkTheme={lightDarkTheme}
+            textColor={lightDarkTheme.primaryText}
+                backgroundColor={lightDarkTheme.primaryBackground}
+            friendLightColor={friendLightColor}
+            friendDarkColor={friendDarkColor}
             userId={userId}
             isVisible={colorsModalVisible}
             themeColors={themeColors}

@@ -140,7 +140,7 @@ const FriendSettingsModal: React.FC<Props> = ({
       useCloseButton={true}
       questionText={friendName}
     >
-      <View style={styles.container}>
+      {/* <View style={styles.container}> */}
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.innerContainer}>
    
@@ -195,7 +195,7 @@ const FriendSettingsModal: React.FC<Props> = ({
           friendName={friendName}
           handleDeselectFriend={handleDeselectFriend}
         />
-      </View>
+      {/* </View> */}
     </AppModal>
   );
 };
