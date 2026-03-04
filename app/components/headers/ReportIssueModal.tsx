@@ -1,25 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
 import React from "react";
-import { ScrollView, StyleSheet, View, Text, ColorValue } from "react-native";
-import { AppFontStyles } from "@/app/styles/AppFonts"; 
-import SvgIcon from "@/app/styles/SvgIcons";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 import { Linking } from "react-native";
-import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
+import AppModal from "../alerts/AppModal";
 import manualGradientColors from "@/app/styles/StaticColors";
+
 interface Props {
   username: string;
-  primaryColor: ColorValue;
+  textColor: string;
+  backgroundColor: string;
   isVisible: boolean;
-  closeModal: () => void;
-  bottomSpacer: number;
+  closeModal: () => void; 
 }
 
 const ReportIssueModal: React.FC<Props> = ({
   username,
-  primaryColor = "orange",
-
+  textColor,
+  backgroundColor,
   isVisible,
-  bottomSpacer,
   closeModal,
 }) => {
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -31,29 +30,19 @@ const ReportIssueModal: React.FC<Props> = ({
   };
 
   return (
-    <ModalScaleLikeTree
-      bottomSpacer={bottomSpacer}
+    <AppModal
+      primaryColor={textColor}
+      backgroundColor={backgroundColor}
+      isFullscreen={false}
+      modalIsTransparent={false}
       isVisible={isVisible}
-      headerIcon={
-        <SvgIcon
-          name={"bug_outline"}
-          size={30}
-          color={primaryColor}
-        />
-      }
-      buttonTitle={`Report a bug`}
-      useModalBar={true}
-      rightSideButtonItem={
-        <SvgIcon
-          name={`bug`}
-          size={50}
-          color={manualGradientColors.darkHomeColor}
-        />
-      }
+      onClose={closeModal}
+      useCloseButton={true}
+      questionText="Report issues"
       children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.sectionContainer}>
-            <Text style={[subWelcomeTextStyle, { color: primaryColor }]}>
+            <Text style={[subWelcomeTextStyle, { color: textColor }]}>
               Please report any issues
               <Text
                 onPress={() => Linking.openURL(generateUniqueEmailURL())}
@@ -69,28 +58,25 @@ const ReportIssueModal: React.FC<Props> = ({
           </View>
         </ScrollView>
       }
-      onClose={closeModal}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  bodyContainer: {
+  scrollViewContainer: {
+    marginVertical: 6,
+    flexDirection: "row",
     width: "100%",
-
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    textAlign: "left",
+    flexWrap: "wrap",
   },
   headerContainer: {
     margin: "2%",
   },
-  sectionContainer: {
-    margin: "2%",
-  },
-  headerText: {
-    fontFamily: "Poppins-Bold",
-    fontSize: 18,
+    sectionContainer: {
+    marginVertical: 6,
+    flexDirection: "row",
+    width: "100%",
+    flexWrap: "wrap",
   },
   text: {
     lineHeight: 21,

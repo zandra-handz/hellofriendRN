@@ -1,63 +1,41 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet, ColorValue  } from "react-native";
- 
-import SvgIcon from "@/app/styles/SvgIcons"; 
+import { View, Text, ScrollView, StyleSheet  } from "react-native";
 
-import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
+import SvgIcon from "@/app/styles/SvgIcons"; 
+import AppModal from "../alerts/AppModal";
 
 interface AboutAppModalProps {
   isVisible: boolean;
   closeModal: () => void;
-  bottomSpacer: number;
-  primaryColor: ColorValue;
-  
+  textColor: string;
+  backgroundColor: string;
 }
 
 const AboutAppModal: React.FC<AboutAppModalProps> = ({
   isVisible,
   closeModal,
-  bottomSpacer,
-  primaryColor='orange',
-}) => { 
- 
-
-  return ( 
-    <ModalScaleLikeTree
-      bottomSpacer={bottomSpacer}
-      useModalBar={true}
-      // rightSideButtonItem={
-      //   <Image
-      //     source={require("@/app/assets/shapes/redheadcoffee.png")}
-      //     style={{
-      //       position: "absolute",
-      //       width: 80,
-      //       height: 80,
-
-      //       top: -26,
-      //       right: 0,
-      //     }}
-      //     resizeMode="contain"
-      //   />
-      // }
+  textColor,
+  backgroundColor,
+}) => {
+  return (
+    <AppModal
+      primaryColor={textColor}
+      backgroundColor={backgroundColor}
+      isFullscreen={false}
+      modalIsTransparent={false}
       isVisible={isVisible}
-      headerIcon={
-        <SvgIcon
-          name={"information_outline"}
-          size={30}
-          color={primaryColor}
-        />
-      }
-      buttonTitle="About hellofriend"
-      questionText="How to use"
+      onClose={closeModal}
+      useCloseButton={true}
+      questionText="About this app"
       children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Thank you for downloading!
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-           <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Hellofriend is an IRL-meet-up assistant that lets you store notes
               (moments) to share with friends ahead of meeting up with them. It
               generates suggestions for meet-up dates and helps you decide
@@ -66,18 +44,18 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               What is a 'Moment'?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-             <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               A moment is literally any thought or idea you want to share with
               your friend the next time you see them.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Specifically, it refers to those moments when something reminds us
               of a person who has the audacity to not be anywhere near us at the
               time for us to tell them. These types of moments can accumulate
@@ -87,36 +65,36 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               This app was born out of a desire to see less of these
               so-very-human moments lost.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               That sounds all deep and stuff, but a moment can be as serious or
               as silly as you'd like!
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-          <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Simply: a moment is a gift.
             </Text>
           </View>
 
           <View style={styles.headerContainer}>
-             <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               I can just text them my 'Moments'.
             </Text>
           </View>
 
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Absolutely! Any form of connection is great!!
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-           <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               And, while you CAN log digital 'meet-ups' as well -- this app is
               ultimately intended for helping encourage and facilitate in-person
               interactions. For the people in our lives we especially want to
@@ -125,23 +103,23 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               It is also for those of us who WANT to meet up in person more but
               get DANG ANXIOUS about the logistics (hint: me!).
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               It is also for adults who are busy or timeblind.
             </Text>
           </View>
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               How can this app help me pick locations?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-               <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Hellofriend can: search and save locations, pin favorite locations
               to individual friend dashboards, calculate the difference in
               travel times between you and your friend for any given location,
@@ -151,30 +129,30 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
             </Text>
           </View>
           <View style={styles.headerContainer}>
-             <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               Anything special about the images feature?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-             <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               You can take and store pictures with the app itself, keeping them
               separate from gallery on your phone and avoiding clutter/making
               retrieval easier, if you struggle with this sort of thing.
             </Text>
           </View>
           <View style={styles.headerContainer}>
-             <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               To log a meet-up... 'add Hello'?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-              <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Yes! There is no in-app reward for completing the goal, but it's
               how the app knows when to generate a new suggested date.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-              <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               (The app will also simply regenerate if you miss a date. They are
               just suggestions. Missing them means absolutely nothing to the
               app. It will not count against you in any way.)
@@ -182,31 +160,31 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               These names are kinda dumb.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-              <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Sorry! I like them.
             </Text>
           </View>
           <View style={styles.headerContainer}>
-             <Text style={[styles.headerText, {color: primaryColor}]}>
+            <Text style={[styles.headerText, { color: textColor }]}>
               One last thing. Why the lizard?
             </Text>
           </View>
 
           <View style={styles.sectionContainer}>
-              <Text style={[styles.text, {color: primaryColor}]}>
+            <Text style={[styles.text, { color: textColor }]}>
               During a somewhat lonely time in my life, a lil gecko would come
               visit my window every night while I was studying and hang out
               there upside down for hours, and I would say 'hello, friend!'.
             </Text>
           </View>
 
-          <View style={[styles.sectionContainer, {paddingBottom: 60}]}>
-              <Text style={[styles.text, {color: primaryColor}]}>
+          <View style={[styles.sectionContainer, { paddingBottom: 60 }]}>
+            <Text style={[styles.text, { color: textColor }]}>
               Never quite got the image out of my head.
             </Text>
           </View>
@@ -224,21 +202,31 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     textAlign: "left",
   },
+
+  scrollViewContainer: {
+    marginVertical: 6,
+    flexDirection: "row",
+    width: "100%",
+    flexWrap: "wrap",
+  },
+    sectionContainer: {
+    marginVertical: 6,
+    flexDirection: "row",
+    width: "100%",
+    flexWrap: "wrap",
+  },
   headerContainer: {
-    margin: "2%",
-  },
-  sectionContainer: {
-    margin: "2%",
-  },
+    margin: 6,
+  }, 
   headerText: {
     fontWeight: "bold",
-      fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
     fontSize: 18,
     lineHeight: 30,
   },
   text: {
     fontSize: 14,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
     lineHeight: 21,
   },
 });

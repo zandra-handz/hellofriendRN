@@ -45,7 +45,7 @@ import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsConte
 // import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-import useCategories from "@/src/hooks/useCategories";
+ 
 // import { useCategories } from "@/src/context/CategoriesContext";
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 
@@ -70,6 +70,9 @@ const { friendCategoryColors}= useFriendCategoryColors();
     friendList,
   });
 
+  // In ScreenFriendHome or wherever the backdrop lives
+  const coloredDotsModeValue = useSharedValue(false);
+    const turnBackdropOnValue = useSharedValue(false);
  
   // Select friend when screen mounts with idToSelect param
   useEffect(() => {
@@ -88,20 +91,16 @@ const handleNavigateToCreateNew = useCallback(() => {
   // }, 50);
 }, [navigateToMomentFocus]);
   
-   
-
-  const { autoSelectFriend } = useAutoSelector(); 
-
+    
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
  
 
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
-  // In ScreenFriendHome or wherever the backdrop lives
-  const coloredDotsModeValue = useSharedValue(false);
 
 
-  const turnBackdropOnValue = useSharedValue(false);
+
+ 
 
  
 useEffect(() => {

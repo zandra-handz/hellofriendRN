@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import useUser from "@/src/hooks/useUser";
 import SignInButton from "@/app/components/user/SignInButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import AppTitle from "@/app/components/appwide/logo/AppTitle";
-import { useLDTheme } from "@/src/context/LDThemeContext";
+  import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { useSharedValue, withSpring } from "react-native-reanimated";
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
 import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
 import MemoizedGeckoSkia from "@/app/assets/shader_animations/GeckoSkia";
-
+ 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 
-const ScreenWelcome = () => {
-  const { lightDarkTheme } = useLDTheme();
+const ScreenWelcome = () => { 
   const { user, isInitializing } = useUser();
   const { resetFriend } = useSelectedFriend();
-
+const { lightDarkTheme} = useLDTheme();
   const [resetAnimation, setResetAnimation] = useState(Date.now());
   const [showAnimation, setShowAnimation] = useState(false);
 
@@ -29,15 +30,24 @@ const ScreenWelcome = () => {
     }
   }, [user?.id, isInitializing]);
 
-  const { navigateToNewAccount } = useAppNavigations();
-  const navigation = useNavigation<AuthScreenNavigationProp>();
+  useFocusEffect(
+  useCallback(() => {
+    turnBackdropOnValue.value = false;
+  }, [])
+);
+
+  const { navigateToAuth, navigateToNewAccount } = useAppNavigations();
+ 
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
     useState(false);
 
-  const handleNavigateToAuthScreen = (userHitCreateAccount: boolean) => {
-    navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
-  };
+        const turnBackdropOnValue = useSharedValue(false);
+
+  const handleNavigateToAuth = useCallback(() => {
+    navigateToAuth({  prevScreenBackdrop: false })
+       turnBackdropOnValue.value = true;
+  },[navigateToAuth]);
 
   useEffect(() => {
     if (user?.id) {
@@ -78,6 +88,8 @@ const ScreenWelcome = () => {
         flex: 1,
       }}
     >
+           <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={100} isVisibleValue={turnBackdropOnValue  } />
+         
       <View style={styles.container}>
         {showAnimation && (
           <View style={[StyleSheet.absoluteFill]}>
@@ -123,7 +135,7 @@ const ScreenWelcome = () => {
                 </Pressable>
 
                 <SignInButton
-                  onPress={() => handleNavigateToAuthScreen(false)}
+                  onPress={handleNavigateToAuth}
                   labelColor={manualGradientColors.homeDarkColor}
                   backgroundColor={manualGradientColors.whiteColor}
                 />

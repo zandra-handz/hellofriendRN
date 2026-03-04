@@ -318,12 +318,16 @@ type NavToQRCodeProp = {
 
 
 
-type NavToAuthProp = {
-  usernameEntered: string | null;
+type NavToAuthProp = { 
+  createNewAccount?: boolean | null;
+  prevScreenBackdrop?: boolean | null;
+
+  
 };
 
 type NavToNewAccountProp = {
   usernameEntered: string | null;
+
 };
 
 interface hookReturns {
@@ -361,7 +365,7 @@ interface hookReturns {
   navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
 
   navigateToFidget: () => void;
-  navigateToAuth: ({ usernameEntered }: NavToAuthProp) => void;
+  navigateToAuth: ({ createNewAccount, prevScreenBackdrop }: NavToAuthProp) => void;
   navigateToNewAccount: ({ usernameEntered }: NavToNewAccountProp) => void;
   navigateToRecoverCredentials: () => void;
   navigateBack: () => void;
@@ -499,8 +503,8 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Welcome");
   };
 
-  const navigateToAuth = ({ usernameEntered }: NavToAuthProp) => {
-    navigation.navigate("Auth", { usernameEntered });
+  const navigateToAuth = ({ createNewAccount=false, prevScreenBackdrop=false }: NavToAuthProp) => {
+    navigation.navigate("Auth", { createNewAccount, prevScreenBackdrop });
   };
 
   const navigateToNewAccount = ({ usernameEntered }: NavToNewAccountProp) => {

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
-import { useFocusEffect, useRoute, RouteProp } from "@react-navigation/native";
-
+import { useFocusEffect  } from "@react-navigation/native";
+import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 // app spinner
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
- 
+import { useSharedValue, withTiming } from "react-native-reanimated";
 //app sibling
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
@@ -12,13 +12,17 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
+
+import { useLDTheme } from "@/src/context/LDThemeContext";
 // app components
 import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
 import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
+import AnimatedReverseBackdrop from "@/app/components/appwide/format/AnimatedReverseBackdrop";
 
+import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
 //app static
 import manualGradientColors from "@/app/styles/StaticColors";
 
@@ -27,8 +31,30 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
 // const ScreenAuth = () => {
 const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
+
   // const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const usernameEntered = route.params?.usernameEntered ?? false;
+    const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
+  const triggerReverseBackdrop = route.params?.triggerReverseBackdrop ?? false;
+
+const { lightDarkTheme } = useLDTheme();
+
+  const ActivateBackdrop = useSharedValue(prevScreenHasBackdrop ? 1 : 0);
+  const ReverseBackdrop = useSharedValue(triggerReverseBackdrop ? 1 : 0);
+
+
+  useEffect(() => {
+    if (!prevScreenHasBackdrop) {
+      ActivateBackdrop.value = withTiming(1, { duration: 600 });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (triggerReverseBackdrop) {
+      ReverseBackdrop.value = withTiming(1, { duration: 600 });
+    }
+  }, []);
+
 
   const { onSignIn, signinMutation } = useSignIn({
     refetchUser: onAuthSuccess,
@@ -51,6 +77,8 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
 
   const INPUTS_GAP = 4;
   const DELAY_BEFORE_FOCUS = 300;
+
+  const textColor =  manualGradientColors.lightColor;
 
   const handleUsernameFocus = () => setIsUsernameFocused(true);
   const handleUsernameBlur = () => setIsUsernameFocused(false);
@@ -131,6 +159,15 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
       />
 
       <SafeViewAppDefault style={styles.container}>
+        
+                  <StaticBackdrop
+        color={lightDarkTheme.backdropColor}
+        zIndex={0}
+        isVisibleValue={ActivateBackdrop}
+        startsVisible={true}
+      />
+           
+
         {!signinMutation.isPending && (
           <View style={styles.outerContainer}>
             <AuthScreenTopTray
@@ -138,7 +175,8 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
               rightLabel={"Forgot password"}
               onRightPress={navigateToRecoverCredentials}
             />
-            <AuthScreenHeader label={"Sign in"} />
+
+ <AuthScreenHeader color={textColor} label={"Sign in"} />
 
             <View
               style={[styles.inputsContainer, { gap: INPUTS_GAP }]}
@@ -147,16 +185,17 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
             >
               <AuthInputWrapper
                 condition={username}
+                color={textColor}
                 label={"Username"}
                 children={
                   <TextInput
                     style={[
                       styles.input,
                       isUsernameFocused && styles.inputFocused,
-                      { color: manualGradientColors.homeDarkColor },
+                      { borderColor: textColor, color: textColor },
                     ]}
                     placeholder="Username"
-                    placeholderTextColor={placeholderTextColor}
+                    placeholderTextColor={textColor}
                     // autoFocus={true}
                     autoFocus={false}
                     onChangeText={handleUsernameChange}
@@ -185,7 +224,7 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
                       style={[
                         styles.input,
                         isPasswordFocused && styles.inputFocused,
-                        { color: manualGradientColors.homeDarkColor },
+                        { color: textColor },
                       ]}
                       placeholder="Password"
                       placeholderTextColor={placeholderTextColor}
@@ -252,7 +291,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignContent: "center",
     justifyContent: "center",
-    borderColor: "black",
+ 
     fontSize: 18,
   },
   inputFocused: {

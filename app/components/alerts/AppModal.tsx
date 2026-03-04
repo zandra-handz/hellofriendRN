@@ -1,19 +1,19 @@
 import React from "react";
 import { StyleSheet, View, Modal, Text, Pressable } from "react-native";
-
 import SvgIcon from "@/app/styles/SvgIcons";
-import PlainSafeView from "../appwide/format/PlainSafeView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   isVisible: boolean;
   isFullscreen: boolean;
-  headerIcon: React.ReactElement;
   questionText: string;
   children: React.ReactElement;
   borderRadius?: number;
   primaryColor: string;
   backgroundColor: string;
   contentPadding?: number;
+  modalIsTransparent?: boolean;
+  useCloseButton?: boolean;
   onClose: () => void;
 }
 
@@ -23,28 +23,26 @@ const AppModal: React.FC<Props> = ({
   backgroundColor,
   questionText,
   children,
-  borderRadius = 40,
-  contentPadding = 10,
-
   onClose,
   modalIsTransparent = true,
-  padding = 10,
   useCloseButton = false,
 }) => {
+  const borderRadius = 40;
+  const contentPadding = 10;
+  const padding = 10;
   return (
     <Modal
-      transparent={modalIsTransparent} 
+      transparent={modalIsTransparent}
       statusBarTranslucent={true}
       visible={isVisible}
-      backdropColor={backgroundColor}
-      // style={modalAnimationStyle}
+      backdropColor={backgroundColor} 
       animationType="slide"
       style={{
         backgroundColor: backgroundColor,
       }}
     >
       <View style={[styles.modalContainer]}>
-        <PlainSafeView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
           <View
             style={[
               styles.modalContent,
@@ -79,7 +77,7 @@ const AppModal: React.FC<Props> = ({
               </Pressable>
             </View>
           )}
-        </PlainSafeView>
+        </SafeAreaView>
       </View>
     </Modal>
   );
@@ -91,7 +89,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   closeButtonWrapper: {
     width: "100%",
@@ -114,9 +112,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "100%",
- 
     flex: 1,
-
     alignItems: "center",
     backgroundColor: "white",
     flexDirection: "column",
@@ -125,7 +121,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     width: "100%",
-
     height: 50,
     marginBottom: 10, // header spacing
     alignItems: "center",
@@ -133,15 +128,8 @@ const styles = StyleSheet.create({
   },
   questionText: {
     fontSize: 24,
-    textAlign: "center",
-    // marginLeft: 10,
-  },
-  buttonContainer: {
-    justifyContent: "center",
-    width: "100%",
-    height: "8%",
-    alignItems: "center",
-  },
+    textAlign: "center", 
+  }, 
 });
 
 export default AppModal;

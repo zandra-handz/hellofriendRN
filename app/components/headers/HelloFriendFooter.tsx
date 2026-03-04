@@ -4,13 +4,12 @@ import { View, StyleSheet, Keyboard } from "react-native";
 // app components
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
-import UserSettingsModal from "./UserSettingsModal.";
-// import FriendSettingsModal from "./FriendSettingsModal";
+import UserSettingsModal from "./UserSettingsModal."; 
 import CategoriesModal from "./CategoriesModal";
 import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
+
 // app display/templates
-import FooterButtonIconVersion from "./FooterButtonIconVersion";
-// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import FooterButtonIconVersion from "./FooterButtonIconVersion"; 
 import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -26,18 +25,13 @@ type Props = {
   friendListLength: number;
 };
 const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
-  const dividerStyle = lightDarkTheme.divider;
 
-  const { onSignOut } = useSignOut();
-  // const { selectFriend } = useSelectedFriend();
+  const { onSignOut } = useSignOut(); 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  // const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
-  //   useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false); 
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -45,11 +39,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
   const footerIconSize = 24;
 
   const primaryColor = lightDarkTheme.primaryText;
-  // const primaryBackground = lightDarkTheme.primaryBackground;
-  // const overlayColor =
-  //   friendListLength > 0
-  //     ? lightDarkTheme.overlayBackground
-  //     : lightDarkTheme.primaryBackground;
+ 
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -75,11 +65,9 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
         confirmationRequired={true}
         confirmationTitle={"Just to be sure"}
         confirmationMessage={"Sign out?"}
-        // label="Deselect"
         label="Sign out"
         icon={
-          <SvgIcon
-            // name={"keyboard-backspace"}
+          <SvgIcon 
             name={"logout"}
             size={footerIconSize}
             color={primaryColor}
@@ -132,12 +120,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
   );
 
   const handleCenterButtonToggle = () => {
-    // console.log("center button toggled!");
-    // if (friendId) {
-    //   setFriendSettingsModalVisible(true);
-    // } else {
     setCategoriesModalVisible((prev) => !prev);
-    // }
   };
 
   const RenderCategoryButton = useCallback(
@@ -174,21 +157,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
           opacity: 0.94,
         },
       ]}
-    >
-      {/* <GradientBackground
-      useFriendColors={false}
-      screenname={"hellofriendfooter"}
-      friendColorDark={themeColors.darkColor}
-      friendColorLight={themeColors.lightColor}
-      additionalStyles={[
-        styles.container,
-        {
-          height: footerHeight,
-          paddingBottom: footerPaddingBottom,
-          opacity: 0.94,
-        },
-      ]}
-    > */}
+    > 
       <View
         style={[
           styles.container,
@@ -196,36 +165,28 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
             backgroundColor: lightDarkTheme.darkerOverlayBackground,
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            opacity: 0.94,
-            // backgroundColor: manualGradientColors.homeLightColor,
+            opacity: 0.94, 
           },
         ]}
       >
         <View style={styles.section}>
           <RenderSignOutButton />
         </View>
-
-        {/* <View style={[styles.divider, dividerStyle]} /> */}
+ 
         <>
           <View style={styles.section}>
             <RenderSettingsButton />
           </View>
-        </>
-
-        {/* <View style={[styles.divider, dividerStyle]} /> */}
+        </> 
         <>
           <View style={styles.section}>
             <RenderCategoryButton />
           </View>
-        </>
-
-        {/* <View style={[styles.divider, dividerStyle]} /> */}
+        </> 
 
         <View style={styles.section}>
           <RenderReportIssueButton />
-        </View>
-
-        {/* <View style={[styles.divider, dividerStyle]} /> */}
+        </View> 
         <>
           <View style={styles.section}>
             <RenderAboutAppButton />
@@ -237,8 +198,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
         <View>
           <UserSettingsModal
             userId={userId}
-            isVisible={settingsModalVisible}
-            bottomSpacer={footerHeight - 30} //for safe view
+            isVisible={settingsModalVisible} 
             closeModal={() => setSettingsModalVisible(false)}
             textColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.primaryBackground}
@@ -263,8 +223,8 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
           <AboutAppModal
             isVisible={aboutModalVisible}
             closeModal={() => setAboutModalVisible(false)}
-            bottomSpacer={footerHeight - 30} //for safe view
-            primaryColor={primaryColor}
+            textColor={lightDarkTheme.primaryText}
+            backgroundColor={lightDarkTheme.primaryBackground}
           />
         </View>
       )}
@@ -272,10 +232,10 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
       {reportModalVisible && (
         <View>
           <ReportIssueModal
-            username={username}
-            primaryColor={primaryColor}
-            isVisible={reportModalVisible}
-            bottomSpacer={footerHeight - 30} //for safe view
+            username={username} 
+            textColor={lightDarkTheme.primaryText}
+            backgroundColor={lightDarkTheme.primaryBackground}
+            isVisible={reportModalVisible} 
             closeModal={() => setReportModalVisible(false)}
           />
         </View>
@@ -288,9 +248,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    position: "absolute",
-    // borderTopRightRadius: 20,
-    // borderTopLeftRadius: 20,
+    position: "absolute", 
     borderRadius: 999,
     bottom: 0,
     zIndex: 50000,

@@ -131,7 +131,7 @@ interface Props {
   closeModal: () => void;
   textColor: string;
   backgroundColor: string;
-  closeButtonColor: string;
+  closeButtonColor?: string;
 }
 
 const UserSettingsModal: React.FC<Props> = ({

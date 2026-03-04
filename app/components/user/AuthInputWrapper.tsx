@@ -17,29 +17,27 @@ const AuthInputWrapper = ({
   labelSize,
   height = "auto",
   marginBottom = 0,
-}: Props) => {
+}) => {
   return (
     <Animated.View
       entering={SlideInRight.duration(100)}
       style={{
         flexDirection: "column",
         width: "100%",
+        height: height,
+        marginBottom: marginBottom,
       }}
     >
-      <Animated.View
-        entering={SlideInDown}
-        style={{ height: height, marginBottom: marginBottom }}
-      >
-        <AuthInputHeader
-          condition={condition}
-          label={label}
-          labelColor={labelColor}
-          overrideFontSize={labelSize}
-        />
-        {children}
-      </Animated.View>
+      <AuthInputHeader
+        condition={condition}
+        label={label}
+        labelColor={labelColor}
+        overrideFontSize={labelSize}
+      />
+      {children}
     </Animated.View>
   );
 };
+
 
 export default AuthInputWrapper;

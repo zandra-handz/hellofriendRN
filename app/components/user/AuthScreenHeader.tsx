@@ -1,24 +1,23 @@
 import { Text } from "react-native";
  
 import React from "react"; 
-import manualGradientColors  from "@/app/styles/StaticColors";
-
+ 
 type Props = {
   label: string;
+  color: string;
   overrideFontSize: number;
 };
 
-const AuthScreenHeader = ({ label , overrideFontSize}: Props) => {
+const AuthScreenHeader = ({ label , color='red' }: Props) => {
   return (
   
     <Text
       style={{
-        color: manualGradientColors.darkHomeColor,
+        color: color,
        // backgroundColor: 'orange',
         fontFamily: "Poppins-Bold",
-        fontSize: overrideFontSize || 26,
-        lineHeight: overrideFontSize ? overrideFontSize + 6 : 50,
-        selfAlign: "center",
+        fontSize:  26,
+        lineHeight:  50, 
       }}
       accessible={true}
     >
