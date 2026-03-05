@@ -93,6 +93,7 @@ import TimerCogSvg from "./svgs/timer-cog";
 import TimerSyncSvg from "./svgs/timer-sync";
 import TreeSvg from "./svgs/tree";
 import ThemeLightDarkSvg from "./svgs/theme-light-dark";
+import TuneVerticalSvg from "./svgs/tune-variant";
 import UploadOutlineSvg from "./svgs/upload-outline";
 import WrenchSvg from "./svgs/wrench";
 import VolumeHighSvg from "./svgs/volume-high";
@@ -185,6 +186,7 @@ const svgIcons = {
   timer_cog: TimerCogSvg,
   timer_sync: TimerSyncSvg,
   tree: TreeSvg,
+  tune_variant: TuneVerticalSvg,
   upload_outline: UploadOutlineSvg,
   format_font_size_increase: FormatFontSizeIncreaseSvg,
   gecko_mine: GeckoMineSvg,

@@ -1,47 +1,47 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
-import { useFocusEffect  } from "@react-navigation/native";
-import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
-// app spinner
-import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
+ 
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { View, StyleSheet, Keyboard, ScrollView } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
-//app sibling
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-
-// app hooks
-import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
-
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import useSignIn from "@/src/hooks/UserCalls/useSignIn";
+import useSignUp from "@/src/hooks/UserCalls/useSignUp";
+import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-// app components
+
+
+import LocalSolidSpinner from "@/app/components/appwide/spinner/LocalSolidSpinner";
+import OptionInput from "@/app/components/headers/OptionInput";
+import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
-import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
+import AuthScreenTray from "./AuthScreenTray";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
-import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 import AnimatedReverseBackdrop from "@/app/components/appwide/format/AnimatedReverseBackdrop";
-
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
-//app static
+import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
+
 import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
-//app types
-import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
+const MODE_SIGNIN = "signin";
+const MODE_CREATE = "create";
 
-// const ScreenAuth = () => {
 const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
-
-  // const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
-  const usernameEntered = route.params?.usernameEntered ?? false;
-    const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
+  const usernameEntered = route.params?.usernameEntered ?? "";
+  const initialMode = route.params?.createNewAccount ?? MODE_SIGNIN;
+  const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
   const triggerReverseBackdrop = route.params?.triggerReverseBackdrop ?? false;
 
-const { lightDarkTheme } = useLDTheme();
+  const { lightDarkTheme } = useLDTheme();
+  const { refetch, isInitializing } = useUser();
+  const { navigateToWelcome, navigateToRecoverCredentials } = useAppNavigations();
 
   const ActivateBackdrop = useSharedValue(prevScreenHasBackdrop ? 1 : 0);
   const ReverseBackdrop = useSharedValue(triggerReverseBackdrop ? 1 : 0);
 
+  const backgroundColor = lightDarkTheme.primaryBackground;
 
   useEffect(() => {
     if (!prevScreenHasBackdrop) {
@@ -55,211 +55,334 @@ const { lightDarkTheme } = useLDTheme();
     }
   }, []);
 
-
-  const { onSignIn, signinMutation } = useSignIn({
-    refetchUser: onAuthSuccess,
-  });
-
-  const { navigateToNewAccount, navigateToRecoverCredentials } =
-    useAppNavigations();
+  const [mode, setMode] = useState(initialMode);
+  const isSignIn = mode === MODE_SIGNIN;
 
   const [username, setUsername] = useState(usernameEntered);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+
+  const [usernameSubmitted, setUsernameSubmitted] = useState(false);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [passwordSubmitted, setPasswordSubmitted] = useState(false);
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
+
+  const [focusedField, setFocusedField] = useState(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const usernameInputRef = useRef(null);
+  const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
-  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const verifyPasswordInputRef = useRef(null);
+  const scrollRef = useRef(null);
 
-  const placeholderTextColor = manualGradientColors.homeDarkColor;
+  const DELAY = 300;
+  const INPUT_HEIGHT = 70;
+  const INPUT_GAP = 4;
+  const BOUNCE_SPEED = 60;
 
-  // console.log("screen auth rerendered");
+  const textColor = manualGradientColors.lightColor;
+  const darkColor = manualGradientColors.homeDarkColor;
+  const inputTextStyle = AppFontStyles.subWelcomeText;
 
-  const INPUTS_GAP = 4;
-  const DELAY_BEFORE_FOCUS = 300;
+  const { onSignIn, signinMutation } = useSignIn({ refetchUser: onAuthSuccess ?? refetch });
+  const { onSignUp, signupMutation } = useSignUp({ signInNewUser: onSignIn });
 
-  const textColor =  manualGradientColors.lightColor;
+const [isNavigating, setIsNavigating] = useState(false);
 
-  const handleUsernameFocus = () => setIsUsernameFocused(true);
-  const handleUsernameBlur = () => setIsUsernameFocused(false);
+// const isPending = signinMutation.isPending || signinMutation.isLoading || signupMutation.isPending || isNavigating;
+ 
 
-  const handlePasswordFocus = () => setIsPasswordFocused(true);
-  const handlePasswordBlur = () => setIsPasswordFocused(false);
+const isPending = isInitializing || isNavigating || signinMutation.isPending || signinMutation.isLoading || signupMutation.isPending;
 
-  const handleFocusUsername = () => {
+
+
+// 0=tray, 1=header, 2=username, 3=password (signin) / email (create), 4=password (create), 5=verify (create)
+  const staggeredDelays = useMemo(() => {
+    const count = isSignIn ? 4 : 6;
+    return Array.from({ length: count }, (_, i) => i * BOUNCE_SPEED);
+  }, [isSignIn]);
+
+  useEffect(() => {
+    const show = Keyboard.addListener("keyboardDidShow", () => setIsKeyboardVisible(true));
+    const hide = Keyboard.addListener("keyboardDidHide", () => setIsKeyboardVisible(false));
+    return () => { show.remove(); hide.remove(); };
+  }, []);
+
+useEffect(() => {
+  if (signinMutation.isSuccess) {
+    showFlashMessage("Success!", false, 2000);
+    setIsNavigating(true);
+  }
+}, [signinMutation.isSuccess]);
+  useEffect(() => {
+    if (signinMutation.isError) {
+      showFlashMessage("Oops! Couldn't sign in", true, 2000);
+      setPassword("");
+    }
+  }, [signinMutation.isError]);
+
+  const focusUsername = () => {
     setTimeout(() => {
-      if (usernameInputRef && usernameInputRef?.current) {
-        usernameInputRef.current.focus();
-      }
-    }, DELAY_BEFORE_FOCUS);
+      usernameInputRef.current?.focus();
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }, DELAY);
   };
 
   useFocusEffect(
     useCallback(() => {
       if (!signinMutation.isSuccess) {
-        setUsername(usernameEntered);
-        handleFocusUsername();
+        setUsername(usernameEntered || "");
+        focusUsername();
       }
-    }, [usernameEntered, signinMutation.isSuccess]),
+    }, [usernameEntered, signinMutation.isSuccess])
   );
 
-  useEffect(() => {
-    if (signinMutation.isSuccess) {
-      showFlashMessage(`Success!`, false, 2000);
-    }
-  }, [signinMutation.isSuccess]);
-
-  useEffect(() => {
-    if (signinMutation.isError) {
-      showFlashMessage(`Oops! Couldn't sign in`, true, 2000);
-      setPassword(null);
-    }
-  }, [signinMutation.isError]);
-
-  const handleCreateNew = () => {
-    console.log("rerendered create new");
-    navigateToNewAccount({ usernameEntered: username });
+  const switchMode = (newMode) => {
+    setMode(newMode);
+    setEmail("");
+    setPassword("");
+    setVerifyPassword("");
+    setUsernameSubmitted(false);
+    setEmailSubmitted(false);
+    setPasswordSubmitted(false);
+    setPasswordsMatch(false);
+    setFocusedField(null);
+    setTimeout(() => focusUsername(), DELAY);
   };
 
-  const handleAuthentication = async () => {
-    try {
-      onSignIn(username, password);
-    } catch (error) {
-      console.error(error);
-    }
+  const focusNextInput = (index, inputRef) => {
+    if (!inputRef.current) return;
+    inputRef.current.focus();
+    scrollRef.current?.scrollTo({ y: index * (INPUT_HEIGHT + INPUT_GAP), animated: true });
   };
-
-  const [usernameSubmitted, setUsernameSubmitted] = useState(false);
 
   const handleUsernameSubmit = () => {
     setUsernameSubmitted(true);
-    setTimeout(() => {
-      if (passwordInputRef.current && username) {
-        passwordInputRef.current.focus();
-      }
-    }, DELAY_BEFORE_FOCUS);
+    if (isSignIn) {
+      setTimeout(() => focusNextInput(1, passwordInputRef), DELAY);
+    } else {
+      setTimeout(() => focusNextInput(1, emailInputRef), DELAY);
+    }
+  };
+
+  const handleEmailSubmit = () => {
+    setEmailSubmitted(true);
+    setTimeout(() => focusNextInput(2, passwordInputRef), DELAY);
+  };
+
+  const handleFirstPasswordSubmit = () => {
+    setPasswordSubmitted(true);
+    setTimeout(() => focusNextInput(3, verifyPasswordInputRef), DELAY);
   };
 
   const handleUsernameChange = (text) => {
     setUsername(text);
-    if (!text || text.length < 1) {
-      setUsernameSubmitted(false);
-    }
+    if (!text) setUsernameSubmitted(false);
+  };
+
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    if (!text) setEmailSubmitted(false);
   };
 
   const handlePasswordChange = (text) => {
     setPassword(text);
+    if (!text) setPasswordSubmitted(false);
+  };
+
+  const handleVerifyPasswordChange = (text) => {
+    setVerifyPassword(text);
+    setPasswordsMatch(text === password);
+  };
+
+  const handleSignIn = async () => {
+    try {
+      onSignIn(username, password);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+const handleCreateAccount = async () => {
+  if (password !== verifyPassword) return;
+  const result = await onSignUp(username, email, password);
+  if (result?.status === 201) {
+    showFlashMessage("Account created!", false, 2000);
+    setIsNavigating(true);
+  } else if (result?.error) {
+    showFlashMessage("Error: " + result.error, true, 2000);
+  }
+};
+
+  const canSubmitSignIn = username && password && !isPending;
+  const canSubmitCreate = username && email && password && passwordsMatch && !isPending && !isKeyboardVisible;
+
+  const activeInputProps = {
+    textStyle: inputTextStyle,
+    buttonPadding: 4,
+    primaryColor: textColor,
+    backgroundColor: backgroundColor,
+    buttonColor: textColor,
   };
 
   return (
     <>
-      <LocalPeacefulGradientSpinner
-        loading={signinMutation.isPending || signinMutation.isLoading}
-        label={"Signing in"}
+      <LocalSolidSpinner
+        loading={isPending}
+        label={isSignIn ? "Signing in" : "Creating account"}
+        backgroundColor={backgroundColor}
       />
 
-      <SafeViewAppDefault style={styles.container}>
-        
-                  <StaticBackdrop
-        color={lightDarkTheme.backdropColor}
-        zIndex={0}
-        isVisibleValue={ActivateBackdrop}
-        startsVisible={true}
-      />
-           
+      <SafeViewAppDefault customStatusIsDarkMode={true} style={styles.container}>
+        <StaticBackdrop
+          color={backgroundColor}
+          zIndex={0}
+          isVisibleValue={ActivateBackdrop}
+          startsVisible={true}
+        />
 
-        {!signinMutation.isPending && (
+        {triggerReverseBackdrop && (
+          <AnimatedReverseBackdrop
+            color={backgroundColor}
+            isVisibleValue={ReverseBackdrop}
+          />
+        )}
+
+        {!isPending && (
           <View style={styles.outerContainer}>
-            <AuthScreenTopTray
-              onBackPress={handleCreateNew}
-              rightLabel={"Forgot password"}
-              onRightPress={navigateToRecoverCredentials}
-            />
-
- <AuthScreenHeader color={textColor} label={"Sign in"} />
-
-            <View
-              style={[styles.inputsContainer, { gap: INPUTS_GAP }]}
-              accessible={true}
-              accessibilityLabel="Form container"
-            >
-              <AuthInputWrapper
-                condition={username}
-                color={textColor}
-                label={"Username"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isUsernameFocused && styles.inputFocused,
-                      { borderColor: textColor, color: textColor },
-                    ]}
-                    placeholder="Username"
-                    placeholderTextColor={textColor}
-                    // autoFocus={true}
-                    autoFocus={false}
-                    onChangeText={handleUsernameChange}
-                    value={username}
-                    onSubmitEditing={handleUsernameSubmit}
-                    ref={usernameInputRef}
-                    onPress={handleUsernameFocus}
-                    onFocus={handleUsernameFocus}
-                    onBlur={handleUsernameBlur}
-                    accessible={true}
-                    autoComplete={"username"}
-                    accessibilityLabel="Username input"
-                    accessibilityHint="Enter your username"
-                    importantForAccessibility="yes"
-                    enterKeyHint={"next"}
-                  />
-                }
+            <BouncyEntrance delay={staggeredDelays[0]} style={{ width: "100%" }}>
+              <AuthScreenTray
+                onBackPress={() => switchMode(isSignIn ? MODE_CREATE : MODE_SIGNIN)}
+                rightLabel={isSignIn ? "Forgot password" : null}
+                onRightPress={isSignIn ? navigateToRecoverCredentials : null}
+                onHomePress={navigateToWelcome}
+                iconColor={manualGradientColors.lightColor}
               />
+            </BouncyEntrance>
 
-              {username && usernameSubmitted && (
-                <AuthInputWrapper
-                  condition={password}
-                  label={"Password"}
-                  children={
-                    <TextInput
-                      style={[
-                        styles.input,
-                        isPasswordFocused && styles.inputFocused,
-                        { color: textColor },
-                      ]}
-                      placeholder="Password"
-                      placeholderTextColor={placeholderTextColor}
-                      // color={lightDarkTheme.primaryText}
-                      autoFocus={false} //true
-                      secureTextEntry={true}
-                      onChangeText={handlePasswordChange}
-                      onSubmitEditing={handleAuthentication}
-                      autoComplete={"current-password"}
-                      value={password}
-                      ref={passwordInputRef}
-                      onFocus={handlePasswordFocus}
-                      onBlur={handlePasswordBlur}
-                      accessible={true}
-                      accessibilityLabel="Password input"
-                      accessibilityHint="Enter your password"
-                      importantForAccessibility="yes"
-                      enterKeyHint={"enter"}
+            <BouncyEntrance delay={staggeredDelays[1]} style={{ width: "100%" }}>
+              <AuthScreenHeader
+                color={textColor}
+                label={isSignIn ? "Sign in" : "Create new account"}
+              />
+            </BouncyEntrance>
+
+            <View style={styles.inputsContainer}>
+              <ScrollView
+                ref={scrollRef}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ paddingBottom: 280 }}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.inputRow}>
+                  <BouncyEntrance delay={staggeredDelays[2]} style={{ width: "100%" }}>
+                    <OptionInput
+                      {...activeInputProps}
+                      inputRef={usernameInputRef}
+                      value={username}
+                      onChangeText={handleUsernameChange}
+                      placeholder="Username"
+                      autoComplete="username"
+                      enterKeyHint="next"
+                      autoFocus={!isSignIn}
+                      onSubmitEditing={handleUsernameSubmit}
+                      onFocus={() => setFocusedField("username")}
+                      onBlur={() => setFocusedField(null)}
+                      accessibilityLabel="Username input"
+                      accessibilityHint="Enter your username"
                     />
-                  }
-                />
-              )}
+                  </BouncyEntrance>
+                </View>
+
+                {!isSignIn && username && usernameSubmitted && (
+                  <View style={styles.inputRow}>
+                    <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
+                      <OptionInput
+                        {...activeInputProps}
+                        inputRef={emailInputRef}
+                        value={email}
+                        onChangeText={handleEmailChange}
+                        placeholder="Email"
+                        inputMode="email"
+                        keyboardType="email-address"
+                        enterKeyHint="next"
+                        onSubmitEditing={handleEmailSubmit}
+                        onFocus={() => setFocusedField("email")}
+                        onBlur={() => setFocusedField(null)}
+                        accessibilityLabel="Email input"
+                        accessibilityHint="Enter your email address"
+                      />
+                    </BouncyEntrance>
+                  </View>
+                )}
+
+                {((isSignIn && username && usernameSubmitted) ||
+                  (!isSignIn && email && emailSubmitted)) && (
+                  <View style={styles.inputRow}>
+                    <BouncyEntrance delay={staggeredDelays[isSignIn ? 3 : 4]} style={{ width: "100%" }}>
+                      <OptionInput
+                        {...activeInputProps}
+                        inputRef={passwordInputRef}
+                        value={password}
+                        onChangeText={handlePasswordChange}
+                        placeholder="Password"
+                        secureTextEntry={true}
+                        autoComplete={isSignIn ? "current-password" : "new-password"}
+                        enterKeyHint={isSignIn ? "enter" : "next"}
+                        onSubmitEditing={isSignIn ? handleSignIn : handleFirstPasswordSubmit}
+                        onFocus={() => setFocusedField("password")}
+                        onBlur={() => setFocusedField(null)}
+                        accessibilityLabel="Password input"
+                        accessibilityHint="Enter your password"
+                      />
+                    </BouncyEntrance>
+                  </View>
+                )}
+
+                {!isSignIn && password && passwordSubmitted && (
+                  <View style={styles.inputRow}>
+                    <BouncyEntrance delay={staggeredDelays[5]} style={{ width: "100%" }}>
+                      <OptionInput
+                        {...activeInputProps}
+                        primaryColor={!passwordsMatch && verifyPassword ? "red" : textColor}
+                        buttonColor={!passwordsMatch && verifyPassword ? "red" : textColor}
+                        inputRef={verifyPasswordInputRef}
+                        value={verifyPassword}
+                        onChangeText={handleVerifyPasswordChange}
+                        placeholder="Verify Password"
+                        secureTextEntry={true}
+                        onSubmitEditing={handleCreateAccount}
+                        onFocus={() => setFocusedField("verify")}
+                        onBlur={() => setVerifyPassword("")}
+                        accessibilityLabel="Verify Password input"
+                        accessibilityHint="Re-enter your password for verification"
+                      />
+                    </BouncyEntrance>
+                  </View>
+                )}
+              </ScrollView>
             </View>
           </View>
         )}
-        <View
-          style={styles.buttomButtonWrapper}
-        >
-          {username && password && !signinMutation.isPending && (
+
+        <View style={styles.bottomButtonWrapper}>
+          {isSignIn && canSubmitSignIn && (
             <AuthBottomButton
-              onPress={handleAuthentication}
-              title={"Sign in"}
+              onPress={handleSignIn}
+              title="Sign in"
               borderRadius={10}
-              backgroundColor={manualGradientColors.homeDarkColor}
-              labelColor={manualGradientColors.lightColor}
+              backgroundColor={darkColor}
+              labelColor={textColor}
+            />
+          )}
+          {!isSignIn && canSubmitCreate && (
+            <AuthBottomButton
+              onPress={handleCreateAccount}
+              title="Create account"
+              borderRadius={10}
+              backgroundColor={darkColor}
+              labelColor={textColor}
             />
           )}
         </View>
@@ -269,42 +392,21 @@ const { lightDarkTheme } = useLDTheme();
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   outerContainer: {
     paddingHorizontal: 10,
     flex: 1,
   },
   inputsContainer: {
-    height: 200,
     width: "100%",
-    fontFamily: "Poppins-Regular",
     justifyContent: "flex-start",
     flex: 1,
   },
-  input: {
-    fontFamily: "Poppins-Regular",
-    borderWidth: 2.6,
-    padding: 20,
-    paddingTop: 20,
-    borderRadius: 30,
-    alignContent: "center",
-    justifyContent: "center",
- 
-    fontSize: 18,
+  inputRow: {
+    width: "100%",
+    marginVertical: 6,
   },
-  inputFocused: {
-    fontFamily: "Poppins-Regular",
-    borderWidth: 3,
-  },
-  title: {
-    fontSize: 62,
-    marginBottom: 10,
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
-  },
-  buttomButtonWrapper: {
+  bottomButtonWrapper: {
     width: "100%",
     bottom: 0,
     paddingHorizontal: 4,

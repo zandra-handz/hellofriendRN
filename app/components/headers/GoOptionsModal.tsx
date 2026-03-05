@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
-import {   StyleSheet, View,   Text } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
 import AppModal from "../alerts/AppModal";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import GlobalPressable from "../appwide/button/GlobalPressable";
 import BouncyEntrance from "./BouncyEntrance";
+import OptionButton from "./OptionButton";
+
 type Props = {
   isVisible: boolean;
   closeModal: () => void;
@@ -25,48 +25,35 @@ const GoOptionsModal = ({
   const {
     navigateToMoments,
     navigateToLocationSearch,
-    navigateToFinalize, 
-    navigateToFidget
+    navigateToFinalize,
+    navigateToFidget,
   } = useAppNavigations();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const BUTTON_PADDING = 4;
   const BUTTON_COLOR = manualGradientColors.lightColor;
-  // const backgroundColor = manualGradientColors.homeDarkColor;
 
-  const handleNavToMoments = () => {
-    closeModal();
-    navigateToMoments({ scrollTo: null });
-  };
+  const handleNavToMoments = () => { closeModal(); navigateToMoments({ scrollTo: null }); };
+  const handleNavToLocationSearch = () => { closeModal(); navigateToLocationSearch(); };
+  const handleNavToFinalize = () => { closeModal(); navigateToFinalize(); };
+  const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
 
-  const handleNavToLocationSearch = () => {
-    closeModal();
-    navigateToLocationSearch();
-  };
-
-  const handleNavToFinalize = () => {
-    closeModal();
-    navigateToFinalize();
-  };
-
-
-    const handleNavToSpiners = () => {
-    closeModal();
-    navigateToFidget();
-  };
-
-
-  const count = 5; // number of items
-  const speed = 20; // milliseconds between each item
+  const count = 5;
+  const speed = 20;
 
   const staggeredDelays = useMemo(() => {
-    const getStaggeredDelays = (count: number, speed: number): number[] => {
-      return Array.from({ length: count }, (_, i) => i * speed);
-    };
-
-    return getStaggeredDelays(count, speed);
+    return Array.from({ length: count }, (_, i) => i * speed);
   }, [count, speed]);
+
+  const sharedButtonProps = {
+    primaryColor,
+    backgroundColor,
+    buttonColor: BUTTON_COLOR,
+    textStyle: subWelcomeTextStyle,
+    buttonPadding: BUTTON_PADDING,
+  };
+
   return (
     <AppModal
       primaryColor={primaryColor}
@@ -74,171 +61,50 @@ const GoOptionsModal = ({
       isFullscreen={false}
       modalIsTransparent={false}
       isVisible={isVisible}
- 
       questionText="What would you like to do?"
+      onClose={closeModal}
       children={
         <View style={{ flex: 1 }}>
-          {staggeredDelays && staggeredDelays.length > 0 && (
+          {staggeredDelays.length > 0 && (
             <>
               <View style={styles.sectionContainer}>
-                <BouncyEntrance
-                  delay={staggeredDelays[0]}
-                  style={{ width: "100%" }}
-                >
-                  <GlobalPressable
-                    onPress={handleNavToLocationSearch}
-                    style={[
-                      styles.button,
-                      {
-                        padding: BUTTON_PADDING,
-                        backgroundColor: BUTTON_COLOR,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        styles.text,
-                        {
-                          color: primaryColor,
-                          backgroundColor: backgroundColor,
-                        },
-                      ]}
-                    >
-                      Find a meetup
-                    </Text>
-                  </GlobalPressable>
-                </BouncyEntrance>
-              </View>
-              <View style={[styles.sectionContainer]}>
-                <BouncyEntrance
-                  delay={staggeredDelays[1]}
-                  style={{ width: "100%" }}
-                >
-                  <GlobalPressable
-                    onPress={handleNavToMoments}
-         style={[
-                      styles.button,
-                      {
-                        padding: BUTTON_PADDING,
-                        backgroundColor: BUTTON_COLOR,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        styles.text,
-                        {
-                          color: primaryColor,
-                          backgroundColor: backgroundColor,
-                        },
-                      ]}
-                    >
-                      Share my ideas
-                    </Text>
-                  </GlobalPressable>
-                </BouncyEntrance>
-              </View>
-              <View style={styles.sectionContainer}>
-                <BouncyEntrance
-                  delay={staggeredDelays[2]}
-                  style={{ width: "100%" }}
-                >
-                  <GlobalPressable
-                    onPress={handleNavToFinalize}
-                    style={[
-                      styles.button,
-                      {
-                        padding: BUTTON_PADDING,
-                        backgroundColor: BUTTON_COLOR,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        styles.text,
-                        {
-                          color: primaryColor,
-                          backgroundColor: backgroundColor,
-                        },
-                      ]}
-                    >
-                      Save hello
-                    </Text>
-                  </GlobalPressable>
-                </BouncyEntrance>
-              </View>
-
-
-                            <View style={styles.sectionContainer}>
-                <BouncyEntrance
-                  delay={staggeredDelays[2]}
-                  style={{ width: "100%" }}
-                >
-                  <GlobalPressable
-                    onPress={handleNavToSpiners}
-                    style={[
-                      styles.button,
-                      {
-                        padding: BUTTON_PADDING,
-                        backgroundColor: BUTTON_COLOR,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        styles.text,
-                        {
-                          color: primaryColor,
-                          backgroundColor: backgroundColor,
-                        },
-                      ]}
-                    >
-                      Spinner gallery
-                    </Text>
-                  </GlobalPressable>
+                <BouncyEntrance delay={staggeredDelays[0]} style={{ width: "100%" }}>
+                  <OptionButton {...sharedButtonProps} onPress={handleNavToLocationSearch} label="Find a meetup" />
                 </BouncyEntrance>
               </View>
 
               <View style={styles.sectionContainer}>
-                <BouncyEntrance
-                  delay={staggeredDelays[3]}
-                  style={{ width: "100%" }}
-                >
-                  <GlobalPressable
+                <BouncyEntrance delay={staggeredDelays[1]} style={{ width: "100%" }}>
+                  <OptionButton {...sharedButtonProps} onPress={handleNavToMoments} label="Share my ideas" />
+                </BouncyEntrance>
+              </View>
+
+              <View style={styles.sectionContainer}>
+                <BouncyEntrance delay={staggeredDelays[2]} style={{ width: "100%" }}>
+                  <OptionButton {...sharedButtonProps} onPress={handleNavToFinalize} label="Save hello" />
+                </BouncyEntrance>
+              </View>
+
+              <View style={styles.sectionContainer}>
+                <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
+                  <OptionButton {...sharedButtonProps} onPress={handleNavToSpinners} label="Spinner gallery" />
+                </BouncyEntrance>
+              </View>
+
+              <View style={styles.sectionContainer}>
+                <BouncyEntrance delay={staggeredDelays[4]} style={{ width: "100%" }}>
+                  <OptionButton
+                    {...sharedButtonProps}
                     onPress={closeModal}
-                    style={[
-                      styles.button,
-                      {
-                        padding: BUTTON_PADDING,
-
-                        backgroundColor: manualGradientColors.darkColor,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        subWelcomeTextStyle,
-                        styles.text,
-                        {
-                          color: primaryColor,
-                          backgroundColor: backgroundColor,
-                        },
-                      ]}
-                    >
-                      Close
-                    </Text>
-                  </GlobalPressable>
+                    label="Close"
+                    buttonColor={manualGradientColors.darkColor}
+                  />
                 </BouncyEntrance>
               </View>
             </>
           )}
         </View>
       }
-      onClose={closeModal}
     />
   );
 };
@@ -248,19 +114,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     flexDirection: "row",
     width: "100%",
-
     flexWrap: "wrap",
-  },
-  button: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "center",
-    height: "auto",
-    borderRadius: 10,
-  },
-  text: {
-    borderRadius: 6,
-    padding: 10,
   },
 });
 

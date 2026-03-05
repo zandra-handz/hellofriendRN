@@ -22,6 +22,7 @@ const DotsPositionLayer = ({
    onCategoryPress,
   // onCategoryLongPress,
   onCenterPress,
+  onCenterSinglePress,
   totalJS, 
   data,
   radius = 40,
@@ -236,6 +237,7 @@ const leafPositionsCombined = useDerivedValue(() => {
             onCategoryPress={onCategoryPress}
           // onCategoryLongPress={onCategoryLongPress}
           onCenterPress={onCenterPress}
+          onCenterSinglePress={onCenterSinglePress}
                 handleToggleColoredDots={handleToggleColoredDots}
       
       

@@ -131,6 +131,8 @@ const ScreenNewAccount = () => {
     let result;
 
     if (password !== verifyPassword) {
+      console.log('passwords do not match')
+    
       return;
     }
     console.log("signing up new user");

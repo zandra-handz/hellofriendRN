@@ -6,6 +6,11 @@ import AppModal from "../alerts/AppModal";
 import DeleteFriend from "../friends/DeleteFriend";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import useUpdateFriend from "@/src/hooks/useUpdateFriend";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import OptionContainer from "./OptionContainer";
+import manualGradientColors from "@/app/styles/StaticColors";
+import BouncyEntrance from "./BouncyEntrance";
+import OptionInputEdit from "./OptionInputEdit";
 
 interface Props {
   isVisible: boolean;
@@ -22,7 +27,9 @@ interface Props {
   friendDarkColor: string;
 }
 
-const phoneRegex = /^\+?1?\d{9,15}$/; // matches backend
+const phoneRegex = /^\+?1?\d{9,15}$/;
+
+const delays = [0, 60, 120];
 
 const FriendSettingsModal: React.FC<Props> = ({
   userId,
@@ -72,7 +79,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   ];
 
   const validatePhone = (value: string): string | null => {
-    if (!value) return null; // empty is allowed (nullable on backend)
+    if (!value) return null;
     if (!phoneRegex.test(value)) return "Format: +123456789 (9-15 digits)";
     return null;
   };
@@ -140,70 +147,93 @@ const FriendSettingsModal: React.FC<Props> = ({
       useCloseButton={true}
       questionText={friendName}
     >
-      {/* <View style={styles.container}> */}
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          <View style={styles.innerContainer}>
-   
-            <View style={styles.sliderContainer}>
-              <ValueSlider
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <View style={styles.innerContainer}>
+          <BouncyEntrance delay={delays[0]} style={{ width: "100%" }}>
+            <View style={styles.sectionContainer}>
+              <OptionContainer
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
                 label="Effort"
-                value={pendingEffort}
-                onValueChange={setPendingEffort}
-                labelColor={textColor}
-                barColor={friendLightColor}
-                pointColor={friendDarkColor}
-                trackColor="transparent"
-                minValue={1}
-                maxValue={5}
-                step={1}
-                valueLabels={effortMessages}
-              />
+                primaryColor={backgroundColor}
+                textStyle={AppFontStyles.subWelcomeText}
+              >
+                <ValueSlider
+                  label="Effort"
+                  value={pendingEffort}
+                  onValueChange={setPendingEffort}
+                  labelColor={textColor}
+                  barColor={friendLightColor}
+                  pointColor={friendDarkColor}
+                  trackColor="transparent"
+                  minValue={1}
+                  maxValue={5}
+                  step={1}
+                  valueLabels={effortMessages}
+                  textStyle={AppFontStyles.subWelcomeText}
+                />
+              </OptionContainer>
             </View>
-            <View style={styles.sliderContainer}>
-              <ValueSlider
+          </BouncyEntrance>
+
+          <BouncyEntrance delay={delays[1]} style={{ width: "100%" }}>
+            <View style={styles.sectionContainer}>
+              <OptionContainer
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
                 label="Priority"
-                value={pendingPriority}
-                onValueChange={setPendingPriority}
-                labelColor={textColor}
-                barColor={friendLightColor}
-                pointColor={friendDarkColor}
-                trackColor="transparent"
-                minValue={1}
-                maxValue={3}
-                invert={true}
-                step={1}
-                valueLabels={priorityMessages}
-              />
+                primaryColor={backgroundColor}
+                textStyle={AppFontStyles.subWelcomeText}
+              >
+                <ValueSlider
+                  label="Priority"
+                  value={pendingPriority}
+                  onValueChange={setPendingPriority}
+                  labelColor={textColor}
+                  barColor={friendLightColor}
+                  pointColor={friendDarkColor}
+                  trackColor="transparent"
+                  minValue={1}
+                  maxValue={3}
+                  invert={true}
+                  step={1}
+                  valueLabels={priorityMessages}
+                  textStyle={AppFontStyles.subWelcomeText}
+                />
+              </OptionContainer>
             </View>
-                     <View style={styles.sliderContainer}>
-              <SingleFieldEdit
+          </BouncyEntrance>
+
+          <BouncyEntrance delay={delays[2]} style={{ width: "100%" }}>
+            <View style={styles.sectionContainer}>
+              <OptionInputEdit
                 label="Phone"
                 value={pendingPhone}
                 onValueChange={setPendingPhone}
-                labelColor={textColor}
-                borderBottomColor={friendLightColor}
+                primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+                textStyle={AppFontStyles.subWelcomeText}
                 keyboardType="phone-pad"
                 placeholder="+123456789"
                 validate={validatePhone}
               />
             </View>
-          </View>
-        </ScrollView>
-        <DeleteFriend
-          userId={userId}
-          friendId={friendId}
-          friendName={friendName}
-          handleDeselectFriend={handleDeselectFriend}
-        />
-      {/* </View> */}
+          </BouncyEntrance>
+        </View>
+      </ScrollView>
+
+      <DeleteFriend
+        userId={userId}
+        friendId={friendId}
+        friendName={friendName}
+        handleDeselectFriend={handleDeselectFriend}
+      />
     </AppModal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   scrollViewContainer: {
     marginVertical: 6,
     flexDirection: "row",
@@ -213,11 +243,9 @@ const styles = StyleSheet.create({
   innerContainer: {
     width: "100%",
   },
-  sliderContainer: {
-    borderRadius: 20,
-    padding: 0,
+  sectionContainer: {
     marginVertical: 6,
-    height: 100,
+    width: "100%",
   },
 });
 

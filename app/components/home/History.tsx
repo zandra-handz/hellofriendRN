@@ -1,25 +1,35 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React from "react"; 
+import React from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
-import useImages from "@/src/hooks/ImageCalls/useImages";
-import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions"; 
 import useFriendDash from "@/src/hooks/useFriendDash";
- 
+
+const SHADOW_COLOR = "rgba(0,0,0,0.95)";
+const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
+const OUTLINE_R = 1;
 
 type Props = {
   userId: number;
-  friendId: number; 
+  friendId: number;
   primaryColor: string;
-  primaryOverlayColor: string; 
+  primaryOverlayColor: string;
 };
 
+const OutlinedText = ({ text, color, style }: { text: string; color: string; style: any }) => (
+  <View style={styles.outlineContainer}>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", left: -OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", left: OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", top: -OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", top: OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: SHADOW_COLOR, position: "absolute", top: 3 }]}>{text}</Text>
+    <Text style={[style, { color }]}>{text}</Text>
+  </View>
+);
+
 const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
- 
- 
-  const {   navigateToHistory } = useAppNavigations();
-    const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
- 
+  const { navigateToHistory } = useAppNavigations();
+  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
+
   return (
     <>
       {friendId && (
@@ -27,7 +37,7 @@ const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props)
           style={[
             styles.outerContainer,
             {
-              backgroundColor: loadingDash ? "transparent" : primaryOverlayColor, // dynamic
+              backgroundColor: loadingDash ? "transparent" : primaryOverlayColor,
             },
           ]}
         >
@@ -39,23 +49,20 @@ const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props)
                   onPress={navigateToHistory}
                   style={styles.row}
                 >
-                  <SvgIcon
-                    name="pie_chart"
-                    size={20}
-                    color={primaryColor} // dynamic
-                    style={styles.icon}
+                  <View style={styles.iconShadow}>
+                    <SvgIcon
+                      name="pie_chart"
+                      size={20}
+                      color={primaryColor}
+                      style={styles.icon}
+                    />
+                  </View>
+                  <OutlinedText
+                    text="History"
+                    color={primaryColor}
+                    style={[styles.titleText, { color: primaryColor }]}
                   />
-                  <Text
-                    style={[
-                      styles.titleText,
-                      { color: primaryColor }, // dynamic
-                    ]}
-                  >
-                    History  
-                  </Text>
                 </Pressable>
-
-         
               </View>
             )}
           </View>
@@ -85,6 +92,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+    alignItems: "center",
   },
   rowSpaceBetween: {
     flexDirection: "row",
@@ -94,11 +102,22 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: 0,
   },
+  iconShadow: {
+    shadowColor: SHADOW_COLOR,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.95,
+    shadowRadius: 1,
+    elevation: 4,
+  },
+  outlineContainer: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   titleText: {
-    marginLeft: 15, 
+    marginLeft: 15,
     fontSize: 13,
-    fontWeight: 'bold',
-    // fontWeight: "bold",
+    fontWeight: "bold",
   },
   rightButtonGroup: {
     flexDirection: "row",

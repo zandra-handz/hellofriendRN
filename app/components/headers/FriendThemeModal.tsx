@@ -1,5 +1,5 @@
 // import React, { useState } from "react";
-// import { View, ScrollView, StyleSheet } from "react-native"; 
+// import { View, ScrollView, StyleSheet } from "react-native";
 // import FriendThemeEditor from "../buttons/friends/FriendThemeEditor";
 // // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 //  import AppModal from "../alerts/AppModal";
@@ -37,13 +37,11 @@
 //   const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
 //   const friendList = friendListAndUpcoming?.friends;
 
-  
 //     const [flashMessage, setFlashMessage] = useState<null | {
 //       text: string;
 //       error: boolean;
 //       duration: number;
 //     }>(null);
-  
 
 //   return (
 //     <AppModalWithToast
@@ -51,7 +49,7 @@
 //       backgroundColor={backgroundColor}
 //       isFullscreen={false}
 //       modalIsTransparent={false}
-//       isVisible={isVisible} 
+//       isVisible={isVisible}
 //       useCloseButton={true}
 //       questionText={friendName}
 //        onClose={closeModal}
@@ -60,7 +58,7 @@
 //     >
 //         <View style={{ flex: 1 }}>
 //             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          
+
 //               <FriendThemeEditor
 //                 primaryColor={textColor}
 //                 backgroundColor={backgroundColor}
@@ -73,10 +71,10 @@
 //                 manualThemeOn={friendDash?.friend_faves?.use_friend_color_theme}
 //                   setFlashMessage={setFlashMessage}
 //               />
-           
+
 //           </ScrollView>
 //         </View>
-    
+
 //       </AppModalWithToast>
 //   );
 // };
@@ -87,7 +85,7 @@
 //     flexDirection: "column",
 //     justifyContent: "flex-start",
 //     textAlign: "left",
-//   }, 
+//   },
 //    scrollViewContainer: {
 //     marginVertical: 6,
 //     flexDirection: "row",
@@ -113,12 +111,10 @@
 
 // export default FriendThemeModal;
 
-
-
-
 import React, { useMemo, useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 
+import OptionToggle from "./OptionToggle";
 import AppModalWithToast from "../alerts/AppModalWithToast";
 import BouncyEntrance from "../headers/BouncyEntrance";
 
@@ -134,6 +130,9 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 
 import ColorPalettes from "@/src/forms/ColorPalettes";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+ 
 
 import {
   FlashMessageData,
@@ -243,8 +242,7 @@ const FriendThemeModal: React.FC<Props> = ({
   }, [enableManualMutation.isSuccess]);
 
   useEffect(() => {
-    if (enableManualMutation.isError)
-      setFlashMessage(friendFavesManualOnError);
+    if (enableManualMutation.isError) setFlashMessage(friendFavesManualOnError);
   }, [enableManualMutation.isError]);
 
   const toggleThemeEdit = () => setShowEdit((p) => !p);
@@ -305,7 +303,9 @@ const FriendThemeModal: React.FC<Props> = ({
   // 2: Editor panel (only if manualTheme && showEdit && mountEditor)
   const speed = 20;
   const totalItems =
-    1 + (manualTheme ? 1 : 0) + (manualTheme && showEdit && mountEditor ? 1 : 0);
+    1 +
+    (manualTheme ? 1 : 0) +
+    (manualTheme && showEdit && mountEditor ? 1 : 0);
 
   const delays = useMemo(
     () => Array.from({ length: totalItems }, (_, idx) => idx * speed),
@@ -332,9 +332,11 @@ const FriendThemeModal: React.FC<Props> = ({
           {/* 1) Manual theme toggle */}
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={delays[i++]} style={{ width: "100%" }}>
-              <Toggle
+              <OptionToggle
                 primaryColor={textColor}
                 backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+                textStyle={AppFontStyles.subWelcomeText}
                 label="Manual theme"
                 icon={<SvgIcon name="palette" size={20} color={textColor} />}
                 value={manualTheme}
@@ -352,7 +354,10 @@ const FriendThemeModal: React.FC<Props> = ({
                   <View style={styles.previewRight}>
                     <View style={styles.previewSpacer} />
                     <View style={styles.previewPillWrap}>
-                      <View style={styles.previewPillTouch} onTouchEnd={toggleThemeEdit}>
+                      <View
+                        style={styles.previewPillTouch}
+                        onTouchEnd={toggleThemeEdit}
+                      >
                         <View
                           style={[
                             styles.previewHalf,

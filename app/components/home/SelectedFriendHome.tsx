@@ -54,6 +54,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   handleToggleColoredDots,
   coloredDotsModeValue,
   handleMomentScreenNoScroll,
+  handleNavigateToGecko,
 }) => {
   // console.log("selected friend home rerendered");
 
@@ -255,7 +256,8 @@ useEffect(() => {
                     skiaFontSmall={skiaFontSmall}
                     handleToggleColoredDots={handleToggleColoredDots}
                     coloredDotsModeValue={coloredDotsModeValue}
-                    handleMomentScreenNoScroll={handleMomentScreenNoScroll}
+                    handleMomentScreenNoScroll={handleMomentScreenNoScroll} // center double press
+                    handleNavigateToGecko={handleNavigateToGecko} // new center single press
                   />
                 </View>
 

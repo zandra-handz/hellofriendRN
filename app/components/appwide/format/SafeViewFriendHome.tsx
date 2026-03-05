@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactElement, useMemo } from "react";
+import React, { useEffect, ReactElement, useMemo } from "react";
 import { DimensionValue, ViewStyle, StyleSheet, Image } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,18 +6,24 @@ import GradientBackground from "../display/GradientBackground";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  useDerivedValue,
   withTiming,
+  SharedValue,
 } from "react-native-reanimated";
 const LeafImage = require("@/app/styles/pngs/leaf.png");
- 
 
 type Props = {
   children: ReactElement;
   style?: ViewStyle;
-  useOverlay: boolean;
-  primaryBackground: boolean;
-  backgroundOverlayHeight: DimensionValue;
+  useOverlay?: boolean;
+  primaryBackground?: boolean;
+  backgroundOverlayHeight?: DimensionValue;
   header?: React.ComponentType;
+  reverseOverlayValue?: SharedValue<boolean>;
+  friendColorLight?: string;
+  friendColorDark?: string;
+  backgroundOverlayColor?: string;
+  friendId?: number;
 };
 
 const SafeViewFriendHome = ({
@@ -26,23 +32,23 @@ const SafeViewFriendHome = ({
   friendColorDark = "red",
   backgroundOverlayColor,
   friendId,
- 
+  reverseOverlayValue,
 }: Props) => {
   const opacityValue = useSharedValue(0);
-
-  // console.log('SAFE VIEW RERENDERED');
-  //rerenders twice when returning to home screen from selected friend
-  //haven't debugged yet
 
   useEffect(() => {
     if (friendId) {
       opacityValue.value = withTiming(0.46, { duration: 800 });
     }
-    // could use this for deselect if there's any time left on this screen in between
-    // else {
-    //   opacityValue.value = withTiming(1, { duration: 300 });
-    // }
   }, [friendId]);
+
+  useDerivedValue(() => {
+    if (reverseOverlayValue?.value) {
+      opacityValue.value = withTiming(0, { duration: 600 });
+    } else if (friendId) {
+      opacityValue.value = withTiming(0.46, { duration: 800 });
+    }
+  });
 
   const fadeStyle = useAnimatedStyle(() => ({
     opacity: opacityValue.value,
@@ -51,7 +57,6 @@ const SafeViewFriendHome = ({
   const useFriendColors = useMemo(() => friendId, [friendId]);
 
   return (
-    // <>
     <GradientBackground
       useFriendColors={useFriendColors}
       additionalStyles={{ flex: 1 }}
@@ -68,25 +73,18 @@ const SafeViewFriendHome = ({
                 backgroundColor: backgroundOverlayColor,
               },
             ]}
-          ></Animated.View>
+          />
 
-
-        <Image
-          source={LeafImage}
-          style={styles.leafContainer}
-          tintColor={friendColorLight}
-        />
-
-
-
-
-
+          <Image
+            source={LeafImage}
+            style={styles.leafContainer}
+            tintColor={friendColorLight}
+          />
 
           {children}
         </>
       </SafeAreaView>
     </GradientBackground>
-    // </>
   );
 };
 
@@ -97,19 +95,17 @@ const styles = StyleSheet.create({
   solidOverlayContainer: {
     position: "absolute",
     zIndex: 0,
-
     width: "100%",
     top: 0,
     bottom: 0,
     right: 0,
     left: 0,
   },
-    leafContainer: { 
+  leafContainer: {
     position: "absolute",
-    top: -654, // 740
+    top: -654,
     left: -410,
     opacity: 0.8,
-
     width: 1100,
     height: 1100,
     resizeMode: "contain",

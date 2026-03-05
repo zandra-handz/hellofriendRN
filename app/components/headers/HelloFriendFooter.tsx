@@ -86,7 +86,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
     () => (
       <FooterButtonIconVersion
         primaryColor={primaryColor}
-        label="Settings"
+        label="Account"
         icon={
           <SvgIcon
             name={"settings_suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty

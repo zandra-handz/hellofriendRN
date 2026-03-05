@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
  
 import React from "react"; 
  
@@ -13,8 +13,7 @@ const AuthScreenHeader = ({ label , color='red' }: Props) => {
   
     <Text
       style={{
-        color: color,
-       // backgroundColor: 'orange',
+        color: color, 
         fontFamily: "Poppins-Bold",
         fontSize:  26,
         lineHeight:  50, 
@@ -25,5 +24,7 @@ const AuthScreenHeader = ({ label , color='red' }: Props) => {
     </Text>
   );
 };
+
+
 
 export default AuthScreenHeader;

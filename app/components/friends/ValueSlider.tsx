@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { View, Text, StyleSheet, StyleProp, ViewStyle, TextStyle } from "react-native";
 import React from "react";
 import Slider from "@react-native-community/slider";
 
@@ -16,6 +16,7 @@ type Props = {
   invert?: boolean;
   valueLabels?: string[];
   style?: StyleProp<ViewStyle>;
+  textStyle?: TextStyle;
 };
 
 const invertValue = (value: number, min: number, max: number): number => {
@@ -40,6 +41,7 @@ const ValueSlider = ({
   invert = false,
   valueLabels,
   style,
+  textStyle,
 }: Props) => {
   const displayValue = invert ? invertValue(value, minValue, maxValue) : value;
 
@@ -63,7 +65,7 @@ const ValueSlider = ({
     <View style={[styles.outerContainer, style]}>
       <View style={styles.row}>
         <View style={styles.labelColumn}>
-          <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
+          <Text style={[styles.label, textStyle, { color: labelColor }]}>{label}</Text>
           {activeLabel && (
             <Text style={[styles.activeLabel, { color: labelColor }]}>
               {activeLabel}

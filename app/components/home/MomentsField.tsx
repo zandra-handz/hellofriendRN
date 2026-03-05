@@ -31,7 +31,8 @@ const MomentsField = ({
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
-  handleMomentScreenNoScroll
+  handleMomentScreenNoScroll,
+  handleNavigateToGecko
 }: Props) => { 
 
   const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
@@ -171,6 +172,7 @@ const MomentsField = ({
            
                 onCategoryPress={handleMomentViewScrollTo}
                 onCenterPress={handleMomentScreenNoScroll}
+                onCenterSinglePress={handleNavigateToGecko}
                 totalJS={capsuleListCount}
                 radius={CHART_RADIUS}
                 strokeWidth={CHART_STROKE_WIDTH}

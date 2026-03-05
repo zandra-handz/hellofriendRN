@@ -1,35 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Keyboard,
-} from "react-native";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { View, StyleSheet, Keyboard } from "react-native";
+import { useSharedValue, withTiming } from "react-native-reanimated";
 
-import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
-import { useNavigation } from "@react-navigation/native";
-import AuthScreenTopTray from "@/app/components/user/AuthScreenTopTray";
+import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
 import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
+import AuthScreenTray from "./AuthScreenTray";
+import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
+import OptionInput from "@/app/components/headers/OptionInput";
+import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
+
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import AuthInputWrapper from "@/app/components/user/AuthInputWrapper";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-// import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
 import {
-  sendEmail,
   sendResetCodeEmail,
   verifyResetCodeEmail,
   resetPassword,
 } from "@/src/calls/api";
 
-import manualGradientColors  from "@/app/styles/StaticColors";
-// import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
-import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
-const ScreenRecoverCredentials = () => { 
+const ScreenRecoverCredentials = () => {
   const { lightDarkTheme } = useLDTheme();
-  const { navigateToAuth } = useAppNavigations();
+  const { navigateToAuth, navigateToWelcome } = useAppNavigations();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
@@ -37,290 +33,204 @@ const ScreenRecoverCredentials = () => {
   const [loading, setLoading] = useState(false);
   const [isRequestCodeScreen, setIsRequestCodeScreen] = useState(true);
   const [isValidateCodeScreen, setIsValidateCodeScreen] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const resetCodeRef = useRef(null);
   const newPasswordInputRef = useRef(null);
   const emailInputRef = useRef(null);
-  const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
-  const [isResetCodeFocused, setIsResetCodeFocused] = useState(false);
-  const navigation = useNavigation();
 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const BOUNCE_SPEED = 60;
+  const textColor = manualGradientColors.lightColor;
+  const darkColor = manualGradientColors.homeDarkColor;
+  const inputTextStyle = AppFontStyles.subWelcomeText;
+
+  // backdrop starts visible
+  const ActivateBackdrop = useSharedValue(1);
+
+  const staggeredDelays = useMemo(
+    () => Array.from({ length: 4 }, (_, i) => i * BOUNCE_SPEED),
+    [],
+  );
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
+    const show = Keyboard.addListener("keyboardDidShow", () => setIsKeyboardVisible(true));
+    const hide = Keyboard.addListener("keyboardDidHide", () => setIsKeyboardVisible(false));
+    return () => { show.remove(); hide.remove(); };
   }, []);
 
-  const labelText =
-    !isRequestCodeScreen && !isValidateCodeScreen
-      ? "Reset code validated! Enter new password: "
-      : isRequestCodeScreen
-        ? "Enter email associated with account: "
-        : "If an account with that email is found, you will be emailed a reset code shortly!";
+  const labelText = !isRequestCodeScreen && !isValidateCodeScreen
+    ? "Reset code validated! Enter new password:"
+    : isRequestCodeScreen
+      ? "Enter email associated with account:"
+      : "If an account with that email is found, you will be emailed a reset code shortly!";
 
   const handleSubmit = async () => {
-    //need to do something to prevent double calling probably?
     if (!isRequestCodeScreen && !isValidateCodeScreen) {
       try {
-        // showMessage(true, null, `Resetting password for ${resetCode}`);
-
         await resetPassword({ email, resetCode, newPassword });
-
-        // showMessage(false, null, "Password reset successfully! Please log in.");
-
-        handleNavigateBackToAuthScreen();
+        navigateToAuth({});
       } catch (error) {
         console.error(error);
-        // showMessage(true, null, `Error! Couldn't reset password.`);
       }
     }
     if (isRequestCodeScreen) {
       try {
-        // showMessage(true, null, "Sending email...");
-//sendEmail(email);
-       sendResetCodeEmail(email);
+        sendResetCodeEmail(email);
         setIsRequestCodeScreen(false);
         setIsValidateCodeScreen(true);
       } catch (error) {
         console.error(error);
-        // showMessage(true, null, `Error! Can't send email.`);
       }
     }
     setLoading(false);
-
     if (isValidateCodeScreen) {
       try {
-        // showMessage(
-        //   true,
-        //   null,
-        //   `Checking reset code... ${resetCode}, ${email}`
-        // );
         await verifyResetCodeEmail({ email, resetCode });
-
-        // showMessage(false, null, "Reset code verified successfully!");
         setIsValidateCodeScreen(false);
       } catch (error) {
         console.error(error);
-        // showMessage(true, null, `Error! Couldn't verify reset code.`);
       }
     }
   };
 
-  const handleNavigateBackToAuthScreen = () => {
-    navigation.goBack();
+  const activeInputProps = {
+    textStyle: inputTextStyle,
+    buttonPadding: 4,
+    primaryColor: textColor,
+    backgroundColor: lightDarkTheme.primaryBackground,
+    buttonColor: textColor,
   };
 
   return (
-    <SafeViewAppDefault 
-      style={{
-        flex: 1,
-        //paddingTop: 40, // TEMPORARY
-      }}
-    >
-      {loading && (
-        <View
-          style={{
-            // backgroundColor: "orange",
-            zIndex: 100000,
-            elevation: 100000,
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            flex: 1,
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-          }}
-        >
-          {/* <LoadingPage
-            loading={true}
-            spinnerType="circle"
-            spinnerSize={40}
-            color={"yellow"}
-          /> */}
+    <SafeViewAppDefault customStatusIsDarkMode={true} style={styles.container}>
+      <StaticBackdrop
+        color={lightDarkTheme.primaryBackground}
+        zIndex={0}
+        isVisibleValue={ActivateBackdrop}
+        startsVisible={true}
+      />
+
+      <View style={styles.outerContainer}>
+        <BouncyEntrance delay={staggeredDelays[0]} style={{ width: "100%" }}>
+          <AuthScreenTray
+            onBackPress={navigateToAuth}
+            onHomePress={navigateToWelcome}
+            rightLabel={null}
+            onRightPress={null}
+            iconColor={manualGradientColors.lightColor}
+          />
+        </BouncyEntrance>
+
+        <BouncyEntrance delay={staggeredDelays[1]} style={{ width: "100%" }}>
+          <AuthScreenHeader color={textColor} label={"Recover password"} />
+        </BouncyEntrance>
+
+        <BouncyEntrance delay={staggeredDelays[2]} style={{ width: "100%" }}>
+          <AuthScreenHeader color={textColor} overrideFontSize={14} label={labelText} />
+        </BouncyEntrance>
+
+        <View style={styles.inputsContainer}>
+          {isRequestCodeScreen && (
+            <View style={styles.inputRow}>
+              <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
+                <OptionInput
+                  {...activeInputProps}
+                  inputRef={emailInputRef}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Email"
+                  inputMode="email"
+                  keyboardType="email-address"
+                  autoFocus={true}
+                  enterKeyHint="next"
+                  onSubmitEditing={handleSubmit}
+                  onFocus={() => setFocusedField("email")}
+                  onBlur={() => setFocusedField(null)}
+                  accessibilityLabel="Email input"
+                  accessibilityHint="Enter your email address"
+                />
+              </BouncyEntrance>
+            </View>
+          )}
+
+          {isValidateCodeScreen && (
+            <View style={styles.inputRow}>
+              <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
+                <OptionInput
+                  {...activeInputProps}
+                  inputRef={resetCodeRef}
+                  value={resetCode}
+                  onChangeText={setResetCode}
+                  placeholder="Reset code"
+                  autoFocus={true}
+                  enterKeyHint="next"
+                  onSubmitEditing={handleSubmit}
+                  onFocus={() => setFocusedField("resetCode")}
+                  onBlur={() => setFocusedField(null)}
+                  accessibilityLabel="Reset code input"
+                  accessibilityHint="Enter the reset code emailed to you"
+                />
+              </BouncyEntrance>
+            </View>
+          )}
+
+          {!isRequestCodeScreen && !isValidateCodeScreen && (
+            <View style={styles.inputRow}>
+              <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
+                <OptionInput
+                  {...activeInputProps}
+                  inputRef={newPasswordInputRef}
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  placeholder="New password"
+                  secureTextEntry={true}
+                  autoFocus={true}
+                  enterKeyHint="enter"
+                  onSubmitEditing={handleSubmit}
+                  onFocus={() => setFocusedField("newPassword")}
+                  onBlur={() => setFocusedField(null)}
+                  accessibilityLabel="New password input"
+                  accessibilityHint="Enter your new password"
+                />
+              </BouncyEntrance>
+            </View>
+          )}
         </View>
-      )}
+      </View>
 
-      {!loading && (
-        <View style={{ paddingHorizontal: 10 }}>
-          <AuthScreenTopTray onBackPress={navigateToAuth} />
-          <AuthScreenHeader label={"Recover password"} />
-
-          <AuthScreenHeader overrideFontSize={14} label={labelText} />
-
-          <View
-            style={[styles.inputsContainer]}
-            accessible={true}
-            accessibilityLabel="Form container"
-          >
-            {isRequestCodeScreen && (
-              <AuthInputWrapper
-                condition={email}
-                label={"Email"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isEmailFocused && styles.inputFocused,
-                    ]}
-                    placeholder="Email"
-                    autoFocus={true}
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
-                    onSubmitEditing={handleSubmit}
-                    ref={emailInputRef}
-                    onFocus={() => setIsEmailFocused(true)}
-                    onBlur={() => setIsEmailFocused(false)}
-                    accessible={true}
-                    accessibilityLabel="Email input"
-                    accessibilityHint="Enter your email address"
-                    importantForAccessibility="yes"
-                  />
-                }
-              />
-            )}
-
-            {isValidateCodeScreen && (
-              <AuthInputWrapper
-                condition={resetCode}
-                label={"Reset code"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isResetCodeFocused && styles.inputFocused,
-                    ]}
-                    placeholder="Reset code"
-                    onChangeText={(text) => setResetCode(text)}
-                    value={resetCode}
-                    onSubmitEditing={handleSubmit}
-                    ref={resetCodeRef}
-                    onFocus={() => setIsResetCodeFocused(true)}
-                    onBlur={() => setIsResetCodeFocused(false)}
-                    accessible={true}
-                    accessibilityLabel="Reset code input"
-                    accessibilityHint="Enter the reset code emailed to you"
-                    importantForAccessibility="yes"
-                  />
-                }
-              />
-            )}
-
-            {!isRequestCodeScreen && !isValidateCodeScreen && (
-              <AuthInputWrapper
-                condition={resetCode}
-                label={"Reset code"}
-                children={
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isNewPasswordFocused && styles.inputFocused,
-                    ]}
-                    placeholder="New password"
-                    secureTextEntry={true}
-                    onChangeText={(text) => setNewPassword(text)}
-                    value={newPassword}
-                    onSubmitEditing={handleSubmit}
-                    ref={newPasswordInputRef}
-                    onFocus={() => setIsNewPasswordFocused(true)}
-                    onBlur={() => setIsNewPasswordFocused(false)}
-                    accessible={true}
-                    accessibilityLabel="New password input"
-                    accessibilityHint="Enter new password"
-                    importantForAccessibility="yes"
-                  />
-                }
-              />
-            )}
-          </View>
-
- 
-          <View
-            style={{
-              width: "100%",
-              bottom: 0,
- 
-            }}
-          >
-            <AuthBottomButton
-              onPress={handleSubmit}
-              title={isRequestCodeScreen ? "Next" : "Next"}
-              fontColor={lightDarkTheme.primaryText}
-              accessible={true}
-              // accessibilityLabel={
-              //   isRequestCodeScreen ? "Sign in button" : "Create account button"
-              // }
-              // accessibilityHint="Press to sign in or create an account"
-            />
-          </View>
-        </View>
-      )}
+      <View style={styles.bottomButtonWrapper}>
+        <AuthBottomButton
+          onPress={handleSubmit}
+          title="Next"
+          borderRadius={10}
+          backgroundColor={darkColor}
+          labelColor={textColor}
+        />
+      </View>
     </SafeViewAppDefault>
   );
 };
 
 const styles = StyleSheet.create({
-  form: {
-    gap: 20,
-    height: 200,
-    width: "100%",
-    fontFamily: "Poppins-Regular",
-    bottom: 10,
-    paddingHorizontal: "4%",
-    position: "absolute",
-    justifyContent: "flex-end",
+  container: { flex: 1 },
+  outerContainer: {
+    paddingHorizontal: 10,
     flex: 1,
   },
   inputsContainer: {
-    height: 300,
     width: "100%",
-    fontFamily: "Poppins-Regular",
-
     justifyContent: "flex-start",
-    //flex: 1,
+    flex: 1,
   },
-  input: {
-    fontFamily: "Poppins-Regular",
-    placeholderTextColor: "black",
-    height: "auto",
-    borderWidth: 2.6,
-    padding: 10,
-    paddingTop: 10,
-    borderRadius: 10,
-    alignContent: "center",
-    justifyContent: "center",
-    borderColor: "black",
-    fontSize: 15,
+  inputRow: {
+    width: "100%",
+    marginVertical: 6,
   },
-  inputFocused: {
-    fontFamily: "Poppins-Regular",
-    borderWidth: 3,
-  },
-  inputHeaderText: {
-    color: "black",
-    fontFamily: "Poppins-Bold",
-    fontSize: 16,
-    selfAlign: "center",
-  },
-  inputSubHeaderText: {
-    color: "black",
-    fontFamily: "Poppins-Bold",
-    fontSize: 14,
-    selfAlign: "center",
+  bottomButtonWrapper: {
+    width: "100%",
+    bottom: 0,
+    paddingHorizontal: 4,
   },
 });
 

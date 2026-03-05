@@ -45,7 +45,13 @@ const { lightDarkTheme} = useLDTheme();
         const turnBackdropOnValue = useSharedValue(false);
 
   const handleNavigateToAuth = useCallback(() => {
-    navigateToAuth({  prevScreenBackdrop: false })
+    navigateToAuth({  prevScreenBackdrop: false, createNewAccount: "signin" })
+       turnBackdropOnValue.value = true;
+  },[navigateToAuth]);
+
+
+    const handleNavigateToCreate = useCallback(() => {
+    navigateToAuth({  prevScreenBackdrop: false, createNewAccount: "create" })
        turnBackdropOnValue.value = true;
   },[navigateToAuth]);
 
@@ -147,7 +153,7 @@ const { lightDarkTheme} = useLDTheme();
                       color: manualGradientColors.homeDarkColor,
                     },
                   ]}
-                  onPress={navigateToNewAccount}
+                  onPress={handleNavigateToCreate}
                   accessible={true}
                   accessibilityLabel="Toggle button"
                   accessibilityHint="Press to toggle between sign in and create account"

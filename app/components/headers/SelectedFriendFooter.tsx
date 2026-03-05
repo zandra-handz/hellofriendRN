@@ -11,7 +11,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import FriendThemeModal from "./FriendThemeModal";
-import FriendProfileButton from "../buttons/friends/FriendProfileButton";
+ 
 
 import SvgIcon from "@/app/styles/SvgIcons";
 
@@ -25,22 +25,19 @@ import { useQueryClient } from "@tanstack/react-query";
 // import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
   userId,
-
   friendName,
-
   lightDarkTheme,
-
-  dividerStyle,
-  themeColors,
+  dividerStyle, 
   friendLightColor,
   friendDarkColor,
+  handleNavigateToGecko
 }) => {
   const { setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
 
   const friendId = selectedFriend?.id;
   const { friendDash } = useFriendDash({ userId: userId, friendId: friendId });
   const { autoSelectFriend } = useAutoSelector();
-  const { navigateToGecko, navigateToHome } = useAppNavigations();
+  const {  navigateToHome } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId: userId });
   const queryClient = useQueryClient();
 
@@ -105,17 +102,7 @@ const SelectedFriendFooter = ({
     deselectFriend,
     navigateToHome,
   ]);
-
-  // const addCheckToDeselect = useCallback(() => {
-  //   console.log(`addCheckToDeselect`, upNextId, friendId, lockedInNext);
-  //   if (lockedInNext && Number(upNextId) === Number(friendId)) {
-  //     Alert.alert("Hi", "Test", [
-  //       { text: "OK", onPress: () => handleDeselect() },
-  //     ]);
-  //   } else {
-  //     handleDeselect();
-  //   }
-  // }, [lockedInNext, upNextId, friendId, handleDeselect]);
+ 
 
   const RenderDeselectButton = useCallback(
     () => (
@@ -143,7 +130,7 @@ const SelectedFriendFooter = ({
     () => (
       <FooterButtonIconVersion
         primaryColor={primaryColor}
-        label="Settings"
+        label="Account"
         icon={
           <SvgIcon
             name={"settings_suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
@@ -179,15 +166,20 @@ const SelectedFriendFooter = ({
   };
 
   const RenderFriendProfileButton = useCallback(
+ 
+
     () => (
-      <FriendProfileButton
-        userId={userId}
-        friendId={friendId}
-        friendName={friendName}
+      <FooterButtonIconVersion
         primaryColor={primaryColor}
-        friendLightColor={friendLightColor}
-        friendDarkColor={friendDarkColor}
-        onPress={() => handleCenterButtonToggle()}
+        label="Settings"
+        icon={
+          <SvgIcon
+            name={"tune_variant"}
+            size={footerIconSize}
+            color={primaryColor}
+          />
+        }
+        onPress={handleCenterButtonToggle}
       />
     ),
     [friendLightColor, friendDarkColor, primaryColor, friendId, friendName],
@@ -209,7 +201,7 @@ const SelectedFriendFooter = ({
           </View>
         }
         // onPress={() => navigateToGecko({selection: 0})} // can use this too
-        onPress={navigateToGecko}
+        onPress={handleNavigateToGecko}
       />
     ),
     [primaryColor],
@@ -312,7 +304,6 @@ const SelectedFriendFooter = ({
             friendDarkColor={friendDarkColor}
             userId={userId}
             isVisible={colorsModalVisible}
-            themeColors={themeColors}
             friendId={friendId}
             friendName={friendName}
             friendDash={friendDash}

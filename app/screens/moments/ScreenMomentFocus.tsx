@@ -13,7 +13,6 @@ import { useSharedValue, withTiming } from "react-native-reanimated";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import AnimatedReverseBackdrop from "@/app/components/appwide/format/AnimatedReverseBackdrop";
-import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
 const ScreenMomentFocus = () => {
   const route = useRoute();

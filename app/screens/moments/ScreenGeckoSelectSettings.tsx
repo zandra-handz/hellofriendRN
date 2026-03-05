@@ -10,6 +10,7 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
 import AppModal from "@/app/components/alerts/AppModal";
+import OptionButton from "@/app/components/headers/OptionButton";
 import Animated, {
   useAnimatedStyle,
   withSpring,
@@ -72,20 +73,23 @@ const ScreenGeckoSelectSettings = (props: Props) => {
     "Random My Interests",
   ];
 
-const handleNavToGecko = useCallback((index=0) => {
-  // console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
-  const timestamp = Date.now(); // Create timestamp before setTimeout
-  // console.log('timestamp being sent:', timestamp);
-  
-  opacity.value = withTiming(0, { duration: 100 });
-  setTimeout(() => {
-    navigateToGecko({ 
-      selection: index, 
-      autoPick: acceptPawClear, 
-      timestamp: timestamp  // Use the captured timestamp
-    });
-  }, 100);
-}, [selected, acceptPawClear, navigateToGecko, opacity]);
+  const handleNavToGecko = useCallback(
+    (index = 0) => {
+      // console.log(`values in gecko select setting screen: `, selected, acceptPawClear);
+      const timestamp = Date.now(); // Create timestamp before setTimeout
+      // console.log('timestamp being sent:', timestamp);
+
+      opacity.value = withTiming(0, { duration: 100 });
+      setTimeout(() => {
+        navigateToGecko({
+          selection: index,
+          autoPick: acceptPawClear,
+          timestamp: timestamp, // Use the captured timestamp
+        });
+      }, 100);
+    },
+    [selected, acceptPawClear, navigateToGecko, opacity],
+  );
   const handleAccept = () => {
     translateY.value = withSpring(-1000, { damping: 20, stiffness: 90 });
     opacity.value = withTiming(0, { duration: 300 });
@@ -110,7 +114,7 @@ const handleNavToGecko = useCallback((index=0) => {
   const speed = 20;
   const staggeredDelays = useMemo(
     () => Array.from({ length: count }, (_, i) => i * speed),
-    [count, speed]
+    [count, speed],
   );
 
   return (
@@ -131,7 +135,10 @@ const handleNavToGecko = useCallback((index=0) => {
           </View>
           <View style={styles.questionWrapper}>
             <Text
-              style={[styles.cancelAcceptText, { color: lightDarkTheme.primaryText }]}
+              style={[
+                styles.cancelAcceptText,
+                { color: lightDarkTheme.primaryText },
+              ]}
             >
               Currently held moments will be dropped. Continue?
             </Text>
@@ -145,7 +152,11 @@ const handleNavToGecko = useCallback((index=0) => {
                 { backgroundColor: lightDarkTheme.lighterOverlayBackground },
               ]}
             >
-              <SvgIcon name={`close`} size={40} color={lightDarkTheme.primaryText} />
+              <SvgIcon
+                name={`close`}
+                size={40}
+                color={lightDarkTheme.primaryText}
+              />
             </Pressable>
             <Pressable
               onPress={handleAccept}
@@ -154,7 +165,11 @@ const handleNavToGecko = useCallback((index=0) => {
                 { backgroundColor: lightDarkTheme.lighterOverlayBackground },
               ]}
             >
-              <SvgIcon name={`check`} size={40} color={lightDarkTheme.primaryText} />
+              <SvgIcon
+                name={`check`}
+                size={40}
+                color={lightDarkTheme.primaryText}
+              />
             </Pressable>
           </View>
         </Animated.View>
@@ -184,44 +199,43 @@ const handleNavToGecko = useCallback((index=0) => {
 
               return (
                 <View key={index} style={styles.sectionContainer}>
-                  <BouncyEntrance delay={staggeredDelays[index]} style={{ width: "100%" }}>
+                  <BouncyEntrance
+                    delay={staggeredDelays[index]}
+                    style={{ width: "100%" }}
+                  >
                     <View style={{ width: "100%" }}>
-                      <GlobalPressable
+                      <OptionButton
                         onPress={() => {
                           updateSelected(index);
                           handleNavToGecko(index);
                         }}
                         onLongPress={() => setLongPressedIndex(index)}
                         onPressOut={() => setLongPressedIndex(null)}
-                        style={[
-                          styles.button,
-                          { padding: BUTTON_PADDING, backgroundColor: BUTTON_COLOR },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            subWelcomeTextStyle,
-                            styles.text,
-                            {
-                              color: isSelected
-                                ? lightDarkTheme.primaryBackground
-                                : lightDarkTheme.primaryText,
-                              backgroundColor: isSelected
-                                ? lightDarkTheme.lighterOverlayBackground
-                                : lightDarkTheme.primaryBackground,
-                            },
-                          ]}
-                        >
-                          {item}
-                        </Text>
-                      </GlobalPressable>
+                        label={item}
+                        primaryColor={
+                          isSelected
+                            ? lightDarkTheme.primaryBackground
+                            : lightDarkTheme.primaryText
+                        }
+                        backgroundColor={
+                          isSelected
+                            ? lightDarkTheme.lighterOverlayBackground
+                            : lightDarkTheme.primaryBackground
+                        }
+                        buttonColor={BUTTON_COLOR}
+                        textStyle={subWelcomeTextStyle}
+                        buttonPadding={BUTTON_PADDING}
+                      />
 
                       {/* Info box shown on long press */}
                       {isLongPressed && (
                         <View
                           style={[
                             styles.infoBox,
-                            { backgroundColor: lightDarkTheme.lighterOverlayBackground },
+                            {
+                              backgroundColor:
+                                lightDarkTheme.lighterOverlayBackground,
+                            },
                           ]}
                         >
                           <Text
@@ -285,7 +299,7 @@ const styles = StyleSheet.create({
   cancelAcceptText: {
     fontSize: 18,
     lineHeight: 30,
-   // fontWeight: "bold",
+    // fontWeight: "bold",
   },
   acceptButton: {
     borderRadius: 30,

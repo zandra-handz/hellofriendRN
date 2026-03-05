@@ -428,7 +428,7 @@ export const getCurrentUser = async () => {
     // );
 
     const response = await helloFriendApiClient.get("/users/get-current/");
-    console.log("API GET Call getCurrentUser");
+    console.log("API GET Call getCurrentUser", response.data);
     // const end = Date.now(); // log end time
     // console.log(
     //   "\x1b[30m%s\x1b[30m",
@@ -931,6 +931,28 @@ export const updateFriendFavesColorThemeSetting = async ({
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during updateFriendFavesColorThemeSetting");
+  }
+};
+
+
+export const addPoints = async (amount: number, reason: string) => {
+  try {
+    const response = await helloFriendApiClient.post(`/users/points/add/`, {
+      amount,
+      reason,
+    });
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during addPoints");
+  }
+};
+
+export const fetchPointsLedger = async () => {
+  try {
+    const response = await helloFriendApiClient.get(`/users/points/ledger/`);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchPointsLedger");
   }
 };
 

@@ -9,6 +9,8 @@ import { useFont } from "@shopify/react-native-skia";
 // import { Skia } from "@shopify/react-native-skia";
 import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
+
+import LocalSolidSpinner from "./app/components/appwide/spinner/LocalSolidSpinner";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import AutoSelectFriendHandler from "./src/handlers/AutoSelectFriendHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -397,6 +399,8 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
 
   useNotificationsRegistration({ receiveNotifications, expoPushToken });
 
+
+  // MIGHT NEED THIS FOR WHEN REFRESHING TOKEN?
   if (isInitializing) {
     return <PeacefulGradientSpinner isInitializing={isInitializing} />;
   }

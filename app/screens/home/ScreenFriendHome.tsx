@@ -1,12 +1,10 @@
 //import * as Sentry from "@sentry/react-native";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { View, Alert, StyleSheet, Pressable } from "react-native";
-
+import React, { useEffect,  useCallback } from "react";
+ 
 import { useRoute } from "@react-navigation/native";
 
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
+import  {
+  useSharedValue, 
 } from "react-native-reanimated";
 
 // app state
@@ -14,7 +12,6 @@ import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 
- 
 import useUserSettings from "@/src/hooks/useUserSettings";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -38,14 +35,13 @@ import { File } from "expo-file-system";
 // app components
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 
-import SelectedFriendHome from "@/app/components/home/SelectedFriendHome"; 
-
+import SelectedFriendHome from "@/app/components/home/SelectedFriendHome";
 
 import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 // import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
- 
+
 // import { useCategories } from "@/src/context/CategoriesContext";
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 
@@ -55,11 +51,11 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
   const route = useRoute();
-const { friendCategoryColors}= useFriendCategoryColors();
-  const idToSelect = route?.params?.idToSelect ?? null; 
+  const { friendCategoryColors } = useFriendCategoryColors();
+  const idToSelect = route?.params?.idToSelect ?? null;
 
-    const backdropTimestamp = route.params?.backdropTimestamp ?? null;
-    // console.log(prevScreenHasBackdrop);
+  const backdropTimestamp = route.params?.backdropTimestamp ?? null;
+  // console.log(prevScreenHasBackdrop);
   // console.log(idToSelect);
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user?.id });
@@ -72,8 +68,8 @@ const { friendCategoryColors}= useFriendCategoryColors();
 
   // In ScreenFriendHome or wherever the backdrop lives
   const coloredDotsModeValue = useSharedValue(false);
-    const turnBackdropOnValue = useSharedValue(false);
- 
+  const turnBackdropOnValue = useSharedValue(false);
+
   // Select friend when screen mounts with idToSelect param
   useEffect(() => {
     if (idToSelect && friendList?.length && !selectedFriend?.id) {
@@ -83,32 +79,36 @@ const { friendCategoryColors}= useFriendCategoryColors();
   }, [idToSelect, friendList?.length, selectedFriend?.id]);
 
   // const { upcomingHelloes  } = useUpcomingHelloes();
-  const { navigateToMomentFocus, navigateToMoments  } = useAppNavigations();
-const handleNavigateToCreateNew = useCallback(() => {
-  navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: coloredDotsModeValue.value });
-  // setTimeout(() => {
+  const { navigateToMomentFocus, navigateToMoments, navigateToGecko } = useAppNavigations();
+
+  const reverseOverlayValue = useSharedValue(false);
+
+const handleNavigateToGecko = useCallback(() => {
+  reverseOverlayValue.value = true;
+  navigateToGecko();
+}, [navigateToGecko]);
+
+
+  const handleNavigateToCreateNew = useCallback(() => {
+    navigateToMomentFocus({
+      screenCameFrom: 1,
+      prevScreenBackdrop: coloredDotsModeValue.value,
+    });
+    // setTimeout(() => {
     turnBackdropOnValue.value = true;
-  // }, 50);
-}, [navigateToMomentFocus]);
-  
-    
+    // }, 50);
+  }, [navigateToMomentFocus]);
+
   const { selectedFriend, setToAutoFriend } = useSelectedFriend();
- 
 
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
-
-
-
- 
-
- 
 useEffect(() => {
   if (backdropTimestamp) {
     turnBackdropOnValue.value = false;
+    reverseOverlayValue.value = false;
   }
 }, [backdropTimestamp]);
-
 
   // useEffect(() => {
   //   if (turnOn) {
@@ -120,19 +120,15 @@ useEffect(() => {
 
   // }, [turnOn]);
 
+  //   const handleMomentScreenNoScroll = useCallback(() => {
+  //   setTurnOn(true);
+  //   navigateToMoments({ scrollTo: null });
+  // }, [navigateToMoments, turnOn]);
 
-    //   const handleMomentScreenNoScroll = useCallback(() => {
-    //   setTurnOn(true);
-    //   navigateToMoments({ scrollTo: null });
-    // }, [navigateToMoments, turnOn]);
-
-
-    const handleMomentScreenNoScroll = useCallback(() => {
-  turnBackdropOnValue.value = true;
-  navigateToMoments({ scrollTo: null });
-}, [navigateToMoments]);
-
-  
+  const handleMomentScreenNoScroll = useCallback(() => {
+    turnBackdropOnValue.value = true;
+    navigateToMoments({ scrollTo: null });
+  }, [navigateToMoments]);
 
   const handleToggleColoredDots = () => {
     coloredDotsModeValue.value = !coloredDotsModeValue.value;
@@ -227,38 +223,21 @@ useEffect(() => {
   //   }
   // }, [imageUri]);
 
- 
-
-  const themeColors = useMemo(
-    () => ({
-      lightColor: selectedFriend?.lightColor,
-      darkColor: selectedFriend?.darkColor,
-      fontColorSecondary: selectedFriend?.fontColorSecondary,
-    }),
-    [
-      selectedFriend?.lightColor,
-      selectedFriend?.darkColor,
-      selectedFriend?.fontColorSecondary,
-    ],
-  );
-
   return (
     <>
       {
-      
-      // autoSelectFriend?.customFriend !== "pending" && // not sure if need all this here
-      //   autoSelectFriend?.nextFriend !== "pending" &&
-      //   selectedFriend?.isReady && 
-      //   friendListAndUpcomingIsSuccess && (
+        // autoSelectFriend?.customFriend !== "pending" && // not sure if need all this here
+        //   autoSelectFriend?.nextFriend !== "pending" &&
+        //   selectedFriend?.isReady &&
+        //   friendListAndUpcomingIsSuccess && (
 
-
-friendListAndUpcomingIsSuccess && user?.id && (
-          
+        friendListAndUpcomingIsSuccess && user?.id && (
           <SafeViewFriendHome
             friendColorLight={selectedFriend.lightColor}
             friendColorDark={selectedFriend.darkColor}
             backgroundOverlayColor={lightDarkTheme.primaryBackground}
             friendId={selectedFriend?.id}
+            reverseOverlayValue={reverseOverlayValue}
           >
             {/* <Pressable
               onPress={handleToggleColoredDots}
@@ -284,23 +263,30 @@ friendListAndUpcomingIsSuccess && user?.id && (
                 userId={user?.id}
                 primaryColor={lightDarkTheme.primaryText}
                 primaryOverlayColor={lightDarkTheme.overlayBackground}
-             
                 friendLightColor={selectedFriend?.lightColor}
-              friendDarkColor={selectedFriend?.darkColor}
+                friendDarkColor={selectedFriend?.darkColor}
                 selectedFriendId={selectedFriend?.id}
                 selectedFriendName={selectedFriend?.name}
                 handleToggleColoredDots={handleToggleColoredDots}
                 coloredDotsModeValue={coloredDotsModeValue}
-                handleMomentScreenNoScroll={handleMomentScreenNoScroll}
+                handleMomentScreenNoScroll={handleMomentScreenNoScroll} // center double press
+                handleNavigateToGecko={handleNavigateToGecko} // new center single press
+          
               />
             )}
 
-            <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={coloredDotsModeValue  } />
-   
+            <AnimatedBackdrop
+              color={lightDarkTheme.backdropColor}
+              zIndex={5}
+              isVisibleValue={coloredDotsModeValue}
+            />
 
+            <AnimatedBackdrop
+              color={lightDarkTheme.backdropColor}
+              zIndex={5}
+              isVisibleValue={turnBackdropOnValue}
+            />
 
-       <AnimatedBackdrop color={lightDarkTheme.backdropColor} zIndex={5} isVisibleValue={turnBackdropOnValue  } />
-   
             {selectedFriend?.id && (
               <TopLayerButton
                 onPress={handleNavigateToCreateNew}
@@ -316,12 +302,13 @@ friendListAndUpcomingIsSuccess && user?.id && (
               friendName={selectedFriend?.name}
               lightDarkTheme={lightDarkTheme}
               overlayColor={lightDarkTheme.overlayBackground}
-              themeColors={themeColors}
               friendLightColor={selectedFriend?.lightColor}
               friendDarkColor={selectedFriend?.darkColor}
+                    handleNavigateToGecko={handleNavigateToGecko}
             />
           </SafeViewFriendHome>
-        )}
+        )
+      }
     </>
   );
 };

@@ -6,11 +6,27 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import useHelloes from "@/src/hooks/useHelloes";
 import useFriendDash from "@/src/hooks/useFriendDash";
 
+const SHADOW_COLOR = "rgba(0,0,0,0.95)";
+const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
+const OUTLINE_R = 1;
+
 type Props = {
   primaryColor: string;
   primaryOverlayColor: string;
   friendId: string;
+  userId: number;
 };
+
+const OutlinedText = ({ text, color, style }: { text: string; color: string; style: any }) => (
+  <View style={styles.outlineContainer}>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", left: -OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", left: OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", top: -OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", top: OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: SHADOW_COLOR, position: "absolute", top: 3 }]}>{text}</Text>
+    <Text style={[style, { color }]}>{text}</Text>
+  </View>
+);
 
 const Helloes = ({
   primaryColor,
@@ -23,9 +39,7 @@ const Helloes = ({
   const isLoading = loadingDash;
 
   const trueHelloesInList = useMemo(() => {
-    return (
-      helloesList?.filter((hello) => hello.manual_reset === undefined) ?? []
-    );
+    return helloesList?.filter((hello) => hello.manual_reset === undefined) ?? [];
   }, [helloesList]);
 
   const { navigateToHelloes } = useAppNavigations();
@@ -53,15 +67,19 @@ const Helloes = ({
                   }
                   style={styles.row}
                 >
-                  <SvgIcon
-                    name="calendar"
-                    size={20}
+                  <View style={styles.iconShadow}>
+                    <SvgIcon
+                      name="calendar"
+                      size={20}
+                      color={primaryColor}
+                      style={styles.icon}
+                    />
+                  </View>
+                  <OutlinedText
+                    text={`Helloes (${trueHelloesInList && trueHelloesInList.length})`}
                     color={primaryColor}
-                    style={styles.icon}
+                    style={[styles.titleText, { color: primaryColor }]}
                   />
-                  <Text style={[styles.titleText, { color: primaryColor }]}>
-                    Helloes ({trueHelloesInList && trueHelloesInList.length})
-                  </Text>
                 </Pressable>
               </View>
             )}
@@ -92,6 +110,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+    alignItems: "center",
   },
   rowSpaceBetween: {
     flexDirection: "row",
@@ -101,11 +120,23 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: 0,
   },
+  iconShadow: {
+    shadowColor: SHADOW_COLOR,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.95,
+    shadowRadius: 1,
+    elevation: 4,
+  },
+  outlineContainer: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   titleText: {
     marginLeft: 15,
     fontSize: 13,
     fontWeight: "bold",
-  }, 
+  },
 });
 
 export default Helloes;

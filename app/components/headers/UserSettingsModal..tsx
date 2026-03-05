@@ -1,115 +1,8 @@
-// import React, { useState } from "react";
-// import { View,   ScrollView, StyleSheet } from "react-native";
- 
-// import manualGradientColors from "@/app/styles/StaticColors";
-// import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
-
-// import AppModalWithToast from "../alerts/AppModalWithToast";
-// import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
-// import SectionAccountSettings from "../user/SectionAccountSettings";
-// import AppModal from "../alerts/AppModal";
-// // import { useUserSettings } from "@/src/context/UserSettingsContext";
-// import useUserSettings from "@/src/hooks/useUserSettings";
-// import { LDTheme } from "@/src/types/LDThemeTypes";
-// interface Props {
-//   userId: number;
-//   isVisible: boolean;
-//   bottomSpacer: number;
-//   closeModal: () => void; 
-//   textColor: string;
-//   backgroundColor: string;
-// }
-// const UserSettingsModal: React.FC<Props> = ({
-//   userId,
-//   isVisible,
-//   closeModal,
-//   textColor,
-//   backgroundColor,
-// }) => {
-//   const { settings } = useUserSettings();
-
-//   const [flashMessage, setFlashMessage] = useState<null | {
-//     text: string;
-//     error: boolean;
-//     duration: number;
-//   }>(null);
-
-//   return (
-//     <AppModalWithToast
-//       primaryColor={textColor}
-//       backgroundColor={backgroundColor}
-//       isFullscreen={false}
-//       modalIsTransparent={false}
-//       isVisible={isVisible}
-//       questionText="User settings"
-//       onClose={closeModal}
-//       flashMessage={flashMessage}
-//       setFlashMessage={setFlashMessage}
-//       useCloseButton={true}
-//       children={
-//         <View style={{ flex: 1 }}>
-//           <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-//             <SectionAccessibilitySettings
-//               backgroundColor={backgroundColor}
-//               userId={userId}
-//               primaryColor={textColor}
-//               settings={settings}
-//               setFlashMessage={setFlashMessage}
-//             />
-
-//             <SectionFriendManagerSettings
-//               backgroundColor={backgroundColor}
-//               userId={userId}
-//               settings={settings}
-//               primaryColor={textColor}
-//               manualGradientColors={manualGradientColors}
-//               setFlashMessage={setFlashMessage}
-//             />
-
-//             {/* <SectionAccountSettings
-//               primaryColor={textColor}
-//               setFlashMessage={setFlashMessage}
-//             /> */}
-//           </ScrollView>
-//         </View>
-//       }
-//     />
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   bodyContainer: {
-//     width: "100%",
-//     textAlign: "left",
- 
-//   },
-//   headerContainer: {
-//     margin: "2%",
-//   },
-//   scrollViewContainer: {
-//     marginVertical: 6,
-//     flexDirection: "row",
-//     width: "100%",
-//     flexWrap: "wrap",
-//   },
-//   headerText: {
-//     fontWeight: "bold",
-//     fontSize: 18,
-//     lineHeight: 30,
-//   },
-//   text: {
-//     fontSize: 14,
-//     lineHeight: 21,
-//   },
-// });
-
-// export default UserSettingsModal;
 import React, { useMemo, useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Alert } from "react-native";
 
-import Toggle from "../user/Toggle";
 import SvgIcon from "@/app/styles/SvgIcons";
-
+import OptionToggle from "../headers/OptionToggle";
 import AppModalWithToast from "../alerts/AppModalWithToast";
 import {
   FlashMessageData,
@@ -119,11 +12,13 @@ import {
 
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useUserSettings from "@/src/hooks/useUserSettings";
-
+import AddPointsButton from "./AddPointsButton";
 import BouncyEntrance from "../headers/BouncyEntrance";
-
-// Friend-manager row component used inside the old SectionFriendManagerSettings:
 import Reset from "../appwide/button/Reset";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import manualGradientColors from "@/app/styles/StaticColors";
+
+
 
 interface Props {
   userId: number;
@@ -140,18 +35,14 @@ const UserSettingsModal: React.FC<Props> = ({
   closeModal,
   textColor,
   backgroundColor,
-  closeButtonColor='red'
+  closeButtonColor = "red",
 }) => {
   const { settings } = useUserSettings();
 
-  const [flashMessage, setFlashMessage] = useState<FlashMessageData | null>(
-    null,
-  );
- 
-  const { updateSettingsMutation, updateSettings } = useUpdateSettings({
-    userId,
-  });
- 
+  const [flashMessage, setFlashMessage] = useState<FlashMessageData | null>(null);
+
+  const { updateSettingsMutation, updateSettings } = useUpdateSettings({ userId });
+
   useEffect(() => {
     if (updateSettingsMutation.isSuccess) setFlashMessage(settingsUpdateSuccess);
   }, [updateSettingsMutation.isSuccess]);
@@ -160,11 +51,21 @@ const UserSettingsModal: React.FC<Props> = ({
     if (updateSettingsMutation.isError) setFlashMessage(settingsUpdateError);
   }, [updateSettingsMutation.isError]);
 
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+  const BUTTON_COLOR = manualGradientColors.lightColor;
+
+  const sharedToggleProps = {
+    primaryColor: textColor,
+    backgroundColor,
+    buttonColor: BUTTON_COLOR,
+    textStyle: subWelcomeTextStyle,
+  };
+
   const manualTheme = useMemo(() => {
     if (!settings) return false;
     return settings.manual_dark_mode !== null;
   }, [settings]);
- 
+
   const toggleManualTheme = () => {
     if (!settings) return;
     const newValue = !manualTheme;
@@ -204,7 +105,7 @@ const UserSettingsModal: React.FC<Props> = ({
       { cancelable: true },
     );
   };
- 
+
   const lockInNext = useMemo(() => {
     if (!settings) return false;
     return settings.lock_in_next === true;
@@ -215,20 +116,8 @@ const UserSettingsModal: React.FC<Props> = ({
     updateSettings({ lock_in_next: !settings.lock_in_next });
   };
 
-  // --- BouncyEntrance sequencing like GoOptionsModal ---
   const speed = 10;
-
-  // Rows in order:
-  // 1 Manual theme
-  // 2 Light/Dark (conditional)
-  // 3 High contrast
-  // 4 Large text
-  // 5 Simplify
-  // 6 Receive notifications
-  // 7 Screen reader
-  // 8 Autoselect next friend
-  // 9 Reset all hello dates
-  const baseCount = 8; // all rows except the conditional Light/Dark
+  const baseCount = 8;
   const totalAnimatedItems = baseCount + (manualTheme ? 1 : 0);
 
   const staggeredDelays = useMemo(
@@ -273,15 +162,27 @@ const UserSettingsModal: React.FC<Props> = ({
     >
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+
+          
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
+              <AddPointsButton
+                userId={userId}
+                label="Add points"
+                icon={<SvgIcon name="timer_sync" size={20} color={textColor} />}
                 primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+              />
+            </BouncyEntrance>
+          </View>
+
+          <View style={styles.sectionContainer}>
+            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+              <OptionToggle
+                {...sharedToggleProps}
                 label="Manual theme"
-                icon={
-                  <SvgIcon name="theme_light_dark" size={20} color={textColor} />
-                }
+                icon={<SvgIcon name="theme_light_dark" size={20} color={textColor} />}
                 value={manualTheme}
                 onPress={toggleManualTheme}
               />
@@ -291,9 +192,8 @@ const UserSettingsModal: React.FC<Props> = ({
           {manualTheme && (
             <View style={styles.sectionContainer}>
               <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-                <Toggle
-                  backgroundColor={backgroundColor}
-                  primaryColor={textColor}
+                <OptionToggle
+                  {...sharedToggleProps}
                   label="Light/Dark"
                   icon={<SvgIcon name="compare" size={20} color={textColor} />}
                   value={settings.manual_dark_mode === true}
@@ -305,9 +205,8 @@ const UserSettingsModal: React.FC<Props> = ({
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
-                primaryColor={textColor}
+              <OptionToggle
+                {...sharedToggleProps}
                 label="High Contrast Mode"
                 icon={<SvgIcon name="text_shadow" size={20} color={textColor} />}
                 value={settings.high_contrast_mode}
@@ -318,17 +217,10 @@ const UserSettingsModal: React.FC<Props> = ({
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
-                primaryColor={textColor}
+              <OptionToggle
+                {...sharedToggleProps}
                 label="Large Text"
-                icon={
-                  <SvgIcon
-                    name="format_font_size_increase"
-                    size={20}
-                    color={textColor}
-                  />
-                }
+                icon={<SvgIcon name="format_font_size_increase" size={20} color={textColor} />}
                 value={settings.large_text}
                 onPress={updateLargeText}
               />
@@ -337,17 +229,10 @@ const UserSettingsModal: React.FC<Props> = ({
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
-                primaryColor={textColor}
+              <OptionToggle
+                {...sharedToggleProps}
                 label="Simplify App For Focus"
-                icon={
-                  <SvgIcon
-                    name="image_filter_center_focus"
-                    size={20}
-                    color={textColor}
-                  />
-                }
+                icon={<SvgIcon name="image_filter_center_focus" size={20} color={textColor} />}
                 value={settings.simplify_app_for_focus}
                 onPress={updateSimplifyAppForFocus}
               />
@@ -356,9 +241,8 @@ const UserSettingsModal: React.FC<Props> = ({
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
-                primaryColor={textColor}
+              <OptionToggle
+                {...sharedToggleProps}
                 label="Receive Notifications"
                 icon={<SvgIcon name="bell" size={20} color={textColor} />}
                 value={settings.receive_notifications}
@@ -369,9 +253,8 @@ const UserSettingsModal: React.FC<Props> = ({
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
-                primaryColor={textColor}
+              <OptionToggle
+                {...sharedToggleProps}
                 label="Screen Reader"
                 icon={<SvgIcon name="volume_high" size={20} color={textColor} />}
                 value={settings.screen_reader}
@@ -380,12 +263,10 @@ const UserSettingsModal: React.FC<Props> = ({
             </BouncyEntrance>
           </View>
 
-          {/* ---- Friend manager rows (now part of the same sequence) ---- */}
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <Toggle
-                backgroundColor={backgroundColor}
-                primaryColor={textColor}
+              <OptionToggle
+                {...sharedToggleProps}
                 label="Autoselect Next Friend"
                 icon={<SvgIcon name="account" size={20} color={textColor} />}
                 value={lockInNext}
@@ -401,9 +282,12 @@ const UserSettingsModal: React.FC<Props> = ({
                 label="Reset all hello dates"
                 icon={<SvgIcon name="timer_sync" size={20} color={textColor} />}
                 primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
               />
             </BouncyEntrance>
           </View>
+
         </ScrollView>
       </View>
     </AppModalWithToast>

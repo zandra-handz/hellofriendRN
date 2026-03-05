@@ -60,6 +60,7 @@ const DotsCanvas = ({
   onCategoryPress,
   catDecimalsValue, 
   onCenterPress,  
+  onCenterSinglePress,
   darkerOverlayBackgroundColor,
   backgroundColor,
  
@@ -67,6 +68,7 @@ const DotsCanvas = ({
   color,
  
   handleToggleColoredDots,
+  
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
@@ -74,7 +76,8 @@ const DotsCanvas = ({
   const { selectedFriend } = useSelectedFriend();
 
   const { handleDoublePress } = useDoublePress({
-    onSinglePress: handleToggleColoredDots,
+    // onSinglePress: handleToggleColoredDots,
+        onSinglePress: onCenterSinglePress,
     onDoublePress: onCenterPress,
   });
 

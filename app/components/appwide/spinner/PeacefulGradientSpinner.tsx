@@ -40,7 +40,7 @@ const PeacefulGradientSpinner = ({
           <LinearGradient
             colors={[
               manualGradientColors.darkColor,
-              manualGradientColors.lightColor,
+              'pink',
             ]} // or could just do dark dark?
             start={{ x: vertDirection[0], y: vertDirection[1] }}
             end={{ x: vertDirection[2], y: vertDirection[3] }}

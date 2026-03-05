@@ -15,8 +15,8 @@ const AuthScreenTopTray = ({
   onBackPress,
   onRightPress,
   rightLabel,
-}: Props) => {
-  const { navigateToWelcome } = useAppNavigations();
+  onHomePress,
+}: Props) => { 
   // const LEFT_BUTTONS_SPACER = 6;
 
   const pressableOneStyles = StyleSheet.flatten([
@@ -36,7 +36,7 @@ const AuthScreenTopTray = ({
       style={styles.container}
     >
       <View style={{ flexDirection: "row", width: 100  }}>
-        <Pressable onPress={navigateToWelcome} style={pressableOneStyles}>
+        <Pressable onPress={onHomePress} style={pressableOneStyles}>
           <MaterialCommunityIcons
             // name={"arrow-left"}
             name={"home"}

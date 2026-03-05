@@ -1,27 +1,39 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React from "react"; 
+import React from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useImages from "@/src/hooks/ImageCalls/useImages";
-import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions"; 
+import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import useFriendDash from "@/src/hooks/useFriendDash";
- 
+
+const SHADOW_COLOR = "rgba(0,0,0,0.95)";
+const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
+const OUTLINE_R = 1;
 
 type Props = {
   userId: number;
-  friendId: number; 
+  friendId: number;
   primaryColor: string;
-  primaryOverlayColor: string; 
+  primaryOverlayColor: string;
 };
 
+const OutlinedText = ({ text, color, style }: { text: string; color: string; style: any }) => (
+  <View style={styles.outlineContainer}>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", left: -OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", left: OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", top: -OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: OUTLINE_COLOR, position: "absolute", top: OUTLINE_R }]}>{text}</Text>
+    <Text style={[style, { color: SHADOW_COLOR, position: "absolute", top: 3 }]}>{text}</Text>
+    <Text style={[style, { color }]}>{text}</Text>
+  </View>
+);
+
 const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
- 
- 
   const { navigateToImages } = useAppNavigations();
-    const { loadingDash } = useFriendDash({userId: userId, friendId: friendId});
-  const { imageList } = useImages({ userId: userId, friendId: friendId, enabled: !loadingDash});
+  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
+  const { imageList } = useImages({ userId: userId, friendId: friendId, enabled: !loadingDash });
   const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
- 
+
   return (
     <>
       {friendId && (
@@ -29,7 +41,7 @@ const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) =>
           style={[
             styles.outerContainer,
             {
-              backgroundColor: loadingDash ? "transparent" : primaryOverlayColor, // dynamic
+              backgroundColor: loadingDash ? "transparent" : primaryOverlayColor,
             },
           ]}
         >
@@ -39,56 +51,42 @@ const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) =>
                 <Pressable
                   hitSlop={10}
                   onPress={
-                    imageList && imageList.length > 0
-                      ? navigateToImages
-                      : () => {}
+                    imageList && imageList.length > 0 ? navigateToImages : () => {}
                   }
                   style={styles.row}
                 >
-                  <SvgIcon
-                    name="image_multiple_outline"
-                    size={20}
-                    color={primaryColor} // dynamic
-                    style={styles.icon}
+                  <View style={styles.iconShadow}>
+                    <SvgIcon
+                      name="image_multiple_outline"
+                      size={20}
+                      color={primaryColor}
+                      style={styles.icon}
+                    />
+                  </View>
+                  <OutlinedText
+                    text={`Pics (${imageList && imageList.length})`}
+                    color={primaryColor}
+                    style={[styles.titleText, { color: primaryColor }]}
                   />
-                  <Text
-                    style={[
-                      styles.titleText,
-                      { color: primaryColor }, // dynamic
-                    ]}
-                  >
-                    Pics ({imageList && imageList.length})
-                  </Text>
                 </Pressable>
 
                 <View style={styles.rightButtonGroup}>
                   <Pressable hitSlop={10} onPress={handleCaptureImage}>
-                    <Text
-                      style={[
-                        styles.actionText,
-                        { color: primaryColor }, // dynamic
-                      ]}
-                    >
-                      Camera
-                    </Text>
+                    <OutlinedText
+                      text="Camera"
+                      color={primaryColor}
+                      style={[styles.actionText, { color: primaryColor }]}
+                    />
                   </Pressable>
 
-                  <View
-                    style={[
-                      styles.divider,
-                      { backgroundColor: primaryColor }, // dynamic
-                    ]}
-                  />
+                  <View style={[styles.divider, { backgroundColor: primaryColor }]} />
 
                   <Pressable hitSlop={10} onPress={handleSelectImage}>
-                    <Text
-                      style={[
-                        styles.actionText,
-                        { color: primaryColor }, // dynamic
-                      ]}
-                    >
-                      Upload
-                    </Text>
+                    <OutlinedText
+                      text="Upload"
+                      color={primaryColor}
+                      style={[styles.actionText, { color: primaryColor }]}
+                    />
                   </Pressable>
                 </View>
               </View>
@@ -120,6 +118,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+    alignItems: "center",
   },
   rowSpaceBetween: {
     flexDirection: "row",
@@ -129,11 +128,22 @@ const styles = StyleSheet.create({
   icon: {
     marginBottom: 0,
   },
+  iconShadow: {
+    shadowColor: SHADOW_COLOR,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.95,
+    shadowRadius: 1,
+    elevation: 4,
+  },
+  outlineContainer: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   titleText: {
-    marginLeft: 15, 
+    marginLeft: 15,
     fontSize: 13,
-    fontWeight: 'bold',
-    // fontWeight: "bold",
+    fontWeight: "bold",
   },
   rightButtonGroup: {
     flexDirection: "row",

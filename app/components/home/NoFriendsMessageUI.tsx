@@ -2,6 +2,9 @@ import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import SmallAddButton from "./SmallAddButton";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import GlobalPressable from "../appwide/button/GlobalPressable";
+import SvgIcon from "@/app/styles/SvgIcons";
+import TopLayerButton from "./TopLayerButton";
 const NoFriendsMessageUI = ({
   primaryColor,
   backgroundColor,
@@ -12,20 +15,18 @@ const NoFriendsMessageUI = ({
   const { navigateToAddFriend } = useAppNavigations();
 
   const ICON_SIZE = 100;
-
-  const EYEBALL_BOTTOM_PADDING = 60;
+ 
 
   return (
     <View
-      style={[
-         styles.container, { 
-        paddingBottom: EYEBALL_BOTTOM_PADDING,
-      }]}
+      style={
+         styles.container}
     >
+      <>
       <Text
         style={[
           welcomeTextStyle,
-          { color: primaryColor, fontSize: 60, lineHeight: 90 },
+          { color: primaryColor },
         ]}
       >
         {new Date(userCreatedOn).toDateString() === new Date().toDateString()
@@ -34,16 +35,12 @@ const NoFriendsMessageUI = ({
       </Text>
       <Text style={[welcomeTextStyle, { color: primaryColor, fontSize: 20 }]}>
         Add some friends to get started
-      </Text>
-      <View style={{ marginVertical: 20 }}>
-        <SmallAddButton
-          size={ICON_SIZE}
-          primaryColor={primaryColor}
-          primaryBackground={backgroundColor}
-          label={"Add friend"}
-          onPress={navigateToAddFriend}
-        />
-      </View>
+      </Text> 
+      </>
+      <GlobalPressable onPress={navigateToAddFriend} style={styles.pressable}>
+        <SvgIcon name={`plus`} size={20} color={primaryColor}/>
+      </GlobalPressable>
+   
     </View>
   );
 };
@@ -51,13 +48,17 @@ const NoFriendsMessageUI = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    flex: 1,
-    flexGrow: 1,
+    height: 200,
     alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: "column", 
+    backgroundColor: 'green'
   },
+  pressable: {
+    height: 40,
+    width: 40,
+    marginTop: 40
+  }
 });
 
 export default NoFriendsMessageUI;
