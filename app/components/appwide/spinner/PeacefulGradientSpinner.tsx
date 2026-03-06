@@ -37,7 +37,7 @@ const PeacefulGradientSpinner = ({
               //  direction="horizontal"
             > */}
 
-          <LinearGradient
+          {/* <LinearGradient
             colors={[
               manualGradientColors.darkColor,
               'pink',
@@ -45,7 +45,7 @@ const PeacefulGradientSpinner = ({
             start={{ x: vertDirection[0], y: vertDirection[1] }}
             end={{ x: vertDirection[2], y: vertDirection[3] }}
             style={[StyleSheet.absoluteFill]}
-          />
+          /> */}
           <LoadingPage
             loading={true}
             label={"loading Hellofriend"}

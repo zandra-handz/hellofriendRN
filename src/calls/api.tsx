@@ -1113,7 +1113,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
     const response = await helloFriendApiClient.get(
       "/friends/upcoming/friends-included/"
     );
- // console.error(`NEW ENDPOINT`, response.data )
+  // console.error(`NEW ENDPOINT`, response.data.upcoming[0] )
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");

@@ -114,6 +114,26 @@ const useSelectFriend = ({
     setToFriend({ friend: selectedFriend, preConditionsMet: true });
   }, [userId, friendList, navigateOnSelect, queryClient, setToFriend]);
 
+
+//   const handleSelectFriend = useCallback((friendId: number) => {
+//   if (!friendList || friendList?.length < 1) return;
+
+//   const selectedFriend = friendList?.find(
+//     (friend) => friend.id === Number(friendId)
+//   ) || null;
+
+//   if (!selectedFriend) return;
+
+//   prefetchFriendDash(userId, selectedFriend.id, queryClient);
+
+//   // Set state FIRST, then navigate
+//   setToFriend({ friend: selectedFriend, preConditionsMet: true });
+
+//   if (navigateOnSelect) {
+//     navigateOnSelect();
+//   }
+// }, [userId, friendList, navigateOnSelect, queryClient, setToFriend]);
+
   return { handleSelectFriend };
 };
 

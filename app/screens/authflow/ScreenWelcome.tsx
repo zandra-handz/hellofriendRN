@@ -36,7 +36,7 @@ const { lightDarkTheme} = useLDTheme();
   }, [])
 );
 
-  const { navigateToAuth, navigateToNewAccount } = useAppNavigations();
+  const { navigateToAuth  } = useAppNavigations();
  
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =

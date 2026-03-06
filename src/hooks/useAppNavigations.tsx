@@ -271,6 +271,15 @@ type NavToImagesProps = {
   startingIndex: number;
 }
 
+type NavToFriendHomeProps = {
+  idToSelect?: number | null;
+  backdropTimestamp?: number | null;
+  friendName?: string | null;
+  friendNextDate?: string | null;
+  friendChangeTimestamp?: number | null;
+
+};
+
 type NavToSelectFriendProps = {
   useNavigateBack?: boolean;
 };
@@ -325,14 +334,14 @@ type NavToAuthProp = {
   
 };
 
-type NavToNewAccountProp = {
-  usernameEntered: string | null;
+// type NavToNewAccountProp = {
+//   usernameEntered: string | null;
 
-};
+// };
 
 interface hookReturns {
   navigateToHome: () => void;
-  navigateToFriendHome: () => void;
+  navigateToFriendHome: ({idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp }: NavToFriendHomeProps) => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
@@ -366,7 +375,7 @@ interface hookReturns {
 
   navigateToFidget: () => void;
   navigateToAuth: ({ createNewAccount, prevScreenBackdrop }: NavToAuthProp) => void;
-  navigateToNewAccount: ({ usernameEntered }: NavToNewAccountProp) => void;
+  // navigateToNewAccount: ({ usernameEntered }: NavToNewAccountProp) => void;
   navigateToRecoverCredentials: () => void;
   navigateBack: () => void;
   resetParams: (params: Partial<RootStackParamList[keyof RootStackParamList]>) => void;
@@ -379,8 +388,13 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("hellofriend");
   };
 
-    const navigateToFriendHome = (idToSelect=null,backdropTimestamp=null) => {
-    navigation.navigate("FriendHome", {idToSelect, backdropTimestamp});
+  //   const navigateToFriendHome = ({idToSelect=null, backdropTimestamp=null, friendName="", friendNextDate="", friendChangeTimestamp=null}) => {
+  //   navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
+  // };
+
+
+      const navigateToFriendHome = (idToSelect=null, backdropTimestamp=null, friendName="", friendNextDate="", friendChangeTimestamp=null) => {
+    navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
   };
 
   const navigateToAddFriend = () => {
@@ -507,9 +521,9 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Auth", { createNewAccount, prevScreenBackdrop });
   };
 
-  const navigateToNewAccount = ({ usernameEntered }: NavToNewAccountProp) => {
-    navigation.navigate("NewAccount", { usernameEntered });
-  };
+  // const navigateToNewAccount = ({ usernameEntered }: NavToNewAccountProp) => {
+  //   navigation.navigate("NewAccount", { usernameEntered });
+  // };
 
   const navigateToRecoverCredentials = () => {
     navigation.navigate("RecoverCredentials");
@@ -546,7 +560,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToMomentView,
     navigateToWelcome,
     navigateToAuth,
-    navigateToNewAccount,
+    // navigateToNewAccount,
     navigateToRecoverCredentials,
     navigateToFidget,
     navigateBack,

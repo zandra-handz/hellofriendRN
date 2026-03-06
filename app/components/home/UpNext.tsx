@@ -15,8 +15,7 @@ const UpNext = ({
   futureDateInWords,
   textColor,
   onPress,
-}: Props) => { 
-  const HEIGHT = 200;
+}: Props) => {  
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 

@@ -54,9 +54,9 @@ const LoadingPage = ({
             </View>
           )}
           <View style={styles.spinnerContainer}>
-            {spinnerType === "chase" && color && (
+            {/* {spinnerType === "chase" && color && (
               <SpinnerOne color1={color} color2={color} />
-            )}
+            )} */}
 
             {spinnerType !== "chase" && (
               <Spinner size={spinnerSize} color={color} />

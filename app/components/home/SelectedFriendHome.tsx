@@ -13,6 +13,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+
+import { useFocusEffect } from "@react-navigation/native";
 import { useDerivedValue, runOnJS } from "react-native-reanimated";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import AnimatedToggler from "../buttons/AnimatedToggler";
@@ -36,6 +38,9 @@ interface SelectedFriendHomeProps {
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   canvasKey,
   userId,
+  friendName,
+  friendNextDate,
+  friendChangeTimestamp,
 
   paddingHorizontal,
   primaryColor,
@@ -57,9 +62,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   handleNavigateToGecko,
 }) => {
   // console.log("selected friend home rerendered");
-
+// console.log('friend name in selectedfriendhome: ', friendName)
   const headerRef = useRef(null);
-
+// console.log(`TIMESTAMP!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`,friendChangeTimestamp)
+  
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const timing = animationTimings.toggleRotate;
@@ -104,11 +110,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
   const smallHeaderVisibility = useSharedValue(0);
 
-  const smallHeaderAnimationStyle = useAnimatedStyle(() => {
-    return {
-      opacity: smallHeaderVisibility.value,
-    };
-  });
+  // const smallHeaderAnimationStyle = useAnimatedStyle(() => {
+  //   return {
+  //     opacity: smallHeaderVisibility.value,
+  //   };
+  // });
 
   const ELEMENTS_BACKGROUND = "transparent";
 const [scrollLocked, setScrollLocked] = useState(false);
@@ -186,9 +192,12 @@ useEffect(() => {
               >
                 <FriendHeaderMessageUI
                   primaryBackground={primaryBackground}
+                  friendChangeTimestamp={friendChangeTimestamp}
                   height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
                   userId={userId}
                   friendId={selectedFriendId}
+                  friendName={friendName}
+                  friendNextDate={friendNextDate}
                   darkGlassBackground={darkGlassBackground}
                   darkerGlassBackground={darkerGlassBackground}
                   selectedFriendName={`${selectedFriendName}`}

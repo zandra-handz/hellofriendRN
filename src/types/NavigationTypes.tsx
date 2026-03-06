@@ -6,21 +6,29 @@ export type RootStackParamList = {
     momentText?: string | null;
     prevScreenBackdrop?: boolean | null;
   };
-    Gecko: {
-      selection?: number | null;
-       autoPick?: boolean | null;
-      timestamp?: string | null;
-    }
-    
+  Gecko: {
+    selection?: number | null;
+    autoPick?: boolean | null;
+    timestamp?: string | null;
+  };
+
   GeckoSelectSettings: {
-    selection: number; 
-  }
+    selection: number;
+  };
   QRCode: {
     selection: number;
     friendName: string;
     friendId: number;
-  },
-  
+  };
+
+  FriendHome: {
+    idToSelect?: number | null;
+    backdropTimestamp?: number | null;
+    friendName?: string | null;
+    friendNextDate?: string | null;
+    friendChangeTimestamp?: number | null;
+  };
+
   Moments: {
     scrollTo: number | null;
   };
@@ -50,16 +58,16 @@ export type RootStackParamList = {
   };
   LocationSend: undefined;
   LocationEdit: {
-    location: Location,
-    focusOn?: string,
-  }
+    location: Location;
+    focusOn?: string;
+  };
   LocationCreate: undefined;
   LocationSearch: undefined;
   MidpointLocationSearch: undefined;
   CalculateTravelTimes: undefined;
   AddHello: undefined;
   SelectFriend: {
-    useNavigateBack?: boolean 
+    useNavigateBack?: boolean;
   };
   AddFriend: undefined;
 
@@ -69,8 +77,8 @@ export type RootStackParamList = {
   Auth: {
     usernameEntered: string | null;
   };
-  NewAccount: {
-    usernameEntered: string | null;
-  };
+  // NewAccount: {
+  //   usernameEntered: string | null;
+  // };
   RecoverCredentials: undefined;
 };

@@ -1,83 +1,47 @@
-import { View, Pressable, StyleSheet, Dimensions } from "react-native";
-import React, { useState,   useMemo, useCallback } from "react";
+import { View, StyleSheet } from "react-native";
+import React, { useCallback } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
-import FriendListUI from "@/app/components/alerts/FriendListUI";
-import { SafeAreaView } from "react-native-safe-area-context"; 
-import { useRoute } from "@react-navigation/native";
-// import { useUserSettings } from "@/src/context/UserSettingsContext";
 
+import FriendListUI from "@/app/components/alerts/FriendListUI";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRoute } from "@react-navigation/native";
+import TextHeader from "@/app/components/appwide/format/TextHeader";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-// import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-
+import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-// import SafeViewAndGradientBackgroundStatic from "@/app/components/appwide/format/SafeViewAndGradBackgroundStatic";
 
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
-import SvgIcon from "@/app/styles/SvgIcons";
-
-import Animated, {
-  // withTiming,
-  // withSpring,
-  // useDerivedValue,
-  useSharedValue,
-  useAnimatedStyle,
-  // useAnimatedProps,
-} from "react-native-reanimated";
-
-import { ColorValue } from "react-native";
-
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
-
-import { LinearGradient } from "expo-linear-gradient";
-
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
-
-const ScreenSelectFriend = (
-  {
-    // navigationDisabled = false
-  }
-) => {
+const ScreenSelectFriend = ({}) => {
   const { user } = useUser();
   const route = useRoute();
   const useNavigateBack = route?.params?.useNavigateBack ?? false;
   const { lightDarkTheme } = useLDTheme();
+
+  const backgroundColor = lightDarkTheme.primaryBackground;
+  const textColor = lightDarkTheme.primaryText;
+  const backgroundOverlayColor = lightDarkTheme.overlayBackground;
+
   const { autoSelectFriend } = useAutoSelector();
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
 
   const { friendListAndUpcoming } = useFriendListAndUpcoming({
     userId: user?.id,
   });
   const friendList = friendListAndUpcoming?.friends;
   const queryClient = useQueryClient();
-  // 🔹 Shared values for circle position
-  const touchLocationX = useSharedValue(-999);
-  const touchLocationY = useSharedValue(-999);
-  const visibility = useSharedValue(0);
-
-  const friendColors = useSharedValue(["#4caf50", "#a0f143"]);
 
   const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
     useSelectedFriend();
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
-
-  const themeColors = useMemo(
-    () => ({
-      lightColor: selectedFriend?.lightColor,
-      darkColor: selectedFriend?.darkColor,
-      fontColor: selectedFriend?.fontColor,
-      fontColorSecondary: selectedFriend?.fontColorSecondary,
-    }),
-    [selectedFriend?.id]
-  );
 
   const toggleLockOnFriend = (id) => {
     // if (id !== selectedFriend?.id) {
@@ -105,143 +69,69 @@ const ScreenSelectFriend = (
     selectFriend,
   ]);
 
-  const locale = "en-US";
-  const { navigateBack, navigateToHome, navigateToFriendHome, navigateToGecko } = useAppNavigations();
+  const { navigateBack, navigateToFriendHome, navigateToAddFriend } =
+    useAppNavigations();
 
-  const handleNavAfterSelect = useCallback((friendId) => {
-    if (!useNavigateBack && friendId) {
-     navigateToFriendHome(friendId)
-     // navigateToGecko();
+  const handleNavAfterSelect = useCallback(
+    (friendId, friendName, friendNextDate) => {
+      if (!useNavigateBack && friendId) {
+        // navigateToFriendHome({idToSelect: friendId, backdropTimestamp: null, friendName: friendName, friendNextDate: null, friendChangeTimestamp: Date.now() });
+         navigateToFriendHome(friendId, null, friendName, friendNextDate, Date.now());
+     
     } else {
-      navigateBack();
-    }
-  }, [useNavigateBack]);
-
-  // usememo is not actually doing anything since dependency is a list...
-  // const alphabFriendList: object[] = useMemo(() => {
-  //   if (!friendList || !(friendList?.length > 0)) {
-  //     return [];
-  //   }
-  //   const summaryOfSorted = friendList
-  //     .slice()
-  //     .sort((a, b) =>
-  //       a.name.localeCompare(b.name, locale, { sensitivity: "case" })
-  //     );
-
-  //   if (!summaryOfSorted || !(summaryOfSorted.length > 0)) {
-  //     return [];
-  //   }
-
-  //   console.log('sorted friends')
-
-  //   return summaryOfSorted;
-  // }, [friendList]);
-
-  const [gradientColors, setGradientColors] = useState<
-    [ColorValue, ColorValue]
-  >(["#4caf50", "#a0f143"]);
-  const screenDiagonal = Math.sqrt(screenWidth ** 2 + screenHeight ** 2);
-
-  const scale = useSharedValue(0);
-
-  const animatedCircleStyle = useAnimatedStyle(() => {
-    const size = scale.value;
-    const left = touchLocationX.value - size / 2;
-    const top = touchLocationY.value - size / 2;
-
-    return {
-      // position: "absolute",
-      top,
-      left,
-      width: size,
-      height: size,
-      // borderRadius: size / 2, // keep circle shape
-      borderRadius: 999,
-      backgroundColor: "rgba(255,255,255,0.4)",
-      opacity: visibility.value,
-    };
-  }, [scale, visibility, touchLocationX, touchLocationY]);
+        navigateBack();
+      }
+    },
+    [useNavigateBack],
+  );
 
   const { handleSelectFriend } = useSelectFriend({
     userId: user?.id,
     friendList: friendList,
-
-    // navigateOnSelect: handleNavAfterSelect,
-    //   navigateOnSelect: undefined,
   });
-// old
-  // const direction = [0, 0, 1, 0];
-  
-  //vertical to match other screens
-  const direction = [0, 0, 0, 1];
 
   return (
     <>
       <SafeAreaView
         style={{
-          flex: 1, 
-          backgroundColor: lightDarkTheme.primaryBackground,
+          flex: 1,
+          backgroundColor: backgroundColor,
+          paddingHorizontal: 10,
         }}
       >
-        <View style={styles.safeViewContainer}>
-          <Animated.View
-            style={[animatedCircleStyle, styles.animatedCircleContainer]}
-          >
-            <AnimatedLinearGradient
-              colors={gradientColors}
-              start={{ x: direction[0], y: direction[1] }}
-              end={{ x: direction[2], y: direction[3] }}
-              style={[StyleSheet.absoluteFill]}
-            />
-          </Animated.View>
-          <View
-            style={[
-              {
-                backgroundColor: lightDarkTheme.primaryBackground,
-              },
-              styles.topBar,
-            ]}
-          >
-            <Pressable
-              hitSlop={30}
-              onPress={navigateBack}
-              onLongPress={handleDeselect}
-              style={styles.topBarButton}
-            >
-              <SvgIcon
-                name={"chevron_left"}
-                size={20}
-                color={lightDarkTheme.primaryText}
-              />
-            </Pressable>
-            <SvgIcon
-              name="account_switch_outline"
-              size={26}
-              color={lightDarkTheme.primaryText}
-            />
-          </View>
-          <View style={styles.friendsListWrapper}>
-            <FriendListUI
-              touchLocationX={touchLocationX}
-              touchLocationY={touchLocationY}
-              friendColors={friendColors}
-              visibility={visibility}
-              scale={scale}
-              setGradientColors={setGradientColors}
-              screenDiagonal={screenDiagonal}
-              autoSelectFriend={autoSelectFriend}
-              handleDeselect={handleDeselect}
-              themeColors={themeColors}
-              friendList={friendList}
-              lightDarkTheme={lightDarkTheme}
-              data={friendList}
-              friendId={selectedFriend ? selectedFriend?.id : null}
-              onPress={handleSelectFriend}
-              handleNavAfterSelect={handleNavAfterSelect}
-              useNavigateBack={!!useNavigateBack}
-              onLongPress={toggleLockOnFriend}
-            />
-          </View>
+        <TextHeader
+          label={`Friends`}
+          color={textColor}
+          fontStyle={welcomeTextStyle}
+          //   showNext={friendList?.length === 20 ? true : false}
+
+          showNext={true}
+          nextEnabled={friendList?.length < 20 ? true : false}
+          showNext={true}
+          onNext={navigateToAddFriend}
+          nextIconName={`plus`}
+          nextDisabledIconName={`plus`}
+          nextColor={manualGradientColors.homeDarkColor}
+            nextBackgroundColor={manualGradientColors.lightColor}
+            nextDisabledColor={backgroundColor}
+            nextDisabledBackgroundColor={'transparent'}
+        />
+
+        <View style={styles.friendsListWrapper}>
+          <FriendListUI
+            autoSelectFriend={autoSelectFriend}
+            handleDeselect={handleDeselect}
+            friendList={friendList}
+            backgroundColor={backgroundColor}
+            backgroundOverlayColor={backgroundOverlayColor}
+            itemColor={textColor}
+            friendColorLight={selectedFriend?.lightColor}
+            data={friendList}
+            friendId={selectedFriend ? selectedFriend?.id : null}
+            onPress={handleSelectFriend}
+            handleNavAfterSelect={handleNavAfterSelect}
+            onLongPress={toggleLockOnFriend}
+          />
         </View>
       </SafeAreaView>
     </>

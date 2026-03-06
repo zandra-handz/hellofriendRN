@@ -1,11 +1,9 @@
 //import * as Sentry from "@sentry/react-native";
-import React, { useEffect,  useCallback } from "react";
- 
+import React, { useEffect, useCallback } from "react";
+
 import { useRoute } from "@react-navigation/native";
 
-import  {
-  useSharedValue, 
-} from "react-native-reanimated";
+import { useSharedValue } from "react-native-reanimated";
 
 // app state
 import useSelectFriend from "@/src/hooks/useSelectFriend";
@@ -53,6 +51,17 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const route = useRoute();
   const { friendCategoryColors } = useFriendCategoryColors();
   const idToSelect = route?.params?.idToSelect ?? null;
+  const friendName = route?.params?.friendName ?? null;
+  const friendNextDate = route?.params?.friendNextDate ?? null;
+  const friendChangeTimestamp = route?.params?.friendChangeTimestamp ?? null;
+  const { selectedFriend, setToAutoFriend } = useSelectedFriend();
+    useEffect(() => {
+    if (selectedFriend) {
+      console.log(`SELECTED`, selectedFriend)
+    }
+
+  }, [selectedFriend]); 
+
 
   const backdropTimestamp = route.params?.backdropTimestamp ?? null;
   // console.log(prevScreenHasBackdrop);
@@ -79,15 +88,15 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   }, [idToSelect, friendList?.length, selectedFriend?.id]);
 
   // const { upcomingHelloes  } = useUpcomingHelloes();
-  const { navigateToMomentFocus, navigateToMoments, navigateToGecko } = useAppNavigations();
+  const { navigateToMomentFocus, navigateToMoments, navigateToGecko } =
+    useAppNavigations();
 
   const reverseOverlayValue = useSharedValue(false);
 
-const handleNavigateToGecko = useCallback(() => {
-  reverseOverlayValue.value = true;
-  navigateToGecko();
-}, [navigateToGecko]);
-
+  const handleNavigateToGecko = useCallback(() => {
+    reverseOverlayValue.value = true;
+    navigateToGecko();
+  }, [navigateToGecko]);
 
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({
@@ -99,16 +108,16 @@ const handleNavigateToGecko = useCallback(() => {
     // }, 50);
   }, [navigateToMomentFocus]);
 
-  const { selectedFriend, setToAutoFriend } = useSelectedFriend();
+
 
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
-useEffect(() => {
-  if (backdropTimestamp) {
-    turnBackdropOnValue.value = false;
-    reverseOverlayValue.value = false;
-  }
-}, [backdropTimestamp]);
+  useEffect(() => {
+    if (backdropTimestamp) {
+      turnBackdropOnValue.value = false;
+      reverseOverlayValue.value = false;
+    }
+  }, [backdropTimestamp]);
 
   // useEffect(() => {
   //   if (turnOn) {
@@ -253,6 +262,9 @@ useEffect(() => {
             {settings?.id && upcomingHelloes?.length && user?.id && (
               <SelectedFriendHome
                 canvasKey={route.key}
+                friendName={friendName}
+                friendNextDate={friendNextDate}
+                friendChangeTimestamp={friendChangeTimestamp}
                 primaryBackground={lightDarkTheme.primaryBackground}
                 darkGlassBackground={lightDarkTheme.darkGlassBackground}
                 darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
@@ -271,7 +283,6 @@ useEffect(() => {
                 coloredDotsModeValue={coloredDotsModeValue}
                 handleMomentScreenNoScroll={handleMomentScreenNoScroll} // center double press
                 handleNavigateToGecko={handleNavigateToGecko} // new center single press
-          
               />
             )}
 
@@ -304,7 +315,7 @@ useEffect(() => {
               overlayColor={lightDarkTheme.overlayBackground}
               friendLightColor={selectedFriend?.lightColor}
               friendDarkColor={selectedFriend?.darkColor}
-                    handleNavigateToGecko={handleNavigateToGecko}
+              handleNavigateToGecko={handleNavigateToGecko}
             />
           </SafeViewFriendHome>
         )
