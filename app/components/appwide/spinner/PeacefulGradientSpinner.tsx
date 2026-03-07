@@ -3,8 +3,7 @@
 import manualGradientColors from "@/app/styles/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react";
-import LoadingPage from "./LoadingPage";
-import { LinearGradient } from "react-native-svg";
+import LoadingPage from "./LoadingPage"; 
 // import { useUserSettings } from "@/src/context/UserSettingsContext";
 
 //  import useSignIn from "@/src/hooks/UserCalls/useSignIn";

@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import useUser from "./useUser";
 import { getUserSettings } from "@/src/calls/api";
 
+
+// prefetching in the useUser hook
 const useUserSettings = () => {
   const { user, isInitializing } = useUser();
 

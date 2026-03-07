@@ -45,11 +45,11 @@ const AllHome = ({
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
   const upcomingId = friendListAndUpcoming?.next?.id;
 
-  // Prefetch top 3 upcoming friends when home screen loads
+  // Prefetch top 1 upcoming friend when home screen loads
   useEffect(() => {
     if (!userId || !upcomingHelloes?.length) return;
 
-    upcomingHelloes.slice(0, 3).forEach((hello) => {
+    upcomingHelloes.slice(0, 1).forEach((hello) => {
       const friendId = hello?.friend?.id;
       if (friendId) {
         prefetchFriendDash(userId, friendId, queryClient);

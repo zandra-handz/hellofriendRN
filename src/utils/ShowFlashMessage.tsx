@@ -5,7 +5,7 @@ import FlashMessage from "@/app/components/alerts/FlashMessage";
 let currentSibling: RootSiblings | null = null;
 
 export const showFlashMessage = (message: string, error: boolean, duration = 2000) => {
-  const triggerKey = Date.now();
+ 
 
   if (currentSibling) {
     console.log('current sibling detected!');
