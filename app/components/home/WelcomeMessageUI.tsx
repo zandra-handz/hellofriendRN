@@ -13,23 +13,24 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import MFeatureWriteButton from "./MFeatureWriteButton";
 
 interface WelcomeMessageUIProps {
-  username: string;
-  isNewUser: boolean; // in parent: {new Date(user?.user?.created_on).toDateString() === new Date().toDateString()
-  isKeyboardVisible: boolean; // indirect condition to change message to friend picker
-  onPress: () => void; // because i have turned this component into a focus moment text button
-  // in order to let it fill as much space as possible while still being under the friend picker
-  borderBottomRightRadius: number;
-  borderBottomLeftRadius: number;
-  backgroundColor: string;
+  primaryColor: string;
+  primaryBackground: string;
+  paddingHorizontal?: number;
+  darkerGlassBackground: string;
+  borderBottomRightRadius?: number;
+  borderBottomLeftRadius?: number;
+  backgroundColor?: string;
+  isKeyboardVisible?: boolean;
+  onPress?: () => void;
+  // removed: username, isNewUser — not destructured in component
 }
-
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   primaryColor,
   primaryBackground,
-  paddingHorizontal = 10,
+  paddingHorizontal = 0,
   darkerGlassBackground,
-  borderBottomRightRadius = 10,
-  borderBottomLeftRadius = 10,
+  borderBottomRightRadius = 0,
+  borderBottomLeftRadius = 0,
   backgroundColor = "red",
   isKeyboardVisible = false,
   onPress = () => {},

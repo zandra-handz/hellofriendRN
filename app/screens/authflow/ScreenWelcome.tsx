@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import useUser from "@/src/hooks/useUser";
 import SignInButton from "@/app/components/user/SignInButton";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import AppTitle from "@/app/components/appwide/logo/AppTitle";
@@ -18,17 +18,17 @@ import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 
 const ScreenWelcome = () => { 
   const { user, isInitializing } = useUser();
-  const { resetFriend } = useSelectedFriend();
+  // const { resetFriend } = useSelectedFriend();
 const { lightDarkTheme} = useLDTheme();
   const [resetAnimation, setResetAnimation] = useState(Date.now());
   const [showAnimation, setShowAnimation] = useState(false);
 
-  useEffect(() => {
-    if (!isInitializing && !user?.id) {
-      // console.log("resetting friend");
-      resetFriend();
-    }
-  }, [user?.id, isInitializing]);
+  // useEffect(() => {
+  //   if (!isInitializing && !user?.id) {
+  //     // console.log("resetting friend");
+  //     resetFriend();
+  //   }
+  // }, [user?.id, isInitializing]);
 
   useFocusEffect(
   useCallback(() => {

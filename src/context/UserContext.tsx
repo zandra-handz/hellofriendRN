@@ -1,23 +1,14 @@
-import React, {
-  createContext,
-  useContext,
-  // useRef,
-  useMemo,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useMemo, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { signout } from "../calls/helloFriendApiClient";
-// import useSignOut from "../hooks/UserCalls/useSignOut";
 import { getCurrentUser } from "../calls/api";
-// import useSignIn from "../hooks/UserCalls/useSignIn";
-// import useSignUp from "../hooks/UserCalls/useSignUp";
 import { User } from "../types/UserContextTypes";
 
 interface UserContextType {
   user: User | null;
-  refetch: () => void; 
-  isInitializing: boolean; 
+  refetch: () => void;
+  isInitializing: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -30,18 +21,12 @@ export const useUser = () => {
   return context;
 };
 
-// LEAVE THIS HERE FOR REFERENCE, IT IS CORRECT I JUST DON'T NEED A VARIABLE BECAUSE IT IS ONLY USED ONCE
-// const TOKEN_KEY = "accessToken";
-
-// console.warn(`USER CONTEXT RERENDERED`);
-
 interface UserProviderProps {
   children: React.ReactNode;
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
- 
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
 
   const {
     data: user,
@@ -71,7 +56,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     if (isError) {
       onSignOutContextVersion();
-      // onSignOut();
     }
   }, [isError]);
 
@@ -81,7 +65,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       if (storedToken) {
         await refetch();
       } else {
-        // onSignOut();
         onSignOutContextVersion();
       }
     })();
@@ -93,7 +76,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       isInitializing: isLoading,
       refetch,
     }),
-    [user, isLoading, refetch]
+    [user, isLoading, refetch],
   );
 
   return (

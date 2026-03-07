@@ -20,7 +20,6 @@ interface LightDarkThemeType {
 
 const LDThemeContext = createContext<LightDarkThemeType | undefined>(undefined);
 
-// export const useLDTheme = () => useContext(LDThemeContext);
 
 export const useLDTheme = () => {
   const context =  useContext(LDThemeContext);

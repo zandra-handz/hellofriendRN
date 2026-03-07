@@ -21,8 +21,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 type Props = {
   userId: number;
   username: string;
-  lightDarkTheme: LDTheme;
-  friendListLength: number;
+  lightDarkTheme: LDTheme; 
 };
 const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
 

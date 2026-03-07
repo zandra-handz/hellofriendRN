@@ -637,6 +637,7 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({ 
   };
 
   const deselectFriend = () => {
+    console.log('DESELECT FRIEND RANNNNN')
     setSelectedFriend({
       isReady: true,
       user: null,

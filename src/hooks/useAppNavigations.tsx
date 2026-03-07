@@ -340,6 +340,7 @@ type NavToAuthProp = {
 // };
 
 interface hookReturns {
+  navigateToWelcome: () => void;
   navigateToHome: () => void;
   navigateToFriendHome: ({idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp }: NavToFriendHomeProps) => void;
   navigateToAddFriend: () => void;

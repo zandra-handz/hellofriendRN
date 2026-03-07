@@ -1,43 +1,43 @@
- 
-import React, { useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { ReactNode, useEffect } from "react";
 
-const TopLevelNavigationHandler = ({ userId, isInitializing, children }) => {
-    const navigation = useNavigation();
- 
- 
- 
+import useAppNavigations from "../hooks/useAppNavigations";
 
-    useEffect(() => { 
-      
-        const checkAuthentication = async () => {
-           
-            if (isInitializing) { 
-                  console.log('nav useeffect triggerd! returning without doing anything');
-                return; // Wait until loading is complete
-            }
- 
-            if (!userId) {
-                console.log('nav useeffect triggerd! not authenticated');
-             
-                 
-                    //  onSignOut();  
+type Props = {
+  userId?: number | null;
+  isInitializing?: boolean | null;
+  children: ReactNode;
+};
 
-                     //not necessary for signing out, but leaving here for right now while debugging the blank green screen issue
-                    navigation.navigate('Welcome'); 
-                // }
-            }
+const TopLevelNavigationHandler = ({
+  userId,
+  isInitializing,
+  children,
+}: Props) => {
+  const { navigateToWelcome } = useAppNavigations();
 
-            if (userId) {
-                   console.log('nav useeffect triggerd! authenticated, not doing anything');
-            }
-        };
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      if (isInitializing) {
+        // console.log("nav useeffect triggerd! returning without doing anything");
+        return; // Wait until loading is complete
+      }
 
-        checkAuthentication();
-    }, [  navigation, isInitializing, userId]);
- 
+      if (!userId) {
+        // console.log("nav useeffect triggerd! not authenticated");
+        navigateToWelcome();
+      }
 
-    return <>{children}</>;
+      if (userId) {
+        // console.log(
+        //   "nav useeffect triggerd! authenticated, not doing anything",
+        // );
+      }
+    };
+
+    checkAuthentication();
+  }, [navigateToWelcome, isInitializing, userId]);
+
+  return <>{children}</>;
 };
 
 export default TopLevelNavigationHandler;
