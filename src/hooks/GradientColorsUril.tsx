@@ -1,5 +1,5 @@
 export const generateGradientColors = (userCategoryIds, startColor, endColor) => {
- console.log(userCategoryIds)
+//  console.log(userCategoryIds)
   const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
   const rgbToHex = (rgb) =>
     '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
@@ -39,6 +39,6 @@ export const calculatePercentage = (
     percentageArray.push(percentage);
   });
 
-  console.log(`calculating percentages: `, percentageArray);
+  // console.log(`calculating percentages: `, percentageArray);
   return percentageArray;
 };

@@ -1,12 +1,9 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-
-// import { AppState, AppStateStatus } from "react-native";
+  
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import SvgIcon from "@/app/styles/SvgIcons";
+ 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import DotsPositionLayer from "../headers/DotsPositionLayer";
 

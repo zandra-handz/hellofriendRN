@@ -63,20 +63,16 @@ const { width: screenWidth } = useWindowDimensions();
 
   // NEED THIS TO STOP THE 'FLASH' OF OLD SHARED VALUES IN LEAVES WHEN FRIEND CHANGES
   useFocusEffect(
-    useCallback(() => {
-      // totalValue.value = 0;
+    useCallback(() => { 
       decimalsValue.value = [];
       catDecimalsValue.value = [];
-      labelsValue.value = [];
-      // categoryStopsValue.value = [];
+      labelsValue.value = []; 
       setPositions([]);
 
-      return () => {
-        // totalValue.value = 0;
+      return () => { 
         decimalsValue.value = [];
         catDecimalsValue.value = [];
-        labelsValue.value = [];
-        // categoryStopsValue.value = [];
+        labelsValue.value = []; 
         setPositions([]);
       };
     }, []),
@@ -99,9 +95,7 @@ const { width: screenWidth } = useWindowDimensions();
   }, [data]);
 
   const RADIUS = radius; 
-  const STROKE_WIDTH = strokeWidth;
-  const OUTER_STROKE_WIDTH = outerStrokeWidth;
-
+ 
 
   const leafCenterXValue = useSharedValue(screenWidth / 2);
 const leafCenterYValue = useSharedValue(RADIUS);
@@ -149,7 +143,7 @@ useEffect(() => {
 
  
 
- 
+ // NEED THIS EVEN IF NOT USING THE RETURN
 const leafPositionsCombined = useDerivedValue(() => {
   "worklet";
 

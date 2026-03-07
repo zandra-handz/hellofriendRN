@@ -41,6 +41,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   friendName,
   friendNextDate,
   friendChangeTimestamp,
+ 
 
   paddingHorizontal,
   primaryColor,
@@ -191,6 +192,7 @@ useEffect(() => {
                 ref={headerRef}
               >
                 <FriendHeaderMessageUI
+         
                   primaryBackground={primaryBackground}
                   friendChangeTimestamp={friendChangeTimestamp}
                   height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE

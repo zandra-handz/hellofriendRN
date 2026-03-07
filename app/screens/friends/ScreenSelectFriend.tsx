@@ -12,13 +12,10 @@ import useUser from "@/src/hooks/useUser";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import manualGradientColors from "@/app/styles/StaticColors";
-import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming"; 
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
+ 
 const ScreenSelectFriend = ({}) => {
   const { user } = useUser();
   const route = useRoute();
@@ -28,57 +25,30 @@ const ScreenSelectFriend = ({}) => {
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;
   const backgroundOverlayColor = lightDarkTheme.overlayBackground;
-
-  const { autoSelectFriend } = useAutoSelector();
-
+ 
   const welcomeTextStyle = AppFontStyles.welcomeText;
 
   const { friendListAndUpcoming } = useFriendListAndUpcoming({
     userId: user?.id,
   });
   const friendList = friendListAndUpcoming?.friends;
-  const queryClient = useQueryClient();
 
-  const { selectedFriend, selectFriend, setToFriend, deselectFriend } =
-    useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
   const { updateSettings } = useUpdateSettings({ userId: user?.id });
-
+ 
   const toggleLockOnFriend = (id) => {
-    // if (id !== selectedFriend?.id) {
-    //   handleSelectFriend(id);
-    // }
-    updateSettings({ lock_in_custom_string: id });
+    updateSettings({ pinned_friend: id });
   };
-
-  const handleDeselect = useCallback(() => {
-    deselectFriendFunction({
-      userId: user?.id,
-      queryClient: queryClient,
-      updateSettings: updateSettings,
-      friendId: selectedFriend?.id,
-      autoSelectFriend: autoSelectFriend,
-      setToFriend: setToFriend,
-      deselectFriend: deselectFriend,
-    });
-  }, [
-    user?.id,
-    queryClient,
-    autoSelectFriend,
-    updateSettings,
-    selectedFriend?.id,
-    selectFriend,
-  ]);
+ 
 
   const { navigateBack, navigateToFriendHome, navigateToAddFriend } =
     useAppNavigations();
-
+ 
   const handleNavAfterSelect = useCallback(
     (friendId, friendName, friendNextDate) => {
       if (!useNavigateBack && friendId) {
-        // navigateToFriendHome({idToSelect: friendId, backdropTimestamp: null, friendName: friendName, friendNextDate: null, friendChangeTimestamp: Date.now() });
-         navigateToFriendHome(friendId, null, friendName, friendNextDate, Date.now());
-     
-    } else {
+        navigateToFriendHome(friendId, null, friendName, friendNextDate, Date.now());
+      } else {
         navigateBack();
       }
     },
@@ -103,24 +73,20 @@ const ScreenSelectFriend = ({}) => {
           label={`Friends`}
           color={textColor}
           fontStyle={welcomeTextStyle}
-          //   showNext={friendList?.length === 20 ? true : false}
-
           showNext={true}
           nextEnabled={friendList?.length < 20 ? true : false}
-          showNext={true}
           onNext={navigateToAddFriend}
           nextIconName={`plus`}
           nextDisabledIconName={`plus`}
           nextColor={manualGradientColors.homeDarkColor}
-            nextBackgroundColor={manualGradientColors.lightColor}
-            nextDisabledColor={backgroundColor}
-            nextDisabledBackgroundColor={'transparent'}
+          nextBackgroundColor={manualGradientColors.lightColor}
+          nextDisabledColor={backgroundColor}
+          nextDisabledBackgroundColor={'transparent'}
         />
 
         <View style={styles.friendsListWrapper}>
           <FriendListUI
-            autoSelectFriend={autoSelectFriend}
-            handleDeselect={handleDeselect}
+            userId={user?.id} 
             friendList={friendList}
             backgroundColor={backgroundColor}
             backgroundOverlayColor={backgroundOverlayColor}

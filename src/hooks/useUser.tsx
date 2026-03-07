@@ -42,7 +42,7 @@ const useUser = () => {
     (async () => {
       const cachedUser = queryClient.getQueryData(["currentUser"]);
       if (cachedUser) {
-        console.log("User already cached, skipping refetch");
+        // console.log("User already cached, skipping refetch");
         setHasCheckedToken(true);
         return;
       }

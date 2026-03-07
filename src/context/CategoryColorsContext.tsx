@@ -28,7 +28,7 @@ export const CategoryColorsProvider: React.FC<CategoryColorsProviderProps> = ({
   children,
 }) => {
   const [categoryColors, setCategoryColors] = useState([]);
-
+console.log('category colors rerendered')
 const handleSetCategoryColors = (colors) => {
   setCategoryColors((prevColors) => {
     const isSame = isEqual(prevColors, colors);

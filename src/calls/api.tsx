@@ -222,6 +222,8 @@ export const getUserSettings = async () => {
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
+
+   
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getUserSettings");
@@ -428,7 +430,7 @@ export const getCurrentUser = async () => {
     // );
 
     const response = await helloFriendApiClient.get("/users/get-current/");
-    console.log("API GET Call getCurrentUser", response.data);
+    // console.log("API GET Call getCurrentUser", response.data);
     // const end = Date.now(); // log end time
     // console.log(
     //   "\x1b[30m%s\x1b[30m",

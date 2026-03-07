@@ -1,92 +1,72 @@
-import { View, Text } from "react-native";
-import React from "react";
-// import { useQueryClient } from "@tanstack/react-query";
-export const findFriendInList = (id, friendList) => {
-  if (!friendList?.length || id) {
-    return;
-  }
-  return friendList?.find((friend) => friend.id === id);
-};
-
-//add hello deselect needs to be handled differently because the nextUpId might change
-// can use a return value of true to navigate to home screen
-export const deselectFriendFunction =   ({
-  userId,
-  queryClient, 
-  updateSettings,
-  friendId, 
-  autoSelectFriend,
  
-  setToFriend,
-  deselectFriend,
-  
-}) => {
-  if (!updateSettings || !friendId || !autoSelectFriend) {
-    return false;
-  }
+import { useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 
-  
-  if (
-    autoSelectFriend?.customFriend === 'pending' ||
-    autoSelectFriend?.nextFriend === 'pending'
-  ) {
-    console.log("autos not ready yet...");
-    // selectFriend(null);
-    // resetTheme(null);
-    return false;
-  }
+const useDeselectFriend = ({ userId, settings }) => {
+  const queryClient = useQueryClient();
+  const { selectedFriend, setToFriend, deselectFriend } = useSelectedFriend();
+  const { updateSettings } = useUpdateSettings({ userId });
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({ userId });
 
-  if (autoSelectFriend?.customFriend?.id && autoSelectFriend.customFriend?.id !== -1 && autoSelectFriend.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1) {
- 
-    setToFriend({friend: autoSelectFriend?.nextFriend, preConditionsMet: true});
- 
+  const friendList = friendListAndUpcoming?.friends;
+  const friendId = selectedFriend?.id;
 
-    let autoToNext;
-    autoToNext = { lock_in_custom_string: null };
+  const findFriendInList = (id) => {
+    if (!friendList?.length || !id) return null;
+    return friendList.find((friend) => friend.id === id) ?? null;
+  };
 
-    queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
-      if (!oldData) return { ...autoToNext };
-      return {
-        ...oldData,
-        ...autoToNext,
-      };
-    });
-    return false;
-  }
+  const handleDeselectFriend = useCallback(() => {
+    if (!friendId || !settings) return false;
 
-  if (
-    autoSelectFriend?.nextFriend?.id && autoSelectFriend?.nextFriend?.id !== -1 &&
-    Number(friendId) === Number(autoSelectFriend?.nextFriend?.id)
-  ) {
-   console.log("TURN AUTO OFF", friendId, autoSelectFriend?.nextFriend?.id);
+    const pinnedFriend = settings.pinned_friend;
+    const upcomingFriend = settings.upcoming_friend;
+
+    const pinnedFriendObj = findFriendInList(pinnedFriend);
+    const upcomingFriendObj = findFriendInList(upcomingFriend);
+
+    // If there's a pinned friend and an upcoming friend, clear pinned and switch to upcoming
+    if (pinnedFriend && upcomingFriend) {
+      setToFriend({ friend: upcomingFriendObj, preConditionsMet: true });
+
+      queryClient.setQueryData(["userSettings", userId], (oldData) => {
+        if (!oldData) return { pinned_friend: null };
+        return { ...oldData, pinned_friend: null };
+      });
+
+      updateSettings({ pinned_friend: null });
+      return false;
+    }
+
+    // If current friend is the upcoming friend, turn off auto-select
+    if (upcomingFriend && Number(friendId) === Number(upcomingFriend)) {
+      console.log("TURN AUTO OFF", friendId, upcomingFriend);
+      deselectFriend();
+
+      queryClient.setQueryData(["userSettings", userId], (oldData) => {
+        if (!oldData) return { upcoming_friend: null };
+        return { ...oldData, upcoming_friend: null };
+      });
+
+      updateSettings({ upcoming_friend: null });
+      return true;
+    }
+
+    // If there's a pinned friend and current is not pinned, switch to pinned
+    if (pinnedFriend && Number(friendId) !== Number(pinnedFriend)) {
+      setToFriend({ friend: pinnedFriendObj, preConditionsMet: true });
+      return false;
+    }
+
+    console.log("Fallback deselect");
     deselectFriend();
-  
-
-    let autoOff;
-    autoOff = { lock_in_next: false };
-
-    queryClient.setQueryData(["userSettings", userId], (oldData: any) => {
-      if (!oldData) return { ...autoOff };
-      return {
-        ...oldData,
-        ...autoOff,
-      };
-    });
     return true;
-  }
+  }, [userId, friendId, settings, friendList, queryClient, setToFriend, deselectFriend, updateSettings]);
 
-  if (
-    autoSelectFriend?.customFriend?.id && autoSelectFriend?.customFriend?.id !== -1 &&
-    Number(friendId) !== Number(autoSelectFriend?.customFriend?.id)
-  ) {
-    setToFriend({friend: autoSelectFriend?.customFriend, preConditionsMet: true});
- 
-
-    return false;
-  }
-console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!T$#RDFVI$RFKER K                          3otrekmfd')
-
-deselectFriend();
- 
-  return true; // not sure about this one
+  return { handleDeselectFriend };
 };
+
+export default useDeselectFriend;

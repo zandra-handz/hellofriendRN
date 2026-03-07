@@ -160,7 +160,7 @@ export const LDThemeProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const colorScheme = useColorScheme();
   const [manualDarkMode, setManualDarkMode] = useState<boolean | null>(null);
   const [theme, setTheme] = useState<string>(colorScheme || "light");
-
+ 
   useEffect(() => {
     const newTheme =
       manualDarkMode !== null

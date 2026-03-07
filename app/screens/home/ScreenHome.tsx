@@ -19,13 +19,13 @@ import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LocalSolidSpinner from "@/app/components/appwide/spinner/LocalSolidSpinner";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useAutoSelector } from "@/src/context/AutoSelectorContext";
+// import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
-import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
+// import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-
+import useSelectFriend from "@/src/hooks/useSelectFriend";
 import useUser from "@/src/hooks/useUser";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 // import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
@@ -49,7 +49,7 @@ const ScreenHome = ( ) => {
   const { settings } = useUserSettings();
   const { navigateToFriendHome } = useAppNavigations();
   const isFocused = useIsFocused();
-  const { autoSelectFriend } = useAutoSelector();
+  // const { autoSelectFriend } = useAutoSelector();
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
   // const { hasShareIntent, shareIntent } = useShareIntentContext();
@@ -61,79 +61,40 @@ const ScreenHome = ( ) => {
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user.id });
 
-  const { setUpNextCache } = useUpNextCache({
-    userId: user.id,
-    friendListAndUpcoming,
-  });
+  // const { setUpNextCache } = useUpNextCache({
+  //   userId: user.id,
+  //   friendListAndUpcoming,
+  // });
 
+
+
+    const friendList = friendListAndUpcoming?.friends;
+  const friendListLength = friendList?.length || 0;
+
+
+    const { handleSelectFriend } = useSelectFriend({
+      userId: user?.id,
+      friendList,
+    });
+  
+ 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [newMomentText, setNewMomentText] = useState();
   const newMomentTextRef = useRef(null);
 
   const isLoading =
-    autoSelectFriend?.nextFriend === "pending" ||
-    autoSelectFriend?.customFriend === "pending" ||
-    !selectedFriend?.isReady ||
+    // autoSelectFriend?.nextFriend === "pending" ||
+    // autoSelectFriend?.customFriend === "pending" ||
+    // !selectedFriend?.isReady ||
     !friendListAndUpcomingIsSuccess;
 
-
-    useEffect(() => {
-    if (!isFocused) return;
-    if (!isLoading && selectedFriend?.id) {
-      navigateToFriendHome();
-    }
-  }, [isLoading, selectedFriend?.id, isFocused]);
-
-  // ─── all useEffects ─────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isFocused) return;
-    setUpNextCache();
-  }, [friendListAndUpcoming, isFocused]);
-
-
-
-  console.log(`~~~~~~~~~~~~~~~~~~~home screen rerendered`);
-
+ 
   // useEffect(() => {
-  //   if (!hasShareIntent || !shareIntent) return;
+  //   if (!isFocused) return;
+  //   setUpNextCache();
+  // }, [friendListAndUpcoming, isFocused]);
 
-  //   if (hasShareIntent && shareIntent?.files?.length > 0) {
-  //     const file = shareIntent.files[0];
-  //     const uri = file?.path || file?.contentUri;
-  //     if (uri) {
-  //       processSharedFile(uri);
-  //     } else {
-  //       console.warn("No valid URI found for the shared file.");
-  //     }
-  //   }
-
-  //   if (hasShareIntent && shareIntent?.text?.length > 0) {
-  //     const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
-  //     if (sharedText) {
-  //       navigateToMomentFocusWithText({
-  //         screenCameFrom: 0,
-  //         momentText: sharedText,
-  //       });
-  //     } else {
-  //       showFlashMessage(
-  //         `length in shared text but data structure passed here is not valid`,
-  //         true,
-  //         2000,
-  //       );
-  //     }
-  //   }
-  // }, [shareIntent, hasShareIntent]);
-
-  // useEffect(() => {
-  //   console.log("request permissions!!");
-  //   requestPermission();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (imageUri) {
-  //     navigateToAddImage({ imageUri });
-  //   }
-  // }, [imageUri]);
+ 
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -150,34 +111,7 @@ const ScreenHome = ( ) => {
     };
   }, []);
 
-  // ─── callbacks ──────────────────────────────────────────────────────────────
-  // const processSharedFile = async (url) => {
-  //   if (url.startsWith("content://") || url.startsWith("file://")) {
-  //     try {
-  //       const file = new File(url);
-  //       const fileInfo = await file.info();
-  //       if (fileInfo && fileInfo.exists) {
-  //         if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-  //           const resizedImage = await resizeImage(fileInfo.uri);
-  //           navigateToAddImage({ imageUri: resizedImage.uri });
-  //         } else {
-  //           Alert.alert(
-  //             "Unsupported File",
-  //             "The shared file is not a valid image.",
-  //           );
-  //         }
-  //       } else {
-  //         Alert.alert("Error", "Could not process the shared file.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error processing shared file:", error);
-  //       Alert.alert(
-  //         "Error",
-  //         "An error occurred while processing the shared file.",
-  //       );
-  //     }
-  //   }
-  // };
+ 
 
   const updateNewMomentTextString = (text) => {
     setNewMomentText(text);
@@ -205,8 +139,7 @@ const ScreenHome = ( ) => {
   };
 
   // ─── derived values (after all hooks) ───────────────────────────────────────
-  const friendList = friendListAndUpcoming?.friends;
-  const friendListLength = friendList?.length || 0;
+
  
   const userCreatedOn = user.created_on; 
  
@@ -231,9 +164,10 @@ const ScreenHome = ( ) => {
         }
       /> */}
 
-      {autoSelectFriend?.customFriend !== "pending" &&
-        autoSelectFriend?.nextFriend !== "pending" &&
-        selectedFriend?.isReady &&
+      {
+      // autoSelectFriend?.customFriend !== "pending" &&
+      //   autoSelectFriend?.nextFriend !== "pending" &&
+      //   selectedFriend?.isReady &&
         friendListAndUpcomingIsSuccess && (
           <SafeAreaView
             style={{
@@ -334,6 +268,7 @@ const ScreenHome = ( ) => {
                                 lightDarkTheme.darkerOverlayBackground
                               }
                               isLoading={isLoading}
+                              handleSelectFriend={handleSelectFriend}
                               navigateToFriendHome={navigateToFriendHome}
                               borderRadius={10}
                               height={"100%"}

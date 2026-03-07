@@ -7,7 +7,7 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
 export default function ShareIntentHandler() {
-  const { hasShareIntent, shareIntent } = useShareIntentContext();
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntentContext();
   const { navigateToMomentFocusWithText, navigateToAddImage } = useAppNavigations();
   const { requestPermission, imageUri, resizeImage } = useImageUploadFunctions();
 
@@ -32,6 +32,8 @@ export default function ShareIntentHandler() {
       } else {
         console.warn("No valid URI found for the shared file.");
       }
+      resetShareIntent();
+      return;
     }
 
     if (shareIntent?.text?.length > 0) {
@@ -48,6 +50,8 @@ export default function ShareIntentHandler() {
           2000,
         );
       }
+      resetShareIntent();
+      return;
     }
   }, [shareIntent, hasShareIntent]);
 

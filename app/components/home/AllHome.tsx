@@ -30,6 +30,7 @@ const AllHome = ({
   borderRadius = 20,
   borderColor = "transparent",
   navigateToFriendHome,
+  handleSelectFriend,
   textColor,
   overlayColor,
   lighterOverlayColor,
@@ -67,23 +68,25 @@ const AllHome = ({
     [upcomingHelloes?.[0]?.future_date_in_words]
   );
 
-  const { handleSelectFriend } = useSelectFriend({
-    userId,
-    friendList,
-  });
+  // const { handleSelectFriend } = useSelectFriend({
+  //   userId,
+  //   friendList,
+  // });
 
   const onPress = useCallback(() => {
     if (upcomingId) {
-      navigateToFriendHome(upcomingId);
+      handleSelectFriend(upcomingId);
+      // navigateToFriendHome(upcomingId);
     }
-  }, [upcomingId, navigateToFriendHome]);
+  }, [upcomingId ]);
 
   
   const onSoonPress = useCallback((id) => {
     if (id) {
-      navigateToFriendHome(id);
+      handleSelectFriend(id);
+      // navigateToFriendHome(id);
     }
-  }, [ navigateToFriendHome]);
+  }, [  handleSelectFriend]);
 
   return (
     <View

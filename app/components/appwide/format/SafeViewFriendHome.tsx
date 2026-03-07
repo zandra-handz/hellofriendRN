@@ -1,4 +1,4 @@
-import React, { useEffect, ReactElement, useMemo } from "react";
+import React, { useEffect, ReactElement, useMemo, useRef } from "react";
 import { DimensionValue, ViewStyle, StyleSheet, Image } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,6 +36,19 @@ const SafeViewFriendHome = ({
 }: Props) => {
   const opacityValue = useSharedValue(0);
 
+  const prevLightRef = useRef(friendColorLight);
+  const prevDarkRef = useRef(friendColorDark);
+
+  if (friendColorLight && friendColorLight !== "white") {
+    prevLightRef.current = friendColorLight;
+  }
+  if (friendColorDark && friendColorDark !== "red") {
+    prevDarkRef.current = friendColorDark;
+  }
+
+  const stableLightColor = friendColorLight || prevLightRef.current;
+  const stableDarkColor = friendColorDark || prevDarkRef.current;
+
   useEffect(() => {
     if (friendId) {
       opacityValue.value = withTiming(0.46, { duration: 800 });
@@ -60,8 +73,8 @@ const SafeViewFriendHome = ({
     <GradientBackground
       useFriendColors={useFriendColors}
       additionalStyles={{ flex: 1 }}
-      friendColorDark={friendColorLight}
-      friendColorLight={friendColorDark}
+      friendColorDark={stableLightColor}
+      friendColorLight={stableDarkColor}
     >
       <SafeAreaView style={styles.safeAreaStyle}>
         <>
@@ -78,7 +91,7 @@ const SafeViewFriendHome = ({
           <Image
             source={LeafImage}
             style={styles.leafContainer}
-            tintColor={friendColorLight}
+            tintColor={stableLightColor}
           />
 
           {children}

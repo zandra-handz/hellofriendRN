@@ -1,211 +1,51 @@
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 
-// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// app components
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import UserSettingsModal from "./UserSettingsModal.";
-import FriendSettingsModal from "./FriendSettingsModal";
-import { useAutoSelector } from "@/src/context/AutoSelectorContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import FriendThemeModal from "./FriendThemeModal";
- 
+import SvgIcon from "@/app/styles/SvgIcons"; 
+import useDeselectFriend from "@/src/hooks/deselectFriendFunction";
+import useUserSettings from "@/src/hooks/useUserSettings";
 
-import SvgIcon from "@/app/styles/SvgIcons";
+// Lazy load modals
+const UserSettingsModal = React.lazy(() => import("./UserSettingsModal."));
+const FriendSettingsModal = React.lazy(() => import("./FriendSettingsModal"));
+const FriendThemeModal = React.lazy(() => import("./FriendThemeModal"));
 
-// import { useFriendDash } from "@/src/context/FriendDashContext";
-import useFriendDash from "@/src/hooks/useFriendDash";
-
-import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
-import { deselectFriendFunction } from "@/src/hooks/deselectFriendFunction";
-
-import { useQueryClient } from "@tanstack/react-query";
-// import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 const SelectedFriendFooter = ({
   userId,
+  friendId,
   friendName,
   lightDarkTheme,
-  dividerStyle, 
+  dividerStyle,
   friendLightColor,
   friendDarkColor,
-  handleNavigateToGecko
+  handleNavigateToGecko,
 }) => {
-  const { setToFriend, deselectFriend, selectedFriend } = useSelectedFriend();
-
-  const friendId = selectedFriend?.id;
-  const { friendDash } = useFriendDash({ userId: userId, friendId: friendId });
-  const { autoSelectFriend } = useAutoSelector();
-  const {  navigateToHome } = useAppNavigations();
-  const { updateSettings } = useUpdateSettings({ userId: userId });
-  const queryClient = useQueryClient();
+  const { settings } = useUserSettings({ userId });
+  const { handleDeselectFriend } = useDeselectFriend({ userId, settings });
+  const { navigateToHome } = useAppNavigations();
 
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
+  const [friendSettingsModalVisible, setFriendSettingsModalVisible] = useState(false);
 
-  const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
-    useState(false);
-
-  // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 12;
   const footerIconSize = 24;
 
   const primaryColor = lightDarkTheme.primaryText;
 
-  // console.log(`SELECTED FRIEND FOOTER RERENDERED: `, upNextId, friendId);
-
   const handleDeselect = useCallback(() => {
-    deselectFriendFunction({
-      userId,
-      queryClient,
-      updateSettings,
-      friendId,
-      autoSelectFriend,
-      setToFriend,
-      deselectFriend,
-    });
-  }, [
-    userId,
-    queryClient,
-    autoSelectFriend,
-    updateSettings,
-    friendId,
-    setToFriend,
-    deselectFriend,
-  ]);
+    handleDeselectFriend();
+  }, [handleDeselectFriend]);
 
   const handleDeselect_withNavigate = useCallback(() => {
-    const goHome = deselectFriendFunction({
-      userId,
-      queryClient,
-      updateSettings,
-      friendId,
-      autoSelectFriend,
-      setToFriend,
-      deselectFriend,
-    });
-
-    console.log(!!goHome);
-
-    if (!!goHome) {
+    const goHome = handleDeselectFriend();
+    if (goHome) {
       navigateToHome();
     }
-  }, [
-    userId,
-    queryClient,
-    autoSelectFriend,
-    updateSettings,
-    friendId,
-    setToFriend,
-    deselectFriend,
-    navigateToHome,
-  ]);
- 
-
-  const RenderDeselectButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        primaryColor={primaryColor}
-        confirmationRequired={true}
-        confirmationTitle={"Just to be sure"}
-        confirmationMessage={"Deselect friend?"}
-        // label="Deselect"
-        label="Back"
-        icon={
-          <SvgIcon
-            name={"account_arrow_left_outline"}
-            size={footerIconSize}
-            color={primaryColor}
-          />
-        }
-        onPress={() => handleDeselect_withNavigate()}
-      />
-    ),
-    [primaryColor, friendId, autoSelectFriend, queryClient],
-  );
-
-  const RenderSettingsButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        primaryColor={primaryColor}
-        label="Account"
-        icon={
-          <SvgIcon
-            name={"settings_suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
-            size={footerIconSize}
-            color={primaryColor}
-          />
-        }
-        onPress={() => setSettingsModalVisible(true)}
-      />
-    ),
-    [primaryColor],
-  );
-  const RenderColorThemeButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        primaryColor={primaryColor}
-        label="Colors"
-        icon={
-          <SvgIcon
-            name={"palette"}
-            size={footerIconSize}
-            color={primaryColor}
-          />
-        }
-        onPress={() => setColorsModalVisible(true)}
-      />
-    ),
-    [primaryColor],
-  );
-
-  const handleCenterButtonToggle = () => {
-    setFriendSettingsModalVisible(true);
-  };
-
-  const RenderFriendProfileButton = useCallback(
- 
-
-    () => (
-      <FooterButtonIconVersion
-        primaryColor={primaryColor}
-        label="Settings"
-        icon={
-          <SvgIcon
-            name={"tune_variant"}
-            size={footerIconSize}
-            color={primaryColor}
-          />
-        }
-        onPress={handleCenterButtonToggle}
-      />
-    ),
-    [friendLightColor, friendDarkColor, primaryColor, friendId, friendName],
-  );
-
-  const RenderFidgetButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        primaryColor={primaryColor}
-        label="Visual"
-        icon={
-          <View style={{ top: 20, left: 10, overflow: "hidden" }}>
-            <SvgIcon
-              name={"gecko_mine"}
-              // name={"pulse"}
-              size={footerIconSize + 130}
-              color={primaryColor}
-            />
-          </View>
-        }
-        // onPress={() => navigateToGecko({selection: 0})} // can use this too
-        onPress={handleNavigateToGecko}
-      />
-    ),
-    [primaryColor],
-  );
+  }, [handleDeselectFriend, navigateToHome]);
 
   return (
     <View
@@ -225,94 +65,200 @@ const SelectedFriendFooter = ({
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            // backgroundColor: overlayColor,
           },
         ]}
       >
         <View style={styles.section}>
-          <RenderDeselectButton />
+          <FooterButtonIconVersion
+            primaryColor={primaryColor}
+            confirmationRequired={true}
+            confirmationTitle={"Just to be sure"}
+            confirmationMessage={"Deselect friend?"}
+            label="Back"
+            icon={
+              <SvgIcon
+                name={"account_arrow_left_outline"}
+                size={footerIconSize}
+                color={primaryColor}
+              />
+            }
+            onPress={handleDeselect_withNavigate}
+          />
         </View>
 
         <View style={[styles.divider, dividerStyle]} />
-        <>
-          <View style={styles.section}>
-            <RenderSettingsButton />
-          </View>
-        </>
+        <View style={styles.section}>
+          <FooterButtonIconVersion
+            primaryColor={primaryColor}
+            label="Account"
+            icon={
+              <SvgIcon
+                name={"settings_suggest"}
+                size={footerIconSize}
+                color={primaryColor}
+              />
+            }
+            onPress={() => setSettingsModalVisible(true)}
+          />
+        </View>
 
         <View style={[styles.divider, dividerStyle]} />
-        <>
-          <View style={styles.section}>
-            <RenderFriendProfileButton />
-          </View>
-        </>
+        <View style={styles.section}>
+          <FooterButtonIconVersion
+            primaryColor={primaryColor}
+            label="Settings"
+            icon={
+              <SvgIcon
+                name={"tune_variant"}
+                size={footerIconSize}
+                color={primaryColor}
+              />
+            }
+            onPress={() => setFriendSettingsModalVisible(true)}
+          />
+        </View>
 
         <View style={[styles.divider, dividerStyle]} />
-        <>
-          <View style={styles.section}>
-            <RenderColorThemeButton />
-          </View>
-        </>
+        <View style={styles.section}>
+          <FooterButtonIconVersion
+            primaryColor={primaryColor}
+            label="Colors"
+            icon={
+              <SvgIcon
+                name={"palette"}
+                size={footerIconSize}
+                color={primaryColor}
+              />
+            }
+            onPress={() => setColorsModalVisible(true)}
+          />
+        </View>
 
         <View style={[styles.divider, dividerStyle]} />
-        <>
-          <View style={styles.section}>
-            <RenderFidgetButton />
-          </View>
-        </>
+        <View style={styles.section}>
+          <FooterButtonIconVersion
+            primaryColor={primaryColor}
+            label="Visual"
+            icon={
+              <View style={{ top: 20, left: 10, overflow: "hidden" }}>
+                <SvgIcon
+                  name={"gecko_mine"}
+                  size={footerIconSize + 130}
+                  color={primaryColor}
+                />
+              </View>
+            }
+            onPress={handleNavigateToGecko}
+          />
+        </View>
       </View>
 
-      {settingsModalVisible && userId && (
-        <UserSettingsModal
-          userId={userId}
-          isVisible={settingsModalVisible}
-          bottomSpacer={footerHeight - 30} //for safe view
-          closeModal={() => setSettingsModalVisible(false)}
-          textColor={lightDarkTheme.primaryText}
-          backgroundColor={lightDarkTheme.primaryBackground}
-          // closeButtonColor={friendLightColor}
-        />
-      )}
-
-      {friendSettingsModalVisible && !!friendId && (
-        <View>
-          <FriendSettingsModal
+      {settingsModalVisible && (
+        <React.Suspense fallback={null}>
+          <UserSettingsModal
             userId={userId}
-            handleDeselectFriend={handleDeselect}
+            isVisible={settingsModalVisible}
+            bottomSpacer={footerHeight - 30}
+            closeModal={() => setSettingsModalVisible(false)}
             textColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.primaryBackground}
-            isVisible={friendSettingsModalVisible}
-            friendLightColor={friendLightColor}
-            friendDarkColor={friendDarkColor}
-            friendId={friendId}
-            friendName={friendName}
-            friendDash={friendDash}
-            bottomSpacer={footerHeight - 30} //for safe view
-            closeModal={() => setFriendSettingsModalVisible(false)}
           />
-        </View>
+        </React.Suspense>
       )}
 
-      {colorsModalVisible && !!friendId && (
-        <View>
-          <FriendThemeModal
+      {friendSettingsModalVisible && (
+        <React.Suspense fallback={null}>
+          <FriendSettingsModalWrapper
             userId={userId}
-            lightDarkTheme={lightDarkTheme}
-            textColor={lightDarkTheme.primaryText}
-                backgroundColor={lightDarkTheme.primaryBackground}
-            friendLightColor={friendLightColor}
-            friendDarkColor={friendDarkColor}
-            userId={userId}
-            isVisible={colorsModalVisible}
             friendId={friendId}
             friendName={friendName}
-            friendDash={friendDash}
-            bottomSpacer={footerHeight - 30} //for safe view
+            friendLightColor={friendLightColor}
+            friendDarkColor={friendDarkColor}
+            lightDarkTheme={lightDarkTheme}
+            handleDeselectFriend={handleDeselect}
+            footerHeight={footerHeight}
+            closeModal={() => setFriendSettingsModalVisible(false)}
+          />
+        </React.Suspense>
+      )}
+
+      {colorsModalVisible && (
+        <React.Suspense fallback={null}>
+          <FriendThemeModalWrapper
+            userId={userId}
+            friendId={friendId}
+            friendName={friendName}
+            friendLightColor={friendLightColor}
+            friendDarkColor={friendDarkColor}
+            lightDarkTheme={lightDarkTheme}
+            footerHeight={footerHeight}
             closeModal={() => setColorsModalVisible(false)}
           />
-        </View>
+        </React.Suspense>
       )}
     </View>
+  );
+};
+
+// Wrapper that fetches friendDash only when modal is open
+const FriendSettingsModalWrapper = ({
+  userId,
+  friendId,
+  friendName,
+  friendLightColor,
+  friendDarkColor,
+  lightDarkTheme,
+  handleDeselectFriend,
+  footerHeight,
+  closeModal,
+}) => {
+  const { friendDash } = require("@/src/hooks/useFriendDash").default({ userId, friendId });
+
+  return (
+    <FriendSettingsModal
+      userId={userId}
+      handleDeselectFriend={handleDeselectFriend}
+      textColor={lightDarkTheme.primaryText}
+      backgroundColor={lightDarkTheme.primaryBackground}
+      isVisible={true}
+      friendLightColor={friendLightColor}
+      friendDarkColor={friendDarkColor}
+      friendId={friendId}
+      friendName={friendName}
+      friendDash={friendDash}
+      bottomSpacer={footerHeight - 30}
+      closeModal={closeModal}
+    />
+  );
+};
+
+const FriendThemeModalWrapper = ({
+  userId,
+  friendId,
+  friendName,
+  friendLightColor,
+  friendDarkColor,
+  lightDarkTheme,
+  footerHeight,
+  closeModal,
+}) => {
+  const { friendDash } = require("@/src/hooks/useFriendDash").default({ userId, friendId });
+
+  return (
+    <FriendThemeModal
+      userId={userId}
+      lightDarkTheme={lightDarkTheme}
+      textColor={lightDarkTheme.primaryText}
+      backgroundColor={lightDarkTheme.primaryBackground}
+      friendLightColor={friendLightColor}
+      friendDarkColor={friendDarkColor}
+      isVisible={true}
+      friendId={friendId}
+      friendName={friendName}
+      friendDash={friendDash}
+      bottomSpacer={footerHeight - 30}
+      closeModal={closeModal}
+    />
   );
 };
 
@@ -321,8 +267,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     position: "absolute",
-    // borderTopRightRadius: 20,
-    // borderTopLeftRadius: 20,
     borderRadius: 999,
     bottom: 0,
     zIndex: 4,

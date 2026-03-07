@@ -24,7 +24,7 @@ export const AutoSelectorProvider: React.FC<AutoSelectorProviderProps> = ({
     userId: userId,
   });
 
-  console.log("autoselect context");
+  // console.log("autoselect context");
 
   const autoSelectFriend = useMemo(() => {
     if (!settings?.id || !friendListAndUpcoming?.user) {

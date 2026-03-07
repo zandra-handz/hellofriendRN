@@ -116,6 +116,11 @@ const UserSettingsModal: React.FC<Props> = ({
     updateSettings({ lock_in_next: !settings.lock_in_next });
   };
 
+    const toggleUseAutoSelect = () => {
+    if (!settings) return;
+    updateSettings({ use_auto_select: !settings.use_auto_select });
+  };
+
   const speed = 10;
   const baseCount = 8;
   const totalAnimatedItems = baseCount + (manualTheme ? 1 : 0);
@@ -274,6 +279,19 @@ const UserSettingsModal: React.FC<Props> = ({
               />
             </BouncyEntrance>
           </View>
+
+                    <View style={styles.sectionContainer}>
+            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+              <OptionToggle
+                {...sharedToggleProps}
+                label="NEW Autoselect Next Friend"
+                icon={<SvgIcon name="account" size={20} color={textColor} />}
+                value={settings.use_auto_select}
+                onPress={toggleUseAutoSelect}
+              />
+            </BouncyEntrance>
+          </View>
+
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>

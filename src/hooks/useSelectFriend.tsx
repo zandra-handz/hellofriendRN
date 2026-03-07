@@ -88,7 +88,7 @@ const useSelectFriend = ({
   const { setToFriend } = useSelectedFriend();
 
   const handleSelectFriend = useCallback((friendId: number) => {
-    console.log("handle SELECT FRIEND", friendId);
+    // console.log("handle SELECT FRIEND", friendId);
 
     if (!friendList || friendList?.length < 1) {
       return;
@@ -112,27 +112,9 @@ const useSelectFriend = ({
 
     // Set friend state
     setToFriend({ friend: selectedFriend, preConditionsMet: true });
-  }, [userId, friendList, navigateOnSelect, queryClient, setToFriend]);
+  }, [userId, friendList, navigateOnSelect, queryClient ]);
 
-
-//   const handleSelectFriend = useCallback((friendId: number) => {
-//   if (!friendList || friendList?.length < 1) return;
-
-//   const selectedFriend = friendList?.find(
-//     (friend) => friend.id === Number(friendId)
-//   ) || null;
-
-//   if (!selectedFriend) return;
-
-//   prefetchFriendDash(userId, selectedFriend.id, queryClient);
-
-//   // Set state FIRST, then navigate
-//   setToFriend({ friend: selectedFriend, preConditionsMet: true });
-
-//   if (navigateOnSelect) {
-//     navigateOnSelect();
-//   }
-// }, [userId, friendList, navigateOnSelect, queryClient, setToFriend]);
+ 
 
   return { handleSelectFriend };
 };

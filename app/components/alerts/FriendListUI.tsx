@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
+import useUserSettings from "@/src/hooks/useUserSettings";
 
 type FriendListItem = Friend | { message: string };
 
@@ -52,9 +53,28 @@ const BouncyEntranceDown = ({ children, delay = 0, style }) => {
   );
 };
 
+const FriendIndicators = ({ friendId, pinnedFriend, upcomingFriend }) => {
+  const isPinned = pinnedFriend === friendId;
+  const isUpcoming = upcomingFriend === friendId;
+
+  return (
+    <View style={styles.itemIndicatorContainer}>
+      {isPinned && (
+        <View style={[styles.indicator, { backgroundColor: manualGradientColors.homeDarkColor }]}>
+          <SvgIcon name="pin_outline" size={12} color={manualGradientColors.lightColor} />
+        </View>
+      )}
+      {isUpcoming && (
+        <View style={[styles.indicator, { backgroundColor: manualGradientColors.homeDarkColor }]}>
+          <SvgIcon name="calendar_clock" size={12} color={manualGradientColors.lightColor} />
+        </View>
+      )}
+    </View>
+  );
+};
+
 const FriendListUI = ({
-  autoSelectFriend,
-  handleDeselect,
+  userId,
   friendColorLight,
   friendList,
   handleNavAfterSelect,
@@ -67,27 +87,29 @@ const FriendListUI = ({
   itemColor,
 }: any) => {
   const { navigateToAddFriend } = useAppNavigations();
+  const { settings } = useUserSettings({ userId });
+
+  const pinnedFriend = settings?.pinned_friend;
+  const upcomingFriend = settings?.upcoming_friend;
 
   const translateY = useSharedValue(-1000);
   const isExiting = useSharedValue(0);
- 
-  // Use refs for callbacks that only touch shared values — never need to change
+
   const handlePressIn = useCallback(() => {
     isExiting.value = withTiming(1, { duration: 80 });
-  }, []); // isExiting is a stable ref, no dep needed
+  }, []);
 
   const handlePressOut = useCallback(() => {
     isExiting.value = withTiming(0, { duration: 150 });
   }, []);
 
-  // Stable refs for props that change but are needed inside useCallback
   const onPressRef = useRef(onPress);
   const handleNavAfterSelectRef = useRef(handleNavAfterSelect);
-  const handleDeselectRef = useRef(handleDeselect);
+  const onLongPressRef = useRef(onLongPress);
   useEffect(() => {
     onPressRef.current = onPress;
     handleNavAfterSelectRef.current = handleNavAfterSelect;
-    handleDeselectRef.current = handleDeselect;
+    onLongPressRef.current = onLongPress;
   });
 
   useEffect(() => {
@@ -100,8 +122,8 @@ const FriendListUI = ({
 
   const handleLongPress = useCallback((id: number) => {
     Vibration.vibrate(100);
-    onLongPress(id);
-  }, [onLongPress]);
+    onLongPressRef.current(id);
+  }, []);
 
   const handlePress = useCallback((id: number, name: string, nextDate: string) => {
     isExiting.value = withTiming(1, { duration: EXIT_DURATION * 0.4 });
@@ -110,11 +132,10 @@ const FriendListUI = ({
       onPressRef.current(id);
       handleNavAfterSelectRef.current(id, name, nextDate);
     }, EXIT_DURATION * 0.6);
-  }, []); // stable — only touches shared values and refs
+  }, []);
 
   const ITEM_HEIGHT = 46;
 
-  // Stable ref for friendId so renderFriendSelectItem doesn't need it in deps
   const friendIdRef = useRef(friendId);
   useEffect(() => { friendIdRef.current = friendId; });
 
@@ -127,18 +148,13 @@ const FriendListUI = ({
         <View style={styles.sectionContainer}>
           <BouncyEntranceDown delay={index * STAGGER_SPEED} style={{ width: "100%" }}>
             <View style={{ width: "100%" }}>
-              <View style={styles.itemIndicatorContainer}>
-                {autoSelectFriend?.customFriend?.id === item.id && (
-                  <View style={[styles.indicator, { backgroundColor: manualGradientColors.homeDarkColor }]}>
-                    <SvgIcon name="pin_outline" size={12} color={manualGradientColors.lightColor} />
-                  </View>
-                )}
-                {autoSelectFriend?.nextFriend?.id === item.id && (
-                  <View style={[styles.indicator, { backgroundColor: manualGradientColors.homeDarkColor }]}>
-                    <SvgIcon name="calendar_clock" size={12} color={manualGradientColors.lightColor} />
-                  </View>
-                )}
-              </View>
+              {"id" in item && (
+                <FriendIndicators
+                  friendId={item.id}
+                  pinnedFriend={pinnedFriend}
+                  upcomingFriend={upcomingFriend}
+                />
+              )}
 
               {"id" in item && (
                 <OptionFriendButton
@@ -154,9 +170,7 @@ const FriendListUI = ({
                   onPress={isSelected ? undefined : () => handlePress(item.id, item.name, item.future_date_in_words)}
                   onPressIn={isSelected ? undefined : handlePressIn}
                   onPressOut={isSelected ? undefined : handlePressOut}
-                  onLongPress={isSelected
-                    ? () => handleDeselectRef.current()
-                    : () => handleLongPress(item.id)}
+                  onLongPress={() => handleLongPress(item.id)}
                 />
               )}
 
@@ -173,8 +187,7 @@ const FriendListUI = ({
         </View>
       );
     },
-    // Only re-create when truly visual deps change — not callbacks or friendId
-    [itemColor, friendColorLight, backgroundOverlayColor, autoSelectFriend, friendList.length],
+    [itemColor, friendColorLight, backgroundOverlayColor, friendList.length, pinnedFriend, upcomingFriend],
   );
 
   const extractItemKey = (item: FriendListItem, index: number) =>
@@ -187,6 +200,7 @@ const FriendListUI = ({
           data={[...data, { message: "add friend" }]}
           keyExtractor={extractItemKey}
           renderItem={renderFriendSelectItem}
+          extraData={{ pinnedFriend, upcomingFriend }}
           numColumns={1}
           showsVerticalScrollIndicator={false}
           style={{ width: "100%" }}
