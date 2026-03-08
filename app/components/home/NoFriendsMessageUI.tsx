@@ -14,7 +14,7 @@ const NoFriendsMessageUI = ({
 }) => {
   const { navigateToAddFriend } = useAppNavigations();
 
-  const ICON_SIZE = 100;
+  // const ICON_SIZE = 100;
  
 
   return (

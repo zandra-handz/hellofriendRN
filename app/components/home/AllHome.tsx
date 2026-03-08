@@ -5,8 +5,7 @@ import React, { useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import UpNext from "./UpNext";
-import HomeScrollSoon from "./HomeScrollSoon";
-import useSelectFriend from "@/src/hooks/useSelectFriend";
+import HomeScrollSoon from "./HomeScrollSoon"; 
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { prefetchFriendDash } from "@/src/hooks/prefetchFriendDashUtil";
 
@@ -29,7 +28,6 @@ const AllHome = ({
   height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
-  navigateToFriendHome,
   handleSelectFriend,
   textColor,
   overlayColor,
@@ -68,15 +66,10 @@ const AllHome = ({
     [upcomingHelloes?.[0]?.future_date_in_words]
   );
 
-  // const { handleSelectFriend } = useSelectFriend({
-  //   userId,
-  //   friendList,
-  // });
-
+ 
   const onPress = useCallback(() => {
     if (upcomingId) {
-      handleSelectFriend(upcomingId);
-      // navigateToFriendHome(upcomingId);
+      handleSelectFriend(upcomingId); 
     }
   }, [upcomingId ]);
 

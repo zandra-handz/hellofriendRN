@@ -11,13 +11,13 @@ export default function QuickActionsHandler({ userId, settings, navigationRef })
 
   const upcoming = upcomingHelloes?.[0]?.friend?.name ?? "None";
   const pinned = friendList?.find(
-    (friend) => friend.id === Number(settings?.lock_in_custom_string)
+    (friend) => friend.id === Number(settings?.pinned_friend)
   );
 
   useEffect(() => {
     const items = [
       // Pinned takes priority
-      ...(settings?.lock_in_custom_string
+      ...(settings?.pinned_friend
         ? [
             {
               id: "Pinned",
@@ -29,7 +29,7 @@ export default function QuickActionsHandler({ userId, settings, navigationRef })
           ]
         : []),
       // Render upcoming only if no pinned AND upNext is true
-      ...(!settings?.lock_in_custom_string && settings?.lock_in_next
+      ...(!settings?.pinned_friend && settings?.upcoming_friend
         ? [
             {
               id: "moments",
