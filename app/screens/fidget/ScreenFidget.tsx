@@ -19,6 +19,8 @@ import SpinnerOne from "@/app/components/appwide/button/SpinnerOne";
 import SpinnerTwo from "@/app/components/appwide/button/SpinnerTwo";
 import SpinnerThree from "@/app/components/appwide/button/SpinnerThree";
 import SpinnerFour from "@/app/components/appwide/button/SpinnerFour";
+
+import SpinnerFive from "@/app/components/appwide/button/SpinnerFive";
 import SpinnerGeckoToes from "@/app/components/appwide/button/SpinnerGeckoToes";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
@@ -189,7 +191,7 @@ const handleRescatterMoments = () => {
         </View>
       )}
 
-      {spinnerViewing === 2 && (
+      {/* {spinnerViewing === 2 && (
         <View
           style={[
             StyleSheet.absoluteFill,
@@ -197,6 +199,21 @@ const handleRescatterMoments = () => {
           ]}
         >
           <SpinnerFour
+            color1={selectedFriend?.lightColor}
+            color2={selectedFriend?.darkColor}
+          />
+        </View>
+      )} */}
+
+
+        {spinnerViewing === 4 && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: lightDarkTheme?.primaryBackground },
+          ]}
+        >
+          <SpinnerFive
             color1={selectedFriend?.lightColor}
             color2={selectedFriend?.darkColor}
           />
