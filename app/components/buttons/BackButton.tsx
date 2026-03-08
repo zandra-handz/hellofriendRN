@@ -62,8 +62,7 @@ const BackButton = ({ label, fontStyle, color, timing, visible, showLabel=false,
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row", 
-    backgroundColor: 'black',
+    flexDirection: "row",  
     height: 40,
     width: 40,
     borderRadius: 999,

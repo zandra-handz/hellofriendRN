@@ -35,9 +35,10 @@ const TextHeader = ({
   nextIconName='check',
   nextDisabledIconName='check',
   timing = 200,
+  zIndex = 1
 }: Props) => {
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, {zIndex: zIndex}]}>
       <View style={styles.leftSideWrapper}>
         <BackButton
           label="Back"

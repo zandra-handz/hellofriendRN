@@ -19,77 +19,40 @@ import SpinnerOne from "@/app/components/appwide/button/SpinnerOne";
 import SpinnerTwo from "@/app/components/appwide/button/SpinnerTwo";
 import SpinnerThree from "@/app/components/appwide/button/SpinnerThree";
 import SpinnerFour from "@/app/components/appwide/button/SpinnerFour";
-
+import TextHeader from "@/app/components/appwide/format/TextHeader";
 import SpinnerFive from "@/app/components/appwide/button/SpinnerFive";
+import SpinnerSix from "@/app/components/appwide/button/SpinnerSix";
+import SpinnerSeven from "@/app/components/appwide/button/SpinnerSeven";
 import SpinnerGeckoToes from "@/app/components/appwide/button/SpinnerGeckoToes";
 import PlainSafeView from "@/app/components/appwide/format/PlainSafeView";
 import LiquidGlassExp from "@/app/components/appwide/button/LiquidGlassExp";
-import PChainSkia from "@/app/assets/shader_animations/PChainSkia"; 
+import PChainSkia from "@/app/assets/shader_animations/PChainSkia";
+import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 type Props = {};
 
 const ScreenFidget = (props: Props) => {
-  const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
-  const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
+  const backgroundColor = lightDarkTheme.primaryBackground;
+  const textColor = lightDarkTheme.primaryText;
 
-
-  const { friendDash } = useFriendDash({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
-
-
-
-
-  const { handleEditMoment, editMomentMutation } = useEditMoment({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
- 
-
-
+  const color1 = manualGradientColors.lightColor;
+  const color2 = manualGradientColors.darkColor;
 
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
- 
-const momentCoords = useMemo(() => {
-  return capsuleList.map(m => ({
-    id: m.id,
-    coord: [m.screen_x, m.screen_y],
-  }));
-}, [capsuleList]);
 
-const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
-
-// Function to randomize/scatter moments
-const handleRescatterMoments = () => {
-  // console.log(`scattering moments!`, scatteredMoments);
-  setScatteredMoments(prev =>
-    prev.map(m => ({
-      ...m,
-      coord: [
-        Math.random(), // random x between 0 and 1
-        Math.random(), // random y between 0 and 1
-      ],
-    }))
-  );
-  // console.log(`done!`, scatteredMoments);
-};
-
- 
   const [spinnerViewing, setSpinnerViewing] = useState(0);
 
-  const handleNextOption = () => { 
-    const next = mod(spinnerViewing + 1, 6); 
+  const handleNextOption = () => {
+    const next = mod(spinnerViewing + 1, 6);
     setSpinnerViewing(next);
   };
 
   const welcomeTextStyle = AppFontStyles.welcomeText;
-  const primaryColor = lightDarkTheme.priamryText;
 
   // console.log(friendDash.time_score);
   // console.log(friendDash.days_since);
@@ -112,203 +75,60 @@ const handleRescatterMoments = () => {
   //     else:
   //         return 1
 
-  const TIME_SCORE = useMemo(() => {
-    if (!friendDash || !friendDash?.time_score) {
-      return 100;
-    }
-    return Math.round(100 / friendDash?.time_score);
-  }, [friendDash]);
-
-  const DAYS_SINCE = friendDash?.days_since || 0;
-
   // useEffect(() => {
   //   console.log(`spinner viewing: `, spinnerViewing);
   // }, [spinnerViewing]);
 
   return (
     // <SafeViewAndGradientBackground
-    <PreAuthSafeViewAndGradientBackground
-      startColor={manualGradientColors.lightColor}
-      endColor={manualGradientColors.darkColor}
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight={120}
+    <SafeAreaView
       style={{
         flex: 1,
-        flexDirection: "column",
-        justifyContent: "flex-end",
-        // padding: 10, //consider this approach for all screens if possible
+        backgroundColor: backgroundColor,
+        paddingHorizontal: 10,
       }}
     >
-{/*  
-      {spinnerViewing === 1 || !spinnerViewing &&  (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            // { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <PChainSkia
-            color1={manualGradientColors.lightColor}
-            color2={manualGradientColors.homeDarkColor}
-            startingCoord={[0.1, 0.0]}
-            restPoint={[1.4, 0.9]}
-            scale={0.6}
-          />
-        </View>
-      )} */}
+      <TextHeader
+        label={`Spinner ${spinnerViewing}`}
+        color={textColor}
+        fontStyle={welcomeTextStyle}
+        showNext={true}
+        nextEnabled={true}
+        nextIconName={`arrow_right`}
+        onNext={handleNextOption}
+        nextColor={textColor}
+        nextBackgroundColor={"transparent"}
+        backgroundColor={"transparent"}
+        zIndex={10}
+      />
 
-      {/* {(spinnerViewing === 2 ) && (
-        <View style={StyleSheet.absoluteFillObject}>
-          <GradientBackgroundFidgetOne
-            secondColorSetDark={selectedFriend.lightColor}
-            secondColorSetLight={selectedFriend.darkColor}
-            firstColorSetDark={manualGradientColors.lightColor}
-            firstColorSetLight={selectedFriend.darkColor}
-            // firstColorSetDark={manualGradientColors.lightColor}
-            // firstColorSetLight={manualGradientColors.darkColor}
-            timeScore={TIME_SCORE}
-            speed={TIME_SCORE > 40 ? 2000 : 600}
-            style={{ flexDirection: "column", justifyContent: "flex-end" }}
-            direction={TIME_SCORE > 40 ? "vertical" : "original"}
-          ></GradientBackgroundFidgetOne>
-        </View>
-      )} */}
+      <View style={StyleSheet.absoluteFill}>
+        {spinnerViewing === 0 && <SpinnerOne color1={color1} color2={color2} />}
+        {spinnerViewing === 1 && <SpinnerTwo color1={color1} color2={color2} />}
 
-      {spinnerViewing === 4 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <SpinnerTwo
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )}
-
-      {/* {spinnerViewing === 2 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <SpinnerFour
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )} */}
-
-
-        {spinnerViewing === 4 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <SpinnerFive
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )}
-
-      {spinnerViewing === 5 && (
-        <View
-          style={[StyleSheet.absoluteFill, { backgroundColor: "transparent" }]}
-        >
-          <SpinnerOne
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )}
-
-      {spinnerViewing === 6 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <SpinnerThree
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )}
-      {/* {spinnerViewing === 1 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            // { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <SpinnerGeckoToes
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )} */}
-
-      {spinnerViewing === 3 && (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: lightDarkTheme?.primaryBackground },
-          ]}
-        >
-          <SpinnerOne
-            color1={selectedFriend?.lightColor}
-            color2={selectedFriend?.darkColor}
-          />
-        </View>
-      )}
-      <SafeAreaView>
-        {(spinnerViewing === 2 || spinnerViewing === 5) && (
-          <View style={styles.statsWrapper}>
-            <Text style={[welcomeTextStyle, { color: primaryColor }]}>
-              Health score: {TIME_SCORE}%
-            </Text>
-            <Text style={[welcomeTextStyle, { color: primaryColor }]}>
-              Days since: {DAYS_SINCE}
-            </Text>
-          </View>
+        {spinnerViewing === 2 && <SpinnerThree color1={color1} color2={color2} />}
+        {/* {spinnerViewing === 3 && (
+          <SpinnerFour color1={color1} color2={color2} />
+        )} */}
+        {spinnerViewing === 3 && (
+          <SpinnerFive color1={color1} color2={color2} />
         )}
 
-        <View style={styles.statsWrapper}>
-          <Text style={[welcomeTextStyle, { color: primaryColor }]}>
-            SPINNER: {spinnerViewing}
-          </Text>
-        </View>
+        {spinnerViewing === 4 && (
+          <SpinnerSix color1={color1} color2={color2} />
+        )} 
+        {spinnerViewing === 5 && (
+          <SpinnerSeven color1={color1} color2={color2} />
+        )}
 
-        <EscortBarFidgetScreen
-          style={{ paddingHorizontal: 10 }}
-          primaryColor={lightDarkTheme.primaryText}
-          primaryBackground={lightDarkTheme.primaryBackground}
-          onPress={handleNextOption}
-          label={"Try a different spinner"}
-        />
-      </SafeAreaView>
-    </PreAuthSafeViewAndGradientBackground>
+
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  statsWrapper: {
-    width: "100%",
-    height: "auto",
-    padding: 10,
-    paddingHorizontal: 20,
-    flexDirection: "column",
-  },
+  shaderContainer: {},
 });
 
 export default ScreenFidget;

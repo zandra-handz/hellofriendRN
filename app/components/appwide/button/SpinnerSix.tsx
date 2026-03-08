@@ -13,12 +13,17 @@ const hexToVec3 = (hex) => {
   return `${r.toFixed(4)}, ${g.toFixed(4)}, ${b.toFixed(4)}`;
 };
 
-const SpinnerFive = ({ color1, color2 }) => {
+const SpinnerSix = ({ color1, color2 }) => {
   const [time, setTime] = useState(0);
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
 
   const source = Skia.RuntimeEffect.Make(`
+mat2 tzb_rotate2d(float angle){
+  return mat2(cos(angle), -sin(angle),
+              sin(angle),  cos(angle));
+}
+
 mat2 tzb_rotate2dSimple(float speed, float u_time){
   float soul = u_time * speed;
   return mat2(cos(soul), -sin(soul),
@@ -28,13 +33,15 @@ mat2 tzb_rotate2dSimple(float speed, float u_time){
 uniform vec2 u_resolution;
 uniform float u_time;
 
-float distFCircle(vec2 uv, float radius) {
+float PI = 3.14159265359;
+
+float circleDF(vec2 uv, float radius){
   return length(uv) - radius;
 }
 
 float smoothMin(float a, float b, float k) {
-  float h = clamp(0.5 + (0.5*(b - a)/k), 0.0, 1.0);
-  return mix(b, a, h) - k*h*(1.0 - h);
+  float h = clamp(.5 - .5*(a-b)/k, 0., 1.);
+  return mix(b, a, h) - k*h*(1. - h);
 }
 
 half4 main(vec2 fragCoord) {
@@ -42,59 +49,51 @@ half4 main(vec2 fragCoord) {
   vec3 endColor   = vec3(${color2Converted});
 
   vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
-  uv = tzb_rotate2dSimple(6., u_time) * uv;
 
-  // for RNSkia - same as SpinnerOne
-  float scale = 2.0;
+  // for RNSkia
+  float scale = 3.0;
   uv *= scale;
   // end RNSkia
 
-//   float regroupSpeed = .14;
-//   float speed = 2.6;
-  float regroupSpeed = .14;
-  float speed = 3;
-  float circleSize = .05;
-  float centerCircleSize = .07;
+  float dP = dot(uv, uv) * 4.;
+  float theta = atan(uv.x, uv.y);
 
-  vec2 circleOneCoords   = uv;
-  vec2 circleTwoCoords   = uv;
-  vec2 circleThreeCoords = uv;
-  vec2 circleFourCoords  = uv;
-  vec2 circleFiveCoords  = uv;
+  float circleSize = .03;
+  float speed = 5.;
+  float arcSize = 5. * abs(sin(u_time * 2.0));
 
-  circleTwoCoords.x   += abs(sin(u_time * speed)) * regroupSpeed;
-  circleThreeCoords.x += abs(sin(u_time * speed)) * -regroupSpeed;
-  circleFourCoords.y  += abs(sin(u_time * speed)) * regroupSpeed;
-  circleFiveCoords.y  += abs(sin(u_time * speed)) * -regroupSpeed;
+  float rotation = mod(u_time * speed, PI * 2.);
+  theta = mod(theta - rotation + PI * 2., PI * 2.);
+  float radius = 0.1;
+  float thickness = 0.03;
 
-  // color sampled from pre-scale UV (divide back out) so gradient isn't blown out
-  vec3 circleTwoColor = mix(startColor, endColor, circleTwoCoords.x / scale);
+  vec2 coordsOne   = uv;
+  vec2 coordsTwo   = uv;
+  vec2 coordsThree = uv;
 
-  float circleOne   = distFCircle(circleOneCoords,   centerCircleSize);
-  float circleTwo   = distFCircle(circleTwoCoords,   circleSize);
-  float circleThree = distFCircle(circleThreeCoords, circleSize);
-  float circleFour  = distFCircle(circleFourCoords,  circleSize);
-  float circleFive  = distFCircle(circleFiveCoords,  circleSize);
+  float s = sin(u_time * speed);
+  float ds = cos(u_time * speed);
+  float motion = (s > 0.0 && ds > 0.0) ? s : 0.0;
 
-  float circleMerge = smoothMin(
-    smoothMin(circleOne, circleTwo, 0.05),
-    circleThree,
-    0.05
-  );
-  circleMerge = smoothMin(
-    smoothMin(circleMerge, circleFour, 0.05),
-    circleFive,
-    0.05
-  );
+  coordsOne.x += (sin(u_time * speed)) * -.5;
+  coordsThree.x += (sin(u_time * speed - .8)) * -0.5;
 
-  float mask = smoothstep(0.0, 0.002, -circleMerge);
-  vec3 finalColor = circleTwoColor * mask;
-  return vec4(finalColor, mask);
+  float circleOne   = circleDF(coordsOne,   circleSize);
+  float circleTwo   = circleDF(coordsTwo,   circleSize);
+  float circleThree = circleDF(coordsThree, circleSize);
+
+  float circleMerge = smoothMin(smoothMin(circleOne, circleTwo, .05), circleThree, .05);
+
+  float mask = smoothstep(0., 0.002, -circleMerge);
+
+  vec3 finalColor = mix(startColor, endColor, coordsOne.x / scale);
+
+  return vec4(finalColor * mask, mask);
 }
 `);
 
   if (!source) {
-    console.error("❌ SpinnerFive shader failed to compile");
+    console.error("❌ SpinnerSix shader failed to compile");
     return null;
   }
 
@@ -134,4 +133,4 @@ half4 main(vec2 fragCoord) {
   );
 };
 
-export default SpinnerFive;
+export default SpinnerSix;
