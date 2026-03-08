@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Canvas, Rect, Shader } from "@shopify/react-native-skia";
-import { Skia } from "@shopify/react-native-skia";
+import React from "react";
+import { Canvas, Rect, Shader, Skia, useClock } from "@shopify/react-native-skia";
 import { Dimensions, View } from "react-native";
+import { useDerivedValue } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
@@ -14,7 +14,7 @@ const hexToVec3 = (hex) => {
 };
 
 const SpinnerFive = ({ color1, color2 }) => {
-  const [time, setTime] = useState(0);
+  const clock = useClock();
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
 
@@ -49,10 +49,8 @@ half4 main(vec2 fragCoord) {
   uv *= scale;
   // end RNSkia
 
-//   float regroupSpeed = .14;
-//   float speed = 2.6;
   float regroupSpeed = .14;
-  float speed = 3;
+  float speed = 3.0;
   float circleSize = .05;
   float centerCircleSize = .07;
 
@@ -67,7 +65,6 @@ half4 main(vec2 fragCoord) {
   circleFourCoords.y  += abs(sin(u_time * speed)) * regroupSpeed;
   circleFiveCoords.y  += abs(sin(u_time * speed)) * -regroupSpeed;
 
-  // color sampled from pre-scale UV (divide back out) so gradient isn't blown out
   vec3 circleTwoColor = mix(startColor, endColor, circleTwoCoords.x / scale);
 
   float circleOne   = distFCircle(circleOneCoords,   centerCircleSize);
@@ -98,22 +95,10 @@ half4 main(vec2 fragCoord) {
     return null;
   }
 
-  const start = useRef(Date.now());
-  useEffect(() => {
-    let frame;
-    const animate = () => {
-      const now = (Date.now() - start.current) / 1000;
-      setTime(now);
-      frame = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  const uniforms = {
-    u_time: time,
+  const uniforms = useDerivedValue(() => ({
+    u_time: clock.value / 1000,
     u_resolution: [width, height],
-  };
+  }));
 
   return (
     <View

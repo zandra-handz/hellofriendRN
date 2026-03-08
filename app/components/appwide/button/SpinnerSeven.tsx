@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Canvas, Rect, Shader } from "@shopify/react-native-skia";
-import { Skia } from "@shopify/react-native-skia";
+import React from "react";
+import { Canvas, Rect, Shader, Skia, useClock } from "@shopify/react-native-skia";
 import { Dimensions, View } from "react-native";
+import { useDerivedValue } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
@@ -14,7 +14,7 @@ const hexToVec3 = (hex) => {
 };
 
 const SpinnerSeven = ({ color1, color2 }) => {
-  const [time, setTime] = useState(0);
+  const clock = useClock();
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
 
@@ -88,22 +88,10 @@ half4 main(vec2 fragCoord) {
     return null;
   }
 
-  const start = useRef(Date.now());
-  useEffect(() => {
-    let frame;
-    const animate = () => {
-      const now = (Date.now() - start.current) / 1000;
-      setTime(now);
-      frame = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  const uniforms = {
-    u_time: time,
+  const uniforms = useDerivedValue(() => ({
+    u_time: clock.value / 1000,
     u_resolution: [width, height],
-  };
+  }));
 
   return (
     <View
