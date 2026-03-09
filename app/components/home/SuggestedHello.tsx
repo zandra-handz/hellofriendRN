@@ -94,7 +94,7 @@ const SuggestedHello = ({
                 onSinglePress={openModal}
                 onDoublePress={navigateToFinalize}
                 color={primaryColor}
-                backgroundColor={primaryBackground}
+                backgroundColor={'transparent'}
               />
             </View>
           </View>

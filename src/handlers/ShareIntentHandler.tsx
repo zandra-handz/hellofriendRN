@@ -11,9 +11,9 @@ export default function ShareIntentHandler() {
   const { navigateToMomentFocusWithText, navigateToAddImage } = useAppNavigations();
   const { requestPermission, imageUri, resizeImage } = useImageUploadFunctions();
 
-  useEffect(() => {
-    requestPermission();
-  }, []);
+  // useEffect(() => {
+  //   requestPermission();
+  // }, []);
 
   useEffect(() => {
     if (imageUri) {

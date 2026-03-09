@@ -1,12 +1,12 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-  
+import React, { useCallback, useRef, useMemo } from "react";
+
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useIsFocused } from "@react-navigation/native";
- 
+
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import DotsPositionLayer from "../headers/DotsPositionLayer";
-
+import { useCapsuleColors } from "@/src/context/useCapsuleColors";
 // import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
 type Props = {
@@ -16,12 +16,11 @@ type Props = {
 };
 
 const MomentsField = ({
-  canvasKey, 
+  canvasKey,
   friendColor,
   categoryColors,
   textColor,
-  overlayColor,
-  skiaFontLarge,
+  friendId,
   skiaFontSmall,
   darkerOverlayBackgroundColor,
   handleToggleColoredDots,
@@ -29,70 +28,23 @@ const MomentsField = ({
   canvasHeight,
   heightFull,
   handleMomentScreenNoScroll,
-  handleNavigateToGecko
-}: Props) => { 
+  handleNavigateToGecko,
+}: Props) => {
+  const { capsuleList, categorySizes, capsuleChartData } = useCapsuleList();
 
-  const { capsuleList, categorySizes, capsuleCategorySet, isPending } =
-    useCapsuleList();
-
-  const capsuleChartData = useMemo(() => {
-    return capsuleList.map((c) => ({
-      name: c.capsule?.slice(0, 20) ?? "untitled", // or whatever label you want
-      size: c.charCount ?? c.capsule?.length ?? 1,
-      user_category: Number(c.user_category),
-      value: c.charCount ?? c.capsule?.length ?? 1,
-    }));
-  }, [capsuleList]);
+  const colors = useCapsuleColors(categoryColors);
+ 
 
   const capsuleListCount = capsuleList?.length;
 
-  const colorsRef = useRef<{
-    colors: string[];
-    colorsReversed: string[];
-    friend: any;
-  }>({
-    colors: [],
-    colorsReversed: [],
-    friend: null,
-  });
- 
 
-  if (
-    capsuleCategorySet?.size &&
-    !isPending &&
-    categoryColors?.length &&
-    capsuleList?.length
-  ) {
-    // build a map of user_category -> color
-    const categoryColorMap = new Map(
-      categoryColors
-        .filter((item) => capsuleCategorySet.has(item.user_category))
-        .map((item) => [item.user_category, item.color]),
-    );
+//   const prevCategoryColors = useRef(categoryColors);
+// if (prevCategoryColors.current !== categoryColors) {
+//   console.log('categoryColors CHANGED');
+//   prevCategoryColors.current = categoryColors;
+// }
 
-    // one color per capsule, mapped by their category
-    const filteredColors = capsuleList.map(
-      (capsule) =>
-        categoryColorMap.get(Number(capsule.user_category)) ??
-        categoryColors[0]?.color,
-    );
-
-    const friend = categoryColors[0]?.friend ?? null;
-
-    colorsRef.current = {
-      colors: filteredColors,
-      colorsReversed: filteredColors.slice().reverse(),
-      friend,
-    };
-  }
-
-  // Use the persistent value
-  const colors = colorsRef.current;
-
-  const { navigateToMoments, navigateToMomentView } = useAppNavigations();
-  // const [categoryColors, setCategoryColors] = useState<string[]>([]);
-
-  // const appState = useRef(AppState.currentState);
+  const { navigateToMomentView } = useAppNavigations();
 
   const HEIGHT = 408;
   const CHART_RADIUS = 150;
@@ -111,33 +63,22 @@ const MomentsField = ({
         });
       }
     },
-    [navigateToMomentView, categorySizes.categoryStartIndices]
+    [navigateToMomentView, categorySizes.categoryStartIndices],
   );
 
   // const handleMomentScreenNoScroll = useCallback(() => {
   //   navigateToMoments({ scrollTo: null });
   // }, [navigateToMoments]);
 
- 
+  // const memoizedCatLabels = useMemo(
+  //   () => categorySizes.catLabels,
+  //   [categorySizes.catLabels],
+  // );
 
-    const memoizedCatLabels = useMemo(
-    () => categorySizes.catLabels,
-    [categorySizes.catLabels],
-  );
-
-
-      const memoizedCatDecimals = useMemo(
-    () => categorySizes.catDecimals,
-    [categorySizes.catDecimals],
-  );
- 
- 
-
-  const memoizedColors = useMemo(() => colors?.colors, [colors?.colors]);
-  const memoizedColorsReversed = useMemo(
-    () => colors?.colorsReversed,
-    [colors?.colorsReversed],
-  );
+  // const memoizedCatDecimals = useMemo(d
+  //   () => categorySizes.catDecimals,
+  //   [categorySizes.catDecimals],
+  // );
 
   const isFocused = useIsFocused();
 
@@ -153,41 +94,38 @@ const MomentsField = ({
           },
         ]}
       >
-        <> 
-
+        <>
           {isFocused && colors?.colors?.length > 0 && (
-           
-              <DotsPositionLayer
-                canvasKey={canvasKey}
-                     iconColor={friendColor} 
-                smallFont={skiaFontSmall} 
-                catLabels={memoizedCatLabels}
-                catDecimals={memoizedCatDecimals}
-                canvasHeight={canvasHeight}
-                heightFull={heightFull}
-          
-           
-                onCategoryPress={handleMomentViewScrollTo}
-                onCenterPress={handleMomentScreenNoScroll}
-                onCenterSinglePress={handleNavigateToGecko}
-                totalJS={capsuleListCount}
-                radius={CHART_RADIUS}
-                strokeWidth={CHART_STROKE_WIDTH}
-                outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-                // gap={GAP}
-                labelsSize={LABELS_SIZE}
-                labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-                labelsSliceEnd={LABELS_SLICE_END} 
-                color={textColor}
-                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                data={capsuleChartData}
-                colors={memoizedColors}
-                colorsReversed={memoizedColorsReversed}
-                handleToggleColoredDots={handleToggleColoredDots}
-                    coloredDotsModeValue={coloredDotsModeValue}
-                
-                // centerTextSize={CENTER_TEXT_SIZE}
-              /> 
+            <DotsPositionLayer
+              canvasKey={canvasKey}
+              friendId={friendId}
+              iconColor={friendColor}
+              smallFont={skiaFontSmall}
+              catLabels={categorySizes.catLabels}
+              catDecimals={categorySizes.catDecimals}
+              canvasHeight={canvasHeight}
+              heightFull={heightFull}
+              onCategoryPress={handleMomentViewScrollTo}
+              onCenterPress={handleMomentScreenNoScroll}
+              onCenterSinglePress={handleNavigateToGecko}
+              totalJS={capsuleListCount}
+              radius={CHART_RADIUS}
+              strokeWidth={CHART_STROKE_WIDTH}
+              outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+              // gap={GAP}
+              labelsSize={LABELS_SIZE}
+              labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+              labelsSliceEnd={LABELS_SLICE_END}
+              color={textColor}
+              darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+              data={capsuleChartData}
+              colors={colors.colors}
+              colorsReversed={colors.colorsReversed}
+              handleToggleColoredDots={handleToggleColoredDots}
+              coloredDotsModeValue={coloredDotsModeValue}
+
+              // centerTextSize={CENTER_TEXT_SIZE}
+            />
           )}
         </>
       </View>
@@ -201,9 +139,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flex: 1,
     padding: 10, // PADDING
-zIndex: 100000,
-  //  paddingVertical: 20,
-   // borderRadius: 20,
+    zIndex: 100000,
+    //  paddingVertical: 20,
+    // borderRadius: 20,
   },
   labelContainer: {
     borderRadius: 20,
@@ -217,7 +155,7 @@ zIndex: 100000,
   historyLabelWrapper: {
     fontFamily: "Poppins-Regular",
     fontSize: 13,
-  }, 
+  },
 });
 
 export default React.memo(MomentsField);

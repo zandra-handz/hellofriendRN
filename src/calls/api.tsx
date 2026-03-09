@@ -1513,6 +1513,20 @@ export const deleteFriend = async (friendId: number) => {
   }
 };
 
+
+export const editFriend = async ( updateData: object) => {
+
+  try {
+    const response = await helloFriendApiClient.patch(
+      `/friends/${updateData.friend}/info/`, updateData
+    );
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during deleteFriend");
+  }
+};
+
+
 export const updateFriendSugSettings = async (SugSettingsData: {
   friend: number;
 }) => {

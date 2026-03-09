@@ -5,12 +5,14 @@ import ValueSlider from "../friends/ValueSlider";
 import AppModal from "../alerts/AppModal";
 import DeleteFriend from "../friends/DeleteFriend";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
-import useUpdateFriend from "@/src/hooks/useUpdateFriend";
+import useUpdateFriendSettings from "@/src/hooks/useUpdateFriendSettings";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import OptionContainer from "./OptionContainer";
 import manualGradientColors from "@/app/styles/StaticColors";
 import BouncyEntrance from "./BouncyEntrance";
 import OptionInputEdit from "./OptionInputEdit";
+
+import useEditFriend from "@/src/hooks/useEditFriend";
 
 interface Props {
   isVisible: boolean;
@@ -44,7 +46,12 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendDarkColor,
   closeModal,
 }) => {
-  const { handleUpdateFriendSettings } = useUpdateFriend({
+  const { handleUpdateFriendSettings } = useUpdateFriendSettings({
+    userId,
+    friendId,
+  });
+
+  const { handleEditFriend } = useEditFriend({
     userId,
     friendId,
   });
@@ -65,6 +72,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   );
 
   const [pendingPhone, setPendingPhone] = useState<string>(initialPhone);
+  const [pendingName, setPendingName] = useState<string>(friendName);
   const [pendingEffort, setPendingEffort] = useState<number>(initialEffort);
   const [pendingPriority, setPendingPriority] =
     useState<number>(initialPriority);
@@ -84,10 +92,18 @@ const FriendSettingsModal: React.FC<Props> = ({
     return null;
   };
 
+    const validateName = (value: string): string | null => {
+    if (!value) return null;
+    if (value === friendName) return "Same as old name";
+    return null;
+  };
+
+
   const hasChanges =
     pendingPhone !== initialPhone ||
     pendingEffort !== initialEffort ||
-    pendingPriority !== initialPriority;
+    pendingPriority !== initialPriority ||
+    pendingName !== friendName;
 
   const handleSave = () => {
     try {
@@ -99,12 +115,20 @@ const FriendSettingsModal: React.FC<Props> = ({
     } catch (error) {
       console.error(error);
     }
+        try {
+      handleEditFriend({
+        name: pendingName
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleReset = () => {
     setPendingPhone(initialPhone);
     setPendingEffort(initialEffort);
     setPendingPriority(initialPriority);
+    setPendingName(friendName)
   };
 
   const handleClose = () => {
@@ -217,6 +241,23 @@ const FriendSettingsModal: React.FC<Props> = ({
                 keyboardType="phone-pad"
                 placeholder="+123456789"
                 validate={validatePhone}
+              />
+            </View>
+          </BouncyEntrance>
+
+          <BouncyEntrance delay={delays[2]} style={{ width: "100%" }}>
+            <View style={styles.sectionContainer}>
+              <OptionInputEdit
+                label="Name"
+                value={pendingName}
+                onValueChange={setPendingName}
+                primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+                textStyle={AppFontStyles.subWelcomeText}
+                keyboardType="default"
+                placeholder={friendName}
+                validate={validateName}
               />
             </View>
           </BouncyEntrance>

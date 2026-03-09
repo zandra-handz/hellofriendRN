@@ -18,8 +18,6 @@ import Reset from "../appwide/button/Reset";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import manualGradientColors from "@/app/styles/StaticColors";
 
-
-
 interface Props {
   userId: number;
   isVisible: boolean;
@@ -39,12 +37,17 @@ const UserSettingsModal: React.FC<Props> = ({
 }) => {
   const { settings } = useUserSettings();
 
-  const [flashMessage, setFlashMessage] = useState<FlashMessageData | null>(null);
+  const [flashMessage, setFlashMessage] = useState<FlashMessageData | null>(
+    null,
+  );
 
-  const { updateSettingsMutation, updateSettings } = useUpdateSettings({ userId });
+  const { updateSettingsMutation, updateSettings } = useUpdateSettings({
+    userId,
+  });
 
   useEffect(() => {
-    if (updateSettingsMutation.isSuccess) setFlashMessage(settingsUpdateSuccess);
+    if (updateSettingsMutation.isSuccess)
+      setFlashMessage(settingsUpdateSuccess);
   }, [updateSettingsMutation.isSuccess]);
 
   useEffect(() => {
@@ -89,7 +92,9 @@ const UserSettingsModal: React.FC<Props> = ({
 
   const updateSimplifyAppForFocus = () => {
     if (!settings) return;
-    updateSettings({ simplify_app_for_focus: !settings.simplify_app_for_focus });
+    updateSettings({
+      simplify_app_for_focus: !settings.simplify_app_for_focus,
+    });
   };
 
   const updateReceiveNotifications = () => {
@@ -106,17 +111,11 @@ const UserSettingsModal: React.FC<Props> = ({
     );
   };
 
-  const lockInNext = useMemo(() => {
-    if (!settings) return false;
-    return settings.lock_in_next === true;
-  }, [settings]);
+ 
 
-  const toggleLockInNext = () => {
-    if (!settings) return;
-    updateSettings({ lock_in_next: !settings.lock_in_next });
-  };
+ 
 
-    const toggleUseAutoSelect = () => {
+  const toggleUseAutoSelect = () => {
     if (!settings) return;
     updateSettings({ use_auto_select: !settings.use_auto_select });
   };
@@ -167,10 +166,11 @@ const UserSettingsModal: React.FC<Props> = ({
     >
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-
-          
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <AddPointsButton
                 userId={userId}
                 label="Add points"
@@ -183,11 +183,20 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
                 label="Manual theme"
-                icon={<SvgIcon name="theme_light_dark" size={20} color={textColor} />}
+                icon={
+                  <SvgIcon
+                    name="theme_light_dark"
+                    size={20}
+                    color={textColor}
+                  />
+                }
                 value={manualTheme}
                 onPress={toggleManualTheme}
               />
@@ -196,7 +205,10 @@ const UserSettingsModal: React.FC<Props> = ({
 
           {manualTheme && (
             <View style={styles.sectionContainer}>
-              <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+              <BouncyEntrance
+                delay={staggeredDelays[i++]}
+                style={{ width: "100%" }}
+              >
                 <OptionToggle
                   {...sharedToggleProps}
                   label="Light/Dark"
@@ -209,11 +221,16 @@ const UserSettingsModal: React.FC<Props> = ({
           )}
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
                 label="High Contrast Mode"
-                icon={<SvgIcon name="text_shadow" size={20} color={textColor} />}
+                icon={
+                  <SvgIcon name="text_shadow" size={20} color={textColor} />
+                }
                 value={settings.high_contrast_mode}
                 onPress={updateHighContrastMode}
               />
@@ -221,11 +238,20 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
                 label="Large Text"
-                icon={<SvgIcon name="format_font_size_increase" size={20} color={textColor} />}
+                icon={
+                  <SvgIcon
+                    name="format_font_size_increase"
+                    size={20}
+                    color={textColor}
+                  />
+                }
                 value={settings.large_text}
                 onPress={updateLargeText}
               />
@@ -233,11 +259,20 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
                 label="Simplify App For Focus"
-                icon={<SvgIcon name="image_filter_center_focus" size={20} color={textColor} />}
+                icon={
+                  <SvgIcon
+                    name="image_filter_center_focus"
+                    size={20}
+                    color={textColor}
+                  />
+                }
                 value={settings.simplify_app_for_focus}
                 onPress={updateSimplifyAppForFocus}
               />
@@ -245,7 +280,10 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
                 label="Receive Notifications"
@@ -257,11 +295,16 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
                 label="Screen Reader"
-                icon={<SvgIcon name="volume_high" size={20} color={textColor} />}
+                icon={
+                  <SvgIcon name="volume_high" size={20} color={textColor} />
+                }
                 value={settings.screen_reader}
                 onPress={toggleScreenReader}
               />
@@ -269,22 +312,13 @@ const UserSettingsModal: React.FC<Props> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <OptionToggle
                 {...sharedToggleProps}
-                label="Autoselect Next Friend"
-                icon={<SvgIcon name="account" size={20} color={textColor} />}
-                value={lockInNext}
-                onPress={toggleLockInNext}
-              />
-            </BouncyEntrance>
-          </View>
-
-                    <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
-              <OptionToggle
-                {...sharedToggleProps}
-                label="NEW Autoselect Next Friend"
+                label=" Autoselect Next Friend"
                 icon={<SvgIcon name="account" size={20} color={textColor} />}
                 value={settings.use_auto_select}
                 onPress={toggleUseAutoSelect}
@@ -292,9 +326,11 @@ const UserSettingsModal: React.FC<Props> = ({
             </BouncyEntrance>
           </View>
 
-
           <View style={styles.sectionContainer}>
-            <BouncyEntrance delay={staggeredDelays[i++]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
               <Reset
                 userId={userId}
                 label="Reset all hello dates"
@@ -305,7 +341,6 @@ const UserSettingsModal: React.FC<Props> = ({
               />
             </BouncyEntrance>
           </View>
-
         </ScrollView>
       </View>
     </AppModalWithToast>

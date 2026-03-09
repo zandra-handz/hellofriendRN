@@ -66,8 +66,7 @@ const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: P
     const pushTokenString = (
       await Notifications.getExpoPushTokenAsync({ projectId })
     ).data;
-
-    // ✅ Skip update if backend already has same token
+ 
     if (expoPushToken === pushTokenString) {
       console.log("No changes needed — push token matches backend");
       return;
@@ -79,14 +78,12 @@ const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: P
       receive_notifications: true,
       expo_push_token: pushTokenString,
     });
-
-    // console.log("UPDATED USER SETTINGS WITH NOTIFICATION SETTINGS");
+ 
   };
 
   const removeNotificationPermissions = async () => {
     console.warn("REMOVING NOTIFS!");
-
-    // ✅ Only call update if backend doesn't already have null
+ 
     if (expoPushToken === null && receiveNotifications === false) {
       console.log("No changes needed — notifications already off");
       return;

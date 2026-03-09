@@ -15,7 +15,7 @@ type Props = {
   refetchUpcoming?: () => void;
 };
 
-const useUpdateFriend = ({ userId, friendId, refetchUpcoming }: Props) => {
+const useUpdateFriendSettings = ({ userId, friendId, refetchUpcoming }: Props) => {
   const queryClient = useQueryClient();
 
   const timeoutRef = useRef(null);
@@ -144,4 +144,4 @@ const useUpdateFriend = ({ userId, friendId, refetchUpcoming }: Props) => {
   };
 };
 
-export default useUpdateFriend;
+export default useUpdateFriendSettings;

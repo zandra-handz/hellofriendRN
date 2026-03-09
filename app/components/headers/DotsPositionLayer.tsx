@@ -1,5 +1,5 @@
 import { View, StyleSheet, DimensionValue } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   useSharedValue,
   useDerivedValue,
@@ -13,10 +13,14 @@ import { useCallback } from "react";
 import DotsCanvas from "./DotsCanvas";
 import { calculatePercentage } from "@/src/hooks/GradientColorsUril";
 
+// OUTSIDE the component, module level
+const positionsCache = new Map<string, { x: number; y: number; size: number; color: string; catId: number }[]>();
+
 const DotsPositionLayer = ({
   canvasKey,
   iconColor,
   darkerOverlayBackgroundColor,
+  friendId,
   catDecimals,
    catLabels, 
    onCategoryPress,
@@ -49,9 +53,7 @@ const DotsPositionLayer = ({
 
 
 const { width: screenWidth } = useWindowDimensions();
-
-
-  // const totalValue = useSharedValue(0);
+ 
   const decimalsValue = useSharedValue<number[]>([]);
   const catDecimalsValue = useSharedValue<number[]>([]);
   const labelsValue = useSharedValue<string[]>([]);
@@ -62,25 +64,39 @@ const { width: screenWidth } = useWindowDimensions();
   const categoryIdsValue = useSharedValue<number[]>([]);
 
   // NEED THIS TO STOP THE 'FLASH' OF OLD SHARED VALUES IN LEAVES WHEN FRIEND CHANGES
-  useFocusEffect(
-    useCallback(() => { 
-      decimalsValue.value = [];
-      catDecimalsValue.value = [];
-      labelsValue.value = []; 
-      setPositions([]);
+  // useFocusEffect(
+  //   useCallback(() => { 
+  //     decimalsValue.value = [];
+  //     catDecimalsValue.value = [];
+  //     labelsValue.value = []; 
+  //     setPositions([]);
 
-      return () => { 
-        decimalsValue.value = [];
-        catDecimalsValue.value = [];
-        labelsValue.value = []; 
-        setPositions([]);
-      };
-    }, []),
-  );
+  //     return () => { 
+  //       decimalsValue.value = [];
+  //       catDecimalsValue.value = [];
+  //       labelsValue.value = []; 
+  //       setPositions([]);
+  //     };
+  //   }, []),
+  // );
+const prevFriendIdRef = useRef(null);
 
+// useFocusEffect(
+//   useCallback(() => {
+//     if (prevFriendIdRef.current !== friendId) {
+//       console.log('RSETTING POSITIONS')
+//       prevFriendIdRef.current = friendId;
+//       decimalsValue.value = [];
+//       catDecimalsValue.value = [];
+//       labelsValue.value = [];
+//       setPositions([]);
+//     }
+//   }, [friendId]),
+// );
  
 
   useEffect(() => {
+ 
   if (!catLabels || !colorsReversed) return;
   const map: Record<number, string> = {};
   catLabels.forEach((item, index) => {
@@ -104,7 +120,15 @@ useEffect(() => {
   leafCenterXValue.value = screenWidth / 2;
 }, [screenWidth]);
  
- 
+ const setPositionsWithCache = useCallback((arr) => {
+  const key = `${friendId}-${totalJS}`;
+  if (positionsCache.has(key)) {
+    setPositions(positionsCache.get(key)!);
+    return;
+  }
+  positionsCache.set(key, arr);
+  setPositions(arr);
+}, [friendId, totalJS]);
 
 useEffect(() => {
   if (!data || data.length === 0) return;
@@ -126,7 +150,7 @@ useEffect(() => {
   const decimals = percentages.map(n => Number(n.toFixed(0)) / 100);
 
   // CATEGORY TOTAL, PERCENTANGE, AND DECIMALS IS CALCULATED IN CAPSULE CONTEXT
-
+console.log('resettinggggggg')
   // totalValue.value = withTiming(total, { duration: 1000 });
   decimalsValue.value = [...decimals];
   catDecimalsValue.value = [...catDecimals];  // from context
@@ -137,10 +161,22 @@ useEffect(() => {
   //   cumulative += Math.round(total * d);
   //   return cumulative;
   // });
-}, [data, catDecimals, catLabels, colors, totalJS]);
- 
- 
+}, [data, catDecimals, catLabels,   totalJS]);
+ useEffect(() => {
+  console.log('data changed');
+}, [data]);
 
+useEffect(() => {
+  console.log('catDecimals changed');
+}, [catDecimals]);
+
+useEffect(() => {
+  console.log('catLabels changed');
+}, [catLabels]);
+
+useEffect(() => {
+  console.log('totalJS changed');
+}, [totalJS]);
  
 
  // NEED THIS EVEN IF NOT USING THE RETURN
@@ -149,7 +185,8 @@ const leafPositionsCombined = useDerivedValue(() => {
 
   const decimals = decimalsValue.value;
   if (!decimals || decimals.length < 1) {
-    runOnJS(setPositions)([]);
+    console.log('worklet returning early')
+    // runOnJS(setPositions)([]);
     return [];
   }
 
@@ -204,7 +241,10 @@ const leafPositionsCombined = useDerivedValue(() => {
     arr.push({ x, y, size: finalSize, color: dotColor, catId: categoryId });
   }
 
-  runOnJS(setPositions)(arr);
+  console.log('setting positions!!!', Date.now(), arr)
+  // runOnJS(setPositions)(arr);
+
+  runOnJS(setPositionsWithCache)(arr);
   return arr;
 }, [
   decimalsValue,

@@ -2,6 +2,9 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import manualGradientColors from "@/app/styles/StaticColors";
 import LoadingPage from "./LoadingPage";
+import SpinnerFive from "../button/SpinnerFive";
+
+import { useLDTheme } from "@/src/context/LDThemeContext";
 
 type Props = {
   loading: boolean;
@@ -9,20 +12,22 @@ type Props = {
   backgroundColor: string;
 };
 
-const LocalSolidSpinner = ({ loading, label, backgroundColor }: Props) => {
+const LocalSolidSpinner = ({ loading, label, backgroundColor}: Props) => {
+
+
+ 
+
+
   return (
     <>
       {loading && (
         <View style={styles.container}>
-          <View style={[StyleSheet.absoluteFillObject, { backgroundColor }]}>
-            <LoadingPage
-              loading={true}
-              label={label}
-              includeLabel={true}
-              labelColor={manualGradientColors.homeDarkColor}
-              color={manualGradientColors.lightColor}
-              spinnerType={"chase"}
-              spinnerSize={40}
+          <View style={[StyleSheet.absoluteFillObject, { backgroundColor: backgroundColor }]}>
+            <SpinnerFive
+              backgroundColor={backgroundColor} 
+              color1={manualGradientColors.lightColor}
+                   color2={manualGradientColors.darkColor}
+           
             />
           </View>
         </View>

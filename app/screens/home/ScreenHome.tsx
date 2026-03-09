@@ -8,8 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import LocalSolidSpinner from "@/app/components/appwide/spinner/LocalSolidSpinner";
+import { SafeAreaView } from "react-native-safe-area-context"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
@@ -20,7 +19,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import useUser from "@/src/hooks/useUser";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import { showSpinner, hideSpinner  } from "@/app/components/appwide/button/showSpinner";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import AllHome from "@/app/components/home/AllHome";
@@ -31,10 +30,26 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 
-const ScreenHome = () => {
+const ScreenHome = ({shouldDelayAnimation}) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
   const { user } = useUser();
   const { settings } = useUserSettings();
+  const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
+  
+  useEffect(() => {
+    if (shouldDelayAnimation) {
+      setIsDelaying(true);
+  
+      const timeout = setTimeout(() => {
+        setIsDelaying(false);
+      }, 1000);
+  
+      return () => clearTimeout(timeout);
+    } else {
+      setIsDelaying(false);
+    }
+  }, [shouldDelayAnimation]);
+
   const { navigateToFriendHome } = useAppNavigations();
 
   const { selectedFriend } = useSelectedFriend();
@@ -116,16 +131,12 @@ const ScreenHome = () => {
   const textColor = lightDarkTheme.primaryText;
 
   const backgroundColor = lightDarkTheme.primaryBackground;
-
-  // ─── early return: friend selected, just show spinner while nav effect fires ─
-  if (!isLoading && selectedFriend?.id) {
-    return <LocalSolidSpinner backgroundColor="hotpink" loading={true} />;
-  }
+ 
 
   // ─── normal render ───────────────────────────────────────────────────────────
   return (
     <>
-      <Text>HOME SCREEN</Text>
+      {/* <Text>HOME SCREEN</Text> */}
       {/* <LocalSolidSpinner
         backgroundColor="hotpink"
         loading={
@@ -136,13 +147,20 @@ const ScreenHome = () => {
         }
       /> */}
 
-      {friendListAndUpcomingIsSuccess && (
+
+   
         <SafeAreaView
           style={{
             flex: 1,
             backgroundColor: backgroundColor,
           }}
         >
+
+    {isDelaying ? showSpinner(backgroundColor) : hideSpinner()}
+      {friendListAndUpcomingIsSuccess && !isDelaying &&  (
+
+<>
+
           {settings?.id && friendListLength < 1 && (
             <View style={styles.noFriendsView}>
               <NoFriendsMessageUI
@@ -253,8 +271,11 @@ const ScreenHome = () => {
               lightDarkTheme={lightDarkTheme}
             />
           </>
+          </>
+ )}
+
         </SafeAreaView>
-      )}
+     
     </>
   );
 };

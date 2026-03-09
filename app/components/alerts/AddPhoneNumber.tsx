@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import DialogBox from "./DialogBox";
-import useUpdateFriend from "@/src/hooks/useUpdateFriend";
+import useUpdateFriendSettings from "@/src/hooks/useUpdateFriendSettings";
 
 type Props = {
   userId: number;
@@ -18,7 +18,7 @@ const AddPhoneNumber = ({
   onClose,
 }: Props) => {
   const [phoneNumber, setPhoneNumber] = useState("");
-  const { handleUpdateFriendSettings, updateFriendSettingsMutation } = useUpdateFriend({
+  const { handleUpdateFriendSettings, updateFriendSettingsMutation } = useUpdateFriendSettings({
     userId: userId,
     friendId: friendId
   });

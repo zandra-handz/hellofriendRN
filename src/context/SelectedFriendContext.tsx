@@ -273,33 +273,22 @@ export const useSelectedFriend = () => {
   const selectFriend = useCallback((friend) => {
     queryClient.setQueryData(SELECTED_FRIEND_KEY, friend);
   }, [queryClient]);
+ 
 
-  const setToAutoFriend = useCallback(({ friend, preConditionsMet }) => {
-    const current = queryClient.getQueryData(SELECTED_FRIEND_KEY);
-    if (!preConditionsMet) {
-      if (!current?.id) {
-        queryClient.setQueryData(SELECTED_FRIEND_KEY, { ...DEFAULT_FRIEND, isReady: false });
-      }
-      return;
-    }
-    if (!friend?.id) {
-      queryClient.setQueryData(SELECTED_FRIEND_KEY, DEFAULT_READY_NO_FRIEND);
-      return;
-    }
-    queryClient.setQueryData(SELECTED_FRIEND_KEY, shapeFriend(friend));
-  }, [queryClient]);
 
-  const setToFriend = useCallback(({ friend, preConditionsMet }) => {
-    const current = queryClient.getQueryData(SELECTED_FRIEND_KEY);
-    if (!preConditionsMet || !friend?.id) {
-      if (!current?.id) {
-        queryClient.setQueryData(SELECTED_FRIEND_KEY, { ...DEFAULT_FRIEND, isReady: false });
-      }
-      return;
-    }
-    queryClient.setQueryData(SELECTED_FRIEND_KEY, shapeFriend(friend));
-  }, [queryClient]);
+const setToFriend = useCallback(({ friend, preConditionsMet }) => {
+  if (!preConditionsMet) {
+    queryClient.setQueryData(SELECTED_FRIEND_KEY, { ...DEFAULT_FRIEND, isReady: false });
+    return;
+  }
 
+  if (!friend?.id) {
+    queryClient.setQueryData(SELECTED_FRIEND_KEY, DEFAULT_READY_NO_FRIEND);
+    return;
+  }
+
+  queryClient.setQueryData(SELECTED_FRIEND_KEY, shapeFriend(friend));
+}, [queryClient]);
   const handleSetTheme = useCallback(({ lightColor, darkColor, fontColor, fontColorSecondary }) => {
     const current = queryClient.getQueryData(SELECTED_FRIEND_KEY);
     queryClient.setQueryData(SELECTED_FRIEND_KEY, {
@@ -319,15 +308,25 @@ export const useSelectedFriend = () => {
     queryClient.setQueryData(SELECTED_FRIEND_KEY, DEFAULT_FRIEND);
   }, [queryClient]);
 
+  const updateSelectedFriendName = useCallback((name: string) => {
+  const current = queryClient.getQueryData(SELECTED_FRIEND_KEY);
+  if (!current?.id) return;
+  queryClient.setQueryData(SELECTED_FRIEND_KEY, {
+    ...current,
+    name,
+  });
+}, [queryClient]);
+
   const friend = selectedFriend ?? DEFAULT_FRIEND;
 
   return useMemo(() => ({
     selectedFriend: friend,
     selectFriend,
-    setToAutoFriend,
+    updateSelectedFriendName,
+    // setToAutoFriend,
     setToFriend,
     handleSetTheme,
     deselectFriend,
     resetFriend,
-  }), [friend, selectFriend, setToAutoFriend, setToFriend, handleSetTheme, deselectFriend, resetFriend]);
+  }), [friend, selectFriend, setToFriend, handleSetTheme, deselectFriend, resetFriend]);
 };

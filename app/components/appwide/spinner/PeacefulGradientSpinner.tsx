@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     right: 0,
-    left: 0,
+    left: 0, 
   },
   innerContainer: { flexDirection: "column" },
   rowContainer: { flexDirection: "row" },

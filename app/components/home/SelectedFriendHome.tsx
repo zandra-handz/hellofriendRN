@@ -38,6 +38,7 @@ interface SelectedFriendHomeProps {
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   canvasKey,
   userId,
+  friendId,
   friendName,
   friendNextDate,
   friendChangeTimestamp,
@@ -50,9 +51,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   darkerGlassBackground,
   categoryColorsArray,
   // darkerOverlayBackgroundColor,
-  primaryBackground,
-  selectedFriendId,
-  selectedFriendName,
+  primaryBackground, 
   skiaFontLarge,
   skiaFontSmall, 
   friendLightColor,
@@ -197,12 +196,12 @@ useEffect(() => {
                   friendChangeTimestamp={friendChangeTimestamp}
                   height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
                   userId={userId}
-                  friendId={selectedFriendId}
+                  friendId={friendId}
                   friendName={friendName}
                   friendNextDate={friendNextDate}
                   darkGlassBackground={darkGlassBackground}
                   darkerGlassBackground={darkerGlassBackground}
-                  selectedFriendName={`${selectedFriendName}`}
+                  selectedFriendName={`${friendName}`}
                   friendDarkColor={friendDarkColor}
                   primaryColor={primaryColor}
                   welcomeTextStyle={welcomeTextStyle}
@@ -253,6 +252,7 @@ useEffect(() => {
                   </View>
 
                   <MomentsField
+                  friendId={friendId}
                     canvasKey={canvasKey}
                     canvasHeight={300}
                     heightFull={620}
@@ -279,7 +279,7 @@ useEffect(() => {
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
                       userId={userId}
-                      friendId={selectedFriendId}
+                      friendId={friendId}
                     />
                   </View>
 
@@ -288,7 +288,7 @@ useEffect(() => {
                       userId={userId}
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
-                      friendId={selectedFriendId}
+                      friendId={friendId}
                     />
                   </View>
                   <View style={{ width: "100%", marginBottom: 6, zIndex: 2 }}>
@@ -296,7 +296,7 @@ useEffect(() => {
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
                       userId={userId}
-                      friendId={selectedFriendId}
+                      friendId={friendId}
                     />
                   </View>
                 </View>

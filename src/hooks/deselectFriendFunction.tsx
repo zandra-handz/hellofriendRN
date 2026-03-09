@@ -47,11 +47,11 @@ const useDeselectFriend = ({ userId, settings }) => {
       deselectFriend();
 
       queryClient.setQueryData(["userSettings", userId], (oldData) => {
-        if (!oldData) return { upcoming_friend: null };
-        return { ...oldData, upcoming_friend: null };
+        if (!oldData) return { use_auto_select: null };
+        return { ...oldData, use_auto_select: null };
       });
 
-      updateSettings({ upcoming_friend: null });
+      updateSettings({ use_auto_select: null });
       return true;
     }
 
@@ -60,8 +60,7 @@ const useDeselectFriend = ({ userId, settings }) => {
       setToFriend({ friend: pinnedFriendObj, preConditionsMet: true });
       return false;
     }
-
-    console.log("Fallback deselect");
+ 
     deselectFriend();
     return true;
   }, [userId, friendId, settings, friendList, queryClient, setToFriend, deselectFriend, updateSettings]);

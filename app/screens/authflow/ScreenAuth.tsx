@@ -9,8 +9,8 @@ import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
-
+import { showSpinner, hideSpinner } from "@/app/components/appwide/button/showSpinner";
+import AppCustomSpinner from "@/app/components/appwide/format/AppCustomSpinner";
 import LocalSolidSpinner from "@/app/components/appwide/spinner/LocalSolidSpinner";
 import OptionInput from "@/app/components/headers/OptionInput";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
@@ -24,6 +24,7 @@ import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/Local
 
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
+import App from "@/App";
 
 const MODE_SIGNIN = "signin";
 const MODE_CREATE = "create";
@@ -91,7 +92,6 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
 
 const [isNavigating, setIsNavigating] = useState(false);
 
-// const isPending = signinMutation.isPending || signinMutation.isLoading || signupMutation.isPending || isNavigating;
  
 
 const isPending = isInitializing || isNavigating || signinMutation.isPending || signinMutation.isLoading || signupMutation.isPending;
@@ -228,11 +228,17 @@ const handleCreateAccount = async () => {
 
   return (
     <>
-      <LocalSolidSpinner
-        loading={isPending}
-        label={isSignIn ? "Signing in" : "Creating account"}
-        backgroundColor={backgroundColor}
+{/* 
+    {isPending && (
+      <AppCustomSpinner
+      backgroundColor={
+        backgroundColor
+      }
+      color1={manualGradientColors.lightColor}
+      color2={manualGradientColors.darkColor}
       />
+    )} */}
+{isPending ? showSpinner(backgroundColor) : hideSpinner()}
 
       <SafeViewAppDefault customStatusIsDarkMode={true} style={styles.container}>
         <StaticBackdrop

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
-import useUpdateFriend from "@/src/hooks/useUpdateFriend";
+import useUpdateFriendSettings from "@/src/hooks/useUpdateFriendSettings";
 import InputAddFriendName from "./InputAddFriendName";
 import PickerAddFriendLastDate from "@/app/components/selectors/PickerAddFriendLastDate";
 import MessagePage from "../alerts/MessagePage";
@@ -37,7 +37,7 @@ const ContentAddFriend = ({
   const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
     userId: userId,
   });
-  const { handleNewFriendSettings } = useUpdateFriend({
+  const { handleNewFriendSettings } = useUpdateFriendSettings({
     userId: userId,
     refetchUpcoming: refetchUpcomingHelloes,
   });

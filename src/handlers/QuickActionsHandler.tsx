@@ -1,28 +1,21 @@
 import { useEffect  } from "react";
 import * as QuickActions from "expo-quick-actions";  
+  
  
-import useFriendListAndUpcoming from "../hooks/usefriendListAndUpcoming";
+export default function QuickActionsHandler({  settings, navigationRef }) {
  
-export default function QuickActionsHandler({ userId, settings, navigationRef }) {
- 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
-  const friendList = friendListAndUpcoming?.friends;
-  const upcomingHelloes = friendListAndUpcoming?.upcoming;
-
-  const upcoming = upcomingHelloes?.[0]?.friend?.name ?? "None";
-  const pinned = friendList?.find(
-    (friend) => friend.id === Number(settings?.pinned_friend)
-  );
-
   useEffect(() => {
+
+  const upcoming_friend_name = settings?.upcoming_friend_name;
+  const pinned_friend_name = settings?.pinned_friend_name;
     const items = [
       // Pinned takes priority
       ...(settings?.pinned_friend
         ? [
             {
               id: "Pinned",
-              title: `Pinned: ${pinned?.name ?? "Unknown"}`,
-              subtitle: `Pinned: ${pinned?.name ?? "Unknown"}`,
+              title: `Pinned: ${pinned_friend_name ?? "Unknown"}`,
+              subtitle: `Pinned: ${pinned_friend_name ?? "Unknown"}`,
               icon: "heart",
               params: { screen: "Moments" },
             },
@@ -33,8 +26,8 @@ export default function QuickActionsHandler({ userId, settings, navigationRef })
         ? [
             {
               id: "moments",
-              title: `Next up: ${upcoming}`,
-              subtitle: `Next up: ${upcoming}`,
+              title: `Next up: ${upcoming_friend_name}`,
+              subtitle: `Next up: ${upcoming_friend_name}`,
               icon: "heart",
               params: { screen: "Moments" },
             },
@@ -65,7 +58,7 @@ export default function QuickActionsHandler({ userId, settings, navigationRef })
     });
 
     return () => subscription.remove();
-  }, [settings, friendList, pinned, upcoming]);
+  }, [settings ]);
 
   //   const subscription = QuickActions.addListener((action) => {
   //     if (!action) return;

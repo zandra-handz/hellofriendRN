@@ -1,5 +1,4 @@
-// FriendCategoryColorsContext.tsx
-import React, { createContext, useContext, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { generateGradientColorsMap } from '../hooks/GenerateGradientColorsMapUtil';
 import { generateGradientColors } from '../hooks/GradientColorsUril';
 import useCategories from '../hooks/useCategories';
@@ -16,31 +15,18 @@ const FriendCategoryColorsContext = createContext<FriendCategoryColorsContextVal
 export const FriendCategoryColorsProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-
   const { userCategories, categoryIds } = useCategories({ userId: user?.id, enabled: !!user?.id });
 
-  const prevColorsMapRef = useRef<Record<string, string>>({});
-  const prevColorsRef = useRef<string[]>([]);
-
   const friendCategoryColorsMap = useMemo(() => {
-    if (!selectedFriend?.lightColor || !selectedFriend?.darkColor || !userCategories?.length) {
-      return prevColorsMapRef.current;
-    }
-    const newMap = generateGradientColorsMap(userCategories, selectedFriend.lightColor, selectedFriend.darkColor);
-    prevColorsMapRef.current = newMap;
-    return newMap;
+    if (!selectedFriend?.lightColor || !selectedFriend?.darkColor || !userCategories?.length) return {};
+    return generateGradientColorsMap(userCategories, selectedFriend.lightColor, selectedFriend.darkColor);
   }, [userCategories, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
   const friendCategoryColors = useMemo(() => {
-    if (!userCategories?.length || !selectedFriend?.lightColor || !selectedFriend?.darkColor) {
-      return prevColorsRef.current;
-    }
-    const newColors = generateGradientColors(categoryIds, selectedFriend.lightColor, selectedFriend.darkColor);
-    prevColorsRef.current = newColors;
-    return newColors;
+    if (!categoryIds?.length || !selectedFriend?.lightColor || !selectedFriend?.darkColor) return [];
+    return generateGradientColors(categoryIds, selectedFriend.lightColor, selectedFriend.darkColor);
   }, [categoryIds, selectedFriend?.lightColor, selectedFriend?.darkColor]);
 
-  // Memoize the context value to prevent children from rerendering
   const contextValue = useMemo(() => ({
     friendCategoryColorsMap,
     friendCategoryColors,

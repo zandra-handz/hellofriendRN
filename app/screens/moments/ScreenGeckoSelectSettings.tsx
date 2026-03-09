@@ -16,8 +16,8 @@ import Animated, {
   withSpring,
   withTiming,
   useSharedValue,
-} from "react-native-reanimated";
-
+} from "react-native-reanimated"; 
+ 
 type Props = {};
 
 const ScreenGeckoSelectSettings = (props: Props) => {

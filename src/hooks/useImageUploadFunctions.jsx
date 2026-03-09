@@ -1,16 +1,13 @@
 import React, {  useState } from 'react';
  
  
-import { useNavigation } from '@react-navigation/native';
-import * as FileSystem from 'expo-file-system';
-
-import { File, Directory, Paths } from 'expo-file-system';
+import { useNavigation } from '@react-navigation/native'; 
 import * as ImagePicker from 'expo-image-picker';
  
 
 import * as ImageManipulator from 'expo-image-manipulator';
  
-
+//using request permissions util file in app file
 // HAS ALL UPLOAD FORMATTING CODING
 const useImageUploadFunctions = () => {
 

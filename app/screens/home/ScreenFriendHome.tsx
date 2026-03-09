@@ -20,7 +20,10 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 
 import SelectedFriendHome from "@/app/components/home/SelectedFriendHome";
-
+import {
+  showSpinner,
+  hideSpinner,
+} from "@/app/components/appwide/button/showSpinner";
 import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -28,9 +31,27 @@ import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 
-const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
+const ScreenFriendHome = ({
+  skiaFontLarge,
+  skiaFontSmall,
+  shouldDelayAnimation,
+}) => {
   const { user } = useUser();
+  const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
 
+  useEffect(() => {
+    if (shouldDelayAnimation) {
+      setIsDelaying(true);
+
+      const timeout = setTimeout(() => {
+        setIsDelaying(false);
+      }, 1000);
+
+      return () => clearTimeout(timeout);
+    } else {
+      setIsDelaying(false);
+    }
+  }, [shouldDelayAnimation]);
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
   const route = useRoute();
@@ -48,7 +69,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
   const friendList = friendListAndUpcoming?.friends;
 
   const { handleSelectFriend } = useSelectFriend({
-    userId: user?.id,
+    userId: user.id,
     friendList,
   });
 
@@ -58,8 +79,8 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
 
   // Select friend when screen mounts with idToSelect param
   useEffect(() => {
+    console.log("laaaaaaaaaaaaaaaaa");
     if (idToSelect && friendList?.length && !selectedFriend?.id) {
-      console.log("laaaaaaaaaaaaaaaaa");
       handleSelectFriend(idToSelect);
     }
   }, [idToSelect, friendList?.length, selectedFriend?.id]);
@@ -99,88 +120,88 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall }) => {
     navigateToMoments({ scrollTo: null });
   }, [navigateToMoments]);
 
-  const handleToggleColoredDots = () => {
+  const handleToggleColoredDots = useCallback(() => {
     coloredDotsModeValue.value = !coloredDotsModeValue.value;
-  };
+  }, []);
 
   const { lightDarkTheme } = useLDTheme();
+  const backgroundColor = lightDarkTheme.primaryBackground;
 
- 
   const PADDING_HORIZONTAL = 6;
 
   return (
     <>
-      {friendListAndUpcomingIsSuccess && user?.id && (
-        <SafeViewFriendHome
-          friendColorLight={selectedFriend.lightColor}
-          friendColorDark={selectedFriend.darkColor}
-          backgroundOverlayColor={lightDarkTheme.primaryBackground}
-          friendId={selectedFriend?.id}
-          reverseOverlayValue={reverseOverlayValue}
-        >
-        
+      <SafeViewFriendHome
+        friendColorLight={selectedFriend.lightColor}
+        friendColorDark={selectedFriend.darkColor}
+        backgroundOverlayColor={backgroundColor}
+        friendId={selectedFriend?.id}
+        reverseOverlayValue={reverseOverlayValue}
+      >
+        {isDelaying ? showSpinner(backgroundColor) : hideSpinner()}
+        {friendListAndUpcomingIsSuccess && !isDelaying && (
+          <>
+            {upcomingHelloes?.length && (
+              <SelectedFriendHome
+                canvasKey={route.key}
+                friendName={selectedFriend.name}
+                friendId={selectedFriend.id}
+                friendNextDate={friendNextDate}
+                friendChangeTimestamp={friendChangeTimestamp}
+                primaryBackground={lightDarkTheme.primaryBackground}
+                darkGlassBackground={lightDarkTheme.darkGlassBackground}
+                darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
+                categoryColorsArray={friendCategoryColors}
+                skiaFontLarge={skiaFontLarge}
+                skiaFontSmall={skiaFontSmall}
+                paddingHorizontal={PADDING_HORIZONTAL}
+                userId={user.id}
+                primaryColor={lightDarkTheme.primaryText}
+                primaryOverlayColor={lightDarkTheme.overlayBackground}
+                friendLightColor={selectedFriend?.lightColor}
+                friendDarkColor={selectedFriend?.darkColor}
+                handleToggleColoredDots={handleToggleColoredDots}
+                coloredDotsModeValue={coloredDotsModeValue}
+                handleMomentScreenNoScroll={handleMomentScreenNoScroll} // center double press
+                handleNavigateToGecko={handleNavigateToGecko} // new center single press
+              />
+            )}
 
-          {upcomingHelloes?.length && user?.id && (
-            <SelectedFriendHome
-              canvasKey={route.key}
-              friendName={friendName}
-              friendNextDate={friendNextDate}
-              friendChangeTimestamp={friendChangeTimestamp}
-              primaryBackground={lightDarkTheme.primaryBackground}
-              darkGlassBackground={lightDarkTheme.darkGlassBackground}
-              darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
-              categoryColorsArray={friendCategoryColors}
-              skiaFontLarge={skiaFontLarge}
-              skiaFontSmall={skiaFontSmall}
-              paddingHorizontal={PADDING_HORIZONTAL}
-              userId={user?.id}
-              primaryColor={lightDarkTheme.primaryText}
-              primaryOverlayColor={lightDarkTheme.overlayBackground}
+            <AnimatedBackdrop
+              color={lightDarkTheme.backdropColor}
+              zIndex={5}
+              isVisibleValue={coloredDotsModeValue}
+            />
+
+            <AnimatedBackdrop
+              color={lightDarkTheme.backdropColor}
+              zIndex={5}
+              isVisibleValue={turnBackdropOnValue}
+            />
+
+            {selectedFriend?.id && (
+              <TopLayerButton
+                onPress={handleNavigateToCreateNew}
+                backgroundColor={manualGradientColors.lightColor}
+                iconColor={manualGradientColors.homeDarkColor}
+                spaceFromBottom={120}
+                hidden={false}
+              />
+            )}
+
+            <SelectedFriendFooter
+              userId={user.id}
+              friendId={selectedFriend?.id}
+              friendName={selectedFriend?.name}
+              lightDarkTheme={lightDarkTheme}
+              overlayColor={lightDarkTheme.overlayBackground}
               friendLightColor={selectedFriend?.lightColor}
               friendDarkColor={selectedFriend?.darkColor}
-              selectedFriendId={selectedFriend?.id}
-              selectedFriendName={selectedFriend?.name}
-              handleToggleColoredDots={handleToggleColoredDots}
-              coloredDotsModeValue={coloredDotsModeValue}
-              handleMomentScreenNoScroll={handleMomentScreenNoScroll} // center double press
-              handleNavigateToGecko={handleNavigateToGecko} // new center single press
+              handleNavigateToGecko={handleNavigateToGecko}
             />
-          )}
-
-          <AnimatedBackdrop
-            color={lightDarkTheme.backdropColor}
-            zIndex={5}
-            isVisibleValue={coloredDotsModeValue}
-          />
-
-          <AnimatedBackdrop
-            color={lightDarkTheme.backdropColor}
-            zIndex={5}
-            isVisibleValue={turnBackdropOnValue}
-          />
-
-          {selectedFriend?.id && (
-            <TopLayerButton
-              onPress={handleNavigateToCreateNew}
-              backgroundColor={manualGradientColors.lightColor}
-              iconColor={manualGradientColors.homeDarkColor}
-              spaceFromBottom={120}
-              hidden={false}
-            />
-          )}
-
-          <SelectedFriendFooter
-            userId={user?.id}
-            friendName={selectedFriend?.name}
-            
-            lightDarkTheme={lightDarkTheme}
-            overlayColor={lightDarkTheme.overlayBackground}
-            friendLightColor={selectedFriend?.lightColor}
-            friendDarkColor={selectedFriend?.darkColor}
-            handleNavigateToGecko={handleNavigateToGecko}
-          />
-        </SafeViewFriendHome>
-      )}
+          </>
+        )}
+      </SafeViewFriendHome>
     </>
   );
 };

@@ -26,11 +26,9 @@ import Animated, {
   useAnimatedStyle,
   withSequence,
 } from "react-native-reanimated";
-
-import SvgIcon from "@/app/styles/SvgIcons";
+ 
 import { useFocusEffect } from "@react-navigation/native";
-
-import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+ 
 // import keyframes from "react-native-reanimated/lib/typescript/css/stylesheet/keyframes";
 // import { TextHeightBehavior } from "@shopify/react-native-skia";
 
@@ -80,8 +78,7 @@ const QuickWriteMoment = forwardRef(
     }, [isKeyboardVisible]);
 
     const textValue = useSharedValue("");
-
-    const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
+ 
 
     const textInputRef = useRef();
     useImperativeHandle(ref, () => ({

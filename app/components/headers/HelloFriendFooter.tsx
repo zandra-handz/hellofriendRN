@@ -150,7 +150,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
       style={[
         styles.container,
         {
-          backgroundColor: manualGradientColors.homeLightColor,
+       
           height: footerHeight,
           paddingBottom: footerPaddingBottom,
           opacity: 0.94,
@@ -161,7 +161,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
         style={[
           styles.container,
           {
-            backgroundColor: lightDarkTheme.darkerOverlayBackground,
+            // backgroundColor: lightDarkTheme.darkerOverlayBackground,
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
             opacity: 0.94, 

@@ -138,9 +138,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
           <View style={[{ width: "100%" }]}>
             <SuggestedActions
-              darkerGlassBackground={darkerGlassBackground}
+              darkerGlassBackground={'transparent'}
               primaryColor={primaryColor}
-              primaryBackground={primaryBackground}
+              primaryBackground={'transparent'}
               padding={SELECTED_FRIEND_CARD_PADDING}
             />
           </View>

@@ -1,116 +1,3 @@
-// import React, { useState } from "react";
-// import { View, ScrollView, StyleSheet } from "react-native";
-// import FriendThemeEditor from "../buttons/friends/FriendThemeEditor";
-// // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
-//  import AppModal from "../alerts/AppModal";
-// import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-// // import { useFriendList } from "@/src/context/FriendListContext";
-// import { FriendDashboardData } from "@/src/types/FriendTypes";
-// import AppModalWithToast from "../alerts/AppModalWithToast";
-
-// interface Props {
-//   isVisible: boolean;
-//   userId: number;
-//   friendId: number;
-//   friendName: string;
-//   friendDash: FriendDashboardData;
-//   textColor: string;
-//   backgroundColor: string;
-//   friendLightColor: string;
-//   friendDarkColor: string;
-//   bottomSpacer: number;
-//   closeModal: () => void;
-// }
-
-// const FriendThemeModal: React.FC<Props> = ({
-//   userId,
-//   isVisible,
-//   friendId,
-//   friendName = "",
-//   textColor,
-//   backgroundColor,
-//   friendLightColor,
-//   friendDarkColor,
-//   friendDash,
-//   closeModal,
-// }) => {
-//   const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
-//   const friendList = friendListAndUpcoming?.friends;
-
-//     const [flashMessage, setFlashMessage] = useState<null | {
-//       text: string;
-//       error: boolean;
-//       duration: number;
-//     }>(null);
-
-//   return (
-//     <AppModalWithToast
-//       primaryColor={textColor}
-//       backgroundColor={backgroundColor}
-//       isFullscreen={false}
-//       modalIsTransparent={false}
-//       isVisible={isVisible}
-//       useCloseButton={true}
-//       questionText={friendName}
-//        onClose={closeModal}
-//              flashMessage={flashMessage}
-//       setFlashMessage={setFlashMessage}
-//     >
-//         <View style={{ flex: 1 }}>
-//             <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-
-//               <FriendThemeEditor
-//                 primaryColor={textColor}
-//                 backgroundColor={backgroundColor}
-//                 editBoxColor={'transparent'}
-//                 friendLightColor={friendLightColor}
-//                 friendDarkColor={friendDarkColor}
-//                 userId={userId}
-//                 friendId={friendId}
-//                 friendList={friendList}
-//                 manualThemeOn={friendDash?.friend_faves?.use_friend_color_theme}
-//                   setFlashMessage={setFlashMessage}
-//               />
-
-//           </ScrollView>
-//         </View>
-
-//       </AppModalWithToast>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   bodyContainer: {
-//     width: "100%",
-//     flexDirection: "column",
-//     justifyContent: "flex-start",
-//     textAlign: "left",
-//   },
-//    scrollViewContainer: {
-//     marginVertical: 6,
-//     flexDirection: "row",
-//     width: "100%",
-//     flexWrap: "wrap",
-//   },
-//   headerContainer: {
-//     marginVertical: 8,
-//   },
-//   sectionContainer: {
-//     marginVertical: 8,
-//   },
-//   headerText: {
-//     fontWeight: "bold",
-//     fontSize: 18,
-//     lineHeight: 30,
-//   },
-//   text: {
-//     fontSize: 14,
-//     lineHeight: 21,
-//   },
-// });
-
-// export default FriendThemeModal;
-
 import React, { useMemo, useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 
@@ -118,7 +5,6 @@ import OptionToggle from "./OptionToggle";
 import AppModalWithToast from "../alerts/AppModalWithToast";
 import BouncyEntrance from "../headers/BouncyEntrance";
 
-import Toggle from "../user/Toggle";
 import SvgIcon from "@/app/styles/SvgIcons";
 
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
@@ -132,7 +18,6 @@ import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 import ColorPalettes from "@/src/forms/ColorPalettes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import manualGradientColors from "@/app/styles/StaticColors";
- 
 
 import {
   FlashMessageData,
@@ -196,13 +81,15 @@ const FriendThemeModal: React.FC<Props> = ({
 
   const { getSavedColorTheme, getFontColor, getFontColorSecondary } =
     useReadableColors(friendList, friendId);
+ 
+  const [manualTheme, setManualTheme] = useState<boolean>(false);
 
-  const initialManualOn = !!friendDash?.friend_faves?.use_friend_color_theme;
-
-  const [manualTheme, setManualTheme] = useState<boolean>(initialManualOn);
+  useEffect(() => {
+    if (friendDash?.friend_faves?.use_friend_color_theme !== undefined) {
+      setManualTheme(!!friendDash.friend_faves.use_friend_color_theme);
+    }
+  }, [friendDash?.friend_faves?.use_friend_color_theme]);
   const [showEdit, setShowEdit] = useState<boolean>(false);
-
-  // ✅ NEW: delay-mount heavy editor content so modal feels fast
   const [mountEditor, setMountEditor] = useState(false);
 
   // if you open the modal, reset editor mount timing
