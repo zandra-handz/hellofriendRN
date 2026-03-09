@@ -80,13 +80,16 @@ const MomentWriteEditView = ({
   const yTranslateValue = useSharedValue(-850);
 
   const handleOpenCat = () => {
-    yTranslateValue.value = withTiming(0, { duration: 100 });
+    openCatCreator();
+  
+    // yTranslateValue.value = withTiming(0, { duration: 100 });
     Keyboard.dismiss();
   };
 
-  const handleCloseCat = () => {
-    yTranslateValue.value = withTiming(-850, { duration: 100 });
-  };
+  // const handleCloseCat = () => {
+  //   closeCatCreator();
+  //   // yTranslateValue.value = withTiming(-850, { duration: 100 });
+  // };
 
   const TOPPER_PADDING_TOP = 0;
 
@@ -127,25 +130,27 @@ const MomentWriteEditView = ({
     }, [momentText]),
   );
 
-  const handleTriggerRefocus = () => {
-    // console.log("handletrifgger refocus");
-    setTriggerReFocus(Date.now());
-  };
+const handleTriggerRefocus = () => {
+  console.log("handleTriggerRefocus");
+  setTimeout(() => setTriggerReFocus(prev => prev + 1), 50);
+};
+const hasInitialFocused = useRef(false);
 
-  // friendId didn't work to bring keyboard up after selecting friend so am using this instead
-  useFocusEffect(
-    useCallback(() => {
+useFocusEffect(
+  useCallback(() => {
+    if (!hasInitialFocused.current) {
+      hasInitialFocused.current = true;
       handleTriggerRefocus();
-      console.log("trigger refocus");
+      console.log("trigger refocus - initial only");
+    }
 
-      return () => {
-        console.log("Screen is unfocused");
-      };
-    }, []),
-  );
-
+    return () => {
+      console.log("Screen is unfocused");
+    };
+  }, []),
+);
   const handleCloseCatCreator = () => {
-    handleCloseCat();
+   
     closeCatCreator();
     handleTriggerRefocus();
   };

@@ -28,14 +28,14 @@ const OptionContainer = ({
         {(!!label || !!icon) && (
           <View style={styles.header}>
             {!!icon && <View style={styles.iconWrap}>{icon}</View>}
-            {!!label && (
+            {/* {!!label && (
               <Text
                 style={[textStyle, styles.label, { color: primaryColor }]}
                 numberOfLines={1}
               >
                 {label}
               </Text>
-            )}
+            )} */}
           </View>
         )}
         {children}
@@ -47,12 +47,14 @@ const OptionContainer = ({
 const styles = StyleSheet.create({
   button: {
     width: "100%",
-    borderRadius: 10,
+    borderRadius: 10, 
+   
   },
 inner: {
   borderRadius: 6,
   paddingVertical: 1,  // same as OptionToggle
-  paddingHorizontal: 12,
+  paddingHorizontal: 12, 
+  
 },
   header: {
     flexDirection: "row",

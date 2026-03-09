@@ -108,7 +108,8 @@ const ValueSlider = ({
 const styles = StyleSheet.create({
   outerContainer: {
     width: "100%",
-    paddingHorizontal: 0,
+    paddingHorizontal: 0, 
+    paddingBottom: 20
   },
   row: {
     flexDirection: "row",

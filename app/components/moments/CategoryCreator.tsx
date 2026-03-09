@@ -2,17 +2,19 @@
 // performs better than non-memoized, per DevTools profiling
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, StyleSheet, Pressable } from "react-native";
-import manualGradientColors from "@/app/styles/StaticColors";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { View, StyleSheet, Pressable, Text, ScrollView } from "react-native";
+import manualGradientColors from "@/app/styles/StaticColors"; 
 import AddNewCategory from "../headers/AddNewCategory";
-// import { useCategories } from "@/src/context/CategoriesContext";
+import AppModalFromTop from "../alerts/AppModalFromTop"; 
 import useCategories from "@/src/hooks/useCategories";
-import SvgIcon from "@/app/styles/SvgIcons";
+import OptionContainer from "../headers/OptionContainer";
+import BouncyEntrance from "../headers/BouncyEntrance";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 import { useCategoryColors } from "@/src/context/CategoryColorsContext";
 import ValueSlider from "../friends/ValueSlider";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+
 type Props = {
   userId: number;
   freezeCategory: boolean;
@@ -27,6 +29,10 @@ type Props = {
   existingId: number;
   selectedId: number;
 };
+
+// index 0 = AddNewCategory, 1 = buttons, 2-9 = sliders
+const allDelays = [0, 60, 120, 180, 240, 300, 360, 420, 480, 540];
+
 const CategoryCreator = ({
   userId,
   primaryColor,
@@ -36,6 +42,7 @@ const CategoryCreator = ({
   friendLightColor,
   friendDarkColor,
   capsuleList,
+  isVisible,
 
   onPress,
   addToOnPress,
@@ -51,7 +58,6 @@ const CategoryCreator = ({
 
   const categoryColorsMap = useMemo(() => {
     if (!categoryColors || !Array.isArray(categoryColors)) {
-      // fallback to empty object if data is not ready
       return {};
     }
 
@@ -60,70 +66,15 @@ const CategoryCreator = ({
     );
   }, [categoryColors]);
 
-  const animatedYTranslateStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: yTranslateValue.value }],
-    };
-  });
-
   const { userCategories } = useCategories({ userId: userId });
 
   const { categorySizes } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
-  // const categoryColorsMap = useMemo(() => {
-  //   if (userCategories?.length && friendLightColor && friendDarkColor) {
-  //     return generateGradientColorsMap(
-  //       userCategories,
-  //       friendLightColor,
-  //       friendDarkColor
-  //     );
-  //   }
-  //   return null;
-  // }, [userCategories, friendLightColor, friendDarkColor]);
-
   const [selectedId, setSelectedId] = useState(null);
-  const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>(
-    [],
-  );
+  const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>([]);
   const [pressedOnce, setPressedOnce] = useState(false);
-
-  // type MomentScores = {
-  //   easy_score: number;
-  //   hard_score: number;
-  //   quick_score: number;
-  //   long_score: number;
-  //   relevant_score: number;
-  //   random_score: number;
-  //   unique_score: number;
-  //   generic_score: number;
-  // };
-
-  // const DEFAULT_SCORES: MomentScores = {
-  //   easy_score: 2,
-  //   hard_score: 2,
-  //   quick_score: 2,
-  //   long_score: 2,
-  //   relevant_score: 2,
-  //   random_score: 2,
-  //   unique_score: 2,
-  //   generic_score: 2,
-  // };
-
-  // // In your component:
-  // const [scoresObject, setScoresObject] = useState<MomentScores>(DEFAULT_SCORES);
-
-  // // Update individual score:
-  // const handleScoreChange = (field: keyof MomentScores, value: number) => {
-  //   setScoresObject(prev => ({
-  //     ...prev,
-  //     [field]: value
-  //   }));
-  // };
-
-  // Usage example:
-  // handleScoreChange('easy_score', 4);
 
   const HORIZONTAL_PADDING = 10;
 
@@ -156,7 +107,7 @@ const CategoryCreator = ({
       addToOnPress();
     }
     setSelectedId(id);
-    onClose(); // TESTING, REMOVE IF REALLY WANT DOUBLE PRESS FEATURE
+    onClose();
 
     if (!pressedOnce) {
       setPressedOnce(true);
@@ -219,9 +170,6 @@ const CategoryCreator = ({
     let largest = categoriesSortedList[0]?.user_category;
     let largestName = categoriesSortedList[0]?.name;
 
-    // console.log(`largest: `, typeof largest);
-    // console.log(`largestName: `, typeof largestName);
-
     if (largest && largestName) {
       onPress({ name: largestName, id: largest });
       setSelectedId(largest);
@@ -271,139 +219,244 @@ const CategoryCreator = ({
   );
 
   return (
-    <>
-      <Animated.View
-        style={[
-          animatedYTranslateStyle,
-          styles.categoryNavigatorContainer,
-          {
-            paddingHorizontal: HORIZONTAL_PADDING,
-            backgroundColor: primaryBackground,
+    <AppModalFromTop
+      isVisible={isVisible}
+      isFullscreen={true}
+      questionText="Moment Settings"
+      primaryColor={primaryColor}
+      backgroundColor={primaryBackground}
+      modalIsTransparent={true}
+      useCloseButton={true}
+      onClose={onClose}
+    >
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <View style={styles.innerContainer}>
+          <View style={styles.categoryNavigatorContainer}>
 
-            paddingTop: 450, //IMPORTANT, this is for status bar clearing since this component appears outside of safe view
-          },
-        ]}
-      >
-        <AddNewCategory
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-          userCategories={userCategories}
-          manualGradientColors={manualGradientColors}
-          addToOnPress={handleSelectCreated}
-        />
-        {userCategories && categoryColorsMap && (
-          <View
-            showsVerticalScrollIndicator={false}
-            style={[styles.scrollContainer]}
-          >
-            {renderedButtons}
-          </View>
-        )}
-        <View style={styles.capsuleScoresPanel}>
-          <View style={styles.capsuleScoresPanel}>
-            <ValueSlider
-              label="Easy"
-              value={scoresObject.easy_score}
-              onValueChange={(value) => handleScoreChange("easy_score", value)}
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+            <BouncyEntrance delay={allDelays[0]} style={{ width: "100%" }}>
+              <View style={styles.sectionContainer}>
+                <OptionContainer
+                  backgroundColor={primaryBackground}
+                  buttonColor={manualGradientColors.lightColor}
+                  label="Category"
+                  primaryColor={primaryBackground}
+                  textStyle={AppFontStyles.subWelcomeText}
+                >
+                  <AddNewCategory
+                    primaryColor={primaryColor}
+                    primaryBackground={primaryBackground}
+                    userCategories={userCategories}
+                    manualGradientColors={manualGradientColors}
+                    addToOnPress={handleSelectCreated}
+                  />
+                </OptionContainer>
+              </View>
+            </BouncyEntrance>
 
-            <ValueSlider
-              label="Hard"
-              value={scoresObject.hard_score}
-              onValueChange={(value) => handleScoreChange("hard_score", value)}
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+            {userCategories && categoryColorsMap && (
+              <BouncyEntrance delay={allDelays[1]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Select"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <View
+                      showsVerticalScrollIndicator={false}
+                      style={styles.scrollContainer}
+                    >
+                      {renderedButtons}
+                    </View>
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
+            )}
 
-            <ValueSlider
-              label="Quick"
-              value={scoresObject.quick_score}
-              onValueChange={(value) => handleScoreChange("quick_score", value)}
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+            <View style={styles.capsuleScoresPanel}>
 
-            <ValueSlider
-              label="Long"
-              value={scoresObject.long_score}
-              onValueChange={(value) => handleScoreChange("long_score", value)}
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+              <BouncyEntrance delay={allDelays[2]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Easy"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Easy"
+                      value={scoresObject.easy_score}
+                      onValueChange={(value) => handleScoreChange("easy_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
 
-            <ValueSlider
-              label="Relevant"
-              value={scoresObject.relevant_score}
-              onValueChange={(value) =>
-                handleScoreChange("relevant_score", value)
-              }
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+              <BouncyEntrance delay={allDelays[3]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Hard"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Hard"
+                      value={scoresObject.hard_score}
+                      onValueChange={(value) => handleScoreChange("hard_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
 
-            <ValueSlider
-              label="Random"
-              value={scoresObject.random_score}
-              onValueChange={(value) =>
-                handleScoreChange("random_score", value)
-              }
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+              <BouncyEntrance delay={allDelays[4]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Quick"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Quick"
+                      value={scoresObject.quick_score}
+                      onValueChange={(value) => handleScoreChange("quick_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
 
-            <ValueSlider
-              label="Unique"
-              value={scoresObject.unique_score}
-              onValueChange={(value) =>
-                handleScoreChange("unique_score", value)
-              }
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+              <BouncyEntrance delay={allDelays[5]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Long"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Long"
+                      value={scoresObject.long_score}
+                      onValueChange={(value) => handleScoreChange("long_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
 
-            <ValueSlider
-              label="Generic"
-              value={scoresObject.generic_score}
-              onValueChange={(value) =>
-                handleScoreChange("generic_score", value)
-              }
-              labelColor={primaryColor}
-              barColor={friendLightColor}
-              pointColor={friendDarkColor}
-              trackColor={"transparent"}
-            />
+              <BouncyEntrance delay={allDelays[6]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Relevant"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Relevant"
+                      value={scoresObject.relevant_score}
+                      onValueChange={(value) => handleScoreChange("relevant_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
+
+              <BouncyEntrance delay={allDelays[7]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Random"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Random"
+                      value={scoresObject.random_score}
+                      onValueChange={(value) => handleScoreChange("random_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
+
+              <BouncyEntrance delay={allDelays[8]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Unique"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Unique"
+                      value={scoresObject.unique_score}
+                      onValueChange={(value) => handleScoreChange("unique_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
+
+              <BouncyEntrance delay={allDelays[9]} style={{ width: "100%" }}>
+                <View style={styles.sectionContainer}>
+                  <OptionContainer
+                    backgroundColor={primaryBackground}
+                    buttonColor={manualGradientColors.lightColor}
+                    label="Generic"
+                    primaryColor={primaryBackground}
+                    textStyle={AppFontStyles.subWelcomeText}
+                  >
+                    <ValueSlider
+                      label="Generic"
+                      value={scoresObject.generic_score}
+                      onValueChange={(value) => handleScoreChange("generic_score", value)}
+                      labelColor={primaryColor}
+                      barColor={friendLightColor}
+                      pointColor={friendDarkColor}
+                      trackColor={"transparent"}
+                    />
+                  </OptionContainer>
+                </View>
+              </BouncyEntrance>
+
+            </View>
           </View>
         </View>
-        <Pressable onPress={onClose} style={styles.bottomButtonContainer}>
-          <SvgIcon
-            name={"chevron_down"}
-            color={primaryColor}
-            color={manualGradientColors.homeDarkColor}
-            size={16}
-            style={{
-              backgroundColor: manualGradientColors.lightColor,
-              borderRadius: 999,
-            }}
-          />
-        </Pressable>
-      </Animated.View>
-    </>
+      </ScrollView>
+    </AppModalFromTop>
   );
 };
 
@@ -414,53 +467,41 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 4,
   },
-
+  scrollViewContainer: {
+    marginVertical: 6,
+    flexDirection: "row",
+    width: "100%",
+    flexWrap: "wrap",
+  },
+  innerContainer: {
+    width: "100%",
+  },
+  sectionContainer: {
+    marginVertical: 6,
+    width: "100%",
+  },
   categoryNavigatorContainer: {
-    position: "absolute",
-    // top: -70, //20
-    top: -460,
-
-    paddingTop: 0,
     zIndex: 5000,
     height: "auto",
-
-    // width: "74%",
     width: "100%",
     selfAlign: "center",
   },
   capsuleScoresPanel: {
-    // backgroundColor: 'red',
-    height: 390,
     marginTop: 10,
   },
   scrollContainer: {
-    maxHeight: 400,
     height: "auto",
     flexGrow: 1,
-    marginTop: 0,
-    borderRadius: 10,
-    padding: 0,
-    paddingTop: 10,
   },
   buttonRow: {
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    // backgroundColor: 'red',
   },
   buttonWrapper: {
     flexDirection: "row",
-    // backgroundColor: "teal",
     marginBottom: 10,
-  },
-  bottomButtonContainer: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 70,
-    paddingBottom: 10,
   },
 });
 

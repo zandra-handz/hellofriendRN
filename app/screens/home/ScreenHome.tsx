@@ -183,7 +183,7 @@ const ScreenHome = ({shouldDelayAnimation}) => {
                     <>
                       {friendListLength > 0 && (
                         <>
-                          <View style={styles.mainActionsWrapper}>
+                          {/* <View style={styles.mainActionsWrapper}>
                             <WelcomeMessageUI
                               darkerGlassBackground={
                                 lightDarkTheme.darkerGlassBackground
@@ -196,9 +196,9 @@ const ScreenHome = ({shouldDelayAnimation}) => {
                               onPress={handleFocusPress}
                               isKeyboardVisible={isKeyboardVisible}
                             />
-                          </View>
+                          </View> */}
 
-                          <QuickWriteMoment
+                          {/* <QuickWriteMoment
                             focusMode={settings?.simplify_app_for_focus}
                             primaryColor={textColor}
                             primaryBackgroundColor={
@@ -228,7 +228,7 @@ const ScreenHome = ({shouldDelayAnimation}) => {
                             isFriendSelected={!!selectedFriend?.id}
                             showMomentScreenButton={!!newMomentText?.length}
                             onPress={navigateToAddMomentScreen}
-                          />
+                          /> */}
                         </>
                       )}
                     </>
