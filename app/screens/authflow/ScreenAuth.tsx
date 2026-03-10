@@ -226,6 +226,15 @@ const handleCreateAccount = async () => {
     buttonColor: textColor,
   };
 
+
+    useEffect(() => {
+    if (isPending) {
+      showSpinner(backgroundColor);
+    } else {
+      hideSpinner();
+    }
+  }, [isPending, backgroundColor]);
+
   return (
     <>
 {/* 
@@ -238,7 +247,7 @@ const handleCreateAccount = async () => {
       color2={manualGradientColors.darkColor}
       />
     )} */}
-{isPending ? showSpinner(backgroundColor) : hideSpinner()}
+{/* {isPending ? showSpinner(backgroundColor) : hideSpinner()} */}
 
       <SafeViewAppDefault customStatusIsDarkMode={true} style={styles.container}>
         <StaticBackdrop

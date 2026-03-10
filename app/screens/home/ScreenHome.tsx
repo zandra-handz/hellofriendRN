@@ -1,16 +1,8 @@
-import React, { useEffect, useCallback, useState, useMemo } from "react";
-import {
-  View,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-} from "react-native";
+import React, { useEffect, useCallback, useMemo } from "react";
+import { View, StyleSheet } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import { useAutoSelector } from "@/src/context/AutoSelectorContext";
 import useUserSettings from "@/src/hooks/useUserSettings";
-// import useUpNextCache from "@/src/hooks/UpcomingHelloesCalls/useUpNextCache";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
 import UpNextCard from "./UpNextCard";
@@ -19,6 +11,7 @@ import useSelectFriend from "@/src/hooks/useSelectFriend";
 import useUser from "@/src/hooks/useUser";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+
 import {
   showSpinner,
   hideSpinner,
@@ -64,11 +57,6 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
 
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user.id });
-
-  // const { setUpNextCache } = useUpNextCache({
-  //   userId: user.id,
-  //   friendListAndUpcoming,
-  // });
 
   const friendList = friendListAndUpcoming?.friends;
   const friendListLength = friendList?.length || 0;
@@ -123,29 +111,7 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
     [handleSelectFriend],
   );
 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   const isLoading = !friendListAndUpcomingIsSuccess;
-
-  // useEffect(() => {
-  //   if (!isFocused) return;
-  //   setUpNextCache();
-  // }, [friendListAndUpcoming, isFocused]);
-
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     "keyboardDidShow",
-  //     () => setIsKeyboardVisible(true),
-  //   );
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     "keyboardDidHide",
-  //     () => setIsKeyboardVisible(false),
-  //   );
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //     keyboardDidHideListener.remove();
-  //   };
-  // }, []);
 
   const userCreatedOn = user.created_on;
 
@@ -154,8 +120,18 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
   const textColor = lightDarkTheme.primaryText;
 
   const backgroundColor = lightDarkTheme.primaryBackground;
+  const overlayColor = lightDarkTheme.overlayBackground;
 
-  // ─── normal render ───────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (isDelaying) {
+      showSpinner(backgroundColor);
+    } else {
+      hideSpinner();
+    }
+  }, [isDelaying, backgroundColor]);
+ 
+
+
   return (
     <>
       <SafeAreaView
@@ -164,14 +140,13 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
           backgroundColor: backgroundColor,
           paddingHorizontal: 10,
         }}
-      >
-        {isDelaying ? showSpinner(backgroundColor) : hideSpinner()}
+      > 
         {friendListAndUpcomingIsSuccess && !isDelaying && (
           <>
             {settings?.id && friendListLength < 1 && (
               <View style={styles.noFriendsView}>
                 <NoFriendsMessageUI
-                  backgroundColor={lightDarkTheme.overlayBackground}
+                  backgroundColor={overlayColor}
                   primaryColor={textColor}
                   welcomeTextStyle={welcomeTextStyle}
                   username={user.username || ""}
@@ -204,7 +179,7 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
                     onSoonPress={onSoonPress}
                     handleSelectFriend={handleSelectFriend}
                     primaryColor={textColor}
-                    overlayColor={lightDarkTheme.overlayBackground}
+                    overlayColor={overlayColor}
                     primaryBackground={backgroundColor}
                     friendList={friendList}
                     upcomingHelloes={upcomingHelloes}
@@ -216,7 +191,7 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
                   />
                   <CategoriesCard
                     onPress={navigateToCategories}
-                    backgroundColor={lightDarkTheme.primaryBackground}
+                    backgroundColor={backgroundColor}
                     textColor={textColor}
                   />
                 </>
@@ -236,22 +211,12 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
 };
 
 const styles = StyleSheet.create({
-  
   noFriendsView: {
     flexDirection: "column",
     justifyContent: "center",
     flex: 1,
     paddingBottom: 60,
-  },
-  mainContainer: {
-    // flex: 1,
-    // justifyContent: "space-between",
-    // flexDirection: "column",
-  },
-  allHomeWrapper: {
-    flex: 1,
-    width: "100%",
-  },
+  }, 
 });
 
 export default ScreenHome;

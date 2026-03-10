@@ -4,8 +4,7 @@ import React, { useEffect, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
 
 import { useSharedValue } from "react-native-reanimated";
-
-// app state
+ 
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
@@ -50,7 +49,7 @@ useEffect(() => {
   const route = useRoute();
   const { friendCategoryColors } = useFriendCategoryColors();
   const idToSelect = route?.params?.idToSelect ?? null;
-  const friendName = route?.params?.friendName ?? null;
+  // const friendName = route?.params?.friendName ?? null;
   const friendNextDate = route?.params?.friendNextDate ?? null;
   const friendChangeTimestamp = route?.params?.friendChangeTimestamp ?? null;
   const { selectedFriend } = useSelectedFriend();
@@ -65,14 +64,13 @@ useEffect(() => {
     userId: user.id,
     friendList,
   });
-
-  // In ScreenFriendHome or wherever the backdrop lives
+ 
   const coloredDotsModeValue = useSharedValue(false);
   const turnBackdropOnValue = useSharedValue(false);
 
   // Select friend when screen mounts with idToSelect param
   useEffect(() => {
-       console.log("laaaaaaaaaaaaaaaaa");
+      
     if (idToSelect && friendList?.length && !selectedFriend?.id) {
    
       handleSelectFriend(idToSelect);
@@ -124,9 +122,16 @@ const handleToggleColoredDots = useCallback(() => {
  
   const PADDING_HORIZONTAL = 6;
 
+  useEffect(() => {
+  if (isDelaying) {
+    showSpinner(backgroundColor);
+  } else {
+    hideSpinner();
+  }
+}, [isDelaying, backgroundColor]);
+
   return (
-    <>
-    {isDelaying ? showSpinner(backgroundColor) : hideSpinner()}
+    <> 
       {friendListAndUpcomingIsSuccess && !isDelaying &&  (
         <SafeViewFriendHome
           friendColorLight={selectedFriend.lightColor}
