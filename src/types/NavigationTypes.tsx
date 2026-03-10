@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   hellofriend: undefined;
+  Categories: undefined;
   UserDetails: undefined;
   MomentFocus: {
     screenCameFrom: number;

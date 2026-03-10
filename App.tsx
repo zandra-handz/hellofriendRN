@@ -19,8 +19,10 @@ import {
   getShareExtensionKey,
 } from "expo-share-intent";
 
-
-import { showSpinner, hideSpinner } from "./app/components/appwide/button/showSpinner";
+import {
+  showSpinner,
+  hideSpinner,
+} from "./app/components/appwide/button/showSpinner";
 import LocalSolidSpinner from "./app/components/appwide/spinner/LocalSolidSpinner";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -53,6 +55,7 @@ import * as MediaLibrary from "expo-media-library";
 import useUser from "./src/hooks/useUser";
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
+import ScreenCategories from "./app/screens/home/ScreenCategories";
 import ScreenFriendHome from "./app/screens/home/ScreenFriendHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
@@ -147,7 +150,6 @@ export default Sentry.wrap(function App() {
     }
     requestPermissions();
   }, []);
-
 
   useEffect(() => {
     const notificationSubscription =
@@ -307,44 +309,42 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const { lightDarkTheme } = useLDTheme();
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
 
-if (!selectedFriend?.isReady) {
+  if (!selectedFriend?.isReady) {
     showSpinner(lightDarkTheme.primaryBackground);
-  return null;
-}
+    return null;
+  }
 
+  const currentBranch: "home" | "friend" = selectedFriend?.id
+    ? "friend"
+    : "home";
 
+  const shouldDelayAnimation =
+    previousBranchRef.current === null ||
+    previousBranchRef.current !== currentBranch;
 
-const currentBranch: "home" | "friend" = selectedFriend?.id ? "friend" : "home";
+  previousBranchRef.current = currentBranch;
 
-const shouldDelayAnimation =
-  previousBranchRef.current === null ||
-  previousBranchRef.current !== currentBranch;
+  //  first load into home → true
 
-previousBranchRef.current = currentBranch;
+  // first load into friend → true
 
-//  first load into home → true
+  // home → friend → true
 
-// first load into friend → true
+  // friend → home → true
 
-// home → friend → true
+  // home → home rerender → false
 
-// friend → home → true
+  // friend → friend rerender → false
 
-// home → home rerender → false
-
-// friend → friend rerender → false
-
-
-if (selectedFriend.isReady) {
-  hideSpinner()
-}
+  if (selectedFriend.isReady) {
+    hideSpinner();
+  }
 
   if (selectedFriend?.isReady && !selectedFriend?.id) {
-    hideSpinner()
-    return ( 
+    hideSpinner();
+    return (
       <FriendCategoryColorsProvider>
         <Stack.Navigator
-        
           screenOptions={{
             contentContainerStyle: { flexGrow: 1 },
             cardStyle: { backgroundColor: "#000002" },
@@ -356,164 +356,169 @@ if (selectedFriend.isReady) {
                 {...props}
                 skiaFontLarge={skiaFontLarge}
                 skiaFontSmall={skiaFontSmall}
-                  shouldDelayAnimation={shouldDelayAnimation}
+                shouldDelayAnimation={shouldDelayAnimation}
               />
             )}
           </Stack.Screen>
+          <Stack.Screen
+            name="Categories"
+            component={ScreenCategories}
+            options={{ gestureEnabled: false, headerShown: false }}
+          />
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
   }
 
-  hideSpinner()
+  hideSpinner();
   return (
-        <FriendCategoryColorsProvider> 
-    <Stack.Navigator
-      screenOptions={{
-        contentContainerStyle: { flexGrow: 1 },
-        cardStyle: { backgroundColor: "#000002" },
-      }}
-    >
-      <Stack.Screen
-        name="FriendHome"
-        options={{ headerShown: false, animation: "none" }}
-      >
-        {(props) => (
-          <ScreenFriendHome
-            {...props}
-            skiaFontLarge={skiaFontLarge}
-            skiaFontSmall={skiaFontSmall}
-             shouldDelayAnimation={shouldDelayAnimation}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen
-        name="Gecko"
-        options={{ headerShown: false, gestureEnabled: false }}
-      >
-        {(props) => (
-          <ScreenGecko
-            {...props}
-            skiaFontLarge={skiaFontLarge}
-            skiaFontSmall={skiaFontSmall}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen
-        name="GeckoSelectSettings"
-        component={ScreenGeckoSelectSettings}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name="QRCode"
-        component={ScreenQRCode}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name="MomentFocus"
-        component={ScreenMomentFocus}
-        options={{ gestureEnabled: false, headerShown: false }}
-      />
-      <Stack.Screen
-        name="Moments"
-        component={ScreenMoments}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="PreAdded"
-        component={ScreenPreAdded}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Finalize"
-        component={ScreenFinalize}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Reload"
-        component={ScreenReload}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="MomentView"
-        component={ScreenMomentView}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="ImageView"
-        component={ScreenImageView}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="History"
-        component={ScreenHistory}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Helloes"
-        component={ScreenHelloes}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="HelloView"
-        component={ScreenHelloView}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="LocationSend"
-        component={ScreenLocationSend}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="LocationEdit"
-        component={ScreenLocationEdit}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="LocationCreate"
-        component={ScreenLocationCreate}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="LocationSearch"
-        component={ScreenLocationSearch}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="MidpointLocationSearch"
-        component={ScreenMidpointLocationSearch}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddImage"
-        component={ScreenAddImage}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddHello"
-        component={ScreenAddHello}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="SelectFriend"
-        component={ScreenSelectFriend}
-        options={{
-          headerShown: false,
-          gestureEnabled: false,
-          animation: "none",
+    <FriendCategoryColorsProvider>
+      <Stack.Navigator
+        screenOptions={{
+          contentContainerStyle: { flexGrow: 1 },
+          cardStyle: { backgroundColor: "#000002" },
         }}
-      />
-      <Stack.Screen
-        name="AddFriend"
-        component={ScreenAddFriend}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Fidget"
-        component={ScreenFidget}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
+      >
+        <Stack.Screen
+          name="FriendHome"
+          options={{ headerShown: false, animation: "none" }}
+        >
+          {(props) => (
+            <ScreenFriendHome
+              {...props}
+              skiaFontLarge={skiaFontLarge}
+              skiaFontSmall={skiaFontSmall}
+              shouldDelayAnimation={shouldDelayAnimation}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen
+          name="Gecko"
+          options={{ headerShown: false, gestureEnabled: false }}
+        >
+          {(props) => (
+            <ScreenGecko
+              {...props}
+              skiaFontLarge={skiaFontLarge}
+              skiaFontSmall={skiaFontSmall}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen
+          name="GeckoSelectSettings"
+          component={ScreenGeckoSelectSettings}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="QRCode"
+          component={ScreenQRCode}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="MomentFocus"
+          component={ScreenMomentFocus}
+          options={{ gestureEnabled: false, headerShown: false }}
+        />
+        <Stack.Screen
+          name="Moments"
+          component={ScreenMoments}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PreAdded"
+          component={ScreenPreAdded}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Finalize"
+          component={ScreenFinalize}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Reload"
+          component={ScreenReload}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MomentView"
+          component={ScreenMomentView}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ImageView"
+          component={ScreenImageView}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="History"
+          component={ScreenHistory}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Helloes"
+          component={ScreenHelloes}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HelloView"
+          component={ScreenHelloView}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LocationSend"
+          component={ScreenLocationSend}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LocationEdit"
+          component={ScreenLocationEdit}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LocationCreate"
+          component={ScreenLocationCreate}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LocationSearch"
+          component={ScreenLocationSearch}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MidpointLocationSearch"
+          component={ScreenMidpointLocationSearch}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddImage"
+          component={ScreenAddImage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddHello"
+          component={ScreenAddHello}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SelectFriend"
+          component={ScreenSelectFriend}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
+        />
+        <Stack.Screen
+          name="AddFriend"
+          component={ScreenAddFriend}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Fidget"
+          component={ScreenFidget}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
     </FriendCategoryColorsProvider>
   );
 };
@@ -563,18 +568,16 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
 
           <ShareIntentHandler />
           <CategoryColorsProvider>
-          
-              <AutoSelectFriendHandler userId={user?.id} settings={settings} />
-              <SelectedFriendNavigator
-                skiaFontLarge={skiaFontLarge}
-                skiaFontSmall={skiaFontSmall}
-              /> 
+            <AutoSelectFriendHandler userId={user?.id} settings={settings} />
+            <SelectedFriendNavigator
+              skiaFontLarge={skiaFontLarge}
+              skiaFontSmall={skiaFontSmall}
+            />
           </CategoryColorsProvider>
         </>
       ) : userIsPending ? (
         <PeacefulGradientSpinner />
       ) : (
-        
         <Stack.Navigator
           screenOptions={{
             contentContainerStyle: { flexGrow: 1 },

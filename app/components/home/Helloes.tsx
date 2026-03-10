@@ -69,7 +69,7 @@ const Helloes = ({
                 >
                   <View style={styles.iconShadow}>
                     <SvgIcon
-                      name="calendar"
+                      name="chart_timeline_variant_shimmer"
                       size={20}
                       color={primaryColor}
                       style={styles.icon}

@@ -1,39 +1,34 @@
-// ShowLocalSpinner.ts
+ 
 import RootSiblings from "react-native-root-siblings";
-import React from "react";
-import LocalSolidSpinner from "@/app/components/appwide/spinner/LocalSolidSpinner";
+import React, { useRef } from "react";
+import LocalSolidSpinner, { SpinnerHandle } from "@/app/components/appwide/spinner/LocalSolidSpinner";
 
 let spinnerSibling: RootSiblings | null = null;
-let refCount = 0;
+let spinnerRef: React.RefObject<SpinnerHandle> | null = null;
 
-// export const showSpinner = (backgroundColor: string) => {
-//   refCount++;
-//   if (spinnerSibling) {
-//     spinnerSibling.update(<LocalSolidSpinner loading={true} backgroundColor={backgroundColor} />);
-//   } else {
-//     spinnerSibling = new RootSiblings(<LocalSolidSpinner loading={true} backgroundColor={backgroundColor} />);
-//   }
-// };
-
-// export const hideSpinner = () => {
-//   refCount = Math.max(0, refCount - 1);
-//   if (refCount === 0 && spinnerSibling) {
-//     spinnerSibling.destroy();
-//     spinnerSibling = null;
-//   }
-// };
+const ensureSpinner = () => {
+  if (!spinnerSibling) {
+    spinnerRef = React.createRef<SpinnerHandle>();
+    spinnerSibling = new RootSiblings(
+      <LocalSolidSpinner ref={spinnerRef} />
+    );
+  }
+};
 
 export const showSpinner = (backgroundColor: string) => {
-  if (spinnerSibling) {
-    spinnerSibling.update(<LocalSolidSpinner loading={true} backgroundColor={backgroundColor} />);
-    return;
-  }
-  spinnerSibling = new RootSiblings(<LocalSolidSpinner loading={true} backgroundColor={backgroundColor} />);
+  ensureSpinner();
+  spinnerRef?.current?.show(backgroundColor);
 };
 
 export const hideSpinner = () => {
+  spinnerRef?.current?.hide();
+};
+
+// Optional: fully destroy after a delay if you want cleanup
+export const destroySpinner = () => {
   if (spinnerSibling) {
     spinnerSibling.destroy();
     spinnerSibling = null;
+    spinnerRef = null;
   }
 };

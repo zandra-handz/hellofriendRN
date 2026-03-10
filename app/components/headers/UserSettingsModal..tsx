@@ -320,7 +320,7 @@ const UserSettingsModal: React.FC<Props> = ({
                 {...sharedToggleProps}
                 label=" Autoselect Next Friend"
                 icon={<SvgIcon name="account" size={20} color={textColor} />}
-                value={settings.use_auto_select}
+               value={!!settings.use_auto_select}
                 onPress={toggleUseAutoSelect}
               />
             </BouncyEntrance>

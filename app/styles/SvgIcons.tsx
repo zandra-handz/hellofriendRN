@@ -31,6 +31,8 @@ import CarSvg from "./svgs/car";
 import CarCogSvg from "./svgs/car-cog";
 import CircleSvg from "./svgs/circle";
 import CircleOutlineSvg from "./svgs/circle-outline";
+import ChartBubbleSvg from "./svgs/chart-bubble";
+import ChartTimelineVariantShimmerSvg from "./svgs/chart-timeline-variant-shimmer";
 import CheckSvg from "./svgs/check";
 import CheckCircleSvg from "./svgs/check-circle";
 import ChevronLeftSvg from "./svgs/chevron-left";
@@ -120,6 +122,8 @@ const svgIcons = {
   calendar_clock: CalendarClockSvg,
   camera_outline: CameraOutlineSvg,
   cancel: CancelSvg,
+  chart_bubble: ChartBubbleSvg,
+  chart_timeline_variant_shimmer: ChartTimelineVariantShimmerSvg,
   check: CheckSvg,
   close: CloseSvg,
   close_outline: CloseOutlineSvg,

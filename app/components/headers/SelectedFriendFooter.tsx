@@ -307,10 +307,10 @@ const SelectedFriendFooter = ({
   handleNavigateToGecko,
 }) => {
   const { settings } = useUserSettings({ userId });
-  const { handleDeselectFriend } = useDeselectFriend({ userId, settings });
+
  
   const { friendDash } = useFriendDash({ userId, friendId });
-
+  const { handleDeselectFriend } = useDeselectFriend({ userId, settings });
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] = useState(false);

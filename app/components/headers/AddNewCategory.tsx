@@ -96,10 +96,6 @@ const AddNewCategory = ({
     }
   }, [userCategories]);
 
-  useEffect(() => {
-    console.log(`DEBUG: `, remaining)
-
-  }, [remaining]);
 
   const toggleInput = () => {
     console.log("toggle pressed");

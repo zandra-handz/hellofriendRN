@@ -46,7 +46,7 @@ onSuccess: (serverData, variables) => {
   });
 
   const updateSettings = async (newSettings) => {
-    console.log("updating settings! (function in updateSettings)", newSettings);
+    // console.log("updating settings! (function in updateSettings)", newSettings);
     try {
       await updateSettingsMutation.mutateAsync({
         // userId: user.user.id, // User ID

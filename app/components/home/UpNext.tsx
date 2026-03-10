@@ -5,6 +5,7 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 
 type Props = {
   friendName: string | null;
+  futureDate: string | null;
   futureDateInWords: string | null;
   textColor: string;
   onPress: () => void;
@@ -12,6 +13,7 @@ type Props = {
 
 const UpNext = ({
   friendName,
+  futureDate, //YYYY-MM-DD
   futureDateInWords,
   textColor,
   onPress,

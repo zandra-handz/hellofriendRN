@@ -172,7 +172,6 @@
 //   navigation.navigate("Gecko", { selection, autoPick });
 // };
 
-
 //   const navigateToGeckoSelectSettings = ({
 //     selection,
 //   }: NavToGeckoSelectSettingsProp) => {
@@ -269,7 +268,7 @@ type NavToAddImageProps = {
 
 type NavToImagesProps = {
   startingIndex: number;
-}
+};
 
 type NavToFriendHomeProps = {
   idToSelect?: number | null;
@@ -277,7 +276,6 @@ type NavToFriendHomeProps = {
   friendName?: string | null;
   friendNextDate?: string | null;
   friendChangeTimestamp?: number | null;
-
 };
 
 type NavToSelectFriendProps = {
@@ -325,13 +323,9 @@ type NavToQRCodeProp = {
   friendId: number;
 };
 
-
-
-type NavToAuthProp = { 
+type NavToAuthProp = {
   createNewAccount?: boolean | null;
   prevScreenBackdrop?: boolean | null;
-
-  
 };
 
 // type NavToNewAccountProp = {
@@ -342,7 +336,13 @@ type NavToAuthProp = {
 interface hookReturns {
   navigateToWelcome: () => void;
   navigateToHome: () => void;
-  navigateToFriendHome: ({idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp }: NavToFriendHomeProps) => void;
+  navigateToFriendHome: ({
+    idToSelect,
+    backdropTimestamp,
+    friendName,
+    friendNextDate,
+    friendChangeTimestamp,
+  }: NavToFriendHomeProps) => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
@@ -353,7 +353,7 @@ interface hookReturns {
     inPersonFilter,
   }: NavToHelloViewProps) => void;
   navigateToAddImage: ({ imageUri }: NavToAddImageProps) => void;
-  navigateToImages: ({startingIndex}: NavToImagesProps) => void;
+  navigateToImages: ({ startingIndex }: NavToImagesProps) => void;
 
   navigateToLocationSearch: () => void;
   navigateToLocationEdit: ({
@@ -365,21 +365,35 @@ interface hookReturns {
     screenCameFrom,
     momentText,
   }: NavToMomentFocusWithTextProp) => void;
-  navigateToGecko: ({ selection, autoPick, timestamp, sessionId }: NavToGeckoProp) => void;
+  navigateToGecko: ({
+    selection,
+    autoPick,
+    timestamp,
+    sessionId,
+  }: NavToGeckoProp) => void;
   navigateToGeckoSelectSettings: ({
     selection,
   }: NavToGeckoSelectSettingsProp) => void;
-  navigateToQRCode: ({ selection, friendName, friendId}: NavToQRCodeProp) => void;
+  navigateToQRCode: ({
+    selection,
+    friendName,
+    friendId,
+  }: NavToQRCodeProp) => void;
 
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
   navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
 
   navigateToFidget: () => void;
-  navigateToAuth: ({ createNewAccount, prevScreenBackdrop }: NavToAuthProp) => void;
+  navigateToAuth: ({
+    createNewAccount,
+    prevScreenBackdrop,
+  }: NavToAuthProp) => void;
   // navigateToNewAccount: ({ usernameEntered }: NavToNewAccountProp) => void;
   navigateToRecoverCredentials: () => void;
   navigateBack: () => void;
-  resetParams: (params: Partial<RootStackParamList[keyof RootStackParamList]>) => void;
+  resetParams: (
+    params: Partial<RootStackParamList[keyof RootStackParamList]>,
+  ) => void;
 }
 
 const useAppNavigations = (): hookReturns => {
@@ -389,13 +403,28 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("hellofriend");
   };
 
+  const navigateToCategories = () => {
+    navigation.navigate("Categories");
+  };
+
   //   const navigateToFriendHome = ({idToSelect=null, backdropTimestamp=null, friendName="", friendNextDate="", friendChangeTimestamp=null}) => {
   //   navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
   // };
 
-
-      const navigateToFriendHome = (idToSelect=null, backdropTimestamp=null, friendName="", friendNextDate="", friendChangeTimestamp=null) => {
-    navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
+  const navigateToFriendHome = (
+    idToSelect = null,
+    backdropTimestamp = null,
+    friendName = "",
+    friendNextDate = "",
+    friendChangeTimestamp = null,
+  ) => {
+    navigation.navigate("FriendHome", {
+      idToSelect,
+      backdropTimestamp,
+      friendName,
+      friendNextDate,
+      friendChangeTimestamp,
+    });
   };
 
   const navigateToAddFriend = () => {
@@ -427,11 +456,9 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("AddImage", { imageUri });
   };
 
-
-  const navigateToImages = ({startingIndex=0}: NavToImagesProps) => {
-      navigation.navigate("ImageView", { startingIndex });
-
-  }
+  const navigateToImages = ({ startingIndex = 0 }: NavToImagesProps) => {
+    navigation.navigate("ImageView", { startingIndex });
+  };
 
   const navigateToLocationEdit = ({
     location,
@@ -445,29 +472,42 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
-  const navigateToMomentFocus = ({ screenCameFrom, prevScreenBackdrop=false }: NavToMomentFocusProp) => {
+  const navigateToMomentFocus = ({
+    screenCameFrom,
+    prevScreenBackdrop = false,
+  }: NavToMomentFocusProp) => {
     navigation.navigate("MomentFocus", {
       screenCameFrom: screenCameFrom,
-      prevScreenBackdrop: prevScreenBackdrop
+      prevScreenBackdrop: prevScreenBackdrop,
     });
   };
 
   const navigateToMomentFocusWithText = ({
     screenCameFrom,
     momentText,
-    triggerReverseBackdrop=false,
+    triggerReverseBackdrop = false,
   }: NavToMomentFocusWithTextProp) => {
     navigation.navigate("MomentFocus", {
       screenCameFrom: screenCameFrom,
       momentText: momentText,
-      triggerReverseBackdrop: triggerReverseBackdrop
+      triggerReverseBackdrop: triggerReverseBackdrop,
     });
   };
 
-  const navigateToGecko = (
-    { selection = 0, autoPick = false, timestamp, pollMode, sessionId}: NavToGeckoProp = {}
-  ) => {
-    navigation.navigate("Gecko", { selection, autoPick, timestamp, pollMode, sessionId});
+  const navigateToGecko = ({
+    selection = 0,
+    autoPick = false,
+    timestamp,
+    pollMode,
+    sessionId,
+  }: NavToGeckoProp = {}) => {
+    navigation.navigate("Gecko", {
+      selection,
+      autoPick,
+      timestamp,
+      pollMode,
+      sessionId,
+    });
   };
 
   const navigateToGeckoSelectSettings = ({
@@ -478,19 +518,17 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
-  
   const navigateToQRCode = ({
     selection,
     friendName,
     friendId,
     friendNumber,
-    
   }: NavToQRCodeProp) => {
     navigation.navigate("QRCode", {
       selection: selection,
       friendName: friendName,
       friendId: friendId,
-      friendNumber: friendNumber
+      friendNumber: friendNumber,
     });
   };
 
@@ -518,7 +556,10 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Welcome");
   };
 
-  const navigateToAuth = ({ createNewAccount=false, prevScreenBackdrop=false }: NavToAuthProp) => {
+  const navigateToAuth = ({
+    createNewAccount = false,
+    prevScreenBackdrop = false,
+  }: NavToAuthProp) => {
     navigation.navigate("Auth", { createNewAccount, prevScreenBackdrop });
   };
 
@@ -535,12 +576,15 @@ const useAppNavigations = (): hookReturns => {
   };
 
   // ✅ New function to reset/clear specific params
-  const resetParams = (params: Partial<RootStackParamList[keyof RootStackParamList]>) => {
+  const resetParams = (
+    params: Partial<RootStackParamList[keyof RootStackParamList]>,
+  ) => {
     navigation.setParams(params as any);
   };
 
   return {
     navigateToHome,
+    navigateToCategories,
     navigateToFriendHome,
     navigateToAddFriend,
     navigateToSelectFriend,

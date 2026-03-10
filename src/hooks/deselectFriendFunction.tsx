@@ -43,15 +43,15 @@ const useDeselectFriend = ({ userId, settings }) => {
 
     // If current friend is the upcoming friend, turn off auto-select
     if (upcomingFriend && Number(friendId) === Number(upcomingFriend)) {
-      console.log("TURN AUTO OFF", friendId, upcomingFriend);
+      console.log("TURN AUTO OFF", friendId, userId, upcomingFriend);
       deselectFriend();
 
       queryClient.setQueryData(["userSettings", userId], (oldData) => {
-        if (!oldData) return { use_auto_select: null };
-        return { ...oldData, use_auto_select: null };
+        if (!oldData) return { use_auto_select: false };
+        return { ...oldData, use_auto_select: false };
       });
 
-      updateSettings({ use_auto_select: null });
+      updateSettings({ use_auto_select: false });
       return true;
     }
 
