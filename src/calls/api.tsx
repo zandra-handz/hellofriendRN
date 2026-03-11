@@ -422,6 +422,8 @@ export const deleteUserCategory = async (
 
 export const getCurrentUser = async () => {
   try {
+
+  
     // const start = Date.now(); // log start time
     // console.log(
     //   "\x1b[30m%s\x1b[30m",

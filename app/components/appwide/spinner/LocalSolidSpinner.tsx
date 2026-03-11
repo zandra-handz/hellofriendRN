@@ -64,25 +64,23 @@ export type SpinnerHandle = {
   show: (backgroundColor: string) => void;
   hide: () => void;
 };
-
 const LocalSolidSpinner = forwardRef<SpinnerHandle>((_, ref) => {
-  const [visible, setVisible] = useState(false);
+  const viewRef = useRef<View>(null);
+  const bgRef = useRef<View>(null);
   const [backgroundColor, setBackgroundColor] = useState("#000000");
 
   useImperativeHandle(ref, () => ({
     show: (bg: string) => {
       setBackgroundColor(bg);
-      setVisible(true);
+      viewRef.current?.setNativeProps({ display: 'flex' });
     },
     hide: () => {
-      setVisible(false);
+      viewRef.current?.setNativeProps({ display: 'none' });
     },
   }));
 
-  if (!visible) return null;
-
   return (
-    <View style={styles.container}>
+    <View ref={viewRef} style={[styles.container, { display: 'none' }]}>
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor }]}>
         <SpinnerFive
           backgroundColor={backgroundColor}
@@ -93,6 +91,34 @@ const LocalSolidSpinner = forwardRef<SpinnerHandle>((_, ref) => {
     </View>
   );
 });
+// const LocalSolidSpinner = forwardRef<SpinnerHandle>((_, ref) => {
+//   const [visible, setVisible] = useState(false);
+//   const [backgroundColor, setBackgroundColor] = useState("#000000");
+
+//   useImperativeHandle(ref, () => ({
+//     show: (bg: string) => {
+//       setBackgroundColor(bg);
+//       setVisible(true);
+//     },
+//     hide: () => {
+//       setVisible(false);
+//     },
+//   }));
+
+//   if (!visible) return null;
+
+//   return (
+//     <View style={styles.container}>
+//       <View style={[StyleSheet.absoluteFillObject, { backgroundColor }]}>
+//         <SpinnerFive
+//           backgroundColor={backgroundColor}
+//           color1={manualGradientColors.lightColor}
+//           color2={manualGradientColors.darkColor}
+//         />
+//       </View>
+//     </View>
+//   );
+// });
 
 const styles = StyleSheet.create({
   container: {

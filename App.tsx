@@ -11,6 +11,8 @@ import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import ShareIntentHandler from "./src/handlers/ShareIntentHandler";
 import AutoSelectFriendHandler from "./src/handlers/AutoSelectFriendHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
+
+import { View, Text } from "react-native";
 import {
   useShareIntentContext,
   ShareIntentProvider,
@@ -110,6 +112,11 @@ Sentry.init({
 const Stack = createNativeStackNavigator();
 const navigationRef = createRef();
 
+
+SplashScreen.preventAutoHideAsync(); // top of file, outside App()
+
+
+
 export default Sentry.wrap(function App() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -119,7 +126,9 @@ export default Sentry.wrap(function App() {
   const skiaFontLarge = useFont(Poppins_400Regular, 34);
   const skiaFontSmall = useFont(Poppins_400Regular, 14);
 
-  SplashScreen.preventAutoHideAsync();
+  
+
+  // SplashScreen.preventAutoHideAsync(); moved out of component
 
   // const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -164,18 +173,31 @@ export default Sentry.wrap(function App() {
 
   const allFontsLoaded = fontsLoaded && skiaFontLarge && skiaFontSmall;
 
-  useEffect(() => {
-    if (allFontsLoaded) {
-      console.log("all fonts loaded");
-      SplashScreen.hideAsync();
-    } else {
-      console.log("fonts not loaded yet");
-    }
-  }, [allFontsLoaded]);
 
-  if (!allFontsLoaded) {
-    return null;
+  // inside useEffect:
+useEffect(() => {
+  if (allFontsLoaded) {
+    SplashScreen.hideAsync();
+  } else {
+    // fallback: hide after 5s no matter what
+    const t = setTimeout(() => SplashScreen.hideAsync(), 5000);
+    return () => clearTimeout(t);
   }
+}, [allFontsLoaded]);
+
+
+  // useEffect(() => {
+  //   if (allFontsLoaded) {
+  //     console.log("all fonts loaded");
+  //     SplashScreen.hideAsync();
+  //   } else {
+  //     console.log("fonts not loaded yet");
+  //   }
+  // }, [allFontsLoaded]);
+
+  // if (!allFontsLoaded) {
+  //   return null;
+  // }
 
   return (
     <ShareIntentProvider>
@@ -304,19 +326,252 @@ const linking = {
 import { useLDTheme } from "./src/context/LDThemeContext";
 import { useSelectedFriend } from "./src/context/SelectedFriendContext";
 
+// const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
+//   const { selectedFriend } = useSelectedFriend();
+//   const { lightDarkTheme } = useLDTheme();
+//   const previousBranchRef = useRef<"home" | "friend" | null>(null);
+
+//   // if (!selectedFriend?.isReady) {
+//   //   showSpinner(lightDarkTheme.primaryBackground);
+//   //   return null;
+//   // }
+
+// if (!selectedFriend?.isReady) {
+//   showSpinner(lightDarkTheme.primaryBackground);
+//   return (
+//     <View style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center' }}>
+//       <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>SPINNER MISSING</Text>
+//     </View>
+//   );
+// }
+
+//   const currentBranch: "home" | "friend" = selectedFriend?.id
+//     ? "friend"
+//     : "home";
+
+//   const shouldDelayAnimation =
+//     previousBranchRef.current === null ||
+//     previousBranchRef.current !== currentBranch;
+
+//   previousBranchRef.current = currentBranch;
+ 
+
+//   if (selectedFriend.isReady) {
+//     hideSpinner();
+//   }
+
+//   if (selectedFriend?.isReady && !selectedFriend?.id) {
+//     hideSpinner();
+//     return (
+//       <FriendCategoryColorsProvider>
+//         <Stack.Navigator
+//           screenOptions={{
+//             contentContainerStyle: { flexGrow: 1 },
+//             cardStyle: { backgroundColor: "#000002" },
+//           }}
+//         >
+//           <Stack.Screen name="hellofriend" options={{ headerShown: false }}>
+//             {(props) => (
+//               <ScreenHome
+//                 {...props}
+//                 skiaFontLarge={skiaFontLarge}
+//                 skiaFontSmall={skiaFontSmall}
+//                 shouldDelayAnimation={shouldDelayAnimation}
+//               />
+//             )}
+//           </Stack.Screen>
+//           <Stack.Screen
+//             name="Categories"
+//             component={ScreenCategories}
+//             options={{ gestureEnabled: false, headerShown: false }}
+//           />
+//         </Stack.Navigator>
+//       </FriendCategoryColorsProvider>
+//     );
+//   }
+
+//   hideSpinner();
+//   return (
+//     <FriendCategoryColorsProvider>
+//       <Stack.Navigator
+//         screenOptions={{
+//           contentContainerStyle: { flexGrow: 1 },
+//           cardStyle: { backgroundColor: "#000002" },
+//         }}
+//       >
+//         <Stack.Screen
+//           name="FriendHome"
+//           options={{ headerShown: false, animation: "none" }}
+//         >
+//           {(props) => (
+//             <ScreenFriendHome
+//               {...props}
+//               skiaFontLarge={skiaFontLarge}
+//               skiaFontSmall={skiaFontSmall}
+//               shouldDelayAnimation={shouldDelayAnimation}
+//             />
+//           )}
+//         </Stack.Screen>
+//         <Stack.Screen
+//           name="Gecko"
+//           options={{ headerShown: false, gestureEnabled: false }}
+//         >
+//           {(props) => (
+//             <ScreenGecko
+//               {...props}
+//               skiaFontLarge={skiaFontLarge}
+//               skiaFontSmall={skiaFontSmall}
+//             />
+//           )}
+//         </Stack.Screen>
+//         <Stack.Screen
+//           name="GeckoSelectSettings"
+//           component={ScreenGeckoSelectSettings}
+//           options={{ headerShown: false, gestureEnabled: false }}
+//         />
+//         <Stack.Screen
+//           name="QRCode"
+//           component={ScreenQRCode}
+//           options={{ headerShown: false, gestureEnabled: false }}
+//         />
+//         <Stack.Screen
+//           name="MomentFocus"
+//           component={ScreenMomentFocus}
+//           options={{ gestureEnabled: false, headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="Moments"
+//           component={ScreenMoments}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="PreAdded"
+//           component={ScreenPreAdded}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="Finalize"
+//           component={ScreenFinalize}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="Reload"
+//           component={ScreenReload}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="MomentView"
+//           component={ScreenMomentView}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="ImageView"
+//           component={ScreenImageView}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="History"
+//           component={ScreenHistory}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="Helloes"
+//           component={ScreenHelloes}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="HelloView"
+//           component={ScreenHelloView}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="LocationSend"
+//           component={ScreenLocationSend}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="LocationEdit"
+//           component={ScreenLocationEdit}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="LocationCreate"
+//           component={ScreenLocationCreate}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="LocationSearch"
+//           component={ScreenLocationSearch}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="MidpointLocationSearch"
+//           component={ScreenMidpointLocationSearch}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="AddImage"
+//           component={ScreenAddImage}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="AddHello"
+//           component={ScreenAddHello}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="SelectFriend"
+//           component={ScreenSelectFriend}
+//           options={{
+//             headerShown: false,
+//             gestureEnabled: false,
+//             animation: "none",
+//           }}
+//         />
+//         <Stack.Screen
+//           name="AddFriend"
+//           component={ScreenAddFriend}
+//           options={{ headerShown: false }}
+//         />
+//         <Stack.Screen
+//           name="Fidget"
+//           component={ScreenFidget}
+//           options={{ headerShown: false }}
+//         />
+//       </Stack.Navigator>
+//     </FriendCategoryColorsProvider>
+//   );
+// };
+
 const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
 
-  if (!selectedFriend?.isReady) {
-    showSpinner(lightDarkTheme.primaryBackground);
-    return null;
-  }
+  useEffect(() => {
+    if (!selectedFriend?.isReady) {
+      showSpinner(lightDarkTheme.primaryBackground);
+    } else {
+      hideSpinner();
+    }
+  }, [selectedFriend?.isReady]);
 
-  const currentBranch: "home" | "friend" = selectedFriend?.id
-    ? "friend"
-    : "home";
+const spinnerShownRef = useRef(false);
+
+if (!selectedFriend?.isReady) {
+  if (!spinnerShownRef.current) {
+    spinnerShownRef.current = true;
+    // This is fine — showSpinner doesn't setState on *this* component
+    showSpinner(lightDarkTheme.primaryBackground);
+  }
+  return (
+    <View style={{ flex: 1, backgroundColor: lightDarkTheme.primaryBackground }} />
+  );
+}
+
+spinnerShownRef.current = false;
+
+  const currentBranch: "home" | "friend" = selectedFriend?.id ? "friend" : "home";
 
   const shouldDelayAnimation =
     previousBranchRef.current === null ||
@@ -324,24 +579,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
 
   previousBranchRef.current = currentBranch;
 
-  //  first load into home → true
-
-  // first load into friend → true
-
-  // home → friend → true
-
-  // friend → home → true
-
-  // home → home rerender → false
-
-  // friend → friend rerender → false
-
-  if (selectedFriend.isReady) {
-    hideSpinner();
-  }
-
-  if (selectedFriend?.isReady && !selectedFriend?.id) {
-    hideSpinner();
+  if (!selectedFriend?.id) {
     return (
       <FriendCategoryColorsProvider>
         <Stack.Navigator
@@ -370,7 +608,6 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
     );
   }
 
-  hideSpinner();
   return (
     <FriendCategoryColorsProvider>
       <Stack.Navigator

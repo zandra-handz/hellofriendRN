@@ -133,7 +133,7 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
 
 
   return (
-    <>
+    
       <SafeAreaView
         style={{
           flex: 1,
@@ -206,7 +206,7 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
           </>
         )}
       </SafeAreaView>
-    </>
+   
   );
 };
 
