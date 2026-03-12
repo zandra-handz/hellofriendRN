@@ -390,7 +390,7 @@ export const updateUserCategory = async (
   updates: object
 ) => {
   // console.log(`updates for user category: `, updates);
-
+// console.log(updates)
   try {
     const response = await helloFriendApiClient.patch(
       `/users/${userId}/category/${categoryId}/`,
@@ -1103,7 +1103,7 @@ export const fetchUpcomingHelloes = async () => {
     //   new Date(end).toISOString()
     // );
     // console.log("\x1b[32m%s\x1b[32m", "Duration (ms):", end - start);
-
+    
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
@@ -1189,7 +1189,7 @@ export const fetchPastHelloes = async (friendId: number) => {
     );
 
     if (response && response.data) {
-      //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
+     //  console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
 
       return response.data;
     } else {

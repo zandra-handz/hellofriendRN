@@ -438,44 +438,49 @@ const SelectedFriendFooter = ({
         </View>
       </View>
 
-      <UserSettingsModal
-        userId={userId}
-        isVisible={settingsModalVisible}
-        bottomSpacer={footerHeight - 30}
-        closeModal={() => setSettingsModalVisible(false)}
-        textColor={lightDarkTheme.primaryText}
-        backgroundColor={lightDarkTheme.primaryBackground}
-      />
+ 
+{settingsModalVisible && (
+  <UserSettingsModal
+    userId={userId}
+    isVisible={true}
+    bottomSpacer={footerHeight - 30}
+    closeModal={() => setSettingsModalVisible(false)}
+    textColor={lightDarkTheme.primaryText}
+    backgroundColor={lightDarkTheme.primaryBackground}
+  />
+)}
 
-      <FriendSettingsModal
-        userId={userId}
-        handleDeselectFriend={handleDeselect}
-        textColor={lightDarkTheme.primaryText}
-        backgroundColor={lightDarkTheme.primaryBackground}
-        isVisible={friendSettingsModalVisible}
-        friendLightColor={friendLightColor}
-        friendDarkColor={friendDarkColor}
-        friendId={friendId}
-        friendName={friendName}
-        friendDash={friendDash}
-        bottomSpacer={footerHeight - 30}
-        closeModal={() => setFriendSettingsModalVisible(false)}
-      />
+{friendSettingsModalVisible && (
+  <FriendSettingsModal
+    userId={userId}
+    handleDeselectFriend={handleDeselect}
+    textColor={lightDarkTheme.primaryText}
+    backgroundColor={lightDarkTheme.primaryBackground}
+    isVisible={true}
+    friendLightColor={friendLightColor}
+    friendDarkColor={friendDarkColor}
+    friendId={friendId}
+    friendName={friendName}
+    bottomSpacer={footerHeight - 30}
+    closeModal={() => setFriendSettingsModalVisible(false)}
+  />
+)}
 
-      <FriendThemeModal
-        userId={userId}
-        lightDarkTheme={lightDarkTheme}
-        textColor={lightDarkTheme.primaryText}
-        backgroundColor={lightDarkTheme.primaryBackground}
-        friendLightColor={friendLightColor}
-        friendDarkColor={friendDarkColor}
-        isVisible={colorsModalVisible}
-        friendId={friendId}
-        friendName={friendName}
-        friendDash={friendDash}
-        bottomSpacer={footerHeight - 30}
-        closeModal={() => setColorsModalVisible(false)}
-      />
+{colorsModalVisible && (
+  <FriendThemeModal
+    userId={userId}
+    lightDarkTheme={lightDarkTheme}
+    textColor={lightDarkTheme.primaryText}
+    backgroundColor={lightDarkTheme.primaryBackground}
+    friendLightColor={friendLightColor}
+    friendDarkColor={friendDarkColor}
+    isVisible={true}
+    friendId={friendId}
+    friendName={friendName}
+    bottomSpacer={footerHeight - 30}
+    closeModal={() => setColorsModalVisible(false)}
+  />
+)}
     </View>
   );
 };

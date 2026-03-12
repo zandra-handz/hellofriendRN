@@ -29,21 +29,29 @@ import TopLayerButton from "@/app/components/home/TopLayerButton";
 
 const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   const { user } = useUser();
-const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
+
+  const [isDelaying, setIsDelaying] = React.useState(() => shouldDelayAnimation ?? false);
 
 useEffect(() => {
-  if (shouldDelayAnimation) {
-    setIsDelaying(true);
+  if (!isDelaying) return;
+  const timeout = setTimeout(() => setIsDelaying(false), 1000);
+  return () => clearTimeout(timeout);
+}, []); // only on mount
+// const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
 
-    const timeout = setTimeout(() => {
-      setIsDelaying(false);
-    }, 1000);
+// useEffect(() => {
+//   if (shouldDelayAnimation) {
+//     setIsDelaying(true);
 
-    return () => clearTimeout(timeout);
-  } else {
-    setIsDelaying(false);
-  }
-}, [shouldDelayAnimation]);
+//     const timeout = setTimeout(() => {
+//       setIsDelaying(false);
+//     }, 1000);
+
+//     return () => clearTimeout(timeout);
+//   } else {
+//     setIsDelaying(false);
+//   }
+// }, [shouldDelayAnimation]);
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
   const route = useRoute();

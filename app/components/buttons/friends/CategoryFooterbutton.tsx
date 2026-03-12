@@ -13,17 +13,17 @@ const CategoryFooterButton = ({ onPress }) => {
       <View
         style={[ styles.outerTreeWrapper, {
           backgroundColor: manualGradientColors.lightColor,
-          width: circleSize + 20,
-          height: circleSize + 20,
+          width: circleSize ,
+          height: circleSize,
           borderRadius: 999, 
         }]}
       >
         <View style={styles.treeWrapper}>
-          <SvgIcon
+          {/* <SvgIcon
             name={"tree"}
             size={45}
             color={manualGradientColors.homeDarkColor}
-          />
+          /> */}
         </View>
       </View>
     );
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+   marginBottom: 18
   },
   treeWrapper: {
     flex: 1,

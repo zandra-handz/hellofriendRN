@@ -10,8 +10,7 @@ import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { showSpinner, hideSpinner } from "@/app/components/appwide/button/showSpinner";
-import AppCustomSpinner from "@/app/components/appwide/format/AppCustomSpinner";
-import LocalSolidSpinner from "@/app/components/appwide/spinner/LocalSolidSpinner";
+ 
 import OptionInput from "@/app/components/headers/OptionInput";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
@@ -20,11 +19,10 @@ import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 import AnimatedReverseBackdrop from "@/app/components/appwide/format/AnimatedReverseBackdrop";
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
-import LocalPeacefulGradientSpinner from "@/app/components/appwide/spinner/LocalPeacefulGradientSpinner";
-
+ 
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import App from "@/App";
+ 
 
 const MODE_SIGNIN = "signin";
 const MODE_CREATE = "create";

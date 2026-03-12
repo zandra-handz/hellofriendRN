@@ -11,6 +11,8 @@ import useSelectFriend from "@/src/hooks/useSelectFriend";
 import useUser from "@/src/hooks/useUser";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+// import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
+// import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
 import {
   showSpinner,
@@ -37,6 +39,7 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
   const { user } = useUser();
   const { settings } = useUserSettings();
   const queryClient = useQueryClient();
+  // const { isOnline } = useNetworkStatus();
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
   const { navigateToCategories } = useAppNavigations();
   useEffect(() => {
@@ -130,8 +133,15 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
     }
   }, [isDelaying, backgroundColor]);
  
+// useEffect(() => {
+//   if (isOnline === null) return;
 
-
+//   if (isOnline) {
+//     showFlashMessage("Back online", false);
+//   } else {
+//     showFlashMessage("No internet connection", false);
+//   }
+// }, [isOnline]);
   return (
     
       <SafeAreaView

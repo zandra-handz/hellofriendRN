@@ -26,7 +26,7 @@ const useDeleteImage = ({userId, friendId}: Props) => {
     mutationFn: (id) => deleteFriendImage(friendId, id), // Pass friendId and imageId
     onSuccess: () => {
       // showMessage(true, null, "Image deleted!");
-      queryClient.invalidateQueries(["friendImages"]);
+      queryClient.invalidateQueries({ queryKey: ["friendImages", userId, friendId] });
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

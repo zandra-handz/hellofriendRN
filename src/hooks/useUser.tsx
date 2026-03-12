@@ -72,10 +72,12 @@ const useUser = () => {
     })();
   }, []);
 
+ 
   return {
     user,
     isInitializing: isLoading,
     userIsPending: !hasCheckedToken,
+ 
     refetch,
   };
 };

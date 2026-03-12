@@ -1,169 +1,62 @@
-import { View, Text, TextInput, ScrollView } from "react-native";
-import React, { useState, useRef, useCallback } from "react"; 
-import { useFocusEffect } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-
+import React from "react";
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
-import EditCategoryDescriptionView from "./EditCategoryDescriptionView";
-type Props = {
-  categoryObject: object;
-  editEnabled: boolean;
-  onToggle: () => void;
-};
+import OptionTextAreaEdit from "@/app/components/headers/OptionTextAreaEdit";
+import { TextStyle, View, StyleSheet } from "react-native";
 
-const CatDescriptEditable = ({
+export default function CatDescriptEditable({
   userId,
   primaryColor = "orange",
+  buttonColor = "transparent",
   subWelcomeTextStyle,
   nullTextInputView,
   categoryObject,
   editEnabled = true,
   onToggle,
-}: Props) => {
- 
+}: {
+  userId: number;
+  primaryColor?: string;
+  buttonColor?: string;
+  subWelcomeTextStyle?: TextStyle;
+  nullTextInputView: () => void;
+  categoryObject: any;
+  editEnabled?: boolean;
+  onToggle?: () => void;
+}) {
+  const { updateCategory, updateCategoryMutation } = useUpdateCategory({ userId });
+  const [text, setText] = React.useState(categoryObject?.description || "");
 
-  const [showEdit, setShowEdit] = useState(false);
-
-  const { updateCategory } = useUpdateCategory({ userId: userId });
-
-  const textInputRef = useRef(null);
-
-  const startingText = categoryObject?.description || null;
-
-  const [textInput, setTextInput] = useState(startingText);
-  useFocusEffect(
-    useCallback(() => {
-      if (categoryObject && textInputRef && textInputRef.current) {
-        textInputRef.current.value = category?.description;
-      }
-    }, [categoryObject])
-  );
-
-  const handleTextChange = (text) => {
-    if (textInputRef?.current) {
-      textInputRef.current.value = text;
-      setTextInput(text);
+  React.useEffect(() => {
+    if (updateCategoryMutation.isSuccess) {
+      nullTextInputView();
     }
-  };
+  }, [updateCategoryMutation.isSuccess]);
 
-  const handleUpdateCategory = () => {
-    updateCategory({
-      id: categoryObject.id,
-
-      updates: { description: textInputRef.current.value },
-    });
-
-    setShowEdit(false);
-  };
-
-  const renderEditView = () => {
-    return (
-      <>
-        <View style={{ height: 100, width: "100%" }}>
-          <TextInput
-            ref={textInputRef}
-            style={[
-              {
-                color: primaryColor,
-                flex: 1,
-                fontSize: 15,
-                textAlignVertical: "top",
-                textAlign: "left",
-                paddingRight: 2,
-                height: 200,
-              },
-            ]}
-            autoFocus={true}
-            value={textInput}
-            onChangeText={handleTextChange}
-            multiline
-          />
-        </View>
-        <GlobalPressable onPress={handleUpdateCategory}>
-          <MaterialCommunityIcons
-            name={"check"}
-            size={20}
-            color={primaryColor}
-          />
-        </GlobalPressable>
-      </>
-    );
-  };
-
-  const toggleEdit = () => {
-    onToggle(
-      <EditCategoryDescriptionView
-      userId={userId}
-        nullTextInputView={nullTextInputView}
-        categoryId={categoryObject.id}
-        startingText={startingText}
-        onSave={handleUpdateCategory}
-        primaryColor={primaryColor}
-      />
-    ); // pass the function, not the JSX
-    setShowEdit((prev) => !prev);
-  };
   return (
-    <>
-      <GlobalPressable
-        style={{ position: "absolute", top: -6, right: -10 }}
-        onPress={toggleEdit}
-      >
-        <MaterialCommunityIcons
-          name={"pencil-outline"}
-          size={15}
-          style={{ opacity: 0.7 }}
-          color={primaryColor}
-        />
-      </GlobalPressable>
-      {/* <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-                  <EditDescriptionButton
-            marginRight={0}
-            maxWidth={200}
-              editMode={editEnabled}
-              onPress={toggleEdit}
-              fontSize={12}
-
-            />
-      </View> */}
-
-      {/* <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "100%",
-          height: "auto",
-          alignItems: "center",
-          marginTop: 10,
-          marginBottom: 20,
-        }}
-      >
-        <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.subWelcomeText,
-            { fontSize: 16 },
-          ]}
-        >
-          Description: {categoryObject.description}
-        </Text>
-      </View> */}
-
-      {/* {!showEdit && ( */}
-      <ScrollView style={{ height: "auto", maxHeight: 200, width: "100%" }}>
-        <Text
-          style={[
-            subWelcomeTextStyle,
-            { color: primaryColor, fontSize: 15, lineHeight: 22 },
-          ]}
-        >
-          {categoryObject?.description}
-        </Text>
-      </ScrollView>
-      {/* )} */}
-    </>
+    <View style={[styles.container, { borderColor: `${primaryColor}30`, backgroundColor: buttonColor }]}>
+      <OptionTextAreaEdit
+        label=""
+        value={text}
+        onValueChange={setText}
+        primaryColor={primaryColor}
+        backgroundColor="transparent"
+        buttonColor="transparent"
+        buttonPadding={0}
+        textStyle={subWelcomeTextStyle ?? { fontSize: 14 }}
+        placeholder="Add a description..."
+        onConfirm={() =>
+          updateCategory({ id: categoryObject.id, updates: { description: text } })
+        }
+      />
+    </View>
   );
-};
+}
 
-export default CatDescriptEditable;
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    borderRadius: 10,
+    borderWidth: 1.5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+});

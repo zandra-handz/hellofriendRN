@@ -11,7 +11,7 @@ import OptionContainer from "./OptionContainer";
 import manualGradientColors from "@/app/styles/StaticColors";
 import BouncyEntrance from "./BouncyEntrance";
 import OptionInputEdit from "./OptionInputEdit";
-
+import useFriendDash from "@/src/hooks/useFriendDash";
 import useEditFriend from "@/src/hooks/useEditFriend";
 
 interface Props {
@@ -29,6 +29,12 @@ interface Props {
   friendDarkColor: string;
 }
 
+
+
+
+
+ 
+
 const phoneRegex = /^\+?1?\d{9,15}$/;
 
 const delays = [0, 60, 120];
@@ -38,7 +44,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   isVisible,
   friendId,
   friendName = "",
-  friendDash,
+  // friendDash,
   handleDeselectFriend,
   textColor,
   backgroundColor,
@@ -46,6 +52,9 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendDarkColor,
   closeModal,
 }) => {
+
+
+    const { friendDash } = useFriendDash({ userId, friendId });
   const { handleUpdateFriendSettings } = useUpdateFriendSettings({
     userId,
     friendId,

@@ -29,7 +29,8 @@ const useCreateImage = ({userId, friendId}: Props) => {
     mutationFn: (formData) => createFriendImage(friendId, formData), // Use the imported function
     onSuccess: () => {
       // showMessage(true, null, "Image uploaded!");
-      queryClient.invalidateQueries(["friendImages"]);
+      // queryClient.invalidateQueries(["friendImages"]);
+      queryClient.invalidateQueries({ queryKey: ["friendImages", userId, friendId] });
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

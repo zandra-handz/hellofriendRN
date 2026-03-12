@@ -1,9 +1,9 @@
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import { Alert } from 'react-native';
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import { Alert } from "react-native";
 
 const helloFriendApiClient = axios.create({
-  baseURL: 'https://badrainbowz.com/',
+  baseURL: "https://badrainbowz.com/",
   timeout: 10000,
 });
 
@@ -15,57 +15,58 @@ function subscribeTokenRefresh(cb) {
 }
 
 function onRefreshed(token) {
-  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers.forEach((cb) => cb(token));
   refreshSubscribers = [];
 }
 
 const setAuthHeader = (token) => {
   if (token) {
-    helloFriendApiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    helloFriendApiClient.defaults.headers.common["Authorization"] =
+      `Bearer ${token}`;
   } else {
-    delete helloFriendApiClient.defaults.headers.common['Authorization'];
+    delete helloFriendApiClient.defaults.headers.common["Authorization"];
   }
 };
 
 const deleteTokens = async () => {
-  await SecureStore.deleteItemAsync('accessToken');
-  await SecureStore.deleteItemAsync('refreshToken');
-  await SecureStore.deleteItemAsync('pushToken');
+  await SecureStore.deleteItemAsync("accessToken");
+  await SecureStore.deleteItemAsync("refreshToken");
+  await SecureStore.deleteItemAsync("pushToken");
 };
 
 const refreshTokenFunct = async () => {
-  const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
+  const storedRefreshToken = await SecureStore.getItemAsync("refreshToken");
   if (!storedRefreshToken) {
     // console.warn('No refresh token available');
     return null;
   }
 
   try {
-    const response = await helloFriendApiClient.post('/users/token/refresh/', {
+    const response = await helloFriendApiClient.post("/users/token/refresh/", {
       refresh: storedRefreshToken,
     });
 
     // console.error(`REFETCHING`, response.data);
 
     const newAccessToken = response.data.access;
-    await SecureStore.setItemAsync('accessToken', newAccessToken);
-  
+    await SecureStore.setItemAsync("accessToken", newAccessToken);
+
     return newAccessToken;
   } catch (error) {
-    console.error('Error refreshing token api file:', error);
+    console.error("Error refreshing token api file:", error);
     throw error;
   }
 };
 
 helloFriendApiClient.interceptors.request.use(
   async (config) => {
-    const token = await SecureStore.getItemAsync('accessToken');
+    const token = await SecureStore.getItemAsync("accessToken");
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 helloFriendApiClient.interceptors.response.use(
@@ -77,30 +78,47 @@ helloFriendApiClient.interceptors.response.use(
     const { config, response } = error;
     const originalRequest = config;
 
-    if (response && response.status === 401 && !(originalRequest as any)._retry) {
-      console.error('401 denied');
+    if (
+      response &&
+      response.status === 401 &&
+      !(originalRequest as any)._retry
+    ) {
+      console.error("401 denied");
       if (!isRefreshing) {
         isRefreshing = true;
         (originalRequest as any)._retry = true;
 
         try {
           const newAccessToken = await refreshTokenFunct();
-          if (!newAccessToken) throw new Error('Failed to refresh token');
+          if (!newAccessToken) throw new Error("Failed to refresh token");
 
           onRefreshed(newAccessToken);
           setAuthHeader(newAccessToken);
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           isRefreshing = false;
-          return helloFriendApiClient(originalRequest);
+          //   return helloFriendApiClient(originalRequest);
+          // } catch (err) {
+          //   isRefreshing = false;
+          //   await deleteTokens(); // Optional: wipe tokens if refresh fails
+          //   return Promise.reject(err);
+          // }
         } catch (err) {
           isRefreshing = false;
-          await deleteTokens(); // Optional: wipe tokens if refresh fails
+
+          // only wipe tokens if the refresh server explicitly rejected them
+          // a network error means we can't reach the server — don't log out
+          if (axios.isAxiosError(err) && err.response) {
+            // server responded — 400/401 means refresh token is actually invalid
+            await deleteTokens();
+          }
+          // if err.response is undefined, it's a network failure — keep tokens intact
+
           return Promise.reject(err);
         }
       } else {
         return new Promise((resolve) => {
           subscribeTokenRefresh((token) => {
-            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
             resolve(helloFriendApiClient(originalRequest));
           });
         });
@@ -108,24 +126,21 @@ helloFriendApiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export const signout = async () => {
-    try {
-        await SecureStore.deleteItemAsync('accessToken');
-        await SecureStore.deleteItemAsync('refreshToken');
-        await SecureStore.deleteItemAsync('tokenExpiry');
-        setAuthHeader(null); 
-        console.log("API signout: Authorization header cleared");
-        return true;
-    } catch (e) {
-        console.log("API signout error", e);
-        return false;
-    }
+  try {
+    await SecureStore.deleteItemAsync("accessToken");
+    await SecureStore.deleteItemAsync("refreshToken");
+    await SecureStore.deleteItemAsync("tokenExpiry");
+    setAuthHeader(null);
+    console.log("API signout: Authorization header cleared");
+    return true;
+  } catch (e) {
+    console.log("API signout error", e);
+    return false;
+  }
 };
-
-
-
 
 export { helloFriendApiClient, setAuthHeader };

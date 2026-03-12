@@ -5,7 +5,7 @@ import { View, StyleSheet, Keyboard } from "react-native";
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal."; 
-import CategoriesModal from "./CategoriesModal";
+ 
 import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
 
 // app display/templates
@@ -205,7 +205,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
         </View>
       )}
 
-      {categoriesModalVisible && (
+      {/* {categoriesModalVisible && (
         <View>
           <CategoriesModal
             userId={userId}
@@ -216,7 +216,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
             closeModal={() => setCategoriesModalVisible(false)}
           />
         </View>
-      )}
+      )} */}
       {aboutModalVisible && (
         <View>
           <AboutAppModal

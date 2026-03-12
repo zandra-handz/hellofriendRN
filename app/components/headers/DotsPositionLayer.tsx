@@ -150,7 +150,7 @@ useEffect(() => {
   const decimals = percentages.map(n => Number(n.toFixed(0)) / 100);
 
   // CATEGORY TOTAL, PERCENTANGE, AND DECIMALS IS CALCULATED IN CAPSULE CONTEXT
-console.log('resettinggggggg')
+ 
   // totalValue.value = withTiming(total, { duration: 1000 });
   decimalsValue.value = [...decimals];
   catDecimalsValue.value = [...catDecimals];  // from context
@@ -162,21 +162,21 @@ console.log('resettinggggggg')
   //   return cumulative;
   // });
 }, [data, catDecimals, catLabels,   totalJS]);
- useEffect(() => {
-  console.log('data changed');
-}, [data]);
+//  useEffect(() => {
+//   console.log('data changed');
+// }, [data]);
 
-useEffect(() => {
-  console.log('catDecimals changed');
-}, [catDecimals]);
+// useEffect(() => {
+//   console.log('catDecimals changed');
+// }, [catDecimals]);
 
-useEffect(() => {
-  console.log('catLabels changed');
-}, [catLabels]);
+// useEffect(() => {
+//   console.log('catLabels changed');
+// }, [catLabels]);
 
-useEffect(() => {
-  console.log('totalJS changed');
-}, [totalJS]);
+// useEffect(() => {
+//   console.log('totalJS changed');
+// }, [totalJS]);
  
 
  // NEED THIS EVEN IF NOT USING THE RETURN
@@ -241,7 +241,7 @@ const leafPositionsCombined = useDerivedValue(() => {
     arr.push({ x, y, size: finalSize, color: dotColor, catId: categoryId });
   }
 
-  console.log('setting positions!!!', Date.now(), arr)
+  // console.log('setting positions!!!', Date.now(), arr)
   // runOnJS(setPositions)(arr);
 
   runOnJS(setPositionsWithCache)(arr);

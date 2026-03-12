@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
-import useHelloes from "@/src/hooks/useHelloes";
-import useFriendDash from "@/src/hooks/useFriendDash";
+// import useHelloes from "@/src/hooks/useHelloes";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 
 const SHADOW_COLOR = "rgba(0,0,0,0.95)";
 const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
@@ -34,13 +34,13 @@ const Helloes = ({
   userId,
   friendId,
 }: Props) => {
-  const { helloesList } = useHelloes({ userId: userId, friendId: friendId });
-  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
-  const isLoading = loadingDash;
+  // const { helloesList } = useHelloes({ userId: userId, friendId: friendId });
+  // const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
+  // const isLoading = loadingDash;
 
-  const trueHelloesInList = useMemo(() => {
-    return helloesList?.filter((hello) => hello.manual_reset === undefined) ?? [];
-  }, [helloesList]);
+  // const trueHelloesInList = useMemo(() => {
+  //   return helloesList?.filter((hello) => hello.manual_reset === undefined) ?? [];
+  // }, [helloesList]);
 
   const { navigateToHelloes } = useAppNavigations();
 
@@ -50,20 +50,21 @@ const Helloes = ({
         <View
           style={[
             styles.outerContainer,
-            {
-              backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
-            },
+            // {
+            //   backgroundColor: isLoading ? "transparent" : primaryOverlayColor,
+            // },
           ]}
         >
           <View style={styles.innerContainer}>
-            {!isLoading && (
+            {/* {!isLoading && ( */}
               <View style={styles.rowSpaceBetween}>
                 <Pressable
                   hitSlop={10}
                   onPress={
-                    trueHelloesInList && trueHelloesInList.length > 0
-                      ? navigateToHelloes
-                      : () => {}
+                    // trueHelloesInList && trueHelloesInList.length > 0
+                    //   ? 
+                      navigateToHelloes
+                      // : () => {}
                   }
                   style={styles.row}
                 >
@@ -76,13 +77,14 @@ const Helloes = ({
                     />
                   </View>
                   <OutlinedText
-                    text={`Helloes (${trueHelloesInList && trueHelloesInList.length})`}
+                    // text={`Helloes (${trueHelloesInList && trueHelloesInList.length})`}
+                          text={`Helloes`}
                     color={primaryColor}
                     style={[styles.titleText, { color: primaryColor }]}
                   />
                 </Pressable>
               </View>
-            )}
+            {/* )} */}
           </View>
         </View>
       )}

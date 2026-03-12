@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, Pressable } from "react-native";
+import { Text, StyleSheet, Pressable, TextInput, View } from "react-native";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, {
   useAnimatedStyle,
   interpolateColor,
   SharedValue,
 } from "react-native-reanimated";
+import SvgIcon from "@/app/styles/SvgIcons";
 
 type Props = {
   category: { id: number; name: string };
@@ -20,11 +21,12 @@ type Props = {
   onPressIn?: () => void;
   onPressOut?: () => void;
   onLongPress?: () => void;
+  onNameConfirm?: (newName: string) => void;
 };
 
 const OptionCategoryButton = ({
   category,
-  primaryColor, 
+  primaryColor,
   buttonColor,
   selectedBorderColor,
   isSelected = false,
@@ -34,11 +36,13 @@ const OptionCategoryButton = ({
   onPressIn,
   onPressOut,
   onLongPress,
+  onNameConfirm,
 }: Props) => {
   const [pressed, setPressed] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [nameValue, setNameValue] = useState(category.name);
 
   const fadedBorder = `${primaryColor}30`;
-
   const staticBorderColor = pressed ? selectedBorderColor : fadedBorder;
 
   const animatedBorderStyle = useAnimatedStyle(() => {
@@ -52,10 +56,21 @@ const OptionCategoryButton = ({
     };
   });
 
+  const handleConfirm = () => {
+    if (!nameValue.trim()) return;
+    onNameConfirm?.(nameValue);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setNameValue(category.name);
+    setIsEditing(false);
+  };
+
   return (
     <Pressable
-      onPress={onPress}
-      onLongPress={onLongPress}
+      onPress={isEditing ? undefined : onPress}
+      onLongPress={isEditing ? undefined : onLongPress}
       onPressIn={() => {
         setPressed(true);
         onPressIn?.();
@@ -79,19 +94,55 @@ const OptionCategoryButton = ({
           pointerEvents="none"
         />
       )}
-      <Text
-        numberOfLines={1}
-        style={[
-          AppFontStyles.subWelcomeText,
-          styles.text,
-          {
-            color: primaryColor,
-            fontFamily: isSelected ? "Poppins_700Bold" : "Poppins_400Regular",
-          },
-        ]}
-      >
-        {category.name}
-      </Text>
+
+      {/* name display or input */}
+      {isEditing ? (
+        <TextInput
+          style={[
+            AppFontStyles.subWelcomeText,
+            styles.textInput,
+            { color: primaryColor, borderBottomColor: primaryColor },
+          ]}
+          value={nameValue}
+          onChangeText={setNameValue}
+          autoFocus
+          onSubmitEditing={handleConfirm}
+        />
+      ) : (
+        <Text
+          numberOfLines={1}
+          style={[
+            AppFontStyles.subWelcomeText,
+            styles.text,
+            {
+              color: primaryColor,
+              fontFamily: isSelected ? "Poppins_700Bold" : "Poppins_400Regular",
+            },
+          ]}
+        >
+          {nameValue}
+        </Text>
+      )}
+
+      {/* edit controls — only visible when selected */}
+      {isSelected && (
+        <View style={styles.actions}>
+          {isEditing ? (
+            <>
+              <Pressable onPress={handleCancel} style={styles.actionBtn}>
+                <SvgIcon name="cancel" size={16} color={primaryColor} />
+              </Pressable>
+              <Pressable onPress={handleConfirm} style={styles.actionBtn}>
+                <SvgIcon name="check" size={16} color={primaryColor} />
+              </Pressable>
+            </>
+          ) : (
+            <Pressable onPress={() => setIsEditing(true)} style={styles.actionBtn}>
+              <SvgIcon name="pencil" size={16} color={primaryColor} />
+            </Pressable>
+          )}
+        </View>
+      )}
     </Pressable>
   );
 };
@@ -101,6 +152,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "flex-start",
+    alignItems: "center",
     height: "auto",
     borderRadius: 10,
     borderWidth: 1.5,
@@ -116,9 +168,25 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   text: {
+    flex: 1,
     borderRadius: 6,
     padding: 10,
     textAlign: "left",
+  },
+  textInput: {
+    flex: 1,
+    padding: 10,
+    borderBottomWidth: 1,
+    fontSize: 14,
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: 10,
+    gap: 8,
+  },
+  actionBtn: {
+    padding: 4,
   },
 });
 

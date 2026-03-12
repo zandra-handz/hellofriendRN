@@ -1,14 +1,10 @@
-// DON'T REMOVE YET
-// import GradientBackgroundFidgetOne from "@/app/fidgets/GradientBackgroundFidgetOne";
+ 
 import manualGradientColors from "@/app/styles/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react";
 import LoadingPage from "./LoadingPage"; 
-// import { useUserSettings } from "@/src/context/UserSettingsContext";
-
-//  import useSignIn from "@/src/hooks/UserCalls/useSignIn";
-import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+ 
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming"; 
 
 type Props = {
   isInitializing: boolean;
@@ -18,8 +14,7 @@ const PeacefulGradientSpinner = ({
   userId,
   isInitializing,
   loadingSettings,
-}: Props) => {
-  const vertDirection = [[0, 0, 0, 1]];
+}: Props) => { 
   const { isLoading } = useFriendListAndUpcoming({ userId: userId });
 
   return (
@@ -27,24 +22,7 @@ const PeacefulGradientSpinner = ({
       {(isInitializing || isLoading || loadingSettings) && (
         <View style={styles.container}>
           <View style={[StyleSheet.absoluteFillObject, {}]}>
-          {/* <GradientBackgroundFidgetOne
-              firstColorSetDark={manualGradientColors.darkColor}
-              firstColorSetLight={manualGradientColors.lightColor}
-              speed={8000}
-              secondColorSetDark={manualGradientColors.darkColor}
-              secondColorSetLight={manualGradientColors.lightColor}
-              //  direction="horizontal"
-            > */}
-
-          {/* <LinearGradient
-            colors={[
-              manualGradientColors.darkColor,
-              'pink',
-            ]} // or could just do dark dark?
-            start={{ x: vertDirection[0], y: vertDirection[1] }}
-            end={{ x: vertDirection[2], y: vertDirection[3] }}
-            style={[StyleSheet.absoluteFill]}
-          /> */}
+ 
           <LoadingPage
             loading={true}
             label={"loading Hellofriend"}
@@ -54,8 +32,7 @@ const PeacefulGradientSpinner = ({
             //  color={'transparent'}
             spinnerType={"chase"}
             spinnerSize={40}
-          />
-          {/* </GradientBackgroundFidgetOne> */}
+          /> 
           </View>
         </View>
       )}
@@ -65,6 +42,7 @@ const PeacefulGradientSpinner = ({
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'red',
     zIndex: 100000,
     elevation: 100000,
     position: "absolute",

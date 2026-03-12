@@ -19,6 +19,8 @@ import ColorPalettes from "@/src/forms/ColorPalettes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import manualGradientColors from "@/app/styles/StaticColors";
 
+import useFriendDash from "@/src/hooks/useFriendDash";
+
 import {
   FlashMessageData,
   friendFavesManualOffSuccess,
@@ -52,9 +54,12 @@ const FriendThemeModal: React.FC<Props> = ({
   backgroundColor,
   friendLightColor,
   friendDarkColor,
-  friendDash,
+  // friendDash,
   closeModal,
 }) => {
+
+
+    const { friendDash } = useFriendDash({ userId, friendId });
   const { friendListAndUpcoming } = useFriendListAndUpcoming({ userId });
   const friendList = friendListAndUpcoming?.friends ?? [];
 

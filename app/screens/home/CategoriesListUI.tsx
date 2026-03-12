@@ -16,15 +16,14 @@ import Animated, {
 } from "react-native-reanimated";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import CatDescriptEditable from "@/app/components/headers/CatDescriptEditable";
+
 const EXIT_DURATION = 180;
-const SCROLL_SETTLE_DELAY = 350;
 const EXPANDED_ITEM_HEIGHT = 400;
-const DOUBLE_PRESS_DELAY = 300;
 
 type Category = { id: number; name: string };
 
 type Props = {
-    userId: number;
+  userId: number;
   userCategories: Category[];
   selectedCategoryId?: number | null;
   onPress: (id: number) => void;
@@ -32,6 +31,8 @@ type Props = {
   itemColor: string;
   backgroundOverlayColor: string;
   selectedBorderColor: string;
+  isAddingNew?: boolean; 
+  onExpandedChange?: (id: number | null) => void;
 };
 
 const ExpandableItem = ({
@@ -74,6 +75,91 @@ const ExpandableItem = ({
   );
 };
 
+const AnimatedCategoryItem = ({
+  item,
+  index,
+  expandedId,
+  userCategoriesLength,
+  staggerSpeed,
+  itemColor,
+  backgroundOverlayColor,
+  selectedBorderColor,
+  isExiting,
+  handlePress,
+  handleLongPress,
+  handlePressIn,
+  handlePressOut,
+  userId,
+  isAddingNew,  
+}: any) => {
+  const isSelected = item.id === expandedId;
+  const isExpanded = item.id === expandedId;
+  const isOtherExpanded = (expandedId !== null && item.id !== expandedId) || !!isAddingNew;
+  const reverseIndex = (userCategoriesLength ?? 0) - 1 - index;
+  const scale = useSharedValue(1);
+
+  // add after the expandedIdRef effect
+ 
+
+  const animatedScaleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const onPressIn = () => {
+    if (!isOtherExpanded && !isSelected) {
+      scale.value = withTiming(0.97, { duration: 80 });
+      handlePressIn();
+    }
+  };
+
+  const onPressOut = () => {
+    if (!isOtherExpanded && !isSelected) {
+      scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      handlePressOut();
+    }
+  };
+
+  return (
+    <View style={styles.sectionContainer}>
+      <BouncyEntrance delay={reverseIndex * staggerSpeed} style={{ width: "100%" }}>
+        <ExpandableItem isExpanded={isExpanded}>
+          <Animated.View style={animatedScaleStyle}>
+            <OptionCategoryButton
+              category={item}
+              primaryColor={isOtherExpanded ? `${itemColor}40` : itemColor}
+              backgroundColor={backgroundOverlayColor}
+              buttonColor={backgroundOverlayColor}
+              selectedBorderColor={
+                isSelected ? selectedBorderColor : `${itemColor}30`
+              }
+              isSelected={isSelected}
+              isExiting={isOtherExpanded ? undefined : isExiting}
+              onPress={isOtherExpanded ? undefined : () => handlePress(item.id)}
+              onPressIn={onPressIn}
+              onPressOut={onPressOut}
+              onLongPress={
+                isOtherExpanded ? undefined : () => handleLongPress(item.id)
+              }
+            />
+          </Animated.View>
+          {isExpanded && (
+            <View style={{ flex: 1, paddingHorizontal: 0, paddingVertical: 10 }}>
+              <CatDescriptEditable
+                userId={userId}
+                primaryColor={itemColor}
+                subWelcomeTextStyle={[]}
+                nullTextInputView={() => console.log("handling null text input")}
+                onToggle={() => console.log("toggling text input!")}
+                categoryObject={item}
+              />
+            </View>
+          )}
+        </ExpandableItem>
+      </BouncyEntrance>
+    </View>
+  );
+};
+
 const CategoriesListUI = ({
   userId,
   userCategories,
@@ -83,6 +169,8 @@ const CategoriesListUI = ({
   itemColor,
   backgroundOverlayColor,
   selectedBorderColor,
+  isAddingNew,
+  onExpandedChange
 }: Props) => {
   const translateY = useSharedValue(1000);
   const isExiting = useSharedValue(0);
@@ -90,8 +178,6 @@ const CategoriesListUI = ({
   const [isScrollLocked, setIsScrollLocked] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const footerHeight = useSharedValue(720);
-
-  const lastPressTime = useRef<{ [id: number]: number }>({});
 
   const handlePressIn = useCallback(() => {
     isExiting.value = withTiming(1, { duration: 80 });
@@ -126,23 +212,20 @@ const CategoriesListUI = ({
     onLongPressRef.current(id);
   }, []);
 
-  const selectedIdRef = useRef(selectedCategoryIdProp);
-  useEffect(() => {
-    selectedIdRef.current = selectedCategoryIdProp;
-  });
-
   const expandedIdRef = useRef(expandedId);
   useEffect(() => {
     expandedIdRef.current = expandedId;
   });
 
+    useEffect(() => {
+    onExpandedChange?.(expandedId);  // ← add this
+  }, [expandedId]);
+
   const collapse = useCallback((id: number) => {
     setExpandedId(null);
     footerHeight.value = withTiming(720, { duration: 250 });
     setIsScrollLocked(false);
-    setTimeout(() => {
-      onPressRef.current(id);
-    }, EXIT_DURATION * 0.6);
+    onPressRef.current(id);
   }, []);
 
   const handlePress = useCallback(
@@ -154,13 +237,7 @@ const CategoriesListUI = ({
       }
 
       if (currentExpanded === id) {
-        const now = Date.now();
-        const last = lastPressTime.current[id] ?? 0;
-        lastPressTime.current[id] = now;
-
-        if (now - last < DOUBLE_PRESS_DELAY) {
-          collapse(id);
-        }
+        collapse(id);
         return;
       }
 
@@ -175,11 +252,9 @@ const CategoriesListUI = ({
         });
       }
 
-      setTimeout(() => {
-        setExpandedId(id);
-        footerHeight.value = withTiming(720 * 3, { duration: 300 });
-        setIsScrollLocked(true);
-      }, SCROLL_SETTLE_DELAY);
+      setExpandedId(id);
+      footerHeight.value = withTiming(720 * 3, { duration: 300 });
+      setIsScrollLocked(true);
 
       setTimeout(() => {
         onPressRef.current(id);
@@ -194,62 +269,25 @@ const CategoriesListUI = ({
   }, [userCategories?.length]);
 
   const renderCategoryItem = useCallback(
-    ({ item, index }: ListRenderItemInfo<Category>) => {
-      // isSelected only true for the expanded item — never appears on others
-      const isSelected = item.id === expandedId;
-      const isExpanded = item.id === expandedId;
-      const isOtherExpanded = expandedId !== null && item.id !== expandedId;
-      const reverseIndex = (userCategories?.length ?? 0) - 1 - index;
-
-      return (
-        <View style={styles.sectionContainer}>
-          <BouncyEntrance
-            delay={reverseIndex * staggerSpeed}
-            style={{ width: "100%" }}
-          >
-            <ExpandableItem isExpanded={isExpanded}>
-              <OptionCategoryButton
-                category={item}
-                primaryColor={isOtherExpanded ? `${itemColor}40` : itemColor}
-                backgroundColor={backgroundOverlayColor}
-                buttonColor={backgroundOverlayColor}
-                selectedBorderColor={
-                  isSelected ? selectedBorderColor : `${itemColor}30`
-                }
-                isSelected={isSelected}
-                isExiting={isOtherExpanded ? undefined : isExiting}
-                onPress={
-                  isOtherExpanded ? undefined : () => handlePress(item.id)
-                }
-                onPressIn={
-                  isOtherExpanded || isSelected ? undefined : handlePressIn
-                }
-                onPressOut={
-                  isOtherExpanded || isSelected ? undefined : handlePressOut
-                }
-                onLongPress={
-                  isOtherExpanded ? undefined : () => handleLongPress(item.id)
-                }
-              />
-              {isExpanded && (
-                <View style={{flex: 1, paddingHorizontal: 10, paddingVertical: 30}}>
-                    
-                <CatDescriptEditable
-                  userId={userId}
-                  primaryColor={itemColor}
-                  subWelcomeTextStyle={[]}
-                  nullTextInputView={() => console.log('handling null text input')}
-                  onToggle={() => console.log('toggling text input!')}
-                  categoryObject={item}
-                />
-                
-                </View>
-              )}
-            </ExpandableItem>
-          </BouncyEntrance>
-        </View>
-      );
-    },
+    ({ item, index }: ListRenderItemInfo<Category>) => (
+      <AnimatedCategoryItem
+        item={item}
+        index={index}
+        expandedId={expandedId}
+        userCategoriesLength={userCategories?.length}
+        staggerSpeed={staggerSpeed}
+        itemColor={itemColor}
+        backgroundOverlayColor={backgroundOverlayColor}
+        selectedBorderColor={selectedBorderColor}
+        isExiting={isExiting}
+        handlePress={handlePress}
+        handleLongPress={handleLongPress}
+        handlePressIn={handlePressIn}
+        handlePressOut={handlePressOut}
+        userId={userId}
+        isAddingNew={isAddingNew}
+      />
+    ),
     [
       itemColor,
       backgroundOverlayColor,
@@ -258,6 +296,7 @@ const CategoriesListUI = ({
       staggerSpeed,
       handlePress,
       expandedId,
+      isAddingNew,
     ],
   );
 
