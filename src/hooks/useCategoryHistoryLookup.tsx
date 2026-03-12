@@ -28,7 +28,7 @@ const useCategoryHistoryLookup = ({
   categoryId: number;
   friendId?: number | null;
 }) => {
-  const { user,  isInitializing } = useUser();
+  const { user  } = useUser();
 
   const {
     data,
