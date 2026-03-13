@@ -285,6 +285,7 @@ useFocusEffect(
           const requestData = {
             friend: friendId,
             selectedUserCategory: selectedUserCategory,
+            selectedUserCategoryName: selectedCategory,
             moment: momentTextToSave,
             easy_score: scoresObject.easy_score,
             hard_score: scoresObject.hard_score,

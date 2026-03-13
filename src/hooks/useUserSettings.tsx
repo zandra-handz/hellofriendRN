@@ -37,7 +37,7 @@ const userSettingsQueryOptions = (userId: number) => ({
   queryFn: () => getUserSettings(),
   enabled: !!userId,
   retry: 3,
-  staleTime: 1000 * 60 * 60 * 10,
+ // staleTime: 1000 * 60 * 60 * 10,
 });
 
 const useUserSettings = () => {

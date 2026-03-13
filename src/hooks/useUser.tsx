@@ -107,7 +107,7 @@ const currentUserQueryOptions = {
   queryFn: getCurrentUser,
   enabled: false,
   retry: 3,
-  staleTime: 1000 * 60 * 60,
+ // staleTime: 1000 * 60 * 60,
 } as const;
 
 const useUser = () => {

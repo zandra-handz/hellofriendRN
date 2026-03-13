@@ -5,7 +5,7 @@ import { useRoute } from "@react-navigation/native";
 
 import { useSharedValue } from "react-native-reanimated";
  
-import useSelectFriend from "@/src/hooks/useSelectFriend";
+// import useSelectFriend from "@/src/hooks/useSelectFriend";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
@@ -34,7 +34,7 @@ const ScreenFriendHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }
 
 useEffect(() => {
   if (!isDelaying) return;
-  const timeout = setTimeout(() => setIsDelaying(false), 1000);
+  const timeout = setTimeout(() => setIsDelaying(false), 2000);
   return () => clearTimeout(timeout);
 }, []); // only on mount
 // const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
@@ -64,26 +64,26 @@ useEffect(() => {
 
   const backdropTimestamp = route.params?.backdropTimestamp ?? null;
  
-  const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
-    useFriendListAndUpcoming({ userId: user?.id });
-  const friendList = friendListAndUpcoming?.friends;
+  // const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
+  //   useFriendListAndUpcoming({ userId: user?.id });
+  // const friendList = friendListAndUpcoming?.friends;
 
-  const { handleSelectFriend } = useSelectFriend({
-    userId: user.id,
-    friendList,
-  });
+  // const { handleSelectFriend } = useSelectFriend({
+  //   userId: user.id,
+  //   friendList,
+  // });
  
   const coloredDotsModeValue = useSharedValue(false);
   const turnBackdropOnValue = useSharedValue(false);
 
   // Select friend when screen mounts with idToSelect param
-  useEffect(() => {
+  // useEffect(() => {
       
-    if (idToSelect && friendList?.length && !selectedFriend?.id) {
+  //   if (idToSelect && friendList?.length && !selectedFriend?.id) {
    
-      handleSelectFriend(idToSelect);
-    }
-  }, [idToSelect, friendList?.length, selectedFriend?.id]);
+  //     handleSelectFriend(idToSelect);
+  //   }
+  // }, [idToSelect, friendList?.length, selectedFriend?.id]);
 
   // const { upcomingHelloes  } = useUpcomingHelloes();
   const { navigateToMomentFocus, navigateToMoments, navigateToGecko } =
@@ -106,7 +106,7 @@ useEffect(() => {
     // }, 50);
   }, [navigateToMomentFocus]);
 
-  const upcomingHelloes = friendListAndUpcoming?.upcoming;
+  // const upcomingHelloes = friendListAndUpcoming?.upcoming;
 
   useEffect(() => {
     if (backdropTimestamp) {
@@ -140,7 +140,9 @@ const handleToggleColoredDots = useCallback(() => {
 
   return (
     <> 
-      {friendListAndUpcomingIsSuccess && !isDelaying &&  (
+      {
+      // friendListAndUpcomingIsSuccess && 
+      !isDelaying &&  (
         <SafeViewFriendHome
           friendColorLight={selectedFriend.lightColor}
           friendColorDark={selectedFriend.darkColor}
@@ -151,7 +153,7 @@ const handleToggleColoredDots = useCallback(() => {
         
         <>
         
-          {upcomingHelloes?.length &&   (
+          {/* {upcomingHelloes?.length &&   ( */}
             <SelectedFriendHome
               canvasKey={route.key}
               friendName={selectedFriend.name}
@@ -176,7 +178,7 @@ const handleToggleColoredDots = useCallback(() => {
               handleMomentScreenNoScroll={handleMomentScreenNoScroll} // center double press
               handleNavigateToGecko={handleNavigateToGecko} // new center single press
             />
-          )}
+          {/* )} */}
 
           <AnimatedBackdrop
             color={lightDarkTheme.backdropColor}

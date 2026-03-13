@@ -9,6 +9,7 @@ import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import { requestImagePermission } from "./src/hooks/util_requestImagePermissions";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import ShareIntentHandler from "./src/handlers/ShareIntentHandler";
+import DraftSyncHandler from "./src/handlers/DraftSyncHandler";
 import NetworkStatusHandler from "./src/handlers/NetworkStatusHandler";
 import AutoSelectFriendHandler from "./src/handlers/AutoSelectFriendHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -113,6 +114,7 @@ queryClient.setQueryData(["selectedFriend"], DEFAULT_FRIEND);
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
   throttleTime: 1000, // collect all changes for 1 second, then write once
+  key: 'persister-query-cache',
 });
 
 // queryClient.getQueryCache().subscribe((event) => {
@@ -126,22 +128,22 @@ const asyncStoragePersister = createAsyncStoragePersister({
 //   }
 // });
 
-queryClient.getMutationCache().subscribe((event) => {
-  const running = queryClient
-    .getMutationCache()
-    .getAll()
-    .filter((m) => m.state.status === "pending").length;
-  console.log(
-    "[MutationCache]",
-    event.type,
-    "| key:",
-    JSON.stringify(event.mutation?.options?.mutationKey),
-    "| fn:",
-    event.mutation?.options?.mutationFn?.name,
-    "| running:",
-    running,
-  );
-});
+// queryClient.getMutationCache().subscribe((event) => {
+//   const running = queryClient
+//     .getMutationCache()
+//     .getAll()
+//     .filter((m) => m.state.status === "pending").length;
+//   console.log(
+//     "[MutationCache]",
+//     event.type,
+//     "| key:",
+//     JSON.stringify(event.mutation?.options?.mutationKey),
+//     "| fn:",
+//     event.mutation?.options?.mutationFn?.name,
+//     "| running:",
+//     running,
+//   );
+// });
 import * as Sentry from "@sentry/react-native";
 import ScreenQRCode from "./app/screens/fidget/ScreenQRCode";
 
@@ -220,6 +222,7 @@ export default Sentry.wrap(function App() {
             shouldDehydrateQuery: (query) => {
               const includedKeys = [
                 "currentUser",
+                "userPoints",
                 "userSettings",
                 "friendListAndUpcoming",
                 "categories",
@@ -230,6 +233,7 @@ export default Sentry.wrap(function App() {
             },
           },
         }}
+ 
       >
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
@@ -357,14 +361,16 @@ import { useLDTheme } from "./src/context/LDThemeContext";
 import { useSelectedFriend } from "./src/context/SelectedFriendContext";
 
 const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
-  console.log("SelectedFriendNavigator", {
-    isReady: selectedFriend?.isReady,
-    id: selectedFriend?.id,
-  });
+
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
   const spinnerShownRef = useRef(false);
+
+  //   console.log("SelectedFriendNavigator", {
+  //   isReady: selectedFriend?.isReady,
+  //   id: selectedFriend?.id,
+  // });
 
   if (!selectedFriend?.isReady) {
     if (!spinnerShownRef.current) {
@@ -589,12 +595,18 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
 export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
   const [sessionKey, setSessionKey] = useState(0);
 
-  const handleSignOut = async () => {
-    await signout();
-    queryClient.clear();
-    setSessionKey((k) => k + 1);
-  };
+  // const handleSignOut = async () => {
+  //   await signout();
+  //   queryClient.clear();
+  //   setSessionKey((k) => k + 1);
+  // };
 
+  const handleSignOut = async () => {
+  await signout();
+  queryClient.clear();
+  await AsyncStorage.removeItem('tanstack-query'); // default key used by the persister
+  setSessionKey((k) => k + 1);
+};
   return (
     <AuthActionsContext.Provider value={{ onSignOut: handleSignOut }}>
       <NavigationContainer ref={navigationRef} linking={linking}>
@@ -654,6 +666,7 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
           />
           <ShareIntentHandler />
           <NetworkStatusHandler />
+          <DraftSyncHandler/>
           <CategoryColorsProvider>
             <AutoSelectFriendHandler userId={user?.id} settings={settings} />
             <SelectedFriendNavigator
