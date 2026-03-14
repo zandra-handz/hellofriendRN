@@ -14,7 +14,7 @@ import useSelectFriend from "@/src/hooks/useSelectFriend";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming"; 
 import { AppFontStyles } from "@/app/styles/AppFonts";
-
+ 
  
 const ScreenSelectFriend = ({}) => {
   const { user } = useUser();

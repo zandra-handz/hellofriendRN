@@ -1,8 +1,6 @@
-import React, { useMemo } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { useLDTheme } from "@/src/context/LDThemeContext";
+import React from "react";
 import ButtonResetHelloes from "../../buttons/helloes/ButtonResetHelloes";
-import OptionNoToggle from "../../headers/OptionNoToggle";  
+import OptionNoToggle from "../../headers/OptionNoToggle";
 interface Props {
   userId: number;
   label: string;

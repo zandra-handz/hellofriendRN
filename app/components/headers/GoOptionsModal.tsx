@@ -23,10 +23,9 @@ const GoOptionsModal = ({
   closeModal,
 }: Props) => {
   const {
-    navigateToMoments,
     navigateToLocationSearch,
     navigateToFinalize,
-    navigateToFidget,
+    // navigateToFidget,
   } = useAppNavigations();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -34,10 +33,15 @@ const GoOptionsModal = ({
   const BUTTON_PADDING = 4;
   const BUTTON_COLOR = manualGradientColors.lightColor;
 
-  const handleNavToMoments = () => { closeModal(); navigateToMoments({ scrollTo: null }); };
-  const handleNavToLocationSearch = () => { closeModal(); navigateToLocationSearch(); };
-  const handleNavToFinalize = () => { closeModal(); navigateToFinalize(); };
-  const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
+  const handleNavToLocationSearch = () => {
+    closeModal();
+    navigateToLocationSearch();
+  };
+  const handleNavToFinalize = () => {
+    closeModal();
+    navigateToFinalize();
+  };
+  // const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
 
   const count = 5;
   const speed = 20;
@@ -63,44 +67,42 @@ const GoOptionsModal = ({
       isVisible={isVisible}
       questionText="What would you like to do?"
       onClose={closeModal}
+      useCloseButton={true}
       children={
         <View style={{ flex: 1 }}>
           {staggeredDelays.length > 0 && (
             <>
-              <View style={styles.sectionContainer}>
-                <BouncyEntrance delay={staggeredDelays[0]} style={{ width: "100%" }}>
-                  <OptionButton {...sharedButtonProps} onPress={handleNavToLocationSearch} label="Find a meetup" />
+              {/* <View style={styles.sectionContainer}>
+                <BouncyEntrance
+                  delay={staggeredDelays[0]}
+                  style={{ width: "100%" }}
+                >
+                  <OptionButton
+                    {...sharedButtonProps}
+                    onPress={handleNavToLocationSearch}
+                    label="Find a meetup"
+                  />
                 </BouncyEntrance>
-              </View>
+              </View> */}
 
               <View style={styles.sectionContainer}>
-                <BouncyEntrance delay={staggeredDelays[1]} style={{ width: "100%" }}>
-                  <OptionButton {...sharedButtonProps} onPress={handleNavToMoments} label="Share my ideas" />
+                <BouncyEntrance
+                  delay={staggeredDelays[2]}
+                  style={{ width: "100%" }}
+                >
+                  <OptionButton
+                    {...sharedButtonProps}
+                    onPress={handleNavToFinalize}
+                    label="Save hello"
+                  />
                 </BouncyEntrance>
               </View>
-
-              <View style={styles.sectionContainer}>
-                <BouncyEntrance delay={staggeredDelays[2]} style={{ width: "100%" }}>
-                  <OptionButton {...sharedButtonProps} onPress={handleNavToFinalize} label="Save hello" />
-                </BouncyEntrance>
-              </View>
-
+              {/* 
               <View style={styles.sectionContainer}>
                 <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
                   <OptionButton {...sharedButtonProps} onPress={handleNavToSpinners} label="Spinner gallery" />
                 </BouncyEntrance>
-              </View>
-
-              <View style={styles.sectionContainer}>
-                <BouncyEntrance delay={staggeredDelays[4]} style={{ width: "100%" }}>
-                  <OptionButton
-                    {...sharedButtonProps}
-                    onPress={closeModal}
-                    label="Close"
-                    buttonColor={manualGradientColors.darkColor}
-                  />
-                </BouncyEntrance>
-              </View>
+              </View> */}
             </>
           )}
         </View>

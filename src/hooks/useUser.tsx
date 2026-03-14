@@ -123,7 +123,7 @@ const useUser = () => {
   } = useQuery(currentUserQueryOptions);
 
 const onSignOutContextVersion = async () => {
-  console.log('SIGNOUT CALLED FROM:', new Error().stack);
+  // console.log('SIGNOUT CALLED FROM:', new Error().stack);
   await signout();
   queryClient.clear();
 };

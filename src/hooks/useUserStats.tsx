@@ -36,7 +36,7 @@ const useUserStats = ({
 
  const refetchUserStats = () => {
      if (userId && !isInitializing) {
-    queryClient.refetchQueries(["userStats", userId]);  //also manually added this to categories context
+        queryClient.refetchQueries({ queryKey: ["userStats", userId]});//also manually added this to categories and create hello
   }
 
 };

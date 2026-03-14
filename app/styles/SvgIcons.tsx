@@ -35,6 +35,7 @@ import ChartBubbleSvg from "./svgs/chart-bubble";
 import ChartTimelineVariantShimmerSvg from "./svgs/chart-timeline-variant-shimmer";
 import CheckSvg from "./svgs/check";
 import CheckCircleSvg from "./svgs/check-circle";
+import AlertCircleSvg from "./svgs/alert-circle";
 import ChevronLeftSvg from "./svgs/chevron-left";
 import ChevronRightSvg from "./svgs/chevron-right";
 import ChevronDownSvg from "./svgs/chevron-down";
@@ -165,6 +166,7 @@ const svgIcons = {
   information_outline: InformationOutlineSvg,
   gesture_swipe_vertical: GestureSwipeVerticalSvg,
   check_circle: CheckCircleSvg,
+  alert_circle: AlertCircleSvg,
   moon_waning_crescent: MoonWaningCrescentSvg,
   motion_pause_outline: MotionPauseOutlineSvg,
   motion_play_outline: MotionPlayOutlineSvg,

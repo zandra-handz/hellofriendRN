@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   inner: {
     borderRadius: 6,
     paddingVertical: 1,
-    paddingHorizontal: 12,
+    paddingHorizontal: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

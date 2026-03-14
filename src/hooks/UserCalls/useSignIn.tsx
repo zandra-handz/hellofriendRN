@@ -1,8 +1,5 @@
-import { View, Text } from "react-native";
-import React, { useEffect, useRef, useCallback } from "react";
-
+import  { useRef, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
- 
 import { signinWithoutRefresh } from "@/src/calls/api";
 type Props = {
   refetchUser: () => void;
@@ -49,19 +46,6 @@ const useSignIn = ({ refetchUser }: Props) => {
   });
 }, [signinMutation]);
 
-
- 
-
-  // const onSignIn = useCallback(
-  //   async (username: string, password: string) => {
-  //     try {
-  //       await signinMutation.mutateAsync({ username, password });
-  //     } catch (error) {
-  //       console.error("Sign in error", error);
-  //     }
-  //   },
-  //   [signinMutation]
-  // );
   return {
     onSignIn,
     signinMutation,

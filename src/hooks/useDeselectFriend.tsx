@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-
+import { showFlashMessage } from "../utils/ShowFlashMessage";
 const useDeselectFriend = ({ userId, settings }) => {
   const queryClient = useQueryClient();
   const { selectedFriend, setToFriend, deselectFriend } = useSelectedFriend();
@@ -41,9 +41,16 @@ const useDeselectFriend = ({ userId, settings }) => {
       return false;
     }
 
+        // If there's a pinned friend and current is not pinned, switch to pinned
+    if (pinnedFriend && Number(friendId) !== Number(pinnedFriend)) {
+      setToFriend({ friend: pinnedFriendObj, preConditionsMet: true });
+      return false;
+    }
+
     // If current friend is the upcoming friend, turn off auto-select
     if (upcomingFriend && Number(friendId) === Number(upcomingFriend)) {
-      console.log("TURN AUTO OFF", friendId, userId, upcomingFriend);
+      showFlashMessage("Auto select mode is off", false, 1000)
+      // console.log("TURN AUTO OFF", friendId, userId, upcomingFriend);
       deselectFriend();
 
       queryClient.setQueryData(["userSettings", userId], (oldData) => {
@@ -55,11 +62,7 @@ const useDeselectFriend = ({ userId, settings }) => {
       return true;
     }
 
-    // If there's a pinned friend and current is not pinned, switch to pinned
-    if (pinnedFriend && Number(friendId) !== Number(pinnedFriend)) {
-      setToFriend({ friend: pinnedFriendObj, preConditionsMet: true });
-      return false;
-    }
+
  
     deselectFriend();
     return true;

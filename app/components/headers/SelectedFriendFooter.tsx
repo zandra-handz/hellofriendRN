@@ -294,7 +294,7 @@ import useUserSettings from "@/src/hooks/useUserSettings";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
 import FriendThemeModal from "./FriendThemeModal";
-import useFriendDash from "@/src/hooks/useFriendDash";
+ 
 
 const SelectedFriendFooter = ({
   userId,
@@ -308,8 +308,7 @@ const SelectedFriendFooter = ({
 }) => {
   const { settings } = useUserSettings({ userId });
 
- 
-  const { friendDash } = useFriendDash({ userId, friendId });
+  
   const { handleDeselectFriend } = useDeselectFriend({ userId, settings });
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);

@@ -18,12 +18,30 @@ type Props = {
 };
 
 const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: Props) => {
-  useEffect(() => {
-    async function registerOrRemove() {
-      // console.log("NEW HOK TRIGGGERED");
+  // useEffect(() => {
+  //   async function registerOrRemove() {
+  //     // console.log("NEW HOK TRIGGGERED");
 
+  //     if (receiveNotifications !== true && receiveNotifications !== false) {
+  //       return; // Don't do anything if not ready
+  //     }
+
+  //     if (receiveNotifications) {
+  //       await registerForNotifications();
+  //     } else {
+  //       await removeNotificationPermissions();
+  //     }
+  //   }
+
+  //   registerOrRemove();
+  // }, [receiveNotifications, expoPushToken]);
+
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    async function registerOrRemove() {
       if (receiveNotifications !== true && receiveNotifications !== false) {
-        return; // Don't do anything if not ready
+        return;
       }
 
       if (receiveNotifications) {
@@ -34,7 +52,10 @@ const useNotificationsRegistration = ({ receiveNotifications, expoPushToken }: P
     }
 
     registerOrRemove();
-  }, [receiveNotifications, expoPushToken]);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [receiveNotifications, expoPushToken]);
 
   const registerForNotifications = async () => {
     // console.warn("REGISTERING FOR NOTIFS!");

@@ -29,12 +29,6 @@ interface Props {
   friendDarkColor: string;
 }
 
-
-
-
-
- 
-
 const phoneRegex = /^\+?1?\d{9,15}$/;
 
 const delays = [0, 60, 120];
@@ -52,9 +46,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendDarkColor,
   closeModal,
 }) => {
-
-
-    const { friendDash } = useFriendDash({ userId, friendId });
+  const { friendDash } = useFriendDash({ userId, friendId });
   const { handleUpdateFriendSettings } = useUpdateFriendSettings({
     userId,
     friendId,
@@ -101,12 +93,11 @@ const FriendSettingsModal: React.FC<Props> = ({
     return null;
   };
 
-    const validateName = (value: string): string | null => {
+  const validateName = (value: string): string | null => {
     if (!value) return null;
     if (value === friendName) return "Same as old name";
     return null;
   };
-
 
   const hasChanges =
     pendingPhone !== initialPhone ||
@@ -124,9 +115,9 @@ const FriendSettingsModal: React.FC<Props> = ({
     } catch (error) {
       console.error(error);
     }
-        try {
+    try {
       handleEditFriend({
-        name: pendingName
+        name: pendingName,
       });
     } catch (error) {
       console.error(error);
@@ -137,7 +128,7 @@ const FriendSettingsModal: React.FC<Props> = ({
     setPendingPhone(initialPhone);
     setPendingEffort(initialEffort);
     setPendingPriority(initialPriority);
-    setPendingName(friendName)
+    setPendingName(friendName);
   };
 
   const handleClose = () => {
@@ -270,15 +261,23 @@ const FriendSettingsModal: React.FC<Props> = ({
               />
             </View>
           </BouncyEntrance>
+
+          <BouncyEntrance delay={delays[2]} style={{ width: "100%" }}>
+            <View style={styles.sectionContainer}>
+              <DeleteFriend
+                userId={userId}
+                friendId={friendId}
+                friendName={friendName}
+                handleDeselectFriend={handleDeselectFriend}
+                textColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.dangerColor}
+                textStyle={AppFontStyles.subWelcomeText}
+              />
+            </View>
+          </BouncyEntrance>
         </View>
       </ScrollView>
-
-      <DeleteFriend
-        userId={userId}
-        friendId={friendId}
-        friendName={friendName}
-        handleDeselectFriend={handleDeselectFriend}
-      />
     </AppModal>
   );
 };

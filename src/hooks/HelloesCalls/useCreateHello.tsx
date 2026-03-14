@@ -1,17 +1,21 @@
-import { View, Text } from "react-native";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { saveHello } from "@/src/calls/api";
+
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
 type Props = {
   userId: number;
-  // friendId: number;
 };
-import { formatDate } from "date-fns";  //NOT SURE IF THIS IS THE RIGHT IMPORT
+import { formatDate } from "date-fns"; //NOT SURE IF THIS IS THE RIGHT IMPORT
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 const useCreateHello = ({ userId }: Props) => {
   const queryClient = useQueryClient();
 
   const timeoutRef = useRef(null);
+
+  const { deselectFriend } = useSelectedFriend();
 
   const createHelloMutation = useMutation({
     mutationFn: (data) => saveHello(data),
@@ -24,7 +28,9 @@ const useCreateHello = ({ userId }: Props) => {
         createHelloMutation.reset();
       }, 2000);
     },
-    onSuccess: (data, variables) => {
+
+    onSuccess: async (data, variables) => {
+      showFlashMessage(`Hello saved!`, false, 2000);
       const friendId = variables.friend;
       const normalized = {
         ...data,
@@ -37,31 +43,53 @@ const useCreateHello = ({ userId }: Props) => {
         return updatedHelloes;
       });
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      // testing whether want to do it this way
+      await queryClient.invalidateQueries({
+        queryKey: ["Moments", userId, friendId],
+      });
 
+      await queryClient.refetchQueries({
+        queryKey: ["friendListAndUpcoming", userId],
+      });
+      await queryClient.refetchQueries({ queryKey: ["userStats", userId] });
+      await queryClient.refetchQueries({ queryKey: ["userSettings", userId] });
+      deselectFriend();
+      queryClient.setQueryData(
+        ["autoSelectTrigger"],
+        (old: number = 0) => old + 1,
+      );
+
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         createHelloMutation.reset();
       }, 2000);
     },
-    // onSuccess: (data) => {
+
+    // onSuccess: (data, variables) => {
+    //   showFlashMessage(`Hello saved!`, false, 2000);
+    //   const friendId = variables.friend;
     //   const normalized = {
     //     ...data,
-    //     dateLong: data.date, // or format if needed
-    //     date: data.past_date_in_words || formatDate(data.date), // optional
+    //     dateLong: data.date,
+    //     date: data.past_date_in_words || formatDate(data.date),
     //   };
 
-    //   queryClient.setQueryData(
-    //     ["pastHelloes", user?.id, selectedFriend?.id],
-    //     (old) => {
-    //       const updatedHelloes = old ? [normalized, ...old] : [normalized];
-    //       return updatedHelloes;
-    //     }
-    //   );
+    //   queryClient.setQueryData(["pastHelloes", userId, friendId], (old) => {
+    //     const updatedHelloes = old ? [normalized, ...old] : [normalized];
+    //     return updatedHelloes;
+    //   });
 
-    //   // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
-    //   //console.log("Actual HelloesList after mutation:", actualHelloesList);
+    //   queryClient.refetchQueries({
+    //     queryKey: ["friendListAndUpcoming", userId],
+    //   });
+    //   queryClient.refetchQueries({ queryKey: ["userStats", userId] });
+    //   queryClient.refetchQueries({ queryKey: ["userSettings", userId] });
+
+    //   // THIS MUST COME AFTER USER SETTINGS REFETCH, TO TRIGGER AUTOSELECT AFTER WE HAVE NEW SETTINGS DATA
+    //   queryClient.setQueryData(['autoSelectTrigger'], (old: number = 0) => old + 1)
+
+    //   // need this for this hook but not for remix
+    //   deselectFriend();
 
     //   if (timeoutRef.current) {
     //     clearTimeout(timeoutRef.current);

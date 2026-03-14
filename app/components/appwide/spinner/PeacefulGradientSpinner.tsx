@@ -1,10 +1,10 @@
  
-import manualGradientColors from "@/app/styles/StaticColors";
+// import manualGradientColors from "@/app/styles/StaticColors";
 import { View, StyleSheet } from "react-native";
 import React from "react";
-import LoadingPage from "./LoadingPage"; 
+// import LoadingPage from "./LoadingPage"; 
  
-import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming"; 
+// import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming"; 
 
 type Props = {
   isInitializing: boolean;
@@ -15,12 +15,13 @@ const PeacefulGradientSpinner = ({
   isInitializing,
   loadingSettings,
 }: Props) => { 
-  const { isLoading } = useFriendListAndUpcoming({ userId: userId });
+  // const { isLoading } = useFriendListAndUpcoming({ userId: userId });
 
   return (
     <>
-      {(isInitializing || isLoading || loadingSettings) && (
-        <View style={styles.container}>
+      <View style={styles.container}>
+      {/* {(isInitializing || isLoading || loadingSettings) && (
+      
           <View style={StyleSheet.absoluteFillObject}>
  
           <LoadingPage
@@ -34,8 +35,9 @@ const PeacefulGradientSpinner = ({
             spinnerSize={40}
           /> 
           </View>
-        </View>
-      )}
+      
+      )} */}
+      </View>
     </>
   );
 };

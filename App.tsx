@@ -7,6 +7,7 @@ import {
 import { useFont } from "@shopify/react-native-skia";
 import ScreenHistory from "./app/screens/helloes/ScreenHistory";
 import { requestImagePermission } from "./src/hooks/util_requestImagePermissions";
+import NotificationsHandler from "./src/handlers/NotificationsHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import ShareIntentHandler from "./src/handlers/ShareIntentHandler";
 import DraftSyncHandler from "./src/handlers/DraftSyncHandler";
@@ -14,7 +15,8 @@ import NetworkStatusHandler from "./src/handlers/NetworkStatusHandler";
 import AutoSelectFriendHandler from "./src/handlers/AutoSelectFriendHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
 import { DEFAULT_FRIEND } from "./src/utils/DEFAULT_FRIEND";
-import DefaultTheme from "@react-navigation/native";
+import { useIsRestoring } from "@tanstack/react-query";
+import { DefaultTheme } from "@react-navigation/native";
 import { View, Text } from "react-native";
 import {
   ShareIntentProvider,
@@ -360,14 +362,6 @@ const linking = {
 import { useLDTheme } from "./src/context/LDThemeContext";
 import { useSelectedFriend } from "./src/context/SelectedFriendContext";
 
-
-
-
-
-
-
-
-
 const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
@@ -413,7 +407,10 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
             cardStyle: { backgroundColor: "#000002" },
           }}
         >
-          <Stack.Screen name="hellofriend" options={{ headerShown: false }}>
+          <Stack.Screen
+            name="hellofriend"
+            options={{ headerShown: false, animation: "none" }}
+          >
             {(props) => (
               <ScreenHome
                 {...props}
@@ -426,7 +423,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           <Stack.Screen
             name="Categories"
             component={ScreenCategories}
-            options={{ gestureEnabled: false, headerShown: false }}
+            options={{
+              gestureEnabled: false,
+              headerShown: false,
+              animation: "none",
+            }}
           />
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
@@ -456,7 +457,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         </Stack.Screen>
         <Stack.Screen
           name="Gecko"
-          options={{ headerShown: false, gestureEnabled: false }}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
         >
           {(props) => (
             <ScreenGecko
@@ -494,7 +499,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         <Stack.Screen
           name="Finalize"
           component={ScreenFinalize}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, animation: "none" }}
         />
         <Stack.Screen
           name="Reload"
@@ -526,26 +531,26 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           component={ScreenHelloView}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="LocationSend"
           component={ScreenLocationSend}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           name="LocationEdit"
           component={ScreenLocationEdit}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           name="LocationCreate"
           component={ScreenLocationCreate}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           name="LocationSearch"
           component={ScreenLocationSearch}
           options={{ headerShown: false }}
-        />
+        /> */}
         <Stack.Screen
           name="MidpointLocationSearch"
           component={ScreenMidpointLocationSearch}
@@ -559,7 +564,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         <Stack.Screen
           name="AddHello"
           component={ScreenAddHello}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, animation: "none" }}
         />
         <Stack.Screen
           name="SelectFriend"
@@ -573,13 +578,13 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         <Stack.Screen
           name="AddFriend"
           component={ScreenAddFriend}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, animation: "none" }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Fidget"
           component={ScreenFidget}
           options={{ headerShown: false }}
-        />
+        /> */}
       </Stack.Navigator>
     </FriendCategoryColorsProvider>
   );
@@ -619,6 +624,14 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
       <NavigationContainer
         ref={navigationRef}
         linking={linking}
+        theme={{
+          dark: true,
+          colors: {
+            ...DefaultTheme.colors,
+            // background: '#000002',
+            background: "blue",
+          },
+        }}
         // theme={{
         //   dark: true,
         //   colors: { background: "hotpink", ...DefaultTheme.colors },
@@ -637,6 +650,10 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
 // ─── LayoutInner ─────────────────────────────────────────────────────────────
 
 const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
+  const isRestoring = useIsRestoring();
+  console.log(
+    "LayoutInner ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RERENDERED",
+  );
   const { user, isInitializing, userIsPending, refetch } = useUser();
   const { settings } = useTopLevelUserSettings({
     userId: user?.id,
@@ -665,14 +682,21 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
         ? "not ready"
         : settings.expo_push_token;
 
-  useNotificationsRegistration({ receiveNotifications, expoPushToken });
+  // useNotificationsRegistration({ receiveNotifications, expoPushToken });
 
+  if (isRestoring || userIsPending) {
+    return <PeacefulGradientSpinner />;
+  }
   return (
     <>
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
 
       {user?.id && !isInitializing ? (
         <>
+          <NotificationsHandler
+            receiveNotifications={receiveNotifications}
+            expoPushToken={expoPushToken}
+          />
           <QuickActionsHandler
             userId={user?.id}
             settings={settings}
@@ -689,9 +713,10 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
             />
           </CategoryColorsProvider>
         </>
-      ) : userIsPending ? (
-        <PeacefulGradientSpinner />
       ) : (
+        // : userIsPending ? (
+        //   <PeacefulGradientSpinner />
+        // )
         <Stack.Navigator
           screenOptions={{
             contentContainerStyle: { flexGrow: 1 },

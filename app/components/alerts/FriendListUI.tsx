@@ -1,10 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  FlatList,
-  ListRenderItemInfo,
-} from "react-native";
+import { View, StyleSheet, FlatList, ListRenderItemInfo } from "react-native";
 import React, { useCallback, useEffect, useRef } from "react";
 import OptionFriendButton from "../headers/OptionFriendButton";
 import { Vibration } from "react-native";
@@ -12,6 +6,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Friend } from "@/src/types/FriendTypes";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
+import BouncyEntranceDown from "../headers/BouncyEntranceDown";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -26,32 +21,32 @@ type FriendListItem = Friend | { message: string };
 const STAGGER_SPEED = 20;
 const EXIT_DURATION = 180;
 
-const BouncyEntranceDown = ({ children, delay = 0, style }) => {
-  const translateY = useSharedValue(-60);
+// const BouncyEntranceDown = ({ children, delay = 0, style }) => {
+//   const translateY = useSharedValue(-60);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
+//   const animatedStyle = useAnimatedStyle(() => ({
+//     transform: [{ translateY: translateY.value }],
+//   }));
 
-  useEffect(() => {
-    translateY.value = withTiming(-60, { duration: 0 });
-    translateY.value = withDelay(
-      delay,
-      withSpring(0, {
-        damping: 20,
-        stiffness: 150,
-        mass: 0.2,
-        overshootClamping: false,
-      }),
-    );
-  }, []);
+//   useEffect(() => {
+//     translateY.value = withTiming(-60, { duration: 0 });
+//     translateY.value = withDelay(
+//       delay,
+//       withSpring(0, {
+//         damping: 20,
+//         stiffness: 150,
+//         mass: 0.2,
+//         overshootClamping: false,
+//       }),
+//     );
+//   }, []);
 
-  return (
-    <Animated.View pointerEvents="auto" style={[animatedStyle, style]}>
-      {children}
-    </Animated.View>
-  );
-};
+//   return (
+//     <Animated.View pointerEvents="auto" style={[animatedStyle, style]}>
+//       {children}
+//     </Animated.View>
+//   );
+// };
 
 const FriendIndicators = ({ friendId, pinnedFriend, upcomingFriend }) => {
   const isPinned = pinnedFriend === friendId;
@@ -60,13 +55,31 @@ const FriendIndicators = ({ friendId, pinnedFriend, upcomingFriend }) => {
   return (
     <View style={styles.itemIndicatorContainer}>
       {isPinned && (
-        <View style={[styles.indicator, { backgroundColor: manualGradientColors.homeDarkColor }]}>
-          <SvgIcon name="pin_outline" size={12} color={manualGradientColors.lightColor} />
+        <View
+          style={[
+            styles.indicator,
+            { backgroundColor: manualGradientColors.homeDarkColor },
+          ]}
+        >
+          <SvgIcon
+            name="pin_outline"
+            size={12}
+            color={manualGradientColors.lightColor}
+          />
         </View>
       )}
       {isUpcoming && (
-        <View style={[styles.indicator, { backgroundColor: manualGradientColors.homeDarkColor }]}>
-          <SvgIcon name="calendar_clock" size={12} color={manualGradientColors.lightColor} />
+        <View
+          style={[
+            styles.indicator,
+            { backgroundColor: manualGradientColors.homeDarkColor },
+          ]}
+        >
+          <SvgIcon
+            name="calendar_clock"
+            size={12}
+            color={manualGradientColors.lightColor}
+          />
         </View>
       )}
     </View>
@@ -125,19 +138,24 @@ const FriendListUI = ({
     onLongPressRef.current(id);
   }, []);
 
-  const handlePress = useCallback((id: number, name: string, nextDate: string) => {
-    isExiting.value = withTiming(1, { duration: EXIT_DURATION * 0.4 });
-    translateY.value = withTiming(800, { duration: EXIT_DURATION });
-    setTimeout(() => {
-      onPressRef.current(id);
-      handleNavAfterSelectRef.current(id, name, nextDate);
-    }, EXIT_DURATION * 0.6);
-  }, []);
+  const handlePress = useCallback(
+    (id: number, name: string, nextDate: string) => {
+      isExiting.value = withTiming(1, { duration: EXIT_DURATION * 0.4 });
+      translateY.value = withTiming(800, { duration: EXIT_DURATION });
+      setTimeout(() => {
+        onPressRef.current(id);
+        handleNavAfterSelectRef.current(id, name, nextDate);
+      }, EXIT_DURATION * 0.6);
+    },
+    [],
+  );
 
   const ITEM_HEIGHT = 46;
 
   const friendIdRef = useRef(friendId);
-  useEffect(() => { friendIdRef.current = friendId; });
+  useEffect(() => {
+    friendIdRef.current = friendId;
+  });
 
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => {
@@ -146,7 +164,10 @@ const FriendListUI = ({
 
       return (
         <View style={styles.sectionContainer}>
-          <BouncyEntranceDown delay={index * STAGGER_SPEED} style={{ width: "100%" }}>
+          <BouncyEntranceDown
+            delay={index * STAGGER_SPEED}
+            style={{ width: "100%" }}
+          >
             <View style={{ width: "100%" }}>
               {"id" in item && (
                 <FriendIndicators
@@ -162,32 +183,41 @@ const FriendListUI = ({
                   primaryColor={itemColor}
                   backgroundColor={backgroundOverlayColor}
                   buttonColor={backgroundOverlayColor}
-                  selectedBorderColor={isSelected
-                    ? (friendColorLight ?? itemColor)
-                    : (item.theme_color_light ?? itemColor)}
+                  selectedBorderColor={
+                    isSelected
+                      ? (friendColorLight ?? itemColor)
+                      : (item.theme_color_light ?? itemColor)
+                  }
                   isSelected={isSelected}
                   isExiting={isExiting}
-                  onPress={isSelected ? undefined : () => handlePress(item.id, item.name, item.future_date_in_words)}
+                  onPress={
+                    isSelected
+                      ? undefined
+                      : () =>
+                          handlePress(
+                            item.id,
+                            item.name,
+                            item.future_date_in_words,
+                          )
+                  }
                   onPressIn={isSelected ? undefined : handlePressIn}
                   onPressOut={isSelected ? undefined : handlePressOut}
                   onLongPress={() => handleLongPress(item.id)}
                 />
-              )}
-
-              {!("id" in item) && friendList.length < 20 && (
-                <Pressable
-                  onPress={navigateToAddFriend}
-                  style={[styles.addFriendButton, { backgroundColor, height: ITEM_HEIGHT }]}
-                >
-                  <SvgIcon name="account_plus" size={26} color={itemColor} />
-                </Pressable>
               )}
             </View>
           </BouncyEntranceDown>
         </View>
       );
     },
-    [itemColor, friendColorLight, backgroundOverlayColor, friendList.length, pinnedFriend, upcomingFriend],
+    [
+      itemColor,
+      friendColorLight,
+      backgroundOverlayColor,
+      friendList.length,
+      pinnedFriend,
+      upcomingFriend,
+    ],
   );
 
   const extractItemKey = (item: FriendListItem, index: number) =>

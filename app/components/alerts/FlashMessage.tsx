@@ -18,7 +18,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 const FlashMessage = ({
   message,
   isInsideModal = false,
-  iconName = "playlist-add-check-circle",
+  iconName = "check_circle",
   error = false,
   duration = 2000,
   onClose,
@@ -109,7 +109,7 @@ const FlashMessage = ({
         </Text>
 
         <SvgIcon
-          name={error ? "error-outline" : iconName}
+          name={error ? "alert_circle" : iconName}
           size={20}
           color={textColor}
           style={styles.icon}

@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
-import { View, TextInput, Text, StyleSheet } from "react-native";
-import Animated, { SlideInUp, SlideOutUp, FadeInUp } from "react-native-reanimated";
+import { View, TextInput, StyleSheet } from "react-native";
+import manualGradientColors from "@/app/styles/StaticColors";
+
 const InputAddFriendName = ({
   friendName,
   setFriendName,
@@ -34,15 +35,19 @@ const InputAddFriendName = ({
     }
   };
 
+  const hasError = !isFriendNameUnique && friendName.length > 0;
+
   return (
-    <View style={[styles.inputContainer]}>
+    <View style={styles.inputContainer}>
       <TextInput
         ref={friendNameRef}
         autoFocus={autoFocus}
-        style={[ 
+        style={[
           styles.input,
-          !isFriendNameUnique && friendName.length > 0 && styles.errorInput,
-          {color: primaryColor, borderColor: primaryColor}
+          {
+            color: primaryColor,
+            borderColor: hasError ? manualGradientColors.dangerColor : primaryColor,
+          },
         ]}
         value={friendName}
         placeholder="Name"
@@ -50,53 +55,26 @@ const InputAddFriendName = ({
         onChangeText={handleFriendNameChange}
         onSubmitEditing={setVisibility}
       />
-      {!isFriendNameUnique && friendName.length > 0 && (
-        <Animated.View entering={SlideInUp} exiting={SlideOutUp} style={{overflow: 'hidden'}}>
-          <Text style={styles.errorText}>
-            This name is already in your friend list. Please choose another
-            name.
-          </Text>
-        </Animated.View>
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginVertical: 8,
-  },
-  sectionTitle: {
-    fontSize: 17,
-    fontFamily: "Poppins-Bold",
-  },
   inputContainer: {
     justifyContent: "center",
     width: "100%",
-    marginVertical: 10,
+    // marginVertical: 0,
   },
   input: {
     fontFamily: "Poppins-Regular",
-
     height: "auto",
-    borderWidth: 2.6,
+    borderWidth: 1.5,
     padding: 10,
     paddingTop: 10,
     borderRadius: 10,
     alignContent: "center",
     justifyContent: "center",
-
     fontSize: 15,
-  },
-
-  errorInput: {
-    borderColor: "red",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 14,
-    marginTop: 5,
-    fontFamily: "Poppins-Regular",
   },
 });
 
