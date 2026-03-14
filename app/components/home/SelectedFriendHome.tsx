@@ -1,20 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-
-import {
-  Text,
+import { 
   StyleSheet,
   View,
   ScrollView,
   DimensionValue,
-  Pressable,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { useSharedValue, withTiming } from "react-native-reanimated";
 
-import { useFocusEffect } from "@react-navigation/native";
 import { useDerivedValue, runOnJS } from "react-native-reanimated";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import AnimatedToggler from "../buttons/AnimatedToggler";
@@ -29,7 +21,7 @@ import MomentsField from "./MomentsField";
 import History from "./History";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import Moments from "./Moments"; 
+import Moments from "./Moments";
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -42,7 +34,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   friendName,
   friendNextDate,
   friendChangeTimestamp,
- 
 
   paddingHorizontal,
   primaryColor,
@@ -51,9 +42,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   darkerGlassBackground,
   categoryColorsArray,
   // darkerOverlayBackgroundColor,
-  primaryBackground, 
+  primaryBackground,
   skiaFontLarge,
-  skiaFontSmall, 
+  skiaFontSmall,
   friendLightColor,
   friendDarkColor,
   handleToggleColoredDots,
@@ -62,10 +53,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   handleNavigateToGecko,
 }) => {
   // console.log("selected friend home rerendered");
-// console.log('friend name in selectedfriendhome: ', friendName)
+  // console.log('friend name in selectedfriendhome: ', friendName)
   const headerRef = useRef(null);
-// console.log(`TIMESTAMP!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`,friendChangeTimestamp)
-  
+  // console.log(`TIMESTAMP!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`,friendChangeTimestamp)
+
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const timing = animationTimings.toggleRotate;
@@ -117,25 +108,24 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   // });
 
   const ELEMENTS_BACKGROUND = "transparent";
-const [scrollLocked, setScrollLocked] = useState(false);
+  const [scrollLocked, setScrollLocked] = useState(false);
 
-useEffect(() => {
-  if (coloredDotsMode && scrollRef.current && momentsFieldRef.current) {
-    momentsFieldRef.current.measureLayout(
-      scrollRef.current,
-      (x, y) => {
-        scrollRef.current?.scrollTo({ y, animated: true });
-    
-        setTimeout(() => setScrollLocked(true), 300);
-      },
-      () => console.log("measure failed"),
-    );
-  } else if (!coloredDotsMode && scrollRef.current) {
-    setScrollLocked(false);  
-    scrollRef.current.scrollTo({ y: 0, animated: true });
-  }
-}, [coloredDotsMode]);
+  useEffect(() => {
+    if (coloredDotsMode && scrollRef.current && momentsFieldRef.current) {
+      momentsFieldRef.current.measureLayout(
+        scrollRef.current,
+        (x, y) => {
+          scrollRef.current?.scrollTo({ y, animated: true });
 
+          setTimeout(() => setScrollLocked(true), 300);
+        },
+        () => console.log("measure failed"),
+      );
+    } else if (!coloredDotsMode && scrollRef.current) {
+      setScrollLocked(false);
+      scrollRef.current.scrollTo({ y: 0, animated: true });
+    }
+  }, [coloredDotsMode]);
 
   return (
     <>
@@ -170,7 +160,7 @@ useEffect(() => {
 
             <ScrollView
               ref={scrollRef}
-                scrollEnabled={!scrollLocked}
+              scrollEnabled={!scrollLocked}
               // ref={scrollRef}
               onScroll={handleScroll}
               scrollEventThrottle={16}
@@ -191,7 +181,6 @@ useEffect(() => {
                 ref={headerRef}
               >
                 <FriendHeaderMessageUI
-         
                   primaryBackground={primaryBackground}
                   friendChangeTimestamp={friendChangeTimestamp}
                   height={MESSAGE_HEADER_HEIGHT} // SAME EYEBALL AS ABOVE
@@ -243,16 +232,16 @@ useEffect(() => {
                       rotationAtoB={-90}
                       rotationBtoA={90}
                       valueAB={!!coloredDotsMode}
-                      timing={timing+200}
+                      timing={timing + 200}
                       colorA={primaryColor}
-                       colorB={primaryColor}
+                      colorB={primaryColor}
                       onPressA={handleToggleColoredDots}
                       onPressB={handleToggleColoredDots}
                     />
                   </View>
 
                   <MomentsField
-                  friendId={friendId}
+                    friendId={friendId}
                     canvasKey={canvasKey}
                     canvasHeight={300}
                     heightFull={620}
@@ -260,7 +249,6 @@ useEffect(() => {
                     textColor={primaryColor}
                     overlayColor={primaryOverlayColor}
                     darkerOverlayBackgroundColor={darkerGlassBackground}
-               
                     friendColor={friendLightColor}
                     categoryColors={categoryColorsArray}
                     skiaFontLarge={skiaFontLarge}
@@ -274,7 +262,9 @@ useEffect(() => {
 
                 {/* {!coloredDotsMode && ( */}
                 <View style={{ opacity: coloredDotsMode ? 0 : 1 }}>
-                  <View style={{ width: "100%", marginBottom: 6, zIndex: 10000 }}>
+                  <View
+                    style={{ width: "100%", marginBottom: 6, zIndex: 10000 }}
+                  >
                     <Pics
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
@@ -352,7 +342,7 @@ const styles = StyleSheet.create({
   },
   momentsFieldTopBar: {
     height: 30,
-    width: "100%", 
+    width: "100%",
     flexDirection: "row",
     justifyContent: "flex-start",
     paddingHorizontal: 10,

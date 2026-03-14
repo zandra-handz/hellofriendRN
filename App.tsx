@@ -14,6 +14,7 @@ import NetworkStatusHandler from "./src/handlers/NetworkStatusHandler";
 import AutoSelectFriendHandler from "./src/handlers/AutoSelectFriendHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
 import { DEFAULT_FRIEND } from "./src/utils/DEFAULT_FRIEND";
+import DefaultTheme from "@react-navigation/native";
 import { View, Text } from "react-native";
 import {
   ShareIntentProvider,
@@ -114,7 +115,7 @@ queryClient.setQueryData(["selectedFriend"], DEFAULT_FRIEND);
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
   throttleTime: 1000, // collect all changes for 1 second, then write once
-  key: 'persister-query-cache',
+  key: "persister-query-cache",
 });
 
 // queryClient.getQueryCache().subscribe((event) => {
@@ -233,9 +234,8 @@ export default Sentry.wrap(function App() {
             },
           },
         }}
- 
       >
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1, backgroundColor: "orange" }}>
           <SafeAreaProvider>
             <DeviceLocationProvider>
               <LDThemeProvider>
@@ -360,17 +360,24 @@ const linking = {
 import { useLDTheme } from "./src/context/LDThemeContext";
 import { useSelectedFriend } from "./src/context/SelectedFriendContext";
 
-const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
 
+
+
+
+
+
+
+
+const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
   const spinnerShownRef = useRef(false);
 
-  //   console.log("SelectedFriendNavigator", {
-  //   isReady: selectedFriend?.isReady,
-  //   id: selectedFriend?.id,
-  // });
+  console.log("SelectedFriendNavigator", {
+    isReady: selectedFriend?.isReady,
+    id: selectedFriend?.id,
+  });
 
   if (!selectedFriend?.isReady) {
     if (!spinnerShownRef.current) {
@@ -602,14 +609,21 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
   // };
 
   const handleSignOut = async () => {
-  await signout();
-  queryClient.clear();
-  await AsyncStorage.removeItem('tanstack-query'); // default key used by the persister
-  setSessionKey((k) => k + 1);
-};
+    await signout();
+    queryClient.clear();
+    await AsyncStorage.removeItem("tanstack-query"); // default key used by the persister
+    setSessionKey((k) => k + 1);
+  };
   return (
     <AuthActionsContext.Provider value={{ onSignOut: handleSignOut }}>
-      <NavigationContainer ref={navigationRef} linking={linking}>
+      <NavigationContainer
+        ref={navigationRef}
+        linking={linking}
+        // theme={{
+        //   dark: true,
+        //   colors: { background: "hotpink", ...DefaultTheme.colors },
+        // }}
+      >
         <LayoutInner
           key={sessionKey}
           skiaFontLarge={skiaFontLarge}
@@ -666,7 +680,7 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
           />
           <ShareIntentHandler />
           <NetworkStatusHandler />
-          <DraftSyncHandler/>
+          <DraftSyncHandler />
           <CategoryColorsProvider>
             <AutoSelectFriendHandler userId={user?.id} settings={settings} />
             <SelectedFriendNavigator

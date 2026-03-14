@@ -471,10 +471,13 @@ import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useUserStats from "@/src/hooks/useUserStats";
+import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 
 const ContentAddHello = ({ userId, primaryColor, backgroundColor, friendList }) => {
   const navigation = useNavigation();
   const { settings } = useUserSettings({ userId });
+
+  const {handleDeselectFriend } = useDeselectFriend({useId: userId, settings: settings})
 
   const pinnedFriend = settings?.pinned_friend;
   const upcomingFriend = settings?.upcoming_friend;

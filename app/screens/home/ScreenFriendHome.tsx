@@ -64,9 +64,11 @@ useEffect(() => {
 
   const backdropTimestamp = route.params?.backdropTimestamp ?? null;
  
-  // const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
-  //   useFriendListAndUpcoming({ userId: user?.id });
-  // const friendList = friendListAndUpcoming?.friends;
+
+  // I feel like I need this but I can't remember why
+  const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
+    useFriendListAndUpcoming({ userId: user?.id });
+  const friendList = friendListAndUpcoming?.friends;
 
   // const { handleSelectFriend } = useSelectFriend({
   //   userId: user.id,
@@ -141,7 +143,7 @@ const handleToggleColoredDots = useCallback(() => {
   return (
     <> 
       {
-      // friendListAndUpcomingIsSuccess && 
+      friendListAndUpcomingIsSuccess && 
       !isDelaying &&  (
         <SafeViewFriendHome
           friendColorLight={selectedFriend.lightColor}

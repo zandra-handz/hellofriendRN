@@ -21,7 +21,7 @@ const PeacefulGradientSpinner = ({
     <>
       {(isInitializing || isLoading || loadingSettings) && (
         <View style={styles.container}>
-          <View style={[StyleSheet.absoluteFillObject, {}]}>
+          <View style={StyleSheet.absoluteFillObject}>
  
           <LoadingPage
             loading={true}

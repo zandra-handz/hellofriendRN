@@ -289,7 +289,7 @@ import { View, StyleSheet } from "react-native";
  
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import SvgIcon from "@/app/styles/SvgIcons";
-import useDeselectFriend from "@/src/hooks/deselectFriendFunction";
+import useDeselectFriend from "@/src/hooks/useDeselectFriend";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
