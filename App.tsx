@@ -580,11 +580,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           component={ScreenAddFriend}
           options={{ headerShown: false, animation: "none" }}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="Fidget"
           component={ScreenFidget}
           options={{ headerShown: false }}
-        /> */}
+        />
       </Stack.Navigator>
     </FriendCategoryColorsProvider>
   );

@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
-import useFriendDash from "@/src/hooks/useFriendDash";
+// import useFriendDash from "@/src/hooks/useFriendDash";
 
 const SHADOW_COLOR = "rgba(0,0,0,0.95)";
 const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
@@ -28,7 +28,7 @@ const OutlinedText = ({ text, color, style }: { text: string; color: string; sty
 
 const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
   const { navigateToHistory } = useAppNavigations();
-  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
+  // const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
 
   return (
     <>
@@ -37,12 +37,12 @@ const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props)
           style={[
             styles.outerContainer,
             {
-              backgroundColor: loadingDash ? "transparent" : primaryOverlayColor,
+              backgroundColor:  primaryOverlayColor,
             },
           ]}
         >
           <View style={styles.innerContainer}>
-            {!loadingDash && (
+            {/* {!loadingDash && ( */}
               <View style={styles.rowSpaceBetween}>
                 <Pressable
                   hitSlop={10}
@@ -64,7 +64,7 @@ const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props)
                   />
                 </Pressable>
               </View>
-            )}
+            {/* )} */}
           </View>
         </View>
       )}
