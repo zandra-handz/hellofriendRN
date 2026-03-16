@@ -3,27 +3,37 @@ import { View, StyleSheet } from "react-native";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
-
+import useUserPoints from "@/src/hooks/useUserPoints";
+import AnimatedClimber from "@/app/screens/fidget/AnimatedClimber";
 import manualGradientColors from "@/app/styles/StaticColors";
-const CategoryFooterButton = ({ onPress }) => {
-  const circleSize = 27;
+const CategoryFooterButton = ({ skiaFontLarge, textColor, onPress }) => {
+  const circleSize = 56;
+
+  const { totalPoints } = useUserPoints();
 
   const renderProfileIcon = () => {
     return (
       <View
-        style={[ styles.outerTreeWrapper, {
-          backgroundColor: manualGradientColors.lightColor,
-          width: circleSize ,
-          height: circleSize,
-          borderRadius: 999, 
-        }]}
+        style={[
+          styles.outerTreeWrapper,
+          {
+            borderColor: manualGradientColors.lightColor,
+
+            borderWidth: 2,
+            width: circleSize,
+            height: circleSize,
+            borderRadius: 999,
+          },
+        ]}
       >
         <View style={styles.treeWrapper}>
-          {/* <SvgIcon
-            name={"tree"}
-            size={45}
-            color={manualGradientColors.homeDarkColor}
-          /> */}
+          {skiaFontLarge && (
+            <AnimatedClimber
+              total={totalPoints}
+              skiaFont={skiaFontLarge}
+              textColor={textColor}
+            />
+          )}
         </View>
       </View>
     );
@@ -54,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-   marginBottom: 18
+    marginBottom: 18,
   },
   treeWrapper: {
     flex: 1,

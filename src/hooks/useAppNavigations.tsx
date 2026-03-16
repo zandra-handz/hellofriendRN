@@ -347,6 +347,7 @@ interface hookReturns {
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
   navigateToHistory: () => void;
+  navigateToFriendHistory: () => void;
   navigateToHelloes: () => void;
   navigateToHelloView: ({
     startingIndex,
@@ -439,6 +440,11 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToHistory = () => {
     navigation.navigate("History");
+  };
+
+  const navigateToFriendHistory = () => {
+    navigation.navigate("FriendHistory");
+
   };
 
   const navigateToHelloes = () => {
@@ -590,6 +596,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToSelectFriend,
     navigateToFinalize,
     navigateToHistory,
+    navigateToFriendHistory,
     navigateToHelloes,
     navigateToHelloView,
     navigateToAddImage,

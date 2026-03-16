@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   Pressable,
+  ScrollView,
   StyleSheet,
   TextStyle,
 } from "react-native";
@@ -21,6 +22,7 @@ type Props = {
   buttonPadding?: number;
   placeholder?: string;
   numberOfLines?: number;
+  maxHeight?: number;
   validate?: (value: string) => string | null;
   onConfirm: () => void;
 };
@@ -37,10 +39,12 @@ const OptionTextAreaEdit: React.FC<Props> = ({
   buttonPadding = 4,
   placeholder = "None",
   numberOfLines = 4,
+  maxHeight = 200,
   validate,
   onConfirm,
 }) => {
   const [showEdit, setShowEdit] = useState(false);
+  const [selection, setSelection] = useState<{ start: number; end: number } | undefined>(undefined);
   const error = validate ? validate(value) : null;
 
   const handleConfirm = () => {
@@ -53,65 +57,82 @@ const OptionTextAreaEdit: React.FC<Props> = ({
     setShowEdit(false);
   };
 
+  const handleStartEdit = () => {
+    if (showEdit) return;
+    setSelection({ start: value.length, end: value.length });
+    setShowEdit(true);
+  };
+
   return (
-    <Pressable
-      onPress={() => !showEdit && setShowEdit(true)}
+    <View
       style={[styles.button, { padding: buttonPadding, backgroundColor: buttonColor }]}
-      android_ripple={{ color: "rgba(255,255,255,0.08)" }}
     >
       <View style={[styles.inner, { backgroundColor }]}>
 
-        {/* top row: label + actions */}
-        <View style={styles.topRow}>
-          <View style={styles.left}>
-            {!!icon && <View style={styles.iconWrap}>{icon}</View>}
-            {!!label && (
-              <View style={styles.labelColumn}>
-                <Text
-                  style={[textStyle, styles.label, { color: primaryColor }]}
-                  numberOfLines={1}
-                >
-                  {label}
-                </Text>
-                {showEdit && !!error && (
-                  <Text style={styles.errorText}>{error}</Text>
-                )}
-              </View>
-            )}
-          </View>
+        <Pressable
+          onPress={handleStartEdit}
+          android_ripple={{ color: "rgba(255,255,255,0.08)" }}
+        >
+          <View style={styles.topRow}>
+            <View style={styles.left}>
+              {!!icon && <View style={styles.iconWrap}>{icon}</View>}
+              {!!label && (
+                <View style={styles.labelColumn}>
+                  <Text
+                    style={[textStyle, styles.label, { color: primaryColor }]}
+                    numberOfLines={1}
+                  >
+                    {label}
+                  </Text>
+                  {showEdit && !!error && (
+                    <Text style={styles.errorText}>{error}</Text>
+                  )}
+                </View>
+              )}
+            </View>
 
-          <View style={styles.actionsColumn}>
-            {!showEdit ? (
-              <Pressable onPress={() => setShowEdit(true)}>
-                <SvgIcon name="pencil" size={18} color={primaryColor} />
-              </Pressable>
-            ) : (
-              <>
-                <Pressable onPress={handleCancel} style={styles.cancelButton}>
-                  <SvgIcon name="cancel" size={18} color={primaryColor} />
+            <View style={styles.actionsColumn}>
+              {!showEdit ? (
+                <Pressable onPress={handleStartEdit}>
+                  <SvgIcon name="pencil" size={18} color={primaryColor} />
                 </Pressable>
-                <Pressable onPress={handleConfirm} disabled={!!error}>
-                  <SvgIcon
-                    name="check"
-                    size={18}
-                    color={error ? "gray" : primaryColor}
-                  />
-                </Pressable>
-              </>
-            )}
+              ) : (
+                <>
+                  <Pressable onPress={handleCancel} style={styles.cancelButton}>
+                    <SvgIcon name="cancel" size={18} color={primaryColor} />
+                  </Pressable>
+                  <Pressable onPress={handleConfirm} disabled={!!error}>
+                    <SvgIcon
+                      name="check"
+                      size={18}
+                      color={error ? "gray" : primaryColor}
+                    />
+                  </Pressable>
+                </>
+              )}
+            </View>
           </View>
-        </View>
+        </Pressable>
 
-        {/* text area */}
-        <View style={styles.textAreaRow}>
+        <ScrollView
+          style={[styles.textAreaRow, { maxHeight }]}
+          nestedScrollEnabled
+        >
           {showEdit ? (
             <TextInput
               style={[
                 textStyle,
-                styles.textArea,
+                styles.valueText,
                 {
                   color: primaryColor,
-                  borderColor: error ? "red" : primaryColor,
+                  padding: 0,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  margin: 0,
+                  marginTop: 0,
+                  marginBottom: 0,
+                  includeFontPadding: false,
+                  verticalAlign: "top",
                 },
               ]}
               value={value}
@@ -120,25 +141,31 @@ const OptionTextAreaEdit: React.FC<Props> = ({
               multiline
               numberOfLines={numberOfLines}
               placeholder={placeholder}
-              placeholderTextColor={primaryColor}
+              placeholderTextColor={primaryColor + "66"}
               textAlignVertical="top"
+              scrollEnabled={false}
+              selection={selection}
+              onSelectionChange={() => selection && setSelection(undefined)}
             />
           ) : (
             <Text
               style={[
                 textStyle,
                 styles.valueText,
-                { color: primaryColor },
+                {
+                  color: primaryColor,
+                  includeFontPadding: false,
+                },
                 !value && styles.placeholderText,
               ]}
             >
               {value || placeholder}
             </Text>
           )}
-        </View>
+        </ScrollView>
 
       </View>
-    </Pressable>
+    </View>
   );
 };
 
@@ -190,13 +217,6 @@ const styles = StyleSheet.create({
   },
   textAreaRow: {
     width: "100%",
-  },
-  textArea: {
-    fontSize: 14,
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 8,
-    minHeight: 80,
   },
   valueText: {
     fontSize: 14,

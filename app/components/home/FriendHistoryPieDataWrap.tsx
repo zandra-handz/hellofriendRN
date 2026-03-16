@@ -1,15 +1,13 @@
 import { View } from "react-native";
-import React, { useCallback, useState, useEffect, useMemo } from "react";
-// import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import React, { useCallback, useState, useMemo } from "react";
 import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
-// import { useHelloes } from "@/src/context/HelloesContext";
 import useHelloes from "@/src/hooks/useHelloes";
+import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
-import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
 import FriendHistoryModal from "../headers/FriendHistoryModal";
-import manualGradientColors from "@/app/styles/StaticColors";
-// import { useFriendList } from "@/src/context/FriendListContext";
+import buildPieChart from "@/src/hooks/utils_buildPieChart";
+
 type Props = {
   chartRadius: number;
   chartBorder: number;
@@ -17,6 +15,7 @@ type Props = {
   labelsSize: number;
   showLabels: boolean;
 };
+
 const FriendHistoryPieDataWrap = React.memo(
   ({
     userId,
@@ -27,70 +26,38 @@ const FriendHistoryPieDataWrap = React.memo(
     labelsSize = 9,
     showLabels = false,
     selectedFriendName,
-    primaryColor, 
+    primaryColor,
     primaryOverlayColor,
     darkerOverlayBackgroundColor,
     themeColors,
   }: Props) => {
-    const { helloesList } = useHelloes({ userId: userId, friendId: friendId});
-    // const { friendList } = useFriendList();
-     const { selectedFriendStats } = useSelectedFriendStats({
-    userId: userId, friendId: friendId, friendIsReady: true, enabled: true
-  });
-     const [largeFriendChartVisible, setLargeFriendChartVisible] =
-      useState(false);
+    const { helloesList } = useHelloes({ userId: userId, friendId: friendId });
+    const { friendCategoryColorsMap } = useFriendCategoryColors();
 
-    const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
-
-    const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
-      useState(false);
-
-    const { categoryHistorySizes } = useStatsSortingFunctions({
-      listData: selectedFriendStats,
+    const {
+      selectedFriendStats,
+      sortedList,
+      hasAnyCapsules,
+    } = useSelectedFriendStats({
+      userId: userId,
+      friendId: friendId,
+      friendIsReady: true,
+      enabled: true,
     });
 
-    useEffect(() => {
-      if (selectedFriendStats) {
-        let categories = categoryHistorySizes();
-
-        setFriendHistorySortedList(categories.sortedList);
-        setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);
-      }
-    }, [selectedFriendStats]);
+    const [largeFriendChartVisible, setLargeFriendChartVisible] = useState(false);
 
     const colors = useMemo(() => {
-      if (!friendHistorySortedList) return [];
-
-      const count = friendHistorySortedList.filter(
-        (item) => Number(item.size) > 0
-      ).length;
-      const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
-      const rgbToHex = (rgb) =>
-        "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
-
-      const start = hexToRgb(manualGradientColors.darkColor);
-      const end = hexToRgb(themeColors.darkColor);
-
-      return Array.from({ length: count }, (_, i) => {
-        const t = i / Math.max(count - 1, 1);
-        const interpolated = start.map((s, j) =>
-          Math.round(s + (end[j] - s) * t)
-        );
-        return rgbToHex(interpolated);
-      });
-    }, [
-      friendHistorySortedList,
-      manualGradientColors.darkColor,
-      themeColors.darkColor,
-    ]);
+      if (!sortedList) return [];
+      return sortedList
+        .filter((item) => Number(item.size) > 0)
+        .map((item) => friendCategoryColorsMap[item.user_category] || "#888888");
+    }, [sortedList, friendCategoryColorsMap]);
 
     const seriesData = useMemo(() => {
-      if (!friendHistorySortedList) return;
-
-      const dataCountList = friendHistorySortedList.filter(
-        (item) => Number(item.size) > 0
-      );
-      return dataCountList.map((item, index) => ({
+      if (!sortedList) return [];
+      const nonZero = sortedList.filter((item) => Number(item.size) > 0);
+      return nonZero.map((item, index) => ({
         ...item,
         label: {
           text: item.name.slice(0, 4),
@@ -100,7 +67,7 @@ const FriendHistoryPieDataWrap = React.memo(
         },
         color: colors[index],
       }));
-    }, [friendHistorySortedList, colors, primaryColor, labelsSize]);
+    }, [sortedList, colors, primaryColor, labelsSize]);
 
     const handleOpenLargeChart = useCallback(() => {
       setLargeFriendChartVisible(true);
@@ -114,17 +81,15 @@ const FriendHistoryPieDataWrap = React.memo(
       <>
         {selectedFriendStats &&
           selectedFriendStats.length > 0 &&
-          friendHistorySortedList &&
-          friendHistoryHasAnyCapsules && (
+          sortedList &&
+          hasAnyCapsules && (
             <View
               style={{
                 width: chartRadius * 2 + chartBorder * 2,
                 height: "100%",
               }}
             >
-              <GlobalPressable 
-                onPress={handleOpenLargeChart}
-              >
+              <GlobalPressable onPress={handleOpenLargeChart}>
                 <View
                   style={{
                     borderRadius: 999,
@@ -135,17 +100,14 @@ const FriendHistoryPieDataWrap = React.memo(
                     borderColor: chartBorderColor,
                   }}
                 >
-                  {friendHistorySortedList && (
+                  {sortedList && (
                     <FriendHistoryMiniPie
-                      darkerOverlayBackgroundColor={
-                        darkerOverlayBackgroundColor
-                      }
+                      darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
                       primaryColor={primaryColor}
                       primaryOverlayColor={primaryOverlayColor}
-
                       colors={colors}
                       seriesData={seriesData}
-                      data={friendHistorySortedList}
+                      data={sortedList}
                       showLabels={showLabels}
                       listData={selectedFriendStats}
                       radius={chartRadius}
@@ -160,14 +122,13 @@ const FriendHistoryPieDataWrap = React.memo(
         {largeFriendChartVisible && (
           <View>
             <FriendHistoryModal
-            userId={userId}
+              userId={userId}
               friendId={friendId}
               helloesList={helloesList}
-                          themeColors={themeColors} 
+              themeColors={themeColors}
               darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
               primaryColor={primaryColor}
               primaryOverlayColor={primaryOverlayColor}
-        
               seriesData={seriesData}
               isVisible={largeFriendChartVisible}
               closeModal={handleCloseLargeChart}

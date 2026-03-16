@@ -1,63 +1,39 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import React from "react";  
+import OptionListItem from "./OptionListItem";
 type Props = {
   item: object;
   index: number;
   friendName: string;
 };
 
-const UserHistoryMomentItem = ({ item, index, friendName, primaryColor='orange' }: Props) => {
+const UserHistoryMomentItem = ({ item, index, friendName, primaryColor='orange', textStyle }: Props) => {
  
   return (
-    <View
-      style={[
-        styles.momentCheckboxContainer,
-        {
-          paddingBottom: 10,
-          paddingTop: 10,
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: primaryColor, 
-        },
-      ]}
-    >
-      <View style={styles.momentItemTextContainer}>
-        <View style={styles.checkboxContainer}>
-          <MaterialCommunityIcons
-            name={"leaf"}
-            size={24}
-            color={primaryColor}
-          />
-        </View>
-
-        <View style={{ width: "100%", flexShrink: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-
-              width: "100%",
-            }}
-          >
-            <Text
-              style={[
-                styles.momentItemText, 
-                { color: primaryColor, fontFamily: "Poppins-Bold" },
-              ]}
-            >
-              @ {friendName} on {item.formattedDate}
-            </Text>
-          </View>
-          <Text style={[styles.momentItemText, {color: primaryColor}]}>
-            {item.capsule}
-          </Text>
-        </View>
-      </View>
-    </View>
+<OptionListItem
+  sublabel={item.capsule}
+  primaryColor={primaryColor}
+  backgroundColor="transparent"
+  buttonColor="transparent"
+>
+  <Text style={{ fontFamily: "SpaceGrotesk-Bold", fontSize: 11, color: primaryColor, opacity: 0.45 }}>
+    @ {friendName}
+    <Text style={{ fontFamily: "SpaceGrotesk-Regular" }}>
+      {" "}on {item.formattedDate}
+    </Text>
+  </Text>
+</OptionListItem>
   );
 };
+
+  // <OptionListItem
+  //   label={`@ ${friendName} on ${item.formattedDate}`}
+  //   sublabel={item.capsule}
+  //   primaryColor={primaryColor}
+  //   backgroundColor="transparent"
+  //   buttonColor="transparent"
+  //   // textStyle={textStyle}
+  // />
 
 // Just for list item (copy pasta'd this from CategoryFriendHistoryModal)
 const styles = StyleSheet.create({

@@ -18,16 +18,19 @@ const ScreenCategories = ({}) => {
   const { lightDarkTheme } = useLDTheme();
   const { navigateBack } = useAppNavigations();
   const { userCategories } = useCategories({ userId: user.id });
-  const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory({ userId: user.id });
+  const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory(
+    { userId: user.id },
+  );
 
   const [showAdd, setShowAdd] = useState(false);
- 
-const [expanded, setExpanded] = useState(false);
+
+  const [expanded, setExpanded] = useState(false);
   const expandedIdRef = useRef<number | null>(null);
 
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;
   const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
 
   const maxStatus = useMemo(() => {
     return `${userCategories.length} / ${userCategories[0].max_active}`;
@@ -57,10 +60,13 @@ const [expanded, setExpanded] = useState(false);
     }
   };
   useEffect(() => {
-  showModalMessage({
-    title: "Manage your categories",
-    body: "Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts"})
-}, []);
+    setTimeout(() => {
+      showModalMessage({
+        title: "Manage your categories",
+        body: "Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts",
+      });
+    }, 700);
+  }, []);
 
   return (
     <>
@@ -107,13 +113,15 @@ const [expanded, setExpanded] = useState(false);
             onPress={(id) => console.log("pressed", id)}
             onLongPress={(id) => console.log("long pressed", id)}
             itemColor={textColor}
+            backgroundColor={backgroundColor}
             backgroundOverlayColor={lightDarkTheme.overlayBackground}
             selectedBorderColor={manualGradientColors.lightColor}
+            subWelcomeTextStyle={subWelcomeTextStyle}
             isAddingNew={showAdd}
-          onExpandedChange={(id) => {
-  expandedIdRef.current = id;
-  setExpanded(id !== null);
-}}
+            onExpandedChange={(id) => {
+              expandedIdRef.current = id;
+              setExpanded(id !== null);
+            }}
           />
         </View>
       </SafeAreaView>

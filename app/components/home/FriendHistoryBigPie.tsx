@@ -1,12 +1,12 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSpring,
-} from "react-native-reanimated";
-import Pie from "../headers/Pie";
+} from "react-native-reanimated"; 
+import AnimatedPieChartWithCallouts from "../headers/AnimatedPieChartWithCallouts";
 
 type Props = {
   listData: object[];
@@ -67,48 +67,49 @@ const FriendHistoryBigPie = ({
     }
   }, [viewCategoryId]);
 
-  const pieScaleStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { scale: pieScale.value },
-        { translateX: pieX.value },
-        { translateY: pieY.value },
-      ],
-    };
-  });
+ 
 
   return (
     <>
       <Animated.View
         style={[
-          pieScaleStyle,
+          // pieScaleStyle,
           {
-            height: !viewCategoryId ? radius * 2 : radius,
-            flexShrink: 1,
-            width: "100%",
-            //  marginHorizontal: 10,
-            alignItems: "center",
-            flexDirection: "column",
-            //  backgroundColor: "orange",
-          },
+            // height: !viewCategoryId ? radius * 2 : radius,
+               height:   radius * 2 ,
+          }, styles.pieWrapper,
         ]}
       >
-        <Pie
+        <AnimatedPieChartWithCallouts
+          duration={400}
           darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
           primaryColor={primaryColor}
           primaryOverlayColor={primaryOverlayColor}
           welcomeTextStyle={welcomeTextStyle}
           subWelcomeTextStyle={subWelcomeTextStyle}
-          seriesData={seriesData}
-          showPercentages={showPercentages}
+          data={seriesData}
           showLabels={showLabels}
-          widthAndHeight={radius * 2}
+          showPercentages={showPercentages}
           labelsSize={labelsSize}
-          onSectionPress={handleCategoryPress}
+          size={radius * 2}
+          radius={radius}
+          labelLayout={!viewCategoryId ? "" : ""}
+          selectedCategoryId={viewCategoryId}
+          onSectionPress={handleCategoryPress ? handleCategoryPress : null}
         />
       </Animated.View>
     </>
   );
 };
+
+
+const styles = StyleSheet.create({
+  pieWrapper: {
+    flexShrink: 1,
+    width: "100%",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+});
 
 export default FriendHistoryBigPie;

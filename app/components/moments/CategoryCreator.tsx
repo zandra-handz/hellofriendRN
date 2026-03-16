@@ -10,8 +10,7 @@ import useCategories from "@/src/hooks/useCategories";
 import OptionContainer from "../headers/OptionContainer";
 import BouncyEntrance from "../headers/BouncyEntrance";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import CategoryButtonForCreator from "./CategoryButtonForCreator";
-import { useCategoryColors } from "@/src/context/CategoryColorsContext";
+import CategoryButtonForCreator from "./CategoryButtonForCreator"; 
 import ValueSlider from "../friends/ValueSlider";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 
@@ -54,17 +53,17 @@ const CategoryCreator = ({
   scoresObject,
   handleScoreChange,
 }: Props) => {
-  const { categoryColors, handleSetCategoryColors } = useCategoryColors();
+ 
 
   const categoryColorsMap = useMemo(() => {
-    if (!categoryColors || !Array.isArray(categoryColors)) {
+    // if (!categoryColors || !Array.isArray(categoryColors)) {
       return {};
-    }
+    // }
 
-    return Object.fromEntries(
-      categoryColors.map(({ user_category, color }) => [user_category, color]),
-    );
-  }, [categoryColors]);
+    // return Object.fromEntries(
+    //   categoryColors.map(({ user_category, color }) => [user_category, color]),
+    // );
+  }, [ ]);
 
   const { userCategories } = useCategories({ userId: userId });
 

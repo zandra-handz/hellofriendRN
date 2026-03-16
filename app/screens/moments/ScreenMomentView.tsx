@@ -18,33 +18,23 @@ import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 import SvgIcon from "@/app/styles/SvgIcons";
-// import { generateGradientColorsMap } from "@/src/hooks/GenerateGradientColorsMapUtil";
-import { useCategoryColors } from "@/src/context/CategoryColorsContext";
+ 
 
 const ScreenMomentView = () => {
   const route = useRoute();
   const currentIndex = route.params?.index ?? null;
 
   const { user } = useUser();
-  const { selectedFriend } = useSelectedFriend();
-  // const { userCategories } = useCategories();
-  // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
+  const { selectedFriend } = useSelectedFriend(); 
   const { lightDarkTheme } = useLDTheme();
-  const { capsuleList } = useCapsuleList();
-  const { categoryColors, handleSetCategoryColors} = useCategoryColors();
+  const { capsuleList } = useCapsuleList(); 
 
   const { handlePreAddMoment, preAddMomentMutation } = usePreAddMoment({
     userId: user?.id,
     friendId: selectedFriend?.id,
   });
 
-  
-  //   useEffect(() => {
-  //   if (preAddMomentMutation.isSuccess) {
-  //     console.log('use effect~~~~~~~~~~~~!')
-  //     showFlashMessage(`Moment added!`, false, 1000);
-  //   }
-  // }, [preAddMomentMutation.isSuccess]);
+   
 
       useEffect(() => {
     if (preAddMomentMutation.isError) { 
@@ -60,16 +50,7 @@ const ScreenMomentView = () => {
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
 
   
-const categoryColorsMap = useMemo(() => {
-  if (!categoryColors || !Array.isArray(categoryColors)) {
-    // fallback to empty object if data is not ready
-    return {};
-  }
-
-  return Object.fromEntries(
-    categoryColors.map(({ user_category, color }) => [user_category, color])
-  );
-}, [categoryColors]);
+ 
 
   
 
@@ -119,13 +100,12 @@ const categoryColorsMap = useMemo(() => {
       {selectedFriend?.id &&
         !loadingDash &&
         capsuleList?.length &&
-        categoryColorsMap && (
+      (
           <CarouselSliderMoments
             lightDarkTheme={lightDarkTheme}
             userId={user?.id}
             friendId={selectedFriend?.id}
-            initialIndex={currentIndex}
-            categoryColorsMap={categoryColorsMap}
+            initialIndex={currentIndex} 
             data={capsuleList}
             handlePreAddMoment={saveToHello}
             children={MomentViewPage}

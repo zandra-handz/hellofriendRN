@@ -1,129 +1,129 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react";
-import { AppFontStyles } from "@/app/styles/AppFonts";
+import React, { useState, useMemo } from "react";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-// import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TextHeader from "@/app/components/appwide/format/TextHeader";
+import useUserStats from "@/src/hooks/useUserStats";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import UserCategoryHistoryList from "@/app/components/headers/UserCategoryHistoryList";
+import buildPieChart from "@/src/hooks/utils_buildPieChart";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import TreeModalBigButtonHistory from "@/app/components/alerts/TreeModalBigButtonHistory";
-import FriendHistoryPieDataWrap from "@/app/components/home/FriendHistoryPieDataWrap";
-import UserHistoryPieDataWrap from "@/app/components/home/UserHistoryPieDataWrap";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+import UserHistoryBigPie from "@/app/components/home/UserHistoryBigPie";
+
 type Props = {};
 
 const ScreenHistory = (props: Props) => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
 
-  const { navigateBack } = useAppNavigations();
+  const { stats, sortedList, hasAnyCapsules, statsCategoryColorsMap } =
+    useUserStats({
+      userId: user.id,
+      isInitializing: false,
+      enabled: true,
+    });
 
-  const { selectedFriend } = useSelectedFriend();
+  const [userHistoryHasAnyCapsules, setUserHistoryHasAnyCapsules] =
+    useState(false);
 
-  const SMALL_CHART_RADIUS = 30;
-  const SMALL_CHART_BORDER = 3;
+  const [viewCategoryId, setViewCategoryId] = useState(undefined);
+
+  const handleUpDrillCategoryId = (categoryId) => {
+    if (categoryId) {
+      setViewCategoryId(categoryId);
+    } else {
+      setViewCategoryId(null);
+    }
+  };
+
+  const backgroundColor = lightDarkTheme.primaryBackground;
+  const textColor = lightDarkTheme.primaryText;
+
+  const pieLabelSize = 9;
+  const pieLabelColor = textColor;
+
+  const pieData = useMemo(
+    () =>
+      buildPieChart({
+        sortedList: sortedList,
+        colorsMap: statsCategoryColorsMap,
+        labelColor: pieLabelColor,
+        labelSize: pieLabelSize,
+      }),
+    [sortedList, statsCategoryColorsMap, pieLabelColor, pieLabelSize],
+  );
+
+  const welcomeTextStyle = AppFontStyles.welcomeText;
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+
+  const headerLabel = "Top Categories";
 
   return (
     <>
-      <SafeViewAndGradientBackground
-        friendColorLight={selectedFriend?.lightColor}
-        friendColorDark={selectedFriend?.darkColor}
-        backgroundOverlayColor={lightDarkTheme.primaryBackground}
-        friendId={selectedFriend?.id}
-        backgroundOverlayHeight={"120%"}
-        addColorChangeDelay={true}
-        forceFullOpacity={true}
-        useSolidOverlay={false}
-        useOverlayFade={false}
-        includeBackgroundOverlay={true}
-        backgroundTransparentOverlayColor={lightDarkTheme.primaryBackground}
-        backgroundOverlayBottomRadius={0}
-        style={{ flex: 1 }}
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: backgroundColor,
+          paddingHorizontal: 0,
+        }}
       >
-        <View style={styles.innerContainer}>
-          <Text
-            numberOfLines={2}
-            style={[
-              AppFontStyles.welcomeText,
-              { color: lightDarkTheme.primaryText, fontSize: 22 },
-            ]}
-          >
-            Hello history for {selectedFriend?.name}
-          </Text>
-        </View>
-
-        <View
-          style={styles.outerPieWrapper}
-        >
-          <FriendHistoryPieDataWrap
-            userId={user?.id}
-            friendId={selectedFriend?.id}
-            selectedFriendName={selectedFriend?.name}
-            primaryColor={lightDarkTheme.primaryText}
-            primaryOverlayColor={lightDarkTheme.primaryOverlay}
-            darkerOverlayBackgroundColor={
-              lightDarkTheme.darkerOverlayBackgroundColor
-            }
-            welcomeTextStyle={AppFontStyles.welcomeText}
-            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-            themeColors={{
-              lightColor: selectedFriend.lightColor,
-              darkColor: selectedFriend.darkColor,
-              fontColor: selectedFriend.fontColor,
-              fontColorSecondary: selectedFriend.fontColorSecondary,
-            }}
-            chartBorder={SMALL_CHART_BORDER}
-            chartBorderColor={lightDarkTheme.primaryBackground}
-            showLabels={false}
-            chartRadius={SMALL_CHART_RADIUS}
-          />
-          <UserHistoryPieDataWrap
-            userId={user?.id}
-            friendStyle={{
-              lightColor: selectedFriend.lightColor,
-              darkColor: selectedFriend.darkColor,
-              fontColor: selectedFriend.fontColor,
-              fontColorSecondary: selectedFriend.fontColorSecondary,
-            }}
-            primaryColor={lightDarkTheme.primaryText}
-            primaryOverlayColor={lightDarkTheme.primaryOverlay}
-            darkerOverlayBackgroundColor={
-              lightDarkTheme.darkerOverlayBackgroundColor
-            }
-            welcomeTextStyle={AppFontStyles.welcomeText}
-            subWelcomeTextStyle={AppFontStyles.subWelcomeText}
-            chartBorder={SMALL_CHART_BORDER}
-            chartBorderColor={lightDarkTheme.primaryBackground}
-            showLabels={false}
-            chartRadius={SMALL_CHART_RADIUS}
-          />
-        </View>
-
-        <TreeModalBigButtonHistory
-          height={90}
-          safeViewPaddingBottom={0}
-          themeColors={{
-            lightColor: selectedFriend.lightColor,
-            darkColor: selectedFriend.darkColor,
-            fontColor: selectedFriend.fontColor,
-            fontColorSecondary: selectedFriend.fontColorSecondary,
-          }}
-          label={"History"}
-          subLabel={"Sub label here"}
-          labelColor={"hotpink"}
-          onLeftPress={navigateBack}
-          onMainPress={() => console.log("main press!")}
-          onRightPress={() => console.log("right press!")}
+        <TextHeader
+          label={headerLabel}
+          color={textColor}
+          fontStyle={welcomeTextStyle}
+          showNext={false}
+          nextEnabled={false}
         />
-      </SafeViewAndGradientBackground>
+
+        {stats && (
+          <View style={styles.outerPieWrapper}>
+            <UserHistoryBigPie
+              upDrillCategoryId={handleUpDrillCategoryId}
+              showPercentages={true}
+              listData={stats}
+              // radius={180}
+              radius={110}
+              labelsSize={pieLabelSize}
+              showFooterLabel={false}
+              seriesData={pieData}
+              darkerOverlayBackgroundColor={
+                lightDarkTheme.darkerGlassBackground
+              }
+              primaryColor={textColor}
+              primaryOverlayColor={"transparent"}
+              welcomeTextStyle={welcomeTextStyle}
+              subWelcomeTextStyle={subWelcomeTextStyle}
+            />
+            {viewCategoryId && (
+              <Animated.View
+                entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
+                exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
+                style={{
+                    paddingTop: 40,
+                  height: viewCategoryId ? "40%" : "0%",
+                  flexGrow: 1,
+                  width: "100%",
+                }}
+              >
+                <UserCategoryHistoryList
+                  userId={user.id}
+                  categoryId={viewCategoryId}
+                  primaryColor={textColor}
+                />
+              </Animated.View>
+            )}
+          </View>
+        )}
+      </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   innerContainer: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 0,
     paddingVertical: 10,
     flexDirection: "row",
     justifyContent: "flex-start",
@@ -134,10 +134,8 @@ const styles = StyleSheet.create({
   },
   outerPieWrapper: {
     width: "100%",
-    height: 100,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "space-around",
+    flex: 1,
+    paddingBottom: 30,
   },
 });
 

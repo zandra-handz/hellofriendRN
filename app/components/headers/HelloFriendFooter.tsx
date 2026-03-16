@@ -23,7 +23,7 @@ type Props = {
   username: string;
   lightDarkTheme: LDTheme; 
 };
-const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
+const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lightDarkTheme }: Props) => {
 
   const { onSignOut } = useSignOut(); 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -123,7 +123,7 @@ const HelloFriendFooter = ({ userId, username, lightDarkTheme }: Props) => {
   };
 
   const RenderCategoryButton = useCallback(
-    () => <CategoryFooterButton onPress={() => handleCenterButtonToggle()} />,
+    () => <CategoryFooterButton skiaFontLarge={skiaFontSmall} textColor={primaryColor} onPress={() => handleCenterButtonToggle()} />,
     [], // was theme colors but I'm not sure why
   );
 

@@ -30,7 +30,7 @@ type Props = {
   textColor: string;
 };
 
-const AnimatedClimber = ({ total, skiaFont, textColor }: Props) => {
+const AnimatedClimber = ({ total, skiaFont, textColor , containerStyle}: Props) => {
   const totalValue = useSharedValue(0);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const AnimatedClimber = ({ total, skiaFont, textColor }: Props) => {
   if (!skiaFont) return null;
 
   return (
-    <View pointerEvents="none" style={styles.container}>
+    <View pointerEvents="none" style={containerStyle}>
       <Canvas pointerEvents="none" style={styles.canvas}>
         <Group>
           {/* Shadow (offset via x/y) */}
@@ -132,15 +132,15 @@ const AnimatedClimber = ({ total, skiaFont, textColor }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    top: -700,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  // container: {
+  //   position: "absolute",
+  //   top: -700,
+  //   left: 0,
+  //   right: 0,
+  //   bottom: 0,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
   canvas: {
     width: CANVAS_WIDTH,
     height: CANVAS_HEIGHT,

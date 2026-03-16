@@ -31,8 +31,7 @@ import {
 } from "./app/components/appwide/button/showSpinner";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import * as SplashScreen from "expo-splash-screen";
-import useNotificationsRegistration from "./src/hooks/useNotificationsRegistration";
+import * as SplashScreen from "expo-splash-screen"; 
 import Constants from "expo-constants";
 import {
   NavigationContainer,
@@ -40,7 +39,7 @@ import {
 } from "@react-navigation/native";
 
 import AuthActionsContext, {
-  useAuthActions,
+   
 } from "./src/context/AuthActionsContext";
 import { FriendCategoryColorsProvider } from "./src/context/FriendCategoryColorsContext";
 import { RootSiblingParent } from "react-native-root-siblings";
@@ -49,8 +48,7 @@ import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
-import { LDThemeProvider } from "./src/context/LDThemeContext";
-import { CategoryColorsProvider } from "./src/context/CategoryColorsContext";
+import { LDThemeProvider } from "./src/context/LDThemeContext"; 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import * as Notifications from "expo-notifications";
@@ -67,6 +65,8 @@ import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
 import ScreenReload from "./app/screens/helloes/ScreenReload";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
+
+import ScreenFriendHistory from "./app/screens/helloes/ScreenFriendHistory";
 import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
 import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
@@ -173,7 +173,7 @@ export default Sentry.wrap(function App() {
   });
 
   const skiaFontLarge = useFont(Poppins_400Regular, 34);
-  const skiaFontSmall = useFont(Poppins_400Regular, 14);
+  const skiaFontSmall = useFont(Poppins_400Regular, 20);
 
   useEffect(() => {
     async function requestPermissions() {
@@ -429,6 +429,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
               animation: "none",
             }}
           />
+          <Stack.Screen
+            name="History"
+            component={ScreenHistory}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
@@ -516,10 +521,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           component={ScreenImageView}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
-          name="History"
-          component={ScreenHistory}
-          options={{ headerShown: false }}
+          name="FriendHistory"
+          component={ScreenFriendHistory}
+          options={{ headerShown: false, animation: "none" }}
         />
         <Stack.Screen
           name="Helloes"
@@ -551,11 +557,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           component={ScreenLocationSearch}
           options={{ headerShown: false }}
         /> */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name="MidpointLocationSearch"
           component={ScreenMidpointLocationSearch}
           options={{ headerShown: false }}
-        />
+        /> */}
         <Stack.Screen
           name="AddImage"
           component={ScreenAddImage}
@@ -705,13 +711,11 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
           <ShareIntentHandler />
           <NetworkStatusHandler />
           <DraftSyncHandler />
-          <CategoryColorsProvider>
-            <AutoSelectFriendHandler userId={user?.id} settings={settings} />
-            <SelectedFriendNavigator
-              skiaFontLarge={skiaFontLarge}
-              skiaFontSmall={skiaFontSmall}
-            />
-          </CategoryColorsProvider>
+          <AutoSelectFriendHandler userId={user?.id} settings={settings} />
+          <SelectedFriendNavigator
+            skiaFontLarge={skiaFontLarge}
+            skiaFontSmall={skiaFontSmall}
+          />
         </>
       ) : (
         // : userIsPending ? (

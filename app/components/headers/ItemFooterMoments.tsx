@@ -23,8 +23,7 @@ interface Props {
   currentIndexValue: SharedValue;
   scrollTo: () => void;
   totalItemCount?: number;
-  useButtons: boolean;
-  categoryColorsMap: object;
+  useButtons: boolean; 
   onRightPress: () => void;
   onRightPressSecondAction: () => void;
   friendNumber: string;
@@ -42,8 +41,7 @@ const ItemFooterMoments: React.FC<Props> = ({
   primaryBackground,
   // isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
-  visibilityValue,
-  categoryColorsMap, // in case want category colors
+  visibilityValue, 
   totalItemCount,
   friendNumber,
 }) => {
@@ -198,8 +196,7 @@ const ItemFooterMoments: React.FC<Props> = ({
       >
         <EscortBarMoments
           primaryColor={primaryColor}
-          primaryBackground={primaryBackground}
-          categoryColorsMap={categoryColorsMap}
+          primaryBackground={primaryBackground} 
           onLeftPress={handleScrollToPrev}
           onRightPress={handleScrollToNext}
           onSendPress={handleSendAlert}

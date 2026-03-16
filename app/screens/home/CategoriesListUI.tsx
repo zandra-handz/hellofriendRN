@@ -16,7 +16,9 @@ import Animated, {
 } from "react-native-reanimated";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import CatDescriptEditable from "@/app/components/headers/CatDescriptEditable";
-
+import DeleteCategory from "./DeleteCategory";
+import manualGradientColors from "@/app/styles/StaticColors";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 const EXIT_DURATION = 180;
 const EXPANDED_ITEM_HEIGHT = 400;
 
@@ -31,7 +33,7 @@ type Props = {
   itemColor: string;
   backgroundOverlayColor: string;
   selectedBorderColor: string;
-  isAddingNew?: boolean; 
+  isAddingNew?: boolean;
   onExpandedChange?: (id: number | null) => void;
 };
 
@@ -84,22 +86,23 @@ const AnimatedCategoryItem = ({
   itemColor,
   backgroundOverlayColor,
   selectedBorderColor,
+  backgroundColor,
+  subWelcomeTextStyle,
   isExiting,
   handlePress,
   handleLongPress,
   handlePressIn,
   handlePressOut,
   userId,
-  isAddingNew,  
+  isAddingNew,
+  collapse,
 }: any) => {
   const isSelected = item.id === expandedId;
   const isExpanded = item.id === expandedId;
-  const isOtherExpanded = (expandedId !== null && item.id !== expandedId) || !!isAddingNew;
+  const isOtherExpanded =
+    (expandedId !== null && item.id !== expandedId) || !!isAddingNew;
   const reverseIndex = (userCategoriesLength ?? 0) - 1 - index;
   const scale = useSharedValue(1);
-
-  // add after the expandedIdRef effect
- 
 
   const animatedScaleStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -121,7 +124,10 @@ const AnimatedCategoryItem = ({
 
   return (
     <View style={styles.sectionContainer}>
-      <BouncyEntrance delay={reverseIndex * staggerSpeed} style={{ width: "100%" }}>
+      <BouncyEntrance
+        delay={reverseIndex * staggerSpeed}
+        style={{ width: "100%" }}
+      >
         <ExpandableItem isExpanded={isExpanded}>
           <Animated.View style={animatedScaleStyle}>
             <OptionCategoryButton
@@ -143,16 +149,33 @@ const AnimatedCategoryItem = ({
             />
           </Animated.View>
           {isExpanded && (
-            <View style={{ flex: 1, paddingHorizontal: 0, paddingVertical: 10 }}>
+            <View
+              style={{ flex: 1, paddingHorizontal: 0, paddingVertical: 10 }}
+            >
               <CatDescriptEditable
                 userId={userId}
                 primaryColor={itemColor}
-                subWelcomeTextStyle={[]}
-                nullTextInputView={() => console.log("handling null text input")}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                nullTextInputView={() =>
+                  console.log("handling null text input")
+                }
                 onToggle={() => console.log("toggling text input!")}
                 categoryObject={item}
+                height={EXPANDED_ITEM_HEIGHT - 130}
               />
             </View>
+          )}
+          {isExpanded && (
+            <DeleteCategory
+              userId={userId}
+              categoryId={item.id}
+              categoryName={item.name}
+              textColor={itemColor}
+              backgroundColor={backgroundColor}
+              buttonColor={manualGradientColors.dangerColor}
+              textStyle={subWelcomeTextStyle}
+               onDeleteSuccess={() => collapse(item.id)}
+            />
           )}
         </ExpandableItem>
       </BouncyEntrance>
@@ -169,8 +192,10 @@ const CategoriesListUI = ({
   itemColor,
   backgroundOverlayColor,
   selectedBorderColor,
+  backgroundColor,
+  subWelcomeTextStyle,
   isAddingNew,
-  onExpandedChange
+  onExpandedChange,
 }: Props) => {
   const translateY = useSharedValue(1000);
   const isExiting = useSharedValue(0);
@@ -217,8 +242,8 @@ const CategoriesListUI = ({
     expandedIdRef.current = expandedId;
   });
 
-    useEffect(() => {
-    onExpandedChange?.(expandedId);  // ← add this
+  useEffect(() => {
+    onExpandedChange?.(expandedId); // ← add this
   }, [expandedId]);
 
   const collapse = useCallback((id: number) => {
@@ -277,6 +302,8 @@ const CategoriesListUI = ({
         userCategoriesLength={userCategories?.length}
         staggerSpeed={staggerSpeed}
         itemColor={itemColor}
+        backgroundColor={backgroundColor}
+        subWelcomeTextStyle={subWelcomeTextStyle}
         backgroundOverlayColor={backgroundOverlayColor}
         selectedBorderColor={selectedBorderColor}
         isExiting={isExiting}
@@ -286,6 +313,7 @@ const CategoriesListUI = ({
         handlePressOut={handlePressOut}
         userId={userId}
         isAddingNew={isAddingNew}
+        collapse={collapse}
       />
     ),
     [

@@ -1,12 +1,12 @@
 import { FlatList, StyleSheet } from "react-native";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback,  useMemo } from "react";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
-import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-// import { useFriendList } from "@/src/context/FriendListContext";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
+import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner"; 
  
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
+import { AppFontStyles } from "@/app/styles/AppFonts";
+import { isoDateToWeekdayMonthDay } from "@/src/hooks/utils_dateFormatting";
 
 type Props = {
   categoryId: number;
@@ -29,29 +29,59 @@ const UserCategoryHistoryList = ({
   const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
   const friendList = friendListAndUpcoming?.friends;
 
-  const formatCapsuleCreationDate = (createdOn) => {
-    if (!createdOn) return "";
 
-    const date = new Date(createdOn);
-    const now = new Date();
+  const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
+// const formatCapsuleCreationDate = (dateStr: string) => {
+//   if (!dateStr) return "";
 
-    const isCurrentYear = date.getFullYear() === now.getFullYear();
+//   const [year, month, day] = dateStr.split("-").map(Number);
+//   // Construct with local midnight — no UTC shift
+//   const date = new Date(year, month - 1, day);
+//   const now = new Date();
 
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      ...(isCurrentYear ? {} : { year: "numeric" }),
-    });
-  };
+//   const isCurrentYear = date.getFullYear() === now.getFullYear();
 
+//   return date.toLocaleDateString("en-US", {
+//     weekday: "long",
+//     month: "long",
+//     day: "numeric",
+//     ...(isCurrentYear ? {} : { year: "numeric" }),
+//   });
+// };
+
+  // useEffect(() => {
+
+  //   const capsules = categoryHistory.map((item) => item.capsules)
+  //   console.log(`category h`, capsules);
+
+  // }, [categoryHistory]);
   // do we need to do it this way?
+  // const categoryHistoryFormatted = useMemo(() => {
+  //   return categoryHistory?.map((item) => ({
+  //     ...item,
+  //     formattedDate: formatCapsuleCreationDate(item.created_on),
+  //   }));
+  // }, [categoryHistory]);
+
+  
+
   const categoryHistoryFormatted = useMemo(() => {
-    return categoryHistory?.map((item) => ({
-      ...item,
-      formattedDate: formatCapsuleCreationDate(item.created_on),
-    }));
-  }, [categoryHistory]);
+  if (!categoryHistory) return [];
+
+  return categoryHistory.flatMap((group) =>
+    group.capsules.map((capsule) => ({
+      ...capsule,
+      formattedDate:  isoDateToWeekdayMonthDay(group.hello?.date || capsule.created_on),
+      helloType: group.hello?.type,
+    }))
+  );
+}, [categoryHistory]);
+
+
+  // useEffect(() => {
+  //   console.log(`FORAMTTED CATEGORIES`, categoryHistoryFormatted)
+
+  // }, [categoryHistoryFormatted]);
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
@@ -66,11 +96,12 @@ const UserCategoryHistoryList = ({
         index={index}
         friendName={getFriendNameFromList(item.friend)}
         primaryColor={primaryColor}
+        textStyle={subWelcomeTextStyle}
       />
     ),
     [
       getFriendNameFromList,
-      formatCapsuleCreationDate,
+      // formatCapsuleCreationDate,
       // getHelloDateFromList,
 
       primaryColor,

@@ -11,8 +11,7 @@ import Animated, {
 import ItemFooterMoments from "./headers/ItemFooterMoments"; 
 type Props = {
   initialIndex: number;
-  data: object[];
-  categoryColorsMap: object;
+  data: object[]; 
   useButtons: boolean;
   friendNumber: string;
 };
@@ -23,8 +22,7 @@ const CarouselSliderMoments = ({
   initialIndex,
   lightDarkTheme, 
   handlePreAddMoment,
-  data,
-  categoryColorsMap,
+  data, 
   useButtons = true,
   children: Children,
   onRightPress,
@@ -114,8 +112,7 @@ const CarouselSliderMoments = ({
         } 
         darkGlassBackground={lightDarkTheme.darkGlassBackground}
         userId={userId}
-        friendId={friendId}
-        categoryColorsMap={categoryColorsMap}
+        friendId={friendId} 
         item={item}
         listLength={data?.length || 0}
         index={index}
@@ -128,7 +125,7 @@ const CarouselSliderMoments = ({
         marginKeepAboveFooter={10} //ONLY MOMENT VIEW PAGE HAS THIS PROP RN, this is just to push positioning up a level for readability
       />
     ),
-    [width, height, currentIndex, categoryColorsMap]
+    [width, height, currentIndex ]
   );
 
   return (
@@ -173,8 +170,7 @@ const CarouselSliderMoments = ({
           height={50} // matches escort read only bar inside
           marginBottom={10} // eyeballed to match finalize styling honestly
           visibilityValue={floaterItemsVisibility}
-          currentIndexValue={currentIndex}
-          categoryColorsMap={categoryColorsMap}
+          currentIndexValue={currentIndex} 
           friendNumber={friendNumber}
       
           useButtons={useButtons}

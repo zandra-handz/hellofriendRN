@@ -311,7 +311,7 @@ export const fetchCapsulesHistoryAPI = async ({
     );
    //  console.log(`response from capsules history`, response.data);
     if (response?.data) {
-      // console.log(response.data);
+    
       return response.data; // DRF-style: { count, next, previous, results }
     } else {
       console.log("No data returned from fetchCapsulesHistoryAPI.");

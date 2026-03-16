@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { 
-  StyleSheet,
-  View,
-  ScrollView,
-  DimensionValue,
-} from "react-native";
+import { StyleSheet, View, ScrollView, DimensionValue } from "react-native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 
 import { useDerivedValue, runOnJS } from "react-native-reanimated";
@@ -209,6 +204,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                       total={capsuleList.length}
                       skiaFont={skiaFontLarge}
                       textColor={primaryColor}
+                      containerStyle={styles.aniamtedClimberPosition}
                     />
                   </View>
                 )}
@@ -327,6 +323,15 @@ const styles = StyleSheet.create({
     padding: 6,
     zIndex: 3,
     elevation: 3,
+  },
+  aniamtedClimberPosition: {
+    position: "absolute",
+    top: -700,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   containerOverScrollView: {

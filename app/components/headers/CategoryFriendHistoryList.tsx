@@ -62,9 +62,11 @@ const CategoryFriendHistoryList = ({
 
   const handlePress = useCallback(
     (helloId, momentOriginalId) => () => {
-      if (onViewHelloPress) {
+      // if (onViewHelloPress) {
+
+        console.log('pressed!!!')
         onViewHelloPress(helloId, momentOriginalId);
-      }
+      // }
     },
     [onViewHelloPress]
   );
@@ -97,8 +99,8 @@ const CategoryFriendHistoryList = ({
       <FriendHistoryMomentItem
         item={item}
         index={index}
-        onHelloPress={handlePress}
-        friendId={friendId}
+        onHelloPress={onViewHelloPress}
+       
         friendName={getFriendNameFromList(item.friend)}
         primaryColor={primaryColor}
         helloDate={getHelloDateFromList(item.hello.id)} //hmmmmm backend now returns hello as an object on this. dunno if I like that
@@ -118,25 +120,8 @@ const CategoryFriendHistoryList = ({
     <>
       {categoryHistory && categoryHistory.length > 0 && (
         <FlatList
-          ListHeaderComponent={
-            <View
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                backgroundColor: "teal",
-                height: "auto",
-                // height: 30,
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={[AppFontStyles.subWelcomeText, { color: primaryColor }]}
-              >
-                History {getCapsuleCount(completedCapsuleCount)}
-              </Text>
-            </View>
-          }
-          stickyHeaderIndices={[0]}
+   
+          // stickyHeaderIndices={[0]}
           data={categoryHistory}
           keyExtractor={extractItemKey}
           renderItem={renderMiniMomentItem}

@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
+import StatsCard from "./StatsCard";
 import UpNextCard from "./UpNextCard";
 import { WelcomeCard } from "./HomeWelcomeCard";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
@@ -34,14 +35,14 @@ const getDayLabel = () => {
   return `${day}, ${month} ${date}`;
 };
 
-const ScreenHome = ({ shouldDelayAnimation }) => {
+const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
   const { user } = useUser();
   const { settings } = useUserSettings();
   const queryClient = useQueryClient();
   // const { isOnline } = useNetworkStatus();
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
-  const { navigateToCategories } = useAppNavigations();
+  const { navigateToCategories, navigateToHistory } = useAppNavigations();
   useEffect(() => {
     if (shouldDelayAnimation) {
       setIsDelaying(true);
@@ -199,8 +200,19 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
                     borderRadius={10}
                     borderColor="black"
                   />
+
+                  <View style={{marginBottom: 10}}>
+              
                   <CategoriesCard
                     onPress={navigateToCategories}
+                    backgroundColor={backgroundColor}
+                    textColor={textColor}
+                  />
+                        
+                  </View>
+
+                  <StatsCard
+                    onPress={navigateToHistory}
                     backgroundColor={backgroundColor}
                     textColor={textColor}
                   />
@@ -209,6 +221,8 @@ const ScreenHome = ({ shouldDelayAnimation }) => {
             </>
 
             <HelloFriendFooter
+            skiaFontLarge={skiaFontLarge}
+            skiaFontSmall={skiaFontSmall}
               userId={user.id}
               username={user.username}
               lightDarkTheme={lightDarkTheme}

@@ -10,6 +10,7 @@ export default function CatDescriptEditable({
   subWelcomeTextStyle,
   nullTextInputView,
   categoryObject,
+  height,
   editEnabled = true,
   onToggle,
 }: {
@@ -32,7 +33,8 @@ export default function CatDescriptEditable({
   }, [updateCategoryMutation.isSuccess]);
 
   return (
-    <View style={[styles.container, { borderColor: `${primaryColor}30`, backgroundColor: buttonColor }]}>
+    <View style={[styles.container, {   flex: 1, borderColor: `${primaryColor}30`, backgroundColor: buttonColor }]}>
+    
       <OptionTextAreaEdit
         label=""
         value={text}

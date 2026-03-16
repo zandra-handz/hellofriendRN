@@ -27,7 +27,7 @@ const OutlinedText = ({ text, color, style }: { text: string; color: string; sty
 );
 
 const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
-  const { navigateToHistory } = useAppNavigations();
+  const { navigateToFriendHistory } = useAppNavigations();
   // const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
 
   return (
@@ -46,7 +46,7 @@ const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props)
               <View style={styles.rowSpaceBetween}>
                 <Pressable
                   hitSlop={10}
-                  onPress={navigateToHistory}
+                  onPress={navigateToFriendHistory}
                   style={styles.row}
                 >
                   <View style={styles.iconShadow}>

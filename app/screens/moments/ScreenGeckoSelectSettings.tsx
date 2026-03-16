@@ -181,13 +181,7 @@ const ScreenGeckoSelectSettings = (props: Props) => {
           backgroundColor={lightDarkTheme.primaryBackground}
           isFullscreen={false}
           isVisible={showSelectionModal}
-          headerIcon={
-            <SvgIcon
-              name={"cog-outline"}
-              size={30}
-              color={lightDarkTheme.primaryText}
-            />
-          }
+ 
           questionText="Choose selection mode"
           onClose={closeSelectionModal}
           modalIsTransparent={false}

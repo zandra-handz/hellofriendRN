@@ -5,8 +5,7 @@ import GlobalPressable from "../appwide/button/GlobalPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
 
-type Props = {
-  categoryColorsMap: object;
+type Props = { 
   primaryColor: string;
   primaryBackground: string;
   children: ReactElement;

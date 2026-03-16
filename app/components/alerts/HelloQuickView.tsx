@@ -19,8 +19,8 @@ const HelloQuickView = ({
   friendId,
   momentOriginalId,
   index,
-  primaryColor,
-  themeAheadOfLoading,
+  primaryColor, 
+  lightColor,
 }: Props) => {
   if (!data || !data?.id) {
     return;
@@ -102,7 +102,7 @@ const HelloQuickView = ({
             loading={true}
             spinnerType="circle"
             spinnerSize={SPINNER_SIZE}
-            color={themeAheadOfLoading.lightColor}
+            color={lightColor}
           />
         </View>
       )}

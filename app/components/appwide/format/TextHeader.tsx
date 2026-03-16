@@ -28,17 +28,17 @@ const TextHeader = ({
   nextEnabled = true,
   onBack = () => {},
   onNext = () => {},
-  nextColor='darkgreen',
-  nextDisabledColor='black',
-  nextBackgroundColor='limegreen',
-  nextDisabledBackgroundColor='gray',
-  nextIconName='check',
-  nextDisabledIconName='check',
+  nextColor = "darkgreen",
+  nextDisabledColor = "black",
+  nextBackgroundColor = "limegreen",
+  nextDisabledBackgroundColor = "gray",
+  nextIconName = "check",
+  nextDisabledIconName = "check",
   timing = 200,
-  zIndex = 1
+  zIndex = 1,
 }: Props) => {
   return (
-    <View style={[styles.wrapper, {zIndex: zIndex}]}>
+    <View style={[styles.wrapper, { zIndex: zIndex }]}>
       <View style={styles.leftSideWrapper}>
         <BackButton
           label="Back"
@@ -59,8 +59,8 @@ const TextHeader = ({
         </Text>
       </View>
       {showNext && (
-        <NextButton 
-          color={nextColor} 
+        <NextButton
+          color={nextColor}
           disabledColor={nextDisabledColor}
           backgroundColor={nextBackgroundColor}
           disabledBackgroundColor={nextDisabledBackgroundColor}
@@ -79,18 +79,17 @@ const TextHeader = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    // paddingHorizontal: 20,
-    height: 60,
+    minHeight: 60,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     paddingBottom: 10,
-    // backgroundColor: "blue",
   },
   leftSideWrapper: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignItems: "flex-start",
+    flexShrink: 1,
   },
 });
 
