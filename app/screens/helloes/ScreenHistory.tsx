@@ -122,16 +122,7 @@ const ScreenHistory = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  innerContainer: {
-    paddingHorizontal: 0,
-    paddingVertical: 10,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    borderRadius: 30,
-    height: "auto",
-    marginVertical: 0,
-  },
+ 
   outerPieWrapper: {
     width: "100%",
     flex: 1,

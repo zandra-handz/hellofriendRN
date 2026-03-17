@@ -1,95 +1,106 @@
 import { View } from "react-native";
 import React, { useState } from "react";
-import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
-import MonthModal from "../headers/MonthModal";
+// import MonthModal from "../headers/MonthModal";
 import useHelloesManips from "@/src/hooks/HelloesFunctions/useHelloesManips";
+
+import CalendarLights from "../foranimations/CalendarLights";
+import LoadingPage from "../appwide/spinner/LoadingPage";
+import AppCustomSpinner from "../appwide/format/AppCustomSpinner";
+import AppCustomSpinnerMini from "../appwide/format/AppCustomSpinnerMini";
 import manualGradientColors from "@/app/styles/StaticColors";
+
 type Props = {
-  outerPadding: DimensionValue;
-  combinedData: any;
-  showTopBar: boolean;
-  useBackgroundOverlay: boolean;
+  helloesList: any;
+  friendId: string;
+  themeColors: any;
+  lightDarkTheme: any;
+  useBackgroundOverlay?: boolean;
 };
 
 const CalendarChart = ({
   helloesList,
   friendId,
   useBackgroundOverlay = true,
- 
   themeColors,
   lightDarkTheme,
 }: Props) => {
   const reversedHelloesList = Array.isArray(helloesList)
     ? [...helloesList].reverse()
     : [];
+
   const { combinedData } = useHelloesManips({
     helloesData: reversedHelloesList,
+    //  helloesData: helloesList,
   });
-  const primaryColor = lightDarkTheme.primaryText;
-  const [monthModalVisible, setMonthModalVisible] = useState(false);
-  const [monthData, setMonthData] = useState(null);
 
-  const CALENDAR_HEIGHT = 100;
+  const primaryColor = lightDarkTheme.primaryText;
+
+  const [monthModalVisible, setMonthModalVisible] = useState(false);
+  const [monthData, setMonthData] = useState<any>(null);
+
+  // Slightly taller to support bigger dots
+  const CALENDAR_HEIGHT = 140;
+
   const MONTH_BUTTON_BOTTOM_MARGIN = 0;
   const COMBINED_HEIGHT = CALENDAR_HEIGHT + MONTH_BUTTON_BOTTOM_MARGIN;
 
-  const PADDING = 4;
-
-  const HEIGHT = COMBINED_HEIGHT + PADDING * 2;
-
-  const handleMonthPress = (data) => {
+  const handleMonthPress = (data: any) => {
     setMonthData(data);
     console.log(data);
-    setMonthModalVisible(true);
+    // setMonthModalVisible(true);
   };
 
   return (
-    <View style={{ height: HEIGHT }}>
+    <View>
       <View
-        style={[
-          {
-            overflow: "hidden",
-            height: HEIGHT,
-            padding: PADDING,
-            backgroundColor: useBackgroundOverlay
-              ? lightDarkTheme.overlayBackground
-              : "transparent",
+        style={{
+          overflow: "hidden",
 
-            borderRadius: 20,
-          },
-        ]}
+          // padding: PADDING,
+          backgroundColor: useBackgroundOverlay
+            ? lightDarkTheme.overlayBackground
+            : "transparent",
+          borderRadius: 20,
+          // backgroundColor: 'pink',
+        }}
       >
-        {combinedData && (
-          <HomeScrollCalendarLights
-            helloesList={helloesList}
-            friendId={friendId}
-            primaryColor={primaryColor}
-            themeColors={themeColors} 
-            onMonthPress={handleMonthPress}
-            combinedData={combinedData}
-            itemColor={lightDarkTheme.primaryText}
-            backgroundColor={lightDarkTheme.overlayBackground}
-            // height={70}
-            height={COMBINED_HEIGHT}
-            monthButtonMargin={MONTH_BUTTON_BOTTOM_MARGIN}
-            borderRadius={20}
-          />
-        )}
-        <View style={{ width: "100%", height: 10 }}></View>
+        <View style={{ height: 120,   width: "100%" }}>
+          {combinedData && helloesList && (
+            <CalendarLights
+              themeColors={themeColors}
+              onMonthPress={handleMonthPress}
+              combinedData={combinedData}
+              daySquareBorderColor={primaryColor}
+              height={COMBINED_HEIGHT}
+            />
+          )}
+
+          {!combinedData && ( 
+       
+
+            <AppCustomSpinnerMini
+            color1={manualGradientColors.lightColor}
+            color2={manualGradientColors.darkColor}
+
+            /> 
+          
+          )}
+        </View>
+ 
       </View>
 
-      {monthModalVisible && (
+      {/* {monthModalVisible && (
         <MonthModal
           friendId={friendId}
           helloesList={helloesList}
           manualGradientColors={manualGradientColors}
-          primaryColor={lightDarkTheme.primaryText}
-          themeColors={themeColors} 
+          primaryColor={primaryColor}
+          themeColors={themeColors}
           isVisible={monthModalVisible}
           monthData={monthData}
           closeModal={() => setMonthModalVisible(false)}
         />
-      )}
+      )} */}
     </View>
   );
 };

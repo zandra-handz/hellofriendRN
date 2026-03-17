@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react";  
+import React from "react";
 import OptionListItem from "./OptionListItem";
 type Props = {
   item: object;
@@ -7,33 +7,46 @@ type Props = {
   friendName: string;
 };
 
-const UserHistoryMomentItem = ({ item, index, friendName, primaryColor='orange', textStyle }: Props) => {
- 
+const UserHistoryMomentItem = ({
+  item,
+  index,
+  friendName,
+  primaryColor = "orange",
+  textStyle,
+}: Props) => {
   return (
-<OptionListItem
-  sublabel={item.capsule}
-  primaryColor={primaryColor}
-  backgroundColor="transparent"
-  buttonColor="transparent"
->
-  <Text style={{ fontFamily: "SpaceGrotesk-Bold", fontSize: 11, color: primaryColor, opacity: 0.45 }}>
-    @ {friendName}
-    <Text style={{ fontFamily: "SpaceGrotesk-Regular" }}>
-      {" "}on {item.formattedDate}
-    </Text>
-  </Text>
-</OptionListItem>
+    <OptionListItem
+      sublabel={item.capsule}
+      primaryColor={primaryColor}
+      backgroundColor="transparent"
+      buttonColor="transparent"
+    >
+      <Text
+        style={{
+          fontFamily: "SpaceGrotesk-Bold",
+          fontSize: 11,
+          color: primaryColor,
+          opacity: 0.45,
+        }}
+      >
+        @ {friendName}
+        <Text style={{ fontFamily: "SpaceGrotesk-Regular" }}>
+          {" "}
+          on {item.formattedDate}
+        </Text>
+      </Text>
+    </OptionListItem>
   );
 };
 
-  // <OptionListItem
-  //   label={`@ ${friendName} on ${item.formattedDate}`}
-  //   sublabel={item.capsule}
-  //   primaryColor={primaryColor}
-  //   backgroundColor="transparent"
-  //   buttonColor="transparent"
-  //   // textStyle={textStyle}
-  // />
+// <OptionListItem
+//   label={`@ ${friendName} on ${item.formattedDate}`}
+//   sublabel={item.capsule}
+//   primaryColor={primaryColor}
+//   backgroundColor="transparent"
+//   buttonColor="transparent"
+//   // textStyle={textStyle}
+// />
 
 // Just for list item (copy pasta'd this from CategoryFriendHistoryModal)
 const styles = StyleSheet.create({

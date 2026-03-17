@@ -1,12 +1,7 @@
- 
-
-
 import React from "react";
 import { Canvas, Rect, Shader, Skia, useClock } from "@shopify/react-native-skia";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import { useDerivedValue } from "react-native-reanimated";
-
-const { width, height } = Dimensions.get("window");
 
 const hexToVec3 = (hex) => {
   const cleanHex = hex.replace("#", "");
@@ -16,7 +11,9 @@ const hexToVec3 = (hex) => {
   return `${r.toFixed(4)}, ${g.toFixed(4)}, ${b.toFixed(4)}`;
 };
 
-const SpinnerFive = ({ color1, color2 }) => {
+const CANVAS_SIZE = 150;
+
+const SpinnerFiveMini = ({ color1, color2, size = CANVAS_SIZE }) => {
   const clock = useClock();
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -44,9 +41,8 @@ half4 main(vec2 fragCoord) {
   vec3 startColor = vec3(${color1Converted});
   vec3 endColor   = vec3(${color2Converted});
 
-  // bounding box — only render in center region
   vec2 center = 0.5 * u_resolution;
-  float boxSize = u_resolution.y * 0.3;
+  float boxSize = u_resolution.y * 0.5;
   if (abs(fragCoord.x - center.x) > boxSize || abs(fragCoord.y - center.y) > boxSize) {
     return vec4(0.0);
   }
@@ -54,10 +50,8 @@ half4 main(vec2 fragCoord) {
   vec2 uv = (fragCoord - 0.5 * u_resolution) / u_resolution.y;
   uv = tzb_rotate2dSimple(6., u_time) * uv;
 
-  // for RNSkia - same as SpinnerOne
   float scale = 2.0;
   uv *= scale;
-  // end RNSkia
 
   float regroupSpeed = .14;
   float speed = 3.0;
@@ -101,32 +95,24 @@ half4 main(vec2 fragCoord) {
 `);
 
   if (!source) {
-    console.error("❌ SpinnerFive shader failed to compile");
+    console.error("❌ SpinnerFiveMini shader failed to compile");
     return null;
   }
 
   const uniforms = useDerivedValue(() => ({
     u_time: clock.value / 1000,
-    u_resolution: [width, height],
+    u_resolution: [size, size],
   }));
 
   return (
-    <View
-      style={{
-        padding: 10,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {color1Converted && color2Converted && (
-        <Canvas style={{ width, height }}>
-          <Rect x={0} y={0} width={width} height={height} color="lightblue">
-            <Shader source={source} uniforms={uniforms} />
-          </Rect>
-        </Canvas>
-      )}
+    <View style={{ width: size, height: size }}>
+      <Canvas style={{ width: size, height: size }}>
+        <Rect x={0} y={0} width={size} height={size}>
+          <Shader source={source} uniforms={uniforms} />
+        </Rect>
+      </Canvas>
     </View>
   );
 };
 
-export default SpinnerFive;
+export default SpinnerFiveMini;

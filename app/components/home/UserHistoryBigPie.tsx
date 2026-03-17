@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+import AnimatedPieChartGloopy from "../headers/AnimatedPieChartGloopy";
 import AnimatedPieChartWithCallouts from "../headers/AnimatedPieChartWithCallouts";
 type SeriesItem = {
   user_category: number;
@@ -108,7 +109,7 @@ const UserHistoryBigPie = ({
           }, styles.pieWrapper,
         ]}
       >
-        <AnimatedPieChartWithCallouts
+        <AnimatedPieChartGloopy
           duration={400}
           darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
           primaryColor={primaryColor}

@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated"; 
 import AnimatedPieChartWithCallouts from "../headers/AnimatedPieChartWithCallouts";
+import AnimatedPieChartGloopy from "../headers/AnimatedPieChartGloopy";
 
 type Props = {
   listData: object[];

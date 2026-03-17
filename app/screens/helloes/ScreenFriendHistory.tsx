@@ -78,8 +78,6 @@ const ScreenFriendHistory = (props: Props) => {
     setHelloViewVisible((prev) => !prev);
   };
 
-  
-
   const [helloViewData, setHelloViewData] = useState<{
     helloObject: any;
     momentOriginalId: string | undefined;
@@ -115,30 +113,21 @@ const ScreenFriendHistory = (props: Props) => {
   };
 
   return (
-   
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: backgroundColor,
+      }}
+    >
+      <TextHeader
+        label={headerLabel}
+        color={textColor}
+        fontStyle={welcomeTextStyle}
+        showNext={false}
+        nextEnabled={false} 
+      />
 
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: backgroundColor,
-        }}
-      >
-        <TextHeader
-          label={headerLabel}
-          color={textColor}
-          fontStyle={welcomeTextStyle}
-          showNext={false}
-          nextEnabled={false}
-          // onNext={navigateToAddFriend}
-          // nextIconName={`plus`}
-          // nextDisabledIconName={`plus`}
-          // nextColor={manualGradientColors.homeDarkColor}
-          // nextBackgroundColor={manualGradientColors.lightColor}
-          // nextDisabledColor={backgroundColor}
-          // nextDisabledBackgroundColor={'transparent'}
-        />
-
-                  {helloViewData && helloViewVisible && (
+      {helloViewData && helloViewVisible && (
         <HelloViewModal
           isVisible={helloViewVisible}
           onClose={closeHelloView}
@@ -152,53 +141,50 @@ const ScreenFriendHistory = (props: Props) => {
         />
       )}
 
-        {selectedFriendStats && (
-          <View style={styles.outerPieWrapper}>
-            <FriendHistoryBigPie
-              darkerOverlayBackgroundColor={
-                lightDarkTheme.darkerGlassBackground
-              }
-              primaryColor={textColor}
-              primaryOverlayColor={"transparent"}
-              welcomeTextStyle={welcomeTextStyle}
-              subWelcomeTextStyle={subWelcomeTextStyle}
-              upDrillCategoryId={handleUpDrillCategoryId}
-              showPercentages={true}
-              listData={selectedFriendStats}
-              showLabels={true}
-              radius={110}
-              labelsSize={pieLabelSize}
-              showFooterLabel={false}
-              seriesData={pieData}
-            />
+      {selectedFriendStats && (
+        <View style={styles.outerPieWrapper}>
+          <FriendHistoryBigPie
+            darkerOverlayBackgroundColor={lightDarkTheme.darkerGlassBackground}
+            primaryColor={textColor}
+            primaryOverlayColor={"transparent"}
+            welcomeTextStyle={welcomeTextStyle}
+            subWelcomeTextStyle={subWelcomeTextStyle}
+            upDrillCategoryId={handleUpDrillCategoryId}
+            showPercentages={true}
+            listData={selectedFriendStats}
+            showLabels={true}
+            radius={110}
+            labelsSize={pieLabelSize}
+            showFooterLabel={false}
+            seriesData={pieData}
+          />
 
-            {viewCategoryId && (
-              <Animated.View
-                entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
-                exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
-                style={{
-                  //  backgroundColor: "red",
-                  paddingTop: 40,
-                  height: viewCategoryId ? "40%" : "0%",
-                  flexGrow: 1,
-                  width: "100%",
-                }}
-              >
-                <CategoryFriendHistoryList
-                  userId={user.id}
-                  friendId={selectedFriend.id}
-                  helloesList={helloesList}
-                  categoryId={viewCategoryId}
-                  closeModal={handleFakeClose}
-                  onViewHelloPress={handleViewHello}
-                  primaryColor={textColor}
-                />
-              </Animated.View>
-            )}
-          </View>
-        )}
-      </SafeAreaView>
- 
+          {viewCategoryId && (
+            <Animated.View
+              entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
+              exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
+              style={{
+                //  backgroundColor: "red",
+                paddingTop: 40,
+                height: viewCategoryId ? "40%" : "0%",
+                flexGrow: 1,
+                width: "100%",
+              }}
+            >
+              <CategoryFriendHistoryList
+                userId={user.id}
+                friendId={selectedFriend.id}
+                helloesList={helloesList}
+                categoryId={viewCategoryId}
+                closeModal={handleFakeClose}
+                onViewHelloPress={handleViewHello}
+                primaryColor={textColor}
+              />
+            </Animated.View>
+          )}
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 

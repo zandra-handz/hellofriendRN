@@ -1,7 +1,8 @@
 import { View, Text, DimensionValue, StyleSheet } from "react-native";
 import React from "react"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+import SvgIcon from "@/app/styles/SvgIcons";
+import OptionListItem from "../headers/OptionListItem";
 type Props = {
   helloData: object;
   combinedHeight: DimensionValue;
@@ -37,41 +38,14 @@ const HelloItem = ({
   subWelcomeTextStyle,
 }: Props) => { 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          height: itemHeight,
-          marginBottom: bottomMargin,
-          // backgroundColor:
-          //   index % 2 === 0
-          //     ? themeStyles.primaryBackground.backgroundColor
-          //     : themeStyles.overlayBackgroundColor.backgroundColor
-        },
-      ]}
-    >
-      <View style={{ flexDirection: "column" }}>
-        <Text
-          style={[ 
-            welcomeTextStyle,
-            { color: primaryColor, lineHeight: 22, fontSize: 18 },
-          ]}
-        >
-          {formatDate(helloData.date)}
-        </Text>
-        <View style={{flexDirection: 'row', width: '90%'}}>
-          <MaterialCommunityIcons
-          name={"map-marker"}
-          color={primaryColor}
-          size={20}/>
-        <Text numberOfLines={1} style={[  subWelcomeTextStyle, { color: primaryColor}]}>
-          {helloData.type}
-          {helloData.location_name && " at " + helloData.location_name}
-        </Text>
-        
-        </View>
-      </View>
-    </View>
+<OptionListItem
+  label={formatDate(helloData.date)}
+  sublabel={helloData.type + (helloData.location_name ? " at " + helloData.location_name : "")}
+  primaryColor={primaryColor}
+  backgroundColor="transparent"
+  buttonColor="transparent"
+  icon={<SvgIcon name="calendar" color={primaryColor} size={20} />}
+/>
   );
 };
 

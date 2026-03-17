@@ -28,8 +28,7 @@ interface Props {
   index: number;
   width: DimensionValue;
   height: DimensionValue;
-  marginBottom: number;
-  categoryColorsMap: object;
+  marginBottom: number; 
   currentIndexValue: SharedValue;
   cardScaleValue: SharedValue;
 
@@ -47,8 +46,7 @@ const MomentViewPage: React.FC<Props> = ({
   index,
   width,
   height,
-  marginBottom,
-  categoryColorsMap,
+  marginBottom, 
   currentIndexValue,
   cardScaleValue,
   handlePreAddMoment,
@@ -96,16 +94,13 @@ const MomentViewPage: React.FC<Props> = ({
 
   const [currentIndex, setCurrentIndex] = useState();
 
+ 
 
-
-
-  if (!item || !categoryColorsMap || !item.user_category) {
+  if (!item   || !item.user_category) {
     return null; // or a fallback component
   }
 
-  const categoryColor = item?.user_category
-    ? (categoryColorsMap[String(item.user_category)] ?? "#ccc")
-    : "#ccc";
+  const categoryColor =   "#ccc";
 
   useAnimatedReaction(
     () => currentIndexValue.value,
