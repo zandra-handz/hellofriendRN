@@ -6,9 +6,7 @@ import useUser from "@/src/hooks/useUser";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TextHeader from "@/app/components/appwide/format/TextHeader";
-
-import { daysSincedDateField } from "@/src/utils/DaysSince";
-import HelloQuickView from "@/app/components/alerts/HelloQuickView";
+ 
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import useHelloes from "@/src/hooks/useHelloes";
@@ -17,7 +15,7 @@ import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
 import buildPieChart from "@/src/hooks/utils_buildPieChart";
 import FriendHistoryBigPie from "@/app/components/home/FriendHistoryBigPie";
 import CategoryFriendHistoryList from "@/app/components/headers/CategoryFriendHistoryList";
-import AppModal from "@/app/components/alerts/AppModal";
+ 
 import HelloViewModal from "@/app/components/alerts/HelloViewModal";
 type Props = {};
 

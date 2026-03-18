@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import MonthModal from "../headers/MonthModal";
 import useHelloesManips from "@/src/hooks/HelloesFunctions/useHelloesManips";
 
@@ -33,6 +33,14 @@ const CalendarChart = ({
     //  helloesData: helloesList,
   });
 
+  useEffect(() => {
+    if (helloesList) {
+      console.log(helloesList.length);
+      console.log(helloesList[0]);
+          console.log(helloesList);
+    }
+  }, [helloesList]);
+
   const primaryColor = lightDarkTheme.primaryText;
 
   const [monthModalVisible, setMonthModalVisible] = useState(false);
@@ -64,7 +72,7 @@ const CalendarChart = ({
           // backgroundColor: 'pink',
         }}
       >
-        <View style={{ height: 120,   width: "100%" }}>
+        <View style={{ height: 120, width: "100%" }}>
           {combinedData && helloesList && (
             <CalendarLights
               themeColors={themeColors}
@@ -75,18 +83,13 @@ const CalendarChart = ({
             />
           )}
 
-          {!combinedData && ( 
-       
-
+          {!combinedData && (
             <AppCustomSpinnerMini
-            color1={manualGradientColors.lightColor}
-            color2={manualGradientColors.darkColor}
-
-            /> 
-          
+              color1={manualGradientColors.lightColor}
+              color2={manualGradientColors.darkColor}
+            />
           )}
         </View>
- 
       </View>
 
       {/* {monthModalVisible && (

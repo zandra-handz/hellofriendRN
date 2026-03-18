@@ -1,5 +1,3 @@
- 
-
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Canvas, Text, Group } from "@shopify/react-native-skia";
@@ -30,7 +28,12 @@ type Props = {
   textColor: string;
 };
 
-const AnimatedClimber = ({ total, skiaFont, textColor , containerStyle}: Props) => {
+const AnimatedClimber = ({
+  total,
+  skiaFont,
+  textColor,
+  containerStyle,
+}: Props) => {
   const totalValue = useSharedValue(0);
 
   useEffect(() => {
@@ -38,20 +41,35 @@ const AnimatedClimber = ({ total, skiaFont, textColor , containerStyle}: Props) 
     totalValue.value = withTiming(total, { duration: 1000 });
   }, [total, totalValue]);
 
+
+  // move this to the TOP, before all useDerivedValue calls
+if (!skiaFont) return null;
+
   const targetText = useDerivedValue(() => `${Math.round(totalValue.value)}`);
 
-  // Center X based on measured text width
   const textX = useDerivedValue(() => {
+    if (!skiaFont) return CANVAS_WIDTH / 2;
     const m = skiaFont.measureText(targetText.value);
     return (CANVAS_WIDTH - m.width) / 2;
   });
 
-  // Center Y using font metrics (keeps visual centering even if font size changes)
   const textY = useDerivedValue(() => {
+    if (!skiaFont) return CANVAS_HEIGHT / 2;
     const metrics = skiaFont.getMetrics();
-    // Skia y is the baseline. This computes a baseline that visually centers glyphs.
     return CANVAS_HEIGHT / 2 - (metrics.ascent + metrics.descent) / 2;
   });
+  // // Center X based on measured text width
+  // const textX = useDerivedValue(() => {
+  //   const m = skiaFont.measureText(targetText.value);
+  //   return (CANVAS_WIDTH - m.width) / 2;
+  // });
+
+  // // Center Y using font metrics (keeps visual centering even if font size changes)
+  // const textY = useDerivedValue(() => {
+  //   const metrics = skiaFont.getMetrics();
+  //   // Skia y is the baseline. This computes a baseline that visually centers glyphs.
+  //   return CANVAS_HEIGHT / 2 - (metrics.ascent + metrics.descent) / 2;
+  // });
 
   // Precompute shadow/outline positions (avoid creating derived values in JSX)
   const shadowX = useDerivedValue(() => textX.value + SHADOW_DX);

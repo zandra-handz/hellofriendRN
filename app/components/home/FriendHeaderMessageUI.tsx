@@ -156,7 +156,7 @@ const { settings } = useUserSettings();
       Vibration.vibrate(100);
       showFlashMessage(`${selectedFriendName} unpinned`, false, 1000);
     } else {
-      updateSettings({ pinned_friend: friendId });
+      updateSettings({ pinned_friend: friendId, use_auto_select: true });
       Vibration.vibrate(100);
       showFlashMessage(`${selectedFriendName} pinned!`, false, 1000);
     }

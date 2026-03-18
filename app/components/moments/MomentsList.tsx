@@ -7,8 +7,7 @@ import React, {
 } from "react";
 import { View, ViewToken, Pressable, StyleSheet } from "react-native";
  
-import { useFocusEffect } from "@react-navigation/native";
-import EscortBarMinusWidth from "./EscortBarMinusWidth";
+import { useFocusEffect } from "@react-navigation/native"; 
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator"; 
 import MomentItem from "./MomentItem"; 

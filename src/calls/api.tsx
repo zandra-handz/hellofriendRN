@@ -1273,6 +1273,7 @@ export const saveHello = async (requestData: { friend: number }) => {
       `/friends/${requestData.friend}/helloes/add/`,
       requestData
     );
+    console.log('hello save! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', response.data)
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during saveHello");

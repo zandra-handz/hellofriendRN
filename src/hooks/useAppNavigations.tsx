@@ -353,6 +353,7 @@ interface hookReturns {
     startingIndex,
     inPersonFilter,
   }: NavToHelloViewProps) => void;
+  navigateToAddHello: () => void;
   navigateToAddImage: ({ imageUri }: NavToAddImageProps) => void;
   navigateToImages: ({ startingIndex }: NavToImagesProps) => void;
 
@@ -457,6 +458,11 @@ const useAppNavigations = (): hookReturns => {
   }: NavToHelloViewProps) => {
     navigation.navigate("HelloView", { startingIndex, inPersonFilter });
   };
+
+
+  const navigateToAddHello = () => {
+    navigation.navigate("AddHello")
+  }
 
   const navigateToAddImage = ({ imageUri }: NavToAddImageProps) => {
     navigation.navigate("AddImage", { imageUri });
@@ -599,6 +605,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToFriendHistory,
     navigateToHelloes,
     navigateToHelloView,
+    navigateToAddHello,
     navigateToAddImage,
     navigateToImages,
     navigateToLocationEdit,

@@ -30,18 +30,19 @@ const useCreateHello = ({ userId }: Props) => {
     },
 
     onSuccess: async (data, variables) => {
+ 
       showFlashMessage(`Hello saved!`, false, 2000);
       const friendId = variables.friend;
-      const normalized = {
-        ...data,
-        dateLong: data.date,
-        date: data.past_date_in_words || formatDate(data.date),
-      };
+      const { hello, hello_light } = data;
 
-      queryClient.setQueryData(["pastHelloes", userId, friendId], (old) => {
-        const updatedHelloes = old ? [normalized, ...old] : [normalized];
-        return updatedHelloes;
+      queryClient.setQueryData(["pastHelloes", userId, variables.friend], (old) => {
+        return old ? [hello_light, ...old] : [hello_light];
       });
+
+      // queryClient.setQueryData(["pastHelloes", userId, friendId], (old) => {
+      //   const updatedHelloes = old ? [normalized, ...old] : [normalized];
+      //   return updatedHelloes;
+      // });
 
       // testing whether want to do it this way
       await queryClient.invalidateQueries({

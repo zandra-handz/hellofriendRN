@@ -17,7 +17,6 @@ import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
 //  import { useFriendList } from "@/src/context/FriendListContext";
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
 
 type Props = {
   categoryId: number;
@@ -36,7 +35,9 @@ const CategoryFriendHistoryList = ({
   onViewHelloPress,
 }: Props) => {
   //  const { friendList } = useFriendList();
-  const { friendListAndUpcoming } = useFriendListAndUpcoming({userId: userId});
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({
+    userId: userId,
+  });
 
   const friendList = friendListAndUpcoming?.friends;
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
@@ -64,11 +65,11 @@ const CategoryFriendHistoryList = ({
     (helloId, momentOriginalId) => () => {
       // if (onViewHelloPress) {
 
-        console.log('pressed!!!')
-        onViewHelloPress(helloId, momentOriginalId);
+      console.log("pressed!!!");
+      onViewHelloPress(helloId, momentOriginalId);
       // }
     },
-    [onViewHelloPress]
+    [onViewHelloPress],
   );
 
   const getFriendNameFromList = (friendId) => {
@@ -78,11 +79,9 @@ const CategoryFriendHistoryList = ({
   };
 
   const getHelloDateFromList = (helloId) => {
-    const hello = helloesList.find((hello) => hello.id === helloId);
-
-    return hello.date || "";
+    const hello = helloesList?.find((hello) => hello.id === helloId);
+    return hello?.date || "";
   };
-
   const getCapsuleCount = (count: number) => {
     if (!count) {
       return ``;
@@ -100,7 +99,6 @@ const CategoryFriendHistoryList = ({
         item={item}
         index={index}
         onHelloPress={onViewHelloPress}
-       
         friendName={getFriendNameFromList(item.friend)}
         primaryColor={primaryColor}
         helloDate={getHelloDateFromList(item.hello.id)} //hmmmmm backend now returns hello as an object on this. dunno if I like that
@@ -113,33 +111,34 @@ const CategoryFriendHistoryList = ({
       // handleOnPress,
       primaryColor,
       styles,
-    ]
+    ],
   );
 
   return (
     <>
-      {categoryHistory && categoryHistory.length > 0 && (
-        <FlatList
-   
-          // stickyHeaderIndices={[0]}
-          data={categoryHistory}
-          keyExtractor={extractItemKey}
-          renderItem={renderMiniMomentItem}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
+      {categoryHistory &&
+        categoryHistory.length > 0 &&
+        helloesList?.length > 0 && (
+          <FlatList
+            // stickyHeaderIndices={[0]}
+            data={categoryHistory}
+            keyExtractor={extractItemKey}
+            renderItem={renderMiniMomentItem}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={
+              <InfiniteScrollSpinner
+                isFetchingNextPage={isFetchingNextPage}
+                color={primaryColor}
+                height={50}
+              />
             }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            <InfiniteScrollSpinner
-              isFetchingNextPage={isFetchingNextPage}
-              color={primaryColor}
-              height={50}
-            />
-          }
-        ></FlatList>
-      )}
+          ></FlatList>
+        )}
     </>
   );
 };
@@ -151,13 +150,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
 
-
     width: "100%",
   },
   momentItemText: {
-    fontSize: 11, 
+    fontSize: 11,
     fontFamily: "Poppins-Regular",
- 
   },
   momentCheckboxContainer: {
     flexDirection: "row",

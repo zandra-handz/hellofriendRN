@@ -8,16 +8,12 @@ import Animated, {
   withTiming,
   SharedValue,
   useDerivedValue,
-  useSharedValue,
-  useAnimatedStyle,
+  useSharedValue, 
   runOnJS,
 } from "react-native-reanimated";
 import {
-  Canvas,
-  Path,
-  SkFont,
-  Skia,
-  Text,
+  Canvas, 
+  SkFont, 
   Group,
   Rect,
 } from "@shopify/react-native-skia";
@@ -32,7 +28,7 @@ type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
-  // onPlusPress: () => void; 
+  // onPlusPress: () => void;
   font: SkFont;
   smallFont: SkFont;
   color: string;
@@ -58,26 +54,26 @@ const DotsCanvas = ({
   positions,
   canvasWidth,
   onCategoryPress,
-  catDecimalsValue, 
-  onCenterPress,  
+  catDecimalsValue,
+  onCenterPress,
   onCenterSinglePress,
   darkerOverlayBackgroundColor,
   backgroundColor,
- 
+
   labelsValue,
   color,
- 
+
   handleToggleColoredDots,
-  
+
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
-}: Props) => { 
+}: Props) => {
   const { selectedFriend } = useSelectedFriend();
 
   const { handleDoublePress } = useDoublePress({
     // onSinglePress: handleToggleColoredDots,
-        onSinglePress: onCenterSinglePress,
+    onSinglePress: onCenterSinglePress,
     onDoublePress: onCenterPress,
   });
 
@@ -103,7 +99,6 @@ const DotsCanvas = ({
   //     zIndex: 4,
   //   };
   // }, [fadeInValue]);
- 
 
   const [highLightedColor, setHighlightedColor] = useState(null);
   const [highlightCatID, setHighlightID] = useState(null);
@@ -252,10 +247,7 @@ const DotsCanvas = ({
                 const isHighlighted = label.user_category === highlightCatID;
 
                 return (
-                  <View
-                    key={index}
-                    style={styles.percentagesRow}
-                  >
+                  <View key={index} style={styles.percentagesRow}>
                     <RNText
                       onPress={() => onCategoryPress(label.name)}
                       style={{
@@ -296,18 +288,19 @@ const DotsCanvas = ({
           const approxWidth = labelText.length * 7 + 16; // +16 for paddingHorizontal * 2
 
           return (
-<CategoryTooltip
-  label={labelText}
-  color={color}
-  borderColor={highLightedColor}
-  backgroundColor={darkerOverlayBackgroundColor}
-  containerStyle={{
-    position: "absolute",
-    left: highlightPosition.x + (isLeftSide ? 8 : -(approxWidth + 8)),
-    top: highlightPosition.y - 14,
-    zIndex: 999999,
-  }}
-/>
+            <CategoryTooltip
+              label={labelText}
+              color={color}
+              borderColor={highLightedColor}
+              backgroundColor={darkerOverlayBackgroundColor}
+              containerStyle={{
+                position: "absolute",
+                left:
+                  highlightPosition.x + (isLeftSide ? 8 : -(approxWidth + 8)),
+                top: highlightPosition.y - 14,
+                zIndex: 999999,
+              }}
+            />
           );
         })()}
 
@@ -318,8 +311,7 @@ const DotsCanvas = ({
             styles.centerWrapper,
             { height: canvasHeight },
           ]}
-        > 
-
+        >
           <Pressable
             onPress={handleDoublePress}
             hitSlop={10}
