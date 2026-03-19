@@ -21,7 +21,7 @@ const useLocations = ({
     queryKey: ["locationList", userId],
     queryFn: () => fetchAllLocations(),
     enabled: !!(userId && !isInitializing && enabled),
-    staleTime: 1000 * 60 * 120, // 2 hours
+   // staleTime: 1000 * 60 * 120, // 2 hours
   });
 
  

@@ -15,7 +15,7 @@ const useTopLevelUserSettings = ({userId, isInitializing}) => {
     queryFn: () => getUserSettings(),
     enabled: !!userId && !isInitializing, //testing removing this
     retry: 3,
-    staleTime: 1000 * 60 * 60 * 10, // 10 hours
+   // staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
   return {

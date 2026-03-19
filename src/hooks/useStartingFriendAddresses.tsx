@@ -20,7 +20,7 @@ const useStartingFriendAddresses = ({ userId, friendId }: Props) => {
     queryKey: ["friendAddresses", userId, friendId],
     queryFn: () => fetchFriendAddresses(friendId),
     enabled: !!(userId && friendId), //adding isInitializing will cause an infinite regression prop bc of something else in the code here
-    staleTime: 1000 * 60 * 20, // 20 minutes
+  //  staleTime: 1000 * 60 * 20, // 20 minutes
   });
 
   return {

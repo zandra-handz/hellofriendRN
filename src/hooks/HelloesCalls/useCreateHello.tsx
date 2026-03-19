@@ -30,21 +30,43 @@ const useCreateHello = ({ userId }: Props) => {
     },
 
     onSuccess: async (data, variables) => {
- 
       showFlashMessage(`Hello saved!`, false, 2000);
       const friendId = variables.friend;
       const { hello, hello_light } = data;
+      console.log(`hello: `, hello);
+      console.log(`hellolight`, hello_light);
 
-      queryClient.setQueryData(["pastHelloes", userId, variables.friend], (old) => {
-        return old ? [hello_light, ...old] : [hello_light];
-      });
-
-      // queryClient.setQueryData(["pastHelloes", userId, friendId], (old) => {
-      //   const updatedHelloes = old ? [normalized, ...old] : [normalized];
-      //   return updatedHelloes;
+      // queryClient.setQueryData(["pastHelloes", userId, variables.friend], (old) => {
+      //   return old ? [hello_light, ...old] : [hello_light];
       // });
 
-      // testing whether want to do it this way
+      queryClient.setQueryData(
+        ["pastHelloes", userId, variables.friend],
+        (old) => {
+          if (old) {
+            const updated = [hello_light, ...old];
+            console.log("updated helloes cache", updated.length, updated[0]);
+            return updated;
+          }
+        },
+      );
+
+
+      // prepend to infinite query cache
+queryClient.setQueryData(
+  ["pastHelloesFull", userId, variables.friend],
+  (old: any) => {
+    if (!old) return old;
+    return {
+      ...old,
+      pages: [
+        { ...old.pages[0], results: [hello, ...old.pages[0].results] },
+        ...old.pages.slice(1),
+      ],
+    };
+  },
+);
+
       await queryClient.invalidateQueries({
         queryKey: ["Moments", userId, friendId],
       });

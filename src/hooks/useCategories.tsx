@@ -24,7 +24,7 @@ const useCategories = ({
     queryKey: ["categories", userId],
     queryFn: () => getUserCategories(userId),
     enabled: !!(userId && !isInitializing && enabled),
-    staleTime: 1000 * 60 * 60 * 10,
+   // staleTime: 1000 * 60 * 60 * 10,
   });
 
   const userCategories = useMemo(() => {

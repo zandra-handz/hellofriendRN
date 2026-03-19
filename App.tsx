@@ -79,7 +79,7 @@ import ScreenLocationSend from "./app/screens/locations/ScreenLocationSend";
 import ScreenAddFriend from "./app/screens/friends/ScreenAddFriend";
 import ScreenAddImage from "./app/screens/images/ScreenAddImage";
 import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
-import ScreenFidget from "./app/screens/fidget/ScreenFidget";
+// import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 import ScreenGecko from "./app/screens/fidget/ScreenGecko";
 import ScreenGeckoSelectSettings from "./app/screens/moments/ScreenGeckoSelectSettings";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
@@ -114,6 +114,12 @@ const queryClient = new QueryClient({
 // initialize selectedFriend before any component mounts
 queryClient.setQueryData(["selectedFriend"], DEFAULT_FRIEND);
 
+
+queryClient.getQueryCache().subscribe((event) => {
+  if (event.query.queryKey[0] === 'pastHelloes') {
+    console.log('[pastHelloes cache]', event.type, JSON.stringify(event.query.queryKey), 'data length:', event.query.state.data?.length);
+  }
+});
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
   throttleTime: 1000, // collect all changes for 1 second, then write once
@@ -586,11 +592,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           component={ScreenAddFriend}
           options={{ headerShown: false, animation: "none" }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Fidget"
           component={ScreenFidget}
           options={{ headerShown: false }}
-        />
+        /> */}
       </Stack.Navigator>
     </FriendCategoryColorsProvider>
   );

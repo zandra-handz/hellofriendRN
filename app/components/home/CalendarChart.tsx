@@ -33,13 +33,11 @@ const CalendarChart = ({
     //  helloesData: helloesList,
   });
 
-  useEffect(() => {
-    if (helloesList) {
-      console.log(helloesList.length);
-      console.log(helloesList[0]);
-          console.log(helloesList);
-    }
-  }, [helloesList]);
+  // useEffect(() => {
+  //   if (helloesList) { 
+  //         console.log(helloesList);
+  //   }
+  // }, [helloesList]);
 
   const primaryColor = lightDarkTheme.primaryText;
 

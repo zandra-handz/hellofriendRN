@@ -33,7 +33,7 @@ const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched init
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["pastHelloes", "full", user?.id, friendId],
+    queryKey: ["pastHelloesFull", user?.id, friendId],
     queryFn: async ({ pageParam = 1 }) => {
       return await fetchPastHelloesFull({
         friendId: friendId,

@@ -18,7 +18,7 @@ const usePrefetches = () => {
       queryKey: ["userAddresses", user?.id],
       queryFn: () => fetchUserAddresses(),
       enabled: !!(user?.id && !isInitializing), // testing removing this && !isInitializing),
-      staleTime: 1000 * 60 * 20, // 20 minutes
+     // staleTime: 1000 * 60 * 20, // 20 minutes
     });
   };
  
@@ -28,7 +28,7 @@ const usePrefetches = () => {
       queryKey: ["friendAddresses", user?.id, selectedFriend?.id],
       queryFn: () => fetchFriendAddresses(selectedFriend.id),
       enabled: !!(user?.id && selectedFriend?.id && !isInitializing),
-      staleTime: 1000 * 60 * 20, // 20 minutes
+    //  staleTime: 1000 * 60 * 20, // 20 minutes
     });
   };
 

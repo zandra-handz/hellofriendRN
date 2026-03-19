@@ -22,7 +22,7 @@ const useStartingUserAddresses = ({ userId }: Props) => {
     queryKey: ["userAddresses", userId],
     queryFn: () => fetchUserAddresses(),
     enabled: !!userId, // testing removing this && !isInitializing),  isInitializing may cause infinite regression ?
-    staleTime: 1000 * 60 * 20, // 20 minutes
+  //  staleTime: 1000 * 60 * 20, // 20 minutes
   });
  
 

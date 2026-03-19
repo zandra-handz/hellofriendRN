@@ -4,13 +4,23 @@ import ContentAddHello from "@/app/components/helloes/ContentAddHello";
 import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";  
- 
+import useHelloes from "@/src/hooks/useHelloes";
+ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
 const ScreenAddHello = () => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend(); 
+
+
+  const QueryClient = useQueryClient();
+
+
+  
+
+
+
 
   return (
     <SafeViewFriendStatic

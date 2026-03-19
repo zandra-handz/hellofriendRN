@@ -31,7 +31,7 @@ const useHelloes = ({
       return fetchPastHelloes(friendId);
     },
     enabled: !!(userId && !isInitializing && friendId && enabled), // testing removing !isInitializing
-    staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
+   // staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
   });
 
   return {

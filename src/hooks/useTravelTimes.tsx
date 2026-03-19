@@ -43,7 +43,7 @@ const useTravelTimes = (
       location?.address,
     ],
     enabled: !!(userAddress?.address && friendAddress?.address && location?.address && enableFetch),
-    staleTime: 1000 * 60 * 60, // one hour
+   // staleTime: 1000 * 60 * 60, // one hour
   });
 
   const cachedData = queryClient.getQueryData([
