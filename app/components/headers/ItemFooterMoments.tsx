@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedStyle,
   runOnJS,
 } from "react-native-reanimated";
+import { AppFontStyles } from "@/app/styles/AppFonts";
 
 interface Props {
   data: object;
@@ -23,10 +24,11 @@ interface Props {
   currentIndexValue: SharedValue;
   scrollTo: () => void;
   totalItemCount?: number;
-  useButtons: boolean; 
+  useButtons: boolean;
   onRightPress: () => void;
   onRightPressSecondAction: () => void;
   friendNumber: string;
+  darkerOverlayColor: string; // ← added to match SelectedFriendFooter's background
 }
 
 const ItemFooterMoments: React.FC<Props> = ({
@@ -39,110 +41,80 @@ const ItemFooterMoments: React.FC<Props> = ({
   fontStyle,
   primaryColor,
   primaryBackground,
-  // isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
-  visibilityValue, 
+  visibilityValue,
   totalItemCount,
   friendNumber,
+  darkerOverlayColor,
 }) => {
   const { handlePreAddMoment } = usePreAddMoment({
     userId: userId,
     friendId: friendId,
   });
 
-  const totalCount = totalItemCount
-    ? totalItemCount
-    : data?.length
-      ? data.length
-      : 0;
+  const totalCount = totalItemCount ?? data?.length ?? 0;
 
   useEffect(() => {
-    if (totalCount === 0) {
-      navigateBack();
-    }
+    if (totalCount === 0) navigateBack();
   }, [totalCount]);
 
-  const [currentIndex, setCurrentIndex] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [inputNumberVisible, setInputNumberVisible] = useState(false);
   const [ideaSent, setIdeaSent] = useState(false);
 
   const { navigateBack } = useAppNavigations();
 
-  const saveToHello = useCallback((moment) => {
-    if (!friendId || !moment) {
-      showFlashMessage(
-        `Oops! Missing data required to save idea to hello`,
-        true,
-        1000
-      );
-      return;
-    }
-
-    try {
-      showFlashMessage(`Added to hello!`, false, 1000);
-      handlePreAddMoment({
-        friendId: friendId,
-        capsuleId: moment.id,
-        isPreAdded: true,
-      });
-    } catch (error) {
-      showFlashMessage(
-        `Oops! Either showFlashMessage or updateCapsule has errored`,
-        true,
-        1000
-      );
-      console.error("Error during pre-save:", error);
-    }
-  }, []);
+  const saveToHello = useCallback(
+    (moment) => {
+      if (!friendId || !moment) {
+        showFlashMessage(`Oops! Missing data required to save idea to hello`, true, 1000);
+        return;
+      }
+      try {
+        showFlashMessage(`Added to hello!`, false, 1000);
+        handlePreAddMoment({ friendId, capsuleId: moment.id, isPreAdded: true });
+      } catch (error) {
+        showFlashMessage(`Oops! Either showFlashMessage or updateCapsule has errored`, true, 1000);
+        console.error("Error during pre-save:", error);
+      }
+    },
+    [friendId],
+  );
 
   useFocusEffect(
     useCallback(() => {
       if (ideaSent && data[currentIndex]) {
         saveToHello(data[currentIndex]);
-
         setIdeaSent(false);
       }
-    }, [ideaSent, currentIndex])
+    }, [ideaSent, currentIndex]),
   );
 
   const handleInputNumberClose = (success) => {
     setInputNumberVisible(false);
-    if (success) {
-      handleSendAlert();
-    }
+    if (success) handleSendAlert();
   };
 
   useAnimatedReaction(
     () => currentIndexValue.value,
     (newIndex, prevIndex) => {
-      if (newIndex !== prevIndex) {
-        runOnJS(setCurrentIndex)(newIndex);
-      }
+      if (newIndex !== prevIndex) runOnJS(setCurrentIndex)(newIndex);
     },
-    []
+    [],
   );
 
   const handleSend = (friendNumber, truncated) => {
     setIdeaSent(true);
-
-    Linking.openURL(
-      `sms:${friendNumber}?body=${encodeURIComponent(truncated)}`
-    );
+    Linking.openURL(`sms:${friendNumber}?body=${encodeURIComponent(truncated)}`);
   };
 
   const handleSendAlert = useCallback(() => {
-    console.log(currentIndex);
     const capsule = data[currentIndex].capsule;
-
     const truncated = `${capsule.slice(0, 30)}${capsule.length > 31 ? `...` : ``}`;
-
     if (friendNumber) {
       Alert.alert("Send idea", `Send ${truncated}?`, [
         { text: "Go back", style: "cancel" },
-        {
-          text: "Yes",
-          onPress: () => handleSend(friendNumber, truncated),
-        },
+        { text: "Yes", onPress: () => handleSend(friendNumber, truncated) },
       ]);
     } else {
       setInputNumberVisible(true);
@@ -150,31 +122,20 @@ const ItemFooterMoments: React.FC<Props> = ({
   }, [currentIndex]);
 
   const handleScrollToNext = () => {
-    if (currentIndex === undefined || totalCount === 0) {
-      console.log("cannot scroll to next");
-      return;
-    }
-
-    const next = currentIndex + 1;
-    const nextExists = next < totalCount;
-    const scrollToIndex = nextExists ? next : 0;
-    scrollTo(scrollToIndex);
+    if (currentIndex === undefined || totalCount === 0) return;
+    scrollTo(currentIndex + 1 < totalCount ? currentIndex + 1 : 0);
   };
 
   const handleScrollToPrev = () => {
-    if (currentIndex === undefined || totalCount === 0) {
-      // console.log("cannot scroll to prev");
-      return;
-    }
-
-    const prev = currentIndex - 1;
-    const scrollToIndex = currentIndex <= 0 ? totalCount - 1 : prev;
-    scrollTo(scrollToIndex);
+    if (currentIndex === undefined || totalCount === 0) return;
+    scrollTo(currentIndex <= 0 ? totalCount - 1 : currentIndex - 1);
   };
 
-  const visibilityStyle = useAnimatedStyle(() => {
-    return { opacity: visibilityValue.value };
-  });
+  const visibilityStyle = useAnimatedStyle(() => ({
+    opacity: visibilityValue.value,
+  }));
+
+  const dimColor = `${primaryColor}55`;
 
   return (
     <>
@@ -184,57 +145,104 @@ const ItemFooterMoments: React.FC<Props> = ({
         isVisible={inputNumberVisible}
         onClose={handleInputNumberClose}
       />
+
       <Animated.View
         style={[
-          styles.container,
-          {
-            height: height,  
-            marginBottom: marginBottom, 
-          },
+          styles.outerContainer,
+          { height, marginBottom },
           visibilityStyle,
         ]}
       >
-        <EscortBarMoments
-          primaryColor={primaryColor}
-          primaryBackground={primaryBackground} 
-          onLeftPress={handleScrollToPrev}
-          onRightPress={handleScrollToNext}
-          onSendPress={handleSendAlert}
-          includeSendButton={true}
-          children={
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={[fontStyle, { color: primaryColor, fontSize: 44 }]}>
-                {currentIndex + 1}
+        {/* Pill shell — matches SelectedFriendFooter shape + color */}
+        <View
+          style={[
+            styles.pill,
+            {
+              backgroundColor: darkerOverlayColor,
+              height: height,
+            },
+          ]}
+        >
+          <EscortBarMoments
+            primaryColor={primaryColor}
+            primaryBackground={primaryBackground}
+            onLeftPress={handleScrollToPrev}
+            onRightPress={handleScrollToNext}
+            onSendPress={handleSendAlert}
+            includeSendButton={true}
+            children={
+              <View style={styles.countContainer}>
                 <Text
-                  style={[fontStyle, { color: primaryColor, fontSize: 22 }]}
+                  style={[
+                    AppFontStyles.welcomeText,
+                    styles.countCurrent,
+                    { color: primaryColor },
+                  ]}
                 >
-                  {/* /{data.length}{" "} */}/{totalCount}{" "}
-                  {/* {isPartialData ? "loaded" : "total"} */}
+                  {currentIndex + 1}
                 </Text>
-              </Text>
-            </View>
-          }
-        />
+                <Text
+                  style={[
+                    AppFontStyles.welcomeText,
+                    styles.countSeparator,
+                    { color: dimColor },
+                  ]}
+                >
+                  {" "}/{" "}
+                </Text>
+                <Text
+                  style={[
+                    AppFontStyles.welcomeText,
+                    styles.countTotal,
+                    { color: dimColor },
+                  ]}
+                >
+                  {totalCount}
+                </Text>
+              </View>
+            }
+          />
+        </View>
       </Animated.View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
+  outerContainer: {
     width: "100%",
     zIndex: 1,
     paddingHorizontal: 6,
     marginBottom: 10,
   },
-  divider: {
-    marginVertical: 10,
+  // Pill — mirrors SelectedFriendFooter's container
+  pill: {
+    width: "100%",
+    borderRadius: 999,
+    opacity: 0.94,
+    overflow: "hidden",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  // Count
+  countContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "center",
+  },
+  countCurrent: {
+    fontSize: 40,
+    fontWeight: "700",
+    letterSpacing: -1,
+    lineHeight: 46,
+  },
+  countSeparator: {
+    fontSize: 20,
+    lineHeight: 46,
+  },
+  countTotal: {
+    fontSize: 20,
+    lineHeight: 46,
   },
 });
 

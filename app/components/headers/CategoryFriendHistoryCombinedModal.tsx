@@ -1,4 +1,3 @@
- 
 import useSelectedFriendStats from "@/src/hooks/useSelectedFriendStats";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -8,11 +7,10 @@ import { daysSincedDateField } from "@/src/utils/DaysSince";
 import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
-import manualGradientColors  from "@/app/styles/StaticColors";
- 
- 
+import manualGradientColors from "@/app/styles/StaticColors";
+
 // import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
- 
+
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import useHelloes from "@/src/hooks/useHelloes";
 import { View, StyleSheet } from "react-native";
@@ -24,6 +22,16 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
+  userId: number;
+  userDefaultCategory: number;
+  primaryColor: string;
+  primaryBackground: string;
+  friendDefaultCategory: number;
+  userCategories: [];
+  lighterOverlayColor: string;
+  friendId: number;
+  friendName: string;
+  themeColors: {};
   isVisible: boolean;
   closeModal: () => void;
   categoryId: number;
@@ -35,8 +43,6 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   userDefaultCategory,
   friendId,
   friendName,
-
- 
 
   themeColors,
   isVisible,
@@ -57,12 +63,17 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
 
   const startingText = category?.description || null;
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
-  const { helloesList } = useHelloes({userId: userId, friendId: friendId});
+  const { helloesList } = useHelloes({ userId: userId, friendId: friendId });
   // const { friendList } = useFriendList();
-  const { friendListAndUpcoming} = useFriendListAndUpcoming({userId: userId});
+  const { friendListAndUpcoming } = useFriendListAndUpcoming({
+    userId: userId,
+  });
   const friendList = friendListAndUpcoming?.friends;
   const { selectedFriendStats } = useSelectedFriendStats({
-    userId: userId, friendId: friendId, friendIsReady: true, enabled: true
+    userId: userId,
+    friendId: friendId,
+    friendIsReady: true,
+    enabled: true,
   });
 
   const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
@@ -74,7 +85,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   const textInputRef = useRef(null);
 
   const [textInputView, setTextInputView] = useState<null | ItemViewProps>(
-    null
+    null,
   );
 
   const handleNullTextInputView = () => {
@@ -114,7 +125,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
       // console.warn(`SELECTED FRIEND STATS ---->>>>`, selectedFriendStats);
 
       const categoryHistoryForFriend = selectedFriendStats.find(
-        (category) => category.id === categoryId
+        (category) => category.id === categoryId,
       );
       if (categoryHistoryForFriend) {
         console.log(categoryHistoryForFriend);
@@ -131,7 +142,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
       if (category && textInputRef && textInputRef.current) {
         textInputRef.current.value = category?.description;
       }
-    }, [category])
+    }, [category]),
   );
 
   const [textInput, setTextInput] = useState(startingText);
@@ -153,11 +164,11 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     useCallback(() => {
       if (category && capsuleList && capsuleList?.length > 0) {
         const moments = capsuleList.filter(
-          (capsule) => capsule?.user_category === categoryId
+          (capsule) => capsule?.user_category === categoryId,
         );
         setMomentsInCategory(moments);
       }
-    }, [category, capsuleList])
+    }, [category, capsuleList]),
   );
   const [showEdit, setShowEdit] = useState(false);
 
@@ -270,7 +281,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
                 />
               </View>
               <CategoryFriendHistoryList
-              userId={userId}
+                userId={userId}
                 friendId={friendId}
                 categoryId={categoryId}
                 friendList={friendList}

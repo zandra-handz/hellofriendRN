@@ -1,7 +1,6 @@
-
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
- 
+
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useDeselectFriend from "@/src/hooks/useDeselectFriend";
@@ -9,25 +8,34 @@ import useUserSettings from "@/src/hooks/useUserSettings";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
 import FriendThemeModal from "./FriendThemeModal";
- 
+import { LDTheme } from "@/src/types/LDThemeTypes";
+
+type Props = {
+  userId: number;
+  friendId: number;
+  friendName: string;
+  lightDarkTheme: LDTheme;
+  friendLightColor: string;
+  friendDarkColor: string;
+  handleNavigateToGecko: () => void;
+};
 
 const SelectedFriendFooter = ({
   userId,
   friendId,
   friendName,
   lightDarkTheme,
-  dividerStyle,
   friendLightColor,
   friendDarkColor,
   handleNavigateToGecko,
-}) => {
+}: Props) => {
   const { settings } = useUserSettings({ userId });
 
-  
   const { handleDeselectFriend } = useDeselectFriend({ userId, settings });
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [colorsModalVisible, setColorsModalVisible] = useState(false);
-  const [friendSettingsModalVisible, setFriendSettingsModalVisible] = useState(false);
+  const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
+    useState(false);
 
   const footerHeight = 90;
   const footerPaddingBottom = 12;
@@ -44,7 +52,7 @@ const SelectedFriendFooter = ({
     // if (goHome) {
     //   navigateToHome();
     // }
-  }, [handleDeselectFriend ]);
+  }, [handleDeselectFriend]);
 
   return (
     <View
@@ -85,7 +93,6 @@ const SelectedFriendFooter = ({
           />
         </View>
 
-        <View style={[styles.divider, dividerStyle]} />
         <View style={styles.section}>
           <FooterButtonIconVersion
             primaryColor={primaryColor}
@@ -101,7 +108,6 @@ const SelectedFriendFooter = ({
           />
         </View>
 
-        <View style={[styles.divider, dividerStyle]} />
         <View style={styles.section}>
           <FooterButtonIconVersion
             primaryColor={primaryColor}
@@ -117,8 +123,7 @@ const SelectedFriendFooter = ({
           />
         </View>
 
-        <View style={[styles.divider, dividerStyle]} />
-        <View style={styles.section}>
+        <View style={styles.sectionColorTheme}>
           <FooterButtonIconVersion
             primaryColor={primaryColor}
             label="Colors"
@@ -133,7 +138,6 @@ const SelectedFriendFooter = ({
           />
         </View>
 
-        <View style={[styles.divider, dividerStyle]} />
         <View style={styles.section}>
           <FooterButtonIconVersion
             primaryColor={primaryColor}
@@ -152,49 +156,48 @@ const SelectedFriendFooter = ({
         </View>
       </View>
 
- 
-{settingsModalVisible && (
-  <UserSettingsModal
-    userId={userId}
-    isVisible={true}
-    bottomSpacer={footerHeight - 30}
-    closeModal={() => setSettingsModalVisible(false)}
-    textColor={lightDarkTheme.primaryText}
-    backgroundColor={lightDarkTheme.primaryBackground}
-  />
-)}
+      {settingsModalVisible && (
+        <UserSettingsModal
+          userId={userId}
+          isVisible={true}
+          bottomSpacer={footerHeight - 30}
+          closeModal={() => setSettingsModalVisible(false)}
+          textColor={lightDarkTheme.primaryText}
+          backgroundColor={lightDarkTheme.primaryBackground}
+        />
+      )}
 
-{friendSettingsModalVisible && (
-  <FriendSettingsModal
-    userId={userId}
-    handleDeselectFriend={handleDeselect}
-    textColor={lightDarkTheme.primaryText}
-    backgroundColor={lightDarkTheme.primaryBackground}
-    isVisible={true}
-    friendLightColor={friendLightColor}
-    friendDarkColor={friendDarkColor}
-    friendId={friendId}
-    friendName={friendName}
-    bottomSpacer={footerHeight - 30}
-    closeModal={() => setFriendSettingsModalVisible(false)}
-  />
-)}
+      {friendSettingsModalVisible && (
+        <FriendSettingsModal
+          userId={userId}
+          handleDeselectFriend={handleDeselect}
+          textColor={lightDarkTheme.primaryText}
+          backgroundColor={lightDarkTheme.primaryBackground}
+          isVisible={true}
+          friendLightColor={friendLightColor}
+          friendDarkColor={friendDarkColor}
+          friendId={friendId}
+          friendName={friendName}
+          bottomSpacer={footerHeight - 30}
+          closeModal={() => setFriendSettingsModalVisible(false)}
+        />
+      )}
 
-{colorsModalVisible && (
-  <FriendThemeModal
-    userId={userId}
-    lightDarkTheme={lightDarkTheme}
-    textColor={lightDarkTheme.primaryText}
-    backgroundColor={lightDarkTheme.primaryBackground}
-    friendLightColor={friendLightColor}
-    friendDarkColor={friendDarkColor}
-    isVisible={true}
-    friendId={friendId}
-    friendName={friendName}
-    bottomSpacer={footerHeight - 30}
-    closeModal={() => setColorsModalVisible(false)}
-  />
-)}
+      {colorsModalVisible && (
+        <FriendThemeModal
+          userId={userId}
+          lightDarkTheme={lightDarkTheme}
+          textColor={lightDarkTheme.primaryText}
+          backgroundColor={lightDarkTheme.primaryBackground}
+          friendLightColor={friendLightColor}
+          friendDarkColor={friendDarkColor}
+          isVisible={true}
+          friendId={friendId}
+          friendName={friendName}
+          bottomSpacer={footerHeight - 30}
+          closeModal={() => setColorsModalVisible(false)}
+        />
+      )}
     </View>
   );
 };
@@ -209,6 +212,14 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
   section: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  sectionColorTheme: {
+    zIndex: 5, // To prevent gecko svg from interfering with this press
     flex: 1,
     flexDirection: "column",
     alignItems: "center",

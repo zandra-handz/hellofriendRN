@@ -1,10 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useMemo } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import React from "react";
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
-// import useHelloes from "@/src/hooks/useHelloes";
-// import useFriendDash from "@/src/hooks/useFriendDash";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 
 const SHADOW_COLOR = "rgba(0,0,0,0.95)";
 const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
@@ -58,7 +57,7 @@ const Helloes = ({
           <View style={styles.innerContainer}>
             {/* {!isLoading && ( */}
               <View style={styles.rowSpaceBetween}>
-                <Pressable
+                <GlobalPressable
                   hitSlop={10}
                   onPress={
                     // trueHelloesInList && trueHelloesInList.length > 0
@@ -66,23 +65,23 @@ const Helloes = ({
                       navigateToHelloes
                       // : () => {}
                   }
-                  style={styles.row}
                 >
-                  <View style={styles.iconShadow}>
-                    <SvgIcon
-                      name="chart_timeline_variant_shimmer"
-                      size={20}
+                  <View style={styles.leftContent}>
+                    <View style={styles.iconShadow}>
+                      <SvgIcon
+                        name="chart_timeline_variant_shimmer"
+                        size={20}
+                        color={primaryColor}
+                        style={styles.icon}
+                      />
+                    </View>
+                    <OutlinedText
+                          text={`Helloes`}
                       color={primaryColor}
-                      style={styles.icon}
+                      style={[styles.titleText, { color: primaryColor }]}
                     />
                   </View>
-                  <OutlinedText
-                    // text={`Helloes (${trueHelloesInList && trueHelloesInList.length})`}
-                          text={`Helloes`}
-                    color={primaryColor}
-                    style={[styles.titleText, { color: primaryColor }]}
-                  />
-                </Pressable>
+                </GlobalPressable>
               </View>
             {/* )} */}
           </View>
@@ -110,14 +109,15 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   rowSpaceBetween: {
     flexDirection: "row",
     width: "100%",
+    alignItems: "center",
     justifyContent: "space-between",
+  },
+  leftContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   icon: {
     marginBottom: 0,

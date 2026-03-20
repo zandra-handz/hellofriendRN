@@ -93,6 +93,8 @@ const ScreenMoments = () => {
     listData: capsuleList,
   });
 
+  
+
   const { userCategories } = useCategories({ userId: user?.id });
   // const { friendList } = useFriendList();
 
@@ -243,12 +245,12 @@ const ScreenMoments = () => {
           backgroundColor={manualGradientColors.lightColor}
           iconColor={manualGradientColors.homeDarkColor}
           hidden={categoryNavigatorVisible}
-          spaceFromBottom={120}
+          spaceFromBottom={110}
         />
       )}
       {selectedFriend?.id && (
         <TopLayerButtonSharedV
-          iconName="rose_compass" 
+          iconName="magnify" 
           onPress={handleToggleCatNav}
           backgroundColorValue={topCategoryColor}
           colors={
@@ -261,7 +263,7 @@ const ScreenMoments = () => {
           } // fallback with 2 values
           iconColor={manualGradientColors.homeDarkColor}
           hidden={categoryNavigatorVisible}
-          spaceFromBottom={44}
+          spaceFromBottom={62}
         />
       )}
     </SafeViewFriendHome>

@@ -1,8 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
 // import useFriendDash from "@/src/hooks/useFriendDash";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 
 const SHADOW_COLOR = "rgba(0,0,0,0.95)";
 const OUTLINE_COLOR = "rgba(0,0,0,0.95)";
@@ -37,32 +38,33 @@ const History = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props)
           style={[
             styles.outerContainer,
             {
-              backgroundColor:  primaryOverlayColor,
+              backgroundColor: primaryOverlayColor,
             },
           ]}
         >
           <View style={styles.innerContainer}>
             {/* {!loadingDash && ( */}
               <View style={styles.rowSpaceBetween}>
-                <Pressable
+                <GlobalPressable
                   hitSlop={10}
                   onPress={navigateToFriendHistory}
-                  style={styles.row}
                 >
-                  <View style={styles.iconShadow}>
-                    <SvgIcon
-                      name="pie_chart"
-                      size={20}
+                  <View style={styles.leftContent}>
+                    <View style={styles.iconShadow}>
+                      <SvgIcon
+                        name="pie_chart"
+                        size={20}
+                        color={primaryColor}
+                        style={styles.icon}
+                      />
+                    </View>
+                    <OutlinedText
+                      text="History"
                       color={primaryColor}
-                      style={styles.icon}
+                      style={[styles.titleText, { color: primaryColor }]}
                     />
                   </View>
-                  <OutlinedText
-                    text="History"
-                    color={primaryColor}
-                    style={[styles.titleText, { color: primaryColor }]}
-                  />
-                </Pressable>
+                </GlobalPressable>
               </View>
             {/* )} */}
           </View>
@@ -90,14 +92,15 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   rowSpaceBetween: {
     flexDirection: "row",
     width: "100%",
+    alignItems: "center",
     justifyContent: "space-between",
+  },
+  leftContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   icon: {
     marginBottom: 0,

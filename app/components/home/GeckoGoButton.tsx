@@ -111,7 +111,7 @@ const GeckoGoButton = ({ onSinglePress, onDoublePress, color, backgroundColor }:
         },
       ]}
     >
-     <SvgIcon name={`chevron_double_right`} size={30} color={color}/>
+     <SvgIcon name={`chevron_right`} size={30} color={color}/>
     </GlobalPressable>
   );
 };

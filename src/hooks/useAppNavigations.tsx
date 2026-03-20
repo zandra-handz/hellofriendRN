@@ -294,6 +294,7 @@ type NavToMomentsProp = {
 type NavToMomentViewProps = {
   moment: Moment; // <-- whatever your `moment` object type is
   index: number;
+  startWithBackdropTimestamp: number;
 };
 
 type NavToMomentFocusProp = {
@@ -383,7 +384,7 @@ interface hookReturns {
   }: NavToQRCodeProp) => void;
 
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
-  navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
+  navigateToMomentView: ({ moment, index, startWithBackdropTimestamp }: NavToMomentViewProps) => void;
 
   navigateToFidget: () => void;
   navigateToAuth: ({
@@ -548,8 +549,8 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
 
-  const navigateToMomentView = ({ moment, index }: NavToMomentViewProps) => {
-    navigation.navigate("MomentView", { moment, index });
+  const navigateToMomentView = ({ moment, index, startWithBackdropTimestamp=null }: NavToMomentViewProps) => {
+    navigation.navigate("MomentView", { moment, index, startWithBackdropTimestamp });
   };
 
   const navigateToLocationSearch = () => {

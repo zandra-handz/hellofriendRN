@@ -418,7 +418,7 @@ useFocusEffect(
               nextColor={manualGradientColors.homeDarkColor}
               nextBackgroundColor={manualGradientColors.lightColor}
               nextDisabledColor={primaryBackground}
-              nextDisabledBackgroundColor={'transparent'}
+              nextDisabledBackgroundColor={'gray'}
             />
 
             <MomentFocusTray

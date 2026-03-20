@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { View } from 'react-native';
+ 
 import { useRoute } from "@react-navigation/native";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+ 
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { SafeAreaView } from "react-native-safe-area-context";
-// import { useHelloes } from "@/src/context/HelloesContext";
-import useUser from "@/src/hooks/useUser";
-// import { useUser } from "@/src/context/UserContext";
+import { SafeAreaView } from "react-native-safe-area-context"; 
+import useUser from "@/src/hooks/useUser"; 
 import useHelloes from "@/src/hooks/useHelloes";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
@@ -39,21 +38,7 @@ const ScreenHelloView = () => {
     (hello) => hello.manual_reset === undefined
   );
 
-  // useEffect(() => {
-  //   console.log(helloesListData.length);
-  // }, [helloesListData]);
-
-  // useEffect(() => {
-  //   // console.log("helloes list filter", inPersonFilter);
-  //   if (inPersonFilter && helloesListFull.length > 0) {
-  //     setHelloesListData(
-  //       helloesListFull.filter((hello) => hello.type === "in person")
-  //     );
-  //   } else {
-  //     setHelloesListData(helloesListFull);
-  //   }
-  // }, [inPersonFilter]);
-  // const [ totalHelloesCount, setTotalHelloesCount ] = helloesList?.length || 0;
+ 
 
   const helloesDataFiltered = useMemo(() => {
     return inPersonFilter
@@ -79,20 +64,7 @@ const ScreenHelloView = () => {
         }}
       >
 
-
-
-{/* 
-    <SafeViewAndGradientBackground
-      friendColorLight={selectedFriend.lightColor}
-      friendColorDark={selectedFriend.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
-      backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
-      friendId={selectedFriend?.id}
-      backgroundOverlayHeight=""
-      includeBackgroundOverlay={true}
-      useSolidOverlay={true}
-      style={{ flex: 1 }}
-    > */}
+ 
       <CarouselSliderInfinite
         totalItemCount={totalHelloesCount}
         isFiltered={inPersonFilter}

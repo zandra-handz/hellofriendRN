@@ -1,43 +1,41 @@
 import { View } from "react-native";
-import React, {   useCallback } from "react";
-import { useWindowDimensions } from "react-native"; 
+import React, { useCallback } from "react";
+import { useWindowDimensions } from "react-native";
 import { AppFontStyles } from "@/app/styles/AppFonts";
+import MomentFooter from "./headers/MomentFooter";
 import Animated, {
-  useAnimatedRef, 
+  useAnimatedRef,
   useAnimatedScrollHandler,
-  useSharedValue, 
+  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import ItemFooterMoments from "./headers/ItemFooterMoments"; 
+
 type Props = {
   initialIndex: number;
-  data: object[]; 
+  data: object[];
   useButtons: boolean;
   friendNumber: string;
 };
 
 const CarouselSliderMoments = ({
   userId,
-  friendId, 
+  friendId,
   initialIndex,
-  lightDarkTheme, 
+  lightDarkTheme,
   handlePreAddMoment,
-  data, 
+  data,
   useButtons = true,
   children: Children,
   onRightPress,
   onRightPressSecondAction,
-  friendNumber, 
-
+  friendNumber,
 }: Props) => {
   const { height, width } = useWindowDimensions();
- 
 
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2;
-  const flatListRef = useAnimatedRef(null); 
- 
+  const flatListRef = useAnimatedRef(null);
 
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -48,50 +46,33 @@ const CarouselSliderMoments = ({
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `item-${index}`;
 
-  const getItemLayout = (item, index) => {
-    return {
-      length: COMBINED,
-      offset: COMBINED * index,
-      index,
-    };
-  };
+  const getItemLayout = (item, index) => ({
+    length: COMBINED,
+    offset: COMBINED * index,
+    index,
+  });
 
   const scrollTo = (index: number) => {
     floaterItemsVisibility.value = withTiming(0, { duration: 10 });
     cardScale.value = withTiming(0.94, { duration: 10 });
-
- 
-    flatListRef.current?.scrollToIndex({
-      index,
-      animated: true,
-    });
-
- 
+    flatListRef.current?.scrollToIndex({ index, animated: true });
     setTimeout(() => {
       floaterItemsVisibility.value = withTiming(1, { duration: 400 });
       cardScale.value = withTiming(1, { duration: 400 });
-    }, 300); 
+    }, 300);
   };
 
- 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      const y = event.contentOffset.y;
-      const x = event.contentOffset.x;
-
-      scrollY.value = y;
-      scrollX.value = x; 
-      currentIndex.value = Math.round(x / COMBINED);
+      scrollY.value = event.contentOffset.y;
+      scrollX.value = event.contentOffset.x;
+      currentIndex.value = Math.round(event.contentOffset.x / COMBINED);
     },
-
-    onBeginDrag: (event) => {
+    onBeginDrag: () => {
       floaterItemsVisibility.value = withTiming(0, { duration: 10 });
       cardScale.value = withTiming(0.94, { duration: 10 });
     },
-    onEndDrag: (event) => {
-      if (event.contentOffset.y <= 0) {
-    
-      }
+    onEndDrag: () => {
       floaterItemsVisibility.value = withTiming(1, { duration: 400 });
       cardScale.value = withTiming(1, { duration: 400 });
     },
@@ -99,91 +80,72 @@ const CarouselSliderMoments = ({
 
   const renderPage = useCallback(
     ({ item, index }) => (
-      // <View style={{marginHorizontal: ITEM_MARGIN}}>
-
       <Children
-      handlePreAddMoment={handlePreAddMoment}
+        handlePreAddMoment={handlePreAddMoment}
         textColor={lightDarkTheme.primaryText}
-        darkerOverlayColor={
-          lightDarkTheme.darkerOverlayBackground 
-        }
-        lighterOverlayColor={
-          lightDarkTheme.lighterOverlayBackground 
-        } 
+        darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
+        lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
         darkGlassBackground={lightDarkTheme.darkGlassBackground}
         userId={userId}
-        friendId={friendId} 
+        friendId={friendId}
         item={item}
         listLength={data?.length || 0}
         index={index}
         width={width}
         height={height}
-        marginBottom={2} //space between this card and the footer bar (there's already some slight padding around the whole card)
+        marginBottom={20}
         currentIndexValue={currentIndex}
         cardScaleValue={cardScale}
-    
-        marginKeepAboveFooter={10} //ONLY MOMENT VIEW PAGE HAS THIS PROP RN, this is just to push positioning up a level for readability
+        marginKeepAboveFooter={54}
       />
     ),
-    [width, height, currentIndex ]
+    [width, height, currentIndex],
   );
 
   return (
     <>
-      <>
-        <Animated.FlatList
-          data={data}
-          ref={flatListRef}
-          horizontal={true}
-          renderItem={renderPage}
-          initialScrollIndex={initialIndex}
-          nestedScrollEnabled
-          //           viewabilityConfigCallbackPairs={
-          //   viewabilityConfigCallbackPairs.current
-          // }
-          scrollEventThrottle={16}
-          showsHorizontalScrollIndicator={false}
-          onScroll={scrollHandler}
-          //  onScroll={handleScroll}
-          keyExtractor={extractItemKey}
-          getItemLayout={getItemLayout}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          windowSize={5}
-          removeClippedSubviews={true}
-          showsVerticalScrollIndicator={false}
-          snapToAlignment={"start"}
-          //snapToInterval={width}
-          pagingEnabled
-          //   snapToOffsets={true}
-          ListFooterComponent={() => <View style={{ width: 100 }} />}
-        /> 
+      <Animated.FlatList
+        data={data}
+        ref={flatListRef}
+        horizontal={true}
+        renderItem={renderPage}
+        initialScrollIndex={initialIndex}
+        nestedScrollEnabled
+        scrollEventThrottle={16}
+        showsHorizontalScrollIndicator={false}
+        onScroll={scrollHandler}
+        keyExtractor={extractItemKey}
+        getItemLayout={getItemLayout}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        removeClippedSubviews={true}
+        showsVerticalScrollIndicator={false}
+        snapToAlignment={"start"}
+        pagingEnabled
+        ListFooterComponent={() => <View style={{ width: 100 }} />}
+      />
 
-        <ItemFooterMoments //this component is now NOT absolutely positioned, so that it can get calculated with the card above and they won't overlap on different screens
-          userId={userId}
-          friendId={friendId}
-          data={data}
-          scrollTo={scrollTo}
-          primaryColor={lightDarkTheme.primaryText}
-          primaryBackground={lightDarkTheme.primaryBackground}
-          fontStyle={AppFontStyles.welcomeText}
-          height={50} // matches escort read only bar inside
-          marginBottom={10} // eyeballed to match finalize styling honestly
-          visibilityValue={floaterItemsVisibility}
-          currentIndexValue={currentIndex} 
-          friendNumber={friendNumber}
-      
-          useButtons={useButtons}
-          onRightPress={() => onRightPress(currentIndex.value)}
-          onRightPressSecondAction={() =>
-            onRightPressSecondAction(data[currentIndex.value])
-          }
-        />
-
-        {/* )} */}
-      </>
-
- 
+      <MomentFooter
+        userId={userId}
+        friendId={friendId}
+        data={data}
+        scrollTo={scrollTo}
+        primaryColor={lightDarkTheme.primaryText}
+        primaryBackground={'transparent'}
+        darkerOverlayColor={'transparent'}
+        fontStyle={AppFontStyles.welcomeText}
+        height={90}
+        marginBottom={0}
+        visibilityValue={floaterItemsVisibility}
+        currentIndexValue={currentIndex}
+        friendNumber={friendNumber}
+        useButtons={useButtons}
+        onRightPress={() => onRightPress(currentIndex.value)}
+        onRightPressSecondAction={() =>
+          onRightPressSecondAction(data[currentIndex.value])
+        }
+      />
     </>
   );
 };

@@ -1,27 +1,34 @@
+ 
+
+
+
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   interpolate,
-  interpolateColor,
   Extrapolation,
   withTiming,
+  withSequence,
   withRepeat,
+  useSharedValue,
+  runOnJS,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import { Moment } from "@/src/types/MomentContextTypes";
 import manualGradientColors from "@/app/styles/StaticColors";
 import CategoryTooltip from "../headers/CategoryTooltip";
-
 import SvgIcon from "@/app/styles/SvgIcons";
+
+const HOLD_DURATION = 600;
 
 interface MomentItemsProps {
   index: number;
   momentData: Moment;
-  momentDate: Date; //JS date object calculated in MomentsList.tsx
+  momentDate: Date;
   itemHeight: number;
   combinedHeight: number;
   visibilityValue: SharedValue<number>;
@@ -37,7 +44,6 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   index,
   momentData,
   categorySide,
-
   momentDate,
   itemHeight,
   combinedHeight,
@@ -47,7 +53,6 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   pulseValue,
   onSend,
   categoryColorsMap,
-
   primaryColor,
   primaryBackgroundColor,
   darkerOverlayColor,
@@ -56,47 +61,80 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const startingPosition = index * combinedHeight;
   const { height } = useWindowDimensions();
   const containerHeight = height - 410;
-  const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
-
-  const textContainerRightPadding = sendButtonWidth - 10;
+  const sendButtonWidth = 44;
 
   if (!momentData || !categoryColorsMap || !momentData.user_category) {
-    return null; // or a fallback component
+    return null;
   }
+
   const categoryColor = momentData?.user_category
     ? (categoryColorsMap[String(momentData.user_category)] ?? "#ccc")
     : "#ccc";
 
-  const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
-  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+  // ── Hold-to-confirm state ──────────────────────────────────
+  // fillProgress: 0 → 1 during hold sweep
+  // fillOpacity:  separately controlled so completion can go solid + pulse
+  const fillProgress = useSharedValue(0);
+  const fillOpacity = useSharedValue(0);
+  const completed = useSharedValue(false);
 
-  const handleSave = () => {
-    onSend(momentData);
-    pressedIndexValue.value = null;
+  const handleSave = () => onSend(momentData);
+
+  const handlePressIn = () => {
+    completed.value = false;
+
+    // Sweep fill left→right
+    fillProgress.value = withTiming(1, { duration: HOLD_DURATION }, (finished) => {
+      if (finished) {
+        completed.value = true;
+        runOnJS(handleSave)();
+
+        // Go fully solid, then do 2 quick pulses, then stay solid
+        fillOpacity.value = withSequence(
+          withTiming(0.7, { duration: 80 }),
+          withRepeat(
+            withSequence(
+              withTiming(0.45, { duration: 120 }),
+              withTiming(0.7, { duration: 120 }),
+            ),
+            2,   // 2 pulses
+            false,
+          ),
+          withTiming(0.6, { duration: 150 }), // settle at solid
+        );
+      }
+    });
+
+    // Opacity ramps up during the sweep
+    fillOpacity.value = withTiming(0.18, { duration: HOLD_DURATION });
   };
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const isPressed = pressedIndexValue.value === index;
+  const handlePressOut = () => {
+    if (!completed.value) {
+      // Released early — cancel everything and reset
+      cancelAnimation(fillProgress);
+      cancelAnimation(fillOpacity);
+      fillProgress.value = withTiming(0, { duration: 180 });
+      fillOpacity.value = withTiming(0, { duration: 180 });
+    }
+    // If completed, leave fill solid — don't reset
+  };
 
-    const backgroundColor = isPressed
-      ? interpolateColor(
-          pulseValue.value,
-          [0, 1],
-          [manualGradientColors.lightColor, friendColor],
-        )
-      : "transparent"; // manualGradientColors.homeDarkColor;
+  // ── Fill overlay ───────────────────────────────────────────
+  const fillStyle = useAnimatedStyle(() => ({
+    transform: [{ scaleX: fillProgress.value }],
+    opacity: fillOpacity.value,
+  }));
 
-    const iconColor = isPressed
-      ? manualGradientColors.homeDarkColor
-      : primaryColor;
+  // ── Icon brightens during hold ─────────────────────────────
+  const iconStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(fillProgress.value, [0, 1], [0.35, 1]),
+    transform: [
+      { scale: interpolate(fillProgress.value, [0, 0.5, 1], [1, 1.2, 1]) },
+    ],
+  }));
 
-    return {
-      backgroundColor,
-      // transform: [{ scale }],
-      color: iconColor,
-    };
-  });
-
+  // ── Scroll entrance (unchanged) ────────────────────────────
   const visibilityStyle = useAnimatedStyle(() => {
     const pos1 = startingPosition - containerHeight;
     const pos2 = startingPosition + combinedHeight - containerHeight;
@@ -134,7 +172,6 @@ const MomentItem: React.FC<MomentItemsProps> = ({
               Extrapolation.CLAMP,
             ),
           },
-
           {
             scale: interpolate(visibilityValue.value, [0, 1], [0.8, 1]),
           },
@@ -145,131 +182,136 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   });
 
   const original = momentData?.user_category_name || "No category";
+  const truncated = original.length > 26 ? original.slice(0, 26) + "..." : original;
 
-  const truncated =
-    original.length > 26 ? original.slice(0, 26) + "..." : original;
-
-  const header = `${truncated}`;// • ${momentDate}`;
   return (
     <Animated.View
       style={[
-        primaryBackgroundColor,
-
-        {
-          flexDirection: "row",
-          height: itemHeight,
-          width: "100%",
-          justifyContent: "center",
-
-          paddingHorizontal: 0, // adjust this/remove from View directly below to give padding to send button
-          paddingVertical: 20, // adjust this/remove from View directly below to give padding to send button
-
-          paddingHorizontal: 0,
-        
-          //borderRadius: 999, //cardBorderRadius,
-
-        //  backgroundColor: "orange",
-          overflow: "hidden", // needed here to hide corners of send button when send button has no padding
-        },
+        styles.rowContainer,
+        { height: itemHeight, borderBottomColor: `${categoryColor}22` },
         visibilityStyle,
       ]}
     >
-      <CategoryTooltip
-        label={header}
-        color={primaryColor}
-        borderColor={categoryColor}
-        backgroundColor={darkerOverlayColor}
-        containerStyle={{
-          zIndex: 5,
-          position: "absolute",
-          top: 10,
-          width: "auto",
-          ...(categorySide === "right" ? { right: 0 } : { left: 0 }),
-        }}
-        labelStyle={{
-          fontSize: 14,
-          fontWeight: "bold",
-          textShadowColor: categoryColor,
-          textShadowOffset: { width: 0, height: 0 },
-          textShadowRadius: 2,
-        }}
+      {/* Progress fill */}
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.fillOverlay,
+          { backgroundColor: categoryColor },
+          fillStyle,
+        ]}
       />
 
+      {/* Dot */}
       <View
-        style={{
-        
-          flexDirection: "column",
-        
-          marginTop: 0,
-          justifyContent: "center",
-          width: "94%",
-          borderWidth: 4,
-          borderColor: categoryColor,
-      backgroundColor: categoryColor,
-          borderRadius: 999, 
-          // paddingRight: textContainerRightPadding,
-        }}
-      >
-        <View style={{ padding: 27 }}>
-       
-          <Text
-            numberOfLines={1}
-            style={[
-              AppFontStyles.subWelcomeText,
-              {
-                color: primaryColor,
-                fontSize: 14,
-                lineHeight: 28,
-                fontFamily: "Poppins-Regular",
-                backgroundColor: darkerOverlayColor ,
-                padding: 3,
-                paddingHorizontal: 10,
-                borderRadius: 8,
-              },
-            ]}
-          >
-            {momentData?.capsule?.replace(/\s*\n\s*/g, " ")}
-          </Text>
-        </View>
+        style={[
+          styles.dot,
+          { backgroundColor: categoryColor, shadowColor: categoryColor },
+        ]}
+      />
+
+      {/* Text block */}
+      <View style={styles.textBlock}>
+        <CategoryTooltip
+          label={truncated}
+          color={primaryColor}
+          borderColor={categoryColor}
+          backgroundColor={darkerOverlayColor}
+          containerStyle={{
+            zIndex: 5,
+            alignSelf: categorySide === "right" ? "flex-end" : "flex-start",
+            marginBottom: 6,
+          }}
+          labelStyle={{
+            fontSize: 12,
+            fontWeight: "bold",
+            textShadowColor: categoryColor,
+            textShadowOffset: { width: 0, height: 0 },
+            textShadowRadius: 2,
+          }}
+        />
+
+        <Text
+          numberOfLines={2}
+          style={[
+            AppFontStyles.subWelcomeText,
+            {
+              color: primaryColor,
+              fontSize: 14,
+              lineHeight: 20,
+              fontFamily: "Poppins-Regular",
+              opacity: 0.9,
+              paddingRight: sendButtonWidth + 8,
+            },
+          ]}
+        >
+          {momentData?.capsule?.replace(/\s*\n\s*/g, " ")}
+        </Text>
       </View>
 
-      <AnimatedPressable
-        hitSlop={20}
-        onPress={() => handleSave()}
-        style={[
-          animatedStyle,
-          {
-            position: "absolute",
-            right: 0,
-            top: 0,
-            borderRadius: 0,
-            height: "100%",
-            overflow: "hidden",
-            // backgroundColor: themeStyles.primaryBackground.backgroundColor,
-            height: "100%",
-            textAlign: "center",
-            flexDirection: "column",
-            alignItems: "start",
-            justifyContent: "start",
-            width: sendButtonWidth,
-          },
-        ]}
-        onPressIn={() => {
-          pressedIndexValue.value = index;
-          console.log(index);
-          pulseValue.value = withRepeat(
-            withTiming(1, { duration: 1000 }),
-            -1,
-            true,
-          );
-        }}
-        onPressOut={() => {
-          pressedIndexValue.value = null;
-          pulseValue.value = 0;
-        }}
-      ></AnimatedPressable>
+      {/* Hold-to-save button */}
+      <Pressable
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        hitSlop={12}
+        style={styles.saveButton}
+      >
+        <Animated.View style={iconStyle}>
+          <SvgIcon
+            name={"plus_circle"}
+            size={22}
+            color={categoryColor}
+          />
+        </Animated.View>
+      </Pressable>
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  rowContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 0,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  fillOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    transformOrigin: "left center",
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    flexShrink: 0,
+    marginRight: 16,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  textBlock: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    minWidth: 0,
+  },
+  saveButton: {
+    position: "absolute",
+    right: 20,
+    top: 0,
+    bottom: 0,
+    width: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default MomentItem;

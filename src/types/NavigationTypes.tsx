@@ -36,6 +36,7 @@ export type RootStackParamList = {
   MomentView: {
     moment: object;
     index: number;
+    startWithBackdropTimestamp: number;
   };
   PreAdded: undefined;
   Finalize: undefined;

@@ -1,4 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import React from "react";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -48,46 +49,46 @@ const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) =>
           <View style={styles.innerContainer}>
             {!loadingDash && (
               <View style={styles.rowSpaceBetween}>
-                <Pressable
+                <GlobalPressable
                   hitSlop={10}
                   onPress={
                     imageList && imageList.length > 0 ? navigateToImages : () => {}
                   }
-                  style={styles.row}
                 >
-                  <View style={styles.iconShadow}>
-                    <SvgIcon
-                      name="image_multiple_outline"
-                      size={20}
+                  <View style={styles.leftContent}>
+                    <View style={styles.iconShadow}>
+                      <SvgIcon
+                        name="image_multiple_outline"
+                        size={20}
+                        color={primaryColor}
+                      />
+                    </View>
+                    <OutlinedText
+                      text={`Pics (${imageList && imageList.length})`}
                       color={primaryColor}
-                      style={styles.icon}
+                      style={[styles.titleText, { color: primaryColor }]}
                     />
                   </View>
-                  <OutlinedText
-                    text={`Pics (${imageList && imageList.length})`}
-                    color={primaryColor}
-                    style={[styles.titleText, { color: primaryColor }]}
-                  />
-                </Pressable>
+                </GlobalPressable>
 
                 <View style={styles.rightButtonGroup}>
-                  <Pressable hitSlop={10} onPress={handleCaptureImage}>
+                  <GlobalPressable hitSlop={10} onPress={handleCaptureImage}>
                     <OutlinedText
                       text="Camera"
                       color={primaryColor}
                       style={[styles.actionText, { color: primaryColor }]}
                     />
-                  </Pressable>
+                  </GlobalPressable>
 
                   <View style={[styles.divider, { backgroundColor: primaryColor }]} />
 
-                  <Pressable hitSlop={10} onPress={handleSelectImage}>
+                  <GlobalPressable hitSlop={10} onPress={handleSelectImage}>
                     <OutlinedText
                       text="Upload"
                       color={primaryColor}
                       style={[styles.actionText, { color: primaryColor }]}
                     />
-                  </Pressable>
+                  </GlobalPressable>
                 </View>
               </View>
             )}
@@ -110,23 +111,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   innerContainer: {
-    borderRadius: 20,
     flexDirection: "row",
     height: 40,
     width: "100%",
     alignItems: "center",
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   rowSpaceBetween: {
     flexDirection: "row",
     width: "100%",
+    alignItems: "center",
     justifyContent: "space-between",
   },
-  icon: {
-    marginBottom: 0,
+  leftContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   iconShadow: {
     shadowColor: SHADOW_COLOR,

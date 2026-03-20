@@ -107,8 +107,7 @@ useEffect(() => {
     turnBackdropOnValue.value = true;
     // }, 50);
   }, [navigateToMomentFocus]);
-
-  // const upcomingHelloes = friendListAndUpcoming?.upcoming;
+ 
 
   useEffect(() => {
     if (backdropTimestamp) {
@@ -199,7 +198,7 @@ const handleToggleColoredDots = useCallback(() => {
               onPress={handleNavigateToCreateNew}
               backgroundColor={manualGradientColors.lightColor}
               iconColor={manualGradientColors.homeDarkColor}
-              spaceFromBottom={120}
+              spaceFromBottom={110}
               hidden={false}
             />
           )}

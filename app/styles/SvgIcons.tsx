@@ -58,6 +58,7 @@ import InformationOutlineSvg from "./svgs/information-outline";
 import ImageFilterCenterFocusSvg from "./svgs/image-filter-center-focus";
 import LockOutlineSvg from "./svgs/lock-outline";
 import LogoutSvg from "./svgs/logout";
+import MagnifySvg from "./svgs/magnify";
 import MapMarkerSvg from "./svgs/map-marker";
 import MoonWaningCrescentSvg from "./svgs/moon-waning-crescent";
 import MotionPlayOutlineSvg from "./svgs/motion-play-outline";
@@ -150,6 +151,7 @@ const svgIcons = {
   calendar_outline: CalendarOutlineSvg, // friend header
   lock_outlne: LockOutlineSvg,
   logout: LogoutSvg,
+  magnify: MagnifySvg,
   scatter_plot: ScatterPlotSvg,
   send: SendSvg,
   send_circle_outline: SendCircleOutlineSvg, // location map screen button

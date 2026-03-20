@@ -269,7 +269,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     />
                   </View>
 
-                  <View style={{ width: "100%", marginVertical: 4, zIndex: 2 }}>
+                  <View style={{ width: "100%", marginVertical: 6, zIndex: 2 }}>
                     <Helloes
                       userId={userId}
                       primaryColor={primaryColor}
@@ -277,7 +277,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                       friendId={friendId}
                     />
                   </View>
-                  <View style={{ width: "100%", marginBottom: 6, zIndex: 2 }}>
+                  <View style={{ width: "100%", marginTop: 6, zIndex: 2 }}>
                     <History
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}

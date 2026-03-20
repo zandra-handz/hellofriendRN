@@ -1,28 +1,34 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect  } from "react";
 import { View, StyleSheet } from "react-native";
-// import { useUser } from "@/src/context/UserContext";
+ 
 import useUser from "@/src/hooks/useUser";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-//import { useFriendDash } from "@/src/context/FriendDashContext";
+import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
-import MomentViewPage from "@/app/components/moments/MomentViewPage";
-// import { useCategories } from "@/src/context/CategoriesContext";
-// import useCategories from "@/src/hooks/useCategories";
-// import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import MomentViewPage from "@/app/components/moments/MomentViewPage"; 
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
+import { useSharedValue } from "react-native-reanimated";
+import EmptyFooter from "@/app/components/headers/EmptyFooter";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
 import SvgIcon from "@/app/styles/SvgIcons";
- 
-
+import SafeViewMomentView from "@/app/components/appwide/format/SafeViewMomentView";
 const ScreenMomentView = () => {
   const route = useRoute();
   const currentIndex = route.params?.index ?? null;
+  const startWithBackdropTimestamp = route.params?.startWithBackdropTimestamp ?? null;
+  const startWithBackdropValue = useSharedValue(!!startWithBackdropTimestamp);
+
+  useEffect(() => {
+    if (startWithBackdropTimestamp) {
+      startWithBackdropValue.value = false;
+    }
+  }, [startWithBackdropTimestamp]);
 
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend(); 
@@ -34,9 +40,7 @@ const ScreenMomentView = () => {
     friendId: selectedFriend?.id,
   });
 
-   
-
-      useEffect(() => {
+  useEffect(() => {
     if (preAddMomentMutation.isError) { 
       showFlashMessage(`Could not add moment`, true, 1000);
     }
@@ -49,34 +53,22 @@ const ScreenMomentView = () => {
 
   const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
 
-  
- 
-
-  
-
-
-
-
   const saveToHello = ({friendId, capsuleId, isPreAdded}) => {
-   showFlashMessage(`Moment added!`, false, 1000);
-   handlePreAddMoment({friendId, capsuleId, isPreAdded})
-
-
+    showFlashMessage(`Moment added!`, false, 1000);
+    handlePreAddMoment({friendId, capsuleId, isPreAdded});
   };
-
-
 
   const TIME_SCORE = 100;
 
   return (
-    <SafeViewAndGradientBackground
+    <SafeViewMomentView
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      backgroundOverlayColor={'transparent'}
       friendId={selectedFriend?.id}
-      style={{ flex: 1 }}
     >
-      <View style={StyleSheet.absoluteFillObject}>
+{/* 
+             <View style={[StyleSheet.absoluteFillObject, {zIndex: 0}]}>
         <GradientBackgroundBreathing
           secondColorSetDark={selectedFriend.lightColor}
           secondColorSetLight={selectedFriend.darkColor}
@@ -86,33 +78,42 @@ const ScreenMomentView = () => {
           speed={3000}
           style={styles.gradientBreathingStyle}
           direction={"vertical"}
-        ></GradientBackgroundBreathing>
-      </View>
-      <View style={styles.leafWrapper}>
+        />
+      </View>    */}
+
+
+      <AnimatedBackdrop
+        color={lightDarkTheme.backdropColor}
+        zIndex={5}
+        isVisibleValue={startWithBackdropValue}
+      />
+
+
+
+     {/* <View style={styles.leafWrapper}>
         <SvgIcon
           name={"leaf"}
           size={1000}
           color={selectedFriend.lightColor}
           style={styles.leaf}
         />
-      </View>
+      </View> */}
 
-      {selectedFriend?.id &&
-        !loadingDash &&
-        capsuleList?.length &&
-      (
-          <CarouselSliderMoments
-            lightDarkTheme={lightDarkTheme}
-            userId={user?.id}
-            friendId={selectedFriend?.id}
-            initialIndex={currentIndex} 
-            data={capsuleList}
-            handlePreAddMoment={saveToHello}
-            children={MomentViewPage}
-            friendNumber={phoneNumber}
-          />
-        )}
-    </SafeViewAndGradientBackground>
+      {selectedFriend?.id && !loadingDash && capsuleList?.length && (
+        <CarouselSliderMoments
+          lightDarkTheme={lightDarkTheme}
+          userId={user?.id}
+          friendId={selectedFriend?.id}
+          initialIndex={currentIndex} 
+          data={capsuleList}
+          handlePreAddMoment={saveToHello}
+          children={MomentViewPage}
+          friendNumber={phoneNumber}
+        />
+      )}
+
+      <EmptyFooter backgroundColor={lightDarkTheme.darkerOverlayBackground} />
+    </SafeViewMomentView>
   );
 };
 
@@ -129,13 +130,13 @@ const styles = StyleSheet.create({
   leaf: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    zindex: 4000,
+   // zIndex: 4000,
     position: "absolute",
     opacity: 0.6,
   },
   innerContainer: { flexDirection: "column" },
   rowContainer: { flexDirection: "row" },
-  labelWrapper: {},
+  labelWrapper: {zIndex: 0},
   label: {},
 });
 

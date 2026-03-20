@@ -48,7 +48,7 @@ const TopLayerButtonSharedV = ({
           onPress={onPress}
           style={[styles.container, animatedStyle]}
         >
-          <SvgIcon name={iconName} color={iconColor} size={40} />
+          <SvgIcon name={iconName} color={iconColor} size={25} />
         </AnimatedGlobalPressable>
       </View>
     </FadeDisappear>
@@ -58,7 +58,7 @@ const TopLayerButtonSharedV = ({
 const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
-    right: 12,
+    right: 20,
     zIndex: 99999,
     elevation: 99999,
   },
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     zIndex: 9,
   },
   container: {
-    height: 60,
-    width: 60,
+    height: 30,
+    width: 30,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",

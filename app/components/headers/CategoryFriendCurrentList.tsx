@@ -5,6 +5,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 type Props = {
+  friendName: string;
+  primaryColor: string;
   categoryId: number;
 };
 

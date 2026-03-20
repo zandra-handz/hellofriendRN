@@ -11,8 +11,15 @@ import { RefObject } from "react";
 import useCategories from "@/src/hooks/useCategories";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 type Props = {
+  userId: string;
   userChangedCategory: boolean;
-
+  userDefaultCategory: number;
+  friendDefaultCategory: number;
+  primaryColor: string;
+  primaryBackground: string;
+  lighterOverlayColor: string;
+  friendId: number;
+  friendName: string;
   categoryId: number;
   freezeCategory: RefObject<boolean>;
   label: string;
@@ -44,9 +51,8 @@ const SelectedCategoryButton = ({
   fontSizeEditMode = 16,
   onPress,
   editMode = true,
- 
 }: Props) => {
-  const { userCategories } = useCategories({userId: userId});
+  const { userCategories } = useCategories({ userId: userId });
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const { handleUpdateDefaultCategory, updateFriendDefaultCategoryMutation } =
@@ -65,7 +71,7 @@ const SelectedCategoryButton = ({
       showFlashMessage(
         "Error",
         updateFriendDefaultCategoryMutation.isError,
-        2000
+        2000,
       );
     }
   }, [updateFriendDefaultCategoryMutation.isError]);
@@ -112,14 +118,12 @@ const SelectedCategoryButton = ({
     <>
       <GlobalPressable
         zIndex={3}
-        style={[styles.container, { borderColor: lighterOverlayColor}]}
+        style={[styles.container, { borderColor: lighterOverlayColor }]}
         onPress={handleOnPress}
         onLongPress={handleLongPress}
       >
         <View>
-          <View
-            style={styles.topRowWrapper}
-          >
+          <View style={styles.topRowWrapper}>
             {isFriendDefault && (
               <SvgIcon name={"star"} size={12} color={primaryColor} />
             )}
@@ -143,7 +147,6 @@ const SelectedCategoryButton = ({
             >
               {label ? label : `Pick category`}
             </Text>
-            
           </View>
         </View>
       </GlobalPressable>

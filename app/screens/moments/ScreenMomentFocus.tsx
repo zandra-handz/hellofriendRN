@@ -107,9 +107,7 @@ const ScreenMomentFocus = () => {
     >
       <StaticBackdrop
         color={lightDarkTheme.backdropColor}
-        zIndex={0}
-        isVisibleValue={ActivateBackdrop}
-        startsVisible={!!selectedFriend?.id}
+        zIndex={0} 
       />
 
       {triggerReverseBackdrop && (
