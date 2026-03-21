@@ -1,7 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import React, { useCallback, useRef, useMemo } from "react";
-
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+ 
 import { useIsFocused } from "@react-navigation/native";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -29,6 +28,7 @@ const MomentsField = ({
   heightFull,
   handleMomentScreenNoScroll,
   handleNavigateToGecko,
+  handleNavToMoments,
 }: Props) => {
   const { capsuleList, categorySizes, capsuleChartData } = useCapsuleList();
 
@@ -44,7 +44,11 @@ const MomentsField = ({
 //   prevCategoryColors.current = categoryColors;
 // }
 
-  const { navigateToMomentView } = useAppNavigations();
+ const handleCenterPress = () => {
+  console.log('disabled nav function in MomentsField');
+  // handleMomentScreenNoScroll();
+
+ };
 
   const HEIGHT = 408;
   const CHART_RADIUS = 150;
@@ -58,12 +62,14 @@ const MomentsField = ({
   const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
       if (categoryLabel && categorySizes.categoryStartIndices) {
-        navigateToMomentView({
-          index: categorySizes.categoryStartIndices[categoryLabel],
-        });
+        // navigateToMomentView({
+        //   index: categorySizes.categoryStartIndices[categoryLabel],
+        // });
+        // console.log(categoryLabel)
+               handleNavToMoments(categoryLabel)
       }
     },
-    [navigateToMomentView, categorySizes.categoryStartIndices],
+    [handleNavToMoments, categorySizes.categoryStartIndices],
   );
 
   // const handleMomentScreenNoScroll = useCallback(() => {
@@ -106,7 +112,7 @@ const MomentsField = ({
               canvasHeight={canvasHeight}
               heightFull={heightFull}
               onCategoryPress={handleMomentViewScrollTo}
-              onCenterPress={handleMomentScreenNoScroll}
+              onCenterPress={handleCenterPress}
               onCenterSinglePress={handleNavigateToGecko}
               totalJS={capsuleListCount}
               radius={CHART_RADIUS}

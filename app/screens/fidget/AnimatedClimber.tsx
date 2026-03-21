@@ -28,22 +28,13 @@ type Props = {
   textColor: string;
 };
 
-const AnimatedClimber = ({
-  total,
-  skiaFont,
-  textColor,
-  containerStyle,
-}: Props) => {
+const AnimatedClimber = ({ total, skiaFont, textColor, containerStyle }: Props) => {
   const totalValue = useSharedValue(0);
 
   useEffect(() => {
     if (total == null) return;
     totalValue.value = withTiming(total, { duration: 1000 });
   }, [total, totalValue]);
-
-
-  // move this to the TOP, before all useDerivedValue calls
-if (!skiaFont) return null;
 
   const targetText = useDerivedValue(() => `${Math.round(totalValue.value)}`);
 
@@ -58,30 +49,16 @@ if (!skiaFont) return null;
     const metrics = skiaFont.getMetrics();
     return CANVAS_HEIGHT / 2 - (metrics.ascent + metrics.descent) / 2;
   });
-  // // Center X based on measured text width
-  // const textX = useDerivedValue(() => {
-  //   const m = skiaFont.measureText(targetText.value);
-  //   return (CANVAS_WIDTH - m.width) / 2;
-  // });
 
-  // // Center Y using font metrics (keeps visual centering even if font size changes)
-  // const textY = useDerivedValue(() => {
-  //   const metrics = skiaFont.getMetrics();
-  //   // Skia y is the baseline. This computes a baseline that visually centers glyphs.
-  //   return CANVAS_HEIGHT / 2 - (metrics.ascent + metrics.descent) / 2;
-  // });
-
-  // Precompute shadow/outline positions (avoid creating derived values in JSX)
   const shadowX = useDerivedValue(() => textX.value + SHADOW_DX);
   const shadowY = useDerivedValue(() => textY.value + SHADOW_DY);
-
   const leftX = useDerivedValue(() => textX.value - OUTLINE_R);
   const rightX = useDerivedValue(() => textX.value + OUTLINE_R);
   const upY = useDerivedValue(() => textY.value - OUTLINE_R);
   const downY = useDerivedValue(() => textY.value + OUTLINE_R);
 
+  // MAKE SURE GUARDS ARE AFTER HOOKS
   if (!skiaFont) return null;
-
   return (
     <View pointerEvents="none" style={containerStyle}>
       <Canvas pointerEvents="none" style={styles.canvas}>

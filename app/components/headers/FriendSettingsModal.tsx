@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { View, ScrollView, StyleSheet, Alert } from "react-native";
-import SingleFieldEdit from "../friends/SingleFieldEdit";
+ 
 import ValueSlider from "../friends/ValueSlider";
 import AppModal from "../alerts/AppModal";
 import DeleteFriend from "../friends/DeleteFriend";

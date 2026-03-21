@@ -47,9 +47,47 @@ const useSelectFriend = ({
     setToFriend({ friend: selectedFriend, preConditionsMet: true });
   }, [userId, friendList, navigateOnSelect, queryClient ]);
 
+
+
+
+
+
+
+  // makes sure that user settings new friend field in app's cache gets updated with new backend data
+  const handleSelectFriendFirstTime = useCallback((friendId: number) => {
+    // console.log("handle SELECT FRIEND", friendId);
+
+    if (!friendList || friendList?.length < 1) {
+      return;
+    }
+
+    const selectedFriend = friendList?.find(
+      (friend) => friend.id === Number(friendId)
+    ) || null;
+
+    if (!selectedFriend) {
+      return;
+    }
+
+    // Prefetch dashboard in background
+    prefetchFriendDash(userId, selectedFriend.id, queryClient);
+
+     queryClient.refetchQueries({ queryKey: ["userSettings", userId] });
+
+
+    // Navigate
+    if (navigateOnSelect) {
+      navigateOnSelect();
+    }
+
+    // Set friend state
+    setToFriend({ friend: selectedFriend, preConditionsMet: true });
+  }, [userId, friendList, navigateOnSelect, queryClient ]);
+
+
  
 
-  return { handleSelectFriend };
+  return { handleSelectFriend, handleSelectFriendFirstTime };
 };
 
 export default useSelectFriend;

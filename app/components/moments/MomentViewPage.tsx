@@ -145,16 +145,7 @@ const MomentViewPage: React.FC<Props> = ({
         {/* Top glow line */}
         <View style={[styles.cardGlowLine, { backgroundColor: categoryColor }]} />
 
-        {/* Category strip */}
-        {/* <View style={styles.catStrip}>
-          <View style={[styles.catDot, { backgroundColor: categoryColor, shadowColor: categoryColor }]} />
-          <Text numberOfLines={1} style={[styles.catLabel, { color: categoryColor }]}>
-            {item.user_category_name?.toUpperCase()}
-          </Text>
-          <View style={[styles.catLine, { backgroundColor: `${categoryColor}28` }]} />
-        </View> */}
-
-        {/* Category title */}
+     
         <View style={styles.categoryHeaderContainer}>
           <Text
             numberOfLines={1}

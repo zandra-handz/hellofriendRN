@@ -5,8 +5,7 @@ import InputAddFriendName from "./InputAddFriendName";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import useCreateFriend from "@/src/hooks/FriendCalls/useCreateFriend";
-import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
-import useAddToFriendList from "@/src/hooks/FriendListCalls/useAddToFriendList";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import manualGradientColors from "@/app/styles/StaticColors";
 import TextHeader from "../appwide/format/TextHeader";
@@ -39,15 +38,9 @@ const ContentAddFriend = ({
   fontStyle,
   textColor,
   backgroundColor,
-}) => {
-  const { navigateToHome } = useAppNavigations();
-  const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
-    userId: userId,
-  });
-  const { handleNewFriendSettings } = useUpdateFriendSettings({
-    userId: userId,
-    refetchUpcoming: refetchUpcomingHelloes,
-  });
+}) => { 
+ 
+ 
   const { selectFriend } = useSelectedFriend();
   const [friendName, setFriendName] = useState("");
   const [friendEffort, setFriendEffort] = useState(3);
@@ -57,14 +50,11 @@ const ContentAddFriend = ({
   const [isFriendLimitReached, setIsFriendLimitReached] = useState(false);
   const [isFriendNameUnique, setIsFriendNameUnique] = useState(false);
   const [revealRest, setRevealRest] = useState(false);
+ 
 
-  const { addToFriendList } = useAddToFriendList({ userId: userId });
-
-  const { handleCreateFriend, createFriendMutation } = useCreateFriend({
+  const { handleCreateFriend, createFriendMutation, newFriendSettingsMutation } = useCreateFriend({
     userId: userId,
-    saveSettings: handleNewFriendSettings,
-    addToFriendList: addToFriendList,
-    refetchUpcoming: refetchUpcomingHelloes,
+  
     selectFriend: selectFriend,
   });
 
@@ -91,13 +81,30 @@ const ContentAddFriend = ({
     }
   }, [createFriendMutation.isPending]);
 
-  useEffect(() => {
-    if (createFriendMutation.isSuccess) {
-      showFlashMessage(`${friendName} added!`, false, 1000);
-      clearInputs();
-      navigateToHome();
+  // useEffect(() => {
+  //   if (createFriendMutation.isSuccess) {
+  //     showFlashMessage(`${friendName} added!`, false, 1000);
+  //     clearInputs();
+   
+  //   }
+  // }, [createFriendMutation.isSuccess]);
+
+
+    useEffect(() => {
+    if (newFriendSettingsMutation.isSuccess) {
+      showFlashMessage(`${friendName} settings saved!`, false, 1000);
+      // clearInputs();
+   
     }
-  }, [createFriendMutation.isSuccess]);
+  }, [newFriendSettingsMutation.isSuccess]);
+
+      useEffect(() => {
+    if (newFriendSettingsMutation.isError) {
+      showFlashMessage(`${friendName} settings not saved`, true, 1000);
+      // clearInputs();
+   
+    }
+  }, [newFriendSettingsMutation.isError]);
 
   useEffect(() => {
     if (createFriendMutation.isError) {

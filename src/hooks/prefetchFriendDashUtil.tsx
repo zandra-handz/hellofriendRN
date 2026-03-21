@@ -26,3 +26,5 @@ export function prefetchFriendDash(
     //staleTime: 1000 * 60 * 120, // 2 hours, same as in context
   });
 }
+
+

@@ -31,16 +31,14 @@ import {
 } from "./app/components/appwide/button/showSpinner";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import * as SplashScreen from "expo-splash-screen"; 
+import * as SplashScreen from "expo-splash-screen";
 import Constants from "expo-constants";
 import {
   NavigationContainer,
   getStateFromPath,
 } from "@react-navigation/native";
 
-import AuthActionsContext, {
-   
-} from "./src/context/AuthActionsContext";
+import AuthActionsContext from "./src/context/AuthActionsContext";
 import { FriendCategoryColorsProvider } from "./src/context/FriendCategoryColorsContext";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, Platform } from "react-native";
@@ -48,7 +46,7 @@ import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
-import { LDThemeProvider } from "./src/context/LDThemeContext"; 
+import { LDThemeProvider } from "./src/context/LDThemeContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import * as Notifications from "expo-notifications";
@@ -59,6 +57,7 @@ import useUser from "./src/hooks/useUser";
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenCategories from "./app/screens/home/ScreenCategories";
+import ScreenAddFirstFriend from "./app/screens/home/ScreenAddFirstFriend";
 import ScreenFriendHome from "./app/screens/home/ScreenFriendHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
@@ -114,45 +113,28 @@ const queryClient = new QueryClient({
 // initialize selectedFriend before any component mounts
 queryClient.setQueryData(["selectedFriend"], DEFAULT_FRIEND);
 
+// queryClient.getQueryCache().subscribe((event) => {
+//   if (event.query.queryKey[0] === "pastHelloes") {
+//     console.log(
+//       "[pastHelloes cache]",
+//       event.type,
+//       JSON.stringify(event.query.queryKey),
+//       "data length:",
+//       event.query.state.data?.length,
+//     );
+//   }
+// });
 
-queryClient.getQueryCache().subscribe((event) => {
-  if (event.query.queryKey[0] === 'pastHelloes') {
-    console.log('[pastHelloes cache]', event.type, JSON.stringify(event.query.queryKey), 'data length:', event.query.state.data?.length);
-  }
-});
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
   throttleTime: 1000, // collect all changes for 1 second, then write once
   key: "persister-query-cache",
 });
 
-// queryClient.getQueryCache().subscribe((event) => {
-//   console.log('[QueryCache]', event.type, event.query.queryKey);
-// });
-// queryClient.getQueryCache().subscribe((event) => {
-//   if (event.query.queryKey[0] === 'selectedFriend') {
-//     console.log('[selectedFriend]', event.type,
-//       event.type === 'updated' ? JSON.stringify(event.query.state.data?.id) : ''
-//     );
-//   }
-// });
+// import { debugQueryKeyStructure } from "./src/hooks/useCacheDebugger";
 
-// queryClient.getMutationCache().subscribe((event) => {
-//   const running = queryClient
-//     .getMutationCache()
-//     .getAll()
-//     .filter((m) => m.state.status === "pending").length;
-//   console.log(
-//     "[MutationCache]",
-//     event.type,
-//     "| key:",
-//     JSON.stringify(event.mutation?.options?.mutationKey),
-//     "| fn:",
-//     event.mutation?.options?.mutationFn?.name,
-//     "| running:",
-//     running,
-//   );
-// });
+// debugQueryKeyStructure(queryClient, "friendListAndUpcoming");
+
 import * as Sentry from "@sentry/react-native";
 import ScreenQRCode from "./app/screens/fidget/ScreenQRCode";
 
@@ -440,6 +422,15 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
             component={ScreenHistory}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="AddFirstFriend"
+            component={ScreenAddFirstFriend}
+            options={{
+              gestureEnabled: false,
+              headerShown: false,
+              animation: "none",
+            }}
+          />
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
@@ -500,7 +491,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         <Stack.Screen
           name="Moments"
           component={ScreenMoments}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, animation: "none" }}
         />
         <Stack.Screen
           name="PreAdded"
@@ -520,7 +511,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         <Stack.Screen
           name="MomentView"
           component={ScreenMomentView}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, animation: "none", gestureEnabled: false }}
         />
         <Stack.Screen
           name="ImageView"

@@ -81,7 +81,7 @@ const MomentWriteEditView = ({
 
   const handleOpenCat = () => {
     openCatCreator();
-  
+
     // yTranslateValue.value = withTiming(0, { duration: 100 });
     Keyboard.dismiss();
   };
@@ -130,27 +130,26 @@ const MomentWriteEditView = ({
     }, [momentText]),
   );
 
-const handleTriggerRefocus = () => {
-  console.log("handleTriggerRefocus");
-  setTimeout(() => setTriggerReFocus(prev => prev + 1), 50);
-};
-const hasInitialFocused = useRef(false);
+  const handleTriggerRefocus = () => {
+    console.log("handleTriggerRefocus");
+    setTimeout(() => setTriggerReFocus((prev) => prev + 1), 50);
+  };
+  const hasInitialFocused = useRef(false);
 
-useFocusEffect(
-  useCallback(() => {
-    if (!hasInitialFocused.current) {
-      hasInitialFocused.current = true;
-      handleTriggerRefocus();
-      console.log("trigger refocus - initial only");
-    }
+  useFocusEffect(
+    useCallback(() => {
+      if (!hasInitialFocused.current) {
+        hasInitialFocused.current = true;
+        handleTriggerRefocus();
+        console.log("trigger refocus - initial only");
+      }
 
-    return () => {
-      console.log("Screen is unfocused");
-    };
-  }, []),
-);
+      return () => {
+        console.log("Screen is unfocused");
+      };
+    }, []),
+  );
   const handleCloseCatCreator = () => {
-   
     closeCatCreator();
     handleTriggerRefocus();
   };
@@ -220,11 +219,9 @@ useFocusEffect(
     extractScoresFromMoment(existingMomentObject),
   );
 
-
   const textLength = useMemo(() => {
-    console.log('textLength: ', momentTextToSave?.length)
+    console.log("textLength: ", momentTextToSave?.length);
     return momentTextToSave?.length;
-
   }, [momentTextToSave]);
   // Update individual score:
   const handleScoreChange = (field: keyof MomentScores, value: number) => {
@@ -333,6 +330,7 @@ useFocusEffect(
         setTriggerReFocus(null);
         return;
       } else {
+        console.log("navigating back after creation!");
         navigateBack();
       }
       createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
@@ -414,11 +412,11 @@ useFocusEffect(
               showNext={true}
               nextEnabled={!!(textLength && selectedCategory)}
               onNext={handleSave}
-
+              onBack={navigateBack}
               nextColor={manualGradientColors.homeDarkColor}
               nextBackgroundColor={manualGradientColors.lightColor}
               nextDisabledColor={primaryBackground}
-              nextDisabledBackgroundColor={'gray'}
+              nextDisabledBackgroundColor={"gray"}
             />
 
             <MomentFocusTray

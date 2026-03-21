@@ -50,6 +50,13 @@ const ScreenMoments = () => {
 
   const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
 
+
+  const textColor = lightDarkTheme.primaryText;
+  const backgroundColor = lightDarkTheme.primaryBackground;
+  const overlayColor = lightDarkTheme.overlayBackground;
+  const overlayColorDarker = lightDarkTheme.darkerOverlayBackground;
+  const overlayColorLighter = lightDarkTheme.lighterOverlayBackground;
+
   const [categoryNavigatorVisible, setCategoryNavigatorVisible] =
     useState(false);
 
@@ -83,6 +90,17 @@ const ScreenMoments = () => {
     navigateToFriendHome,
   } = useAppNavigations();
   const TIME_SCORE = 100;
+
+
+  const [triggerClose, setTriggerClose ] = useState(0);
+
+
+  const handleNavBack = () => {
+    console.log('setting trigger!!!!!!!!!!!!!')
+    setTriggerClose((prev) => prev + 1);
+ 
+
+  };
 
   const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming({
     userId: user?.id,
@@ -178,7 +196,7 @@ const ScreenMoments = () => {
     <SafeViewFriendHome
       friendColorLight={selectedFriend.lightColor}
       friendColorDark={selectedFriend.darkColor}
-      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+      backgroundOverlayColor={backgroundColor}
       friendId={selectedFriend?.id}
     >
       {/* <AnimatedBackdrop
@@ -196,13 +214,15 @@ const ScreenMoments = () => {
 
       <TextHeader
         label={`All notes`}
-        color={lightDarkTheme.primaryText}
+        color={textColor}
         fontStyle={welcomeTextStyle}
         showNext={true}
         nextEnabled={true}
         nextIconName={`arrow_right`}
+        onBack={handleNavBack}
+
         onNext={navigateToFinalize}
-        nextColor={lightDarkTheme.primaryText}
+        nextColor={textColor}
         nextBackgroundColor={'transparent'}
       />
 
@@ -211,6 +231,8 @@ const ScreenMoments = () => {
           <View style={{ flex: 1 }}>
             {capsuleList && friendCategoryColorsMap && (
               <MomentsList
+              triggerClose={triggerClose}
+              navigateBack={navigateBack}
                 topCategoryColorValue={topCategoryColor}
                 capsuleList={capsuleList}
                 preAdded={preAdded}
@@ -218,19 +240,15 @@ const ScreenMoments = () => {
                 categoryNames={categoryNames}
                 categoryStartIndices={categoryStartIndices}
                 navigateToMomentView={navigateToMomentView}
-                darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
-                lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
-                // EscortBarMinusWidth
-                navigateBack={navigateBack}
-                // Moment item
+               overlayColorDarker={overlayColorDarker}
+                overlayColorLighter={overlayColorLighter}
                 friendColor={selectedFriend.darkColor}
-                primaryBackgroundColor={lightDarkTheme.primaryBackground}
-                primaryColor={lightDarkTheme.primaryText}
-                primaryOverlayColor={lightDarkTheme.overlayBackground}
+                backgroundColor={backgroundColor}
+                textColor={textColor}
+                overlayColor={overlayColor}
                 friendId={selectedFriend?.id}
                 scrollToIndex={scrollTo}
-                categoryColorsMap={friendCategoryColorsMap}
-                handleNavigateToCreateNew={handleNavigateToCreateNew}
+                categoryColorsMap={friendCategoryColorsMap} 
                 categoryNavigatorVisible={categoryNavigatorVisible}
                 handleToggleCatNav={handleToggleCatNav}
               />

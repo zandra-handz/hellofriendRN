@@ -134,6 +134,7 @@ const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
     }
   }, [isDelaying, backgroundColor]);
  
+ 
 // useEffect(() => {
 //   if (isOnline === null) return;
 
@@ -166,7 +167,7 @@ const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
               </View>
             )}
             <>
-              {settings?.id && friendListLength > 0 && (
+              {settings?.id && friendListLength > 0  && (
                 <>
                   <WelcomeCard
                     eyebrow="Gecko:"

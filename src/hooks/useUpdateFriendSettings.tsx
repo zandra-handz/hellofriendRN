@@ -12,10 +12,9 @@ import { updateFriendSugSettings } from "@/src/calls/api";
 type Props = {
   userId: number;
   friendId: number;
-  refetchUpcoming?: () => void;
 };
 
-const useUpdateFriendSettings = ({ userId, friendId, refetchUpcoming }: Props) => {
+const useUpdateFriendSettings = ({ userId, friendId }: Props) => {
   const queryClient = useQueryClient();
 
   const timeoutRef = useRef(null);
@@ -33,11 +32,11 @@ const useUpdateFriendSettings = ({ userId, friendId, refetchUpcoming }: Props) =
             ...old,
             suggestion_settings: data, // <-- your new data
           };
-        }
+        },
       );
-      if (refetchUpcoming) {
-        refetchUpcoming();
-      }
+      // if (refetchUpcoming) {
+      //   refetchUpcoming();
+      // }
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -81,64 +80,11 @@ const useUpdateFriendSettings = ({ userId, friendId, refetchUpcoming }: Props) =
       console.error("Error saving new friend in RQ function: ", error);
     }
   };
-
-  const handleNewFriendSettings = async ({
-    friendId,
-    effort,
-    priority,
-    phoneNumber,
-  }) => {
-    const update = {
-      user: userId,
-      friend: friendId,
-      effort_required: effort,
-      priority_level: priority,
-      phone_number: phoneNumber,
-    };
-
-    console.log("Payload in RQ function before sending:", update);
-
-    try {
-      await newFriendSettingsMutation.mutateAsync(update); // Call the mutation with the location data
-    } catch (error) {
-      console.error("Error saving new friend in RQ function: ", error);
-    }
-  };
-
-
-    const newFriendSettingsMutation = useMutation({
-    mutationFn: (data) => updateFriendSugSettings(data),
-    onSuccess: (data) => {
-      console.log("Friend suggestion settings updated successfully.", data);
  
-      if (refetchUpcoming) {
-        refetchUpcoming();
-      }
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+ 
 
-      timeoutRef.current = setTimeout(() => {
-        updateFriendSettingsMutation.reset();
-      }, 2000);
-    },
-    onError: (error) => {
-      console.error("Error updating friend suggestion settings: ", error);
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        updateFriendSettingsMutation.reset();
-      }, 2000);
-    },
-  });
-
-
-  return {
-    handleNewFriendSettings,
+  return { 
     handleUpdateFriendSettings,
     updateFriendSettingsMutation,
   };

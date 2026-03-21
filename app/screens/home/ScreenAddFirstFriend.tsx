@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-const ScreenAddFriend = () => {
+const ScreenAddFirstFriend = () => {
   const { lightDarkTheme } = useLDTheme();
   // const { selectedFriend } = useSelectedFriend();
 
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScreenAddFriend;
+export default ScreenAddFirstFriend;

@@ -337,6 +337,7 @@ type NavToAuthProp = {
 interface hookReturns {
   navigateToWelcome: () => void;
   navigateToHome: () => void;
+  navigateToAddFirstFriend: () => void;
   navigateToFriendHome: ({
     idToSelect,
     backdropTimestamp,
@@ -347,12 +348,13 @@ interface hookReturns {
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
   navigateToFinalize: () => void;
+  navigateToPreAdded: () => void;
   navigateToHistory: () => void;
   navigateToFriendHistory: () => void;
   navigateToHelloes: () => void;
   navigateToHelloView: ({
     startingIndex,
-    inPersonFilter,
+    inPersonFilter, 
   }: NavToHelloViewProps) => void;
   navigateToAddHello: () => void;
   navigateToAddImage: ({ imageUri }: NavToAddImageProps) => void;
@@ -384,7 +386,7 @@ interface hookReturns {
   }: NavToQRCodeProp) => void;
 
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
-  navigateToMomentView: ({ moment, index, startWithBackdropTimestamp }: NavToMomentViewProps) => void;
+  navigateToMomentView: ({ moment, index, startWithBackdropTimestamp, momentId }: NavToMomentViewProps) => void;
 
   navigateToFidget: () => void;
   navigateToAuth: ({
@@ -409,6 +411,11 @@ const useAppNavigations = (): hookReturns => {
   const navigateToCategories = () => {
     navigation.navigate("Categories");
   };
+
+    const navigateToAddFirstFriend = () => {
+    navigation.navigate("AddFirstFriend");
+  };
+
 
   //   const navigateToFriendHome = ({idToSelect=null, backdropTimestamp=null, friendName="", friendNextDate="", friendChangeTimestamp=null}) => {
   //   navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
@@ -549,8 +556,8 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
 
-  const navigateToMomentView = ({ moment, index, startWithBackdropTimestamp=null }: NavToMomentViewProps) => {
-    navigation.navigate("MomentView", { moment, index, startWithBackdropTimestamp });
+  const navigateToMomentView = ({ moment, index, startWithBackdropTimestamp=null, momentId=null }: NavToMomentViewProps) => {
+    navigation.navigate("MomentView", { moment, index, startWithBackdropTimestamp, momentId });
   };
 
   const navigateToLocationSearch = () => {
@@ -559,6 +566,10 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToFinalize = () => {
     navigation.navigate("Finalize");
+  };
+
+    const navigateToPreAdded = () => {
+    navigation.navigate("PreAdded");
   };
 
   const navigateToFidget = () => {
@@ -598,10 +609,12 @@ const useAppNavigations = (): hookReturns => {
   return {
     navigateToHome,
     navigateToCategories,
+    navigateToAddFirstFriend,
     navigateToFriendHome,
     navigateToAddFriend,
     navigateToSelectFriend,
     navigateToFinalize,
+    navigateToPreAdded,
     navigateToHistory,
     navigateToFriendHistory,
     navigateToHelloes,

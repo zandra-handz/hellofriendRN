@@ -50,7 +50,7 @@ const BackButton = ({ label, fontStyle, color, timing, visible, showLabel=false,
   }));
 
   return (
-    <Pressable onPress={navigateBack}>
+    <Pressable onPress={onPress ? onPress : navigateBack}>
       <Animated.View style={[styles.container, wrapperStyle]}>
         <Animated.View style={iconStyle}>
           <SvgIcon name="chevron_left" size={iconSize} color={color} />

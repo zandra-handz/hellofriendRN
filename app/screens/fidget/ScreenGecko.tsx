@@ -99,34 +99,69 @@ const speedMultiplier = useSharedValue(1.0);
 
 const luxRef = useRef(0); // track last lux to avoid unnecessary updates
 
-useEffect(() => {
-  DeviceMotion.setUpdateInterval(16);
-  const motionSub = DeviceMotion.addListener(({ rotation }) => {
-    tiltX.value = rotation.beta;
-    tiltY.value = rotation.gamma;
-  });
-  return () => motionSub.remove();
-}, []);
+// useEffect(() => {
+//   // DeviceMotion.setUpdateInterval(16);
+//     DeviceMotion.setUpdateInterval(100);
+//   const motionSub = DeviceMotion.addListener(({ rotation }) => {
+//     tiltX.value = rotation.beta;
+//     tiltY.value = rotation.gamma;
+//   });
+//   return () => motionSub.remove();
+// }, []);
 
-useEffect(() => {
-  const lightSub = LightSensor.addListener(({ illuminance }) => {
-    const prev = luxRef.current;
-    luxRef.current = illuminance;
+// useEffect(() => {
+//   const lightSub = LightSensor.addListener(({ illuminance }) => {
+//     const prev = luxRef.current;
+//     luxRef.current = illuminance;
 
-    // only update speed if lux crosses a meaningful threshold
-    const crossedThreshold =
-      (prev < 50 && illuminance >= 50) ||
-      (prev >= 50 && illuminance < 50) ||
-      (prev < 500 && illuminance >= 500) ||
-      (prev >= 500 && illuminance < 500);
+//     // only update speed if lux crosses a meaningful threshold
+//     const crossedThreshold =
+//       (prev < 50 && illuminance >= 50) ||
+//       (prev >= 50 && illuminance < 50) ||
+//       (prev < 500 && illuminance >= 500) ||
+//       (prev >= 500 && illuminance < 500);
 
-    if (crossedThreshold) {
-      const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
-      speedMultiplier.value = mapped;
-    }
-  });
-  return () => lightSub.remove();
-}, []);
+//     if (crossedThreshold) {
+//       const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
+//       speedMultiplier.value = mapped;
+//     }
+//   });
+//   return () => lightSub.remove();
+// }, []);
+
+useFocusEffect(
+  useCallback(() => {
+    // Wake up sensors on focus
+    DeviceMotion.setUpdateInterval(100);
+    
+    const motionSub = DeviceMotion.addListener(({ rotation }) => {
+      tiltX.value = rotation.beta;
+      tiltY.value = rotation.gamma;
+    });
+
+    const lightSub = LightSensor.addListener(({ illuminance }) => {
+      const prev = luxRef.current;
+      luxRef.current = illuminance;
+
+      const crossedThreshold =
+        (prev < 50 && illuminance >= 50) ||
+        (prev >= 50 && illuminance < 50) ||
+        (prev < 500 && illuminance >= 500) ||
+        (prev >= 500 && illuminance < 500);
+
+      if (crossedThreshold) {
+        const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
+        speedMultiplier.value = mapped;
+      }
+    });
+
+    // Sleep sensors on blur
+    return () => {
+      motionSub.remove();
+      lightSub.remove();
+    };
+  }, []),
+);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -173,7 +208,7 @@ useEffect(() => {
 
   const handleNavigateToMoment = useCallback(
     (m) => {
-      navigateToMomentView({ moment: m, index: m.uniqueIndex });
+      navigateToMomentView({ moment: m, index: m.uniqueIndex, momentId: m.id});
     },
     [navigateToMomentView],
   );
