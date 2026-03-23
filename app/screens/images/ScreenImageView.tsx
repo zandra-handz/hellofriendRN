@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { View, Alert } from "react-native";
+
 import { useRoute } from "@react-navigation/native";
 import SafeViewFriendStatic from "@/app/components/appwide/format/SafeViewFriendStatic";
 import ImageCarouselSlider from "@/app/components/appwide/ImageCarouselSlider";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import EmptyFooter from "@/app/components/headers/EmptyFooter";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
 // import { useUser } from "@/src/context/UserContext";
 import useUser from "@/src/hooks/useUser";
@@ -22,6 +22,10 @@ const ScreenImageView = () => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
   const { lightDarkTheme } = useLDTheme();
+
+  const textColor = lightDarkTheme.primaryText;
+  const backgroundColor = lightDarkTheme.primaryBackground;
+
   const { imageList } = useImages({
     userId: user?.id,
     friendId: selectedFriend?.id,
@@ -42,25 +46,25 @@ const ScreenImageView = () => {
     }
 
     try {
-      // 1️⃣ Create (or ensure) the shared_images directory
+      //  Create (or ensure) the shared_images directory
       const shareDir = new Directory(Paths.cache, "shared_images");
       if (!shareDir.exists) shareDir.create();
 
-      // 2️⃣ Create the File object
+      // Create the File object
       const fileName = `${imageItem.title || "shared_image"}.jpg`;
       const file = new File(shareDir, fileName);
 
-      // 3️⃣ Delete existing file if present
+      //   Delete existing file if present
       if (file.exists) {
         file.delete(); // synchronous deletion
         console.log("Deleted existing file:", file.uri);
       }
 
-      // 4️⃣ Download the image to the file
+      //  Download the image to the file
       const output = await File.downloadFileAsync(imageItem.image, file);
 
       if (output.exists) {
-        // 5️⃣ Share it
+        //  Share it
         await Sharing.shareAsync(output.uri, { mimeType: "image/jpeg" });
         console.log("Shared file URI:", output.uri);
       } else {
@@ -104,12 +108,14 @@ const ScreenImageView = () => {
         )}
         onRightPress={handleShare}
         onRightPressSecondAction={handleDelete}
-        primaryColor={lightDarkTheme.primaryText}
-        primaryBackground={lightDarkTheme.primaryBackground}
+        primaryColor={textColor}
+        primaryBackground={backgroundColor}
         overlayColor={lightDarkTheme.overlayBackground}
         dividerStyle={lightDarkTheme.divider}
         welcomeTextStyle={AppFontStyles.welcomeText}
       />
+
+      <EmptyFooter backgroundColor={lightDarkTheme.darkerOverlayBackground} />
     </SafeViewFriendStatic>
   );
 };

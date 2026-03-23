@@ -127,7 +127,7 @@ const ItemFooter: React.FC<Props> = ({
       >
         <EscortBarMoments
           primaryColor={primaryColor}
-          primaryBackground={backgroundColor}
+          primaryBackground={'transparent'}
           onLeftPress={handleScrollToPrev}
           onRightPress={handleScrollToNext}
           includeSendButton={true}

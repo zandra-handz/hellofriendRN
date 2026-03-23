@@ -22,13 +22,12 @@ import SelectedFriendHome from "@/app/components/home/SelectedFriendHome";
 import {
   showSpinner,
   hideSpinner,
-} from "@/app/components/appwide/button/showSpinner";
-import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
-
+} from "@/app/components/appwide/button/showSpinner"; 
 import manualGradientColors from "@/app/styles/StaticColors";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 
 import TopLayerButton from "@/app/components/home/TopLayerButton";
+import { color } from "react-native-elements/dist/helpers";
 
 const ScreenFriendHome = ({
   skiaFontLarge,
@@ -64,7 +63,9 @@ const ScreenFriendHome = ({
   //FOR SOME REASON SETTINGS UPDATE DOESN'T GET BATCHED WITH OTHER THINGS RENDERING
   //MAYBE TOO MUCH ON THIS SCREEN TO RENDER???? ???????
   const route = useRoute();
-  const { friendCategoryColors } = useFriendCategoryColors();
+ 
+
+const resetTimestamp = route?.params?.resetTimestamp ?? null;
   const idToSelect = route?.params?.idToSelect ?? null;
   // const friendName = route?.params?.friendName ?? null;
   const friendNextDate = route?.params?.friendNextDate ?? null;
@@ -72,7 +73,7 @@ const ScreenFriendHome = ({
   const { selectedFriend } = useSelectedFriend();
 
   const backdropTimestamp = route.params?.backdropTimestamp ?? null;
-
+console.log(resetTimestamp)
   // I feel like I need this but I can't remember why
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user?.id });
@@ -85,6 +86,15 @@ const ScreenFriendHome = ({
 
   const coloredDotsModeValue = useSharedValue(false);
   const turnBackdropOnValue = useSharedValue(false);
+
+
+    useEffect(() => {
+    if (resetTimestamp && coloredDotsModeValue.value) {
+      console.log('resetting1')
+      coloredDotsModeValue.value = false;
+    }
+
+  }, [resetTimestamp]);
 
   // Select friend when screen mounts with idToSelect param
   // useEffect(() => {
@@ -132,6 +142,9 @@ const ScreenFriendHome = ({
     coloredDotsModeValue.value = !coloredDotsModeValue.value;
   }, []);
 
+
+
+
   const { lightDarkTheme } = useLDTheme();
   const backgroundColor = lightDarkTheme.primaryBackground;
 
@@ -166,7 +179,7 @@ const ScreenFriendHome = ({
               primaryBackground={lightDarkTheme.primaryBackground}
               darkGlassBackground={lightDarkTheme.darkGlassBackground}
               darkerGlassBackground={lightDarkTheme.darkerGlassBackground}
-              categoryColorsArray={friendCategoryColors}
+           
               skiaFontLarge={skiaFontLarge}
               skiaFontSmall={skiaFontSmall}
               paddingHorizontal={PADDING_HORIZONTAL}
@@ -194,15 +207,14 @@ const ScreenFriendHome = ({
               isVisibleValue={turnBackdropOnValue}
             />
 
-            {selectedFriend?.id && (
+     
               <TopLayerButton
                 onPress={handleNavigateToCreateNew}
                 backgroundColor={manualGradientColors.lightColor}
                 iconColor={manualGradientColors.homeDarkColor}
                 spaceFromBottom={110}
                 hidden={false}
-              />
-            )}
+              /> 
 
             <SelectedFriendFooter
               userId={user.id}

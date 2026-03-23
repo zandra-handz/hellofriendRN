@@ -1,5 +1,5 @@
 import { View, StyleSheet, Pressable, Text, Button } from "react-native";
-import React, { useState, useRef } from "react"; 
+import React, { useState, useRef } from "react";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -8,9 +8,14 @@ import SpinnerThree from "@/app/components/appwide/button/SpinnerThree";
 import SpinnerFive from "@/app/components/appwide/button/SpinnerFive";
 import SpinnerSix from "@/app/components/appwide/button/SpinnerSix";
 import SpinnerSeven from "@/app/components/appwide/button/SpinnerSeven";
+import SpinnerEight from "@/app/components/appwide/button/SpinnerEight";
+import SpinnerNine from "@/app/components/appwide/button/SpinnerNine";
+import SpinnerTen from "@/app/components/appwide/button/SpinnerTen";
+import SpinnerEleven from "@/app/components/appwide/button/SpinnerEleven";
+import SpinnerTwelve from "@/app/components/appwide/button/SpinnerTwelve";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSharedValue } from "react-native-reanimated";
-
+import SpinnerThirteen from "@/app/components/appwide/button/SpinnerThirteen";
 type Props = {};
 
 const INITIAL_INTERVAL = 200;
@@ -46,12 +51,14 @@ const ScreenFidget = (props: Props) => {
       speed.value = speed.value + delta;
       currentIntervalRef.current = Math.max(
         MIN_INTERVAL,
-        currentIntervalRef.current - ACCELERATION_STEP
+        currentIntervalRef.current - ACCELERATION_STEP,
       );
       intervalRef.current = setTimeout(tick, currentIntervalRef.current);
     };
     intervalRef.current = setTimeout(tick, INITIAL_INTERVAL);
   };
+
+  const color3 = lightDarkTheme.primaryText;
 
   const handleNextOption = () => {
     setSpinnerViewing(mod(spinnerViewing + 1, 6));
@@ -61,56 +68,85 @@ const ScreenFidget = (props: Props) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor, paddingHorizontal: 10 }}>
+      <Pressable
+        onPress={handleNextOption}
+        style={{
+          position: "absolute",
+          zIndex: 100,
+          width: "110%",
+          right: 0,
+          left: 0,
+          height: 50,
+          top: 80,
+        //  backgroundColor: "orange",
+        }}
+      ></Pressable>
+      {/* 
       <TextHeader
         label={`Spinner ${spinnerViewing}`}
-        color={textColor}
+        color={'transparent'}
         fontStyle={welcomeTextStyle}
         showNext={true}
         nextEnabled={true}
         nextIconName="arrow_right"
         onNext={handleNextOption}
-        nextColor={textColor}
+        nextColor={'transparent'}
         nextBackgroundColor="transparent"
         backgroundColor="transparent"
         zIndex={10}
-      />
+      /> */}
 
       <View style={StyleSheet.absoluteFill}>
         {spinnerViewing === 0 && (
-          <SpinnerThree
-            color1={color1}
-            color2={manualGradientColors.homeDarkColor}
+          <SpinnerNine
+            color2={color3}
+            color1={manualGradientColors.homeDarkColor}
             speed={speed}
           />
         )}
         {spinnerViewing === 1 && (
-          <SpinnerThree
-            color1={color1}
-            color2={manualGradientColors.homeDarkColor}
-             speed={speed}
+          <SpinnerEight
+            color2={color3}
+            color1={manualGradientColors.homeDarkColor}
+            speed={speed}
           />
         )}
         {spinnerViewing === 2 && (
-          <SpinnerThree
-            color1={color1}
-            color2={manualGradientColors.homeDarkColor}
-             speed={speed}
+          <SpinnerTen
+            color2={color3}
+            color1={manualGradientColors.homeDarkColor}
+            speed={speed}
           />
         )}
-        {spinnerViewing === 3 && <SpinnerFive color1={color1} color2={color2} />}
-        {spinnerViewing === 4 && <SpinnerSix color1={color1} color2={color2} />}
-        {spinnerViewing === 5 && <SpinnerSeven color1={color1} color2={color2} />}
+        {spinnerViewing === 3 && (
+          <SpinnerEleven
+            color1={color3}
+            color2={manualGradientColors.homeDarkColor}
+          />
+        )}
+        {spinnerViewing === 4 && (
+          <SpinnerTwelve
+            color2={color3}
+            color1={manualGradientColors.homeDarkColor}
+          />
+        )}
+        {spinnerViewing === 5 && (
+          <SpinnerThirteen 
+            color2={color3}
+            color1={manualGradientColors.homeDarkColor}
+           />
+        )}
       </View>
- 
-      <Pressable
+
+      {/* <Pressable
         style={[styles.hideToggle, { opacity: showControls ? 1 : 0 }]}
         onPress={() => setShowControls(v => !v)}
       >
         <Text style={[styles.speedButtonText, { fontSize: 13 }]}>
           {showControls ? "hide" : "show"}
         </Text>
-      </Pressable>
- 
+      </Pressable> */}
+      {/*  
       <View style={[styles.upDownButtonsWrapper, { opacity: showControls ? 1 : 0 }]}>
         <Pressable
           style={styles.speedButton}
@@ -131,7 +167,7 @@ const ScreenFidget = (props: Props) => {
         >
           <Text style={styles.speedButtonText}>−</Text>
         </Pressable>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
@@ -173,14 +209,6 @@ const styles = StyleSheet.create({
 });
 
 export default ScreenFidget;
-
-
-
-
-
-
-
-
 
 // import { View, StyleSheet, Pressable, Text } from "react-native";
 // import React, { useState, useRef, useEffect } from "react";

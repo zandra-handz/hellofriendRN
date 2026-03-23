@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
 import { View, ViewToken, Pressable, StyleSheet } from "react-native";
-
+import RestoreButton from "./RestoreButton";
+import GoHomeButton from "./GoHomeButton";
 import { useFocusEffect } from "@react-navigation/native";
 import MomentsAdded from "./MomentsAdded";
 import MomentsAddedStatic from "./MomentsAddedStatic";
@@ -45,6 +46,7 @@ type Props = {
 };
 
 const MomentsList = ({
+  shouldResetRef,
   triggerClose,
   navigateBack,
   friendColor,
@@ -67,27 +69,29 @@ const MomentsList = ({
   topCategoryColorValue,
   tooltipLayout = "left" as TooltipLayout, // "left" | "right" | "alternating"
 }: Props) => {
+  const NAV_BACK_LIST_VISIBILITY_TIMING = 500;
+  const NAV_BACK_SCROLL_TIMING = 10;
+  const NAV_BACK_NAVIGATION_TIMING = 300;
 
+  const flatListRef = useAnimatedRef(null);
 
+  useEffect(() => {
+    if (triggerClose && triggerClose > 0) {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 
-    const flatListRef = useAnimatedRef(null);
+      setTimeout(() => {
+        pullCount.value = 2;
+        scrollY.value = 0;
+        listVisibility.value = withTiming(0, {
+          duration: NAV_BACK_LIST_VISIBILITY_TIMING,
+        });
+      }, NAV_BACK_SCROLL_TIMING);
 
-
-useEffect(() => {
-  if (triggerClose && triggerClose > 0) {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    
-    setTimeout(() => {
-      pullCount.value = 2;
-      scrollY.value = 0;
-      listVisibility.value = withTiming(0, { duration: 600 });
-    }, 150);
-
-    setTimeout(() => {
-      navigateBack();
-    }, 800);
-  }
-}, [triggerClose]);
+      setTimeout(() => {
+        navigateBack();
+      }, NAV_BACK_NAVIGATION_TIMING);
+    }
+  }, [triggerClose]);
 
   // useEffect(() => {
   //   if (scrollToIndex) {
@@ -96,40 +100,38 @@ useEffect(() => {
   //   }
   // }, [scrollToIndex]);
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     listVisibility.value = 0;
+  //     pullCount.value = 0;
+  //     listVisibility.value = withSpring(1);
 
-// useFocusEffect(
-//   useCallback(() => {
-//     listVisibility.value = 0;
-//     pullCount.value = 0;
-//     listVisibility.value = withSpring(1);
+  //     if (scrollToIndex) {
+  //       setTimeout(() => {
+  //         scrollToCategoryStart(scrollToIndex);
+  //       }, 200); // wait for spring to finish
+  //     }
+  //   }, [scrollToIndex])
+  // );
 
-//     if (scrollToIndex) {
-//       setTimeout(() => {
-//         scrollToCategoryStart(scrollToIndex);
-//       }, 200); // wait for spring to finish
-//     }
-//   }, [scrollToIndex])
-// );
+  const isFirstFocus = useRef(true);
 
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstFocus.current) {
+        listVisibility.value = 0;
+        pullCount.value = 0;
+        listVisibility.value = withSpring(1);
 
-const isFirstFocus = useRef(true);
-
-useFocusEffect(
-  useCallback(() => {
-    if (isFirstFocus.current) {
-      listVisibility.value = 0;
-      pullCount.value = 0;
-      listVisibility.value = withSpring(1);
-
-      if (scrollToIndex) {
-        setTimeout(() => {
-          scrollToCategoryStart(scrollToIndex);
-        }, 200);
+        if (scrollToIndex) {
+          setTimeout(() => {
+            scrollToCategoryStart(scrollToIndex);
+          }, 200);
+        }
+        isFirstFocus.current = false;
       }
-      isFirstFocus.current = false;
-    }
-  }, [scrollToIndex])
-);
+    }, [scrollToIndex]),
+  );
   const ITEM_HEIGHT = 160;
   const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
@@ -159,7 +161,6 @@ useFocusEffect(
       onViewableItemsChanged: (info) => onViewableItemsChangedRef.current(info),
     },
   ]);
-
 
   const momentListBottomSpacer = 600;
   const pressedIndex = useSharedValue(null);
@@ -324,7 +325,7 @@ useFocusEffect(
           justifyContent: "center",
           height: ITEM_HEIGHT,
           marginBottom: ITEM_BOTTOM_MARGIN,
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           opacity: pressed ? 0.6 : 1,
         })}
       >
@@ -401,13 +402,18 @@ useFocusEffect(
               keyboardDismissMode="on-drag"
             />
           </View>
-                  <MomentsAddedStatic
-          overlayBackgroundColor={'transparent'}
-          primaryColor={textColor}
-          darkerOverlayColor={'transparent'}
-          capsuleList={capsuleList}
-          preAdded={preAdded} 
-        />
+        
+            <RestoreButton
+              primaryColor={textColor}
+              darkerOverlayColor={'transparent'}
+              preAdded={preAdded}
+            />
+
+            <GoHomeButton
+              primaryColor={textColor}
+              darkerOverlayColor={'transparent'}
+              shouldResetRef={shouldResetRef}
+            /> 
         </View>
 
         <>
@@ -438,6 +444,14 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 1,
     elevation: 1,
+  },
+  buttonsWrapper: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   flatlistOuterWrapper: {
     alignContent: "center",

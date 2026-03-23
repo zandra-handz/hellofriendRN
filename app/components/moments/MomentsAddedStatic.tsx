@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 
 const MomentsAddedStatic: React.FC<MomentsAddedProps> = ({
   overlayBackgroundColor,
@@ -12,7 +12,14 @@ const MomentsAddedStatic: React.FC<MomentsAddedProps> = ({
   preAdded,
 }) => {
   const navigation = useNavigation();
-  const { navigateToPreAdded } = useAppNavigations();
+  const { navigateToPreAdded, navigateToFriendHome } = useAppNavigations();
+
+  const handleNavHome = () => {
+ 
+    navigateToFriendHome({resetTimestamp: Date.now()})
+  }
+
+
 
   return (
     <View style={styles.outerWrapper}>
@@ -36,6 +43,26 @@ const MomentsAddedStatic: React.FC<MomentsAddedProps> = ({
                 ]}
               >
                 Restore  ({preAdded?.length})
+              </Text>
+            </Pressable>
+          )}
+        </View>
+                <View style={styles.row}>
+          {/* <Text style={[
+            //AppFontStyles.subWelcomeText,
+             styles.text, { color: primaryColor }]}>
+            Added: {preAdded?.length}
+          </Text> */}
+          {preAdded?.length > 0 && (
+            <Pressable style={styles.restoreButton} onPress={handleNavHome}>
+              <Text
+                style={[
+                  AppFontStyles.subWelcomeText,
+                  styles.restoreText,
+                  { color: primaryColor, backgroundColor: darkerOverlayColor, marginTop: 10 },
+                ]}
+              >
+                Back to home
               </Text>
             </Pressable>
           )}

@@ -61,6 +61,7 @@ import ScreenAddFirstFriend from "./app/screens/home/ScreenAddFirstFriend";
 import ScreenFriendHome from "./app/screens/home/ScreenFriendHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
+// import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 import ScreenReload from "./app/screens/helloes/ScreenReload";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";

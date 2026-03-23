@@ -213,6 +213,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
       {/* Text block */}
       <View style={styles.textBlock}>
         <CategoryTooltip
+        pointerEvents="none"
           label={truncated}
           color={primaryColor}
           borderColor={categoryColor}
@@ -276,7 +277,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    overflow: "hidden",
+    overflow: "hidden",  
+    
   },
   fillOverlay: {
     position: "absolute",
@@ -305,10 +307,10 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     position: "absolute",
-    right: 20,
+    right: 0,
     top: 0,
     bottom: 0,
-    width: 44,
+    width: 22,
     justifyContent: "center",
     alignItems: "center",
   },

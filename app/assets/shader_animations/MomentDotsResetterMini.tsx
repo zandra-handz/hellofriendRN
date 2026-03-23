@@ -32,7 +32,7 @@ const MomentDotsResetterMini = ({
     if (onBackPress) {
       onBackPress();
     }
-     navigateToFriendHome(null, Date.now());
+     navigateToFriendHome({backdropTimestamp: Date.now()});
   };
   const handleOnPress = () => {
     onPress();

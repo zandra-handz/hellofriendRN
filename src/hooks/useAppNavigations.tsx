@@ -276,6 +276,7 @@ type NavToFriendHomeProps = {
   friendName?: string | null;
   friendNextDate?: string | null;
   friendChangeTimestamp?: number | null;
+  resetTimestamp?: number | null;
 };
 
 type NavToSelectFriendProps = {
@@ -344,6 +345,7 @@ interface hookReturns {
     friendName,
     friendNextDate,
     friendChangeTimestamp,
+    resetTimestamp,
   }: NavToFriendHomeProps) => void;
   navigateToAddFriend: () => void;
   navigateToSelectFriend: ({ useNavigateBack }: NavToSelectFriendProps) => void;
@@ -421,21 +423,41 @@ const useAppNavigations = (): hookReturns => {
   //   navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
   // };
 
-  const navigateToFriendHome = (
-    idToSelect = null,
-    backdropTimestamp = null,
-    friendName = "",
-    friendNextDate = "",
-    friendChangeTimestamp = null,
-  ) => {
-    navigation.navigate("FriendHome", {
-      idToSelect,
-      backdropTimestamp,
-      friendName,
-      friendNextDate,
-      friendChangeTimestamp,
-    });
-  };
+  // const navigateToFriendHome = (
+  //   idToSelect = null,
+  //   backdropTimestamp = null,
+  //   friendName = "",
+  //   friendNextDate = "",
+  //   friendChangeTimestamp = null,
+  //   resetTimestamp = null,
+  // ) => {
+  //   navigation.navigate("FriendHome", {
+  //     idToSelect,
+  //     backdropTimestamp,
+  //     friendName,
+  //     friendNextDate,
+  //     friendChangeTimestamp,
+  //     resetTimestamp,
+  //   });
+  // };
+
+  const navigateToFriendHome = ({
+  idToSelect = null,
+  backdropTimestamp = null,
+  friendName = "",
+  friendNextDate = "",
+  friendChangeTimestamp = null,
+  resetTimestamp = null,
+} = {}) => {
+  navigation.navigate("FriendHome", {
+    idToSelect,
+    backdropTimestamp,
+    friendName,
+    friendNextDate,
+    friendChangeTimestamp,
+    resetTimestamp,
+  });
+};
 
   const navigateToAddFriend = () => {
     navigation.navigate("AddFriend");

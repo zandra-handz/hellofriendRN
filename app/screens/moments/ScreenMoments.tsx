@@ -1,31 +1,27 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-//import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useNavigation } from "@react-navigation/native";
 
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
-import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome"; 
+import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
 
-
+import { useCapsuleColors } from "@/src/context/useCapsuleColors";
 import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import manualGradientColors from "@/app/styles/StaticColors";
-// import { useCategories } from "@/src/context/CategoriesContext";
-import useCategories from "@/src/hooks/useCategories";
+
 // import { useFriendList } from "@/src/context/FriendListContext";
- 
+
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 import TopLayerButtonSharedV from "@/app/components/home/TopLayerButtonSharedV";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-// import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
-// import { useFriendListAndUpcoming } from "@/src/context/FriendListAndUpcomingContext";
 import TextHeader from "@/app/components/appwide/format/TextHeader";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // import LoadingCircle from "@/app/components/appwide/spinner/LoadingCircle";
@@ -44,12 +40,14 @@ const ScreenMoments = () => {
   const { lightDarkTheme } = useLDTheme();
   const navigation = useNavigation();
   const { user } = useUser();
-  const { selectedFriend, selectFriend } = useSelectedFriend();
-  const { friendCategoryColorsMap } = useFriendCategoryColors();
+  const { selectedFriend } = useSelectedFriend();
+  const { friendCategoryColors, friendCategoryColorsMap } =
+    useFriendCategoryColors();
   const { capsuleList, preAdded } = useCapsuleList();
 
   const prevScreenHasBackdrop = route.params?.prevScreenBackdrop ?? false;
 
+  const capsuleColors = useCapsuleColors(friendCategoryColors);
 
   const textColor = lightDarkTheme.primaryText;
   const backgroundColor = lightDarkTheme.primaryBackground;
@@ -91,34 +89,23 @@ const ScreenMoments = () => {
   } = useAppNavigations();
   const TIME_SCORE = 100;
 
-
-  const [triggerClose, setTriggerClose ] = useState(0);
-
+  const [triggerClose, setTriggerClose] = useState(0);
 
   const handleNavBack = () => {
-    console.log('setting trigger!!!!!!!!!!!!!')
     setTriggerClose((prev) => prev + 1);
- 
-
   };
 
   const { friendListAndUpcoming, isLoading } = useFriendListAndUpcoming({
     userId: user?.id,
   });
 
-  // const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { generateGradientColorsMap } = useMomentSortingFunctions({
-    listData: capsuleList,
-  });
-
-  
-
-  const { userCategories } = useCategories({ userId: user?.id });
-  // const { friendList } = useFriendList();
+  // // const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+  // const { generateGradientColorsMap } = useMomentSortingFunctions({
+  //   listData: capsuleList,
+  // });
 
   const friendList = friendListAndUpcoming?.friends;
   const upcomingHelloes = friendListAndUpcoming?.upcoming;
-  // const upcomingId = friendListAndUpcoming?.next?.id;
   const welcomeTextStyle = AppFontStyles.welcomeText;
 
   const { loadingDash } = useFriendDash({
@@ -127,21 +114,38 @@ const ScreenMoments = () => {
   });
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
-  // const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const { handleSelectFriend } = useSelectFriend({
     userId: user?.id,
     friendList: friendList,
   });
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-      e.preventDefault();
-      unsubscribe(); // remove listener first to prevent loop
-      navigateToFriendHome(null, Date.now());
+const shouldResetRef = useRef(false);
+
+// useEffect(() => {
+//   const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+//     e.preventDefault();
+//     unsubscribe();
+//     navigateToFriendHome({
+//       backdropTimestamp: Date.now(),
+//       resetTimestamp: shouldResetRef.current ? Date.now() : null,
+//     });
+//   });
+//   return unsubscribe;
+// }, [navigation]);
+
+useEffect(() => {
+  const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+    const incomingParams = e.data.action?.payload?.params ?? {};
+    e.preventDefault();
+    unsubscribe();
+    navigateToFriendHome({
+      backdropTimestamp: incomingParams.backdropTimestamp ?? Date.now(),
+      resetTimestamp: incomingParams.resetTimestamp ?? (shouldResetRef.current ? Date.now() : null),
     });
-    return unsubscribe;
-  }, [navigation]);
+  });
+  return unsubscribe;
+}, [navigation]);
 
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: true });
@@ -212,27 +216,29 @@ const ScreenMoments = () => {
         startsVisible={!!selectedFriend?.id}
       />
 
-      <TextHeader
-        label={`All notes`}
-        color={textColor}
-        fontStyle={welcomeTextStyle}
-        showNext={true}
-        nextEnabled={true}
-        nextIconName={`arrow_right`}
-        onBack={handleNavBack}
-
-        onNext={navigateToFinalize}
-        nextColor={textColor}
-        nextBackgroundColor={'transparent'}
-      />
+      {!triggerClose && (
+        <TextHeader
+          label={`All notes`}
+          color={textColor}
+          fontStyle={welcomeTextStyle}
+          showNext={true}
+          nextEnabled={true}
+          nextIconName={`arrow_right`}
+          onBack={handleNavBack}
+          onNext={navigateToFinalize}
+          nextColor={textColor}
+          nextBackgroundColor={"transparent"}
+        />
+      )}
 
       {selectedFriend && !loadingDash && (
         <>
           <View style={{ flex: 1 }}>
             {capsuleList && friendCategoryColorsMap && (
               <MomentsList
-              triggerClose={triggerClose}
-              navigateBack={navigateBack}
+              shouldResetRef={shouldResetRef}
+                triggerClose={triggerClose}
+                navigateBack={navigateBack}
                 topCategoryColorValue={topCategoryColor}
                 capsuleList={capsuleList}
                 preAdded={preAdded}
@@ -240,7 +246,7 @@ const ScreenMoments = () => {
                 categoryNames={categoryNames}
                 categoryStartIndices={categoryStartIndices}
                 navigateToMomentView={navigateToMomentView}
-               overlayColorDarker={overlayColorDarker}
+                overlayColorDarker={overlayColorDarker}
                 overlayColorLighter={overlayColorLighter}
                 friendColor={selectedFriend.darkColor}
                 backgroundColor={backgroundColor}
@@ -248,7 +254,8 @@ const ScreenMoments = () => {
                 overlayColor={overlayColor}
                 friendId={selectedFriend?.id}
                 scrollToIndex={scrollTo}
-                categoryColorsMap={friendCategoryColorsMap} 
+                // categoryColorsMap={friendCategoryColorsMap}
+                categoryColorsMap={capsuleColors.categoryColorsMap}
                 categoryNavigatorVisible={categoryNavigatorVisible}
                 handleToggleCatNav={handleToggleCatNav}
               />
@@ -268,17 +275,26 @@ const ScreenMoments = () => {
       )}
       {selectedFriend?.id && (
         <TopLayerButtonSharedV
-          iconName="magnify" 
+          iconName="magnify"
           onPress={handleToggleCatNav}
           backgroundColorValue={topCategoryColor}
+          // colors={
+          //   Object.values(friendCategoryColorsMap).length > 1
+          //     ? Object.values(friendCategoryColorsMap)
+          //     : [
+          //         manualGradientColors.lightColor,
+          //         manualGradientColors.lightColor,
+          //       ]
+          // } // fallback with 2 values
+
           colors={
-            Object.values(friendCategoryColorsMap).length > 1
-              ? Object.values(friendCategoryColorsMap)
+            Object.values(capsuleColors.categoryColorsMap).length > 1
+              ? Object.values(capsuleColors.categoryColorsMap)
               : [
                   manualGradientColors.lightColor,
                   manualGradientColors.lightColor,
                 ]
-          } // fallback with 2 values
+          }
           iconColor={manualGradientColors.homeDarkColor}
           hidden={categoryNavigatorVisible}
           spaceFromBottom={62}

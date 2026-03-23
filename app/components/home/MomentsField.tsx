@@ -1,12 +1,11 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React, { useCallback, useRef, useMemo } from "react";
- 
+import React, { useCallback, useEffect, useRef, useMemo } from "react";
+import { useSharedValue } from "react-native-reanimated";
 import { useIsFocused } from "@react-navigation/native";
-
+import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import DotsPositionLayer from "../headers/DotsPositionLayer";
 import { useCapsuleColors } from "@/src/context/useCapsuleColors";
-// import { generateGradientColors } from "@/src/hooks/GradientColorsUril";
 
 type Props = {
   userId: number;
@@ -17,7 +16,6 @@ type Props = {
 const MomentsField = ({
   canvasKey,
   friendColor,
-  categoryColors,
   textColor,
   friendId,
   skiaFontSmall,
@@ -26,35 +24,24 @@ const MomentsField = ({
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
-  handleMomentScreenNoScroll,
   handleNavigateToGecko,
   handleNavToMoments,
 }: Props) => {
   const { capsuleList, categorySizes, capsuleChartData } = useCapsuleList();
 
-  const colors = useCapsuleColors(categoryColors);
- 
+  const { friendCategoryColors } = useFriendCategoryColors();
+  const colors = useCapsuleColors(friendCategoryColors);
 
   const capsuleListCount = capsuleList?.length;
 
-
-//   const prevCategoryColors = useRef(categoryColors);
-// if (prevCategoryColors.current !== categoryColors) {
-//   console.log('categoryColors CHANGED');
-//   prevCategoryColors.current = categoryColors;
-// }
-
- const handleCenterPress = () => {
-  console.log('disabled nav function in MomentsField');
-  // handleMomentScreenNoScroll();
-
- };
+  const handleCenterPress = () => {
+    console.log("disabled nav function in MomentsField");
+  };
 
   const HEIGHT = 408;
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
-  // const GAP = 0.0;
   const LABELS_SIZE = 12;
   const LABELS_DISTANCE_FROM_CENTER = 4;
   const LABELS_SLICE_END = 20;
@@ -62,31 +49,32 @@ const MomentsField = ({
   const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
       if (categoryLabel && categorySizes.categoryStartIndices) {
-        // navigateToMomentView({
-        //   index: categorySizes.categoryStartIndices[categoryLabel],
-        // });
-        // console.log(categoryLabel)
-               handleNavToMoments(categoryLabel)
+        handleNavToMoments(categoryLabel);
       }
     },
     [handleNavToMoments, categorySizes.categoryStartIndices],
   );
 
-  // const handleMomentScreenNoScroll = useCallback(() => {
-  //   navigateToMoments({ scrollTo: null });
-  // }, [navigateToMoments]);
+  const categoryColorMapValue = useSharedValue<Record<number, string>>({});
+  const prevFriendId = useRef(friendId);
 
-  // const memoizedCatLabels = useMemo(
-  //   () => categorySizes.catLabels,
-  //   [categorySizes.catLabels],
-  // );
+  useEffect(() => {
+    if (prevFriendId.current !== friendId) {
+      categoryColorMapValue.value = {};
+      prevFriendId.current = friendId;
+    }
+  }, [friendId]);
 
-  // const memoizedCatDecimals = useMemo(d
-  //   () => categorySizes.catDecimals,
-  //   [categorySizes.catDecimals],
-  // );
+  useEffect(() => {
+    if (!friendId) return;
+    if (!categorySizes.catLabels?.length || !colors.categoryColorsMap || !Object.keys(colors.categoryColorsMap).length) return;
 
-  const isFocused = useIsFocused();
+    const map: Record<number, string> = {};
+    categorySizes.catLabels.forEach((item) => {
+      map[item.user_category] = colors.categoryColorsMap[item.user_category] ?? colors.colors?.[0];
+    });
+    categoryColorMapValue.value = map;
+  }, [friendId, categorySizes.catLabels, colors.categoryColorsMap]);
 
   return (
     <>
@@ -95,13 +83,11 @@ const MomentsField = ({
           styles.container,
           {
             height: HEIGHT,
-            minHeight: HEIGHT,
-            // backgroundColor: overlayColor,
           },
         ]}
       >
         <>
-          {isFocused && colors?.colors?.length > 0 && (
+          {colors?.colors?.length > 0 && (
             <DotsPositionLayer
               canvasKey={canvasKey}
               friendId={friendId}
@@ -112,25 +98,21 @@ const MomentsField = ({
               canvasHeight={canvasHeight}
               heightFull={heightFull}
               onCategoryPress={handleMomentViewScrollTo}
-              onCenterPress={handleCenterPress}
-              onCenterSinglePress={handleNavigateToGecko}
+              onCenterPress={handleToggleColoredDots}
+              onCenterSinglePress={handleToggleColoredDots}
               totalJS={capsuleListCount}
               radius={CHART_RADIUS}
               strokeWidth={CHART_STROKE_WIDTH}
               outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-              // gap={GAP}
               labelsSize={LABELS_SIZE}
               labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
               labelsSliceEnd={LABELS_SLICE_END}
               color={textColor}
               darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
               data={capsuleChartData}
-              colors={colors.colors}
-              colorsReversed={colors.colorsReversed}
-              handleToggleColoredDots={handleToggleColoredDots}
+              colors={colors.colors} 
               coloredDotsModeValue={coloredDotsModeValue}
-
-              // centerTextSize={CENTER_TEXT_SIZE}
+              categoryColorMapValue={categoryColorMapValue}
             />
           )}
         </>
@@ -144,15 +126,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     flexGrow: 1,
     flex: 1,
-    padding: 10, // PADDING
+    padding: 10,
     zIndex: 100000,
-    //  paddingVertical: 20,
-    // borderRadius: 20,
   },
   labelContainer: {
     borderRadius: 20,
     height: 26,
-
     flexDirection: "row",
     width: "100%",
     alignItems: "center",

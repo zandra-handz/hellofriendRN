@@ -41,7 +41,7 @@ const GoOptionsModal = ({
     closeModal();
     navigateToFinalize();
   };
-  // const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
+//  const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
 
   const count = 5;
   const speed = 20;

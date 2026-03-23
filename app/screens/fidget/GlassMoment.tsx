@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  Alert,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,12 +18,10 @@ import Animated, {
 } from "react-native-reanimated";
 import SvgIcon from "@/app/styles/SvgIcons";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import GlobalHoldPressable from "@/app/components/appwide/button/GlobalHoldPressable";
 import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
-import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import manualGradientColors from "@/app/styles/StaticColors";
-import SlideDelete from "@/app/components/foranimations/SlideDelete";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const PEEK_HEIGHT = 0;
@@ -42,12 +41,15 @@ type Props = {
   friendId: number;
   onPressNew: () => void;
   onPressBack: () => void;
-  saveToHello: () => void; 
+  onPressShare: () => void;
+  saveToHello: () => void;
   deletMoment: () => void;
   triggerClose?: number;
+  inputNumberVisible: boolean;
 };
 
 const GlassMoment = ({
+  shouldResetRef,
   color = "red",
   backgroundColor = "orange",
   borderColor = "pink",
@@ -59,23 +61,28 @@ const GlassMoment = ({
   noContentText = "No content",
   onPressBack,
   onPressNew,
+  onPressShare,
   userId,
   friendId,
   saveToHello,
   deleteMoment,
   triggerClose,
+  inputNumberVisible,
 }: Props) => {
   const translateY = useSharedValue(START_Y);
   const hasAnimated = useRef(false);
   const navigation = useNavigation();
   const welcomeTextStyle = AppFontStyles.welcomeText;
   const { handleDeleteMoment } = useDeleteMoment({ userId, friendId });
+  const { navigateToFriendHome } = useAppNavigations();
 
-  const [utilityTrayVisible, setUtilityTrayVisible] = useState(false);
-  const closeUtilityTray = () => setUtilityTrayVisible(false);
-  const toggleUtilityTray = () => setUtilityTrayVisible((prev) => !prev);
+  const [dangerVisible, setDangerVisible] = useState(false);
 
   const categoryColor = manualGradientColors.lightColor;
+
+  const FOOTER_HEIGHT = 90;
+  const FOOTER_PADDING_BOTTOM = 12;
+  const FOOTER_ICON_SIZE = 24;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -105,6 +112,18 @@ const GlassMoment = ({
     }, 200);
   };
 
+  const handlePressHome = () => {
+    if (shouldResetRef) {
+      shouldResetRef.current = true;
+    }
+    translateY.value = withTiming(START_Y, { duration: 180 });
+    setTimeout(() => {
+      navigateToFriendHome({ 
+        resetTimestamp: Date.now(),
+      });
+    }, 200);
+  };
+
   useEffect(() => {
     if (triggerClose) {
       handlePressBack();
@@ -117,7 +136,6 @@ const GlassMoment = ({
       updateExistingMoment: true,
       existingMomentObject: moment || null,
     });
-    closeUtilityTray();
   };
 
   const handleDelete = (item) => {
@@ -132,25 +150,36 @@ const GlassMoment = ({
     }
   };
 
-  const renderTrayToggler = useCallback(
-    () => (
-      <GlobalPressable
-        onPress={toggleUtilityTray}
-        style={styles.trayTogglerContainer}
-      >
-        <SvgIcon
-          name={!utilityTrayVisible ? "eye" : "eye_closed"}
-          size={20}
-          color={color}
-          style={{ opacity: 0.6 }}
-        />
-      </GlobalPressable>
-    ),
-    [toggleUtilityTray, color, utilityTrayVisible],
-  );
-
-  const renderTrashIcon = () => (
-    <SvgIcon name={"delete"} size={20} color={color} />
+  const FooterButtonItem = ({
+    iconName,
+    label,
+    onPress,
+    confirmationRequired,
+    confirmationTitle,
+    confirmationMessage,
+  }) => (
+    <GlobalPressable
+      onPress={() => {
+        if (confirmationRequired) {
+          Alert.alert(
+            confirmationTitle || "Just to be sure",
+            confirmationMessage || "Are you sure?",
+            [
+              { text: "Cancel", style: "cancel" },
+              { text: "Yes", onPress },
+            ],
+          );
+        } else {
+          onPress();
+        }
+      }}
+      style={styles.footerSection}
+    >
+      <SvgIcon name={iconName} size={FOOTER_ICON_SIZE} color={color} />
+      <Text style={[styles.footerLabel, { color, fontSize: 11 }]}>
+        {label}
+      </Text>
+    </GlobalPressable>
   );
 
   return (
@@ -192,71 +221,74 @@ const GlassMoment = ({
                   </Text>
                 </ScrollView>
               </View>
-
-              <View style={styles.bottomUtilitiesContainer}>
-                {utilityTrayVisible && (
-                  <View style={styles.trayExpanded}>
-                    <GlobalPressable
-                      onPress={handleEditMoment}
-                      style={[
-                        styles.editBtn,
-                        { backgroundColor: darkerOverlayColor },
-                      ]}
-                    >
-                      <SvgIcon
-                        name={"pencil"}
-                        size={18}
-                        color={lighterOverlayColor}
-                      />
-                    </GlobalPressable>
-                    <View style={styles.deleteSliderWrapper}>
-                      <SlideDelete
-                        paddingHorizontal={6}
-                        itemToDelete={moment}
-                        onPress={deleteMoment}
-                        sliderWidth={"100%"}
-                        targetIcon={renderTrashIcon}
-                        sliderTextColor={color}
-                        onDelete={deleteMoment}
-                      />
-                    </View>
-                  </View>
-                )}
-                <View style={styles.bottomActionRow}>
-                  {renderTrayToggler()}
-                  <GlobalHoldPressable
-                    onPress={saveToHello}
-                    style={[
-                      styles.saveButtonStyle,
-                      { borderColor: `${categoryColor}50`, borderWidth: 1 },
-                    ]}
-                  >
-                    <SvgIcon
-                      name={"plus_circle"}
-                      size={20}
-                      color={manualGradientColors.darkColor}
-                    />
-                  </GlobalHoldPressable>
-                </View>
-              </View>
             </>
           )}
 
           {!moment && (
             <View style={styles.scrollViewContainer}>
               <Pressable onPress={onPressNew} style={styles.noMomentWrapper}>
-                <Text style={[styles.noMomentText, { color }]}>
-                  {noContentText}{" "}
-                  <Text style={[styles.buttonText, { color }]}>Add one?</Text>
-                </Text>
               </Pressable>
             </View>
           )}
 
-          <View style={styles.closeButtonWrapper}>
-            <Pressable onPress={handlePressBack} style={styles.closeButton}>
-              <SvgIcon name={`close`} color={"pink"} size={24} />
-            </Pressable>
+          {dangerVisible && (
+            <View
+              style={[
+                styles.dangerTray,
+                { backgroundColor: darkerOverlayColor },
+              ]}
+            >
+              <FooterButtonItem
+                iconName="pencil"
+                label="Edit"
+                onPress={handleEditMoment}
+              />
+              <FooterButtonItem
+                iconName="delete"
+                label="Delete"
+                onPress={deleteMoment}
+                confirmationRequired={true}
+                confirmationTitle="Delete moment"
+                confirmationMessage="Are you sure you want to delete this moment?"
+              />
+            </View>
+          )}
+
+          <View
+            style={[
+              styles.footerContainer,
+              {
+                backgroundColor: darkerOverlayColor,
+                height: FOOTER_HEIGHT,
+                paddingBottom: FOOTER_PADDING_BOTTOM,
+              },
+            ]}
+          >
+            <FooterButtonItem
+              iconName="home"
+              label="Home"
+              onPress={handlePressHome}
+            />
+            <FooterButtonItem
+              iconName={dangerVisible ? "eye_closed" : "eye"}
+              label={dangerVisible ? "Hide" : "More"}
+              onPress={() => setDangerVisible((prev) => !prev)}
+            />
+            <FooterButtonItem
+              iconName="close"
+              label="Close"
+              onPress={handlePressBack}
+            />
+            <FooterButtonItem
+              iconName="send_circle_outline"
+              label="Send"
+              onPress={onPressShare}
+            />
+            <FooterButtonItem
+              iconName="plus_circle"
+              label="Add"
+              onPress={saveToHello}
+            />
           </View>
         </SafeAreaView>
       </View>
@@ -300,75 +332,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  noMomentText: {
-    fontSize: 17,
-  },
-  bottomUtilitiesContainer: {
-    width: "100%",
-    paddingTop: 8,
-  },
-  trayExpanded: {
+  dangerTray: {
     flexDirection: "row",
-    alignItems: "center",
     width: "100%",
-    gap: 8,
-    marginBottom: 10,
-    height: 40,
-  },
-  editBtn: {
-    padding: 8,
     borderRadius: 999,
     alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
+    justifyContent: "space-around",
+    height: 70,
+    marginBottom: 8,
   },
-  deleteSliderWrapper: {
+  footerContainer: {
+    flexDirection: "row",
+    width: "100%",
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  footerSection: {
     flex: 1,
-    height: 40,
-  },
-  bottomActionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: 4,
-  },
-  trayTogglerContainer: {
-    padding: 4,
-    paddingHorizontal: 2,
-    alignItems: "center",
-    borderRadius: 999,
-  },
-  saveButtonStyle: {
-    padding: 6,
-    borderRadius: 999,
-    overflow: "hidden",
-    height: 38,
-    width: 38,
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    height: "100%",
   },
-  closeButtonWrapper: {
-    width: "100%",
-    height: 60,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    bottom: 30,
-  },
-  closeButton: {
-    backgroundColor: "red",
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    width: 60,
-    height: 60,
-  },
-  buttonText: {
+  footerLabel: {
+    marginTop: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 10,
     fontWeight: "bold",
-    fontSize: 16,
-  },
-  closeX: {
-    fontSize: 25,
   },
 });
 

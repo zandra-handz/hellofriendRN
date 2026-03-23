@@ -47,7 +47,7 @@ const ScreenSelectFriend = ({}) => {
   const handleNavAfterSelect = useCallback(
     (friendId, friendName, friendNextDate) => {
       if (!useNavigateBack && friendId) {
-        navigateToFriendHome(friendId, null, friendName, friendNextDate, Date.now());
+        navigateToFriendHome({idToSelect: friendId, friendName: friendName, friendNextDate: friendNextDate, friendChangeTimestamp: Date.now()});
       } else {
         navigateBack();
       }
@@ -76,6 +76,7 @@ const ScreenSelectFriend = ({}) => {
           showNext={true}
           nextEnabled={friendList?.length < 20 ? true : false}
           onNext={navigateToAddFriend}
+          onBack={navigateBack}
           nextIconName={`plus`}
           nextDisabledIconName={`plus`}
           nextColor={manualGradientColors.homeDarkColor}

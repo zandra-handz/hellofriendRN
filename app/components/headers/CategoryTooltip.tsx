@@ -1,5 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, StyleProp, ViewStyle, TextStyle } from "react-native";
+import {
+  View,
+  Pressable,
+  Text,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 
 type Props = {
   label: string;
@@ -11,11 +19,28 @@ type Props = {
   pointerEvents?: "none" | "box-none" | "box-only" | "auto";
 };
 
-const CategoryTooltip = ({ label, color, borderColor, backgroundColor, containerStyle, labelStyle, pointerEvents = "none" }: Props) => {
+const CategoryTooltip = ({
+  label,
+  color,
+  borderColor,
+  backgroundColor,
+  containerStyle,
+  labelStyle,
+  pointerEvents = "auto",
+  onPress = () => {},
+}: Props) => {
   return (
-    <View pointerEvents={pointerEvents} style={[styles.container, { borderColor, backgroundColor }, containerStyle]}>
+    <Pressable
+       onPress={() => onPress(label)}
+      pointerEvents={pointerEvents}
+      style={[
+        styles.container,
+        { borderColor, backgroundColor },
+        containerStyle,
+      ]}
+    >
       <Text style={[styles.label, { color }, labelStyle]}>{label}</Text>
-    </View>
+    </Pressable>
   );
 };
 

@@ -1,10 +1,10 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect, useCallback, useRef, useState } from "react";
+import { StyleSheet, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import useUser from "@/src/hooks/useUser";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import { Linking } from "react-native";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -13,8 +13,10 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 import { useSharedValue } from "react-native-reanimated";
 import GradientBackgroundBreathing from "@/app/fidgets/GradientBackgroundBreathing";
-
+import { showModalInput, dismissModalInput } from "@/src/utils/ShowModalInput";
+import useUpdateFriendSettings from "@/src/hooks/useUpdateFriendSettings";
 import SafeViewMomentView from "@/app/components/appwide/format/SafeViewMomentView";
+
 import { BackHandler } from "react-native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GlassMoment from "../fidget/GlassMoment";
@@ -32,6 +34,96 @@ const ScreenMomentView = () => {
   const momentId = route.params?.momentId ?? null;
   const moment = capsuleList.find((c) => c.id === momentId) ?? null;
 
+  const [ideaSent, setIdeaSent] = useState(false);
+  const [inputNumberVisible, setInputNumberVisible] = useState(false);
+
+  const { handleUpdateFriendSettings, updateFriendSettingsMutation } =
+    useUpdateFriendSettings({
+      userId: user?.id,
+      friendId: selectedFriend?.id,
+    });
+  const { friendDash, loadingDash } = useFriendDash({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
+
+
+  const shouldResetRef = useRef(false);
+ 
+
+const handleAddPhone = () => {
+  showModalInput({
+    title: "Add Phone Number",
+    placeholder: "Phone number...",
+    confirmLabel: "Save",
+    keyboardType: "phone-pad",
+    validate: (val) => {
+      const cleaned = val.replace(/[^\d]/g, "");
+      if (!cleaned) return "Please enter a phone number";
+      if (cleaned.length < 10) return "Must be at least 10 digits";
+      return null;
+    },
+    onConfirm: (val) => {
+      const cleaned = val.replace(/[^\d]/g, "");
+      handleUpdateFriendSettings({ phoneNumber: cleaned });
+    },
+  });
+};
+
+// Watch for success and close — same logic as your useEffect:
+useEffect(() => {
+  if (updateFriendSettingsMutation.isSuccess) {
+    dismissModalInput();
+  }
+}, [updateFriendSettingsMutation.isSuccess]);
+  const phoneNumber = friendDash?.suggestion_settings?.phone_number || "";
+
+  const handleSend = (fn: string, truncated: string) => {
+    setIdeaSent(true);
+    Linking.openURL(`sms:${fn}?body=${encodeURIComponent(truncated)}`);
+  };
+
+  const handleSendAlert = useCallback(() => {
+    if (!moment?.id) return;
+    const momentCapsule = moment?.capsule || "";
+    const truncated = `${momentCapsule.slice(0, 30)}${momentCapsule.length > 31 ? `...` : ``}`;
+    if (phoneNumber) {
+      Alert.alert("Send idea", `Send ${truncated}?`, [
+        { text: "Go back", style: "cancel" },
+        { text: "Yes", onPress: () => handleSend(phoneNumber, truncated) },
+      ]);
+    } else {
+      handleAddPhone();
+    }
+  }, [currentIndex, phoneNumber]);
+
+  const startWithBackdropTimestamp =
+    route.params?.startWithBackdropTimestamp ?? null;
+
+  const { navigateBack } = useAppNavigations();
+
+  const saveToHello = useCallback(() => {
+    if (!selectedFriend?.id || !moment?.id) {
+      showFlashMessage(`Moment not added`, true, 1000);
+      return;
+    }
+    showFlashMessage(`Moment added!`, false, 1000);
+    handlePreAddMoment({
+      friendId: selectedFriend.id,
+      capsuleId: moment?.id,
+      isPreAdded: true,
+    });
+  }, [selectedFriend, moment]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (ideaSent && moment?.id) {
+        saveToHello();
+        setIdeaSent(false);
+      }
+    }, [ideaSent, moment?.id]),
+  );
+
   useFocusEffect(
     useCallback(() => {
       const subscription = BackHandler.addEventListener(
@@ -42,12 +134,8 @@ const ScreenMomentView = () => {
     }, []),
   );
 
-  const { navigateBack } = useAppNavigations();
-
   const [triggerClose, setTriggerClose] = useState(false);
 
-  const startWithBackdropTimestamp =
-    route.params?.startWithBackdropTimestamp ?? null;
   const startWithBackdropValue = useSharedValue(!!startWithBackdropTimestamp);
 
   useEffect(() => {
@@ -72,26 +160,6 @@ const ScreenMomentView = () => {
     }
   }, [preAddMomentMutation.isError]);
 
-  const { friendDash, loadingDash } = useFriendDash({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
-
-  const phoneNumber = friendDash?.suggestion_settings?.phone_number || null;
-
-  const saveToHello = useCallback(() => {
-    if (!selectedFriend?.id || !moment?.id) {
-      showFlashMessage(`Moment not added`, true, 1000);
-      return;
-    }
-    showFlashMessage(`Moment added!`, false, 1000);
-    handlePreAddMoment({
-      friendId: selectedFriend.id,
-      capsuleId: moment?.id,
-      isPreAdded: true,
-    });
-  }, [selectedFriend, moment]);
-
   const deleteMoment = useCallback(() => {
     if (!selectedFriend?.id || !moment?.id) {
       showFlashMessage(`Moment not deleted`, true, 1000);
@@ -107,13 +175,13 @@ const ScreenMomentView = () => {
 
   useEffect(() => {
     if (preAddMomentMutation.isSuccess) {
-      setTriggerClose(true); 
+      setTriggerClose(true);
     }
   }, [preAddMomentMutation.isSuccess]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (deleteMomentMutation.isSuccess) {
-      setTriggerClose(true); 
+      setTriggerClose(true);
     }
   }, [deleteMomentMutation.isSuccess]);
 
@@ -142,6 +210,7 @@ const ScreenMomentView = () => {
         {/* <EmptyFooter backgroundColor={lightDarkTheme.darkerOverlayBackground} /> */}
       </SafeViewFriendStatic>
       <GlassMoment
+      shouldResetRef={shouldResetRef}
         color={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         borderColor={"transparent"}
@@ -150,9 +219,11 @@ const ScreenMomentView = () => {
         noContentText={""}
         friendId={selectedFriend.id}
         onPressBack={navigateBack}
+        onPressShare={handleSendAlert}
         saveToHello={saveToHello}
         deleteMoment={deleteMoment}
         triggerClose={triggerClose}
+        inputNumberVisible={inputNumberVisible}
         // onPressEdit={(handleNavigateToMoment)}
         // onPressNew={handleNavigateToCreateNew}
       />

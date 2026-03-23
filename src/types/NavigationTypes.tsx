@@ -28,6 +28,7 @@ export type RootStackParamList = {
     friendName?: string | null;
     friendNextDate?: string | null;
     friendChangeTimestamp?: number | null;
+    resetTimestamp?: number | null;
   };
 
   Moments: {

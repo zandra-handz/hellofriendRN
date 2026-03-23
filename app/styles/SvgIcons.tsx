@@ -53,6 +53,7 @@ import GeckoMineSvg from "./svgs/gecko-mine";
 import GestureSwipeVerticalSvg from "./svgs/gesture-swipe-vertical";
 import HeartSvg from './svgs/heart';
 import HelpCircleSvg from "./svgs/help-circle";
+import HomeSvg from "./svgs/home";
 import ImageMultipleOutlineSvg from "./svgs/image-multiple-outline";
 import InformationOutlineSvg from "./svgs/information-outline";
 import ImageFilterCenterFocusSvg from "./svgs/image-filter-center-focus";
@@ -135,6 +136,7 @@ const svgIcons = {
   eye: EyeSvg,
   eye_closed: EyeClosedSvg,
   hand_pointing_right: HandPointingRightSvg,
+  home: HomeSvg,
   palette: PaletteSvg,
   paw: PawSvg,
   paw_outline: PawOutlineSvg,

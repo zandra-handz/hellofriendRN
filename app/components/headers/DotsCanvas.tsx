@@ -1,5 +1,11 @@
 import { View, StyleSheet, Pressable, ScrollView } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
 import useDoublePress from "../buttons/useDoublePress";
 import CategoryTooltip from "./CategoryTooltip";
 
@@ -8,21 +14,17 @@ import Animated, {
   withTiming,
   SharedValue,
   useDerivedValue,
-  useSharedValue, 
+  useSharedValue,
   runOnJS,
 } from "react-native-reanimated";
-import {
-  Canvas, 
-  SkFont, 
-  Group,
-  Rect,
-} from "@shopify/react-native-skia";
+import { Canvas, SkFont, Group, Rect } from "@shopify/react-native-skia";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import { Text as RNText } from "react-native";
 
 import DotPaths from "./DotPaths";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useIsFocused } from "@react-navigation/native";
 
 type Props = {
   onCategoryPress: () => void;
@@ -63,14 +65,12 @@ const DotsCanvas = ({
   labelsValue,
   color,
 
-  handleToggleColoredDots,
-
   coloredDotsModeValue,
   canvasHeight,
   heightFull,
 }: Props) => {
   const { selectedFriend } = useSelectedFriend();
-
+  const isFocused = useIsFocused();
   const { handleDoublePress } = useDoublePress({
     // onSinglePress: handleToggleColoredDots,
     onSinglePress: onCenterSinglePress,
@@ -93,6 +93,18 @@ const DotsCanvas = ({
 
   const fadeInValue = useSharedValue(0);
 
+  const CATEGORY_CONTAINER_HEIGHT = 300;
+
+  const sortedCategories = useMemo(() => {
+    if (!labelsJS.length || !catDecimalsJS.length) return [];
+    return labelsJS
+      .map((label, index) => ({
+        label,
+        decimal: catDecimalsJS[index] ?? 0,
+      }))
+      .sort((a, b) => b.decimal - a.decimal);
+  }, [labelsJS, catDecimalsJS]);
+
   // const LabelOverlayStyle = useAnimatedStyle(() => {
   //   return {
   //     opacity: fadeInValue.value,
@@ -107,13 +119,20 @@ const DotsCanvas = ({
     y: number;
   } | null>(null);
 
+  const lastSelectedCatId = useRef(null);
+
   useEffect(() => {
     if (!coloredDotsMode) {
       setHighlightedColor(null);
       setHighlightID(null);
       setHighlightPosition(null);
+    } else if (sortedCategories.length > 0 && positions.length > 0) {
+      const targetCatId =
+        lastSelectedCatId.current ?? sortedCategories[0].label.user_category;
+      const hit = positions.find((p) => p.catId === targetCatId);
+      if (hit) onDotPress(hit);
     }
-  }, [coloredDotsMode]);
+  }, [coloredDotsMode, sortedCategories]);
 
   useEffect(() => {
     if (!totalJS) {
@@ -132,26 +151,30 @@ const DotsCanvas = ({
     runOnJS(setLabelsJS)(labelsSnapshot);
   }, [labelsValue]);
 
-  // useDerivedValue(() => {
-  //   const decimalsSnapshot = decimalsValue.value;
-  //   runOnJS(setDecimalsJS)(decimalsSnapshot);
-  // }, [decimalsValue]);
-
-  // const path = Skia.Path.Make();
-  // path.addCircle(radius, radius, innerRadius);
-
   const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
+
+
+const handleCategoryPress = useCallback((label) => {
+  lastSelectedCatId.current = label.user_category;
+  const hit = positions.find((p) => p.catId === label.user_category);
+  if (hit) onDotPress(hit);
+  onCategoryPress(label.name);
+}, [onCategoryPress, positions, onDotPress]);
 
   useEffect(() => {
     // Update shared value whenever selectedFriend changes
     friendIdValue.value = selectedFriend?.id ?? -1;
   }, [selectedFriend?.id]);
 
-  const onDotDoublePress = () => {
+  const onDotDoublePress = useCallback((hit) => {
+    if (hit) {
+    }
     console.log("doulbe press!");
-  };
+  }, []);
+
   const onDotPress = useCallback((hit) => {
     if (hit) {
+      console.log("single press!");
       setHighlightID(hit.catId);
       setHighlightedColor(hit.color);
       setHighlightPosition({ x: hit.x, y: hit.y });
@@ -193,87 +216,83 @@ const DotsCanvas = ({
     <View
       style={[
         styles.container,
-        { height: coloredDotsMode ? heightFull : canvasHeight },
+        // { height: coloredDotsMode ? heightFull : canvasHeight },
+        { height: heightFull },
       ]}
     >
-      <GestureDetector gesture={gesture}>
-        <Canvas
-          key={canvasKey}
-          style={[
-            styles.canvasContainer,
-            {
-              width: canvasWidth, // full screen width
-              height: canvasHeight,
-            },
-          ]}
-        >
-          <Rect
-            x={0}
-            y={0}
-            width={canvasWidth}
-            height={canvasHeight}
-            color={backgroundColor}
-          />
-          <DotPaths
-            // key={selectedFriend?.id ?? "no-friend"}
-            positions={positions}
-            useColors={coloredDotsMode}
-            highlightColor={highLightedColor}
-            highlightCatID={highlightCatID}
-          />
+      {isFocused && (
+        <GestureDetector gesture={gesture}>
+          <Canvas
+            key={canvasKey}
+            style={[
+              styles.canvasContainer,
+              {
+                width: canvasWidth, // full screen width
+                height: canvasHeight,
+              },
+            ]}
+          >
+            <Rect
+              x={0}
+              y={0}
+              width={canvasWidth}
+              height={canvasHeight}
+              color={backgroundColor}
+            />
+            <DotPaths
+              positions={positions}
+              useColors={coloredDotsMode}
+              highlightColor={highLightedColor}
+              highlightCatID={highlightCatID}
+            />
 
-          <Group transform={[{ translateX: 5 }, { translateY: 5 }]}></Group>
-        </Canvas>
-      </GestureDetector>
+            <Group transform={[{ translateX: 5 }, { translateY: 5 }]}></Group>
+          </Canvas>
+        </GestureDetector>
+      )}
       {coloredDotsMode && (
         <View
           style={[
             styles.percentagesOutContainer,
             {
+              height: CATEGORY_CONTAINER_HEIGHT,
               width: canvasWidth,
             },
           ]}
         >
           <ScrollView>
-            {[
-              ...labelsJS.map((label, index) => ({
-                label,
-                decimal: catDecimalsJS[index] ?? 0,
-              })),
-            ]
-              .sort((a, b) => b.decimal - a.decimal)
-              .map(({ label, decimal }, index) => {
-                const percentage = decimal ? Math.round(decimal * 100) : 0;
-                const isHighlighted = label.user_category === highlightCatID;
+            {sortedCategories.map(({ label, decimal }, index) => {
+              const percentage = decimal ? Math.round(decimal * 100) : 0;
+              const isHighlighted = label.user_category === highlightCatID;
 
-                return (
-                  <View key={index} style={styles.percentagesRow}>
-                    <RNText
-                      onPress={() => onCategoryPress(label.name)}
-                      style={{
-                        color: isHighlighted ? highLightedColor : color,
-                        lineHeight: 30,
-                        opacity: isHighlighted ? 1 : 0.8,
-                        fontFamily: "Poppins-Regular", // fix
-                        fontSize: 13,
-                      }}
-                    >
-                      {label.name}
-                    </RNText>
-                    <RNText
-                      style={{
-                        color: isHighlighted ? highLightedColor : color,
-                        lineHeight: 30,
-                        opacity: isHighlighted ? 1 : 0.8,
-                        fontFamily: "Poppins-Regular", // fix
-                        fontSize: 18,
-                      }}
-                    >
-                      {percentage}%
-                    </RNText>
-                  </View>
-                );
-              })}
+              return (
+                <View key={index} style={styles.percentagesRow}>
+                  <RNText
+                 onPress={() => handleCategoryPress(label)}
+                    style={{
+                      color: isHighlighted ? highLightedColor : color,
+                      lineHeight: 30,
+                      opacity: isHighlighted ? 1 : 0.8,
+                      fontFamily: "Poppins-Regular",
+                      fontSize: 13,
+                    }}
+                  >
+                    {label.name}
+                  </RNText>
+                  <RNText
+                    style={{
+                      color: isHighlighted ? highLightedColor : color,
+                      lineHeight: 30,
+                      opacity: isHighlighted ? 1 : 0.8,
+                      fontFamily: "Poppins-Regular",
+                      fontSize: 18,
+                    }}
+                  >
+                    {percentage}%
+                  </RNText>
+                </View>
+              );
+            })}
           </ScrollView>
         </View>
       )}
@@ -291,6 +310,7 @@ const DotsCanvas = ({
             <CategoryTooltip
               label={labelText}
               color={color}
+              onPress={onCategoryPress}
               borderColor={highLightedColor}
               backgroundColor={darkerOverlayBackgroundColor}
               containerStyle={{
@@ -326,13 +346,11 @@ const DotsCanvas = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    zIndex: 200000,
-    alignItems: "center", // add this
-    // backgroundColor: 'red'
+    zIndex: 2, // was 200000
+    alignItems: "center",
   },
   canvasContainer: {
-    // flex: 1,
-    zIndex: 200000,
+    zIndex: 2, // was 200000
   },
   categoryLabelsContainer: {
     zIndex: 66666,
@@ -346,7 +364,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     height: "100%",
-    // backgroundColor: "limegreen",
   },
   buttonArea: {
     zIndex: 1000000,
@@ -363,14 +380,9 @@ const styles = StyleSheet.create({
   },
   centerButton: {
     position: "absolute",
-    padding: 0,
 
     zIndex: 1000000,
     elevation: 1000000,
-    // backgroundColor: "red",
-    //borderRadius: 999,
-    borderRadius: 0,
-    // zIndex: 2,
 
     right: -10,
     bottom: 30,
@@ -385,7 +397,6 @@ const styles = StyleSheet.create({
   },
   RNText: {
     fontFamily: "Poppins-Regular",
-    // fontWeight: "bold",
 
     alignSelf: "center",
     padding: 20,
@@ -393,9 +404,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   percentagesOutContainer: {
-    height: 300,
     paddingVertical: 30,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     marginTop: 10,
   },
   percentagesRow: {

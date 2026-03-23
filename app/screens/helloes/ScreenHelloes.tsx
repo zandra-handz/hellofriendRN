@@ -14,7 +14,7 @@ import useFullHelloes from "@/src/hooks/HelloesCalls/useFullHelloes";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import MonthCalendarChartListV2 from "@/app/components/home/MonthCalenderChartListV2";
-
+ 
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { user } = useUser();
@@ -27,6 +27,8 @@ const ScreenHelloes = () => {
     friendId: selectedFriend?.id,
   });
 
+
+ 
   // Used only for the helloes list at the bottom and for navigableHelloes
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
@@ -111,7 +113,7 @@ const selectedIndex = useMemo(() => {
     >
       <TextHeader
         label={headerLabel}
-        color={textColor}
+        color={textColor} 
         fontStyle={welcomeTextStyle}
         showNext={false}
         nextEnabled={false}

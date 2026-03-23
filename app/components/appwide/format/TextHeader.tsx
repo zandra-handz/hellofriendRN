@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { StyleProps } from "react-native-reanimated";
-
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import BackButton from "../../buttons/BackButton";
 import NextButton from "../../buttons/NextButton";
 
@@ -37,6 +37,8 @@ const TextHeader = ({
   timing = 200,
   zIndex = 1,
 }: Props) => {
+
+  const { navigateBack} = useAppNavigations();
   return (
     <View style={[styles.wrapper, { zIndex: zIndex }]}>
       <View style={styles.leftSideWrapper}>
@@ -47,7 +49,7 @@ const TextHeader = ({
           timing={timing}
           visible={showBack}
           iconSize={22}
-          onPress={onBack}
+          onPress={onBack ? onBack : navigateBack}
         />
         <Text
           style={[
