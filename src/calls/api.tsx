@@ -230,6 +230,16 @@ export const getUserSettings = async () => {
   }
 };
 
+export const getUserGeckoCombinedData = async () => {
+  try {
+    const response = await helloFriendApiClient.get(`/users/geckodata/`);
+    console.log("API GET Call getGeckoData", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during getGeckoData");
+  }
+};
+
 export const getUserCategories = async (userId: number) => {
   try {
     // const start = Date.now(); // log start time
@@ -432,7 +442,7 @@ export const getCurrentUser = async () => {
     // );
 
     const response = await helloFriendApiClient.get("/users/get-current/");
-    // console.log("API GET Call getCurrentUser", response.data);
+    console.log("API GET Call getCurrentUser", response.data);
     // const end = Date.now(); // log end time
     // console.log(
     //   "\x1b[30m%s\x1b[30m",
@@ -1542,6 +1552,24 @@ export const updateFriendSugSettings = async (SugSettingsData: {
     return res.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during updateFriendSugSettings");
+  }
+};
+
+
+
+export const updateFriendGeckoData = async (GeckoData: {
+  friend: number;
+}) => {
+  console.log(`updatefriendgeckodata payload: `, GeckoData)
+  try {
+    const res = await helloFriendApiClient.patch(
+      `/friends/${GeckoData.friend}/geckodata/update/`,
+      GeckoData
+    );
+
+    return res.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during updateFriendGeckoData");
   }
 };
 

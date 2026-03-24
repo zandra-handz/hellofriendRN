@@ -161,6 +161,8 @@ this.fingers = [
     this.calcStepAngle0 = 0;
     this.calcStepAngle1 = 0;
 
+ 
+
     this.stepThreshhold = forwardStepThreshhold;
     this.stepWiggleRoom = forwardStepWiggleRoom;
     this.stepWideness = forwardStepWideness;
@@ -212,6 +214,7 @@ this._tempPerpDir = new Float32Array(2);
   }
 
   solveStepTargetsPaired() {
+ 
     //  getFrontStepsSagTrans_inPlace(
     //   this.stepTargets[0],
     //   this.stepTargets[1],
@@ -292,6 +295,7 @@ this._tempPerpDir = new Float32Array(2);
       this.stepTargetAngle0 = this.centerToAheadAngle;
 
       this.state.stepCompleted(false);
+      // this.stepCount++; 
     } else if (lDist > this.stepThreshhold + this.stepWiggleRoom) {
       this.state.catchUp(false);
     }
@@ -300,7 +304,7 @@ this._tempPerpDir = new Float32Array(2);
       this.stepTargets[1][0] = calcStep1[0];
       this.stepTargets[1][1] = calcStep1[1];
       this.stepTargetAngle1 = this.centerToAheadAngle;
-
+      // this.stepCount++; 
       this.state.stepCompleted(true);
     } else if (rDist > this.stepThreshhold + this.stepWiggleRoom) {
       this.state.catchUp(true);

@@ -11,7 +11,7 @@ import React, {
 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import useUpdateGeckoData from "@/src/hooks/useUpdateGeckoData";
 import DebugPanel from "../moments/DebugPanel";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -252,6 +252,11 @@ useFocusEffect(
     updatePressedMoment,
     handleNavigateToMoment,
   ]);
+
+    const { handleUpdateGeckoData, updateFriendGeckoMutation } = useUpdateGeckoData({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -666,6 +671,7 @@ useFocusEffect(
         
         <MomentsSkia
           handleUpdateMomentCoords={handleUpdateMomentCoords}
+          handleUpdateGeckoData={handleUpdateGeckoData}
           handleGetMoment={handleGetMoment}
           color1={manualGradientColors.lightColor}
           color2={manualGradientColors.homeDarkColor}

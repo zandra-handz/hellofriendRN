@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
+import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
 import StatsCard from "./StatsCard";
@@ -23,7 +24,7 @@ import { prefetchFriendDash } from "@/src/hooks/prefetchFriendDashUtil";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-
+import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 
@@ -39,10 +40,23 @@ const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
   const { user } = useUser();
   const { settings } = useUserSettings();
+  const { geckoCombinedData } = useUserGeckoCombinedData();
   const queryClient = useQueryClient();
   // const { isOnline } = useNetworkStatus();
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
   const { navigateToCategories, navigateToHistory } = useAppNavigations();
+
+useEffect(() => {
+  if (!geckoCombinedData) return;
+
+  setTimeout(() => {
+    showModalMessage({
+      title: "Your gecko stats",
+      body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance}`,
+    });
+  }, 700);
+}, [geckoCombinedData]);
+
   useEffect(() => {
     if (shouldDelayAnimation) {
       setIsDelaying(true);

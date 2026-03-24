@@ -40,6 +40,8 @@ export default class FourLegs {
     this.spine = spine;
     this.valuesForReversing = valuesForReversing;
 
+    
+
     this.stepWiggleRoom = forwardStepThreshhold / 3;
     this.reverseStepWiggleRoom = reverseStepThreshold / 3;
 

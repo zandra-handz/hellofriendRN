@@ -11,7 +11,7 @@ export default class GaitState {
     this.catchUpGain = 0.15;
     this.speedScalar = speedScalar;
     this.reverseSpeedScalar = reverseSpeedScalar;
-
+    this.stepCount = 0;
     this.scalar = this.speedScalar; // initialize to forward scalar
 
     this.threshold = 0.94;
@@ -128,6 +128,8 @@ export default class GaitState {
     // } else {
     //     console.log('                              no step')
     // }
+
+    // console.log(`finalDistance: ${this.finalDistance.toFixed(4)}`);
   }
 
   jumpUpdate(inputDistance, dt = 1) {
@@ -177,13 +179,35 @@ export default class GaitState {
   }
   // used after actual step logic in animation functions
   // is1 = primary step is on right side
-  stepCompleted(is1) {
-    if (is1) {
-      this.takeStep1 = false;
-    } else {
-      this.takeStep0 = false;
-    }
+  // stepCompleted(is1) {
+  //   if (is1) {
+  //     this.takeStep1 = false;
+  //   } else {
+  //     this.takeStep0 = false;
+  //   }
+  // }
+
+//   stepCompleted(is1) {
+//   if (is1) {
+//     this.takeStep1 = false;
+//     this.stepCount++;
+//   } else {
+//     this.takeStep0 = false;
+//     this.stepCount++;
+//   }
+// }
+
+
+stepCompleted(is1) {
+  if (is1) {
+    this.takeStep1 = false;
+    this.stepCount++;
+  } else {
+    this.takeStep0 = false;
+    this.stepCount++;
   }
+  // console.log('stepCount:', this.stepCount);
+}
 
   syncedStepsCompleted(is1) {
     if (is1) {
@@ -208,6 +232,8 @@ export default class GaitState {
     if (jumpDistance < 0) jumpDistance += this.cycle;
     this.jumpUpdate(jumpDistance);
     this.jumpCount++;
+
+    
 
     // POST JUMP LOGS:
     // console.log('After Jump:');

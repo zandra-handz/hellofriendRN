@@ -109,6 +109,7 @@ type Props = {
 
 const MomentsSkia = ({
   handleUpdateMomentCoords,
+  handleUpdateGeckoData,
   handleGetMoment,
   color1,
   color2,
@@ -155,7 +156,8 @@ const MomentsSkia = ({
   const lastRenderRef = useRef(0);
   const isPausedRef = useRef(false);
   const lastAutoPickupIdRef = useRef(-1);
-
+// const geckoStepsRef = useRef(0);
+// const geckoDistanceRef = useRef(0);
 
 
 
@@ -170,6 +172,13 @@ const MomentsSkia = ({
 
     handleRecenterMomentsInternal(moments.current.moments);
   };
+
+  const handleUpdateGeckoDataState = () => {
+  handleUpdateGeckoData({
+    steps: gecko.current.gait.stepCount,
+    distance: leadPoint.current.leadDistanceTraveled,
+  });
+};
 
   // const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 30;
@@ -605,6 +614,9 @@ const MomentsSkia = ({
         leadPoint.current.isMoving,
       );
 
+//       geckoStepsRef.current = gecko.current.legs.frontLegs.stepCount;
+// geckoDistanceRef.current = leadPoint.current.leadDistanceTraveled;
+
       const spine = gecko.current.body.spine;
       hintRef.current = spine.hintJoint || [0, 0];
 
@@ -864,7 +876,10 @@ const MomentsSkia = ({
 
       <View style={styles.resetterContainer}>
         <MomentDotsResetterMini
-          onBackPress={handleUpdateMomentsState}
+           onBackPress={() => {
+    handleUpdateMomentsState();
+    handleUpdateGeckoDataState();
+  }}
           onCenterPress={handleRecenterMoments_useMomentClass}
           onUndoPress={handleReset}
           primaryColor={lightDarkTheme.primaryText}

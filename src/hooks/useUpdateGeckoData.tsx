@@ -1,0 +1,88 @@
+// we are invalidating upcomingHelloes when friend added or removed with this line:
+// queryClient.invalidateQueries(['upcomingHelloes']);
+
+// also running updateAppSetup from api file in parent component that is creating a new friend
+// based on if app_setup_complete is not already true for current user
+
+import { useRef } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { updateFriendGeckoData } from "@/src/calls/api";
+
+type Props = {
+  userId: number;
+  friendId: number;
+};
+
+const useUpdateGeckoData = ({ userId, friendId }: Props) => {
+  const queryClient = useQueryClient();
+
+  const timeoutRef = useRef(null);
+
+  const updateFriendGeckoMutation = useMutation({
+    mutationFn: (data) => updateFriendGeckoData(data),
+    onSuccess: (data) => {
+      console.log("Friend gecko data updated successfully.", data);
+      queryClient.setQueryData(
+        ["friendDashboardData", userId, friendId],
+        (old) => {
+          if (!old) return old; // if cache is empty, just bail
+
+          return {
+            ...old,
+            gecko_data: data, // <-- your new data
+          };
+        },
+      );
+
+      queryClient.refetchQueries({queryKey: ["userGeckoCombinedData", userId]})
+      // if (refetchUpcoming) {
+      //   refetchUpcoming();
+      // }
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        updateFriendGeckoMutation.reset();
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error updating friend gecko data: ", error);
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        updateFriendGeckoMutation.reset();
+      }, 2000);
+    },
+  });
+
+const handleUpdateGeckoData = async ({ steps, distance }) => {
+  const update = {
+    friend: friendId,
+    steps,
+    distance,
+  };
+
+  console.log("Payload in RQ function before sending:", update);
+
+  try {
+    await updateFriendGeckoMutation.mutateAsync(update);
+  } catch (error) {
+    console.error("Error updating gecko data in RQ function: ", error);
+  }
+};
+
+ 
+
+  return { 
+    handleUpdateGeckoData,
+    updateFriendGeckoMutation,
+  };
+};
+
+export default useUpdateGeckoData;
