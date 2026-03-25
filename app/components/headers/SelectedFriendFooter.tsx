@@ -9,6 +9,7 @@ import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
 import FriendThemeModal from "./FriendThemeModal";
 import { LDTheme } from "@/src/types/LDThemeTypes";
+import GeckoFooterButton from "./GeckoFooterButton";
 
 type Props = {
   userId: number;
@@ -139,7 +140,7 @@ const SelectedFriendFooter = ({
         </View>
 
         <View style={styles.section}>
-          <FooterButtonIconVersion
+          {/* <FooterButtonIconVersion
             primaryColor={primaryColor}
             label="Visual"
             icon={
@@ -152,7 +153,17 @@ const SelectedFriendFooter = ({
               </View>
             }
             onPress={handleNavigateToGecko}
-          />
+          /> */}
+
+          <GeckoFooterButton
+          userId={userId}
+          friendId={friendId}
+  primaryColor={primaryColor}
+  size={footerIconSize + 130}
+  onPress={handleNavigateToGecko}
+  // onLongPress={handleSomethingElse}
+/>
+
         </View>
       </View>
 

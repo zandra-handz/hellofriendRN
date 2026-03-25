@@ -4,33 +4,39 @@ import { View, StyleSheet, Keyboard } from "react-native";
 // app components
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
-import UserSettingsModal from "./UserSettingsModal."; 
- 
+import UserSettingsModal from "./UserSettingsModal.";
+import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
+// import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 
 // app display/templates
-import FooterButtonIconVersion from "./FooterButtonIconVersion"; 
+import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 
 import SvgIcon from "@/app/styles/SvgIcons";
 
 // types
 import { LDTheme } from "@/src/types/LDThemeTypes";
-import manualGradientColors from "@/app/styles/StaticColors";
 
 type Props = {
   userId: number;
   username: string;
-  lightDarkTheme: LDTheme; 
+  lightDarkTheme: LDTheme;
 };
-const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lightDarkTheme }: Props) => {
-
-  const { onSignOut } = useSignOut(); 
+const HelloFriendFooter = ({
+  // skiaFontLarge,
+  skiaFontSmall,
+  userId,
+  username,
+  lightDarkTheme,
+  geckoCombinedData,
+}: Props) => {
+  const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
-  const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
+  const [geckoDataVisible, setGeckoDataVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false); 
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -38,7 +44,17 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
   const footerIconSize = 24;
 
   const primaryColor = lightDarkTheme.primaryText;
- 
+
+  useEffect(() => {
+    if (geckoDataVisible && geckoCombinedData) {
+
+         showModalMessage({
+          onConfirm: setGeckoDataVisible(false),
+      title: "Your gecko stats",
+      body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance}`,
+    });
+    }
+  }, [geckoDataVisible]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -66,7 +82,7 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
         confirmationMessage={"Sign out?"}
         label="Sign out"
         icon={
-          <SvgIcon 
+          <SvgIcon
             name={"logout"}
             size={footerIconSize}
             color={primaryColor}
@@ -119,11 +135,18 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
   );
 
   const handleCenterButtonToggle = () => {
-    setCategoriesModalVisible((prev) => !prev);
+    console.log("button pressed!");
+    setGeckoDataVisible((prev) => !prev);
   };
 
   const RenderCategoryButton = useCallback(
-    () => <CategoryFooterButton skiaFontLarge={skiaFontSmall} textColor={primaryColor} onPress={() => handleCenterButtonToggle()} />,
+    () => (
+      <CategoryFooterButton
+        skiaFontLarge={skiaFontSmall}
+        textColor={primaryColor}
+        onPress={() => handleCenterButtonToggle()}
+      />
+    ),
     [], // was theme colors but I'm not sure why
   );
 
@@ -150,13 +173,12 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
       style={[
         styles.container,
         {
-       
           height: footerHeight,
           paddingBottom: footerPaddingBottom,
           opacity: 0.94,
         },
       ]}
-    > 
+    >
       <View
         style={[
           styles.container,
@@ -164,28 +186,28 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
             // backgroundColor: lightDarkTheme.darkerOverlayBackground,
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            opacity: 0.94, 
+            opacity: 0.94,
           },
         ]}
       >
         <View style={styles.section}>
           <RenderSignOutButton />
         </View>
- 
+
         <>
           <View style={styles.section}>
             <RenderSettingsButton />
           </View>
-        </> 
+        </>
         <>
           <View style={styles.section}>
             <RenderCategoryButton />
           </View>
-        </> 
+        </>
 
         <View style={styles.section}>
           <RenderReportIssueButton />
-        </View> 
+        </View>
         <>
           <View style={styles.section}>
             <RenderAboutAppButton />
@@ -197,7 +219,7 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
         <View>
           <UserSettingsModal
             userId={userId}
-            isVisible={settingsModalVisible} 
+            isVisible={settingsModalVisible}
             closeModal={() => setSettingsModalVisible(false)}
             textColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.primaryBackground}
@@ -231,10 +253,10 @@ const HelloFriendFooter = ({ skiaFontLarge, skiaFontSmall, userId, username, lig
       {reportModalVisible && (
         <View>
           <ReportIssueModal
-            username={username} 
+            username={username}
             textColor={lightDarkTheme.primaryText}
             backgroundColor={lightDarkTheme.primaryBackground}
-            isVisible={reportModalVisible} 
+            isVisible={reportModalVisible}
             closeModal={() => setReportModalVisible(false)}
           />
         </View>
@@ -247,7 +269,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    position: "absolute", 
+    position: "absolute",
     borderRadius: 999,
     bottom: 0,
     zIndex: 50000,

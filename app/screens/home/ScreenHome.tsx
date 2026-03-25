@@ -236,11 +236,12 @@ useEffect(() => {
             </>
 
             <HelloFriendFooter
-            skiaFontLarge={skiaFontLarge}
+            // skiaFontLarge={skiaFontLarge}
             skiaFontSmall={skiaFontSmall}
               userId={user.id}
               username={user.username}
               lightDarkTheme={lightDarkTheme}
+              geckoCombinedData={geckoCombinedData}
             />
           </>
         )}

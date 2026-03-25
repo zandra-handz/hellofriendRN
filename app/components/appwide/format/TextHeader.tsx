@@ -26,7 +26,7 @@ const TextHeader = ({
   showBack = true,
   showNext = false,
   nextEnabled = true,
-  onBack = () => {},
+  onBack,
   onNext = () => {},
   nextColor = "darkgreen",
   nextDisabledColor = "black",
@@ -49,7 +49,7 @@ const TextHeader = ({
           timing={timing}
           visible={showBack}
           iconSize={22}
-          onPress={onBack ? onBack : navigateBack}
+        onPress={onBack ?? navigateBack}
         />
         <Text
           style={[

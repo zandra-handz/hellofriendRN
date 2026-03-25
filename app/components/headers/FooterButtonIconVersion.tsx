@@ -8,6 +8,7 @@ interface ButtonDeselectProps {
   primaryColor: ColorValue;
   labelFontSize?: number;
   onPress: () => void;
+  onLongPress: () => void;
   confirmationRequired?: boolean;
   confirmationTitle?: string;
   confirmationMessage?: string;
@@ -20,6 +21,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   icon,
   labelFontSize = 11,
   onPress,
+  onLongPress = () => {},
   confirmationRequired = false,
   confirmationTitle = "",
   confirmationMessage = "Are you sure?",
@@ -41,7 +43,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   };
 
   return (
-    <GlobalPressable onPress={() => handleOnPress()} style={styles.container}>
+    <GlobalPressable   onLongPress={onLongPress}  onPress={() => handleOnPress()} style={styles.container}>
   
       {icon && icon}
        
