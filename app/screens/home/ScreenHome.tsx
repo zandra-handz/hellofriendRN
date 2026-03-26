@@ -50,11 +50,13 @@ const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   const { navigateToCategories, navigateToHistory } = useAppNavigations();
 
 
-    const geckoTotalDuration = geckoCombinedData.total_duration || 0;
-  const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
+
 
 useEffect(() => {
   if (!geckoCombinedData) return;
+
+  const geckoTotalDuration = geckoCombinedData?.total_duration || 0;
+  const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
 
   setTimeout(() => {
     showModalMessage({
