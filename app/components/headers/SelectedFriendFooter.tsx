@@ -158,6 +158,7 @@ const SelectedFriendFooter = ({
           <GeckoFooterButton
           userId={userId}
           friendId={friendId}
+          friendName={friendName}
   primaryColor={primaryColor}
   size={footerIconSize + 130}
   onPress={handleNavigateToGecko}

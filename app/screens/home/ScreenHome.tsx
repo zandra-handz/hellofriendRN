@@ -27,7 +27,7 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
-
+import { formatDurationFromSeconds } from "@/app/components/headers/util_formatDurationFromSeconds";
 const getDayLabel = () => {
   const now = new Date();
   const day = now.toLocaleDateString("en-US", { weekday: "long" });
@@ -35,6 +35,9 @@ const getDayLabel = () => {
   const date = now.getDate();
   return `${day}, ${month} ${date}`;
 };
+
+
+
 
 const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
@@ -46,13 +49,19 @@ const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
   const { navigateToCategories, navigateToHistory } = useAppNavigations();
 
+
+    const geckoTotalDuration = geckoCombinedData.total_duration || 0;
+  const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
+
 useEffect(() => {
   if (!geckoCombinedData) return;
 
   setTimeout(() => {
     showModalMessage({
       title: "Your gecko stats",
-      body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance}`,
+      body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance} \nTotal duration: ${formattedDuration}`,
+ 
+ 
     });
   }, 700);
 }, [geckoCombinedData]);

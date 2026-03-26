@@ -240,6 +240,35 @@ export const getUserGeckoCombinedData = async () => {
   }
 };
 
+export const fetchFriendGeckoSessions = async ({
+  friendId,
+  page = 1,
+}: {
+  friendId: number;
+  page: number;
+}) => {
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", String(page));
+ 
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/gecko/sessions/?${params.toString()}`
+    ); 
+    if (response?.data && response?.data?.results) { 
+
+      console.log(`gecko sessions: `, response.data)
+
+      return response.data; // DRF-style: { count, next, previous, results }
+    } else {
+      console.log("No data returned from fetchFriendGeckoSessions.");
+      return { results: [], next: null, previous: null };
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchFriendGeckoSessions");
+  }
+};
+
 export const getUserCategories = async (userId: number) => {
   try {
     // const start = Date.now(); // log start time
@@ -809,15 +838,17 @@ export const updateUserProfile = async (
 };
 
 export const fetchFriendDashboard = async (friendId: number) => {
-  const startTime = Date.now(); // TIMER START
+
+  console.log('fetching friend dashboard')
+  // const startTime = Date.now(); // TIMER START
 
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/dashboard/`
     );
 
-    const endTime = Date.now(); // TIMER END
-    const duration = endTime - startTime;
+    // const endTime = Date.now(); // TIMER END
+    // const duration = endTime - startTime;
 
     // console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
@@ -1235,37 +1266,11 @@ export const fetchPastHelloesFull = async ({
     const params = new URLSearchParams();
 
     params.append("page", String(page));
-
-    // console.log(params);
-    // console.log(`hello full friend id: `, friendId);
-
+ 
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/helloes/?${params.toString()}`
-    );
-    // console.log(response.data.results);
-    if (response?.data && response?.data?.results) {
-      //  const formattedHelloesList = response.data.results.map((hello) => {
-      //     const pastCapsules = hello.thought_capsules_shared
-      //       ? Object.keys(hello.thought_capsules_shared).map((key) => {
-      //           const capsule = hello.thought_capsules_shared[key];
-      //           // console.log(`Capsule ID ${key}:`, capsule); // ✅ log all fields for this capsule
-
-      //           return {
-      //             id: key,
-      //             capsule: capsule.capsule,
-      //             typed_category: capsule.typed_category,
-      //             user_category: capsule.user_category,
-      //             user_category_name: capsule.user_category_name,
-      //           };
-      //         })
-      //       : [];
-
-      //     return {
-      //
-      //       thought_capsules_shared: pastCapsules,
-      //     };
-      //   });
-      //   return formattedHelloesList;
+    ); 
+    if (response?.data && response?.data?.results) { 
 
       return response.data; // DRF-style: { count, next, previous, results }
     } else {
@@ -1563,7 +1568,7 @@ export const updateFriendGeckoData = async (GeckoData: {
   console.log(`updatefriendgeckodata payload: `, GeckoData)
   try {
     const res = await helloFriendApiClient.patch(
-      `/friends/${GeckoData.friend}/geckodata/update/`,
+      `/friends/${GeckoData.friend}/gecko/data/update/`,
       GeckoData
     );
 

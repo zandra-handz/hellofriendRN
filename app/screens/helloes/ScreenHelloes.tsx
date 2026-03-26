@@ -105,7 +105,7 @@ const selectedIndex = useMemo(() => {
     const itemIndex = helloesData.findIndex((hello) => hello.id === item);
     setTriggerScroll(itemIndex + 1);
   };
-  console.log("selectedIndex", selectedIndex, "helloesList length", helloesList?.length);
+  // console.log("selectedIndex", selectedIndex, "helloesList length", helloesList?.length);
 
   return (
     <SafeAreaView

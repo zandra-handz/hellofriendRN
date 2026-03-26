@@ -220,6 +220,7 @@ export default Sentry.wrap(function App() {
                 "categories",
                 "Moments",
                 "friendDashboardData",
+                "userGeckoCombinedData"
               ];
               return includedKeys.includes(query.queryKey[0] as string);
             },

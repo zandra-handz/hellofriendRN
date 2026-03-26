@@ -59,7 +59,7 @@ const ScreenMomentFocus = () => {
         e.preventDefault();
         unsubscribe();
 
-        navigateToFriendHome(null, Date.now());
+        navigateToFriendHome({backdropTimestamp: Date.now()});
       });
       return unsubscribe;
     }

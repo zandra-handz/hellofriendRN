@@ -1,5 +1,5 @@
 import { useEffect, useRef, useMemo } from "react";
-import { fetchPastHelloesFull } from "../../calls/api"; 
+import {  fetchFriendGeckoSessions } from "../../calls/api"; 
 import useUser from "../useUser";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
@@ -9,7 +9,7 @@ type Props = {
   indexNeeded?: number;
 };
 
-const useFullHelloes = ({ friendId, fetchAll = false, indexNeeded = 0 }: Props) => {
+const useFriendGeckoSessions = ({ friendId, fetchAll = false, indexNeeded = 0 }: Props) => {
   const { user, isInitializing } = useUser();
 
   const itemsPerPageOnBackend = 30;
@@ -23,18 +23,18 @@ const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched init
 
 
   const {
-    data: helloesListTemp,
-    isLoading: helloesListFullIsLoading,
-    isFetching: helloesListFullIsFetching,
+    data: friendGeckoSessions,
+    isLoading: friendGeckoSessionsIsLoading,
+    isFetching: friendGeckoSessionsIsFetching,
     isFetchingNextPage,
-    isSuccess: helloesListFullIsSuccess,
-    isError: helloesListFullIsError,
+    isSuccess: friendGeckoSessionsIsSuccess,
+    isError: friendGeckoSessionsIsError,
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["pastHelloesFull", user?.id, friendId],
+    queryKey: ["friendGeckoSessions", user?.id, friendId],
     queryFn: async ({ pageParam = 1 }) => {
-      return await fetchPastHelloesFull({
+      return await fetchFriendGeckoSessions({
         friendId: friendId,
         page: pageParam,
       });
@@ -45,7 +45,7 @@ const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched init
       return Number(nextUrl.searchParams.get("page"));
     },
     initialPageParam: 1,
-    enabled: !!(friendId && user?.id), // testing removing this && !isInitializing),
+    enabled: !!(friendId && user?.id),  
    // staleTime: 1000 * 60 * 60 * 10,
   });
 
@@ -73,20 +73,12 @@ useEffect(() => {
       fetchNextPage();
     }
   }, [fetchAll, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // flatten the paginated results for easier consumption
-
+ 
   
   
-  const flatResults = helloesListTemp?.pages.flatMap((page) => page.results) ?? [];
-  // console.log(`flatresult`, flatResults)
-
-
-
-  // Added this quickly without much testing/consideration
-  const trueHelloes = flatResults.filter((hello) => hello.manual_reset === undefined);
-  // console.log(trueHelloes.length);
-
+  const friendGeckoSessionsFlattened = friendGeckoSessions?.pages.flatMap((page) => page.results) ?? [];
+ 
+ 
   const fetchUntilIndex = async (newIndex) => {
   const newPagesNeeded = Math.floor(newIndex / itemsPerPageOnBackend) + 1;
   while (pagesFetchedRef.current < newPagesNeeded && hasNextPage && !isFetchingNextPage) {
@@ -100,17 +92,17 @@ useEffect(() => {
 
 
   return {
-    trueHelloes,
-    helloesListFull: flatResults,
-    helloesListFullIsLoading,
-    helloesListFullIsFetching,
+    friendGeckoSessions,
+    friendGeckoSessionsFlattened, 
+    friendGeckoSessionsIsLoading,
+    friendGeckoSessionsIsFetching,
     isFetchingNextPage,
     fetchUntilIndex,
-    helloesListFullIsSuccess,
-    helloesListFullIsError,
+   friendGeckoSessionsIsSuccess,
+    friendGeckoSessionsIsError,
     fetchNextPage,
     hasNextPage, 
   };
 };
 
-export default useFullHelloes;
+export default useFriendGeckoSessions;

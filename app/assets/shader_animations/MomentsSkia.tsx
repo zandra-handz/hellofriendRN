@@ -139,6 +139,9 @@ const MomentsSkia = ({
 
   const [aspect, setAspect] = useState<number>(width / height);
 
+const sessionStartRef = useRef<number>(Date.now());
+const sessionEndRef = useRef<number>(Date.now());
+
   useEffect(() => {
     if (size && size.width > 0 && size.height > 0) {
       const newAspect = size.width / size.height;
@@ -173,10 +176,13 @@ const MomentsSkia = ({
     handleRecenterMomentsInternal(moments.current.moments);
   };
 
-  const handleUpdateGeckoDataState = () => {
+const handleUpdateGeckoDataState = () => {
+  sessionEndRef.current = Date.now();
   handleUpdateGeckoData({
     steps: gecko.current.gait.stepCount,
     distance: leadPoint.current.leadDistanceTraveled,
+    startedOn: new Date(sessionStartRef.current).toISOString(),
+    endedOn: new Date(sessionEndRef.current).toISOString(),
   });
 };
 

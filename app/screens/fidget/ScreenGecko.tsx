@@ -9,6 +9,7 @@ import React, {
   useCallback,
 } from "react";
 
+import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateGeckoData from "@/src/hooks/useUpdateGeckoData";
@@ -354,14 +355,60 @@ useFocusEffect(
 
   const MAX_MOMENTS = 30;
 
-  const momentCoords = useMemo(() => {
-    console.log("momentsCoords recalculated, triggered by capsuleList");
-    return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
+  // const momentCoords = useMemo(() => {
+  //   // console.log("momentsCoords recalculated, triggered by capsuleList");
+  //   return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
+  //     id: m.id,
+  //     coord: [m.screen_x, m.screen_y],
+  //     stored_index: m.stored_index,
+  //   }));
+  // }, [capsuleList]);
+
+
+  // random
+
+//   const momentCoords = useMemo(() => {
+//   return [...capsuleList]
+//     .sort(() => Math.random() - 0.5)
+//     .slice(0, MAX_MOMENTS)
+//     .map((m) => ({
+//       id: m.id,
+//       coord: [m.screen_x, m.screen_y],
+//       stored_index: m.stored_index,
+//     }));
+// }, [capsuleList]);
+  
+const HISTORY_SIZE = 20;
+const momentHistoryRef = useRef({
+  buffer: new Array(HISTORY_SIZE).fill(null),
+  pointer: 0,
+  count: 0,
+});
+
+const getHistory = () => {
+  const { buffer, pointer, count } = momentHistoryRef.current;
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]);
+  }
+  return result;
+};
+
+// sort by angle from center
+const momentCoords = useMemo(() => {
+  return [...capsuleList]
+    .sort((a, b) => {
+      const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+      const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+      return angleA - angleB;
+    })
+    .slice(0, MAX_MOMENTS)
+    .map((m) => ({
       id: m.id,
       coord: [m.screen_x, m.screen_y],
       stored_index: m.stored_index,
     }));
-  }, [capsuleList]);
+}, [capsuleList]);
 
   const [resetSkia, setResetSkia] = useState<number | null>(null);
 
@@ -622,6 +669,16 @@ useFocusEffect(
         });
         return;
       }
+
+const history = momentHistoryRef.current;
+history.buffer[history.pointer] = {
+  id: foundMoment.id,
+  category: foundMoment.user_category_name,
+  capsule: foundMoment.capsule,
+};
+history.pointer = (history.pointer + 1) % HISTORY_SIZE;
+history.count = Math.min(history.count + 1, HISTORY_SIZE);
+console.log('moment history:', getHistory().map(m => `${m.category} - ${m.id}`));
 
       setMoment({
         category: foundMoment.user_category_name,

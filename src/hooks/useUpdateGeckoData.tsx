@@ -36,6 +36,7 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
       );
 
       queryClient.refetchQueries({queryKey: ["userGeckoCombinedData", userId]})
+      queryClient.refetchQueries({queryKey: ["friendGeckoSessions", userId, friendId]})
       // if (refetchUpcoming) {
       //   refetchUpcoming();
       // }
@@ -61,11 +62,13 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
     },
   });
 
-const handleUpdateGeckoData = async ({ steps, distance }) => {
+const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn }) => {
   const update = {
     friend: friendId,
-    steps,
-    distance,
+    steps: steps,
+    distance: distance,
+    started_on: startedOn,
+    ended_on: endedOn
   };
 
   console.log("Payload in RQ function before sending:", update);
