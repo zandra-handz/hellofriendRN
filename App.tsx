@@ -105,9 +105,12 @@ const queryClient = new QueryClient({
       gcTime: 1000 * 60 * 60 * 24, // 24 hours
       retry: 3,
     },
-    mutations: {
-      networkMode: "offlineFirst",
+        mutations: {
+      networkMode: "online", // change this — pauses and resumes automatically
     },
+    // mutations: {
+    //   networkMode: "offlineFirst",
+    // },
   },
 });
 

@@ -1520,6 +1520,26 @@ export const createFriend = async (friendData: object) => {
   }
 };
 
+
+export const groqCall = async (promptData: object) => {
+  try { 
+    const res = await helloFriendApiClient.post("/friends/groq/", promptData);
+    return res.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during groq call");
+  }
+};
+
+
+export const geckoReadMoments = async (friendId: number, ids: string[]) => {
+  try {
+    const res = await helloFriendApiClient.post(`/friends/${friendId}/gecko/read/moments/`, { ids });
+    return res.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during gecko read moments");
+  }
+};
+
 export const deleteFriend = async (friendId: number) => {
   try {
     const response = await helloFriendApiClient.delete(

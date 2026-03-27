@@ -5,12 +5,12 @@ import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useNavigation } from "@react-navigation/native";
-
+import AppCloseButton from "@/app/components/alerts/AppCloseButton";
 import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
-
+import AnimatedTogglerBig from "@/app/components/alerts/AnimatedTogglerBig";
 import { useCapsuleColors } from "@/src/context/useCapsuleColors";
 import { useFriendCategoryColors } from "@/src/context/FriendCategoryColorsContext";
 import { useSharedValue, withTiming } from "react-native-reanimated";
@@ -120,32 +120,34 @@ const ScreenMoments = () => {
     friendList: friendList,
   });
 
-const shouldResetRef = useRef(false);
+  const shouldResetRef = useRef(false);
 
-// useEffect(() => {
-//   const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-//     e.preventDefault();
-//     unsubscribe();
-//     navigateToFriendHome({
-//       backdropTimestamp: Date.now(),
-//       resetTimestamp: shouldResetRef.current ? Date.now() : null,
-//     });
-//   });
-//   return unsubscribe;
-// }, [navigation]);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+  //     e.preventDefault();
+  //     unsubscribe();
+  //     navigateToFriendHome({
+  //       backdropTimestamp: Date.now(),
+  //       resetTimestamp: shouldResetRef.current ? Date.now() : null,
+  //     });
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
-useEffect(() => {
-  const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-    const incomingParams = e.data.action?.payload?.params ?? {};
-    e.preventDefault();
-    unsubscribe();
-    navigateToFriendHome({
-      backdropTimestamp: incomingParams.backdropTimestamp ?? Date.now(),
-      resetTimestamp: incomingParams.resetTimestamp ?? (shouldResetRef.current ? Date.now() : null),
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      const incomingParams = e.data.action?.payload?.params ?? {};
+      e.preventDefault();
+      unsubscribe();
+      navigateToFriendHome({
+        backdropTimestamp: incomingParams.backdropTimestamp ?? Date.now(),
+        resetTimestamp:
+          incomingParams.resetTimestamp ??
+          (shouldResetRef.current ? Date.now() : null),
+      });
     });
-  });
-  return unsubscribe;
-}, [navigation]);
+    return unsubscribe;
+  }, [navigation]);
 
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1, prevScreenBackdrop: true });
@@ -236,7 +238,7 @@ useEffect(() => {
           <View style={{ flex: 1 }}>
             {capsuleList && friendCategoryColorsMap && (
               <MomentsList
-              shouldResetRef={shouldResetRef}
+                shouldResetRef={shouldResetRef}
                 triggerClose={triggerClose}
                 navigateBack={navigateBack}
                 topCategoryColorValue={topCategoryColor}
@@ -273,33 +275,44 @@ useEffect(() => {
           spaceFromBottom={110}
         />
       )}
-      {selectedFriend?.id && (
-        <TopLayerButtonSharedV
-          iconName="magnify"
-          onPress={handleToggleCatNav}
-          backgroundColorValue={topCategoryColor}
-          // colors={
-          //   Object.values(friendCategoryColorsMap).length > 1
-          //     ? Object.values(friendCategoryColorsMap)
-          //     : [
-          //         manualGradientColors.lightColor,
-          //         manualGradientColors.lightColor,
-          //       ]
-          // } // fallback with 2 values
 
-          colors={
-            Object.values(capsuleColors.categoryColorsMap).length > 1
-              ? Object.values(capsuleColors.categoryColorsMap)
-              : [
-                  manualGradientColors.lightColor,
-                  manualGradientColors.lightColor,
-                ]
-          }
-          iconColor={manualGradientColors.homeDarkColor}
-          hidden={categoryNavigatorVisible}
-          spaceFromBottom={62}
-        />
-      )}
+      <TopLayerButtonSharedV
+        iconName="magnify"
+        onPress={handleToggleCatNav}
+        backgroundColorValue={topCategoryColor}
+        // colors={
+        //   Object.values(friendCategoryColorsMap).length > 1
+        //     ? Object.values(friendCategoryColorsMap)
+        //     : [
+        //         manualGradientColors.lightColor,
+        //         manualGradientColors.lightColor,
+        //       ]
+        // } // fallback with 2 values
+
+        colors={
+          Object.values(capsuleColors.categoryColorsMap).length > 1
+            ? Object.values(capsuleColors.categoryColorsMap)
+            : [manualGradientColors.lightColor, manualGradientColors.lightColor]
+        }
+        iconColor={manualGradientColors.homeDarkColor}
+        hidden={categoryNavigatorVisible}
+        spaceFromBottom={62}
+      />
+<AnimatedTogglerBig
+  colorA={textColor}
+  colorB={textColor}
+  backgroundColor={overlayColor}
+  onPress={navigateBack}
+  labelA="Back"
+  labelB="Back"
+  iconAName="chevron_left"
+  iconBName="chevron_left"
+  valueAB={false}
+  hidden={categoryNavigatorVisible}
+    timing={300}      // A↔B crossfade speed (default 200)
+  hideTiming={400}  // show/hide fade speed (default 200)
+  labelSide={'bottom'}
+/>
     </SafeViewFriendHome>
   );
 };

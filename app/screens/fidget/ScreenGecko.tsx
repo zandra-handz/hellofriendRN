@@ -1,5 +1,3 @@
- 
-
 import { View, StyleSheet, Pressable, Vibration } from "react-native";
 import React, {
   useState,
@@ -8,7 +6,8 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-
+import useGroqBeta from "@/src/hooks/useGroqBeta";
+import useGeckoReadMoments from "@/src/hooks/useGeckoReadMoments";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -30,13 +29,10 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlassPreviewBottom from "./GlassPreviewBottom";
 import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
- import { LightSensor, DeviceMotion } from "expo-sensors";
+import { LightSensor, DeviceMotion } from "expo-sensors";
 import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession";
 
-import {
-  activateKeepAwakeAsync,
-  deactivateKeepAwake,
-} from "expo-keep-awake";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
 
 type Props = {
@@ -60,112 +56,131 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [isPollMode, setIsPollMode] = useState(false);
 
+  const { fetchGeckoMoments, loading: geckoReadLoading } = useGeckoReadMoments({
+    friendId: selectedFriend?.id,
+  });
 
- //////////// NEW!! SENSOR TESTING //////////////////////////////////////////////////////////
+  const { askGroq, isModalOpen } = useGroqBeta();
 
-// const [debugValues, setDebugValues] = useState({
-//   tiltX: 0,
-//   tiltY: 0,
-//   lux: 0,
-//   speed: 0,
-// });
+  const handleGeckoReadAndAsk = async () => {
+    const history = getHistory();
+    const ids = history.map((m) => m.id).filter(Boolean);
+    if (!ids.length) return;
 
-// const tiltX = useSharedValue(0);
-// const tiltY = useSharedValue(0);
-// const speedMultiplier = useSharedValue(1.0);
+    const data = await fetchGeckoMoments(ids);
+    if (!data) return;
 
-// DeviceMotion.setUpdateInterval(16);
+    const reply = await askGroq(
+      "In ONE SENTENCE ONLY, with a single word exclamation preceeding the sentence to describe how you feel, please ask me one question about ONE of the following notes (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!) which I have saved to tell a friend later. NEVER reveal the name of a field/key in this data. EVER. your question should be a little more interesting and intelligent then just 'what does this mean' lol. ask me about it as if you wanna hear a fun story about it! you can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. if you include this sentence, end it with ... instead of a period",
+      JSON.stringify(data),
+    );
+    showModalMessage({ title: "Gecko says", body: reply });
+  };
 
-// useEffect(() => {
-//   const motionSub = DeviceMotion.addListener(({ rotation }) => {
-//     tiltX.value = rotation.beta;
-//     tiltY.value = rotation.gamma;
-//     setDebugValues(prev => ({ ...prev, tiltX: rotation.beta, tiltY: rotation.gamma }));
-//   });
-//   return () => motionSub.remove();
-// }, []);
+  //////////// NEW!! SENSOR TESTING //////////////////////////////////////////////////////////
 
-// useEffect(() => {
-//   const lightSub = LightSensor.addListener(({ illuminance }) => {
-//     const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
-//     speedMultiplier.value = mapped;
-//     setDebugValues(prev => ({ ...prev, lux: illuminance, speed: mapped }));
-//   });
-//   return () => lightSub.remove();
-// }, []);
+  // const [debugValues, setDebugValues] = useState({
+  //   tiltX: 0,
+  //   tiltY: 0,
+  //   lux: 0,
+  //   speed: 0,
+  // });
 
-const tiltX = useSharedValue(0);
-const tiltY = useSharedValue(0);
-const speedMultiplier = useSharedValue(1.0);
+  // const tiltX = useSharedValue(0);
+  // const tiltY = useSharedValue(0);
+  // const speedMultiplier = useSharedValue(1.0);
 
-const luxRef = useRef(0); // track last lux to avoid unnecessary updates
+  // DeviceMotion.setUpdateInterval(16);
 
-// useEffect(() => {
-//   // DeviceMotion.setUpdateInterval(16);
-//     DeviceMotion.setUpdateInterval(100);
-//   const motionSub = DeviceMotion.addListener(({ rotation }) => {
-//     tiltX.value = rotation.beta;
-//     tiltY.value = rotation.gamma;
-//   });
-//   return () => motionSub.remove();
-// }, []);
+  // useEffect(() => {
+  //   const motionSub = DeviceMotion.addListener(({ rotation }) => {
+  //     tiltX.value = rotation.beta;
+  //     tiltY.value = rotation.gamma;
+  //     setDebugValues(prev => ({ ...prev, tiltX: rotation.beta, tiltY: rotation.gamma }));
+  //   });
+  //   return () => motionSub.remove();
+  // }, []);
 
-// useEffect(() => {
-//   const lightSub = LightSensor.addListener(({ illuminance }) => {
-//     const prev = luxRef.current;
-//     luxRef.current = illuminance;
+  // useEffect(() => {
+  //   const lightSub = LightSensor.addListener(({ illuminance }) => {
+  //     const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
+  //     speedMultiplier.value = mapped;
+  //     setDebugValues(prev => ({ ...prev, lux: illuminance, speed: mapped }));
+  //   });
+  //   return () => lightSub.remove();
+  // }, []);
 
-//     // only update speed if lux crosses a meaningful threshold
-//     const crossedThreshold =
-//       (prev < 50 && illuminance >= 50) ||
-//       (prev >= 50 && illuminance < 50) ||
-//       (prev < 500 && illuminance >= 500) ||
-//       (prev >= 500 && illuminance < 500);
+  const tiltX = useSharedValue(0);
+  const tiltY = useSharedValue(0);
+  const speedMultiplier = useSharedValue(1.0);
 
-//     if (crossedThreshold) {
-//       const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
-//       speedMultiplier.value = mapped;
-//     }
-//   });
-//   return () => lightSub.remove();
-// }, []);
+  const luxRef = useRef(0); // track last lux to avoid unnecessary updates
 
-useFocusEffect(
-  useCallback(() => {
-    // Wake up sensors on focus
-    DeviceMotion.setUpdateInterval(100);
-    
-    const motionSub = DeviceMotion.addListener(({ rotation }) => {
-      tiltX.value = rotation.beta;
-      tiltY.value = rotation.gamma;
-    });
+  // useEffect(() => {
+  //   // DeviceMotion.setUpdateInterval(16);
+  //     DeviceMotion.setUpdateInterval(100);
+  //   const motionSub = DeviceMotion.addListener(({ rotation }) => {
+  //     tiltX.value = rotation.beta;
+  //     tiltY.value = rotation.gamma;
+  //   });
+  //   return () => motionSub.remove();
+  // }, []);
 
-    const lightSub = LightSensor.addListener(({ illuminance }) => {
-      const prev = luxRef.current;
-      luxRef.current = illuminance;
+  // useEffect(() => {
+  //   const lightSub = LightSensor.addListener(({ illuminance }) => {
+  //     const prev = luxRef.current;
+  //     luxRef.current = illuminance;
 
-      const crossedThreshold =
-        (prev < 50 && illuminance >= 50) ||
-        (prev >= 50 && illuminance < 50) ||
-        (prev < 500 && illuminance >= 500) ||
-        (prev >= 500 && illuminance < 500);
+  //     // only update speed if lux crosses a meaningful threshold
+  //     const crossedThreshold =
+  //       (prev < 50 && illuminance >= 50) ||
+  //       (prev >= 50 && illuminance < 50) ||
+  //       (prev < 500 && illuminance >= 500) ||
+  //       (prev >= 500 && illuminance < 500);
 
-      if (crossedThreshold) {
-        const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
-        speedMultiplier.value = mapped;
-      }
-    });
+  //     if (crossedThreshold) {
+  //       const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
+  //       speedMultiplier.value = mapped;
+  //     }
+  //   });
+  //   return () => lightSub.remove();
+  // }, []);
 
-    // Sleep sensors on blur
-    return () => {
-      motionSub.remove();
-      lightSub.remove();
-    };
-  }, []),
-);
+  useFocusEffect(
+    useCallback(() => {
+      // Wake up sensors on focus
+      DeviceMotion.setUpdateInterval(100);
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+      const motionSub = DeviceMotion.addListener(({ rotation }) => {
+        tiltX.value = rotation.beta;
+        tiltY.value = rotation.gamma;
+      });
 
+      const lightSub = LightSensor.addListener(({ illuminance }) => {
+        const prev = luxRef.current;
+        luxRef.current = illuminance;
+
+        const crossedThreshold =
+          (prev < 50 && illuminance >= 50) ||
+          (prev >= 50 && illuminance < 50) ||
+          (prev < 500 && illuminance >= 500) ||
+          (prev >= 500 && illuminance < 500);
+
+        if (crossedThreshold) {
+          const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
+          speedMultiplier.value = mapped;
+        }
+      });
+
+      // Sleep sensors on blur
+      return () => {
+        motionSub.remove();
+        lightSub.remove();
+      };
+    }, []),
+  );
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
 
   useFocusEffect(
     useCallback(() => {
@@ -209,7 +224,7 @@ useFocusEffect(
 
   const handleNavigateToMoment = useCallback(
     (m) => {
-      navigateToMomentView({ moment: m, index: m.uniqueIndex, momentId: m.id});
+      navigateToMomentView({ moment: m, index: m.uniqueIndex, momentId: m.id });
     },
     [navigateToMomentView],
   );
@@ -254,10 +269,11 @@ useFocusEffect(
     handleNavigateToMoment,
   ]);
 
-    const { handleUpdateGeckoData, updateFriendGeckoMutation } = useUpdateGeckoData({
-    userId: user?.id,
-    friendId: selectedFriend?.id,
-  });
+  const { handleUpdateGeckoData, updateFriendGeckoMutation } =
+    useUpdateGeckoData({
+      userId: user?.id,
+      friendId: selectedFriend?.id,
+    });
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -364,51 +380,50 @@ useFocusEffect(
   //   }));
   // }, [capsuleList]);
 
-
   // random
 
-//   const momentCoords = useMemo(() => {
-//   return [...capsuleList]
-//     .sort(() => Math.random() - 0.5)
-//     .slice(0, MAX_MOMENTS)
-//     .map((m) => ({
-//       id: m.id,
-//       coord: [m.screen_x, m.screen_y],
-//       stored_index: m.stored_index,
-//     }));
-// }, [capsuleList]);
-  
-const HISTORY_SIZE = 20;
-const momentHistoryRef = useRef({
-  buffer: new Array(HISTORY_SIZE).fill(null),
-  pointer: 0,
-  count: 0,
-});
+  //   const momentCoords = useMemo(() => {
+  //   return [...capsuleList]
+  //     .sort(() => Math.random() - 0.5)
+  //     .slice(0, MAX_MOMENTS)
+  //     .map((m) => ({
+  //       id: m.id,
+  //       coord: [m.screen_x, m.screen_y],
+  //       stored_index: m.stored_index,
+  //     }));
+  // }, [capsuleList]);
 
-const getHistory = () => {
-  const { buffer, pointer, count } = momentHistoryRef.current;
-  const result = [];
-  for (let i = 0; i < count; i++) {
-    result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]);
-  }
-  return result;
-};
+  const HISTORY_SIZE = 20;
+  const momentHistoryRef = useRef({
+    buffer: new Array(HISTORY_SIZE).fill(null),
+    pointer: 0,
+    count: 0,
+  });
 
-// sort by angle from center
-const momentCoords = useMemo(() => {
-  return [...capsuleList]
-    .sort((a, b) => {
-      const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
-      const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
-      return angleA - angleB;
-    })
-    .slice(0, MAX_MOMENTS)
-    .map((m) => ({
-      id: m.id,
-      coord: [m.screen_x, m.screen_y],
-      stored_index: m.stored_index,
-    }));
-}, [capsuleList]);
+  const getHistory = () => {
+    const { buffer, pointer, count } = momentHistoryRef.current;
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]);
+    }
+    return result;
+  };
+
+  // sort by angle from center
+  const momentCoords = useMemo(() => {
+    return [...capsuleList]
+      .sort((a, b) => {
+        const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+        const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+        return angleA - angleB;
+      })
+      .slice(0, MAX_MOMENTS)
+      .map((m) => ({
+        id: m.id,
+        coord: [m.screen_x, m.screen_y],
+        stored_index: m.stored_index,
+      }));
+  }, [capsuleList]);
 
   const [resetSkia, setResetSkia] = useState<number | null>(null);
 
@@ -416,7 +431,7 @@ const momentCoords = useMemo(() => {
   const [speedSetting, setSpeedSetting] = useState(1);
 
   const tickTotalsRef = useRef([120, 85, 50]);
-  
+
   const speedSettingRef = useRef(tickTotalsRef.current[0]);
   const manualOnlyRef = useRef(true);
 
@@ -670,15 +685,18 @@ const momentCoords = useMemo(() => {
         return;
       }
 
-const history = momentHistoryRef.current;
-history.buffer[history.pointer] = {
-  id: foundMoment.id,
-  category: foundMoment.user_category_name,
-  capsule: foundMoment.capsule,
-};
-history.pointer = (history.pointer + 1) % HISTORY_SIZE;
-history.count = Math.min(history.count + 1, HISTORY_SIZE);
-console.log('moment history:', getHistory().map(m => `${m.category} - ${m.id}`));
+      const history = momentHistoryRef.current;
+      history.buffer[history.pointer] = {
+        id: foundMoment.id,
+        category: foundMoment.user_category_name,
+        capsule: foundMoment.capsule,
+      };
+      history.pointer = (history.pointer + 1) % HISTORY_SIZE;
+      history.count = Math.min(history.count + 1, HISTORY_SIZE);
+      // console.log(
+      //   "moment history:",
+      //   getHistory().map((m) => `${m.category} - ${m.id}`),
+      // );
 
       setMoment({
         category: foundMoment.user_category_name,
@@ -722,10 +740,7 @@ console.log('moment history:', getHistory().map(m => `${m.category} - ${m.id}`))
 
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
-   
       <View style={[StyleSheet.absoluteFill]}>
-        
-        
         <MomentsSkia
           handleUpdateMomentCoords={handleUpdateMomentCoords}
           handleUpdateGeckoData={handleUpdateGeckoData}
@@ -752,7 +767,7 @@ console.log('moment history:', getHistory().map(m => `${m.category} - ${m.id}`))
           handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
         />
       </View>
-<DebugPanel />
+      <DebugPanel />
       <GlassTopBarLight
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
@@ -761,7 +776,6 @@ console.log('moment history:', getHistory().map(m => `${m.category} - ${m.id}`))
         DAYS_SINCE={DAYS_SINCE}
         highlight={!!isPollMode}
       />
- 
 
       <View style={styles.animatedCounterWrapper}>
         {selectedFriend && count && (
@@ -790,6 +804,20 @@ console.log('moment history:', getHistory().map(m => `${m.category} - ${m.id}`))
             size={36}
             color={lightDarkTheme.primaryText}
           />
+        </Pressable>
+        <Pressable
+          onPress={handleGeckoReadAndAsk}
+          style={{
+            position: "absolute",
+            top: 100,
+            right: 20,
+            zIndex: 1000,
+            backgroundColor: lightDarkTheme.overlayBackground,
+            padding: 8,
+            borderRadius: 999,
+          }}
+        >
+          <SvgIcon name="chat" size={34} color={lightDarkTheme.primaryText}/>
         </Pressable>
 
         {!manualOnly && (

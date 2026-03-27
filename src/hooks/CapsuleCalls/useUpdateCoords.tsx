@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateMomentAPI, updateMomentCoordsAPI } from "@/src/calls/api";
 import { networkRef } from "@/src/handlers/utils_networkStatus";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+
 type Props = {
   userId: number;
   friendId: number;
@@ -11,17 +12,7 @@ type Props = {
 
 const useUpdateMomentCoords = ({ userId, friendId }: Props) => {
   const timeoutRef = useRef(null);
-
   const queryClient = useQueryClient();
-
-  const handleUpdateMomentCoords = (capsuleCoordData) => {
-    if (networkRef && networkRef.isOnline === true) {
-    updateMomentCoordsMutation.mutate({ capsuleCoordData });
-    } else {
-      showFlashMessage("Offline mode can't save moments positions", false, 1000 );
-    }
-
-  };
 
   const updateMomentCoordsMutation = useMutation({
     mutationFn: ({ capsuleCoordData }) =>
@@ -34,9 +25,7 @@ const useUpdateMomentCoords = ({ userId, friendId }: Props) => {
         return oldMoments.map((moment) => {
           const newData = updated.find((u) => u.id === moment.id);
           if (newData) {
-            const updatedMoment = { ...moment, ...newData };
-            // console.log(`Updated moment ${moment.id}:`, updatedMoment);
-            return updatedMoment;
+            return { ...moment, ...newData };
           }
           return moment;
         });
@@ -44,24 +33,31 @@ const useUpdateMomentCoords = ({ userId, friendId }: Props) => {
     },
 
     onError: (error) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         updateMomentCoordsMutation.reset();
       }, 500);
     },
-    onSettled: () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
 
+    onSettled: () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         updateMomentCoordsMutation.reset();
       }, 500);
     },
   });
+
+  const handleUpdateMomentCoords = async (capsuleCoordData) => {
+    if (networkRef && networkRef.isOnline === true) {
+      try {
+        await updateMomentCoordsMutation.mutateAsync({ capsuleCoordData });
+      } catch (e) {
+        // onError handles it
+      }
+    } else {
+      showFlashMessage("Offline mode can't save moments positions", false, 1000);
+    }
+  };
 
   return {
     handleUpdateMomentCoords,

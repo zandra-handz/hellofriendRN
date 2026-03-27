@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  ScrollView,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -117,10 +118,19 @@ const ModalMessage = ({
           ]}
         >
           <Text style={styles.title}>{title}</Text>
-          {body ? <Text style={styles.body}>{body}</Text> : null}
-          {listElement ? (
-            <View style={styles.listContainer}>{listElement}</View>
+
+          {(body || listElement) ? (
+            <ScrollView
+              style={styles.scrollArea}
+              showsVerticalScrollIndicator={false}
+            >
+              {body ? <Text style={styles.body}>{body}</Text> : null}
+              {listElement ? (
+                <View style={styles.listContainer}>{listElement}</View>
+              ) : null}
+            </ScrollView>
           ) : null}
+
           <View style={styles.footer}>
             <TouchableOpacity
               onPress={handleConfirm}
@@ -167,6 +177,10 @@ const styles = StyleSheet.create({
     shadowRadius: 24,
     elevation: 12,
   },
+  scrollArea: {
+    maxHeight: 350,
+    marginBottom: 22,
+  },
   title: {
     fontSize: 18,
     fontFamily: "SpaceGrotesk_700Bold",
@@ -179,11 +193,9 @@ const styles = StyleSheet.create({
     fontFamily: "SpaceGrotesk_400Regular",
     color: "#6a6a6a",
     lineHeight: 20,
-    marginBottom: 22,
   },
   listContainer: {
-    maxHeight: 300,
-    marginBottom: 16,
+    marginTop: 8,
   },
   footer: {
     alignItems: "flex-end",

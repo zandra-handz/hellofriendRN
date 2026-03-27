@@ -33,6 +33,8 @@ import CircleSvg from "./svgs/circle";
 import CircleOutlineSvg from "./svgs/circle-outline";
 import ChartBubbleSvg from "./svgs/chart-bubble";
 import ChartTimelineVariantShimmerSvg from "./svgs/chart-timeline-variant-shimmer";
+import ChatSvg from "./svgs/chat";
+import ChatAlertSvg from "./svgs/chat-alert";
 import CheckSvg from "./svgs/check";
 import CheckCircleSvg from "./svgs/check-circle";
 import AlertCircleSvg from "./svgs/alert-circle";
@@ -127,6 +129,8 @@ const svgIcons = {
   cancel: CancelSvg,
   chart_bubble: ChartBubbleSvg,
   chart_timeline_variant_shimmer: ChartTimelineVariantShimmerSvg,
+  chat: ChatSvg,
+  chat_alert: ChatAlertSvg,
   check: CheckSvg,
   close: CloseSvg,
   close_outline: CloseOutlineSvg,

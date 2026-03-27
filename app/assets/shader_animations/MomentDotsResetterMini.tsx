@@ -28,12 +28,13 @@ const MomentDotsResetterMini = ({
 }: Props) => {
   const { navigateBack, navigateToFriendHome } = useAppNavigations();
 
-  const onGoBack =  () => {
-    if (onBackPress) {
-      onBackPress();
-    }
-     navigateToFriendHome({backdropTimestamp: Date.now()});
-  };
+const onGoBack = async () => {
+  if (onBackPress) {
+    await onBackPress();
+  }
+  navigateToFriendHome({ backdropTimestamp: Date.now() });
+};
+
   const handleOnPress = () => {
     onPress();
     

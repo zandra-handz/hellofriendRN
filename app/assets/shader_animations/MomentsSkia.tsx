@@ -176,9 +176,9 @@ const sessionEndRef = useRef<number>(Date.now());
     handleRecenterMomentsInternal(moments.current.moments);
   };
 
-const handleUpdateGeckoDataState = () => {
+const handleUpdateGeckoDataState = async () => {
   sessionEndRef.current = Date.now();
-  handleUpdateGeckoData({
+  await handleUpdateGeckoData({
     steps: gecko.current.gait.stepCount,
     distance: leadPoint.current.leadDistanceTraveled,
     startedOn: new Date(sessionStartRef.current).toISOString(),
@@ -250,21 +250,19 @@ const handleUpdateGeckoDataState = () => {
   );
 
 
-  const handleUpdateMomentsState = () => {
-    const newMoments = moments.current.moments;
-    handleUpdateCoords(momentsData, newMoments);
-  };
+ 
 
-  const handleUpdateCoords = ( newMoments) => {
-    const formattedData = newMoments.map((moment) => ({
-      id: moment.id,
-      screen_x: moment.coord[0],
-      screen_y: moment.coord[1],
-      stored_index: moment.stored_index,
-    }));
-    handleUpdateMomentCoords(formattedData);
-  };
 
+  const handleUpdateMomentsState = async () => {
+  const newMoments = moments.current.moments;
+  const formattedData = newMoments.map((moment) => ({
+    id: moment.id,
+    screen_x: moment.coord[0],
+    screen_y: moment.coord[1],
+    stored_index: moment.stored_index,
+  }));
+  await handleUpdateMomentCoords(formattedData);
+};
   // const userPointSV = useSharedValue(restPoint);
   const userPointSV = useSharedValue([restPoint0, restPoint1]);
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
@@ -882,10 +880,10 @@ const handleUpdateGeckoDataState = () => {
 
       <View style={styles.resetterContainer}>
         <MomentDotsResetterMini
-           onBackPress={() => {
-    handleUpdateMomentsState();
-    handleUpdateGeckoDataState();
-  }}
+onBackPress={async () => {
+  await handleUpdateMomentsState();
+  await handleUpdateGeckoDataState();
+}}
           onCenterPress={handleRecenterMoments_useMomentClass}
           onUndoPress={handleReset}
           primaryColor={lightDarkTheme.primaryText}
