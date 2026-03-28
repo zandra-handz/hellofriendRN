@@ -293,9 +293,10 @@ type NavToMomentsProp = {
 };
 
 type NavToMomentViewProps = {
-  moment: Moment; // <-- whatever your `moment` object type is
+  moment: Moment; // can this be empty?  
   index: number;
-  startWithBackdropTimestamp: number;
+  startWithBackdropTimestamp?: number | null;
+  momentId: number;
 };
 
 type NavToMomentFocusProp = {
@@ -352,6 +353,7 @@ interface hookReturns {
   navigateToFinalize: () => void;
   navigateToPreAdded: () => void;
   navigateToHistory: () => void;
+  navigateToGeckoManage: () => void;
   navigateToFriendHistory: () => void;
   navigateToHelloes: () => void;
   navigateToHelloView: ({
@@ -472,6 +474,10 @@ const useAppNavigations = (): hookReturns => {
   const navigateToHistory = () => {
     navigation.navigate("History");
   };
+
+  const navigateToGeckoManage = () => {
+    navigation.navigate("GeckoManage");
+  }
 
   const navigateToFriendHistory = () => {
     navigation.navigate("FriendHistory");
@@ -638,6 +644,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToFinalize,
     navigateToPreAdded,
     navigateToHistory,
+    navigateToGeckoManage,
     navigateToFriendHistory,
     navigateToHelloes,
     navigateToHelloView,

@@ -6,6 +6,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import { useFont } from "@shopify/react-native-skia";
 import ScreenHistory from "./app/screens/helloes/ScreenHistory";
+import ScreenGeckoManage from "./app/screens/home/ScreenGeckoManage";
 import { requestImagePermission } from "./src/hooks/util_requestImagePermissions";
 import NotificationsHandler from "./src/handlers/NotificationsHandler";
 import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
@@ -223,7 +224,9 @@ export default Sentry.wrap(function App() {
                 "categories",
                 "Moments",
                 "friendDashboardData",
-                "userGeckoCombinedData"
+                "userGeckoCombinedData",
+                "userGeckoConfigs",
+                "groqConversationHistory"
               ];
               return includedKeys.includes(query.queryKey[0] as string);
             },
@@ -425,6 +428,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           <Stack.Screen
             name="History"
             component={ScreenHistory}
+            options={{ headerShown: false }}
+          />
+                    <Stack.Screen
+            name="GeckoManage"
+            component={ScreenGeckoManage}
             options={{ headerShown: false }}
           />
           <Stack.Screen

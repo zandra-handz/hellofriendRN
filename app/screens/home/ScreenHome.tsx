@@ -7,6 +7,7 @@ import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
 import StatsCard from "./StatsCard";
+import GeckoCard from "./GeckoCard";
 import UpNextCard from "./UpNextCard";
 import { WelcomeCard } from "./HomeWelcomeCard";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
@@ -28,6 +29,7 @@ import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { formatDurationFromSeconds } from "@/app/components/headers/util_formatDurationFromSeconds";
+import { ScrollView } from "react-native-gesture-handler";
 const getDayLabel = () => {
   const now = new Date();
   const day = now.toLocaleDateString("en-US", { weekday: "long" });
@@ -36,10 +38,7 @@ const getDayLabel = () => {
   return `${day}, ${month} ${date}`;
 };
 
-
-
-
-const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
+const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
   const { user } = useUser();
   const { settings } = useUserSettings();
@@ -47,26 +46,24 @@ const ScreenHome = ({skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   const queryClient = useQueryClient();
   // const { isOnline } = useNetworkStatus();
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
-  const { navigateToCategories, navigateToHistory } = useAppNavigations();
+  const { navigateToCategories, navigateToHistory, navigateToGeckoManage } = useAppNavigations();
 
+  const FOOTER_SPACER = 120;
+  const MANAGE_CARDS_SCROLL_HEIGHT = 180;
 
+  useEffect(() => {
+    if (!geckoCombinedData) return;
 
+    const geckoTotalDuration = geckoCombinedData?.total_duration || 0;
+    const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
 
-useEffect(() => {
-  if (!geckoCombinedData) return;
-
-  const geckoTotalDuration = geckoCombinedData?.total_duration || 0;
-  const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
-
-  setTimeout(() => {
-    showModalMessage({
-      title: "Your gecko stats",
-      body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance} \nTotal duration: ${formattedDuration}`,
- 
- 
-    });
-  }, 700);
-}, [geckoCombinedData]);
+    setTimeout(() => {
+      showModalMessage({
+        title: "Your gecko stats",
+        body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance} \nTotal duration: ${formattedDuration}`,
+      });
+    }, 700);
+  }, [geckoCombinedData]);
 
   useEffect(() => {
     if (shouldDelayAnimation) {
@@ -158,106 +155,111 @@ useEffect(() => {
       hideSpinner();
     }
   }, [isDelaying, backgroundColor]);
- 
- 
-// useEffect(() => {
-//   if (isOnline === null) return;
 
-//   if (isOnline) {
-//     showFlashMessage("Back online", false);
-//   } else {
-//     showFlashMessage("No internet connection", false);
-//   }
-// }, [isOnline]);
+  // useEffect(() => {
+  //   if (isOnline === null) return;
+
+  //   if (isOnline) {
+  //     showFlashMessage("Back online", false);
+  //   } else {
+  //     showFlashMessage("No internet connection", false);
+  //   }
+  // }, [isOnline]);
   return (
-    
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: backgroundColor,
-          paddingHorizontal: 10,
-        }}
-      > 
-        {friendListAndUpcomingIsSuccess && !isDelaying && (
-          <>
-            {settings?.id && friendListLength < 1 && (
-              <View style={styles.noFriendsView}>
-                <NoFriendsMessageUI
-                  backgroundColor={overlayColor}
-                  primaryColor={textColor}
-                  welcomeTextStyle={welcomeTextStyle}
-                  username={user.username || ""}
-                  userCreatedOn={userCreatedOn || ""}
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: backgroundColor,
+        paddingHorizontal: 10,
+      }}
+    >
+      {friendListAndUpcomingIsSuccess && !isDelaying && (
+        <>
+          {settings?.id && friendListLength < 1 && (
+            <View style={styles.noFriendsView}>
+              <NoFriendsMessageUI
+                backgroundColor={overlayColor}
+                primaryColor={textColor}
+                welcomeTextStyle={welcomeTextStyle}
+                username={user.username || ""}
+                userCreatedOn={userCreatedOn || ""}
+              />
+            </View>
+          )}
+          <View
+            style={[
+              styles.parentToScrollView,
+              { paddingBottom: FOOTER_SPACER },
+            ]}
+          >
+            {settings?.id && friendListLength > 0 && (
+              <>
+                <WelcomeCard
+                  eyebrow="Gecko:"
+                  headingLine1={`Hi ${user.username}!`}
+                  headingLine2="Welcome back!"
+                  subtitle={`${getDayLabel()}`}
                 />
-              </View>
-            )}
-            <>
-              {settings?.id && friendListLength > 0  && (
-                <>
-                  <WelcomeCard
-                    eyebrow="Gecko:"
-                    headingLine1={`Hi ${user.username}!`}
-                    headingLine2="Welcome back!"
-                    subtitle={`${getDayLabel()}`}
-                  />
-                  <UpNextCard
-                    name={upcomingFriendName}
-                    date={upcomingFutureDate}
-                    futureDateInWords={upcomingFutureDateInWords}
-                    onPress={onNextPress}
-                  />
-
-                  <HomeScrollSoon
-                    lighterOverlayColor={
-                      lightDarkTheme.lighterOverlayBackground
-                    }
-                    darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
-                    isLoading={isLoading}
-                    onSoonPress={onSoonPress}
-                    handleSelectFriend={handleSelectFriend}
-                    primaryColor={textColor}
-                    overlayColor={overlayColor}
-                    primaryBackground={backgroundColor}
-                    friendList={friendList}
-                    upcomingHelloes={upcomingHelloes}
-                    itemListLength={friendList?.length}
-                    height={300}
-                    maxHeight={300}
-                    borderRadius={10}
-                    borderColor="black"
-                  />
-
-                  <View style={{marginBottom: 10}}>
-              
+                <UpNextCard
+                  name={upcomingFriendName}
+                  date={upcomingFutureDate}
+                  futureDateInWords={upcomingFutureDateInWords}
+                  onPress={onNextPress}
+                />
+                <HomeScrollSoon
+                  lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
+                  darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
+                  isLoading={isLoading}
+                  onSoonPress={onSoonPress}
+                  handleSelectFriend={handleSelectFriend}
+                  primaryColor={textColor}
+                  overlayColor={overlayColor}
+                  primaryBackground={backgroundColor}
+                  friendList={friendList}
+                  upcomingHelloes={upcomingHelloes}
+                  itemListLength={friendList?.length}
+                  height={300}
+                  maxHeight={300}
+                  borderRadius={10}
+                  borderColor="black"
+                />
+                <View style={{height: MANAGE_CARDS_SCROLL_HEIGHT}}>
+                  
+                <ScrollView >
                   <CategoriesCard
                     onPress={navigateToCategories}
                     backgroundColor={backgroundColor}
                     textColor={textColor}
                   />
-                        
-                  </View>
+              
+                <StatsCard
+                  onPress={navigateToHistory}
+                  backgroundColor={backgroundColor}
+                  textColor={textColor}
+                />
+                <GeckoCard
+                  onPress={navigateToGeckoManage}
+                  backgroundColor={backgroundColor}
+                  textColor={textColor}
+                />   
+                </ScrollView>
+                
+                </View>
+              </>
+            )}
+          </View>
 
-                  <StatsCard
-                    onPress={navigateToHistory}
-                    backgroundColor={backgroundColor}
-                    textColor={textColor}
-                  />
-                </>
-              )}
-            </>
-
-            <HelloFriendFooter
+          <HelloFriendFooter
             // skiaFontLarge={skiaFontLarge}
             skiaFontSmall={skiaFontSmall}
-              userId={user.id}
-              username={user.username}
-              lightDarkTheme={lightDarkTheme}
-              geckoCombinedData={geckoCombinedData}
-            />
-          </>
-        )}
-      </SafeAreaView>
-   
+            userId={user.id}
+            username={user.username}
+            lightDarkTheme={lightDarkTheme}
+            geckoCombinedData={geckoCombinedData}
+          />
+        </>
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -267,7 +269,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
     paddingBottom: 60,
-  }, 
+  },
+  scrollView: {
+    // paddingBottom: 60
+  },
+  parentToScrollView: {},
 });
 
 export default ScreenHome;

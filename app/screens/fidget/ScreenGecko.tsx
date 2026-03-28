@@ -24,6 +24,7 @@ import QRCodeButton from "./QRCodeButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import AnimatedCounter from "./AnimatedCounter";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import NoGradientBackground from "@/app/components/appwide/format/NoGradientBackground";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import GlassPreviewBottom from "./GlassPreviewBottom";
@@ -31,9 +32,10 @@ import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import { LightSensor, DeviceMotion } from "expo-sensors";
 import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession";
-
+import { SkFont } from "@shopify/react-native-skia";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
+import { assignStylesValue } from "@expo/config-plugins/build/android/Styles.js";
 
 type Props = {
   skiaFontLarge: SkFont;
@@ -60,22 +62,151 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     friendId: selectedFriend?.id,
   });
 
-  const { askGroq, isModalOpen } = useGroqBeta();
+  const textColor = lightDarkTheme.primaryText;
+  const backgroundColor = lightDarkTheme.primaryBackground;
+  const darkerOverlayColor =  lightDarkTheme.darkerOverlayBackground;
 
-  const handleGeckoReadAndAsk = async () => {
+
+
+  const GROQ_MESSAGE_PAUSE_TIME = 10000; 
+  const { askGroq, onModalCloseRef } = useGroqBeta({userId: user?.id, friendId: selectedFriend?.id, pauseTime: GROQ_MESSAGE_PAUSE_TIME});
+
+// const isAskingRef = useRef(false);
+
+// const handleGeckoReadAndAsk = async () => {
+//   if (isAskingRef.current) return;
+//   isAskingRef.current = true;
+//   try {
+//     const history = getHistory();
+//     const ids = history.map((m) => m.id).filter(Boolean);
+//     if (!ids.length) return;
+
+//     const data = await fetchGeckoMoments(ids);
+//     if (!data?.moments?.length) return;
+
+//     const momentsList = data.moments;
+//     const validIds = momentsList.map((m) => m.id);
+
+//     // Step 1: Ask groq to pick one capsule, return ONLY the id
+//     const pickReply = await askGroq(
+//       "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
+//       JSON.stringify(momentsList),
+//       { silent: true },
+//     );
+
+//     // console.log(pickReply)
+
+//     // Validate the pick — fall back to random if groq returns garbage
+//     const trimmedPick = pickReply?.trim();
+//     const pickedId = validIds.includes(trimmedPick)
+//       ? trimmedPick
+//       : validIds[Math.floor(Math.random() * validIds.length)];
+
+//     manualOnlyRef.current = false; // make sure auto mode if not already
+//     oneTimeSelectIdRef.current = pickedId;
+
+//     const pickedMoment = momentsList.find((m) => m.id === pickedId);
+
+//     // Step 2: Ask groq to comment on the picked capsule
+//     const reply = await askGroq(
+//       `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
+//       JSON.stringify(pickedMoment),
+//     );
+
+//     setTimeout(() => {
+//       oneTimeSelectIdRef.current = null;
+//       manualOnlyRef.current = false;
+//     }, GROQ_MESSAGE_PAUSE_TIME);
+//     //   setTimeout(() => {
+//     //     showModalMessage({ title: "Gecko says", body: reply });
+//     //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
+
+//     // }  , 2000);
+//   } catch (e: any) {
+//     showModalMessage({
+//       title: 'Gecko error',
+//       body: e?.message || 'Something went wrong',
+//     });
+//   } finally {
+//     isAskingRef.current = false;
+//   }
+// };
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+const isAskingRef = useRef(false);
+
+const handleGeckoReadAndAsk = async () => {
+  if (isAskingRef.current) return;
+  isAskingRef.current = true;
+  try {
     const history = getHistory();
     const ids = history.map((m) => m.id).filter(Boolean);
     if (!ids.length) return;
 
     const data = await fetchGeckoMoments(ids);
-    if (!data) return;
+    if (!data?.moments?.length) return;
 
+    const momentsList = data.moments;
+    const validIds = momentsList.map((m) => m.id);
+
+    // Step 1: Ask groq to pick one capsule, return ONLY the id
+const pickReply = await askGroq(
+  "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
+  JSON.stringify(momentsList),
+  { silent: true, noHistory: true },
+);
+
+    // console.log(pickReply)
+
+    // Validate the pick — fall back to random if groq returns garbage
+    const trimmedPick = pickReply?.trim();
+    const pickedId = validIds.includes(trimmedPick)
+      ? trimmedPick
+      : validIds[Math.floor(Math.random() * validIds.length)];
+
+    manualOnlyRef.current = false; // make sure auto mode if not already
+    oneTimeSelectIdRef.current = pickedId;
+
+    const pickedMoment = momentsList.find((m) => m.id === pickedId);
+
+    // Register cleanup for when modal closes
+    onModalCloseRef.current = () => {
+      oneTimeSelectIdRef.current = null;
+      manualOnlyRef.current = false;
+    };
+
+    // Step 2: Ask groq to comment on the picked capsule
     const reply = await askGroq(
-      "In ONE SENTENCE ONLY, with a single word exclamation preceeding the sentence to describe how you feel, please ask me one question about ONE of the following notes (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!) which I have saved to tell a friend later. NEVER reveal the name of a field/key in this data. EVER. your question should be a little more interesting and intelligent then just 'what does this mean' lol. ask me about it as if you wanna hear a fun story about it! you can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. if you include this sentence, end it with ... instead of a period",
-      JSON.stringify(data),
+      `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
+      JSON.stringify(pickedMoment),
     );
-    showModalMessage({ title: "Gecko says", body: reply });
-  };
+
+    //   setTimeout(() => {
+    //     showModalMessage({ title: "Gecko says", body: reply });
+    //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
+
+    // }  , 2000);
+  } catch (e: any) {
+    showModalMessage({
+      title: 'Gecko error',
+      body: e?.message || 'Something went wrong',
+    });
+  } finally {
+    isAskingRef.current = false;
+  }
+};
+ 
 
   //////////// NEW!! SENSOR TESTING //////////////////////////////////////////////////////////
 
@@ -146,39 +277,42 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   //   return () => lightSub.remove();
   // }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      // Wake up sensors on focus
-      DeviceMotion.setUpdateInterval(100);
 
-      const motionSub = DeviceMotion.addListener(({ rotation }) => {
-        tiltX.value = rotation.beta;
-        tiltY.value = rotation.gamma;
-      });
 
-      const lightSub = LightSensor.addListener(({ illuminance }) => {
-        const prev = luxRef.current;
-        luxRef.current = illuminance;
+  // DONT DELETE
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // Wake up sensors on focus
+  //     DeviceMotion.setUpdateInterval(100);
 
-        const crossedThreshold =
-          (prev < 50 && illuminance >= 50) ||
-          (prev >= 50 && illuminance < 50) ||
-          (prev < 500 && illuminance >= 500) ||
-          (prev >= 500 && illuminance < 500);
+  //     const motionSub = DeviceMotion.addListener(({ rotation }) => {
+  //       tiltX.value = rotation.beta;
+  //       tiltY.value = rotation.gamma;
+  //     });
 
-        if (crossedThreshold) {
-          const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
-          speedMultiplier.value = mapped;
-        }
-      });
+  //     const lightSub = LightSensor.addListener(({ illuminance }) => {
+  //       const prev = luxRef.current;
+  //       luxRef.current = illuminance;
 
-      // Sleep sensors on blur
-      return () => {
-        motionSub.remove();
-        lightSub.remove();
-      };
-    }, []),
-  );
+  //       const crossedThreshold =
+  //         (prev < 50 && illuminance >= 50) ||
+  //         (prev >= 50 && illuminance < 50) ||
+  //         (prev < 500 && illuminance >= 500) ||
+  //         (prev >= 500 && illuminance < 500);
+
+  //       if (crossedThreshold) {
+  //         const mapped = Math.min(1.0, Math.max(0.2, illuminance / 1000));
+  //         speedMultiplier.value = mapped;
+  //       }
+  //     });
+
+  //     // Sleep sensors on blur
+  //     return () => {
+  //       motionSub.remove();
+  //       lightSub.remove();
+  //     };
+  //   }, []),
+  // );
 
   //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -269,11 +403,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     handleNavigateToMoment,
   ]);
 
-  const { handleUpdateGeckoData, updateFriendGeckoMutation } =
+  const { handleUpdateGeckoData  } =
     useUpdateGeckoData({
       userId: user?.id,
       friendId: selectedFriend?.id,
     });
+
+
+ 
+  
+
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -434,6 +573,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const speedSettingRef = useRef(tickTotalsRef.current[0]);
   const manualOnlyRef = useRef(true);
+
+ 
+  const oneTimeSelectIdRef = useRef(null);
 
   const randomWakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -763,11 +905,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           speedSetting={speedSettingRef}
           autoPickUp={autoPickUpRef}
           randomMomentIds={randomMomentIdsRef}
+          oneTimeSelectId={oneTimeSelectIdRef}
           handleRescatterMomentsInternal={handleRescatterMoments_insideMS}
           handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
         />
       </View>
-      <DebugPanel />
+      {/* <DebugPanel /> */}
       <GlassTopBarLight
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
@@ -796,13 +939,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           onPress={handleToggleManual}
           style={[
             styles.manualButton,
-            { backgroundColor: lightDarkTheme.darkerOverlayBackground },
+            { backgroundColor:  darkerOverlayColor },
           ]}
         >
           <SvgIcon
             name={manualOnly ? `motion_play_outline` : `motion_pause_outline`}
             size={36}
-            color={lightDarkTheme.primaryText}
+            color={textColor}
           />
         </Pressable>
         <Pressable
@@ -812,23 +955,23 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
             top: 100,
             right: 20,
             zIndex: 1000,
-            backgroundColor: lightDarkTheme.overlayBackground,
+            backgroundColor: backgroundColor,
             padding: 8,
             borderRadius: 999,
           }}
         >
-          <SvgIcon name="chat" size={34} color={lightDarkTheme.primaryText}/>
+          <SvgIcon name="chat" size={34} color={textColor}/>
         </Pressable>
 
         {!manualOnly && (
           <View style={{ marginHorizontal: 10 }}>
             <SpeedButtons
-              color={lightDarkTheme.primaryText}
+              color={textColor}
               curSetting={speedSetting}
               buttonDiameter={40}
               buttonPadding={0}
               iconSize={24}
-              backgroundColor={lightDarkTheme.primaryBackground}
+              backgroundColor={backgroundColor}
               onPress={handleChangeSpeed}
             />
           </View>
@@ -838,12 +981,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       <View style={styles.qRCodeWrapper}>
         <QRCodeButton
           color={
-            isPollMode ? selectedFriend.lightColor : lightDarkTheme.primaryText
+            isPollMode ? selectedFriend.lightColor : textColor
           }
           buttonDiameter={40}
           buttonPadding={0}
           iconSize={24}
-          backgroundColor={lightDarkTheme.primaryBackground}
+          backgroundColor={backgroundColor}
           onPress={handleNavToQRCode}
         />
       </View>
@@ -854,20 +997,20 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
             color={
               autoPickUp
                 ? selectedFriend.lightColor
-                : lightDarkTheme.primaryText
+                : textColor
             }
             buttonDiameter={40}
             buttonPadding={0}
             iconSize={24}
-            backgroundColor={lightDarkTheme.primaryBackground}
+            backgroundColor={backgroundColor}
             onPress={handleNavToSelect}
           />
         </View>
       )}
 
       <GlassPreviewBottom
-        color={lightDarkTheme.primaryText}
-        backgroundColor={lightDarkTheme.darkerOverlayBackground}
+        color={textColor}
+        backgroundColor={darkerOverlayColor}
         borderColor={"transparent"}
         moment={moment.id ? moment : null}
         hasContent={scatteredMoments.length > 0}

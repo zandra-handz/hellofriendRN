@@ -28,8 +28,9 @@ export function handleApiError(e: unknown, contextMessage = "API error") {
     if (e.response) {
       console.log("Server responded with: REMOVED THIS it is html doc"); //, e.response.data);
 
-      const msg = (e.response.data as { msg?: string })?.msg;
-      throw new Error(msg || "Invalid credentials");
+const msg = (e.response.data as { msg?: string; error?: string })?.msg
+  || (e.response.data as { error?: string })?.error;
+throw new Error(msg || "Something went wrong");
     } else if (e.request) {
       console.log("No response from server:", e.request);
       throw new Error("No response from server, please check your network");
@@ -230,6 +231,29 @@ export const getUserSettings = async () => {
   }
 };
 
+
+
+// this call's serializer currently adds categories
+export const getUserGeckoConfigs = async () => {
+  // console.log("Default common headers:", helloFriendApiClient.defaults.headers);
+
+  try {
+    //         const start = Date.now(); // log start time
+    // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
+
+    const response = await helloFriendApiClient.get(`/users/gecko/configs/`);
+    console.log("API GET Call getUserGeckoConfigs", response.data);
+    // const end = Date.now(); // log end time
+    // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
+    // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
+
+   
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during getUserGeckoConfigs");
+  }
+};
+
 export const getUserGeckoCombinedData = async () => {
   try {
     const response = await helloFriendApiClient.get(`/users/geckodata/`);
@@ -257,15 +281,39 @@ export const fetchFriendGeckoSessions = async ({
     ); 
     if (response?.data && response?.data?.results) { 
 
-      console.log(`gecko sessions: `, response.data)
+      // console.log(`gecko sessions: `, response.data)
 
-      return response.data; // DRF-style: { count, next, previous, results }
+      return response.data; 
     } else {
       console.log("No data returned from fetchFriendGeckoSessions.");
       return { results: [], next: null, previous: null };
     }
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendGeckoSessions");
+  }
+};
+
+
+export const fetchFriendGeckoSessionsTimeRange = async ({
+  friendId,
+  minutes,
+}: {
+  friendId: number;
+  minutes: number;
+}) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/gecko/sessions/range/?minutes=${minutes}`
+    );
+    if (response?.data) {
+      console.log(`gecko sessions time range: `, response.data);
+      return response.data;
+    } else {
+      console.log("No data returned from fetchFriendGeckoSessionsTimeRange.");
+      return [];
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchFriendGeckoSessionsTimeRange");
   }
 };
 
@@ -812,6 +860,22 @@ export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
     handleApiError(e, "Error during updateUserAccessibilitySettings");
+  }
+};
+
+
+export const updateUserGeckoConfigs = async (fieldUpdates: object) => {
+  // console.log(`payload in api call`, fieldUpdates);
+  try {
+    const response = await helloFriendApiClient.patch(
+      `/users/gecko/configs/`,
+      fieldUpdates
+    );
+    console.log("API PATCH CALL updateUserGeckoConfigs");
+    console.log("API response:", response.data); // Log the response data
+    return response.data; // Ensure this returns the expected structure
+  } catch (e: unknown) {
+    handleApiError(e, "Error during updateUserGeckoConfigs");
   }
 };
 

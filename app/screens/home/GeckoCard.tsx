@@ -2,14 +2,14 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, ViewStyle } from 'react-native';
 import SvgIcon from '@/app/styles/SvgIcons';
 
-interface CategoriesCardProps {
+interface GeckoCardProps {
   onPress: () => void;
   backgroundColor?: string;
   textColor?: string;
   style?: ViewStyle;
 }
 
-const CategoriesCard: React.FC<CategoriesCardProps> = ({
+const GeckoCard: React.FC<GeckoCardProps> = ({
   onPress,
   backgroundColor = '#141414',
   textColor = '#ffffff',
@@ -20,20 +20,19 @@ const CategoriesCard: React.FC<CategoriesCardProps> = ({
       onPress={onPress}
       style={({ pressed }) => [
         styles.outer,
-        { backgroundColor, opacity: pressed ? 0.85 : 1, marginBottom: 10 },
+        { backgroundColor, opacity: pressed ? 0.85 : 1 },
         style,
       ]}
     >
-      {/* Transparent spacer — same width as UpNextCard bar to keep text aligned */}
       <View style={styles.bar} />
 
-      <View style={styles.content}> 
+      <View style={styles.content}>
         <View style={styles.left}>
           <Text style={[styles.eyebrow, { color: textColor }]}>MANAGE</Text>
-          <Text style={[styles.title, { color: textColor }]}>Categories</Text>
+          <Text style={[styles.title, { color: textColor }]}>Gecko</Text>
         </View>
- 
-        <View style={styles.right}>
+
+    <View style={styles.right}>
           <SvgIcon name="wrench" color={textColor} size={36} style={styles.wrench} />
           <Text style={[styles.arrow, { color: textColor }]}>›</Text>
         </View>
@@ -79,9 +78,9 @@ const styles = StyleSheet.create({
   right: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 8, 
   },
-  wrench: {
+    wrench: {
     opacity: 0.9,
   },
   arrow: {
@@ -93,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoriesCard;
+export default GeckoCard;

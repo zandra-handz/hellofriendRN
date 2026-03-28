@@ -13,14 +13,14 @@ const StatsCard: React.FC<StatsCardProps> = ({
   onPress,
   backgroundColor = '#141414',
   textColor = '#ffffff',
-  style,
+  style,s
 }) => {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.outer,
-        { backgroundColor, opacity: pressed ? 0.85 : 1 },
+        { backgroundColor, opacity: pressed ? 0.85 : 1, marginBottom: 10 },
         style,
       ]}
     >

@@ -35,9 +35,10 @@ export type RootStackParamList = {
     scrollTo: number | null;
   };
   MomentView: {
-    moment: object;
+    moment: object | null;
     index: number;
-    startWithBackdropTimestamp: number;
+    startWithBackdropTimestamp?: number | null;
+    momentId: number;
   };
   PreAdded: undefined;
   Finalize: undefined;

@@ -6,7 +6,7 @@
 
 import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { showFlashMessage } from "../utils/ShowFlashMessage";
 import { updateFriendGeckoData } from "@/src/calls/api";
 
 type Props = {
@@ -22,6 +22,7 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
   const updateFriendGeckoMutation = useMutation({
     mutationFn: (data) => updateFriendGeckoData(data),
     onSuccess: (data) => {
+       showFlashMessage(`Game saved!`, false, 1000)
       console.log("Friend gecko data updated successfully.", data);
       queryClient.setQueryData(
         ["friendDashboardData", userId, friendId],
@@ -37,6 +38,7 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
 
       queryClient.refetchQueries({queryKey: ["userGeckoCombinedData", userId]})
       queryClient.refetchQueries({queryKey: ["friendGeckoSessions", userId, friendId]})
+          queryClient.refetchQueries({queryKey: ["friendGeckoSessionsTimeRange", userId, friendId]})
       // if (refetchUpcoming) {
       //   refetchUpcoming();
       // }
@@ -50,7 +52,8 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
       }, 2000);
     },
     onError: (error) => {
-      console.error("Error updating friend gecko data: ", error);
+         showFlashMessage(`Game not saved`, false, 1000);
+      // console.error("Error updating friend gecko data: ", error);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -63,6 +66,8 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
   });
 
 const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn }) => {
+ showFlashMessage(`Saving Gecko game...`, false, 1000)
+ 
   const update = {
     friend: friendId,
     steps: steps,
@@ -71,7 +76,8 @@ const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn }) =>
     ended_on: endedOn
   };
 
-  console.log("Payload in RQ function before sending:", update);
+  
+  // console.log("Payload in RQ function before sending:", update);
 
   try {
     await updateFriendGeckoMutation.mutateAsync(update);

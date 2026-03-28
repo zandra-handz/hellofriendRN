@@ -749,6 +749,8 @@ half4 main(float2 fragCoord) {
     //     color = applyGlassDotSq(dist2, 60.0, color);
     // }
 
+
+ 
        if (boxSDFSelected < 0.0) {
         color = applyGlassDotSq(dist2, 14.0, color);
     }
@@ -778,16 +780,18 @@ half4 main(float2 fragCoord) {
  
 
 
-        if (length(u_lastSelected) > 0.0001 && boxSDFLast < 0.0) {
-        color = applyGlass(
-            fragCoord,
-            lastSelected_px,
-            34.0,
-            10.0,
-            1.8,
-            color
-        );
-    }
+    // DONT DELETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
+    //     if (length(u_lastSelected) > 0.0001 && boxSDFLast < 0.0) {
+    //     color = applyGlass(
+    //         fragCoord,
+    //         lastSelected_px,
+    //         34.0,
+    //         10.0,
+    //         1.8,
+    //         color
+    //     );
+    // }
  
 
     // for (int i = 0; i < 4; i++) {

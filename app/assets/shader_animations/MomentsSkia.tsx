@@ -130,6 +130,7 @@ const MomentsSkia = ({
   speedSetting,
   autoPickUp,
   randomMomentIds,
+  oneTimeSelectId,
   reset = 0,
   handleRescatterMomentsInternal,
   handleRecenterMomentsInternal
@@ -339,6 +340,7 @@ const handleUpdateGeckoDataState = async () => {
       speedSetting,
       autoPickUp,
       randomMomentIds,
+      oneTimeSelectId,
     ),
   );
   const moments = useRef(
