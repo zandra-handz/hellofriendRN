@@ -13,9 +13,9 @@ import SpinnerNine from "@/app/components/appwide/button/SpinnerNine";
 import SpinnerTen from "@/app/components/appwide/button/SpinnerTen";
 import SpinnerEleven from "@/app/components/appwide/button/SpinnerEleven";
 import SpinnerTwelve from "@/app/components/appwide/button/SpinnerTwelve";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useSharedValue } from "react-native-reanimated";
 import SpinnerThirteen from "@/app/components/appwide/button/SpinnerThirteen";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSharedValue } from "react-native-reanimated"; 
 type Props = {};
 
 const INITIAL_INTERVAL = 200;
@@ -98,40 +98,50 @@ const ScreenFidget = (props: Props) => {
 
       <View style={StyleSheet.absoluteFill}>
         {spinnerViewing === 0 && (
-          <SpinnerNine
+          <SpinnerThirteen
+             size={200} speed={1.4} 
             color2={color3}
             color1={manualGradientColors.homeDarkColor}
-            speed={speed}
+            
           />
         )}
         {spinnerViewing === 1 && (
-          <SpinnerEight
+         <SpinnerThirteen
+             size={300} speed={1.4} 
             color2={color3}
             color1={manualGradientColors.homeDarkColor}
-            speed={speed}
+            
           />
         )}
         {spinnerViewing === 2 && (
-          <SpinnerTen
+         <SpinnerThirteen
+             size={400} speed={1.4} 
             color2={color3}
             color1={manualGradientColors.homeDarkColor}
-            speed={speed}
+            
           />
         )}
         {spinnerViewing === 3 && (
-          <SpinnerEleven
-            color1={color3}
-            color2={manualGradientColors.homeDarkColor}
+               <SpinnerThirteen
+             size={600} speed={1.4} 
+            color2={color3}
+            color1={manualGradientColors.homeDarkColor}
+            
           />
         )}
         {spinnerViewing === 4 && (
-          <SpinnerTwelve
+     
+
+             <SpinnerThirteen
+             size={200} speed={1.4} 
             color2={color3}
             color1={manualGradientColors.homeDarkColor}
+            
           />
         )}
         {spinnerViewing === 5 && (
           <SpinnerThirteen 
+           size={400} speed={1.4} 
             color2={color3}
             color1={manualGradientColors.homeDarkColor}
            />
