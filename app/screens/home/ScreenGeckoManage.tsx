@@ -7,7 +7,7 @@ import TextHeader from "@/app/components/appwide/format/TextHeader";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import GeckoChart from "../helloes/GeckoChart"; 
-import useUserGeckoConfigs from "@/src/hooks/useUserGeckoConfigs"; 
+import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs"; 
 import useUpdateGeckoConfigs from "@/src/hooks/GeckoCalls/useUpdateGeckoConfigs";
 import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
 

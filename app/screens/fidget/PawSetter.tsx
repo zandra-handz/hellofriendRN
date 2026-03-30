@@ -5,10 +5,73 @@ import {
   Pressable,
   Alert,
   Vibration,
+  Animated,
 } from "react-native";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import SvgIcon from "@/app/styles/SvgIcons";
+
+const AnimatedPawButton = ({
+  onPress,
+  onLongPress,
+  iconName,
+  iconSize,
+  color,
+}: {
+  onPress: () => void;
+  onLongPress: () => void;
+  iconName: string;
+  iconSize: number;
+  color: string;
+}) => {
+  const scale = useRef(new Animated.Value(1)).current;
+  const prevIconName = useRef(iconName);
+
+  useEffect(() => {
+    if (prevIconName.current !== iconName) {
+      prevIconName.current = iconName;
+      scale.setValue(0.6);
+      Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 12,
+        bounciness: 16,
+      }).start();
+    }
+  }, [iconName]);
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.8,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 0,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 12,
+      bounciness: 14,
+    }).start();
+  };
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={styles.buttonContainer}
+    >
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <SvgIcon name={iconName} size={iconSize} color={color} />
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 type Props = {
   color: string;
@@ -34,12 +97,11 @@ const PawSetter = ({
   updateSelected,
   handleGetMoment,
 }: Props) => {
-  const iconSize = 18;
-  const highlightColor = color || "#FFD700"; // Use accent or gold as highlight
+  const iconSize = 22;
+  const highlightColor = color || "#FFD700";
 
   const [localPaws, setLocalPaws] = useState([false, false, false, false]);
 
-  // Initialize localPaws from momentsData
   useEffect(() => {
     const newPaws = [false, false, false, false];
     momentsData.forEach((moment) => {
@@ -58,7 +120,6 @@ const PawSetter = ({
     if (!registerSyncPaws) return;
 
     registerSyncPaws(() => {
-  
       const newPaws = [false, false, false, false];
       momentsData.forEach((moment) => {
         if (
@@ -69,22 +130,18 @@ const PawSetter = ({
           newPaws[moment.stored_index] = true;
         }
       });
-        console.log('setting local paws in pawsetter!!', Date.now())
+      console.log("setting local paws in pawsetter!!", Date.now());
       setLocalPaws(newPaws);
     });
   }, [registerSyncPaws, momentsData]);
 
   const runClearPaw = (index: number) => {
-    // console.log("long press! clear paw here if any is here");
     const updatedHoldings = clearPaw(index);
-
-    // Map holdings to boolean array for icon display
     setLocalPaws(updatedHoldings.map((h) => h.id !== null));
   };
 
   const handleClearPaw = (index: number) => {
     if (!localPaws[index]) {
-      // console.log("nothing here for long press!");
       return;
     }
 
@@ -92,33 +149,22 @@ const PawSetter = ({
       "Are you sure?",
       "Do you want to drop this moment?",
       [
-        {
-          text: "Wait no",
-          style: "cancel",
-        },
-        {
-          text: "Yes",
-          onPress: () => {
-            runClearPaw(index);
-          },
-        },
+        { text: "Wait no", style: "cancel" },
+        { text: "Yes", onPress: () => runClearPaw(index) },
       ],
       { cancelable: true },
     );
   };
 
-  
-
   const handlePawPress = (index: number) => {
     if (!lastSelected.id) {
-      return; // no selected moment, do nothing
+      return;
     }
 
     const momentInSlot = momentsData.find((m) => m.stored_index === index);
 
-    // EARLY RETURN: if the paw already holds the lastSelected moment
     if (momentInSlot && momentInSlot.id === lastSelected.id) {
-      return; // do nothing
+      return;
     }
 
     if (localPaws[index]) {
@@ -126,10 +172,7 @@ const PawSetter = ({
         "Are you sure?",
         "Select new moment?",
         [
-          {
-            text: "Oops no!",
-            style: "cancel",
-          },
+          { text: "Oops no!", style: "cancel" },
           {
             text: "Yes please",
             onPress: () => {
@@ -144,7 +187,6 @@ const PawSetter = ({
       return;
     }
 
-    // Otherwise, assign lastSelected to this paw
     const updatedHoldings = updatePaw(lastSelected, index);
     setLocalPaws(updatedHoldings.map((h) => h.id !== null));
   };
@@ -159,7 +201,7 @@ const PawSetter = ({
     }
   }, [registerClearAll, clearAllPaws]);
 
-  const getPawColor = (index: number) => { 
+  const getPawColor = (index: number) => {
     const moment = momentsData.find((m) => m.stored_index === index);
     if (moment && lastSelected && moment.id === lastSelected.id) {
       return highlightColor;
@@ -171,68 +213,40 @@ const PawSetter = ({
     <View
       style={[
         styles.container,
-        { backgroundColor: backgroundColor, borderColor: borderColor },
+        { backgroundColor: "transparent", borderColor: borderColor },
       ]}
     >
-      {/* <Pressable
-        onPress={() => handleClearAllPaws()}
-        style={{
-          position: "absolute",
-          top: -50,
-          left: 0,
-          height: 40,
-          width: 40,
-          borderRadius: 999,
-          backgroundColor: "pink",
-        }}
-      ></Pressable> */}
       <View style={styles.row}>
-        <Pressable
-          onLongPress={() => handleClearPaw(0)}
+        <AnimatedPawButton
           onPress={() => handlePawPress(0)}
-          style={styles.buttonContainer}
-        >
-          <SvgIcon
-            name={localPaws[0] ? `circle` : `circle_outline`}
-            size={iconSize}
-            color={getPawColor(0)}
-          />
-        </Pressable>
-        <Pressable
-          onLongPress={() => handleClearPaw(1)}
+          onLongPress={() => handleClearPaw(0)}
+          iconName={localPaws[0] ? "circle" : "circle_outline"}
+          iconSize={iconSize}
+          color={getPawColor(0)}
+        />
+        <AnimatedPawButton
           onPress={() => handlePawPress(1)}
-          style={styles.buttonContainer}
-        >
-          <SvgIcon
-            name={localPaws[1] ? `circle` : `circle_outline`}
-            size={iconSize}
-            color={getPawColor(1)}
-          />
-        </Pressable>
+          onLongPress={() => handleClearPaw(1)}
+          iconName={localPaws[1] ? "circle" : "circle_outline"}
+          iconSize={iconSize}
+          color={getPawColor(1)}
+        />
       </View>
       <View style={styles.row}>
-        <Pressable
-          onLongPress={() => handleClearPaw(2)}
+        <AnimatedPawButton
           onPress={() => handlePawPress(2)}
-          style={styles.buttonContainer}
-        >
-          <SvgIcon
-            name={localPaws[2] ? `circle` : `circle_outline`}
-            size={iconSize}
-            color={getPawColor(2)}
-          />
-        </Pressable>
-        <Pressable
-          onLongPress={() => handleClearPaw(3)}
+          onLongPress={() => handleClearPaw(2)}
+          iconName={localPaws[2] ? "circle" : "circle_outline"}
+          iconSize={iconSize}
+          color={getPawColor(2)}
+        />
+        <AnimatedPawButton
           onPress={() => handlePawPress(3)}
-          style={styles.buttonContainer}
-        >
-          <SvgIcon
-            name={localPaws[3] ? `circle` : `circle_outline`}
-            size={iconSize}
-            color={getPawColor(3)}
-          />
-        </Pressable>
+          onLongPress={() => handleClearPaw(3)}
+          iconName={localPaws[3] ? "circle" : "circle_outline"}
+          iconSize={iconSize}
+          color={getPawColor(3)}
+        />
       </View>
     </View>
   );
@@ -242,23 +256,17 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
-    height: 80,
-    width: 90,
+    height: 100,
+    width: 100,
     padding: 10,
- 
     alignItems: "center",
     borderRadius: 30,
     borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
   },
   row: {
     flexDirection: "row",
     height: "50%",
-    width: "80%",
+    width: "100%",
     justifyContent: "space-evenly",
   },
   buttonContainer: {

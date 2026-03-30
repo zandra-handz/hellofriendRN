@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
 import StatsCard from "./StatsCard";
@@ -13,7 +14,7 @@ import { WelcomeCard } from "./HomeWelcomeCard";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import useUser from "@/src/hooks/useUser";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 // import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
 // import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
@@ -50,21 +51,9 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
 
   const FOOTER_SPACER = 120;
   const MANAGE_CARDS_SCROLL_HEIGHT = 180;
+ 
 
-  useEffect(() => {
-    if (!geckoCombinedData) return;
-
-    const geckoTotalDuration = geckoCombinedData?.total_duration || 0;
-    const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
-
-    setTimeout(() => {
-      showModalMessage({
-        title: "Your gecko stats",
-        body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance} \nTotal duration: ${formattedDuration}`,
-      });
-    }, 700);
-  }, [geckoCombinedData]);
-
+ 
   useEffect(() => {
     if (shouldDelayAnimation) {
       setIsDelaying(true);
@@ -254,8 +243,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
             skiaFontSmall={skiaFontSmall}
             userId={user.id}
             username={user.username}
-            lightDarkTheme={lightDarkTheme}
-            geckoCombinedData={geckoCombinedData}
+            lightDarkTheme={lightDarkTheme} 
           />
         </>
       )}

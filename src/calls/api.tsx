@@ -256,11 +256,65 @@ export const getUserGeckoConfigs = async () => {
 
 export const getUserGeckoCombinedData = async () => {
   try {
-    const response = await helloFriendApiClient.get(`/users/geckodata/`);
+    const response = await helloFriendApiClient.get(`/users/gecko/totals/`);
     console.log("API GET Call getGeckoData", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoData");
+  }
+};
+
+
+
+export const fetchdGeckoCombinedSessions = async ({
+ 
+  page = 1,
+}: { 
+  page: number;
+}) => {
+  try {
+    const params = new URLSearchParams();
+
+    params.append("page", String(page));
+ 
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/sessions/?${params.toString()}`
+    ); 
+    if (response?.data && response?.data?.results) { 
+
+      // console.log(`gecko sessions: `, response.data)
+
+      return response.data; 
+    } else {
+      console.log("No data returned from fetchdGeckoCombinedSessions.");
+      return { results: [], next: null, previous: null };
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchdGeckoCombinedSessions");
+  }
+};
+
+
+export const fetchGeckoCombinedSessionsTimeRange = async ({
+  minutes,
+  page = 1,
+}: {
+  minutes: number;
+  page?: number;
+}) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/sessions/range/?minutes=${minutes}&page=${page}`
+    );
+    if (response?.data && response?.data?.results) {
+      // console.log(`USER GECKO SESSIONS`,response.data)
+      return response.data;
+    } else {
+      console.log("No data returned from fetchGeckoCombinedSessionsTimeRange.");
+      return { results: [], next: null, previous: null, totals: null };
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoCombinedSessionsTimeRange");
   }
 };
 

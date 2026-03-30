@@ -8,6 +8,7 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
+import FooterButtonRow from "./FooterButtonRow";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
@@ -54,11 +55,7 @@ const GlassMoment = ({
   backgroundColor = "orange",
   borderColor = "pink",
   darkerOverlayColor,
-  lighterOverlayColor,
   moment,
-  hasContent = false,
-  showButton = false,
-  noContentText = "No content",
   onPressBack,
   onPressNew,
   onPressShare,
@@ -67,7 +64,6 @@ const GlassMoment = ({
   saveToHello,
   deleteMoment,
   triggerClose,
-  inputNumberVisible,
 }: Props) => {
   const translateY = useSharedValue(START_Y);
   const hasAnimated = useRef(false);
@@ -77,8 +73,6 @@ const GlassMoment = ({
   const { navigateToFriendHome } = useAppNavigations();
 
   const [dangerVisible, setDangerVisible] = useState(false);
-
-  const categoryColor = manualGradientColors.lightColor;
 
   const FOOTER_HEIGHT = 90;
   const FOOTER_PADDING_BOTTOM = 12;
@@ -118,7 +112,7 @@ const GlassMoment = ({
     }
     translateY.value = withTiming(START_Y, { duration: 180 });
     setTimeout(() => {
-      navigateToFriendHome({ 
+      navigateToFriendHome({
         resetTimestamp: Date.now(),
       });
     }, 200);
@@ -176,9 +170,7 @@ const GlassMoment = ({
       style={styles.footerSection}
     >
       <SvgIcon name={iconName} size={FOOTER_ICON_SIZE} color={color} />
-      <Text style={[styles.footerLabel, { color, fontSize: 11 }]}>
-        {label}
-      </Text>
+      <Text style={[styles.footerLabel, { color, fontSize: 11 }]}>{label}</Text>
     </GlobalPressable>
   );
 
@@ -226,70 +218,32 @@ const GlassMoment = ({
 
           {!moment && (
             <View style={styles.scrollViewContainer}>
-              <Pressable onPress={onPressNew} style={styles.noMomentWrapper}>
-              </Pressable>
+              <Pressable
+                onPress={onPressNew}
+                style={styles.noMomentWrapper}
+              ></Pressable>
             </View>
           )}
 
-          {dangerVisible && (
-            <View
-              style={[
-                styles.dangerTray,
-                { backgroundColor: darkerOverlayColor },
-              ]}
-            >
-              <FooterButtonItem
-                iconName="pencil"
-                label="Edit"
-                onPress={handleEditMoment}
-              />
-              <FooterButtonItem
-                iconName="delete"
-                label="Delete"
-                onPress={deleteMoment}
-                confirmationRequired={true}
-                confirmationTitle="Delete moment"
-                confirmationMessage="Are you sure you want to delete this moment?"
-              />
-            </View>
-          )}
-
-          <View
-            style={[
-              styles.footerContainer,
+          <FooterButtonRow
+            backgroundColor={darkerOverlayColor}
+            color={color}
+            buttons={[
+              { iconName: "home", label: "Home", onPress: handlePressHome },
               {
-                backgroundColor: darkerOverlayColor,
-                height: FOOTER_HEIGHT,
-                paddingBottom: FOOTER_PADDING_BOTTOM,
+                iconName: dangerVisible ? "eye_closed" : "eye",
+                label: dangerVisible ? "Hide" : "More",
+                onPress: () => setDangerVisible((prev) => !prev),
               },
+              { iconName: "close", label: "Close", onPress: handlePressBack },
+              {
+                iconName: "send_circle_outline",
+                label: "Send",
+                onPress: onPressShare,
+              },
+              { iconName: "plus_circle", label: "Add", onPress: saveToHello },
             ]}
-          >
-            <FooterButtonItem
-              iconName="home"
-              label="Home"
-              onPress={handlePressHome}
-            />
-            <FooterButtonItem
-              iconName={dangerVisible ? "eye_closed" : "eye"}
-              label={dangerVisible ? "Hide" : "More"}
-              onPress={() => setDangerVisible((prev) => !prev)}
-            />
-            <FooterButtonItem
-              iconName="close"
-              label="Close"
-              onPress={handlePressBack}
-            />
-            <FooterButtonItem
-              iconName="send_circle_outline"
-              label="Send"
-              onPress={onPressShare}
-            />
-            <FooterButtonItem
-              iconName="plus_circle"
-              label="Add"
-              onPress={saveToHello}
-            />
-          </View>
+          />
         </SafeAreaView>
       </View>
     </Animated.View>

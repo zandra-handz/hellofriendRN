@@ -25,7 +25,7 @@ const GoOptionsModal = ({
   const {
     navigateToLocationSearch,
     navigateToFinalize,
-    navigateToFidget,
+    // navigateToFidget,
   } = useAppNavigations();
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
@@ -41,7 +41,7 @@ const GoOptionsModal = ({
     closeModal();
     navigateToFinalize();
   };
-  const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
+  //const handleNavToSpinners = () => { closeModal(); navigateToFidget(); };
 
   const count = 5;
   const speed = 20;
@@ -98,11 +98,11 @@ const GoOptionsModal = ({
                 </BouncyEntrance>
               </View>
               
-              <View style={styles.sectionContainer}>
+              {/* <View style={styles.sectionContainer}>
                 <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
                   <OptionButton {...sharedButtonProps} onPress={handleNavToSpinners} label="Spinner gallery" />
                 </BouncyEntrance>
-              </View>
+              </View> */}
             </>
           )}
         </View>

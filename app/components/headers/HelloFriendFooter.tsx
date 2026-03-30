@@ -7,12 +7,12 @@ import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
-// import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
-
+  import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import useSignOut from "@/src/hooks/UserCalls/useSignOut";
-
+import UserGeckoFooterButton from "./UserGeckoFooterButton";
 import SvgIcon from "@/app/styles/SvgIcons";
 
 // types
@@ -28,8 +28,7 @@ const HelloFriendFooter = ({
   skiaFontSmall,
   userId,
   username,
-  lightDarkTheme,
-  geckoCombinedData,
+  lightDarkTheme, 
 }: Props) => {
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -37,6 +36,7 @@ const HelloFriendFooter = ({
   const [geckoDataVisible, setGeckoDataVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+    const { geckoCombinedData } = useUserGeckoCombinedData();
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -44,6 +44,24 @@ const HelloFriendFooter = ({
   const footerIconSize = 24;
 
   const primaryColor = lightDarkTheme.primaryText;
+
+   
+  // useEffect(() => {
+  //   if (!geckoCombinedData) return;
+
+  //   console.log(`gecko combined data`, geckoCombinedData);
+
+  //   const geckoTotalDuration = geckoCombinedData?.total_duration || 0;
+  //   const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
+
+  //   setTimeout(() => {
+  //     showModalMessage({
+  //       title: "Your gecko stats",
+  //       body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance} \nTotal duration: ${formattedDuration}`,
+  //     });
+  //   }, 700);
+  // }, [geckoCombinedData]);
+
 
   useEffect(() => {
     if (geckoDataVisible && geckoCombinedData) {
@@ -142,9 +160,12 @@ const HelloFriendFooter = ({
   const RenderCategoryButton = useCallback(
     () => (
       <CategoryFooterButton
+      userId={userId}
         skiaFontLarge={skiaFontSmall}
         textColor={primaryColor}
         onPress={() => handleCenterButtonToggle()}
+        geckoCombinedData={geckoCombinedData}
+     
       />
     ),
     [], // was theme colors but I'm not sure why

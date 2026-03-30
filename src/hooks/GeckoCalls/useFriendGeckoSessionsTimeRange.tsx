@@ -96,6 +96,8 @@ type Props = {
 const useFriendGeckoSessionsTimeRange = ({ friendId, minutes }: Props) => {
   const { user } = useUser();
 
+    const HARD_CODED_MINUTES = 720; //last 12 hours
+
   const {
     data: friendGeckoSessionsTimeRange,
     isLoading: friendGeckoSessionsTimeRangeIsLoading,
@@ -103,14 +105,14 @@ const useFriendGeckoSessionsTimeRange = ({ friendId, minutes }: Props) => {
     isSuccess: friendGeckoSessionsTimeRangeIsSuccess,
     isError: friendGeckoSessionsTimeRangeIsError,
   } = useQuery({
-    queryKey: ["friendGeckoSessionsTimeRange", user?.id, friendId, minutes],
+    queryKey: ["friendGeckoSessionsTimeRange", user?.id, friendId], // use minutes here only if querying different ranges
     queryFn: async () => {
       return await fetchFriendGeckoSessionsTimeRange({
         friendId,
         minutes,
       });
     },
-    enabled: !!(friendId && user?.id && minutes > 0),
+    enabled: !!(friendId && user?.id &&  HARD_CODED_MINUTES  > 0),
   });
 
   const sessions: GeckoSession[] = friendGeckoSessionsTimeRange ?? [];

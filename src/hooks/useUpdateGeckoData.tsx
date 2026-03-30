@@ -38,7 +38,12 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
 
       queryClient.refetchQueries({queryKey: ["userGeckoCombinedData", userId]})
       queryClient.refetchQueries({queryKey: ["friendGeckoSessions", userId, friendId]})
-          queryClient.refetchQueries({queryKey: ["friendGeckoSessionsTimeRange", userId, friendId]})
+      
+      queryClient.refetchQueries({queryKey: ["friendGeckoSessionsTimeRange", userId, friendId]})
+    queryClient.refetchQueries({queryKey: ["userGeckoSessionsTimeRange", userId]})
+       
+      
+      
       // if (refetchUpcoming) {
       //   refetchUpcoming();
       // }

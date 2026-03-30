@@ -17,6 +17,14 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
+
+
+import useGeckoSynthesizer from "@/src/hooks/useGeckoSynthesizer";
+import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
+import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
+import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
+
 import SvgIcon from "@/app/styles/SvgIcons";
 import SpeedButtons from "./SpeedButtons";
 import AutoPickUpButton from "./AutoPickUpButton";
@@ -35,7 +43,6 @@ import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession"
 import { SkFont } from "@shopify/react-native-skia";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
-import { assignStylesValue } from "@expo/config-plugins/build/android/Styles.js";
 
 type Props = {
   skiaFontLarge: SkFont;
@@ -47,13 +54,39 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
   const timestamp = route.params?.timestamp ?? null;
-  const pollMode = route.params?.pollMode ?? false;
+  // const pollMode = route.params?.pollMode ?? false;
   const sessionId = route.params?.sessionId ?? null;
 
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+
+const { geckoCombinedData } = useUserGeckoCombinedData();
+const { geckoConfigs } = useUserGeckoConfigs({userId: user?.id});
+const { sessionTotals } = useFriendGeckoSessionsTimeRange({
+  friendId: selectedFriend?.id,
+  minutes: 720,
+});
+const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
+
+const { gecko, readIds, updateReadIds } = useGeckoSynthesizer({
+  geckoCombinedData,
+  geckoConfigs,
+  sessionTotals,
+  userSessionTotals,
+  friendId: selectedFriend?.id,
+});
+
+
+useEffect(() => {
+  if (gecko) {
+    console.log(`TADA! gecko`, gecko)
+  }
+
+}, [gecko]);
+
+
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [isPollMode, setIsPollMode] = useState(false);
@@ -64,149 +97,146 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const textColor = lightDarkTheme.primaryText;
   const backgroundColor = lightDarkTheme.primaryBackground;
-  const darkerOverlayColor =  lightDarkTheme.darkerOverlayBackground;
+  const darkerOverlayColor = lightDarkTheme.darkerOverlayBackground;
 
+  const [rescatterTrigger, setRescatterTrigger] = useState(0);
+  const [recenterTrigger, setRecenterTrigger] = useState(0);
+  const [backTrigger, setBackTrigger] = useState(0);
 
+  const triggerRescatter = () => setRescatterTrigger((prev) => prev + 1);
+  const triggerRecenter = () => setRecenterTrigger((prev) => prev + 1);
+  const triggerBack = () => setBackTrigger((prev) => prev + 1);
 
-  const GROQ_MESSAGE_PAUSE_TIME = 10000; 
-  const { askGroq, onModalCloseRef } = useGroqBeta({userId: user?.id, friendId: selectedFriend?.id, pauseTime: GROQ_MESSAGE_PAUSE_TIME});
+  const GROQ_MESSAGE_PAUSE_TIME = 10000;
+  const { askGroq, onModalCloseRef } = useGroqBeta({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+    pauseTime: GROQ_MESSAGE_PAUSE_TIME,
+  });
 
-// const isAskingRef = useRef(false);
+  // const isAskingRef = useRef(false);
 
-// const handleGeckoReadAndAsk = async () => {
-//   if (isAskingRef.current) return;
-//   isAskingRef.current = true;
-//   try {
-//     const history = getHistory();
-//     const ids = history.map((m) => m.id).filter(Boolean);
-//     if (!ids.length) return;
+  // const handleGeckoReadAndAsk = async () => {
+  //   if (isAskingRef.current) return;
+  //   isAskingRef.current = true;
+  //   try {
+  //     const history = getHistory();
+  //     const ids = history.map((m) => m.id).filter(Boolean);
+  //     if (!ids.length) return;
 
-//     const data = await fetchGeckoMoments(ids);
-//     if (!data?.moments?.length) return;
+  //     const data = await fetchGeckoMoments(ids);
+  //     if (!data?.moments?.length) return;
 
-//     const momentsList = data.moments;
-//     const validIds = momentsList.map((m) => m.id);
+  //     const momentsList = data.moments;
+  //     const validIds = momentsList.map((m) => m.id);
 
-//     // Step 1: Ask groq to pick one capsule, return ONLY the id
-//     const pickReply = await askGroq(
-//       "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
-//       JSON.stringify(momentsList),
-//       { silent: true },
-//     );
+  //     // Step 1: Ask groq to pick one capsule, return ONLY the id
+  //     const pickReply = await askGroq(
+  //       "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
+  //       JSON.stringify(momentsList),
+  //       { silent: true },
+  //     );
 
-//     // console.log(pickReply)
+  //     // console.log(pickReply)
 
-//     // Validate the pick — fall back to random if groq returns garbage
-//     const trimmedPick = pickReply?.trim();
-//     const pickedId = validIds.includes(trimmedPick)
-//       ? trimmedPick
-//       : validIds[Math.floor(Math.random() * validIds.length)];
+  //     // Validate the pick — fall back to random if groq returns garbage
+  //     const trimmedPick = pickReply?.trim();
+  //     const pickedId = validIds.includes(trimmedPick)
+  //       ? trimmedPick
+  //       : validIds[Math.floor(Math.random() * validIds.length)];
 
-//     manualOnlyRef.current = false; // make sure auto mode if not already
-//     oneTimeSelectIdRef.current = pickedId;
+  //     manualOnlyRef.current = false; // make sure auto mode if not already
+  //     oneTimeSelectIdRef.current = pickedId;
 
-//     const pickedMoment = momentsList.find((m) => m.id === pickedId);
+  //     const pickedMoment = momentsList.find((m) => m.id === pickedId);
 
-//     // Step 2: Ask groq to comment on the picked capsule
-//     const reply = await askGroq(
-//       `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
-//       JSON.stringify(pickedMoment),
-//     );
+  //     // Step 2: Ask groq to comment on the picked capsule
+  //     const reply = await askGroq(
+  //       `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
+  //       JSON.stringify(pickedMoment),
+  //     );
 
-//     setTimeout(() => {
-//       oneTimeSelectIdRef.current = null;
-//       manualOnlyRef.current = false;
-//     }, GROQ_MESSAGE_PAUSE_TIME);
-//     //   setTimeout(() => {
-//     //     showModalMessage({ title: "Gecko says", body: reply });
-//     //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
+  //     setTimeout(() => {
+  //       oneTimeSelectIdRef.current = null;
+  //       manualOnlyRef.current = false;
+  //     }, GROQ_MESSAGE_PAUSE_TIME);
+  //     //   setTimeout(() => {
+  //     //     showModalMessage({ title: "Gecko says", body: reply });
+  //     //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
 
-//     // }  , 2000);
-//   } catch (e: any) {
-//     showModalMessage({
-//       title: 'Gecko error',
-//       body: e?.message || 'Something went wrong',
-//     });
-//   } finally {
-//     isAskingRef.current = false;
-//   }
-// };
- 
+  //     // }  , 2000);
+  //   } catch (e: any) {
+  //     showModalMessage({
+  //       title: 'Gecko error',
+  //       body: e?.message || 'Something went wrong',
+  //     });
+  //   } finally {
+  //     isAskingRef.current = false;
+  //   }
+  // };
 
+  const isAskingRef = useRef(false);
 
+  const handleGeckoReadAndAsk = async () => {
+    if (isAskingRef.current) return;
+    isAskingRef.current = true;
+    try {
+      const history = getHistory();
+      const ids = history.map((m) => m.id).filter(Boolean);
+      if (!ids.length) return;
 
+      const data = await fetchGeckoMoments(ids);
+      if (!data?.moments?.length) return;
 
+      const momentsList = data.moments;
+      const validIds = momentsList.map((m) => m.id);
 
+      // Step 1: Ask groq to pick one capsule, return ONLY the id
+      const pickReply = await askGroq(
+        "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
+        JSON.stringify(momentsList),
+        { silent: true, noHistory: true },
+      );
 
+      // console.log(pickReply)
 
+      // Validate the pick — fall back to random if groq returns garbage
+      const trimmedPick = pickReply?.trim();
+      const pickedId = validIds.includes(trimmedPick)
+        ? trimmedPick
+        : validIds[Math.floor(Math.random() * validIds.length)];
 
+      manualOnlyRef.current = false; // make sure auto mode if not already
+      oneTimeSelectIdRef.current = pickedId;
 
+      const pickedMoment = momentsList.find((m) => m.id === pickedId);
 
+      // Register cleanup for when modal closes
+      onModalCloseRef.current = () => {
+        oneTimeSelectIdRef.current = null;
+        manualOnlyRef.current = false;
+      };
 
+      // Step 2: Ask groq to comment on the picked capsule
+      const reply = await askGroq(
+        `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
+        JSON.stringify(pickedMoment),
+      );
 
-const isAskingRef = useRef(false);
+      //   setTimeout(() => {
+      //     showModalMessage({ title: "Gecko says", body: reply });
+      //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
 
-const handleGeckoReadAndAsk = async () => {
-  if (isAskingRef.current) return;
-  isAskingRef.current = true;
-  try {
-    const history = getHistory();
-    const ids = history.map((m) => m.id).filter(Boolean);
-    if (!ids.length) return;
-
-    const data = await fetchGeckoMoments(ids);
-    if (!data?.moments?.length) return;
-
-    const momentsList = data.moments;
-    const validIds = momentsList.map((m) => m.id);
-
-    // Step 1: Ask groq to pick one capsule, return ONLY the id
-const pickReply = await askGroq(
-  "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
-  JSON.stringify(momentsList),
-  { silent: true, noHistory: true },
-);
-
-    // console.log(pickReply)
-
-    // Validate the pick — fall back to random if groq returns garbage
-    const trimmedPick = pickReply?.trim();
-    const pickedId = validIds.includes(trimmedPick)
-      ? trimmedPick
-      : validIds[Math.floor(Math.random() * validIds.length)];
-
-    manualOnlyRef.current = false; // make sure auto mode if not already
-    oneTimeSelectIdRef.current = pickedId;
-
-    const pickedMoment = momentsList.find((m) => m.id === pickedId);
-
-    // Register cleanup for when modal closes
-    onModalCloseRef.current = () => {
-      oneTimeSelectIdRef.current = null;
-      manualOnlyRef.current = false;
-    };
-
-    // Step 2: Ask groq to comment on the picked capsule
-    const reply = await askGroq(
-      `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
-      JSON.stringify(pickedMoment),
-    );
-
-    //   setTimeout(() => {
-    //     showModalMessage({ title: "Gecko says", body: reply });
-    //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
-
-    // }  , 2000);
-  } catch (e: any) {
-    showModalMessage({
-      title: 'Gecko error',
-      body: e?.message || 'Something went wrong',
-    });
-  } finally {
-    isAskingRef.current = false;
-  }
-};
- 
+      // }  , 2000);
+    } catch (e: any) {
+      showModalMessage({
+        title: "Gecko error",
+        body: e?.message || "Something went wrong",
+      });
+    } finally {
+      isAskingRef.current = false;
+    }
+  };
 
   //////////// NEW!! SENSOR TESTING //////////////////////////////////////////////////////////
 
@@ -276,8 +306,6 @@ const pickReply = await askGroq(
   //   });
   //   return () => lightSub.remove();
   // }, []);
-
-
 
   // DONT DELETE
   // useFocusEffect(
@@ -354,6 +382,7 @@ const pickReply = await askGroq(
     navigateToMomentFocus,
     navigateToGeckoSelectSettings,
     navigateToQRCode,
+    navigateToFriendHome,
   } = useAppNavigations();
 
   const handleNavigateToMoment = useCallback(
@@ -403,16 +432,10 @@ const pickReply = await askGroq(
     handleNavigateToMoment,
   ]);
 
-  const { handleUpdateGeckoData  } =
-    useUpdateGeckoData({
-      userId: user?.id,
-      friendId: selectedFriend?.id,
-    });
-
-
- 
-  
-
+  const { handleUpdateGeckoData } = useUpdateGeckoData({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -574,7 +597,6 @@ const pickReply = await askGroq(
   const speedSettingRef = useRef(tickTotalsRef.current[0]);
   const manualOnlyRef = useRef(true);
 
- 
   const oneTimeSelectIdRef = useRef(null);
 
   const randomWakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -640,11 +662,18 @@ const pickReply = await askGroq(
     return getAutoSelectLabel(autoSelectType);
   }, [autoSelectType]);
 
-  const handleChangeSpeed = useCallback((newSpeedFromButton) => {
+  // const handleChangeSpeed = useCallback((newSpeedFromButton) => {
+  //   speedSettingRef.current =
+  //     tickTotalsRef.current[newSpeedFromButton] ?? tickTotalsRef.current[1];
+  //   setSpeedSetting(newSpeedFromButton);
+  // }, []);
+
+  const handleChangeSpeed = useCallback(() => {
+    const next = (speedSetting + 1) % 3;
     speedSettingRef.current =
-      tickTotalsRef.current[newSpeedFromButton] ?? tickTotalsRef.current[1];
-    setSpeedSetting(newSpeedFromButton);
-  }, []);
+      tickTotalsRef.current[next] ?? tickTotalsRef.current[1];
+    setSpeedSetting(next);
+  }, [speedSetting]);
 
   const handleNavToSelect = useCallback(() => {
     if (autoPickUp) {
@@ -880,6 +909,10 @@ const pickReply = await askGroq(
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
+  const handleNavBack = () => {
+    navigateToFriendHome({ backdropTimestamp: Date.now() });
+  };
+
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
       <View style={[StyleSheet.absoluteFill]}>
@@ -908,6 +941,10 @@ const pickReply = await askGroq(
           oneTimeSelectId={oneTimeSelectIdRef}
           handleRescatterMomentsInternal={handleRescatterMoments_insideMS}
           handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
+          handleNavBack={handleNavBack}
+          rescatterTrigger={rescatterTrigger}
+          recenterTrigger={recenterTrigger}
+          backTrigger={backTrigger}
         />
       </View>
       {/* <DebugPanel /> */}
@@ -934,82 +971,15 @@ const pickReply = await askGroq(
         )}
       </View>
 
-      <View style={styles.movementSettingsRow}>
-        <Pressable
-          onPress={handleToggleManual}
-          style={[
-            styles.manualButton,
-            { backgroundColor:  darkerOverlayColor },
-          ]}
-        >
-          <SvgIcon
-            name={manualOnly ? `motion_play_outline` : `motion_pause_outline`}
-            size={36}
-            color={textColor}
-          />
-        </Pressable>
-        <Pressable
-          onPress={handleGeckoReadAndAsk}
-          style={{
-            position: "absolute",
-            top: 100,
-            right: 20,
-            zIndex: 1000,
-            backgroundColor: backgroundColor,
-            padding: 8,
-            borderRadius: 999,
-          }}
-        >
-          <SvgIcon name="chat" size={34} color={textColor}/>
-        </Pressable>
-
-        {!manualOnly && (
-          <View style={{ marginHorizontal: 10 }}>
-            <SpeedButtons
-              color={textColor}
-              curSetting={speedSetting}
-              buttonDiameter={40}
-              buttonPadding={0}
-              iconSize={24}
-              backgroundColor={backgroundColor}
-              onPress={handleChangeSpeed}
-            />
-          </View>
-        )}
-      </View>
-
-      <View style={styles.qRCodeWrapper}>
-        <QRCodeButton
-          color={
-            isPollMode ? selectedFriend.lightColor : textColor
-          }
-          buttonDiameter={40}
-          buttonPadding={0}
-          iconSize={24}
-          backgroundColor={backgroundColor}
-          onPress={handleNavToQRCode}
-        />
-      </View>
-
-      {!manualOnly && (
-        <View style={styles.autoPickUpWrapper}>
-          <AutoPickUpButton
-            color={
-              autoPickUp
-                ? selectedFriend.lightColor
-                : textColor
-            }
-            buttonDiameter={40}
-            buttonPadding={0}
-            iconSize={24}
-            backgroundColor={backgroundColor}
-            onPress={handleNavToSelect}
-          />
-        </View>
-      )}
-
+ 
+ 
       <GlassPreviewBottom
+        readingMode={!manualOnly}
+        speedSetting={speedSetting}
+        autoPickUp={autoPickUp}
+        isPollMode={isPollMode}
         color={textColor}
+        highlightColor={selectedFriend.lightColor}
         backgroundColor={darkerOverlayColor}
         borderColor={"transparent"}
         moment={moment.id ? moment : null}
@@ -1017,6 +987,14 @@ const pickReply = await askGroq(
         noContentText={BLANK_WINDOW_MESSAGE}
         onPressEdit={handleNavigateToMoment}
         onPressNew={handleNavigateToCreateNew}
+        onPress_rescatterMoments={triggerRescatter}
+        onPress_recenterMoments={triggerRecenter}
+        onPress_saveAndExit={triggerBack}
+        onPress_toggleReadMode={handleToggleManual}
+        onPress_changeSpeed={handleChangeSpeed}
+        onPress_geckoVoice={handleGeckoReadAndAsk}
+        onPress_autoPickUpScreen={handleNavToSelect}
+        onPress_QRCodeScreen={handleNavToQRCode}
       />
     </NoGradientBackground>
   );

@@ -28,8 +28,7 @@ import {
   // GECKO_SKELETON_SKSL,
 } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { BackHandler } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import MomentDotsResetterMini from "./MomentDotsResetterMini";
+import { useFocusEffect } from "@react-navigation/native"; 
 import {
   runOnJS,
   useSharedValue,
@@ -133,7 +132,11 @@ const MomentsSkia = ({
   oneTimeSelectId,
   reset = 0,
   handleRescatterMomentsInternal,
-  handleRecenterMomentsInternal
+  handleRecenterMomentsInternal,
+  handleNavBack,
+  rescatterTrigger,
+  recenterTrigger,
+  backTrigger,
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -172,10 +175,32 @@ const sessionEndRef = useRef<number>(Date.now());
 
   };
 
+
+  useEffect(() => {
+  if (rescatterTrigger) {
+    handleRescatterMoments_useMomentClass();
+  }
+}, [rescatterTrigger]);
+
+
+
   const handleRecenterMoments_useMomentClass = () => {
 
     handleRecenterMomentsInternal(moments.current.moments);
   };
+
+
+  useEffect(() => {
+  if (rescatterTrigger) {
+      handleRescatterMomentsInternal(moments.current.moments);
+  }
+}, [rescatterTrigger]);
+
+useEffect(() => {
+  if (recenterTrigger) {
+    handleRecenterMomentsInternal(moments.current.moments);
+  }
+}, [recenterTrigger]);
 
 const handleUpdateGeckoDataState = async () => {
   sessionEndRef.current = Date.now();
@@ -186,6 +211,17 @@ const handleUpdateGeckoDataState = async () => {
     endedOn: new Date(sessionEndRef.current).toISOString(),
   });
 };
+
+useEffect(() => {
+  if (backTrigger) {
+    const run = async () => {
+      await handleUpdateMomentsState();
+      await handleUpdateGeckoDataState();
+      handleNavBack();
+    };
+    run();
+  }
+}, [backTrigger]);
 
   // const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 30;
@@ -880,27 +916,13 @@ const handleUpdateGeckoDataState = async () => {
         />
       </View>
 
-      <View style={styles.resetterContainer}>
-        <MomentDotsResetterMini
-onBackPress={async () => {
-  await handleUpdateMomentsState();
-  await handleUpdateGeckoDataState();
-}}
-          onCenterPress={handleRecenterMoments_useMomentClass}
-          onUndoPress={handleReset}
-          primaryColor={lightDarkTheme.primaryText}
-          borderColor={lightDarkTheme.lighterOverlayBackground}
-          primaryBackground={lightDarkTheme.darkerOverlayBackground}
-          onPress={handleRescatterMoments_useMomentClass}
-        />
-      </View>
+  
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  pawSetterContainer: { position: "absolute", bottom: 176, left: 16 },
-  resetterContainer: { position: "absolute", bottom: 176, right: 16 },
+  pawSetterContainer: { position: "absolute", bottom: 270, left: 16 }, 
 });
 
 const MemoizedMomentsSkia = React.memo(MomentsSkia);

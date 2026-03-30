@@ -247,6 +247,8 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
     sessionTotals,
   } = useFriendGeckoSessionsTimeRange({ friendId, minutes });
 
+ 
+
   // Overall totals from backend
   const geckoTotalSteps = friendDash?.gecko_data?.total_steps || 0;
   const geckoTotalDistance = friendDash?.gecko_data?.total_distance || 0;

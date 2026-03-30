@@ -1,10 +1,37 @@
- 
-
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { useColorScheme } from "react-native";
 
+type ThemeColors = {
+  overlayBackground: string;
+  darkerOverlayBackground: string;
+  lighterOverlayBackground: string;
+  primaryText: string;
+  primaryBackground: string;
+  signInButton?: string;
+  darkerBackground: string;
+  darkestBackground: string;
+  darkGlassBackground: string;
+  darkerGlassBackground: string;
+  dangerZoneText: string;
+  borderColor?: string;
+  toggleButtonColor: string;
+  toggleOn: string;
+  toggleOff: string;
+  divider: {
+    width: number;
+    backgroundColor: string;
+  };
+  header: {
+    backgroundColor: string;
+    borderBottomColor: string;
+    borderBottomWidth: number;
+  };
+  headerTextColor: string;
+  backdropColor: string;
+};
+
 interface LightDarkThemeType {
-  lightDarkTheme: object;
+  lightDarkTheme: ThemeColors;
   theme: string;
   setManualDarkMode: (value: boolean | null) => void;
 }
@@ -21,7 +48,7 @@ export const LDThemeProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const colorScheme = useColorScheme();
   const [manualDarkMode, setManualDarkMode] = useState<boolean | null>(null);
   const [theme, setTheme] = useState<string>(colorScheme || "light");
- 
+
   useEffect(() => {
     const newTheme =
       manualDarkMode !== null
@@ -30,7 +57,7 @@ export const LDThemeProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setTheme((prev) => (prev === newTheme ? prev : newTheme));
   }, [manualDarkMode, colorScheme]);
 
-  const lightDarkTheme = theme === "dark" ? darkTheme : lightTheme;
+  const lightDarkTheme: ThemeColors = theme === "dark" ? darkTheme : lightTheme;
 
   const contextValue = useMemo(
     () => ({ lightDarkTheme, theme, setManualDarkMode }),
@@ -44,7 +71,7 @@ export const LDThemeProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 };
 
-export const lightTheme = {
+export const lightTheme: ThemeColors = {
   overlayBackground: "rgba(255, 255, 255, 0.3)",
   darkerOverlayBackground: "rgba(255, 255, 255, 0.6)",
   lighterOverlayBackground: "rgba(0, 0, 0, 0.6)",
@@ -64,7 +91,7 @@ export const lightTheme = {
   backdropColor: "rgba(255,255,255,.85)",
 };
 
-export const darkTheme = {
+export const darkTheme: ThemeColors = {
   overlayBackground: "rgba(0, 0, 0, 0.46)",
   darkerOverlayBackground: "rgba(0, 0, 0, 0.75)",
   lighterOverlayBackground: "rgba(255, 255, 255, 0.3)",

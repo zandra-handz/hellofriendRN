@@ -4,6 +4,7 @@ import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import GeckoFriendSessionItem from "./GeckoFriendSessionItem";
+import GeckoUserSessionItem from "./GeckoUserSessionItem";
 import Animated, {
   LinearTransition, 
 } from "react-native-reanimated";
@@ -85,7 +86,7 @@ const InfiniteScrollList = ({
           height: COMBINED_HEIGHT,
         }}
       >
-     <GeckoFriendSessionItem
+     <GeckoUserSessionItem
         sessionData={item}
         primaryColor={primaryColor}
       />
@@ -121,7 +122,7 @@ const InfiniteScrollList = ({
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
-          <InfiniteScrollSpinner
+          <InfiniteScrollSpinner 
             isFetchingNextPage={isFetchingNextPage}
             color={primaryColor}
             height={200}
