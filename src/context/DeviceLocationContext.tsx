@@ -163,6 +163,7 @@ export const DeviceLocationProvider: React.FC = ({ children }) => {
   useEffect(() => {
   let retries = 0;
   let hasAlerted = false;
+  let retryTimer: ReturnType<typeof setTimeout> | undefined;
 
   const tryGetLocation = async () => {
     try {
@@ -185,7 +186,7 @@ export const DeviceLocationProvider: React.FC = ({ children }) => {
     } catch (err) {
       retries++;
       if (retries < MAX_STARTUP_RETRIES) {
-        setTimeout(tryGetLocation, RETRY_DELAY_MS);
+        retryTimer = setTimeout(tryGetLocation, RETRY_DELAY_MS);
       } else {
         if (!hasAlerted) {
           hasAlerted = true;
@@ -203,7 +204,10 @@ export const DeviceLocationProvider: React.FC = ({ children }) => {
     tryGetLocation();
   }, 500);
 
-  return () => clearTimeout(timer);
+  return () => {
+    clearTimeout(timer);
+    if (retryTimer) clearTimeout(retryTimer);
+  };
 }, [queryClient, newPermissionRequest]);
 
   const triggerNewPermissionRequest = () => {

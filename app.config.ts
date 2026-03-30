@@ -43,7 +43,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
         backgroundColor: '#000002',
         config: {
           googleMaps: {
-            apiKey: process.env.GOOGLE_API_KEY || 'AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg',
+            apiKey: process.env.GOOGLE_API_KEY,
           },
         },
         intentFilters: [

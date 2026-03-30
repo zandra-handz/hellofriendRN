@@ -59,6 +59,11 @@ const TinyFlashMessage = ({
         setVisible(false);
       }, visibleDuration);
     }
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef2.current) clearTimeout(timeoutRef2.current);
+    };
   }, [visible]);
 
   const animatedStyle = useAnimatedStyle(() => {

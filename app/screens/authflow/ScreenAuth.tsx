@@ -121,8 +121,10 @@ useEffect(() => {
     }
   }, [signinMutation.isError]);
 
+  const focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const focusUsername = () => {
-    setTimeout(() => {
+    focusTimeoutRef.current = setTimeout(() => {
       usernameInputRef.current?.focus();
       scrollRef.current?.scrollTo({ y: 0, animated: true });
     }, DELAY);
@@ -134,6 +136,9 @@ useEffect(() => {
         setUsername(usernameEntered || "");
         focusUsername();
       }
+      return () => {
+        if (focusTimeoutRef.current) clearTimeout(focusTimeoutRef.current);
+      };
     }, [usernameEntered, signinMutation.isSuccess])
   );
 

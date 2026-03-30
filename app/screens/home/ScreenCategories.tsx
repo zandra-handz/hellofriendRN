@@ -60,12 +60,13 @@ const ScreenCategories = ({}) => {
     }
   };
   useEffect(() => {
-    setTimeout(() => {
+    const t = setTimeout(() => {
       showModalMessage({
         title: "Manage your categories",
         body: "Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts",
       });
     }, 700);
+    return () => clearTimeout(t);
   }, []);
 
   return (

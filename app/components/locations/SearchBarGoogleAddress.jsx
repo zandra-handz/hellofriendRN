@@ -1,4 +1,5 @@
 import "react-native-get-random-values";
+import { GOOGLE_API_KEY } from "@env";
 // import { v4 as uuidv4 } from "uuid";
 import React, {
   useState,
@@ -109,7 +110,7 @@ const SearchBarGoogleAddress = forwardRef(
         onPress={handlePress}
         nearbyPlacesAPI="GooglePlacesSearch"
         query={{
-          key: "AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg",
+          key: GOOGLE_API_KEY,
           language: "en",
         }}
         enablePoweredByContainer={false}

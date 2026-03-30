@@ -70,8 +70,10 @@ const ScreenNewAccount = () => {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   };
 
+  const focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleFocusUsername = () => {
-    setTimeout(() => {
+    focusTimeoutRef.current = setTimeout(() => {
       if (usernameInputRef.current) {
         usernameInputRef.current.focus();
         //   handleUsernameFocus();
@@ -87,6 +89,9 @@ const ScreenNewAccount = () => {
         setUsername(usernameEntered);
         handleFocusUsername();
       }
+      return () => {
+        if (focusTimeoutRef.current) clearTimeout(focusTimeoutRef.current);
+      };
     }, [usernameEntered])
   );
 
@@ -95,6 +100,9 @@ const ScreenNewAccount = () => {
       handleFocusUsername();
       // console.log('scrolling to start ');
       // scrollToStart();
+      return () => {
+        if (focusTimeoutRef.current) clearTimeout(focusTimeoutRef.current);
+      };
     }, [])
   );
 

@@ -1,5 +1,5 @@
 // FlashMessage.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Text, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
@@ -33,6 +33,7 @@ const FlashMessage = ({
   // start a bit higher so movement is obvious but still fast
   const translateY = useSharedValue(-18);
   const opacity = useSharedValue(0);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { lightDarkTheme } = useLDTheme();
   const insets = useSafeAreaInsets();
@@ -64,11 +65,13 @@ const FlashMessage = ({
       });
 
       // close right after the exit finishes
-      const closeTimeout = setTimeout(onClose, 130);
-      return () => clearTimeout(closeTimeout);
+      closeTimeoutRef.current = setTimeout(onClose, 130);
     }, duration);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
   }, [message, error, duration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
