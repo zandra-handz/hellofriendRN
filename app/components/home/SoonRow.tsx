@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import SvgIcon from '@/app/styles/SvgIcons';
-import { formatDayOfWeekAbbrevMonth } from '@/src/utils/DaysSince';
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/dateUtils";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 

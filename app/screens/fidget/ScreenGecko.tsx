@@ -70,12 +70,14 @@ const { sessionTotals } = useFriendGeckoSessionsTimeRange({
 });
 const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
 
-const { gecko, readIds, updateReadIds } = useGeckoSynthesizer({
+const { gecko, updateReadIds, hasReadAll, momentHistory, addToHistory } = useGeckoSynthesizer({
+  userId: user?.id,
   geckoCombinedData,
   geckoConfigs,
   sessionTotals,
   userSessionTotals,
   friendId: selectedFriend?.id,
+  capsuleCount: capsuleList.length,
 });
 
 
@@ -86,6 +88,35 @@ useEffect(() => {
 
 }, [gecko]);
 
+const hasShownWelcome = useRef(false);
+const hasShownReadAll = useRef(false);
+
+useEffect(() => {
+  if (!gecko || hasShownWelcome.current) return;
+ 
+  hasShownWelcome.current = true;
+  const t = setTimeout(() => {
+    showModalMessage({
+      title: "Hi!",
+      body: "I'm going to start reading these, if ya don't mind!",
+    });
+  }, 1000);
+  return () => clearTimeout(t);
+}, [gecko]);
+
+
+useEffect(() => {
+  if (gecko && !hasShownReadAll.current &&  hasReadAll) {
+    hasShownReadAll.current = true;  
+    const t = setTimeout(() => {
+      showModalMessage({
+        title: "Read em all!",
+        body: "Thanks!",
+      });
+    }, 1000);
+    return () => clearTimeout(t);
+  }
+}, [gecko, hasReadAll]);
 
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -181,8 +212,7 @@ useEffect(() => {
     if (isAskingRef.current) return;
     isAskingRef.current = true;
     try {
-      const history = getHistory();
-      const ids = history.map((m) => m.id).filter(Boolean);
+      const ids = momentHistory.map((m) => `${m.id}`).filter(Boolean);
       if (!ids.length) return;
 
       const data = await fetchGeckoMoments(ids);
@@ -555,21 +585,6 @@ useEffect(() => {
   //     }));
   // }, [capsuleList]);
 
-  const HISTORY_SIZE = 20;
-  const momentHistoryRef = useRef({
-    buffer: new Array(HISTORY_SIZE).fill(null),
-    pointer: 0,
-    count: 0,
-  });
-
-  const getHistory = () => {
-    const { buffer, pointer, count } = momentHistoryRef.current;
-    const result = [];
-    for (let i = 0; i < count; i++) {
-      result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]);
-    }
-    return result;
-  };
 
   // sort by angle from center
   const momentCoords = useMemo(() => {
@@ -642,9 +657,31 @@ useEffect(() => {
 
   const randomMomentIdsRef = useRef<any[]>([]);
 
-  useEffect(() => {
-    randomMomentIdsRef.current = pickRandomMomentIds(capsuleList, 4);
-  }, [capsuleList]);
+
+const hasInitializedReadRef = useRef(false);
+
+useEffect(() => {
+  if (hasInitializedReadRef.current) return;
+  if (!capsuleList || capsuleList.length === 0) return;
+
+  hasInitializedReadRef.current = true;
+
+  const ids = pickRandomMomentIds(capsuleList, 4);
+  randomMomentIdsRef.current = ids;
+
+  const validIds = ids.filter(id => id !== -1).map(id => `${id}`);
+  updateReadIds(validIds);
+
+  validIds.forEach(id => {
+    const found = capsuleList.find(c => c.id === id);
+    if (!found) return;
+    addToHistory({
+      id: found.id,
+      category: found.user_category_name,
+      capsule: found.capsule,
+    });
+  });
+}, [capsuleList, updateReadIds, addToHistory]);
 
   useEffect(() => {
     if (autoSelectType === 0) {
@@ -856,18 +893,8 @@ useEffect(() => {
         return;
       }
 
-      const history = momentHistoryRef.current;
-      history.buffer[history.pointer] = {
-        id: foundMoment.id,
-        category: foundMoment.user_category_name,
-        capsule: foundMoment.capsule,
-      };
-      history.pointer = (history.pointer + 1) % HISTORY_SIZE;
-      history.count = Math.min(history.count + 1, HISTORY_SIZE);
-      // console.log(
-      //   "moment history:",
-      //   getHistory().map((m) => `${m.category} - ${m.id}`),
-      // );
+      updateReadIds([`${id}`]);
+      addToHistory({ id: foundMoment.id, category: foundMoment.user_category_name, capsule: foundMoment.capsule });
 
       setMoment({
         category: foundMoment.user_category_name,
@@ -890,7 +917,7 @@ useEffect(() => {
 
       Vibration.vibrate(50);
     },
-    [capsuleList, count],
+    [capsuleList, count, updateReadIds, addToHistory],
   );
 
   const BLANK_WINDOW_MESSAGE = useMemo(() => {

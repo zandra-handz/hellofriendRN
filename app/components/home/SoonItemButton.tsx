@@ -2,7 +2,7 @@ import React, { useRef, useState, useMemo, useEffect } from "react";
 import { View, Text, StyleSheet, DimensionValue } from "react-native";
 import UpcomingFriendPressable from "../appwide/button/UpcomingFriendPressable";
 import SvgIcon from "@/app/styles/SvgIcons";
-import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/dateUtils";
 interface SoonItemButtonProps {
   width: DimensionValue;
   date: string;

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import InfoItem from "./InfoItem";
 import CategoryFriendCurrentList from "./CategoryFriendCurrentList";
-import { daysSincedDateField } from "@/src/utils/DaysSince";
+import { daysSincedDateField } from "@/src/utils/dateUtils";
 import HelloQuickView from "../alerts/HelloQuickView";
 import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";

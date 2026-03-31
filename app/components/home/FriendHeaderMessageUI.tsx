@@ -18,7 +18,7 @@ import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
-import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince"; 
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/dateUtils";
 import useUserSettings from "@/src/hooks/useUserSettings";
 
 const PILL_BG = "rgba(0, 0, 0, 0.82)";

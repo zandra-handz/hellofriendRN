@@ -6,7 +6,7 @@ import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { isoDateToWeekdayMonthDay } from "@/src/hooks/utils_dateFormatting";
+import { isoDateToWeekdayMonthDay } from "@/src/utils/dateUtils";
 
 type Props = {
   categoryId: number;

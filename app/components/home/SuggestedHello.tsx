@@ -4,7 +4,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import { AppFontStyles } from "@/app/styles/AppFonts";
-import { formatDayOfWeekAbbrevMonth } from "@/src/utils/DaysSince";
+import { formatDayOfWeekAbbrevMonth } from "@/src/utils/dateUtils";
 
 type Props = {
   padding: number;

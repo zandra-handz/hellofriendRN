@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import HelloQuickView from "../alerts/HelloQuickView";
-import { daysSincedDateField } from "@/src/utils/DaysSince";
+import { daysSincedDateField } from "@/src/utils/dateUtils";
 
 interface Props {
   isVisible: boolean;
