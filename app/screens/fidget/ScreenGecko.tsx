@@ -70,7 +70,7 @@ const { sessionTotals } = useFriendGeckoSessionsTimeRange({
 });
 const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
 
-const { gecko, updateReadIds, hasReadAll, momentHistory, addToHistory } = useGeckoSynthesizer({
+const { gecko, updateReadIds, hasReadAll, hasInitialized, markInitialized } = useGeckoSynthesizer({
   userId: user?.id,
   geckoCombinedData,
   geckoConfigs,
@@ -91,6 +91,21 @@ useEffect(() => {
 const hasShownWelcome = useRef(false);
 const hasShownReadAll = useRef(false);
 
+const HISTORY_SIZE = 20;
+const momentHistoryRef = useRef({
+  buffer: new Array(HISTORY_SIZE).fill(null) as ({ id: string; category: string; capsule: string } | null)[],
+  pointer: 0,
+  count: 0,
+});
+const getHistory = () => {
+  const { buffer, pointer, count } = momentHistoryRef.current;
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]!);
+  }
+  return result;
+};
+
 useEffect(() => {
   if (!gecko || hasShownWelcome.current) return;
  
@@ -106,8 +121,8 @@ useEffect(() => {
 
 
 useEffect(() => {
-  if (gecko && !hasShownReadAll.current &&  hasReadAll) {
-    hasShownReadAll.current = true;  
+  if (gecko && !hasShownReadAll.current && hasReadAll) {
+    hasShownReadAll.current = true;
     const t = setTimeout(() => {
       showModalMessage({
         title: "Read em all!",
@@ -212,7 +227,7 @@ useEffect(() => {
     if (isAskingRef.current) return;
     isAskingRef.current = true;
     try {
-      const ids = momentHistory.map((m) => `${m.id}`).filter(Boolean);
+      const ids = getHistory().map((m) => `${m.id}`).filter(Boolean);
       if (!ids.length) return;
 
       const data = await fetchGeckoMoments(ids);
@@ -658,13 +673,11 @@ useEffect(() => {
   const randomMomentIdsRef = useRef<any[]>([]);
 
 
-const hasInitializedReadRef = useRef(false);
-
 useEffect(() => {
-  if (hasInitializedReadRef.current) return;
+  if (hasInitialized) return;
   if (!capsuleList || capsuleList.length === 0) return;
 
-  hasInitializedReadRef.current = true;
+  markInitialized();
 
   const ids = pickRandomMomentIds(capsuleList, 4);
   randomMomentIdsRef.current = ids;
@@ -673,15 +686,14 @@ useEffect(() => {
   updateReadIds(validIds);
 
   validIds.forEach(id => {
-    const found = capsuleList.find(c => c.id === id);
+    const found = capsuleList.find(c => `${c.id}` === id);
     if (!found) return;
-    addToHistory({
-      id: found.id,
-      category: found.user_category_name,
-      capsule: found.capsule,
-    });
+    const h = momentHistoryRef.current;
+    h.buffer[h.pointer] = { id: `${found.id}`, category: found.user_category_name, capsule: found.capsule };
+    h.pointer = (h.pointer + 1) % HISTORY_SIZE;
+    h.count = Math.min(h.count + 1, HISTORY_SIZE);
   });
-}, [capsuleList, updateReadIds, addToHistory]);
+}, [capsuleList, hasInitialized, markInitialized, updateReadIds]);
 
   useEffect(() => {
     if (autoSelectType === 0) {
@@ -894,7 +906,10 @@ useEffect(() => {
       }
 
       updateReadIds([`${id}`]);
-      addToHistory({ id: foundMoment.id, category: foundMoment.user_category_name, capsule: foundMoment.capsule });
+      const h = momentHistoryRef.current;
+      h.buffer[h.pointer] = { id: `${foundMoment.id}`, category: foundMoment.user_category_name, capsule: foundMoment.capsule };
+      h.pointer = (h.pointer + 1) % HISTORY_SIZE;
+      h.count = Math.min(h.count + 1, HISTORY_SIZE);
 
       setMoment({
         category: foundMoment.user_category_name,
@@ -917,7 +932,7 @@ useEffect(() => {
 
       Vibration.vibrate(50);
     },
-    [capsuleList, count, updateReadIds, addToHistory],
+    [capsuleList, count, updateReadIds],
   );
 
   const BLANK_WINDOW_MESSAGE = useMemo(() => {

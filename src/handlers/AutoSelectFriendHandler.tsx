@@ -56,9 +56,11 @@ const AutoSelectFriendHandler = ({ userId }) => {
       prevUseAutoSelect.current && !settings.use_auto_select;
 
     const newFriendJustViewed = prevNewFriend.current && !settings.new_friend;
-  
+
     const newFriend = settings.new_friend;
     prevNewFriend.current = newFriend;
+
+    if (newFriendJustViewed) return;
 
     if (newFriend && !newFriendJustViewed) {
   

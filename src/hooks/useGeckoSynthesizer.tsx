@@ -243,7 +243,7 @@
 // export default useGeckoSynthesizer;
 
 
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { isoDateTimeToWeekdayMonthDay, getAgeFromDate } from "@/src/utils/dateUtils";
 import useGeckoVoice from "@/src/hooks/useGeckoVoice";
@@ -308,92 +308,60 @@ const useGeckoSynthesizer = ({
     };
   }, [geckoCombinedData, geckoConfigs, userSessionTotals, sessionTotals]);
 
-  const HISTORY_SIZE = 20;
+  const readKey = useMemo(
+    () => ["geckoReadIds", userId, friendId],
+    [userId, friendId]
+  );
 
-  type HistoryEntry = {
-    id: string | number;
-    category: string;
-    capsule: string;
-  };
-
-  const readKey = ["geckoReadIds", userId ?? "anon", friendId];
-  const readAllKey = ["geckoHasReadAll", userId ?? "anon", friendId];
+  const readAllKey = useMemo(
+    () => ["geckoHasReadAll", userId, friendId],
+    [userId, friendId]
+  );
 
   const { data: readIds = [] } = useQuery({
     queryKey: readKey,
-    queryFn: () => queryClient.getQueryData(readKey) ?? [],
+    queryFn: () => [],
     staleTime: Infinity,
     gcTime: Infinity,
-    initialData: () => queryClient.getQueryData(readKey) ?? [],
   });
 
   const updateReadIds = useCallback(
     (newIds: string[]) => {
-      let justFinishedReadAll = false;
-
       queryClient.setQueryData(readKey, (prev: string[] = []) => {
         const existing = new Set(prev);
         const unique = newIds.filter((id) => !existing.has(id));
-
-        if (unique.length === 0) {
-          const alreadyHasReadAll = capsuleCount > 0 && prev.length >= capsuleCount;
-          queryClient.setQueryData(readAllKey, alreadyHasReadAll);
-          return prev;
-        }
-
+        if (unique.length === 0) return prev;
         const updated = [...prev, ...unique];
-        const prevHasReadAll = capsuleCount > 0 && prev.length >= capsuleCount;
-        const nextHasReadAll = capsuleCount > 0 && updated.length >= capsuleCount;
-
-        justFinishedReadAll = !prevHasReadAll && nextHasReadAll;
-
-        queryClient.setQueryData(readAllKey, nextHasReadAll);
-
+        queryClient.setQueryData(readAllKey, capsuleCount > 0 && updated.length >= capsuleCount);
+        console.log(`readIds updated: ${updated.length} read, ${capsuleCount} total`);
         return updated;
       });
-
-      return justFinishedReadAll;
     },
     [queryClient, readKey, readAllKey, capsuleCount]
   );
 
-  const computedHasReadAll = capsuleCount > 0 && readIds.length >= capsuleCount;
-
   const { data: hasReadAll = false } = useQuery({
     queryKey: readAllKey,
-    queryFn: () => queryClient.getQueryData(readAllKey) ?? false,
+    queryFn: () => false,
     staleTime: Infinity,
     gcTime: Infinity,
-    initialData: () => {
-      const cached = queryClient.getQueryData(readAllKey);
-      return typeof cached === "boolean" ? cached : computedHasReadAll;
-    },
   });
 
-  useEffect(() => {
-    queryClient.setQueryData(readAllKey, computedHasReadAll);
-  }, [queryClient, readAllKey, computedHasReadAll]);
-
-  const historyKey = ["geckoMomentHistory", userId ?? "anon", friendId];
-
-  const { data: momentHistory = [] } = useQuery<HistoryEntry[]>({
-    queryKey: historyKey,
-    queryFn: () => queryClient.getQueryData(historyKey) ?? [],
-    staleTime: Infinity,
-    gcTime: Infinity,
-    initialData: () => queryClient.getQueryData(historyKey) ?? [],
-  });
-
-  const addToHistory = useCallback(
-    (entry: HistoryEntry) => {
-      queryClient.setQueryData(historyKey, (prev: HistoryEntry[] = []) => {
-        const updated = [...prev, entry];
-        if (updated.length > HISTORY_SIZE) return updated.slice(-HISTORY_SIZE);
-        return updated;
-      });
-    },
-    [queryClient, historyKey]
+  const initializedKey = useMemo(
+    () => ["geckoHasInitialized", userId, friendId],
+    [userId, friendId]
   );
+
+  const { data: hasInitialized = false } = useQuery({
+    queryKey: initializedKey,
+    queryFn: () => false,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  const markInitialized = useCallback(() => {
+    queryClient.setQueryData(initializedKey, true);
+  }, [queryClient, initializedKey]);
 
   const { scripts } = useGeckoVoice({
     personalityType: gecko?.personalityType,
@@ -491,9 +459,9 @@ const useGeckoSynthesizer = ({
     readIds,
     updateReadIds,
     hasReadAll,
+    hasInitialized,
+    markInitialized,
     scripts,
-    momentHistory,
-    addToHistory,
   };
 };
 

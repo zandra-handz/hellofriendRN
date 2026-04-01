@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { View, Text, StyleSheet, Keyboard, Alert } from "react-native";
-
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import DeleteUnused from "./DeleteUnused";
 import LocationModal from "../selectors/LocationModal";
 import EscortBar from "../moments/EscortBar";
@@ -209,6 +209,8 @@ const ContentAddHello = ({ userId, primaryColor, backgroundColor }) => {
   };
 
   const handleSave = () => {
+
+    showFlashMessage(`Saving hello...`, false, 1000);
     try {
       if (selectedFriend) {
         const formattedDate = helloDate.toISOString().split("T")[0];

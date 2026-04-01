@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
-import React, { useCallback, useMemo, useEffect, useState } from "react";
+import React, { useCallback, useMemo, useEffect, useState, use } from "react";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import { useFocusEffect } from "@react-navigation/native";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -41,12 +41,11 @@ const FriendHeaderMessageUI: React.FC<any> = ({
   primaryBackground,
   welcomeTextStyle,
   friendChangeTimestamp,
- 
 }) => {
   const { friendDash } = useFriendDash({ userId, friendId });
   const { navigateToSelectFriend, navigateToFinalize } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId });
-const { settings } = useUserSettings();
+  const { settings } = useUserSettings();
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
   const [showName, setShowName] = useState(false);
 
@@ -58,6 +57,17 @@ const { settings } = useUserSettings();
 
   const contentTranslateY = useSharedValue(0);
   const contentOpacity = useSharedValue(0);
+
+ 
+
+  // resets new friend after we visit the home screen for friend once
+  useEffect(() => {
+    if (settings.new_friend && settings.new_friend === friendId) {
+      updateSettings({new_friend: null})
+    }
+
+  }, [settings.new_friend, friendId]);
+  
 
   const contentAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: contentTranslateY.value }],
@@ -109,13 +119,13 @@ const { settings } = useUserSettings();
     opacity: secondOpacityValue.value,
   }));
 
-  const isLockedOn = useMemo(() =>
-    friendId === settings?.pinned_friend,
+  const isLockedOn = useMemo(
+    () => friendId === settings?.pinned_friend,
     [friendId, settings?.pinned_friend],
   );
 
-  const isUpNext = useMemo(() =>
-    friendId === settings?.upcoming_friend,
+  const isUpNext = useMemo(
+    () => friendId === settings?.upcoming_friend,
     [friendId, settings?.upcoming_friend],
   );
 
@@ -167,8 +177,8 @@ const { settings } = useUserSettings();
     navigateToSelectFriend({ useNavigateBack: false });
   };
 
-  const helloDate = useMemo(() =>
-    formatDayOfWeekAbbrevMonth(friendDash?.date),
+  const helloDate = useMemo(
+    () => formatDayOfWeekAbbrevMonth(friendDash?.date),
     [friendDash?.date],
   );
 
@@ -176,16 +186,30 @@ const { settings } = useUserSettings();
     <View style={styles.wrapper}>
       <View style={styles.iconsContainer} pointerEvents="none">
         <Animated.View
-          style={[animatedPinStyle, styles.animatedIcon,
-            { backgroundColor: manualGradientColors.lightColor }]}
+          style={[
+            animatedPinStyle,
+            styles.animatedIcon,
+            { backgroundColor: manualGradientColors.lightColor },
+          ]}
         >
-          <SvgIcon name="pin_outline" size={22} color={manualGradientColors.homeDarkColor} />
+          <SvgIcon
+            name="pin_outline"
+            size={22}
+            color={manualGradientColors.homeDarkColor}
+          />
         </Animated.View>
         <Animated.View
-          style={[animatedSecondPinStyle, styles.animatedIcon,
-            { backgroundColor: manualGradientColors.lightColor }]}
+          style={[
+            animatedSecondPinStyle,
+            styles.animatedIcon,
+            { backgroundColor: manualGradientColors.lightColor },
+          ]}
         >
-          <SvgIcon name="calendar_outline" size={22} color={manualGradientColors.homeDarkColor} />
+          <SvgIcon
+            name="calendar_outline"
+            size={22}
+            color={manualGradientColors.homeDarkColor}
+          />
         </Animated.View>
       </View>
 
@@ -195,7 +219,9 @@ const { settings } = useUserSettings();
         style={[styles.pill, { backgroundColor: PILL_BG }]}
       >
         {showName && (
-          <Animated.View style={[contentAnimatedStyle, { overflow: "visible" }]}>
+          <Animated.View
+            style={[contentAnimatedStyle, { overflow: "visible" }]}
+          >
             <Text
               numberOfLines={1}
               style={[styles.friendName, { color: primaryColor }]}
@@ -219,7 +245,7 @@ const { settings } = useUserSettings();
                 onSinglePress={() => setOptionsModalVisible(true)}
                 onDoublePress={navigateToFinalize}
                 color={primaryColor}
-                backgroundColor={'transparent'}
+                backgroundColor={"transparent"}
               />
             </View>
           </Animated.View>

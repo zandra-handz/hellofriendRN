@@ -33,8 +33,8 @@ const useCreateHello = ({ userId }: Props) => {
       showFlashMessage(`Hello saved!`, false, 2000);
       const friendId = variables.friend;
       const { hello, hello_light } = data;
-      console.log(`hello: `, hello);
-      console.log(`hellolight`, hello_light);
+      // console.log(`hello: `, hello);
+      // console.log(`hellolight`, hello_light);
 
       // queryClient.setQueryData(["pastHelloes", userId, variables.friend], (old) => {
       //   return old ? [hello_light, ...old] : [hello_light];
@@ -51,21 +51,20 @@ const useCreateHello = ({ userId }: Props) => {
         },
       );
 
-
       // prepend to infinite query cache
-queryClient.setQueryData(
-  ["pastHelloesFull", userId, variables.friend],
-  (old: any) => {
-    if (!old) return old;
-    return {
-      ...old,
-      pages: [
-        { ...old.pages[0], results: [hello, ...old.pages[0].results] },
-        ...old.pages.slice(1),
-      ],
-    };
-  },
-);
+      queryClient.setQueryData(
+        ["pastHelloesFull", userId, variables.friend],
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: [
+              { ...old.pages[0], results: [hello, ...old.pages[0].results] },
+              ...old.pages.slice(1),
+            ],
+          };
+        },
+      );
 
       await queryClient.invalidateQueries({
         queryKey: ["Moments", userId, friendId],
