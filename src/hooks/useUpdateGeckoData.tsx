@@ -70,7 +70,7 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
     },
   });
 
-const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn }) => {
+const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn, pointsEarnedList=[] }) => {
  showFlashMessage(`Saving Gecko game...`, false, 1000)
  
   const update = {
@@ -78,7 +78,15 @@ const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn }) =>
     steps: steps,
     distance: distance,
     started_on: startedOn,
-    ended_on: endedOn
+    ended_on: endedOn,
+    points_earned: pointsEarnedList,
+
+
+                //     [
+                //   { "amount": 10, "reason": "some reason" },
+                //   { "amount": 5 }
+                // ]
+
   };
 
   

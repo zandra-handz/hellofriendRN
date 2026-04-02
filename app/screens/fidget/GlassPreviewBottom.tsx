@@ -286,4 +286,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GlassPreviewBottom;
+export default React.memo(GlassPreviewBottom);

@@ -360,7 +360,7 @@ export const fetchFriendGeckoSessionsTimeRange = async ({
       `/friends/${friendId}/gecko/sessions/range/?minutes=${minutes}`
     );
     if (response?.data) {
-      console.log(`gecko sessions time range: `, response.data);
+      // console.log(`gecko sessions time range: `, response.data);
       return response.data;
     } else {
       console.log("No data returned from fetchFriendGeckoSessionsTimeRange.");

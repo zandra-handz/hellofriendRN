@@ -103,6 +103,7 @@ type Props = {
   speedSetting: any;
   autoPickUp: any;
   randomMomentIds: any;
+  pointsEarnedList: any;
   reset?: number | null;
 };
 
@@ -130,6 +131,7 @@ const MomentsSkia = ({
   autoPickUp,
   randomMomentIds,
   oneTimeSelectId,
+  pointsEarnedList,
   reset = 0,
   handleRescatterMomentsInternal,
   handleRecenterMomentsInternal,
@@ -209,6 +211,7 @@ const handleUpdateGeckoDataState = async () => {
     distance: leadPoint.current.leadDistanceTraveled,
     startedOn: new Date(sessionStartRef.current).toISOString(),
     endedOn: new Date(sessionEndRef.current).toISOString(),
+    pointsEarnedList: pointsEarnedList.current ?? [],
   });
 };
 

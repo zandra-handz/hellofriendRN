@@ -18,7 +18,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
 
-
+import useUserPoints from "@/src/hooks/useUserPoints";
 import useGeckoSynthesizer from "@/src/hooks/useGeckoSynthesizer";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
@@ -49,7 +49,35 @@ type Props = {
   skiaFontSmall: SkFont;
 };
 
+// Pure scoring function — add all point rules here, outside the component so it
+// never gets recreated and never needs to be passed into handleGetMoment.
+// Parameters: the picked moment and whatever state is needed to evaluate the rule.
+// Returns the total bonus points earned by this single pickup.
+const scorePickup = (moment: any, lastCategory: string | null): number => {
+  let points = 0;
+
+  // +200 for picking two moments from the same category in a row
+  if (lastCategory !== null && lastCategory === moment.user_category_name) {
+    points += 20;
+  }
+
+  return points;
+};
+
 const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
+  // const renderCount = useRef(0);
+  // renderCount.current += 1;
+  // console.log(`ScreenGecko render #${renderCount.current}`);
+
+  const { totalPoints } = useUserPoints();
+  const count = useSharedValue(totalPoints);
+
+  const addToPoints = () => {
+    count.value += 10;
+
+  };
+  
+
   const route = useRoute();
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
@@ -61,6 +89,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+ 
 
 const { geckoCombinedData } = useUserGeckoCombinedData();
 const { geckoConfigs } = useUserGeckoConfigs({userId: user?.id});
@@ -70,7 +99,7 @@ const { sessionTotals } = useFriendGeckoSessionsTimeRange({
 });
 const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
 
-const { gecko, updateReadIds, hasReadAll, hasInitialized, markInitialized } = useGeckoSynthesizer({
+const { gecko, updateReadIds, getReadIds, hasReadAll, hasInitialized, markInitialized } = useGeckoSynthesizer({
   userId: user?.id,
   geckoCombinedData,
   geckoConfigs,
@@ -81,15 +110,11 @@ const { gecko, updateReadIds, hasReadAll, hasInitialized, markInitialized } = us
 });
 
 
-useEffect(() => {
-  if (gecko) {
-    console.log(`TADA! gecko`, gecko)
-  }
-
-}, [gecko]);
+ 
 
 const hasShownWelcome = useRef(false);
 const hasShownReadAll = useRef(false);
+const [localHasReadAll, setLocalHasReadAll] = useState(false);
 
 const HISTORY_SIZE = 20;
 const momentHistoryRef = useRef({
@@ -106,23 +131,17 @@ const getHistory = () => {
   return result;
 };
 
-useEffect(() => {
-  if (!gecko || hasShownWelcome.current) return;
- 
-  hasShownWelcome.current = true;
-  const t = setTimeout(() => {
-    showModalMessage({
-      title: "Hi!",
-      body: "I'm going to start reading these, if ya don't mind!",
-    });
-  }, 1000);
-  return () => clearTimeout(t);
-}, [gecko]);
 
 
+
+const effectiveHasReadAll = hasReadAll || localHasReadAll;
+
 useEffect(() => {
-  if (gecko && !hasShownReadAll.current && hasReadAll) {
+  if (gecko && !hasShownReadAll.current && effectiveHasReadAll) {
+    stopReading();
+
     hasShownReadAll.current = true;
+    addToPoints();
     const t = setTimeout(() => {
       showModalMessage({
         title: "Read em all!",
@@ -131,7 +150,8 @@ useEffect(() => {
     }, 1000);
     return () => clearTimeout(t);
   }
-}, [gecko, hasReadAll]);
+}, [gecko, effectiveHasReadAll]);
+
 
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -160,67 +180,7 @@ useEffect(() => {
     pauseTime: GROQ_MESSAGE_PAUSE_TIME,
   });
 
-  // const isAskingRef = useRef(false);
-
-  // const handleGeckoReadAndAsk = async () => {
-  //   if (isAskingRef.current) return;
-  //   isAskingRef.current = true;
-  //   try {
-  //     const history = getHistory();
-  //     const ids = history.map((m) => m.id).filter(Boolean);
-  //     if (!ids.length) return;
-
-  //     const data = await fetchGeckoMoments(ids);
-  //     if (!data?.moments?.length) return;
-
-  //     const momentsList = data.moments;
-  //     const validIds = momentsList.map((m) => m.id);
-
-  //     // Step 1: Ask groq to pick one capsule, return ONLY the id
-  //     const pickReply = await askGroq(
-  //       "You are selecting one note to talk about. Look at the following notes and pick the one you find most interesting or curious. Respond with ONLY the id of the note you pick. Nothing else. No quotes, no explanation, no punctuation. Just the id.",
-  //       JSON.stringify(momentsList),
-  //       { silent: true },
-  //     );
-
-  //     // console.log(pickReply)
-
-  //     // Validate the pick — fall back to random if groq returns garbage
-  //     const trimmedPick = pickReply?.trim();
-  //     const pickedId = validIds.includes(trimmedPick)
-  //       ? trimmedPick
-  //       : validIds[Math.floor(Math.random() * validIds.length)];
-
-  //     manualOnlyRef.current = false; // make sure auto mode if not already
-  //     oneTimeSelectIdRef.current = pickedId;
-
-  //     const pickedMoment = momentsList.find((m) => m.id === pickedId);
-
-  //     // Step 2: Ask groq to comment on the picked capsule
-  //     const reply = await askGroq(
-  //       `You picked the following note to talk about. In ONE SENTENCE ONLY, with a single word exclamation preceding the sentence to describe how you feel, please ask me one question about this note (by which I mean, the CONTENT OF THE 'CAPSULE' ONLY!!!!). NEVER reveal the name of a field/key in this data. EVER. Your question should be a little more interesting and intelligent than just 'what does this mean' lol. Ask me about it as if you wanna hear a fun story about it! You can add ONE more sentence at the end if you want to, reflecting on the fact that you are not inside a chat and I won't be able to answer you, so you will be left pondering the mystery on your own. If you include this sentence, end it with ... instead of a period`,
-  //       JSON.stringify(pickedMoment),
-  //     );
-
-  //     setTimeout(() => {
-  //       oneTimeSelectIdRef.current = null;
-  //       manualOnlyRef.current = false;
-  //     }, GROQ_MESSAGE_PAUSE_TIME);
-  //     //   setTimeout(() => {
-  //     //     showModalMessage({ title: "Gecko says", body: reply });
-  //     //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
-
-  //     // }  , 2000);
-  //   } catch (e: any) {
-  //     showModalMessage({
-  //       title: 'Gecko error',
-  //       body: e?.message || 'Something went wrong',
-  //     });
-  //   } finally {
-  //     isAskingRef.current = false;
-  //   }
-  // };
-
+ 
   const isAskingRef = useRef(false);
 
   const handleGeckoReadAndAsk = async () => {
@@ -394,7 +354,7 @@ useEffect(() => {
       const newSessionId = route.params?.sessionId ?? null;
       const newPollMode = route.params?.pollMode ?? false;
 
-      console.log("Screen focused, params:", { newSessionId, newPollMode });
+      // console.log("Screen focused, params:", { newSessionId, newPollMode });
 
       setActiveSessionId(newSessionId);
       setIsPollMode(newPollMode);
@@ -414,13 +374,13 @@ useEffect(() => {
     enabled: isPollMode && !!activeSessionId,
   });
 
-  console.log(
-    `PICK SESSION VALUES: `,
-    isPressed,
-    isExpired,
-    pressedAt,
-    activeSessionId,
-  );
+  // console.log(
+  //   `PICK SESSION VALUES: `,
+  //   isPressed,
+  //   isExpired,
+  //   pressedAt,
+  //   activeSessionId,
+  // );
 
   const {
     navigateToMomentView,
@@ -577,29 +537,21 @@ useEffect(() => {
   };
 
   const MAX_MOMENTS = 30;
+ 
 
-  // const momentCoords = useMemo(() => {
-  //   // console.log("momentsCoords recalculated, triggered by capsuleList");
-  //   return capsuleList.slice(0, MAX_MOMENTS).map((m) => ({
-  //     id: m.id,
-  //     coord: [m.screen_x, m.screen_y],
-  //     stored_index: m.stored_index,
-  //   }));
-  // }, [capsuleList]);
 
-  // random
+  const capsuleMap = useMemo(() => {
+    const m = new Map();
+    capsuleList.forEach((c) => m.set(c.id, c));
+    return m;
+  }, [capsuleList]);
 
-  //   const momentCoords = useMemo(() => {
-  //   return [...capsuleList]
-  //     .sort(() => Math.random() - 0.5)
-  //     .slice(0, MAX_MOMENTS)
-  //     .map((m) => ({
-  //       id: m.id,
-  //       coord: [m.screen_x, m.screen_y],
-  //       stored_index: m.stored_index,
-  //     }));
-  // }, [capsuleList]);
-
+  useEffect(() => {
+    if (capsuleMap.size > 0 && readDataRef.current.size < capsuleMap.size) {
+      setLocalHasReadAll(false);
+      hasShownReadAll.current = false;
+    }
+  }, [capsuleMap]);
 
   // sort by angle from center
   const momentCoords = useMemo(() => {
@@ -620,7 +572,7 @@ useEffect(() => {
   const [resetSkia, setResetSkia] = useState<number | null>(null);
 
   const [manualOnly, setManualOnly] = useState(true);
-  const [speedSetting, setSpeedSetting] = useState(1);
+  const [speedSetting, setSpeedSetting] = useState(2);
 
   const tickTotalsRef = useRef([120, 85, 50]);
 
@@ -636,6 +588,36 @@ useEffect(() => {
     null,
   );
   const randomAutoEnabledRef = useRef(false);
+  const isReadyRef = useRef(false);
+
+      const startReading = useCallback(() => {
+ 
+    manualOnlyRef.current = false;
+    setManualOnly(false);
+  }, []);
+
+
+        const stopReading = useCallback(() => {
+ 
+    manualOnlyRef.current = true;
+    setManualOnly(true);
+  }, []);
+
+useEffect(() => {
+  if (!gecko || hasShownWelcome.current || effectiveHasReadAll) return;
+  
+  hasShownWelcome.current = true;
+  const t = setTimeout(() => {
+    showModalMessage({
+      title: "Hi!",
+      body: "I'm going to start reading these, if ya don't mind!",
+      onConfirm: () => { startReading(); },
+    });
+  }, 1000);
+  return () => clearTimeout(t);
+}, [gecko, effectiveHasReadAll]);
+
+
 
   const clearRandomAutoTimeouts = useCallback(() => {
     if (randomWakeTimeoutRef.current) {
@@ -679,21 +661,31 @@ useEffect(() => {
 
   markInitialized();
 
+  // randomMomentIdsRef drives which moments the animation auto-selects during gameplay.
+  // this is separate from what the gecko is "holding" — holding is determined by stored_index on the backend.
   const ids = pickRandomMomentIds(capsuleList, 4);
   randomMomentIdsRef.current = ids;
 
-  const validIds = ids.filter(id => id !== -1).map(id => `${id}`);
-  updateReadIds(validIds);
+  // the gecko's held moments are the ones the backend flagged with stored_index 0-3.
+  // these are already physically in the gecko's hands when the screen loads,
+  // so they count as read immediately — add them to readData without waiting for a pickup.
+  const heldMoments = capsuleList.filter(
+    c => c.stored_index !== null && c.stored_index >= 0 && c.stored_index < 4
+  );
 
-  validIds.forEach(id => {
-    const found = capsuleList.find(c => `${c.id}` === id);
-    if (!found) return;
+  heldMoments.forEach(found => {
+    const id = `${found.id}`;
+    readDataRef.current.set(id, { id, category: found.user_category_name, capsule: found.capsule });
     const h = momentHistoryRef.current;
-    h.buffer[h.pointer] = { id: `${found.id}`, category: found.user_category_name, capsule: found.capsule };
+    h.buffer[h.pointer] = { id, category: found.user_category_name, capsule: found.capsule };
     h.pointer = (h.pointer + 1) % HISTORY_SIZE;
     h.count = Math.min(h.count + 1, HISTORY_SIZE);
   });
-}, [capsuleList, hasInitialized, markInitialized, updateReadIds]);
+
+ // console.log(`gecko init: holding ${heldMoments.length} moments, readData:`, Array.from(readDataRef.current.values()));
+
+
+}, [capsuleList, hasInitialized, markInitialized]);
 
   useEffect(() => {
     if (autoSelectType === 0) {
@@ -758,6 +750,7 @@ useEffect(() => {
 
   const scheduleRandomWake = useCallback(() => {
     if (!randomAutoEnabledRef.current) return;
+    if (!isReadyRef.current) return;
 
     clearRandomAutoTimeouts();
 
@@ -795,6 +788,42 @@ useEffect(() => {
 
   useFocusEffect(
     useCallback(() => {
+      // on focus: re-seed readDataRef from cache so the gecko remembers
+      // what it already read in previous sessions on this screen
+      const cachedIds = getReadIds();
+      cachedIds.forEach(id => {
+        if (!readDataRef.current.has(id)) {
+          const found = capsuleList.find(c => `${c.id}` === id);
+          if (found) {
+            readDataRef.current.set(id, { id, category: found.user_category_name, capsule: found.capsule });
+          }
+        }
+      });
+      // after re-seeding, check if we're already at full read so hasReadAll reflects reality
+      if (capsuleList.length > 0 && readDataRef.current.size >= capsuleList.length) {
+        setLocalHasReadAll(true);
+      }
+
+      return () => {
+        // on blur: flush readDataRef to cache
+        if (readDataRef.current.size > 0) {
+          updateReadIds(Array.from(readDataRef.current.keys()));
+        }
+      };
+    }, [updateReadIds, getReadIds, capsuleList]),
+  );
+
+  useEffect(() => {
+    const ready = !!gecko && hasInitialized && capsuleList.length > 0;
+    isReadyRef.current = ready;
+    if (ready && randomAutoEnabledRef.current) {
+      // data just became ready while screen is focused — start the wake schedule
+      scheduleRandomWake();
+    }
+  }, [gecko, hasInitialized, capsuleList, scheduleRandomWake]);
+
+  useFocusEffect(
+    useCallback(() => {
       console.log("RANDOM AUTO: focus start");
 
       randomAutoEnabledRef.current = true;
@@ -817,6 +846,9 @@ useEffect(() => {
     manualOnlyRef.current = nextValue;
     setManualOnly(nextValue);
   }, []);
+
+
+
 
   useEffect(() => {
     setScatteredMoments(momentCoords);
@@ -886,14 +918,18 @@ useEffect(() => {
     );
   }, []);
 
-  const count = useSharedValue(0);
+
 
   const loopCount = useRef(0);
   const pickupCountInCurrentLoop = useRef(0);
+  const lastPickedCategoryRef = useRef<string | null>(null);
+  const pointsEarnedListRef = useRef<{ amount: number; reason: string }[]>([]);
+
+  const readDataRef = useRef<Map<string, { id: string; category: string; capsule: string }>>(new Map());
 
   const handleGetMoment = useCallback(
     (id) => {
-      const foundMoment = capsuleList.find((c) => c.id === id);
+      const foundMoment = capsuleMap.get(id);
 
       if (!foundMoment?.id) {
         setMoment({
@@ -905,11 +941,32 @@ useEffect(() => {
         return;
       }
 
-      updateReadIds([`${id}`]);
+      // const prevSize = readDataRef.current.size;
+      readDataRef.current.set(`${foundMoment.id}`, {
+        id: `${foundMoment.id}`,
+        category: foundMoment.user_category_name,
+        capsule: foundMoment.capsule,
+      });
+      // if (readDataRef.current.size === prevSize) {
+      //   console.log(`readData: duplicate`, foundMoment.capsule);
+      // } else {
+      //   console.log(`readData: ${readDataRef.current.size} / ${capsuleMap.size}`, Array.from(readDataRef.current.values()));
+      // }
+      if (readDataRef.current.size >= capsuleMap.size) {
+        setLocalHasReadAll(true);
+      }
+
+      const bonus = scorePickup(foundMoment, lastPickedCategoryRef.current);
+      if (bonus > 0) {
+        count.value += bonus;
+        pointsEarnedListRef.current.push({ amount: bonus, reason: 'test' });
+      }
+      lastPickedCategoryRef.current = foundMoment.user_category_name;
       const h = momentHistoryRef.current;
       h.buffer[h.pointer] = { id: `${foundMoment.id}`, category: foundMoment.user_category_name, capsule: foundMoment.capsule };
       h.pointer = (h.pointer + 1) % HISTORY_SIZE;
       h.count = Math.min(h.count + 1, HISTORY_SIZE);
+      // console.log(`history: ${h.count} / ${HISTORY_SIZE}`, h.buffer.slice(0, h.count));
 
       setMoment({
         category: foundMoment.user_category_name,
@@ -918,21 +975,21 @@ useEffect(() => {
         id: foundMoment.id,
       });
 
-      const charCount = Number(foundMoment?.charCount) || 0;
-      const isSubtracting = loopCount.current % 2 !== 0;
-      const delta = isSubtracting ? -charCount : charCount;
+      // const charCount = Number(foundMoment?.charCount) || 0;
+      // const isSubtracting = loopCount.current % 2 !== 0;
+      // const delta = isSubtracting ? -charCount : charCount;
 
-      count.value = count.value + delta;
+      // count.value = count.value + delta;
 
       pickupCountInCurrentLoop.current += 1;
-      if (pickupCountInCurrentLoop.current >= capsuleList.length) {
+      if (pickupCountInCurrentLoop.current >= capsuleMap.size) {
         loopCount.current += 1;
         pickupCountInCurrentLoop.current = 0;
       }
 
       Vibration.vibrate(50);
     },
-    [capsuleList, count, updateReadIds],
+    [capsuleMap, count, setLocalHasReadAll],
   );
 
   const BLANK_WINDOW_MESSAGE = useMemo(() => {
@@ -981,6 +1038,7 @@ useEffect(() => {
           autoPickUp={autoPickUpRef}
           randomMomentIds={randomMomentIdsRef}
           oneTimeSelectId={oneTimeSelectIdRef}
+          pointsEarnedList={pointsEarnedListRef}
           handleRescatterMomentsInternal={handleRescatterMoments_insideMS}
           handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
           handleNavBack={handleNavBack}

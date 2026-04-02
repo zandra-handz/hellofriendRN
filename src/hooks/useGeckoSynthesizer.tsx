@@ -318,24 +318,32 @@ const useGeckoSynthesizer = ({
     [userId, friendId]
   );
 
-  const { data: readIds = [] } = useQuery({
-    queryKey: readKey,
-    queryFn: () => [],
-    staleTime: Infinity,
-    gcTime: Infinity,
-  });
+  // const { data: readIds = [] } = useQuery({
+  //   queryKey: readKey,
+  //   queryFn: () => [],
+  //   staleTime: Infinity,
+  //   gcTime: Infinity,
+  // });
 
   const updateReadIds = useCallback(
     (newIds: string[]) => {
+      const t = performance.now();
+      const current = (queryClient.getQueryData(readKey) as string[] | undefined) ?? [];
+      console.log(`readIds: ${current.length} / ${capsuleCount} in cache`);
       queryClient.setQueryData(readKey, (prev: string[] = []) => {
         const existing = new Set(prev);
         const unique = newIds.filter((id) => !existing.has(id));
         if (unique.length === 0) return prev;
         const updated = [...prev, ...unique];
-        queryClient.setQueryData(readAllKey, capsuleCount > 0 && updated.length >= capsuleCount);
+        const nextHasReadAll = capsuleCount > 0 && updated.length >= capsuleCount;
+        const currentHasReadAll = queryClient.getQueryData(readAllKey) ?? false;
+        if (nextHasReadAll !== currentHasReadAll) {
+          queryClient.setQueryData(readAllKey, nextHasReadAll);
+        }
         console.log(`readIds updated: ${updated.length} read, ${capsuleCount} total`);
         return updated;
       });
+      console.log(`setQueryData took ${(performance.now() - t).toFixed(2)}ms`);
     },
     [queryClient, readKey, readAllKey, capsuleCount]
   );
@@ -362,6 +370,10 @@ const useGeckoSynthesizer = ({
   const markInitialized = useCallback(() => {
     queryClient.setQueryData(initializedKey, true);
   }, [queryClient, initializedKey]);
+
+  const getReadIds = useCallback((): string[] => {
+    return (queryClient.getQueryData(readKey) as string[] | undefined) ?? [];
+  }, [queryClient, readKey]);
 
   const { scripts } = useGeckoVoice({
     personalityType: gecko?.personalityType,
@@ -456,8 +468,8 @@ const useGeckoSynthesizer = ({
 
   return {
     gecko,
-    readIds,
     updateReadIds,
+    getReadIds,
     hasReadAll,
     hasInitialized,
     markInitialized,
