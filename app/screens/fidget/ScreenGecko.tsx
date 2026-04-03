@@ -65,10 +65,7 @@ const scorePickup = (moment: any, lastCategory: string | null): number => {
 };
 
 const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
-  // const renderCount = useRef(0);
-  // renderCount.current += 1;
-  // console.log(`ScreenGecko render #${renderCount.current}`);
-
+ 
   const { totalPoints } = useUserPoints();
   const count = useSharedValue(totalPoints);
 

@@ -1,6 +1,6 @@
 
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery  } from "@tanstack/react-query";
 
 import { getUserGeckoConfigs } from "@/src/calls/api";
 
@@ -15,6 +15,7 @@ const userGeckoConfigsQueryOptions = (userId: number) => ({
 const useUserGeckoConfigs = ({ userId }: { userId: number }) => {
 //   const { user, isInitializing } = useUser();
 
+ 
   const {
     data: geckoConfigs,
     isLoading: loadingGeckoConfigs,
@@ -23,6 +24,9 @@ const useUserGeckoConfigs = ({ userId }: { userId: number }) => {
     ...userGeckoConfigsQueryOptions(userId ?? 0),
     enabled: !!userId,
   });
+
+
+
 
   return {
     geckoConfigs,

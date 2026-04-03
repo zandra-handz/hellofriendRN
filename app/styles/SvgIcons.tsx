@@ -92,6 +92,7 @@ import SettingsSuggestSvg from "./svgs/settings_suggest";
 import SpeedometerSlowSvg from "./svgs/speedometer-slow";
 import SpeedometerMediumSvg from "./svgs/speedometer-medium";
 import SpeedometerSvg from "./svgs/speedometer";
+import SproutOutlineSvg from "./svgs/sprout-outline";
 import StarSvg from "./svgs/star";
 import TextSearchSvg from "./svgs/text-search";
 import TextShadowSvg from "./svgs/text-shadow";
@@ -161,6 +162,7 @@ const svgIcons = {
   scatter_plot: ScatterPlotSvg,
   send: SendSvg,
   send_circle_outline: SendCircleOutlineSvg, // location map screen button
+  sprout_outline: SproutOutlineSvg,
   chevron_left: ChevronLeftSvg,
   chevron_right: ChevronRightSvg,
   chevron_down: ChevronDownSvg,

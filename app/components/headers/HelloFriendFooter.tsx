@@ -6,7 +6,8 @@ import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
-import CategoryFooterButton from "../buttons/friends/CategoryFooterbutton";
+import GeckoHistoryFooterButton from "../buttons/friends/GeckoHistoryFooterButton";
+import GeckoPointsFooterButton from "../buttons/friends/GeckoPointsFooterButton";
   import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
 // app display/templates
@@ -157,9 +158,21 @@ const HelloFriendFooter = ({
     setGeckoDataVisible((prev) => !prev);
   };
 
-  const RenderCategoryButton = useCallback(
+  const RenderGeckoPointsButton = useCallback(
     () => (
-      <CategoryFooterButton
+      <GeckoPointsFooterButton
+        skiaFontLarge={skiaFontSmall}
+        textColor={primaryColor}
+        geckoCombinedData={geckoCombinedData}
+      />
+    ),
+    [], // was theme colors but I'm not sure why
+  );
+
+
+    const RenderGeckoHistoryButton = useCallback(
+    () => (
+      <GeckoHistoryFooterButton
       userId={userId}
         skiaFontLarge={skiaFontSmall}
         textColor={primaryColor}
@@ -222,17 +235,18 @@ const HelloFriendFooter = ({
         </>
         <>
           <View style={styles.section}>
-            <RenderCategoryButton />
+            <RenderGeckoPointsButton />
           </View>
         </>
+            <View style={styles.section}>
+            <RenderGeckoHistoryButton />
+          </View>
 
         <View style={styles.section}>
           <RenderReportIssueButton />
         </View>
         <>
-          <View style={styles.section}>
-            <RenderAboutAppButton />
-          </View>
+      
         </>
       </View>
 

@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+import useGeckoScriptsData from "@/src/hooks/useGeckoScripts";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
@@ -43,7 +44,20 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
   const { user } = useUser();
   const { settings } = useUserSettings();
-  const { geckoCombinedData } = useUserGeckoCombinedData();
+  // const { geckoCombinedData } = useUserGeckoCombinedData();
+  
+  
+  const { geckoScriptsData} = useGeckoScriptsData();
+
+
+  useEffect(() => {
+    if (geckoScriptsData) {
+      console.log(`gecko scripts!!!`, geckoScriptsData)
+    }
+
+  }, [geckoScriptsData]);
+  
+  
   const queryClient = useQueryClient();
   // const { isOnline } = useNetworkStatus();
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);

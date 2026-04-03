@@ -102,12 +102,9 @@
 // export default CategoryFooterButton;
 
 import React, { useState, useEffect, useMemo } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import SvgIcon from "@/app/styles/SvgIcons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
-import useUserPoints from "@/src/hooks/useUserPoints";
-import AnimatedClimber from "@/app/screens/fidget/AnimatedClimber";
-import manualGradientColors from "@/app/styles/StaticColors";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { showModalMessageAndList } from "@/src/utils/ShowModalMessage";
@@ -120,16 +117,15 @@ const formatMinutesLabel = (minutes: number): string => {
   return `${Math.round(minutes / 1440)}d`;
 };
 
-const CategoryFooterButton = ({
-  skiaFontLarge,
+const GeckoHistoryFooterButton = ({
   textColor,
   userId,
   geckoCombinedData,
   minutes = 720, // 12 hours
   highlightColor = "limegreen",
+  label = "gecko",
+  labelFontSize = 11,
 }) => {
-  const circleSize = 56;
-  const { totalPoints } = useUserPoints();
   const [isHighlighted, setIsHighlighted] = useState(false);
 
   const { friendListAndUpcoming } = useFriendListAndUpcoming({
@@ -213,80 +209,33 @@ const CategoryFooterButton = ({
     setIsHighlighted(true);
   };
 
-  const borderColor = isHighlighted
-    ? highlightColor
-    : manualGradientColors.lightColor;
-
-  const renderProfileIcon = () => {
-    return (
-      <View
-        style={[
-          styles.outerTreeWrapper,
-          {
-            borderColor,
-            borderWidth: 2,
-            width: circleSize,
-            height: circleSize,
-            borderRadius: 999,
-          },
-        ]}
-      >
-        <View style={styles.treeWrapper}>
-          {skiaFontLarge && (
-            <AnimatedClimber
-              total={totalPoints}
-              skiaFont={skiaFontLarge}
-              textColor={textColor}
-            />
-          )}
-        </View>
-      </View>
-    );
-  };
+  const iconColor = isHighlighted ? highlightColor : textColor;
 
   return (
-    <View style={styles.container}>
-      <GlobalPressable onPress={handlePress} style={{}}>
-        <View>
-          {renderProfileIcon()}
-          <View style={styles.timerWrapper}></View>
-        </View>
-      </GlobalPressable>
-    </View>
+    <GlobalPressable onPress={handlePress} onLongPress={() => {}} style={styles.container}>
+      <SvgIcon name="sprout_outline" size={28} color={iconColor} />
+      <Text style={[styles.text, { fontSize: labelFontSize, color: iconColor }]}>
+        {label}
+      </Text>
+    </GlobalPressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    alignContent: "center",
-    flexDirection: "row",
-  },
-  outerTreeWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    marginBottom: 18,
-  },
-  treeWrapper: {
+    height: "100%",
     flex: 1,
-    position: "absolute",
-    right: 0,
-    left: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    flexGrow: 1,
-    top: 0,
-    bottom: 0,
   },
-  timerWrapper: {
-    position: "absolute",
-    top: -13,
-    right: 13,
-    zIndex: 1000,
+  text: {
+    marginTop: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 10,
+    fontWeight: "bold",
   },
 });
 
-export default CategoryFooterButton;
+export default GeckoHistoryFooterButton;

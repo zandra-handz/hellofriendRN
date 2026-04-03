@@ -265,6 +265,70 @@ export const getUserGeckoCombinedData = async () => {
 };
 
 
+export const getGeckoScriptsData = async () => {
+  try {
+    const response = await helloFriendApiClient.get(`/geckoscripts/welcome/`);
+    console.log("API GET Call getGeckoScriptData", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during getGeckoScriptData");
+  }
+};
+
+export const fetchGeckoPointsLedger = async ({
+  page = 1,
+}: {
+  page?: number;
+}) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/points/all/ledger/?page=${page}`
+    );
+    if (response?.data && response?.data?.results) {
+      // console.log("API GET Call fetchGeckoPointsLedger", response.data);
+      return response.data;
+    } else {
+      console.log("No data returned from fetchGeckoPointsLedger.");
+      return { results: [], next: null, previous: null };
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoPointsLedger");
+  }
+};
+
+export const fetchGeckoScriptsLedger = async ({
+  page = 1,
+}: {
+  page?: number;
+}) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/geckoscripts/ledger/all/?page=${page}`
+    );
+    if (response?.data && response?.data?.results) {
+      // console.log("API GET Call fetchGeckoScriptsLedger", response.data);
+      
+      return response.data;
+    } else {
+      console.log("No data returned from fetchGeckoScriptsLedger.");
+      return { results: [], next: null, previous: null };
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoScriptsLedger");
+  }
+};
+
+export const logWelcomeScripts = async (entries: { script_id: number; shown_at: string }[]) => {
+  try {
+    const response = await helloFriendApiClient.post(`/geckoscripts/ledger/all/`, { entries });
+    console.log("API POST Call logWelcomeScripts", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during logWelcomeScripts");
+  }
+};
+
+
 
 export const fetchdGeckoCombinedSessions = async ({
  

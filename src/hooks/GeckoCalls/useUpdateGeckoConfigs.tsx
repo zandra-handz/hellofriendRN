@@ -27,6 +27,10 @@ const useUpdateGeckoConfigs = ({ userId }: Props) => {
         };
       });
 
+
+      queryClient.refetchQueries({queryKey: ["userGeckoScriptsData", userId]})
+       
+      
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
