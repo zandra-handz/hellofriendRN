@@ -1,7 +1,5 @@
-
-
-import { useQuery  } from "@tanstack/react-query";
-
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getUserGeckoConfigs } from "@/src/calls/api";
 
 const userGeckoConfigsQueryOptions = (userId: number) => ({
@@ -9,13 +7,9 @@ const userGeckoConfigsQueryOptions = (userId: number) => ({
   queryFn: () => getUserGeckoConfigs(),
   enabled: !!userId,
   retry: 3,
- // staleTime: 1000 * 60 * 60 * 10,
 });
 
 const useUserGeckoConfigs = ({ userId }: { userId: number }) => {
-//   const { user, isInitializing } = useUser();
-
- 
   const {
     data: geckoConfigs,
     isLoading: loadingGeckoConfigs,
@@ -25,13 +19,19 @@ const useUserGeckoConfigs = ({ userId }: { userId: number }) => {
     enabled: !!userId,
   });
 
+  const isAwake = useMemo(() => {
+    if (!geckoConfigs?.active_hours) return false;
 
+    const currentHour = new Date().getHours();
 
+    return geckoConfigs.active_hours.includes(currentHour);
+  }, [geckoConfigs?.active_hours]);
 
   return {
     geckoConfigs,
     loadingGeckoConfigs,
     geckoConfigsLoaded,
+    isAwake,
   };
 };
 

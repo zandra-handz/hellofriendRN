@@ -253,10 +253,11 @@ import {
 } from "react-native-reanimated";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
 
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 // import useGroqBeta from "@/src/hooks/useGroqBeta";
 import useUser from "@/src/hooks/useUser";
@@ -275,6 +276,7 @@ import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 import AnimatedTogglerBig from "@/app/components/alerts/AnimatedTogglerBig";
 import { Pressable } from "react-native";
+import { showModalMessage } from "@/src/utils/ShowModalMessage";
 
 const ScreenFriendHome = ({
   skiaFontLarge,
@@ -294,6 +296,7 @@ const ScreenFriendHome = ({
   }, []);
 
   const route = useRoute();
+  const { isAwake } = useUserGeckoConfigs({userId: user?.id});
 
   const resetTimestamp = route?.params?.resetTimestamp ?? null;
   const idToSelect = route?.params?.idToSelect ?? null;
@@ -303,16 +306,15 @@ const ScreenFriendHome = ({
 
   const backdropTimestamp = route.params?.backdropTimestamp ?? null;
 
-  
-//   const { askGroq, loading, error } = useGroqBeta();
+  //   const { askGroq, loading, error } = useGroqBeta();
 
-// const handlePress = async () => {
-//   const reply = await askGroq(
-//     'You are a friendly assistant.',
-//     'Say hello in three languages.'
-//   );
-//   console.log(reply);
-// };
+  // const handlePress = async () => {
+  //   const reply = await askGroq(
+  //     'You are a friendly assistant.',
+  //     'Say hello in three languages.'
+  //   );
+  //   console.log(reply);
+  // };
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user?.id });
   const friendList = friendListAndUpcoming?.friends;
@@ -338,6 +340,11 @@ const ScreenFriendHome = ({
   const reverseOverlayValue = useSharedValue(false);
 
   const handleNavigateToGecko = useCallback(() => {
+
+    // if (!isAwake) {
+    //     showFlashMessage(`Gecko is asleep. Ssssshh!`, false, 1000);
+    // }
+
     reverseOverlayValue.value = true;
     navigateToGecko();
   }, [navigateToGecko]);
@@ -392,7 +399,7 @@ const ScreenFriendHome = ({
           reverseOverlayValue={reverseOverlayValue}
         >
           <>
-          {/* <Pressable onPress={handlePress} style={{width: 100, top: 230, zIndex: 10, position: 'absolute', height: 50, backgroundColor: 'red'}}>
+            {/* <Pressable onPress={handlePress} style={{width: 100, top: 230, zIndex: 10, position: 'absolute', height: 50, backgroundColor: 'red'}}>
 
           </Pressable> */}
             <SelectedFriendHome
@@ -439,7 +446,7 @@ const ScreenFriendHome = ({
             />
 
             <AnimatedTogglerBig
-              colorA={'transparent'}
+              colorA={"transparent"}
               colorB={textColor}
               backgroundColor={overlayColor}
               onPress={handleToggleColoredDots}
@@ -450,11 +457,11 @@ const ScreenFriendHome = ({
               valueAB={coloredDotsMode}
               hidden={!coloredDotsMode}
               labelSide={"bottom"}
-  hideTiming={10}   // disappear fast
-  shadowColorB="transparent"
-  outlineColorB="transparent" 
-    shadowColorA="transparent"
-  outlineColorA="transparent" 
+              hideTiming={10} // disappear fast
+              shadowColorB="transparent"
+              outlineColorB="transparent"
+              shadowColorA="transparent"
+              outlineColorA="transparent"
             />
 
             <SelectedFriendFooter

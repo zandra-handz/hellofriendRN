@@ -1,0 +1,39 @@
+HOW TO DELETE CLAUDE CODE CONVERSATION HISTORY (PowerShell)
+============================================================
+
+Conversation files are stored here:
+  C:\Users\alexa\.claude\projects\c--Users-alexa-OneDrive-Desktop-CodingSpace-hellofriendRN\
+
+Your current files and sizes:
+  0da79e94-...jsonl   3.7 MB
+  317e1c24-...jsonl   2.8 MB
+  5d28c746-...jsonl   1.9 MB
+  701398ec-...jsonl   352 KB
+  5f7bea18-...jsonl    20 KB
+
+NOTE: The "memory" folder in that directory holds persistent memories across
+sessions. The commands below will NOT delete it.
+
+------------------------------------------------------------
+STEP 1 — Check sizes (optional)
+------------------------------------------------------------
+Get-ChildItem "C:\Users\alexa\.claude\projects\c--Users-alexa-OneDrive-Desktop-CodingSpace-hellofriendRN\" -Filter "*.jsonl" | Select-Object Name, @{N='Size(MB)';E={[math]::Round($_.Length/1MB,2)}}
+
+------------------------------------------------------------
+STEP 2a — Delete only the .jsonl conversation files
+------------------------------------------------------------
+Remove-Item "C:\Users\alexa\.claude\projects\c--Users-alexa-OneDrive-Desktop-CodingSpace-hellofriendRN\*.jsonl"
+
+------------------------------------------------------------
+STEP 2b — Delete .jsonl files AND numbered subdirectories
+(more thorough cleanup, still keeps the memory folder)
+------------------------------------------------------------
+Get-ChildItem "C:\Users\alexa\.claude\projects\c--Users-alexa-OneDrive-Desktop-CodingSpace-hellofriendRN\" -Exclude "memory" | Remove-Item -Recurse -Force
+
+------------------------------------------------------------
+TIPS
+------------------------------------------------------------
+- Run these in PowerShell (not bash/cmd)
+- The ~ shortcut does NOT work in PowerShell — use the full path
+- After deleting, restart VS Code to free the memory
+- Do this whenever VS Code starts lagging or crashing

@@ -33,20 +33,22 @@ const AutoSelectFriendHandler = ({ userId }) => {
     gcTime: Infinity,
   });
 
+  // useEffect(() => {
+  //   console.log("AUTO SELECT:", {
+  //     friendListAndUpcomingIsSuccess,
+  //     settingsLoaded: !!settings,
+  //     friendCount: friendList?.length,
+  //   });
+  // }, [friendListAndUpcomingIsSuccess, settings, friendList]);
+  
+  
   useEffect(() => {
-    console.log("AUTO SELECT:", {
-      friendListAndUpcomingIsSuccess,
-      settingsLoaded: !!settings,
-      friendCount: friendList?.length,
-    });
-  }, [friendListAndUpcomingIsSuccess, settings, friendList]);
-  useEffect(() => {
-    console.log("AUTO SELECT EFFECT RUNNING", {
-      hasSettings: !!settings,
-      isSuccess: friendListAndUpcomingIsSuccess,
-      useAutoSelect: settings?.use_auto_select,
-      hasRunOnMount: hasRunOnMount.current,
-    });
+    // console.log("AUTO SELECT EFFECT RUNNING", {
+    //   hasSettings: !!settings,
+    //   isSuccess: friendListAndUpcomingIsSuccess,
+    //   useAutoSelect: settings?.use_auto_select,
+    //   hasRunOnMount: hasRunOnMount.current,
+    // });
     if (!settings || !friendListAndUpcomingIsSuccess) return;
 
     const isFirstRun = !hasRunOnMount.current;
@@ -74,7 +76,7 @@ const AutoSelectFriendHandler = ({ userId }) => {
     if (!settings.use_auto_select) {
       prevUseAutoSelect.current = false;
       if (isFirstRun || wasJustToggledOff) {
-        console.log("CALLING DESELECT FRIEND");
+        // console.log("CALLING DESELECT FRIEND");
         hasRunOnMount.current = true;
         deselectFriend();
       }
@@ -114,7 +116,7 @@ const AutoSelectFriendHandler = ({ userId }) => {
 
     // auto-select is on but no pinned/upcoming — still go home
 
-    console.log("auto select is selecting nothing");
+    // console.log("auto select is selecting nothing");
     deselectFriend();
   }, [
     settings?.use_auto_select,

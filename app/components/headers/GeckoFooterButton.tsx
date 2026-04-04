@@ -185,15 +185,16 @@ import {
   ColorValue,
   DimensionValue,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import GeckoMineSvg from "@/app/styles/svgs/gecko-mine";
-import { showModalMessageAndList } from "@/src/utils/ShowModalMessage";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import { showModalMessage, showModalMessageAndList } from "@/src/utils/ShowModalMessage";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
 import ScrollList from "../helloes/ScrollList";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
-
+import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
 const formatMinutesLabel = (minutes: number): string => {
   if (minutes < 60) return `${minutes}m`;
   if (minutes < 1440) return `${Math.round(minutes / 60)}h`;
@@ -241,6 +242,19 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
 }) => {
   const [isHighlighted, setIsHighlighted] = useState(false);
   const { friendDash } = useFriendDash({ userId, friendId });
+  const {   isAwake } = useUserGeckoConfigs({userId: userId});
+
+
+  useEffect(() => {
+    if (isAwake) {
+      console.log(`is awake!`)
+    } else {
+      console.log(`is not awake`)
+    }
+
+  },[isAwake]);
+
+ 
 
   const {
     friendGeckoSessionsTimeRange,
@@ -262,6 +276,11 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
   const handleOnPress = () => {
     if (isHighlighted) {
       setIsHighlighted(false);
+      return;
+    }
+
+    if (!isAwake) {
+      showFlashMessage(`Gecko is asleep. Ssssshh!`, false, 1000);
       return;
     }
 
@@ -333,7 +352,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
       onPress={handleOnPress}
       style={styles.container}
     >
-      <View style={iconStyle}>
+      <View style={[iconStyle, {opacity: isAwake? 1 : .4}]}>
         <GeckoMineSvg
           width={size}
           height={size}

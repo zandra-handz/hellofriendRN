@@ -249,7 +249,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
                 
                 </View>
               </>
-            )}
+            )}s
           </View>
 
           <HelloFriendFooter

@@ -55,6 +55,8 @@ import * as Linking from "expo-linking";
 import * as MediaLibrary from "expo-media-library";
 
 import useUser from "./src/hooks/useUser";
+
+import useDateChangeRefresh from "./src/hooks/useDateChangeRefresh";
 import PeacefulGradientSpinner from "./app/components/appwide/spinner/PeacefulGradientSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenCategories from "./app/screens/home/ScreenCategories";
@@ -364,10 +366,10 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
   const spinnerShownRef = useRef(false);
 
-  console.log("SelectedFriendNavigator", {
-    isReady: selectedFriend?.isReady,
-    id: selectedFriend?.id,
-  });
+  // console.log("SelectedFriendNavigator", {
+  //   isReady: selectedFriend?.isReady,
+  //   id: selectedFriend?.id,
+  // });
 
   if (!selectedFriend?.isReady) {
     if (!spinnerShownRef.current) {
@@ -667,9 +669,10 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
 
 const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
   const isRestoring = useIsRestoring();
-  console.log(
-    "LayoutInner ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RERENDERED",
-  );
+  useDateChangeRefresh();
+  // console.log(
+  //   "LayoutInner ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RERENDERED",
+  // );
   const { user, isInitializing, userIsPending, refetch } = useUser();
   const { settings } = useTopLevelUserSettings({
     userId: user?.id,

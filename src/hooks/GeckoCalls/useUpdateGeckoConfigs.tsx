@@ -14,23 +14,21 @@ const useUpdateGeckoConfigs = ({ userId }: Props) => {
   const updateGeckoConfigsMutation = useMutation({
     mutationFn: (data) => updateUserGeckoConfigs(data.setting),
     onSuccess: (serverData, variables) => {
-
-        showFlashMessage(`Gecko settings updated!`, false, 1000)
-      const updates = variables.setting;
-      console.log("updating gecko configs!");
+      showFlashMessage(`Gecko settings updated!`, false, 1000);
+      console.log("updating gecko configs!", serverData);
 
       queryClient.setQueryData(["userGeckoConfigs", userId], (oldData: any) => {
         if (!oldData) return serverData;
         return {
           ...oldData,
-          ...updates,
+          ...serverData,
         };
       });
 
+      queryClient.refetchQueries({
+        queryKey: ["userGeckoScriptsData", userId],
+      });
 
-      queryClient.refetchQueries({queryKey: ["userGeckoScriptsData", userId]})
-       
-      
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -39,7 +37,7 @@ const useUpdateGeckoConfigs = ({ userId }: Props) => {
       }, 2000);
     },
     onError: (error) => {
-             showFlashMessage(`Gecko settings not updated`, true, 1000)
+      showFlashMessage(`Gecko settings not updated`, true, 1000);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

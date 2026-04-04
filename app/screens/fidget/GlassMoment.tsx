@@ -74,8 +74,8 @@ const GlassMoment = ({
 
   const [dangerVisible, setDangerVisible] = useState(false);
 
-  const FOOTER_HEIGHT = 90;
-  const FOOTER_PADDING_BOTTOM = 12;
+  // const FOOTER_HEIGHT = 90;
+  // const FOOTER_PADDING_BOTTOM = 12;
   const FOOTER_ICON_SIZE = 24;
 
   useFocusEffect(

@@ -43,6 +43,7 @@ import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession"
 import { SkFont } from "@shopify/react-native-skia";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
+import { freezeEnabled } from "react-native-screens";
 
 type Props = {
   skiaFontLarge: SkFont;
@@ -65,15 +66,12 @@ const scorePickup = (moment: any, lastCategory: string | null): number => {
 };
 
 const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
- 
   const { totalPoints } = useUserPoints();
   const count = useSharedValue(totalPoints);
 
   const addToPoints = () => {
     count.value += 10;
-
   };
-  
 
   const route = useRoute();
   const selection = route.params?.selection ?? null;
@@ -86,70 +84,86 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
+
+  const { geckoCombinedData } = useUserGeckoCombinedData();
+  const { geckoConfigs, isAwake } = useUserGeckoConfigs({ userId: user?.id });
+  const { sessionTotals } = useFriendGeckoSessionsTimeRange({
+    friendId: selectedFriend?.id,
+    minutes: 720,
+  });
+  const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
+
+  const {
+    gecko,
+    updateReadIds,
+    getReadIds,
+    hasReadAll,
+    hasInitialized,
+    markInitialized,
+  } = useGeckoSynthesizer({
+    userId: user?.id,
+    geckoCombinedData,
+    geckoConfigs,
+    sessionTotals,
+    userSessionTotals,
+    friendId: selectedFriend?.id,
+    capsuleCount: capsuleList.length,
+  });
+
+  const hasShownWelcome = useRef(false);
+  const hasShownReadAll = useRef(false);
+  const [localHasReadAll, setLocalHasReadAll] = useState(false);
+
+  const HISTORY_SIZE = 20;
+  const momentHistoryRef = useRef({
+    buffer: new Array(HISTORY_SIZE).fill(null) as ({
+      id: string;
+      category: string;
+      capsule: string;
+    } | null)[],
+    pointer: 0,
+    count: 0,
+  });
+  const getHistory = () => {
+    const { buffer, pointer, count } = momentHistoryRef.current;
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]!);
+    }
+    return result;
+  };
+
+
+
+  const effectiveHasReadAll = hasReadAll || localHasReadAll;
+  const [freezeForTalking, setFreezeForTalking] = useState(false);
+
+  const handleFreezeForTalking = () => {
+    console.log('handle freeze')
+    setFreezeForTalking(true);
+  };
+
+  const handleUnfreezeForTalking = () => {
+    console.log('handle unfreeze!')
+    setFreezeForTalking(false);
+  };
+
+  useEffect(() => {
+    if (gecko && !hasShownReadAll.current && effectiveHasReadAll) {
+      stopReading();
+
+      hasShownReadAll.current = true;
+      addToPoints();
+      handleFreezeForTalking(); 
+        showModalMessage({
+          title: "Read em all!",
+          body: "Thanks!",
+          onClose: handleUnfreezeForTalking,
+          autoCloseTime: 1000,
+        }); 
  
-
-const { geckoCombinedData } = useUserGeckoCombinedData();
-const { geckoConfigs } = useUserGeckoConfigs({userId: user?.id});
-const { sessionTotals } = useFriendGeckoSessionsTimeRange({
-  friendId: selectedFriend?.id,
-  minutes: 720,
-});
-const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
-
-const { gecko, updateReadIds, getReadIds, hasReadAll, hasInitialized, markInitialized } = useGeckoSynthesizer({
-  userId: user?.id,
-  geckoCombinedData,
-  geckoConfigs,
-  sessionTotals,
-  userSessionTotals,
-  friendId: selectedFriend?.id,
-  capsuleCount: capsuleList.length,
-});
-
-
- 
-
-const hasShownWelcome = useRef(false);
-const hasShownReadAll = useRef(false);
-const [localHasReadAll, setLocalHasReadAll] = useState(false);
-
-const HISTORY_SIZE = 20;
-const momentHistoryRef = useRef({
-  buffer: new Array(HISTORY_SIZE).fill(null) as ({ id: string; category: string; capsule: string } | null)[],
-  pointer: 0,
-  count: 0,
-});
-const getHistory = () => {
-  const { buffer, pointer, count } = momentHistoryRef.current;
-  const result = [];
-  for (let i = 0; i < count; i++) {
-    result.push(buffer[(pointer - count + i + HISTORY_SIZE) % HISTORY_SIZE]!);
-  }
-  return result;
-};
-
-
-
-
-const effectiveHasReadAll = hasReadAll || localHasReadAll;
-
-useEffect(() => {
-  if (gecko && !hasShownReadAll.current && effectiveHasReadAll) {
-    stopReading();
-
-    hasShownReadAll.current = true;
-    addToPoints();
-    const t = setTimeout(() => {
-      showModalMessage({
-        title: "Read em all!",
-        body: "Thanks!",
-      });
-    }, 1000);
-    return () => clearTimeout(t);
-  }
-}, [gecko, effectiveHasReadAll]);
-
-
+    }
+  }, [gecko, effectiveHasReadAll]);
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [isPollMode, setIsPollMode] = useState(false);
@@ -159,7 +173,6 @@ useEffect(() => {
   });
 
   const textColor = lightDarkTheme.primaryText;
-  const backgroundColor = lightDarkTheme.primaryBackground;
   const darkerOverlayColor = lightDarkTheme.darkerOverlayBackground;
 
   const [rescatterTrigger, setRescatterTrigger] = useState(0);
@@ -177,14 +190,15 @@ useEffect(() => {
     pauseTime: GROQ_MESSAGE_PAUSE_TIME,
   });
 
- 
   const isAskingRef = useRef(false);
 
   const handleGeckoReadAndAsk = async () => {
     if (isAskingRef.current) return;
     isAskingRef.current = true;
     try {
-      const ids = getHistory().map((m) => `${m.id}`).filter(Boolean);
+      const ids = getHistory()
+        .map((m) => `${m.id}`)
+        .filter(Boolean);
       if (!ids.length) return;
 
       const data = await fetchGeckoMoments(ids);
@@ -234,6 +248,7 @@ useEffect(() => {
       showModalMessage({
         title: "Gecko error",
         body: e?.message || "Something went wrong",
+        onClose: handleUnfreezeForTalking,
       });
     } finally {
       isAskingRef.current = false;
@@ -385,7 +400,13 @@ useEffect(() => {
     navigateToGeckoSelectSettings,
     navigateToQRCode,
     navigateToFriendHome,
+  
   } = useAppNavigations();
+
+    const handleNavBack = () => {
+    navigateToFriendHome({ backdropTimestamp: Date.now() });
+  };
+
 
   const handleNavigateToMoment = useCallback(
     (m) => {
@@ -534,8 +555,6 @@ useEffect(() => {
   };
 
   const MAX_MOMENTS = 30;
- 
-
 
   const capsuleMap = useMemo(() => {
     const m = new Map();
@@ -587,34 +606,33 @@ useEffect(() => {
   const randomAutoEnabledRef = useRef(false);
   const isReadyRef = useRef(false);
 
-      const startReading = useCallback(() => {
- 
+  const startReading = useCallback(() => {
     manualOnlyRef.current = false;
-    setManualOnly(false);
+    setManualOnly(false); 
   }, []);
 
-
-        const stopReading = useCallback(() => {
- 
+  const stopReading = useCallback(() => {
     manualOnlyRef.current = true;
     setManualOnly(true);
+    // handleUnfreezeForTalking(); keep froze because modal opens after this finishes
   }, []);
 
-useEffect(() => {
-  if (!gecko || hasShownWelcome.current || effectiveHasReadAll) return;
-  
-  hasShownWelcome.current = true;
-  const t = setTimeout(() => {
-    showModalMessage({
-      title: "Hi!",
-      body: "I'm going to start reading these, if ya don't mind!",
-      onConfirm: () => { startReading(); },
-    });
-  }, 1000);
-  return () => clearTimeout(t);
-}, [gecko, effectiveHasReadAll]);
+  useEffect(() => {
+    if (!gecko || hasShownWelcome.current || effectiveHasReadAll) return;
 
+    hasShownWelcome.current = true;
+ 
 
+      handleFreezeForTalking();
+      showModalMessage({
+        title: "Hi!",
+        body: "I'm going to start reading these, if ya don't mind!",
+        autoCloseTime: 1000,
+        onClose: () => {
+          startReading();
+        },
+      });  
+  }, [gecko, effectiveHasReadAll]);
 
   const clearRandomAutoTimeouts = useCallback(() => {
     if (randomWakeTimeoutRef.current) {
@@ -651,38 +669,44 @@ useEffect(() => {
 
   const randomMomentIdsRef = useRef<any[]>([]);
 
+  useEffect(() => {
+    if (hasInitialized) return;
+    if (!capsuleList || capsuleList.length === 0) return;
 
-useEffect(() => {
-  if (hasInitialized) return;
-  if (!capsuleList || capsuleList.length === 0) return;
+    markInitialized();
 
-  markInitialized();
+    // randomMomentIdsRef drives which moments the animation auto-selects during gameplay.
+    // this is separate from what the gecko is "holding" — holding is determined by stored_index on the backend.
+    const ids = pickRandomMomentIds(capsuleList, 4);
+    randomMomentIdsRef.current = ids;
 
-  // randomMomentIdsRef drives which moments the animation auto-selects during gameplay.
-  // this is separate from what the gecko is "holding" — holding is determined by stored_index on the backend.
-  const ids = pickRandomMomentIds(capsuleList, 4);
-  randomMomentIdsRef.current = ids;
+    // the gecko's held moments are the ones the backend flagged with stored_index 0-3.
+    // these are already physically in the gecko's hands when the screen loads,
+    // so they count as read immediately — add them to readData without waiting for a pickup.
+    const heldMoments = capsuleList.filter(
+      (c) =>
+        c.stored_index !== null && c.stored_index >= 0 && c.stored_index < 4,
+    );
 
-  // the gecko's held moments are the ones the backend flagged with stored_index 0-3.
-  // these are already physically in the gecko's hands when the screen loads,
-  // so they count as read immediately — add them to readData without waiting for a pickup.
-  const heldMoments = capsuleList.filter(
-    c => c.stored_index !== null && c.stored_index >= 0 && c.stored_index < 4
-  );
+    heldMoments.forEach((found) => {
+      const id = `${found.id}`;
+      readDataRef.current.set(id, {
+        id,
+        category: found.user_category_name,
+        capsule: found.capsule,
+      });
+      const h = momentHistoryRef.current;
+      h.buffer[h.pointer] = {
+        id,
+        category: found.user_category_name,
+        capsule: found.capsule,
+      };
+      h.pointer = (h.pointer + 1) % HISTORY_SIZE;
+      h.count = Math.min(h.count + 1, HISTORY_SIZE);
+    });
 
-  heldMoments.forEach(found => {
-    const id = `${found.id}`;
-    readDataRef.current.set(id, { id, category: found.user_category_name, capsule: found.capsule });
-    const h = momentHistoryRef.current;
-    h.buffer[h.pointer] = { id, category: found.user_category_name, capsule: found.capsule };
-    h.pointer = (h.pointer + 1) % HISTORY_SIZE;
-    h.count = Math.min(h.count + 1, HISTORY_SIZE);
-  });
-
- // console.log(`gecko init: holding ${heldMoments.length} moments, readData:`, Array.from(readDataRef.current.values()));
-
-
-}, [capsuleList, hasInitialized, markInitialized]);
+    // console.log(`gecko init: holding ${heldMoments.length} moments, readData:`, Array.from(readDataRef.current.values()));
+  }, [capsuleList, hasInitialized, markInitialized]);
 
   useEffect(() => {
     if (autoSelectType === 0) {
@@ -746,6 +770,15 @@ useEffect(() => {
   }, [manualOnly]);
 
   const scheduleRandomWake = useCallback(() => {
+    if (freezeForTalking) {
+      console.log(`not scheduling random`, Date.now(), freezeForTalking);
+  
+    }
+
+        if (!freezeForTalking) {
+      console.log(`RESUMING random scheduling`, Date.now(), freezeForTalking);
+ 
+    }
     if (!randomAutoEnabledRef.current) return;
     if (!isReadyRef.current) return;
 
@@ -781,23 +814,47 @@ useEffect(() => {
         scheduleRandomWake();
       }, activeDuration);
     }, nextDelay);
-  }, [clearRandomAutoTimeouts]);
+  }, [clearRandomAutoTimeouts, freezeForTalking]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   useFocusEffect(
     useCallback(() => {
       // on focus: re-seed readDataRef from cache so the gecko remembers
       // what it already read in previous sessions on this screen
       const cachedIds = getReadIds();
-      cachedIds.forEach(id => {
+      cachedIds.forEach((id) => {
         if (!readDataRef.current.has(id)) {
-          const found = capsuleList.find(c => `${c.id}` === id);
+          const found = capsuleList.find((c) => `${c.id}` === id);
           if (found) {
-            readDataRef.current.set(id, { id, category: found.user_category_name, capsule: found.capsule });
+            readDataRef.current.set(id, {
+              id,
+              category: found.user_category_name,
+              capsule: found.capsule,
+            });
           }
         }
       });
       // after re-seeding, check if we're already at full read so hasReadAll reflects reality
-      if (capsuleList.length > 0 && readDataRef.current.size >= capsuleList.length) {
+      if (
+        capsuleList.length > 0 &&
+        readDataRef.current.size >= capsuleList.length
+      ) {
         setLocalHasReadAll(true);
       }
 
@@ -843,9 +900,6 @@ useEffect(() => {
     manualOnlyRef.current = nextValue;
     setManualOnly(nextValue);
   }, []);
-
-
-
 
   useEffect(() => {
     setScatteredMoments(momentCoords);
@@ -915,14 +969,14 @@ useEffect(() => {
     );
   }, []);
 
-
-
   const loopCount = useRef(0);
   const pickupCountInCurrentLoop = useRef(0);
   const lastPickedCategoryRef = useRef<string | null>(null);
   const pointsEarnedListRef = useRef<{ amount: number; reason: string }[]>([]);
 
-  const readDataRef = useRef<Map<string, { id: string; category: string; capsule: string }>>(new Map());
+  const readDataRef = useRef<
+    Map<string, { id: string; category: string; capsule: string }>
+  >(new Map());
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -956,11 +1010,15 @@ useEffect(() => {
       const bonus = scorePickup(foundMoment, lastPickedCategoryRef.current);
       if (bonus > 0) {
         count.value += bonus;
-        pointsEarnedListRef.current.push({ amount: bonus, reason: 'test' });
+        pointsEarnedListRef.current.push({ amount: bonus, reason: "test" });
       }
       lastPickedCategoryRef.current = foundMoment.user_category_name;
       const h = momentHistoryRef.current;
-      h.buffer[h.pointer] = { id: `${foundMoment.id}`, category: foundMoment.user_category_name, capsule: foundMoment.capsule };
+      h.buffer[h.pointer] = {
+        id: `${foundMoment.id}`,
+        category: foundMoment.user_category_name,
+        capsule: foundMoment.capsule,
+      };
       h.pointer = (h.pointer + 1) % HISTORY_SIZE;
       h.count = Math.min(h.count + 1, HISTORY_SIZE);
       // console.log(`history: ${h.count} / ${HISTORY_SIZE}`, h.buffer.slice(0, h.count));
@@ -1005,9 +1063,14 @@ useEffect(() => {
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
-  const handleNavBack = () => {
-    navigateToFriendHome({ backdropTimestamp: Date.now() });
-  };
+    useEffect(() => {
+    if (geckoConfigs?.active_hours && !isAwake) {
+      handleNavBack();
+
+    }
+
+  }, [geckoConfigs?.active_hours, isAwake]);
+
 
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
@@ -1068,8 +1131,6 @@ useEffect(() => {
         )}
       </View>
 
- 
- 
       <GlassPreviewBottom
         readingMode={!manualOnly}
         speedSetting={speedSetting}

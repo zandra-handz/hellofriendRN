@@ -15,7 +15,6 @@ const friendListQueryOptions = (userId: number) => ({
   queryFn: () => fetchUpcomingHelloesAndFriends(),
   enabled: !!userId,
   retry: 4,
- // staleTime: 1000 * 60 * 60 * 1,
 });
 
 const useFriendListAndUpcoming = ({

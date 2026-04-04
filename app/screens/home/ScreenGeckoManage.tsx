@@ -10,7 +10,7 @@ import GeckoChart from "../helloes/GeckoChart";
 import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs"; 
 import useUpdateGeckoConfigs from "@/src/hooks/GeckoCalls/useUpdateGeckoConfigs";
 import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
-
+import HoursSelector from "./HoursSelector";
 // ─── Map gecko section ids to backend field names ───────────────
 const SECTION_CONFIG_MAP = {
   head: {
@@ -53,6 +53,15 @@ const ScreenGeckoManage = (props: Props) => {
 
   const [viewCategoryId, setViewCategoryId] = useState<string | null>(null);
 
+  // useEffect(() => {
+  //   if (viewCategoryId){
+  //     console.log(viewCategoryId)
+  //     console.log(currentValue)
+  //     console.log(geckoConfigs?.thresholds)
+  //   }
+
+  // },[viewCategoryId, geckoConfigs]);
+
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;
   const welcomeTextStyle = AppFontStyles.welcomeText;
@@ -83,6 +92,20 @@ const ScreenGeckoManage = (props: Props) => {
     ? geckoConfigs[activeConfig.valueField]
     : null;
 
+  const THRESHOLDS = geckoConfigs ? geckoConfigs?.thresholds : null;
+
+  const activeHours = geckoConfigs ? geckoConfigs?.active_hours : [];
+
+
+
+
+  // useEffect(() => {
+  //   if (activeHours){
+  //     console.log(`gecko active hours`,geckoConfigs?.active_hours) 
+  //   }
+
+  // }, [geckoConfigs]);
+
   // Available choices for the selected section
   const currentChoices = useMemo(() => {
     if (!activeConfig || !geckoConfigs?.available_choices) return [];
@@ -96,9 +119,21 @@ const ScreenGeckoManage = (props: Props) => {
   }, [activeConfig, geckoConfigs]);
 
   const handleChoiceChange = useCallback(
+    
     (newValue: number | string) => {
       if (!activeConfig) return;
       updateGeckoConfigs({ [activeConfig.valueField]: newValue });
+    },
+    [activeConfig, updateGeckoConfigs],
+  );
+
+    const handleActiveHours = useCallback(
+    (hours: number[], newHourType: number) => {
+      if (!activeConfig) return;
+      updateGeckoConfigs({
+        active_hours: hours,
+        active_hours_type: newHourType,
+      });
     },
     [activeConfig, updateGeckoConfigs],
   );
@@ -141,6 +176,19 @@ const ScreenGeckoManage = (props: Props) => {
               buttonColor={lightDarkTheme.darkerGlassBackground}
               textStyle={subWelcomeTextStyle}
             />
+            {viewCategoryId === "feet" && (
+              <HoursSelector
+                key={`${currentValue}-${(geckoConfigs?.active_hours ?? []).join(",")}`}
+                hourType={currentValue}
+                activeHours={geckoConfigs?.active_hours ?? []}
+                maxHours={geckoConfigs?.thresholds?.max_active_hours}
+                onSave={handleActiveHours}
+                primaryColor={textColor}
+                backgroundColor={lightDarkTheme.primaryBackground}
+                buttonColor={lightDarkTheme.darkerGlassBackground}
+                textStyle={subWelcomeTextStyle}
+              />
+            )}
           </Animated.View>
         )}
       </View>
@@ -163,6 +211,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: "100%",
   },
+  hourSelectorWrapper: {
+    width: '100%',
+    height: 60,
+    backgroundColor: 'pink',
+     marginVertical: 20,
+  }
 });
 
 export default ScreenGeckoManage;

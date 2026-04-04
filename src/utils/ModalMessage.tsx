@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import {
   Text,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet, 
+  Pressable,
   TouchableWithoutFeedback,
   View,
   ScrollView,
@@ -27,6 +27,7 @@ const ModalMessage = ({
   dismissOnBackdrop = true,
   floatingElement,
   listElement,
+  autoCloseTime,
 }: {
   title: string;
   body?: string;
@@ -36,6 +37,7 @@ const ModalMessage = ({
   dismissOnBackdrop?: boolean;
   floatingElement?: React.ReactElement;
   listElement?: React.ReactElement;
+  autoCloseTime?: number | null;
 }) => {
   const scale = useSharedValue(0.88);
   const opacity = useSharedValue(0);
@@ -82,6 +84,11 @@ const ModalMessage = ({
       damping: 30,
       mass: 0.5,
     });
+
+    if (autoCloseTime && autoCloseTime > 0) {
+      const t = setTimeout(handleClose, autoCloseTime);
+      return () => clearTimeout(t);
+    }
   }, []);
 
   const backdropStyle = useAnimatedStyle(() => ({
@@ -132,13 +139,13 @@ const ModalMessage = ({
           ) : null}
 
           <View style={styles.footer}>
-            <TouchableOpacity
+            <Pressable
               onPress={handleConfirm}
               activeOpacity={0.75}
               style={styles.button}
             >
               <Text style={styles.buttonText}>{confirmLabel}</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </Animated.View>
       </View>

@@ -9,6 +9,8 @@ export const showModalMessage = ({
   body,
   confirmLabel = "Got it!",
   onConfirm,
+  onClose,
+  autoCloseTime,
   dismissOnBackdrop = true,
   floatingElement,
 }: {
@@ -16,13 +18,19 @@ export const showModalMessage = ({
   body?: string;
   confirmLabel?: string;
   onConfirm?: () => void;
+  onClose?: () => void;
+  autoCloseTime?: number | null;
   dismissOnBackdrop?: boolean;
   floatingElement?: React.ReactElement;
 }) => {
   const destroy = () => {
     if (currentModal) {
+   
       currentModal.destroy();
       currentModal = null;
+    }
+    if (onClose) {
+      onClose();
     }
   };
 
@@ -33,6 +41,7 @@ export const showModalMessage = ({
       confirmLabel={confirmLabel}
       onConfirm={onConfirm}
       onClose={destroy}
+            autoCloseTime={autoCloseTime}
       dismissOnBackdrop={dismissOnBackdrop}
       floatingElement={floatingElement}
     />
@@ -49,7 +58,7 @@ export const showModalMessageAndList = ({
   title,
   body,
   confirmLabel = "Got it!",
-  onConfirm,
+  onConfirm, 
   dismissOnBackdrop = true,
   floatingElement,
   listElement,
@@ -57,7 +66,7 @@ export const showModalMessageAndList = ({
   title: string;
   body?: string;
   confirmLabel?: string;
-  onConfirm?: () => void;
+  onConfirm?: () => void; 
   dismissOnBackdrop?: boolean;
   floatingElement?: React.ReactElement;
   listElement?: React.ReactElement;
@@ -76,6 +85,7 @@ export const showModalMessageAndList = ({
       confirmLabel={confirmLabel}
       onConfirm={onConfirm}
       onClose={destroy}
+
       dismissOnBackdrop={dismissOnBackdrop}
       floatingElement={floatingElement}
       listElement={listElement}

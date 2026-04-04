@@ -235,13 +235,20 @@ export const getUserSettings = async () => {
 
 // this call's serializer currently adds categories
 export const getUserGeckoConfigs = async () => {
+
+  const today = new Date();
+  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+ 
+  
   // console.log("Default common headers:", helloFriendApiClient.defaults.headers);
 
   try {
     //         const start = Date.now(); // log start time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
 
-    const response = await helloFriendApiClient.get(`/users/gecko/configs/`);
+    const response = await helloFriendApiClient.get(`/users/gecko/configs/`,
+         { params: { local_date: localDate } }
+    );
     console.log("API GET Call getUserGeckoConfigs", response.data);
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
@@ -257,7 +264,7 @@ export const getUserGeckoConfigs = async () => {
 export const getUserGeckoCombinedData = async () => {
   try {
     const response = await helloFriendApiClient.get(`/users/gecko/totals/`);
-    console.log("API GET Call getGeckoData", response.data);
+   // console.log("API GET Call getGeckoData", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoData");
@@ -268,7 +275,7 @@ export const getUserGeckoCombinedData = async () => {
 export const getGeckoScriptsData = async () => {
   try {
     const response = await helloFriendApiClient.get(`/geckoscripts/welcome/`);
-    console.log("API GET Call getGeckoScriptData", response.data);
+   // console.log("API GET Call getGeckoScriptData", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoScriptData");
@@ -983,14 +990,15 @@ export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
 
 
 export const updateUserGeckoConfigs = async (fieldUpdates: object) => {
-  // console.log(`payload in api call`, fieldUpdates);
+  console.log(`payload in api call`, fieldUpdates);
   try {
     const response = await helloFriendApiClient.patch(
       `/users/gecko/configs/`,
       fieldUpdates
     );
-    console.log("API PATCH CALL updateUserGeckoConfigs");
-    console.log("API response:", response.data); // Log the response data
+    // console.log("API PATCH CALL updateUserGeckoConfigs");
+    // console.log("API response:", response.data); // Log the response data
+    
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
     handleApiError(e, "Error during updateUserGeckoConfigs");
@@ -1021,7 +1029,7 @@ export const updateUserProfile = async (
 
 export const fetchFriendDashboard = async (friendId: number) => {
 
-  console.log('fetching friend dashboard')
+  // console.log('fetching friend dashboard')
   // const startTime = Date.now(); // TIMER START
 
   try {
@@ -1121,7 +1129,7 @@ export const updateFriendDefaultCategory = async ({
       }
     );
 
-    console.log("API PATCH CALL updateFriendDefaultCategory");
+    // console.log("API PATCH CALL updateFriendDefaultCategory");
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error updateFriendDefaultCategory");
@@ -1154,7 +1162,7 @@ export const updateFriendFavesColorThemeSetting = async ({
       }
     );
 
-    console.log("API PATCH CALL updateFriendFavesColorThemeSetting", response.data);
+    // console.log("API PATCH CALL updateFriendFavesColorThemeSetting", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during updateFriendFavesColorThemeSetting");
@@ -1333,14 +1341,30 @@ export const fetchUpcomingHelloes = async () => {
   }
 };
 
+// export const fetchUpcomingHelloesAndFriends = async () => {
+//   //use keys 'friends' = old friendlist data. 'upcoming' =old upcoming data
+//   //this endpoint just combines the queries on backend
+//   try {
+//     const response = await helloFriendApiClient.get(
+//       "/friends/upcoming/friends-included/"
+//     );
+//   // console.error(`NEW ENDPOINT`, response.data.upcoming[0] )
+//     return response.data;
+//   } catch (e: unknown) {
+//     handleApiError(e, "Error during fetchUpcomingHelloes");
+//   }
+// };
+
 export const fetchUpcomingHelloesAndFriends = async () => {
-  //use keys 'friends' = old friendlist data. 'upcoming' =old upcoming data
-  //this endpoint just combines the queries on backend
+  const today = new Date();
+  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+ 
   try {
     const response = await helloFriendApiClient.get(
-      "/friends/upcoming/friends-included/"
+      "/friends/upcoming/friends-included/",
+      { params: { local_date: localDate } }
     );
-  // console.error(`NEW ENDPOINT`, response.data.upcoming[0] )
+    console.log(`API CALL: fetchUpcomingHelloesAndFriends`)
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
