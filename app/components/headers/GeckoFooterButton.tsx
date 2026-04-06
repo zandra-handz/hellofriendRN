@@ -195,6 +195,7 @@ import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGec
 import ScrollList from "../helloes/ScrollList";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
 import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
+import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 const formatMinutesLabel = (minutes: number): string => {
   if (minutes < 60) return `${minutes}m`;
   if (minutes < 1440) return `${Math.round(minutes / 60)}h`;
@@ -243,16 +244,17 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
   const [isHighlighted, setIsHighlighted] = useState(false);
   const { friendDash } = useFriendDash({ userId, friendId });
   const {   isAwake } = useUserGeckoConfigs({userId: userId});
+  const { geckoScoreState } = useGeckoScoreState();
 
 
-  useEffect(() => {
-    if (isAwake) {
-      console.log(`is awake!`)
-    } else {
-      console.log(`is not awake`)
-    }
+  // useEffect(() => {
+  //   if (isAwake) {
+  //     console.log(`is awake!`)
+  //   } else {
+  //     console.log(`is not awake`)
+  //   }
 
-  },[isAwake]);
+  // },[isAwake]);
 
  
 
@@ -279,7 +281,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
       return;
     }
 
-    if (!isAwake) {
+    if (!isAwake ) {
       showFlashMessage(`Gecko is asleep. Ssssshh!`, false, 1000);
       return;
     }

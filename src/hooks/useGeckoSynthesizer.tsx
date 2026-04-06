@@ -243,15 +243,17 @@
 // export default useGeckoSynthesizer;
 
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { isoDateTimeToWeekdayMonthDay, getAgeFromDate } from "@/src/utils/dateUtils";
 import useGeckoVoice from "@/src/hooks/useGeckoVoice";
+import { showFlashMessage } from "../utils/ShowFlashMessage";
 
 const useGeckoSynthesizer = ({
   userId,
   geckoCombinedData,
   geckoConfigs,
+  geckoScoreState,
   sessionTotals,
   friendId,
   userSessionTotals,
@@ -260,9 +262,11 @@ const useGeckoSynthesizer = ({
   const queryClient = useQueryClient();
 
   const gecko = useMemo(() => {
-    if (!sessionTotals || !userSessionTotals || !geckoCombinedData || !geckoConfigs) {
+    if (!sessionTotals || !userSessionTotals || !geckoScoreState || !geckoCombinedData || !geckoConfigs) {
       return null;
     }
+
+    console.log(`gecko score state`, geckoScoreState);
 
     const birthday = isoDateTimeToWeekdayMonthDay(geckoConfigs.created_on, { alwaysShowYear: true });
     const age = getAgeFromDate(geckoConfigs.created_on); 
@@ -287,6 +291,11 @@ const useGeckoSynthesizer = ({
 
     const storyType = geckoConfigs.story_type;
     const storyTypeLabel = geckoConfigs.story_type_label;
+
+    const scoreBaseMultiplier = geckoScoreState.base_multiplier;
+    const scoreMultiplier = geckoScoreState.multiplier;
+    
+
     // types of messages, overall 'mission' of the gecko, has little effect on speed or pattern
     // but does influence types of points the user gets
 
@@ -304,9 +313,36 @@ const useGeckoSynthesizer = ({
       activeHoursType,
       activeHoursTypeLabel,
       storyType,
-      storyTypeLabel
+      storyTypeLabel,
+      scoreBaseMultiplier,
+      scoreMultiplier
     };
   }, [geckoCombinedData, geckoConfigs, userSessionTotals, sessionTotals]);
+
+  const streakActive = useMemo(() => {
+    if (!geckoScoreState?.expires_at) return false;
+    if (geckoScoreState.multiplier <= geckoScoreState.base_multiplier) return false;
+    return new Date(geckoScoreState.expires_at).getTime() > Date.now();
+  }, [geckoScoreState?.expires_at, geckoScoreState?.multiplier, geckoScoreState?.base_multiplier]);
+
+  useEffect(() => {
+    if (!streakActive || !geckoScoreState?.expires_at) return;
+
+
+    showFlashMessage(`Streak achieved!`, false, 2000);
+    const msUntilExpiry =
+      new Date(geckoScoreState.expires_at).getTime() - Date.now();
+    if (msUntilExpiry <= 0) return;
+
+    const timeout = setTimeout(() => {
+      console.log("gecko streak expired — refetching score state");
+      queryClient.invalidateQueries({
+        queryKey: ["userGeckoScoreState", userId],
+      });
+    }, msUntilExpiry);
+
+    return () => clearTimeout(timeout);
+  }, [streakActive, geckoScoreState?.expires_at, queryClient, userId]);
 
   const readKey = useMemo(
     () => ["geckoReadIds", userId, friendId],
@@ -474,6 +510,7 @@ const useGeckoSynthesizer = ({
     hasInitialized,
     markInitialized,
     scripts,
+    streakActive,
   };
 };
 

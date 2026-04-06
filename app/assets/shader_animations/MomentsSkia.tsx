@@ -28,7 +28,7 @@ import {
   // GECKO_SKELETON_SKSL,
 } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { BackHandler } from "react-native";
-import { useFocusEffect } from "@react-navigation/native"; 
+import { useFocusEffect } from "@react-navigation/native";
 import {
   runOnJS,
   useSharedValue,
@@ -139,14 +139,26 @@ const MomentsSkia = ({
   rescatterTrigger,
   recenterTrigger,
   backTrigger,
-}: Props) => {
+}: Props) => { 
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
 
   const [aspect, setAspect] = useState<number>(width / height);
 
-const sessionStartRef = useRef<number>(Date.now());
-const sessionEndRef = useRef<number>(Date.now());
+  const sessionStartRef = useRef<number>(Date.now());
+  const sessionEndRef = useRef<number>(Date.now());
+
+  // For interval saving while staying on screen
+
+  // Offset so we can keep the original list
+
+  const prevPointsLengthRef = useRef<number>(0);
+
+  const stepsRef = useRef<number>(0);
+  const distanceRef = useRef<number>(0);
+
+ 
+    
 
   useEffect(() => {
     if (size && size.width > 0 && size.height > 0) {
@@ -165,66 +177,170 @@ const sessionEndRef = useRef<number>(Date.now());
   const lastRenderRef = useRef(0);
   const isPausedRef = useRef(false);
   const lastAutoPickupIdRef = useRef(-1);
-// const geckoStepsRef = useRef(0);
-// const geckoDistanceRef = useRef(0);
-
-
+  // const geckoStepsRef = useRef(0);
+  // const geckoDistanceRef = useRef(0);
 
   const handleRescatterMoments_useMomentClass = () => {
     handleRescatterMomentsInternal(moments.current.moments);
- 
-
-
   };
 
-
   useEffect(() => {
-  if (rescatterTrigger) {
-    handleRescatterMoments_useMomentClass();
-  }
-}, [rescatterTrigger]);
-
-
+    if (rescatterTrigger) {
+      handleRescatterMoments_useMomentClass();
+    }
+  }, [rescatterTrigger]);
 
   const handleRecenterMoments_useMomentClass = () => {
-
     handleRecenterMomentsInternal(moments.current.moments);
   };
 
+  useEffect(() => {
+    if (rescatterTrigger) {
+      handleRescatterMomentsInternal(moments.current.moments);
+    }
+  }, [rescatterTrigger]);
 
   useEffect(() => {
-  if (rescatterTrigger) {
-      handleRescatterMomentsInternal(moments.current.moments);
-  }
-}, [rescatterTrigger]);
+    if (recenterTrigger) {
+      handleRecenterMomentsInternal(moments.current.moments);
+    }
+  }, [recenterTrigger]);
 
-useEffect(() => {
-  if (recenterTrigger) {
-    handleRecenterMomentsInternal(moments.current.moments);
-  }
-}, [recenterTrigger]);
+  // const handleUpdateGeckoDataState = async () => {
+  //   sessionStartRef.current = sessionEndRef.current;
+  //   sessionEndRef.current = Date.now();
+
+  //   const startPointsIndex = prevPointsLengthRef.current;
+  //   const endPointsIndex = pointsEarnedList.current.length;
+
+  //   const handleUpdateGeckoDataState = async () => {
+  //     sessionStartRef.current = sessionEndRef.current;
+  //     sessionEndRef.current = Date.now();
+
+  //     const startPointsIndex = prevPointsLengthRef.current;
+  //     const endPointsIndex = pointsEarnedList.current.length;
+
+  //     const success = await handleUpdateGeckoData({
+  //       steps: gecko.current.gait.stepCount - stepsRef.current,
+  //       distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
+  //       startedOn: new Date(sessionStartRef.current).toISOString(),
+  //       endedOn: new Date(sessionEndRef.current).toISOString(),
+  //       pointsEarnedList: pointsEarnedList.current.slice(
+  //         startPointsIndex,
+  //         endPointsIndex,
+  //       ),
+  //     });
+
+  //     if (!success) 
+  //       {
+          
+  //         return;
+  //       }
+
+  //     // {1}, {2}, {3}, {4}, {5} // saved as 5, .length is the index of the next one
+  //     // {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}
+
+  //     stepsRef.current = gecko.current.gait.stepCount;
+  //     distanceRef.current = leadPoint.current.leadDistanceTraveled;
+  //     prevPointsLengthRef.current = endPointsIndex;
+  //   };
+  // };
+
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~can yo
 
 const handleUpdateGeckoDataState = async () => {
+  sessionStartRef.current = sessionEndRef.current;
   sessionEndRef.current = Date.now();
-  await handleUpdateGeckoData({
-    steps: gecko.current.gait.stepCount,
-    distance: leadPoint.current.leadDistanceTraveled,
+
+  const startPointsIndex = prevPointsLengthRef.current;
+  const endPointsIndex = pointsEarnedList.current.length;
+
+  const newPoints = pointsEarnedList.current.slice(
+    startPointsIndex,
+    endPointsIndex
+  );
+
+  // BEFORE SAVE
+  // console.log(
+  //   "BEFORE SAVE | prev:",
+  //   startPointsIndex,
+  //   "| curr:",
+  //   endPointsIndex,
+  //   "| sending:",
+  //   newPoints
+  // );
+
+  const success = await handleUpdateGeckoData({
+    steps: gecko.current.gait.stepCount - stepsRef.current,
+    distance:
+      leadPoint.current.leadDistanceTraveled - distanceRef.current,
     startedOn: new Date(sessionStartRef.current).toISOString(),
     endedOn: new Date(sessionEndRef.current).toISOString(),
-    pointsEarnedList: pointsEarnedList.current ?? [],
+    pointsEarnedList: newPoints,
   });
+
+  if (!success) {
+    // console.log(
+    //   "SAVE FAILED | prev:",
+    //   prevPointsLengthRef.current,
+    //   "| curr:",
+    //   pointsEarnedList.current.length,
+    //   "| unsaved:",
+    //   pointsEarnedList.current.slice(prevPointsLengthRef.current)
+    // );
+    return;
+  }
+
+  // console.log(
+  //   "SAVE SUCCESS | prev:",
+  //   prevPointsLengthRef.current,
+  //   "| updating to:",
+  //   endPointsIndex
+  // );
+
+  // commit
+  stepsRef.current = gecko.current.gait.stepCount;
+  distanceRef.current =
+    leadPoint.current.leadDistanceTraveled;
+  prevPointsLengthRef.current = endPointsIndex;
+
+  // console.log(
+  //   "AFTER COMMIT | prev now:",
+  //   prevPointsLengthRef.current,
+  //   "| remaining:",
+  //   pointsEarnedList.current.slice(prevPointsLengthRef.current)
+  // );
 };
 
-useEffect(() => {
-  if (backTrigger) {
-    const run = async () => {
-      await handleUpdateMomentsState();
-      await handleUpdateGeckoDataState();
-      handleNavBack();
-    };
-    run();
-  }
-}, [backTrigger]);
+
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+useEffect(() => { 
+
+  const oneMinute = 60000;
+  const id = setInterval(handleUpdateGeckoDataState, oneMinute);
+
+  return () => clearInterval(id);
+}, [])
+
+
+
+
+
+  useEffect(() => {
+    if (backTrigger) {
+      const run = async () => {
+        await handleUpdateMomentsState();
+        await handleUpdateGeckoDataState();
+        handleNavBack();
+      };
+      run();
+    }
+  }, [backTrigger]);
 
   // const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 30;
@@ -289,20 +405,18 @@ useEffect(() => {
     }, []),
   );
 
-
- 
-
-
+  // only need to do this one when leaving screen
+  // this one just ensures permanence when moments are moved around and picked up or dropped
   const handleUpdateMomentsState = async () => {
-  const newMoments = moments.current.moments;
-  const formattedData = newMoments.map((moment) => ({
-    id: moment.id,
-    screen_x: moment.coord[0],
-    screen_y: moment.coord[1],
-    stored_index: moment.stored_index,
-  }));
-  await handleUpdateMomentCoords(formattedData);
-};
+    const newMoments = moments.current.moments;
+    const formattedData = newMoments.map((moment) => ({
+      id: moment.id,
+      screen_x: moment.coord[0],
+      screen_y: moment.coord[1],
+      stored_index: moment.stored_index,
+    }));
+    await handleUpdateMomentCoords(formattedData);
+  };
   // const userPointSV = useSharedValue(restPoint);
   const userPointSV = useSharedValue([restPoint0, restPoint1]);
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
@@ -389,10 +503,10 @@ useEffect(() => {
   const handleGetMomentRef = useRef(handleGetMoment);
   useEffect(() => {
     handleGetMomentRef.current = handleGetMoment;
-    console.log(
-      `handleGetMoment triggered handleGetMomentRef`,
-      handleGetMomentRef.current,
-    );
+    // console.log(
+    //   `handleGetMoment triggered handleGetMomentRef`,
+    //   handleGetMomentRef.current,
+    // );
   }, [handleGetMoment]);
 
   useEffect(() => {
@@ -449,43 +563,41 @@ useEffect(() => {
   //   console.log("resetting");
   //   moments.current.updateOrAddMoments(momentsData);
   //   moments.current.updateAllCoords(momentsData);
-  //   updateTrigger.value += 1; // need this to update the moments 
+  //   updateTrigger.value += 1; // need this to update the moments
   // }, [momentsData, reset]);
-
-
 
   // THIS WAS GIVEN TO ME BY CHATGPT TO ENSURE MOMENT RESCATTERING UPDATES OUTSIDE OF ANIMATION LOOP (WHEN GECKO IS STILL)
   useEffect(() => {
-  console.log("resetting");
+    // console.log("resetting");
 
-  moments.current.updateOrAddMoments(momentsData);
-  moments.current.updateAllCoords(momentsData);
+    moments.current.updateOrAddMoments(momentsData);
+    moments.current.updateAllCoords(momentsData);
 
-  //  PACK + COPY the moments uniform RIGHT NOW
-  if (aspect && size.width && size.height) {
-    workingBuffers.moments.fill(0);
+    //  PACK + COPY the moments uniform RIGHT NOW
+    if (aspect && size.width && size.height) {
+      workingBuffers.moments.fill(0);
 
-    packVec2Uniform_withRecenter_moments(
-      moments.current.moments,                 // <-- IMPORTANT: pack from the class
-      workingBuffers.moments as any,
-      moments.current.momentsLength,
-      aspect,
-      scale,
-    );
+      packVec2Uniform_withRecenter_moments(
+        moments.current.moments, // <-- IMPORTANT: pack from the class
+        workingBuffers.moments as any,
+        moments.current.momentsLength,
+        aspect,
+        scale,
+      );
 
-    momentsUniformSV.value = Array.from(workingBuffers.moments);
-    momentsLengthSV.value = moments.current.momentsLength;
-  }
+      momentsUniformSV.value = Array.from(workingBuffers.moments);
+      momentsLengthSV.value = moments.current.momentsLength;
+    }
 
-  updateTrigger.value += 1;
-}, [momentsData, reset, aspect, scale, size.width, size.height]);
+    updateTrigger.value += 1;
+  }, [momentsData, reset, aspect, scale, size.width, size.height]);
 
   useEffect(() => {
     if (!internalReset || !reset) {
       console.log("conditions not met for a reset");
       return;
     } else {
-      console.log("TRUE RESET", startingCoord0, startingCoord1);
+      // console.log("TRUE RESET", startingCoord0, startingCoord1);
     }
 
     // start.current = Date.now();
@@ -518,7 +630,6 @@ useEffect(() => {
     momentsLengthSV.value = 0;
 
     userPointSV.value = [restPoint0, restPoint1];
- 
 
     userPoint_geckoSpaceRef.current[0] = startingCoord0;
     userPoint_geckoSpaceRef.current[1] = startingCoord1;
@@ -529,7 +640,6 @@ useEffect(() => {
   const lastPawsClearedRef = useRef(false);
   const clearAllPawsInUIRef = useRef(() => {});
   const syncPawsInUIRef = useRef<() => void>(() => {});
-
 
   // triggers animation to update when updateHold or clearHolding run in momentsClass
   const lastHoldingsVersionRef = useRef(0);
@@ -555,7 +665,6 @@ useEffect(() => {
         return;
       }
 
- 
       // DON'T DELETE
       // frameBudgetMonitor();
 
@@ -643,10 +752,9 @@ useEffect(() => {
       } else if (
         gecko.current.oneTimeEnterComplete &&
         !gecko.current.sleepWalkMode
-      ) { 
+      ) {
         leadPoint.current.update(userPoint_geckoSpaceRef.current); //, dt, now);
       } else {
-    
         sleepWalk0.current.update(moments);
         leadPoint.current.update(sleepWalk0.current.walk); //, dt, now);
       }
@@ -659,8 +767,8 @@ useEffect(() => {
         leadPoint.current.isMoving,
       );
 
-//       geckoStepsRef.current = gecko.current.legs.frontLegs.stepCount;
-// geckoDistanceRef.current = leadPoint.current.leadDistanceTraveled;
+      //       geckoStepsRef.current = gecko.current.legs.frontLegs.stepCount;
+      // geckoDistanceRef.current = leadPoint.current.leadDistanceTraveled;
 
       const spine = gecko.current.body.spine;
       hintRef.current = spine.hintJoint || [0, 0];
@@ -742,17 +850,16 @@ useEffect(() => {
 
       const holdingsVersion = moments.current.holdingsVersion;
 
-      
       const shouldUpdateBigUniforms =
         leadPoint.current.isMoving ||
         isDragging.value ||
         wasTapSV.value ||
         wasDoubleTapSV.value ||
-        moments.current.trigger_remote || 
+        moments.current.trigger_remote ||
         holdingsVersion !== lastHoldingsVersionRef.current;
 
       if (shouldUpdateBigUniforms) {
-          lastHoldingsVersionRef.current = holdingsVersion;
+        lastHoldingsVersionRef.current = holdingsVersion;
         shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
         // .
@@ -813,7 +920,6 @@ useEffect(() => {
   const uniforms = useDerivedValue(() => {
     // Reanimated dependency gate
     updateTrigger.value;
-
 
     if (!size.width || !size.height) {
       return {
@@ -918,14 +1024,12 @@ useEffect(() => {
           handleGetMoment={handleGetMoment}
         />
       </View>
-
-  
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  pawSetterContainer: { position: "absolute", bottom: 270, left: 16 }, 
+  pawSetterContainer: { position: "absolute", bottom: 270, left: 16 },
 });
 
 const MemoizedMomentsSkia = React.memo(MomentsSkia);

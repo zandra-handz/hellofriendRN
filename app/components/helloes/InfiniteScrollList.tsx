@@ -4,7 +4,7 @@ import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import GeckoFriendSessionItem from "./GeckoFriendSessionItem";
-import GeckoUserSessionItem from "./GeckoUserSessionItem";
+import GeckoUserSessionItem from "./GeckoUserSessionItem"; 
 import Animated, {
   LinearTransition, 
 } from "react-native-reanimated";
@@ -38,6 +38,8 @@ const InfiniteScrollList = ({
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
   const flatListRef = useRef(null);
+
+ 
 
   const fontStyles: FontStyles = useMemo(() => {
     return {

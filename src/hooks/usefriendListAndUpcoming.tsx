@@ -31,13 +31,14 @@ const useFriendListAndUpcoming = ({
         (friend) => Number(friend.id) === Number(data.upcoming[0]?.friend?.id)
       );
     }
-
+ 
     const upcomingDateMap: Record<number, string | null> = {};
     if (data.upcoming?.length) {
       data.upcoming.forEach((upcoming) => {
         upcomingDateMap[upcoming.friend.id] = upcoming.future_date_in_words ?? null;
       });
     }
+    
 
     if (data.upcoming?.length && data.friends?.length && data.capsule_summaries?.length) {
       const capsuleMap = {};
@@ -68,11 +69,19 @@ const useFriendListAndUpcoming = ({
           future_date_in_words: upcomingDateMap[friend.id] ?? null,
         })) || [];
 
+    const friendNameMap: Record<number, string> = {};
+    if (sortedFriends) {
+      for (const f of sortedFriends) {
+        friendNameMap[f.id] = f.name;
+      }
+    }
+
     return {
       ...data,
       upcoming: upcomingWithSummaries,
       friends: sortedFriends,
       next: nextFriend,
+      friendNameMap,
     };
   }, []);
 
@@ -94,6 +103,7 @@ const useFriendListAndUpcoming = ({
 
   return {
     friendListAndUpcoming,
+    friendNameMap: friendListAndUpcoming?.friendNameMap ?? {},
     friendListAndUpcomingIsFetching: isFetching,
     friendListAndUpcomingIsSuccess: isSuccess,
     upNext,

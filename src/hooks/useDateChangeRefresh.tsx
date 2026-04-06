@@ -43,7 +43,7 @@ const useDateChangeRefresh = () => {
         );
 
         lastDateRef.current = today;
-        queryClient.invalidateQueries({ queryKey: ["friendListAndUpcoming"] });
+        queryClient.refetchQueries({ queryKey: ["friendListAndUpcoming"] });
       }
     };
 
@@ -51,7 +51,7 @@ const useDateChangeRefresh = () => {
       console.log(
         `[useDateChangeRefresh] hourly gecko config refresh at ${new Date().toLocaleTimeString()}`,
       );
-      queryClient.invalidateQueries({ queryKey: ["userGeckoConfigs"] });
+      queryClient.refetchQueries({ queryKey: ["userGeckoConfigs"] });
     };
 
     const handleSync = () => {

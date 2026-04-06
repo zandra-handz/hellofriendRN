@@ -36,11 +36,12 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
         },
       );
 
-      queryClient.refetchQueries({queryKey: ["userGeckoCombinedData", userId]})
+      queryClient.refetchQueries({queryKey: ["userGeckoCombinedData"]})
       queryClient.refetchQueries({queryKey: ["friendGeckoSessions", userId, friendId]})
+      queryClient.refetchQueries({queryKey: ["userGeckoPointsLedger"]})
       
       queryClient.refetchQueries({queryKey: ["friendGeckoSessionsTimeRange", userId, friendId]})
-    queryClient.refetchQueries({queryKey: ["userGeckoSessionsTimeRange", userId]})
+    queryClient.refetchQueries({queryKey: ["userGeckoSessionsTimeRange"]})
        
       
       
@@ -70,36 +71,62 @@ const useUpdateGeckoData = ({ userId, friendId }: Props) => {
     },
   });
 
-const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn, pointsEarnedList=[] }) => {
- showFlashMessage(`Saving Gecko game...`, false, 1000)
+// const handleUpdateGeckoData = async ({ steps, distance, startedOn, endedOn, pointsEarnedList=[] }) => {
+//  showFlashMessage(`Saving Gecko game...`, false, 1000)
  
+//   const update = {
+//     friend: friendId,
+//     steps: steps,
+//     distance: distance,
+//     started_on: startedOn,
+//     ended_on: endedOn,
+//     points_earned: pointsEarnedList,
+
+
+//                 //     [
+//                 //   { "amount": 10, "reason": "some reason" },
+//                 //   { "amount": 5 }
+//                 // ]
+
+//   };
+
+  
+//   // console.log("Payload in RQ function before sending:", update);
+
+//   try {
+//     await updateFriendGeckoMutation.mutateAsync(update);
+//   } catch (error) {
+//     console.error("Error updating gecko data in RQ function: ", error);
+//   }
+// };
+
+//catching error in ScreenGecko instead, to work with the need to update without losing current game values/progress
+const handleUpdateGeckoData = async ({
+  steps,
+  distance,
+  startedOn,
+  endedOn,
+  pointsEarnedList = [],
+}) => {
+  showFlashMessage(`Saving Gecko game...`, false, 1000);
+
   const update = {
     friend: friendId,
-    steps: steps,
-    distance: distance,
+    steps,
+    distance,
     started_on: startedOn,
     ended_on: endedOn,
     points_earned: pointsEarnedList,
-
-
-                //     [
-                //   { "amount": 10, "reason": "some reason" },
-                //   { "amount": 5 }
-                // ]
-
   };
-
-  
-  // console.log("Payload in RQ function before sending:", update);
 
   try {
     await updateFriendGeckoMutation.mutateAsync(update);
+    return true; // necessary for the way this function is used in ScreenGecko
   } catch (error) {
-    console.error("Error updating gecko data in RQ function: ", error);
+    console.error("Error updating gecko data:", error);
+    return false; // necessary
   }
 };
-
- 
 
   return { 
     handleUpdateGeckoData,

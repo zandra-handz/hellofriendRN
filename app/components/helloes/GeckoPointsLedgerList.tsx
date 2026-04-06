@@ -3,6 +3,7 @@ import React, { useEffect, useCallback, useRef } from "react";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
 import GeckoPointsLedgerItem from "./GeckoPointsLedgerItem";
 import Animated, { LinearTransition } from "react-native-reanimated";
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { FlatList } from "react-native";
 
 type LedgerEntry = {
@@ -13,6 +14,7 @@ type LedgerEntry = {
 };
 
 type Props = {
+  userId: number;
   listData: LedgerEntry[];
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
@@ -22,6 +24,7 @@ type Props = {
 };
 
 const GeckoPointsLedgerList = ({
+  userId,
   listData,
   isFetchingNextPage,
   fetchNextPage,
@@ -34,6 +37,11 @@ const GeckoPointsLedgerList = ({
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
   const flatListRef = useRef<FlatList<LedgerEntry>>(null);
+
+    const {  friendNameMap } = useFriendListAndUpcoming({
+    userId,
+    enabled: true,
+  });
 
   useEffect(() => {
     if (triggerScroll) {
@@ -51,6 +59,7 @@ const GeckoPointsLedgerList = ({
     ({ item }: { item: LedgerEntry }) => (
       <Pressable style={{ width: "100%", height: COMBINED_HEIGHT }}>
         <GeckoPointsLedgerItem
+        friendNameMap={friendNameMap}
           ledgerData={item}
           primaryColor={primaryColor}
         />

@@ -17,14 +17,15 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
-
+import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserPoints from "@/src/hooks/useUserPoints";
 import useGeckoSynthesizer from "@/src/hooks/useGeckoSynthesizer";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
-
+import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
+import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
 import SvgIcon from "@/app/styles/SvgIcons";
 import SpeedButtons from "./SpeedButtons";
 import AutoPickUpButton from "./AutoPickUpButton";
@@ -55,23 +56,20 @@ type Props = {
 // Parameters: the picked moment and whatever state is needed to evaluate the rule.
 // Returns the total bonus points earned by this single pickup.
 const scorePickup = (moment: any, lastCategory: string | null): number => {
-  let points = 0;
-
-  // +200 for picking two moments from the same category in a row
+ 
+ 
   if (lastCategory !== null && lastCategory === moment.user_category_name) {
-    points += 20;
+    return 1
   }
 
-  return points;
+  return 0
+ 
 };
 
 const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { totalPoints } = useUserPoints();
   const count = useSharedValue(totalPoints);
-
-  const addToPoints = () => {
-    count.value += 10;
-  };
+  const scoreLabelRef = useRef("");
 
   const route = useRoute();
   const selection = route.params?.selection ?? null;
@@ -93,6 +91,32 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   });
   const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
 
+  const { geckoScoreState } = useGeckoScoreState();
+
+  const multiplierRef = useRef(1);
+
+  useEffect(() => {
+    console.log(`[geckoScoreState changed]`, geckoScoreState);
+    if (!geckoScoreState) return;
+    const expired =
+      !geckoScoreState.expires_at ||
+      new Date(geckoScoreState.expires_at).getTime() <= Date.now();
+    multiplierRef.current = expired ? 1 : geckoScoreState.multiplier ?? 1;
+  }, [geckoScoreState]);
+
+  const { scoreRules, welcomeScripts } = useGeckoStaticData();
+
+  const scoreRulesRef = useRef<
+    Record<string, { code: number; points: number } | undefined>
+  >({});
+
+  useEffect(() => {
+    scoreRulesRef.current = {
+      GECKO_READ_ALL_NOTES: scoreRules.labels("GECKO_READ_ALL_NOTES"),
+      CATEGORY_MATCHES_PREVIOUS: scoreRules.labels("CATEGORY_MATCHES_PREVIOUS"),
+    };
+  }, [scoreRules]);
+
   const {
     gecko,
     updateReadIds,
@@ -104,6 +128,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     userId: user?.id,
     geckoCombinedData,
     geckoConfigs,
+    geckoScoreState,
     sessionTotals,
     userSessionTotals,
     friendId: selectedFriend?.id,
@@ -133,18 +158,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     return result;
   };
 
-
-
   const effectiveHasReadAll = hasReadAll || localHasReadAll;
   const [freezeForTalking, setFreezeForTalking] = useState(false);
 
   const handleFreezeForTalking = () => {
-    console.log('handle freeze')
+    // console.log("handle freeze");
     setFreezeForTalking(true);
   };
 
   const handleUnfreezeForTalking = () => {
-    console.log('handle unfreeze!')
+    // console.log("handle unfreeze!");
     setFreezeForTalking(false);
   };
 
@@ -153,15 +176,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       stopReading();
 
       hasShownReadAll.current = true;
-      addToPoints();
-      handleFreezeForTalking(); 
-        showModalMessage({
-          title: "Read em all!",
-          body: "Thanks!",
-          onClose: handleUnfreezeForTalking,
-          autoCloseTime: 1000,
-        }); 
- 
+
+      handleFreezeForTalking();
+      showModalMessage({
+        title: "Read em all!",
+        body: "Thanks!",
+        onClose: handleUnfreezeForTalking,
+        autoCloseTime: 1000,
+      });
     }
   }, [gecko, effectiveHasReadAll]);
 
@@ -400,13 +422,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     navigateToGeckoSelectSettings,
     navigateToQRCode,
     navigateToFriendHome,
-  
   } = useAppNavigations();
 
-    const handleNavBack = () => {
+  const handleNavBack = () => {
     navigateToFriendHome({ backdropTimestamp: Date.now() });
   };
-
 
   const handleNavigateToMoment = useCallback(
     (m) => {
@@ -566,6 +586,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     if (capsuleMap.size > 0 && readDataRef.current.size < capsuleMap.size) {
       setLocalHasReadAll(false);
       hasShownReadAll.current = false;
+      pointsGivenForReadAllRef.current = false;
     }
   }, [capsuleMap]);
 
@@ -608,7 +629,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const startReading = useCallback(() => {
     manualOnlyRef.current = false;
-    setManualOnly(false); 
+    setManualOnly(false);
   }, []);
 
   const stopReading = useCallback(() => {
@@ -621,17 +642,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     if (!gecko || hasShownWelcome.current || effectiveHasReadAll) return;
 
     hasShownWelcome.current = true;
- 
 
-      handleFreezeForTalking();
-      showModalMessage({
-        title: "Hi!",
-        body: "I'm going to start reading these, if ya don't mind!",
-        autoCloseTime: 1000,
-        onClose: () => {
-          startReading();
-        },
-      });  
+    handleFreezeForTalking();
+    showModalMessage({
+      title: "Hi!",
+      body: "I'm going to start reading these, if ya don't mind!",
+      autoCloseTime: 1000,
+      onClose: () => {
+        startReading();
+      },
+    });
   }, [gecko, effectiveHasReadAll]);
 
   const clearRandomAutoTimeouts = useCallback(() => {
@@ -770,15 +790,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   }, [manualOnly]);
 
   const scheduleRandomWake = useCallback(() => {
-    if (freezeForTalking) {
-      console.log(`not scheduling random`, Date.now(), freezeForTalking);
-  
-    }
+    // if (freezeForTalking) {
+    //   console.log(`not scheduling random`, Date.now(), freezeForTalking);
+    // }
 
-        if (!freezeForTalking) {
-      console.log(`RESUMING random scheduling`, Date.now(), freezeForTalking);
- 
-    }
+    // if (!freezeForTalking) {
+    //   console.log(`RESUMING random scheduling`, Date.now(), freezeForTalking);
+    // }
     if (!randomAutoEnabledRef.current) return;
     if (!isReadyRef.current) return;
 
@@ -789,7 +807,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     randomWakeTimeoutRef.current = setTimeout(() => {
       if (!randomAutoEnabledRef.current) return;
 
-      console.log("RANDOM AUTO: waking gecko");
+      // console.log("RANDOM AUTO: waking gecko");
 
       manualOnlyRef.current = false;
       setManualOnly(false);
@@ -806,7 +824,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       randomSleepTimeoutRef.current = setTimeout(() => {
         if (!randomAutoEnabledRef.current) return;
 
-        console.log("RANDOM AUTO: putting gecko back to manual");
+        // console.log("RANDOM AUTO: putting gecko back to manual");
 
         manualOnlyRef.current = true;
         setManualOnly(true);
@@ -815,23 +833,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       }, activeDuration);
     }, nextDelay);
   }, [clearRandomAutoTimeouts, freezeForTalking]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   useFocusEffect(
     useCallback(() => {
@@ -878,13 +879,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("RANDOM AUTO: focus start");
+      // console.log("RANDOM AUTO: focus start");
 
       randomAutoEnabledRef.current = true;
       scheduleRandomWake();
 
       return () => {
-        console.log("RANDOM AUTO: focus cleanup");
+        // console.log("RANDOM AUTO: focus cleanup");
 
         randomAutoEnabledRef.current = false;
         clearRandomAutoTimeouts();
@@ -972,11 +973,24 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const loopCount = useRef(0);
   const pickupCountInCurrentLoop = useRef(0);
   const lastPickedCategoryRef = useRef<string | null>(null);
-  const pointsEarnedListRef = useRef<{ amount: number; reason: string }[]>([]);
+  const pointsEarnedListRef = useRef<
+    { code: number; label: string; timestamp_earned: string }[]
+  >([]);
 
   const readDataRef = useRef<
     Map<string, { id: string; category: string; capsule: string }>
   >(new Map());
+
+
+  const pointsGivenForReadAllRef = useRef(false);
+
+  const { handleUpdateGeckoScoreState } = useUpdateGeckoScoreState();
+  const categoryStreakRef = useRef(0);
+  const updateScoreStateRef = useRef(handleUpdateGeckoScoreState);
+
+  useEffect(() => {
+    updateScoreStateRef.current = handleUpdateGeckoScoreState;
+  }, [handleUpdateGeckoScoreState]);
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -998,19 +1012,35 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         category: foundMoment.user_category_name,
         capsule: foundMoment.capsule,
       });
-      // if (readDataRef.current.size === prevSize) {
-      //   console.log(`readData: duplicate`, foundMoment.capsule);
-      // } else {
-      //   console.log(`readData: ${readDataRef.current.size} / ${capsuleMap.size}`, Array.from(readDataRef.current.values()));
-      // }
-      if (readDataRef.current.size >= capsuleMap.size) {
-        setLocalHasReadAll(true);
-      }
 
-      const bonus = scorePickup(foundMoment, lastPickedCategoryRef.current);
-      if (bonus > 0) {
-        count.value += bonus;
-        pointsEarnedListRef.current.push({ amount: bonus, reason: "test" });
+      if (!pointsGivenForReadAllRef.current && readDataRef.current.size >= capsuleMap.size) {
+        setLocalHasReadAll(true);
+        scoreLabelRef.current = "GECKO_READ_ALL_NOTES";
+        pointsGivenForReadAllRef.current = true;
+      } else {
+        const match = scorePickup(foundMoment, lastPickedCategoryRef.current);
+        if (match) {
+          scoreLabelRef.current = "CATEGORY_MATCHES_PREVIOUS";
+          categoryStreakRef.current += 1;
+          if (categoryStreakRef.current >= 5) {
+            categoryStreakRef.current = 0;
+            setTimeout(() => updateScoreStateRef.current({ multiplier: 2 }), 0);
+          }
+        } else {
+          categoryStreakRef.current = 0;
+        }
+      }
+      if (scoreLabelRef && scoreLabelRef.current) {
+        pointsEarnedListRef.current.push({
+          code: scoreRulesRef.current[scoreLabelRef.current]?.code || 2,
+          label: scoreLabelRef.current,
+          timestamp_earned: new Date().toISOString(),
+        });
+
+        count.value +=
+          (scoreRulesRef.current[scoreLabelRef.current]?.points || 0) *
+          multiplierRef.current;
+        scoreLabelRef.current = "";
       }
       lastPickedCategoryRef.current = foundMoment.user_category_name;
       const h = momentHistoryRef.current;
@@ -1063,14 +1093,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
-    useEffect(() => {
+  useEffect(() => {
     if (geckoConfigs?.active_hours && !isAwake) {
       handleNavBack();
-
     }
-
   }, [geckoConfigs?.active_hours, isAwake]);
-
 
   return (
     <NoGradientBackground style={styles.backgroundContainer}>

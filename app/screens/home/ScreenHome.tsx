@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
-import useGeckoScriptsData from "@/src/hooks/useGeckoScripts";
+import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import CategoriesCard from "./CategoriesCard";
@@ -47,15 +47,15 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // const { geckoCombinedData } = useUserGeckoCombinedData();
   
   
-  const { geckoScriptsData} = useGeckoScriptsData();
+  const { welcomeScripts } = useGeckoStaticData();
 
 
   useEffect(() => {
-    if (geckoScriptsData) {
-      console.log(`gecko scripts!!!`, geckoScriptsData)
+    if (welcomeScripts) {
+      console.log(`gecko scripts!!!`, welcomeScripts)
     }
 
-  }, [geckoScriptsData]);
+  }, [welcomeScripts]);
   
   
   const queryClient = useQueryClient();

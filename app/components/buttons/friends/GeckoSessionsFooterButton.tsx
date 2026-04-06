@@ -117,7 +117,7 @@ const formatMinutesLabel = (minutes: number): string => {
   return `${Math.round(minutes / 1440)}d`;
 };
 
-const GeckoHistoryFooterButton = ({
+const GeckoSessionsFooterButton = ({
   textColor,
   userId,
   geckoCombinedData,
@@ -128,20 +128,20 @@ const GeckoHistoryFooterButton = ({
 }) => {
   const [isHighlighted, setIsHighlighted] = useState(false);
 
-  const { friendListAndUpcoming } = useFriendListAndUpcoming({
+  const {  friendNameMap } = useFriendListAndUpcoming({
     userId,
     enabled: true,
   });
 
-  const friendNameMap = useMemo(() => {
-    const map: Record<number, string> = {};
-    if (friendListAndUpcoming?.friends) {
-      for (const f of friendListAndUpcoming.friends) {
-        map[f.id] = f.name;
-      }
-    }
-    return map;
-  }, [friendListAndUpcoming?.friends]);
+  // const friendNameMap = useMemo(() => {
+  //   const map: Record<number, string> = {};
+  //   if (friendListAndUpcoming?.friends) {
+  //     for (const f of friendListAndUpcoming.friends) {
+  //       map[f.id] = f.name;
+  //     }
+  //   }
+  //   return map;
+  // }, [friendListAndUpcoming?.friends]);
 
   const {
     userGeckoSessionsTimeRange,
@@ -238,4 +238,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GeckoHistoryFooterButton;
+export default GeckoSessionsFooterButton;

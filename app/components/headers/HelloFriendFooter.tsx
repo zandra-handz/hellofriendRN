@@ -6,7 +6,7 @@ import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
-import GeckoHistoryFooterButton from "../buttons/friends/GeckoHistoryFooterButton";
+import GeckoSessionsFooterButton from "../buttons/friends/GeckoSessionsFooterButton";
 import GeckoPointsFooterButton from "../buttons/friends/GeckoPointsFooterButton";
   import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
@@ -160,7 +160,8 @@ const HelloFriendFooter = ({
 
   const RenderGeckoPointsButton = useCallback(
     () => (
-      <GeckoPointsFooterButton
+      <GeckoPointsFooterButton 
+      userId={userId}
         skiaFontLarge={skiaFontSmall}
         textColor={primaryColor}
         geckoCombinedData={geckoCombinedData}
@@ -172,7 +173,7 @@ const HelloFriendFooter = ({
 
     const RenderGeckoHistoryButton = useCallback(
     () => (
-      <GeckoHistoryFooterButton
+      <GeckoSessionsFooterButton
       userId={userId}
         skiaFontLarge={skiaFontSmall}
         textColor={primaryColor}

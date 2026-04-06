@@ -271,6 +271,31 @@ export const getUserGeckoCombinedData = async () => {
   }
 };
 
+export const getGeckoScoreState = async () => {
+  try {
+    const response = await helloFriendApiClient.get(`/users/gecko/score-state/`);
+     console.log(" API GET Call getGeckoScoreState", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during getGeckoScoreState");
+  }
+};
+
+
+export const updateGeckoScoreState = async (fieldUpdates: object) => {
+ 
+  try {
+    const response = await helloFriendApiClient.patch(
+      `/users/gecko/score-state/`,
+      fieldUpdates
+    ); 
+    console.log("~~~~~~~``000`~~~~~~~~~~~~API GET Call updateGeckoScoreState", response.data);
+    return response.data; // Ensure this returns the expected structure
+  } catch (e: unknown) {
+    handleApiError(e, "Error during updateGeckoScoreState");
+  }
+};
+
 
 export const getGeckoScriptsData = async () => {
   try {
@@ -279,6 +304,18 @@ export const getGeckoScriptsData = async () => {
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoScriptData");
+  }
+};
+
+
+
+export const loadAllStaticData = async () => {
+  try {
+    const response = await helloFriendApiClient.get(`/geckoscripts/load-all-static-data/`);
+   // console.log("API GET Call getGeckoScriptData", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during loadAllStaticData");
   }
 };
 

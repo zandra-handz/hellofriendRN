@@ -7,13 +7,15 @@ type Props = {
   ledgerData: {
     id: number;
     amount: number;
+    friend?: number | null;
     created_on: string;
+    timestamp_earned?: string;
     reason?: string | null;
   };
   primaryColor?: string;
 };
 
-const formatLedgerDate = (dateStr: string) => {
+const formatExactTime = (dateStr: string) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   const now = new Date();
@@ -25,15 +27,19 @@ const formatLedgerDate = (dateStr: string) => {
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    second: "2-digit",
     ...(isCurrentYear ? {} : { year: "numeric" }),
   }).format(date);
 };
 
 const GeckoPointsLedgerItem = ({
+  friendNameMap,
   ledgerData,
   primaryColor = "orange",
 }: Props) => {
-  const label = formatLedgerDate(ledgerData.created_on);
+ 
+  const label = formatExactTime(ledgerData.timestamp_earned);
+  const friendName = ledgerData.friend ? friendNameMap[ledgerData.friend] ?? "Unknown" : null;
   const pointsLabel = ledgerData.amount > 0 ? `+${ledgerData.amount}` : `${ledgerData.amount}`;
   const sublabel = ledgerData.reason
     ? `${pointsLabel} pts · ${ledgerData.reason}`
@@ -41,7 +47,7 @@ const GeckoPointsLedgerItem = ({
 
   return (
     <OptionListItem
-      label={label}
+      label={`${friendName} · ${label}`}
       sublabel={sublabel}
       primaryColor={primaryColor}
       backgroundColor="transparent"

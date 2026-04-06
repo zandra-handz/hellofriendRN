@@ -8,11 +8,13 @@ import { showModalMessageAndList } from "@/src/utils/ShowModalMessage";
 import GeckoPointsLedgerList from "../../helloes/GeckoPointsLedgerList";
 
 const GeckoPointsFooterButton = ({
+  userId,
   skiaFontLarge,
   textColor,
   geckoCombinedData,
   highlightColor = "limegreen",
 }: {
+  userId: number;
   skiaFontLarge: any;
   textColor: string;
   geckoCombinedData: any;
@@ -39,6 +41,7 @@ const GeckoPointsFooterButton = ({
       onConfirm: () => setIsHighlighted(false),
       listElement: userGeckoPointsLedgerFlattened?.length ? (
         <GeckoPointsLedgerList
+          userId={userId}
           listData={userGeckoPointsLedgerFlattened}
           isFetchingNextPage={isFetchingNextPage}
           fetchNextPage={fetchNextPage}
