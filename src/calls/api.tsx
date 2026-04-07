@@ -227,6 +227,7 @@ export const getUserSettings = async () => {
    
     return response.data;
   } catch (e: unknown) {
+  
     handleApiError(e, "Error during getUserSettings");
   }
 };
@@ -249,7 +250,7 @@ export const getUserGeckoConfigs = async () => {
     const response = await helloFriendApiClient.get(`/users/gecko/configs/`,
          { params: { local_date: localDate } }
     );
-    console.log("API GET Call getUserGeckoConfigs", response.data);
+    // console.log("API GET Call getUserGeckoConfigs", response.data);
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
@@ -289,12 +290,59 @@ export const updateGeckoScoreState = async (fieldUpdates: object) => {
       `/users/gecko/score-state/`,
       fieldUpdates
     ); 
-    console.log("~~~~~~~``000`~~~~~~~~~~~~API GET Call updateGeckoScoreState", response.data);
+    // console.log("~~~~~~~``000`~~~~~~~~~~~~API GET Call updateGeckoScoreState", response.data);
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
     handleApiError(e, "Error during updateGeckoScoreState");
   }
 };
+
+
+
+  export const fetchGeckoEnergyLog = async ({                                                                                                                                                                                                                
+    page = 1,                                                                                                                                                                                                                                                  }: {                                                                                                                                                                                                                                                       
+    page?: number;                                                                                                                                                                                                                                           
+  }) => {
+    try {
+      const response = await helloFriendApiClient.get(
+        `/users/gecko/energy-log/?page=${page}`
+      );
+      if (response?.data && response?.data?.results) {
+        return response.data;
+      } else {
+        console.log("No data returned from fetchGeckoEnergyLog.");
+        return { results: [], next: null, previous: null };
+      }
+    } catch (e: unknown) {
+      handleApiError(e, "Error during fetchGeckoEnergyLog");
+    }
+  };
+
+  export const devResetEnergy = async () => {
+    try {
+      const response = await helloFriendApiClient.post(
+        `/users/gecko/dev/reset-energy/`
+      );
+      console.log("API POST Call devResetEnergy", response.data);
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during devResetEnergy");
+    }
+  };
+
+  export const devDepleteEnergy = async () => {
+    try {
+      const response = await helloFriendApiClient.post(
+        `/users/gecko/dev/deplete-energy/`
+      );
+      console.log("API POST Call devDepleteEnergy", response.data);
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during devDepleteEnergy");
+    }
+  };
+
+ 
 
 
 export const getGeckoScriptsData = async () => {
@@ -1027,7 +1075,7 @@ export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
 
 
 export const updateUserGeckoConfigs = async (fieldUpdates: object) => {
-  console.log(`payload in api call`, fieldUpdates);
+  // console.log(`payload in api call`, fieldUpdates);
   try {
     const response = await helloFriendApiClient.patch(
       `/users/gecko/configs/`,

@@ -95,6 +95,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const multiplierRef = useRef(1);
 
+ 
+  const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
+  const geckoScoreStateRef = useRef(geckoScoreState);    
+  useEffect(() => { 
+
+    if (geckoScoreState)
+
+      {
+    geckoScoreStateRef.current = geckoScoreState;
+      }
+  
+  }, [geckoScoreState]);
+
   useEffect(() => {
     console.log(`[geckoScoreState changed]`, geckoScoreState);
     if (!geckoScoreState) return;
@@ -204,6 +217,20 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const triggerRescatter = () => setRescatterTrigger((prev) => prev + 1);
   const triggerRecenter = () => setRecenterTrigger((prev) => prev + 1);
   const triggerBack = () => setBackTrigger((prev) => prev + 1);
+
+
+
+
+    useEffect(() => {
+    if (geckoConfigs?.active_hours && !isAwake) {
+      triggerBack();
+      // handleNavBack();
+    }
+  }, [geckoConfigs?.active_hours, isAwake]);
+
+
+
+
 
   const GROQ_MESSAGE_PAUSE_TIME = 10000;
   const { askGroq, onModalCloseRef } = useGroqBeta({
@@ -1093,11 +1120,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
-  useEffect(() => {
-    if (geckoConfigs?.active_hours && !isAwake) {
-      handleNavBack();
-    }
-  }, [geckoConfigs?.active_hours, isAwake]);
+
 
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
@@ -1132,6 +1155,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           rescatterTrigger={rescatterTrigger}
           recenterTrigger={recenterTrigger}
           backTrigger={backTrigger}
+          geckoScoreState={geckoScoreState}
+          energyRef={energyRef}
+          geckoScoreStateRef={geckoScoreStateRef}
         />
       </View>
       {/* <DebugPanel /> */}

@@ -4,7 +4,7 @@ import Body from "./geckoClasses/bodyClass.js";
 import FourLegs from "./geckoClasses/fourLegsClass.js";
 
 export default class Gecko {
-  constructor(startingCoord0, startingCoord1, hintDist=.04) {
+  constructor(startingCoord0, startingCoord1, hintDist=.04, energyConfig={}) {
     this.gaitSpeedScalar = 9;
     this.reverseGaitSpeedScalar = 40;
 
@@ -22,6 +22,7 @@ export default class Gecko {
     this.mir_MotionDilutionScalar = 0.5;
     this.startingCoord = [startingCoord0, startingCoord1];
     this.hintDist = hintDist;
+    this.energyConfig = energyConfig;
 
  
     this.valuesForReversing = {
@@ -48,8 +49,7 @@ export default class Gecko {
       _normalizedBuffer: new Float32Array(2),
       jumpedFirstPosition: new Float32Array(2),
       jumpedCursorPosition: new Float32Array(2),
-      
-      // ✅ Ring buffers instead of dynamic arrays
+       
       distanceHistory: new Float32Array(6),      // max length = 6
       distanceHistoryIndex: 0,
       distanceHistoryCount: 0,
@@ -62,7 +62,7 @@ export default class Gecko {
     this.oneTimeEnterComplete = false; // set only once
     this.sleepWalkMode = false;
 
-    this.gait = new GaitState(this.gaitSpeedScalar, this.reverseGaitSpeedScalar);
+    this.gait = new GaitState(this.gaitSpeedScalar, this.reverseGaitSpeedScalar, this.energyConfig);
     this.motion = new MotionGlobal(
       this.gait,
       this.valuesForReversing,
@@ -120,6 +120,9 @@ export default class Gecko {
   }
 
   update(leadPoint_lead, leadPoint_angles, leadPoint_distanceTraveled, leadPoint_isMoving) {
+
+ 
+ 
     // if (this.sleepWalkMode) {
     //   console.log('gecko is in sleep mode')
     // }

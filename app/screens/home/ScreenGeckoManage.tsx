@@ -11,6 +11,8 @@ import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
 import useUpdateGeckoConfigs from "@/src/hooks/GeckoCalls/useUpdateGeckoConfigs";
 import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
 import HoursSelector from "./HoursSelector";
+import GeckoEnergyLogList from "@/app/components/helloes/GeckoEnergyLogList";
+import useUserGeckoEnergyLog from "@/src/hooks/GeckoCalls/useUserGeckoEnergyLog";
 // ─── Map gecko section ids to backend field names ───────────────
 const SECTION_CONFIG_MAP = {
   head: {
@@ -49,6 +51,12 @@ const ScreenGeckoManage = (props: Props) => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { geckoConfigs } = useUserGeckoConfigs({ userId: user?.id });
+  const {
+    userGeckoEnergyLogFlattened,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useUserGeckoEnergyLog({ fetchAll: false });
   const { updateGeckoConfigs } = useUpdateGeckoConfigs({ userId: user?.id });
 
   const [viewCategoryId, setViewCategoryId] = useState<string | null>(null);
@@ -191,6 +199,15 @@ const ScreenGeckoManage = (props: Props) => {
             )}
           </Animated.View>
         )}
+
+        <GeckoEnergyLogList
+          userId={user?.id}
+          listData={userGeckoEnergyLogFlattened}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          primaryColor={textColor}
+        />
       </View>
     </SafeAreaView>
   );

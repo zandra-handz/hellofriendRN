@@ -139,6 +139,9 @@ const MomentsSkia = ({
   rescatterTrigger,
   recenterTrigger,
   backTrigger,
+  geckoScoreState,
+  energyRef,
+  geckoScoreStateRef,
 }: Props) => { 
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -262,15 +265,20 @@ const handleUpdateGeckoDataState = async () => {
     endPointsIndex
   );
 
-  // BEFORE SAVE
-  // console.log(
-  //   "BEFORE SAVE | prev:",
-  //   startPointsIndex,
-  //   "| curr:",
-  //   endPointsIndex,
-  //   "| sending:",
-  //   newPoints
-  // );
+  //  const latest = geckoScoreStateRef.current;
+  // if (latest) {
+  //     gecko.current.gait.energy = latest.energy;
+  //     gecko.current.gait.surplusEnergy = latest.surplus_energy;
+  // }
+ 
+    console.log('[SESSION DEBUG]', {                                                                                                                                                                                                                      startedOn: new Date(sessionStartRef.current).toISOString(),
+    endedOn: new Date(sessionEndRef.current).toISOString(),                                                                                                                                                                                         
+    durationSec: (sessionEndRef.current - sessionStartRef.current) / 1000,
+    steps: gecko.current.gait.stepCount - stepsRef.current,
+    frontendEnergy: gecko.current.gait.energy,
+  });
+
+  
 
   const success = await handleUpdateGeckoData({
     steps: gecko.current.gait.stepCount - stepsRef.current,
@@ -281,42 +289,39 @@ const handleUpdateGeckoDataState = async () => {
     pointsEarnedList: newPoints,
   });
 
-  if (!success) {
-    // console.log(
-    //   "SAVE FAILED | prev:",
-    //   prevPointsLengthRef.current,
-    //   "| curr:",
-    //   pointsEarnedList.current.length,
-    //   "| unsaved:",
-    //   pointsEarnedList.current.slice(prevPointsLengthRef.current)
-    // );
+  if (!success) { 
     return;
-  }
-
-  // console.log(
-  //   "SAVE SUCCESS | prev:",
-  //   prevPointsLengthRef.current,
-  //   "| updating to:",
-  //   endPointsIndex
-  // );
-
+  } 
   // commit
   stepsRef.current = gecko.current.gait.stepCount;
   distanceRef.current =
     leadPoint.current.leadDistanceTraveled;
   prevPointsLengthRef.current = endPointsIndex;
 
-  // console.log(
-  //   "AFTER COMMIT | prev now:",
-  //   prevPointsLengthRef.current,
-  //   "| remaining:",
-  //   pointsEarnedList.current.slice(prevPointsLengthRef.current)
-  // );
+ 
 };
 
 
 ///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  //  useEffect(() => {          
+  // if (geckoScoreState && gecko.current) {                                                                                                                                                                                                       
+  //         gecko.current.gait.energy = geckoScoreState.energy;                                                                                                                                                                                       
+  //         gecko.current.gait.surplusEnergy = geckoScoreState.surplus_energy;
+  //     }
+  // }, [geckoScoreState]);
+
+    useEffect(() => {                                                                                                                                                                                                                                 
+      if (geckoScoreState && gecko.current) {                                                                                                                                                                                                       
+          gecko.current.gait.energy = geckoScoreState.energy;
+          gecko.current.gait.surplusEnergy = geckoScoreState.surplus_energy;
+          gecko.current.gait.expiresAt = geckoScoreState.expires_at
+              ? new Date(geckoScoreState.expires_at).getTime()
+              : 0;
+          gecko.current.gait.multiplier = geckoScoreState.multiplier ?? 1;
+          gecko.current.gait.baseMultiplier = geckoScoreState.base_multiplier ?? 1;
+      }
+  }, [geckoScoreState]);
 
 
 useEffect(() => { 
@@ -483,7 +488,7 @@ useEffect(() => {
 
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
   const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
-  const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06));
+  const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState));
   const sleepWalk0 = useRef(
     new SleepWalk0(
       [0.5, 0.3],
@@ -559,6 +564,8 @@ useEffect(() => {
   const [internalReset, setInternalReset] = useState(0);
   const handleReset = () => setInternalReset(Date.now());
 
+  
+
   // useEffect(() => {
   //   console.log("resetting");
   //   moments.current.updateOrAddMoments(momentsData);
@@ -592,6 +599,9 @@ useEffect(() => {
     updateTrigger.value += 1;
   }, [momentsData, reset, aspect, scale, size.width, size.height]);
 
+
+  
+
   useEffect(() => {
     if (!internalReset || !reset) {
       console.log("conditions not met for a reset");
@@ -606,7 +616,7 @@ useEffect(() => {
     // gecko.current = new Gecko(startingCoord, 0.06);
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
     leadPoint.current = new Mover(startingCoord0, startingCoord1);
-    gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06);
+    gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState);
 
     // Reset buffers
     workingBuffers.soul.fill(0);

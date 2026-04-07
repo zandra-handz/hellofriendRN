@@ -1,6 +1,6 @@
 // Gait animation via distance leading point for creature travels instead of time
 export default class GaitState {
-  constructor(speedScalar, reverseSpeedScalar) {
+  constructor(speedScalar, reverseSpeedScalar, energyConfig) {
     this.TAU = Math.PI * 2;
     this.gaitDistanceCorrection = 0;
     this.accumulatedDistance = 0;
@@ -11,6 +11,7 @@ export default class GaitState {
     this.catchUpGain = 0.15;
     this.speedScalar = speedScalar;
     this.reverseSpeedScalar = reverseSpeedScalar;
+
     this.stepCount = 0;
     this.scalar = this.speedScalar; // initialize to forward scalar
 
@@ -34,7 +35,31 @@ export default class GaitState {
 
     // New: backwards movement tracking
     this.isReversing = false;
+
+    this.energy = energyConfig.energy ?? 1.0;
+    this.surplusEnergy = energyConfig.surplus_energy ?? 0.0;
+    this.stepFatiguePerStep = energyConfig.step_fatigue_per_step ?? 0;
+    this.rechargePerSecond = energyConfig.recharge_per_second ?? 0;
+    this.streakFatigueMultiplier =
+      energyConfig.streak_fatigue_multiplier ?? 0.25;
+    this.streakRechargePerSecond = energyConfig.streak_recharge_per_second ?? 0;
+    this.surplusCap = energyConfig.surplus_cap ?? 2.0;
+    this.stamina = energyConfig.stamina ?? 1.0;
+
+      this.multiplier = energyConfig.multiplier ?? 1;
+  this.baseMultiplier = energyConfig.base_multiplier ?? 1;
+    this.lastUpdateTime = performance.now();
   }
+
+  // initEnergy(scoreState) {
+  //   this.energy = scoreState.energy;
+  //   this.surplusEnergy = scoreState.surplus_energy;
+  //   this.stepFatiguePerStep = scoreState.step_fatigue_per_step;
+  //   this.rechargePerSecond = scoreState.recharge_per_second;
+  //   this.streakFatigueMultiplier = scoreState.streak_fatigue_multiplier;
+  //   this.streakRechargePerSecond = scoreState.streak_recharge_per_second;
+  //   this.surplusCap = scoreState.surplus_cap;
+  // }
 
   get phaseAngle() {
     // New
@@ -66,16 +91,30 @@ export default class GaitState {
   }
 
   update(externalDistanceDriver, goingBackwards) {
-    this.isReversing = goingBackwards;
+
+      const now = performance.now();
+  const dt = (now - this.lastUpdateTime) / 1000;
+  this.lastUpdateTime = now;
   
-//console.log(this.phase)
+  if (this.energy > 0 && this.energy < 1.0) {
+      if (this.multiplier > this.baseMultiplier) {
+          const recharge = this.streakRechargePerSecond * this.stamina * dt;
+          this.energy = Math.min(1.0, this.energy + recharge);
+      }
+  }
+
+
+  
+    this.isReversing = goingBackwards;
+
+    //console.log(this.phase)
     if (this.isReversing) {
       this.updateSpeedScalar(this.reverseSpeedScalar);
-        // console.log('gait is in reversal!!');
+      // console.log('gait is in reversal!!');
     } else {
       // console.log(`~~~~~~~~~~`)
       this.updateSpeedScalar(this.speedScalar);
-    } 
+    }
 
     this.externalDistanceDriver = externalDistanceDriver;
 
@@ -97,11 +136,9 @@ export default class GaitState {
     } else {
       // Normal forward step triggers
       if (this.phase > 0.89) {
-   
         this.takeStep0 = true;
       }
       if (this.phase < -0.89) {
-      
         this.takeStep1 = true;
       }
 
@@ -124,7 +161,7 @@ export default class GaitState {
     //        console.log('setting step')
     // } else if (this.takeStep1){
     //     console.log('                       setting step')
-      
+
     // } else {
     //     console.log('                              no step')
     // }
@@ -169,7 +206,6 @@ export default class GaitState {
       }
     }
 
-
     if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
       // console.log("setting sway to tru!!");
       this.swayBodyFront = true;
@@ -177,38 +213,51 @@ export default class GaitState {
       this.swayBodyFront = false;
     }
   }
-  // used after actual step logic in animation functions
-  // is1 = primary step is on right side
+ 
+
   // stepCompleted(is1) {
   //   if (is1) {
   //     this.takeStep1 = false;
   //   } else {
   //     this.takeStep0 = false;
   //   }
+  //   this.stepCount++;
+
+  //   const fatigue = this.stepFatiguePerStep / this.stamina;
+  //   if (this.surplusEnergy >= fatigue) {
+  //     this.surplusEnergy -= fatigue;
+  //   } else {
+  //     const remaining = fatigue - this.surplusEnergy;
+  //     this.surplusEnergy = 0;
+  //     this.energy = Math.max(0, this.energy - remaining);
+  //     console.log(this.energy);
+  //   }
+
+  //   // console.log('stepCount:', this.stepCount);
   // }
 
-//   stepCompleted(is1) {
-//   if (is1) {
-//     this.takeStep1 = false;
-//     this.stepCount++;
-//   } else {
-//     this.takeStep0 = false;
-//     this.stepCount++;
-//   }
-// }
+    stepCompleted(is1) {                                                                                                                                                                                                                              
+      if (is1) {  
+          this.takeStep1 = false;
+      } else {
+          this.takeStep0 = false;
+      }
+      this.stepCount++;
+      console.log(this.stepCount)
 
-
-stepCompleted(is1) {
-  if (is1) {
-    this.takeStep1 = false;
-    this.stepCount++;
-  } else {
-    this.takeStep0 = false;
-    this.stepCount++;
+      let fatigue = this.stepFatiguePerStep / this.stamina;
+      if (this.multiplier > this.baseMultiplier) {
+          fatigue *= this.streakFatigueMultiplier;
+      }
+      if (this.surplusEnergy >= fatigue) {
+          this.surplusEnergy -= fatigue;
+      } else {
+          const remaining = fatigue - this.surplusEnergy;
+          this.surplusEnergy = 0;
+          this.energy = Math.max(0, this.energy - remaining);
+      }
+      console.log(this.energy);
   }
-  // console.log('stepCount:', this.stepCount);
-}
-
   syncedStepsCompleted(is1) {
     if (is1) {
       this.takeSyncedSteps1 = false;
@@ -232,8 +281,6 @@ stepCompleted(is1) {
     if (jumpDistance < 0) jumpDistance += this.cycle;
     this.jumpUpdate(jumpDistance);
     this.jumpCount++;
-
-    
 
     // POST JUMP LOGS:
     // console.log('After Jump:');

@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUserGeckoConfigs } from "@/src/calls/api";
+import { getUserGeckoConfigs } from "@/src/calls/api"; 
 
 const userGeckoConfigsQueryOptions = (userId: number) => ({
   queryKey: ["userGeckoConfigs", userId],
@@ -17,6 +17,26 @@ const useUserGeckoConfigs = ({ userId }: { userId: number }) => {
   } = useQuery({
     ...userGeckoConfigsQueryOptions(userId ?? 0),
     enabled: !!userId,
+    refetchInterval: (query) => {
+      const hours = query.state.data?.active_hours;
+      if (!hours || hours.length === 0) return false;
+
+      const now = new Date();
+      const currentHour = now.getHours();
+      const isActive = hours.includes(currentHour);
+
+      for (let i = 1; i <= 24; i++) {
+        const checkHour = (currentHour + i) % 24;
+        const willBeActive = hours.includes(checkHour);
+        if (willBeActive !== isActive) {
+          const target = new Date(now);
+          target.setHours(currentHour + i, 0, 0, 0);
+          return target.getTime() - now.getTime() + 1000;
+        }
+      }
+
+      return false;
+    },
   });
 
   const isAwake = useMemo(() => {

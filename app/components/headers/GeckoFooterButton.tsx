@@ -185,7 +185,7 @@ import {
   ColorValue,
   DimensionValue,
 } from "react-native";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import GeckoMineSvg from "@/app/styles/svgs/gecko-mine";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -244,18 +244,10 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
   const [isHighlighted, setIsHighlighted] = useState(false);
   const { friendDash } = useFriendDash({ userId, friendId });
   const {   isAwake } = useUserGeckoConfigs({userId: userId});
-  const { geckoScoreState } = useGeckoScoreState();
+  const { geckoScoreState, geckoEnergyLevel} = useGeckoScoreState();
 
 
-  // useEffect(() => {
-  //   if (isAwake) {
-  //     console.log(`is awake!`)
-  //   } else {
-  //     console.log(`is not awake`)
-  //   }
-
-  // },[isAwake]);
-
+ 
  
 
   const {
@@ -275,13 +267,13 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
   const rangeLabel = formatMinutesLabel(minutes);
   const formattedRangeDuration = formatDurationFromSeconds(sessionTotals.totalDurationSeconds);
 
-  const handleOnPress = () => {
+  const handleOnPress = useCallback(() => {
     if (isHighlighted) {
       setIsHighlighted(false);
       return;
     }
 
-    if (!isAwake ) {
+    if (!isAwake || geckoEnergyLevel === 0) {
       showFlashMessage(`Gecko is asleep. Ssssshh!`, false, 1000);
       return;
     }
@@ -298,7 +290,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
     } else {
       onPress();
     }
-  };
+  }, [geckoEnergyLevel, isAwake]);
 
   useEffect(() => {
     if (!isHighlighted) return;
@@ -354,7 +346,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
       onPress={handleOnPress}
       style={styles.container}
     >
-      <View style={[iconStyle, {opacity: isAwake? 1 : .4}]}>
+      <View style={[iconStyle, {opacity: (isAwake && (geckoEnergyLevel > 0)) ? 1 : .4}]}>
         <GeckoMineSvg
           width={size}
           height={size}

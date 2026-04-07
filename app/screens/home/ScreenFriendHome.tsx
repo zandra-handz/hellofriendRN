@@ -254,7 +254,7 @@ import {
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
-
+import DevEnergyButtons from "@/app/components/buttons/DevEnergyButtons";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -463,6 +463,7 @@ const ScreenFriendHome = ({
               shadowColorA="transparent"
               outlineColorA="transparent"
             />
+            <DevEnergyButtons/>
 
             <SelectedFriendFooter
               userId={user.id}
