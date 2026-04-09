@@ -32,8 +32,8 @@ const geckoScoreStateQueryOptions = (userId: number) => ({
 
 
 
-    const geckoEnergyLevel = useMemo(() => {
-      console.log('updating geckoenergylevel')
+    const geckoEnergyLevel = useMemo(() => { 
+      
       return geckoScoreState?.energy ?? null;
     }, [geckoScoreState?.energy])
 

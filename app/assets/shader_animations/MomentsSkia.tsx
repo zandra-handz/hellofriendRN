@@ -108,6 +108,7 @@ type Props = {
 };
 
 const MomentsSkia = ({
+  updateScoreState,
   handleUpdateMomentCoords,
   handleUpdateGeckoData,
   handleGetMoment,
@@ -141,7 +142,7 @@ const MomentsSkia = ({
   backTrigger,
   geckoScoreState,
   energyRef,
-  geckoScoreStateRef,
+  liveScoreStateRef, 
 }: Props) => { 
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -209,6 +210,38 @@ const MomentsSkia = ({
     }
   }, [recenterTrigger]);
 
+
+  const applyLiveScoreStateToGait = useCallback(() => {
+  const live = liveScoreStateRef?.current;
+  if (!live || !gecko.current) return;
+
+  gecko.current.gait.energy = live.energy ?? gecko.current.gait.energy;
+  gecko.current.gait.surplusEnergy =
+    live.surplus_energy ?? gecko.current.gait.surplusEnergy;
+  gecko.current.gait.expiresAt = live.expires_at
+    ? new Date(live.expires_at).getTime()
+    : 0;
+  gecko.current.gait.multiplier = live.multiplier ?? 1;
+  gecko.current.gait.baseMultiplier = live.base_multiplier ?? 1;
+  gecko.current.gait.stepFatiguePerStep =
+    live.step_fatigue_per_step ?? gecko.current.gait.stepFatiguePerStep;
+  gecko.current.gait.rechargePerSecond =
+    live.recharge_per_second ?? gecko.current.gait.rechargePerSecond;
+  gecko.current.gait.streakFatigueMultiplier =
+    live.streak_fatigue_multiplier ?? gecko.current.gait.streakFatigueMultiplier;
+  gecko.current.gait.streakRechargePerSecond =
+    live.streak_recharge_per_second ?? gecko.current.gait.streakRechargePerSecond;
+  gecko.current.gait.surplusCap =
+    live.surplus_cap ?? gecko.current.gait.surplusCap;
+  gecko.current.gait.stamina =
+    live.stamina ?? gecko.current.gait.stamina;
+}, [liveScoreStateRef]);
+
+
+useEffect(() => {
+  applyLiveScoreStateToGait();
+}, [applyLiveScoreStateToGait]);
+
   // const handleUpdateGeckoDataState = async () => {
   //   sessionStartRef.current = sessionEndRef.current;
   //   sessionEndRef.current = Date.now();
@@ -254,6 +287,7 @@ const MomentsSkia = ({
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~can yo
 
 const handleUpdateGeckoDataState = async () => {
+  
   sessionStartRef.current = sessionEndRef.current;
   sessionEndRef.current = Date.now();
 
@@ -270,6 +304,8 @@ const handleUpdateGeckoDataState = async () => {
   //     gecko.current.gait.energy = latest.energy;
   //     gecko.current.gait.surplusEnergy = latest.surplus_energy;
   // }
+
+  
  
     console.log('[SESSION DEBUG]', {                                                                                                                                                                                                                      startedOn: new Date(sessionStartRef.current).toISOString(),
     endedOn: new Date(sessionEndRef.current).toISOString(),                                                                                                                                                                                         
@@ -289,9 +325,20 @@ const handleUpdateGeckoDataState = async () => {
     pointsEarnedList: newPoints,
   });
 
-  if (!success) { 
-    return;
-  } 
+  updateScoreState?.({
+  steps: gecko.current.gait.stepCount - stepsRef.current,
+  distance:
+    leadPoint.current.leadDistanceTraveled - distanceRef.current,
+  startedOn: new Date(sessionStartRef.current).toISOString(),
+  endedOn: new Date(sessionEndRef.current).toISOString(),
+  pointsEarnedList: newPoints,
+});
+
+  
+
+  // if (!success) { 
+  //   return;
+  // } 
   // commit
   stepsRef.current = gecko.current.gait.stepCount;
   distanceRef.current =
@@ -311,17 +358,17 @@ const handleUpdateGeckoDataState = async () => {
   //     }
   // }, [geckoScoreState]);
 
-    useEffect(() => {                                                                                                                                                                                                                                 
-      if (geckoScoreState && gecko.current) {                                                                                                                                                                                                       
-          gecko.current.gait.energy = geckoScoreState.energy;
-          gecko.current.gait.surplusEnergy = geckoScoreState.surplus_energy;
-          gecko.current.gait.expiresAt = geckoScoreState.expires_at
-              ? new Date(geckoScoreState.expires_at).getTime()
-              : 0;
-          gecko.current.gait.multiplier = geckoScoreState.multiplier ?? 1;
-          gecko.current.gait.baseMultiplier = geckoScoreState.base_multiplier ?? 1;
-      }
-  }, [geckoScoreState]);
+  //   useEffect(() => {                                                                                                                                                                                                                                 
+  //     if (geckoScoreState && gecko.current) {                                                                                                                                                                                                       
+  //         gecko.current.gait.energy = geckoScoreState.energy;
+  //         gecko.current.gait.surplusEnergy = geckoScoreState.surplus_energy;
+  //         gecko.current.gait.expiresAt = geckoScoreState.expires_at
+  //             ? new Date(geckoScoreState.expires_at).getTime()
+  //             : 0;
+  //         gecko.current.gait.multiplier = geckoScoreState.multiplier ?? 1;
+  //         gecko.current.gait.baseMultiplier = geckoScoreState.base_multiplier ?? 1;
+  //     }
+  // }, [geckoScoreState]);
 
 
 useEffect(() => { 
@@ -488,7 +535,15 @@ useEffect(() => {
 
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
   const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
-  const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState));
+  // const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState));
+  const gecko = useRef(
+  new Gecko(
+    startingCoord0,
+    startingCoord1,
+    0.06,
+    liveScoreStateRef?.current ?? geckoScoreState ?? {}
+  )
+);
   const sleepWalk0 = useRef(
     new SleepWalk0(
       [0.5, 0.3],
@@ -616,7 +671,15 @@ useEffect(() => {
     // gecko.current = new Gecko(startingCoord, 0.06);
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
     leadPoint.current = new Mover(startingCoord0, startingCoord1);
-    gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState);
+    // gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState);
+
+
+    gecko.current = new Gecko(
+  startingCoord0,
+  startingCoord1,
+  0.06,
+  liveScoreStateRef?.current ?? geckoScoreState ?? {}
+);
 
     // Reset buffers
     workingBuffers.soul.fill(0);

@@ -242,7 +242,7 @@ export default class GaitState {
       } else {
           this.takeStep0 = false;
       }
-      this.stepCount++;
+      this.stepCount++; 
       console.log(this.stepCount)
 
       let fatigue = this.stepFatiguePerStep / this.stamina;
@@ -256,7 +256,7 @@ export default class GaitState {
           this.surplusEnergy = 0;
           this.energy = Math.max(0, this.energy - remaining);
       }
-      console.log(this.energy);
+       console.log(this.energy);
   }
   syncedStepsCompleted(is1) {
     if (is1) {

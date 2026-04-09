@@ -20,10 +20,11 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserPoints from "@/src/hooks/useUserPoints";
 import useGeckoSynthesizer from "@/src/hooks/useGeckoSynthesizer";
+import useGeckoSynthesizer_WS from "@/src/hooks/useGeckoSynthesizer_WS";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
-import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
+// import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -45,6 +46,7 @@ import { SkFont } from "@shopify/react-native-skia";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
 import { freezeEnabled } from "react-native-screens";
+import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
 
 type Props = {
   skiaFontLarge: SkFont;
@@ -84,7 +86,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { selectedFriend } = useSelectedFriend();
 
   const { geckoCombinedData } = useUserGeckoCombinedData();
-  const { geckoConfigs, isAwake } = useUserGeckoConfigs({ userId: user?.id });
   const { sessionTotals } = useFriendGeckoSessionsTimeRange({
     friendId: selectedFriend?.id,
     minutes: 720,
@@ -95,21 +96,21 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const multiplierRef = useRef(1);
 
- 
+
   const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
-  const geckoScoreStateRef = useRef(geckoScoreState);    
-  useEffect(() => { 
+  // const geckoScoreStateRef = useRef(geckoScoreState);
+  // useEffect(() => {
 
-    if (geckoScoreState)
+  //   if (geckoScoreState)
 
-      {
-    geckoScoreStateRef.current = geckoScoreState;
-      }
-  
-  }, [geckoScoreState]);
+  //     {
+  //   geckoScoreStateRef.current = geckoScoreState;
+  //     }
+
+  // }, [geckoScoreState]);
 
   useEffect(() => {
-    console.log(`[geckoScoreState changed]`, geckoScoreState);
+    // console.log(`[geckoScoreState changed]`, geckoScoreState);
     if (!geckoScoreState) return;
     const expired =
       !geckoScoreState.expires_at ||
@@ -117,7 +118,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     multiplierRef.current = expired ? 1 : geckoScoreState.multiplier ?? 1;
   }, [geckoScoreState]);
 
-  const { scoreRules, welcomeScripts } = useGeckoStaticData();
+  const { scoreRules  } = useGeckoStaticData();
 
   const scoreRulesRef = useRef<
     Record<string, { code: number; points: number } | undefined>
@@ -130,23 +131,87 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     };
   }, [scoreRules]);
 
+  // const {
+  //   gecko,
+  //   updateReadIds,
+  //   getReadIds,
+  //   hasReadAll,
+  //   hasInitialized,
+  //   markInitialized,
+  // } = useGeckoSynthesizer({
+  //   userId: user?.id,
+  //   geckoCombinedData,
+  //   geckoConfigs,
+  //   geckoScoreState,
+  //   sessionTotals,
+  //   userSessionTotals,
+  //   friendId: selectedFriend?.id,
+  //   capsuleCount: capsuleList.length,
+  // });
+
+
+const {
+  socketStatus,
+  scoreStateRef,
+  liveScoreState,
+  getScoreState,
+  updateScoreState,
+  registerOnScoreState,
+} = useGeckoEnergySocket();
+        useEffect(() => {
+          if (socketStatus) {
+            showFlashMessage(`Socket ${socketStatus}`, false, 1000)
+          }
+
+        }, [socketStatus]);
+  useEffect(() => {
+    registerOnScoreState((data: any) => {
+      if (!data) return;
+      energyRef.current = {
+        energy: data.energy ?? energyRef.current.energy,
+        surplusEnergy: data.surplus_energy ?? energyRef.current.surplusEnergy,
+      };
+    });
+  }, [registerOnScoreState]);
+
+
+  // const {
+  //     gecko,
+  //     updateReadIds,
+  //     getReadIds,
+  //     hasReadAll,
+  //     hasInitialized,                                                                                                                                                             markInitialized,
+  //     isAwake,
+  //   } = useGeckoSynthesizer_WS({
+  //     userId: user?.id,
+  //     geckoCombinedData,
+  //     geckoScoreState,
+  //     scoreStateRef,
+  //     sessionTotals,
+  //     userSessionTotals,
+  //     friendId: selectedFriend?.id,
+  //     capsuleCount: capsuleList.length,
+  //   });
+
   const {
-    gecko,
-    updateReadIds,
-    getReadIds,
-    hasReadAll,
-    hasInitialized,
-    markInitialized,
-  } = useGeckoSynthesizer({
-    userId: user?.id,
-    geckoCombinedData,
-    geckoConfigs,
-    geckoScoreState,
-    sessionTotals,
-    userSessionTotals,
-    friendId: selectedFriend?.id,
-    capsuleCount: capsuleList.length,
-  });
+  gecko,
+  updateReadIds,
+  getReadIds,
+  hasReadAll,
+  hasInitialized,
+  markInitialized,
+  isAwake,
+} = useGeckoSynthesizer_WS({
+  userId: user?.id,
+  geckoCombinedData,
+  geckoScoreState,
+  liveScoreState,
+  sessionTotals,
+  userSessionTotals,
+  friendId: selectedFriend?.id,
+  capsuleCount: capsuleList.length,
+  getScoreState,
+});
 
   const hasShownWelcome = useRef(false);
   const hasShownReadAll = useRef(false);
@@ -222,11 +287,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
 
     useEffect(() => {
-    if (geckoConfigs?.active_hours && !isAwake) {
+    if (  !isAwake) {
       triggerBack();
       // handleNavBack();
     }
-  }, [geckoConfigs?.active_hours, isAwake]);
+  }, [  isAwake]);
 
 
 
@@ -1011,13 +1076,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const pointsGivenForReadAllRef = useRef(false);
 
-  const { handleUpdateGeckoScoreState } = useUpdateGeckoScoreState();
   const categoryStreakRef = useRef(0);
-  const updateScoreStateRef = useRef(handleUpdateGeckoScoreState);
+  const updateScoreStateRef = useRef(updateScoreState);
 
   useEffect(() => {
-    updateScoreStateRef.current = handleUpdateGeckoScoreState;
-  }, [handleUpdateGeckoScoreState]);
+    updateScoreStateRef.current = updateScoreState;
+  }, [updateScoreState]);
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -1126,6 +1190,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     <NoGradientBackground style={styles.backgroundContainer}>
       <View style={[StyleSheet.absoluteFill]}>
         <MomentsSkia
+        updateScoreState={updateScoreState}
           handleUpdateMomentCoords={handleUpdateMomentCoords}
           handleUpdateGeckoData={handleUpdateGeckoData}
           handleGetMoment={handleGetMoment}
@@ -1157,7 +1222,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           backTrigger={backTrigger}
           geckoScoreState={geckoScoreState}
           energyRef={energyRef}
-          geckoScoreStateRef={geckoScoreStateRef}
+          liveScoreStateRef={scoreStateRef}
+          // geckoScoreStateRef={geckoScoreStateRef}
         />
       </View>
       {/* <DebugPanel /> */}
