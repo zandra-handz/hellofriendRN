@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Vibration } from "react-native";
+import { View, StyleSheet, Pressable, Text, Vibration } from "react-native";
 import React, {
   useState,
   useRef,
@@ -58,14 +58,11 @@ type Props = {
 // Parameters: the picked moment and whatever state is needed to evaluate the rule.
 // Returns the total bonus points earned by this single pickup.
 const scorePickup = (moment: any, lastCategory: string | null): number => {
- 
- 
   if (lastCategory !== null && lastCategory === moment.user_category_name) {
-    return 1
+    return 1;
   }
 
-  return 0
- 
+  return 0;
 };
 
 const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
@@ -96,7 +93,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const multiplierRef = useRef(1);
 
-
   const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
   // const geckoScoreStateRef = useRef(geckoScoreState);
   // useEffect(() => {
@@ -115,10 +111,10 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     const expired =
       !geckoScoreState.expires_at ||
       new Date(geckoScoreState.expires_at).getTime() <= Date.now();
-    multiplierRef.current = expired ? 1 : geckoScoreState.multiplier ?? 1;
+    multiplierRef.current = expired ? 1 : (geckoScoreState.multiplier ?? 1);
   }, [geckoScoreState]);
 
-  const { scoreRules  } = useGeckoStaticData();
+  const { scoreRules } = useGeckoStaticData();
 
   const scoreRulesRef = useRef<
     Record<string, { code: number; points: number } | undefined>
@@ -149,21 +145,25 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   //   capsuleCount: capsuleList.length,
   // });
 
+  const {
+    socketStatus,
+    scoreStateRef,
+    liveScoreState,
+    getScoreState,
+    updateGeckoData,
+    flush,
+    registerOnScoreState,
+    registerOnSync,
+    hasReceivedInitialScoreStateRef,
+    initialBackendEnergyUpdatedAtRef,
+    latestBackendEnergyUpdatedAtRef,
+  } = useGeckoEnergySocket(selectedFriend?.id ?? null);
 
-const {
-  socketStatus,
-  scoreStateRef,
-  liveScoreState,
-  getScoreState,
-  updateScoreState,
-  registerOnScoreState,
-} = useGeckoEnergySocket();
-        useEffect(() => {
-          if (socketStatus) {
-            showFlashMessage(`Socket ${socketStatus}`, false, 1000)
-          }
-
-        }, [socketStatus]);
+  useEffect(() => {
+    if (socketStatus) {
+      showFlashMessage(`Socket ${socketStatus}`, false, 1000);
+    }
+  }, [socketStatus]);
   useEffect(() => {
     registerOnScoreState((data: any) => {
       if (!data) return;
@@ -173,7 +173,6 @@ const {
       };
     });
   }, [registerOnScoreState]);
-
 
   // const {
   //     gecko,
@@ -194,24 +193,24 @@ const {
   //   });
 
   const {
-  gecko,
-  updateReadIds,
-  getReadIds,
-  hasReadAll,
-  hasInitialized,
-  markInitialized,
-  isAwake,
-} = useGeckoSynthesizer_WS({
-  userId: user?.id,
-  geckoCombinedData,
-  geckoScoreState,
-  liveScoreState,
-  sessionTotals,
-  userSessionTotals,
-  friendId: selectedFriend?.id,
-  capsuleCount: capsuleList.length,
-  getScoreState,
-});
+    gecko,
+    updateReadIds,
+    getReadIds,
+    hasReadAll,
+    hasInitialized,
+    markInitialized,
+    isAwake,
+  } = useGeckoSynthesizer_WS({
+    userId: user?.id,
+    geckoCombinedData,
+    geckoScoreState,
+    liveScoreState,
+    sessionTotals,
+    userSessionTotals,
+    friendId: selectedFriend?.id,
+    capsuleCount: capsuleList.length,
+    getScoreState,
+  });
 
   const hasShownWelcome = useRef(false);
   const hasShownReadAll = useRef(false);
@@ -283,19 +282,12 @@ const {
   const triggerRecenter = () => setRecenterTrigger((prev) => prev + 1);
   const triggerBack = () => setBackTrigger((prev) => prev + 1);
 
-
-
-
-    useEffect(() => {
-    if (  !isAwake) {
+  useEffect(() => {
+    if (!isAwake) {
       triggerBack();
       // handleNavBack();
     }
-  }, [  isAwake]);
-
-
-
-
+  }, [isAwake]);
 
   const GROQ_MESSAGE_PAUSE_TIME = 10000;
   const { askGroq, onModalCloseRef } = useGroqBeta({
@@ -1073,15 +1065,14 @@ const {
     Map<string, { id: string; category: string; capsule: string }>
   >(new Map());
 
-
   const pointsGivenForReadAllRef = useRef(false);
 
   const categoryStreakRef = useRef(0);
-  const updateScoreStateRef = useRef(updateScoreState);
+  const updateGeckoDataRef = useRef(updateGeckoData);
 
   useEffect(() => {
-    updateScoreStateRef.current = updateScoreState;
-  }, [updateScoreState]);
+    updateGeckoDataRef.current = updateGeckoData;
+  }, [updateGeckoData]);
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -1104,7 +1095,10 @@ const {
         capsule: foundMoment.capsule,
       });
 
-      if (!pointsGivenForReadAllRef.current && readDataRef.current.size >= capsuleMap.size) {
+      if (
+        !pointsGivenForReadAllRef.current &&
+        readDataRef.current.size >= capsuleMap.size
+      ) {
         setLocalHasReadAll(true);
         scoreLabelRef.current = "GECKO_READ_ALL_NOTES";
         pointsGivenForReadAllRef.current = true;
@@ -1115,7 +1109,13 @@ const {
           categoryStreakRef.current += 1;
           if (categoryStreakRef.current >= 5) {
             categoryStreakRef.current = 0;
-            setTimeout(() => updateScoreStateRef.current({ multiplier: 2 }), 0);
+            setTimeout(
+              () =>
+                updateGeckoDataRef.current({
+                  score_state: { multiplier: 2 },
+                }),
+              0,
+            );
           }
         } else {
           categoryStreakRef.current = 0;
@@ -1184,13 +1184,15 @@ const {
 
   const DAYS_SINCE = friendDash?.days_since || 0;
 
-
-
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
       <View style={[StyleSheet.absoluteFill]}>
         <MomentsSkia
-        updateScoreState={updateScoreState}
+          updateGeckoData={updateGeckoData}
+          liveScoreStateRef={scoreStateRef}
+          hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
+          initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}
+          latestBackendEnergyUpdatedAtRef={latestBackendEnergyUpdatedAtRef}
           handleUpdateMomentCoords={handleUpdateMomentCoords}
           handleUpdateGeckoData={handleUpdateGeckoData}
           handleGetMoment={handleGetMoment}
@@ -1248,6 +1250,7 @@ const {
             fontSmall={skiaFontSmall}
           />
         )}
+        <Text>{liveScoreState?.energy?.toFixed(2)}</Text>
       </View>
 
       <GlassPreviewBottom
