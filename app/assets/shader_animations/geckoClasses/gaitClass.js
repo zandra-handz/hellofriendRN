@@ -1,292 +1,501 @@
-// Gait animation via distance leading point for creature travels instead of time
-export default class GaitState {
-  constructor(speedScalar, reverseSpeedScalar, energyConfig) {
-    this.TAU = Math.PI * 2;
-    this.gaitDistanceCorrection = 0;
-    this.accumulatedDistance = 0;
-    this.inputDistance = 0; // raw mouse-driven distance //mouse
-    this.finalDistance = 0;
+// // Gait animation via distance leading point for creature travels instead of time
+// export default class GaitState {
+//   constructor(speedScalar, reverseSpeedScalar, energyConfig) {
+//     this.TAU = Math.PI * 2;
+//     this.gaitDistanceCorrection = 0;
+//     this.accumulatedDistance = 0;
+//     this.inputDistance = 0; // raw mouse-driven distance //mouse
+//     this.finalDistance = 0;
 
-    this.maxAdvanceRate = 0.03; // distance per frame (tunable)
-    this.catchUpGain = 0.15;
-    this.speedScalar = speedScalar;
-    this.reverseSpeedScalar = reverseSpeedScalar;
+//     this.maxAdvanceRate = 0.03; // distance per frame (tunable)
+//     this.catchUpGain = 0.15;
+//     this.speedScalar = speedScalar;
+//     this.reverseSpeedScalar = reverseSpeedScalar;
 
-    this.stepCount = 0;
-    this.scalar = this.speedScalar; // initialize to forward scalar
+//     this.stepCount = 0;
+//     this.scalar = this.speedScalar; // initialize to forward scalar
 
-    this.threshold = 0.94;
-    this.cycle = 1 / this.scalar;
-    this.jumpCount = 0;
-    this.frontCenterAngle = 0;
+//     this.threshold = 0.94;
+//     this.cycle = 1 / this.scalar;
+//     this.jumpCount = 0;
+//     this.frontCenterAngle = 0;
 
-    this.step0Distance = Math.asin(this.threshold) / (this.TAU * this.scalar);
-    this.step1Distance = -Math.asin(this.threshold) / (this.TAU * this.scalar);
+//     this.step0Distance = Math.asin(this.threshold) / (this.TAU * this.scalar);
+//     this.step1Distance = -Math.asin(this.threshold) / (this.TAU * this.scalar);
 
-    this.externalDistanceDriver = 0;
+//     this.externalDistanceDriver = 0;
 
-    this.takeStep0 = false;
-    this.takeStep1 = false;
-    this.syncedStepOffset = 0.1;
-    this.takeSyncedSteps0 = false;
-    this.takeSyncedSteps1 = false;
+//     this.takeStep0 = false;
+//     this.takeStep1 = false;
+//     this.syncedStepOffset = 0.1;
+//     this.takeSyncedSteps0 = false;
+//     this.takeSyncedSteps1 = false;
 
-    this.swayBodyFront = false;
+//     this.swayBodyFront = false;
 
-    // New: backwards movement tracking
-    this.isReversing = false;
+//     // New: backwards movement tracking
+//     this.isReversing = false;
 
-    this.energy = energyConfig.energy ?? 1.0;
-    this.surplusEnergy = energyConfig.surplus_energy ?? 0.0;
-    this.stepFatiguePerStep = energyConfig.step_fatigue_per_step ?? 0;
-    this.rechargePerSecond = energyConfig.recharge_per_second ?? 0;
-    this.streakFatigueMultiplier =
-      energyConfig.streak_fatigue_multiplier ?? 0.25;
-    this.streakRechargePerSecond = energyConfig.streak_recharge_per_second ?? 0;
-    this.surplusCap = energyConfig.surplus_cap ?? 2.0;
-    this.stamina = energyConfig.stamina ?? 1.0;
+//     this.energy = energyConfig.energy ?? 1.0;
+//     this.surplusEnergy = energyConfig.surplus_energy ?? 0.0;
+//     this.stepFatiguePerStep = energyConfig.step_fatigue_per_step ?? 0;
+//     this.rechargePerSecond = energyConfig.recharge_per_second ?? 0;
+//     this.streakFatigueMultiplier =
+//       energyConfig.streak_fatigue_multiplier ?? 0.25;
+//     this.streakRechargePerSecond = energyConfig.streak_recharge_per_second ?? 0;
+//     this.surplusCap = energyConfig.surplus_cap ?? 2.0;
+//     this.stamina = energyConfig.stamina ?? 1.0;
 
-      this.multiplier = energyConfig.multiplier ?? 1;
-  this.baseMultiplier = energyConfig.base_multiplier ?? 1;
-    this.lastUpdateTime = performance.now();
-  }
+//       this.multiplier = energyConfig.multiplier ?? 1;
+//   this.baseMultiplier = energyConfig.base_multiplier ?? 1;
+//     this.lastUpdateTime = performance.now();
+//   }
 
-  // initEnergy(scoreState) {
-  //   this.energy = scoreState.energy;
-  //   this.surplusEnergy = scoreState.surplus_energy;
-  //   this.stepFatiguePerStep = scoreState.step_fatigue_per_step;
-  //   this.rechargePerSecond = scoreState.recharge_per_second;
-  //   this.streakFatigueMultiplier = scoreState.streak_fatigue_multiplier;
-  //   this.streakRechargePerSecond = scoreState.streak_recharge_per_second;
-  //   this.surplusCap = scoreState.surplus_cap;
-  // }
+//   // initEnergy(scoreState) {
+//   //   this.energy = scoreState.energy;
+//   //   this.surplusEnergy = scoreState.surplus_energy;
+//   //   this.stepFatiguePerStep = scoreState.step_fatigue_per_step;
+//   //   this.rechargePerSecond = scoreState.recharge_per_second;
+//   //   this.streakFatigueMultiplier = scoreState.streak_fatigue_multiplier;
+//   //   this.streakRechargePerSecond = scoreState.streak_recharge_per_second;
+//   //   this.surplusCap = scoreState.surplus_cap;
+//   // }
 
-  get phaseAngle() {
-    // New
-    const direction = this.isReversing ? -1 : 1;
-    return this.finalDistance * this.TAU * this.scalar * direction;
-    // return this.finalDistance * this.TAU * this.scalar;
-  }
+//   get phaseAngle() {
+//     // New
+//     const direction = this.isReversing ? -1 : 1;
+//     return this.finalDistance * this.TAU * this.scalar * direction;
+//     // return this.finalDistance * this.TAU * this.scalar;
+//   }
 
-  get phase() {
-    return Math.sin(this.phaseAngle);
-  }
+//   get phase() {
+//     return Math.sin(this.phaseAngle);
+//   }
 
-  // used for back legs, exploring using for body sway; just offsets the phase a little for more natural walking movement
-  get followerPhase() {
-    return Math.sin(this.phaseAngle - this.syncedStepOffset);
-  }
+//   // used for back legs, exploring using for body sway; just offsets the phase a little for more natural walking movement
+//   get followerPhase() {
+//     return Math.sin(this.phaseAngle - this.syncedStepOffset);
+//   }
 
-  get progress() {
-    return this.finalDistance % this.cycle;
-    // return this.accumulatedDistance % this.cycle;
-  }
+//   get progress() {
+//     return this.finalDistance % this.cycle;
+//     // return this.accumulatedDistance % this.cycle;
+//   }
 
-  updateSpeedScalar(scalar) {
-    this.scalar = scalar;
-    this.cycle = 1 / scalar;
+//   updateSpeedScalar(scalar) {
+//     this.scalar = scalar;
+//     this.cycle = 1 / scalar;
 
-    this.step0Distance = Math.asin(this.threshold) / (this.TAU * scalar);
-    this.step1Distance = -Math.asin(this.threshold) / (this.TAU * scalar);
-  }
+//     this.step0Distance = Math.asin(this.threshold) / (this.TAU * scalar);
+//     this.step1Distance = -Math.asin(this.threshold) / (this.TAU * scalar);
+//   }
 
-  update(externalDistanceDriver, goingBackwards) {
+//   update(externalDistanceDriver, goingBackwards) {
 
-      const now = performance.now();
-  const dt = (now - this.lastUpdateTime) / 1000;
-  this.lastUpdateTime = now;
+//       const now = performance.now();
+//   const dt = (now - this.lastUpdateTime) / 1000;
+//   this.lastUpdateTime = now;
   
-  if (this.energy > 0 && this.energy < 1.0) {
-      if (this.multiplier > this.baseMultiplier) {
-          const recharge = this.streakRechargePerSecond * this.stamina * dt;
-          this.energy = Math.min(1.0, this.energy + recharge);
-      }
-  }
+//   if (this.energy > 0 && this.energy < 1.0) {
+//       if (this.multiplier > this.baseMultiplier) {
+//           const recharge = this.streakRechargePerSecond * this.stamina * dt;
+//           this.energy = Math.min(1.0, this.energy + recharge);
+//       }
+//   }
 
 
   
-    this.isReversing = goingBackwards;
+//     this.isReversing = goingBackwards;
 
-    //console.log(this.phase)
-    if (this.isReversing) {
-      this.updateSpeedScalar(this.reverseSpeedScalar);
-      // console.log('gait is in reversal!!');
-    } else {
-      // console.log(`~~~~~~~~~~`)
-      this.updateSpeedScalar(this.speedScalar);
-    }
+//     //console.log(this.phase)
+//     if (this.isReversing) {
+//       this.updateSpeedScalar(this.reverseSpeedScalar);
+//       // console.log('gait is in reversal!!');
+//     } else {
+//       // console.log(`~~~~~~~~~~`)
+//       this.updateSpeedScalar(this.speedScalar);
+//     }
 
-    this.externalDistanceDriver = externalDistanceDriver;
+//     this.externalDistanceDriver = externalDistanceDriver;
 
-    this.finalDistance = externalDistanceDriver + this.gaitDistanceCorrection;
+//     this.finalDistance = externalDistanceDriver + this.gaitDistanceCorrection;
 
-    if (this.isReversing) {
-      if (this.phase < -0.89) {
-        this.takeStep0 = true;
-      }
-      if (this.phase > 0.89) {
-        this.takeStep1 = true;
-      }
+//     if (this.isReversing) {
+//       if (this.phase < -0.89) {
+//         this.takeStep0 = true;
+//       }
+//       if (this.phase > 0.89) {
+//         this.takeStep1 = true;
+//       }
 
-      if (this.followerPhase < -0.89) {
-        this.takeSyncedSteps0 = true;
-      } else if (this.followerPhase > 0.89) {
-        this.takeSyncedSteps1 = true;
-      }
-    } else {
-      // Normal forward step triggers
-      if (this.phase > 0.89) {
-        this.takeStep0 = true;
-      }
-      if (this.phase < -0.89) {
-        this.takeStep1 = true;
-      }
+//       if (this.followerPhase < -0.89) {
+//         this.takeSyncedSteps0 = true;
+//       } else if (this.followerPhase > 0.89) {
+//         this.takeSyncedSteps1 = true;
+//       }
+//     } else {
+//       // Normal forward step triggers
+//       if (this.phase > 0.89) {
+//         this.takeStep0 = true;
+//       }
+//       if (this.phase < -0.89) {
+//         this.takeStep1 = true;
+//       }
 
-      if (this.followerPhase > 0.89) {
-        this.takeSyncedSteps0 = true;
-      } else if (this.followerPhase < -0.89) {
-        this.takeSyncedSteps1 = true;
-      }
-    }
+//       if (this.followerPhase > 0.89) {
+//         this.takeSyncedSteps0 = true;
+//       } else if (this.followerPhase < -0.89) {
+//         this.takeSyncedSteps1 = true;
+//       }
+//     }
 
-    if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
-      // console.log("setting sway to tru!!");
-      this.swayBodyFront = true;
-    } else {
-      this.swayBodyFront = false;
-    }
+//     if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
+//       // console.log("setting sway to tru!!");
+//       this.swayBodyFront = true;
+//     } else {
+//       this.swayBodyFront = false;
+//     }
 
-    // if (this.takeStep0){
+//     // if (this.takeStep0){
 
-    //        console.log('setting step')
-    // } else if (this.takeStep1){
-    //     console.log('                       setting step')
+//     //        console.log('setting step')
+//     // } else if (this.takeStep1){
+//     //     console.log('                       setting step')
 
-    // } else {
-    //     console.log('                              no step')
-    // }
+//     // } else {
+//     //     console.log('                              no step')
+//     // }
 
-    // console.log(`finalDistance: ${this.finalDistance.toFixed(4)}`);
-  }
+//     // console.log(`finalDistance: ${this.finalDistance.toFixed(4)}`);
+//   }
 
-  jumpUpdate(inputDistance, dt = 1) {
-    // this.inputDistance += inputDistance;
-    this.gaitDistanceCorrection += inputDistance;
+//   jumpUpdate(inputDistance, dt = 1) {
+//     // this.inputDistance += inputDistance;
+//     this.gaitDistanceCorrection += inputDistance;
 
-    this.finalDistance =
-      this.externalDistanceDriver + this.gaitDistanceCorrection;
+//     this.finalDistance =
+//       this.externalDistanceDriver + this.gaitDistanceCorrection;
 
-    // Reverse step triggers when going backwards
-    if (this.isReversing) {
-      if (this.phase < -0.89) {
-        this.takeStep0 = true;
-      }
-      if (this.phase > 0.89) {
-        this.takeStep1 = true;
-      }
+//     // Reverse step triggers when going backwards
+//     if (this.isReversing) {
+//       if (this.phase < -0.89) {
+//         this.takeStep0 = true;
+//       }
+//       if (this.phase > 0.89) {
+//         this.takeStep1 = true;
+//       }
 
-      if (this.followerPhase < -0.89) {
-        this.takeSyncedSteps0 = true;
-      } else if (this.followerPhase > 0.89) {
-        this.takeSyncedSteps1 = true;
-      }
-    } else {
-      // Normal forward step triggers
-      if (this.phase > 0.89) {
-        this.takeStep0 = true;
-      }
-      if (this.phase < -0.89) {
-        this.takeStep1 = true;
-      }
+//       if (this.followerPhase < -0.89) {
+//         this.takeSyncedSteps0 = true;
+//       } else if (this.followerPhase > 0.89) {
+//         this.takeSyncedSteps1 = true;
+//       }
+//     } else {
+//       // Normal forward step triggers
+//       if (this.phase > 0.89) {
+//         this.takeStep0 = true;
+//       }
+//       if (this.phase < -0.89) {
+//         this.takeStep1 = true;
+//       }
 
-      if (this.followerPhase > 0.89) {
-        this.takeSyncedSteps0 = true;
-      } else if (this.followerPhase < -0.89) {
-        this.takeSyncedSteps1 = true;
-      }
-    }
+//       if (this.followerPhase > 0.89) {
+//         this.takeSyncedSteps0 = true;
+//       } else if (this.followerPhase < -0.89) {
+//         this.takeSyncedSteps1 = true;
+//       }
+//     }
 
-    if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
-      // console.log("setting sway to tru!!");
-      this.swayBodyFront = true;
-    } else {
-      this.swayBodyFront = false;
-    }
-  }
+//     if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
+//       // console.log("setting sway to tru!!");
+//       this.swayBodyFront = true;
+//     } else {
+//       this.swayBodyFront = false;
+//     }
+//   }
  
 
-  // stepCompleted(is1) {
-  //   if (is1) {
-  //     this.takeStep1 = false;
-  //   } else {
-  //     this.takeStep0 = false;
-  //   }
-  //   this.stepCount++;
+//   // stepCompleted(is1) {
+//   //   if (is1) {
+//   //     this.takeStep1 = false;
+//   //   } else {
+//   //     this.takeStep0 = false;
+//   //   }
+//   //   this.stepCount++;
 
-  //   const fatigue = this.stepFatiguePerStep / this.stamina;
-  //   if (this.surplusEnergy >= fatigue) {
-  //     this.surplusEnergy -= fatigue;
-  //   } else {
-  //     const remaining = fatigue - this.surplusEnergy;
-  //     this.surplusEnergy = 0;
-  //     this.energy = Math.max(0, this.energy - remaining);
-  //     console.log(this.energy);
-  //   }
+//   //   const fatigue = this.stepFatiguePerStep / this.stamina;
+//   //   if (this.surplusEnergy >= fatigue) {
+//   //     this.surplusEnergy -= fatigue;
+//   //   } else {
+//   //     const remaining = fatigue - this.surplusEnergy;
+//   //     this.surplusEnergy = 0;
+//   //     this.energy = Math.max(0, this.energy - remaining);
+//   //     console.log(this.energy);
+//   //   }
 
-  //   // console.log('stepCount:', this.stepCount);
-  // }
+//   //   // console.log('stepCount:', this.stepCount);
+//   // }
 
-    stepCompleted(is1) {                                                                                                                                                                                                                              
-      if (is1) {  
-          this.takeStep1 = false;
-      } else {
-          this.takeStep0 = false;
+//     stepCompleted(is1) {                                                                                                                                                                                                                              
+//       if (is1) {  
+//           this.takeStep1 = false;
+//       } else {
+//           this.takeStep0 = false;
+//       }
+//       this.stepCount++; 
+//       // console.log(this.stepCount)
+
+//       let fatigue = this.stepFatiguePerStep / this.stamina;
+//       if (this.multiplier > this.baseMultiplier) {
+//           fatigue *= this.streakFatigueMultiplier;
+//       }
+//       if (this.surplusEnergy >= fatigue) {
+//           this.surplusEnergy -= fatigue;
+//       } else {
+//           const remaining = fatigue - this.surplusEnergy;
+//           this.surplusEnergy = 0;
+//           this.energy = Math.max(0, this.energy - remaining);
+//       }
+//       //  console.log(this.energy);
+//   }
+//   syncedStepsCompleted(is1) {
+//     if (is1) {
+//       this.takeSyncedSteps1 = false;
+//     } else {
+//       this.takeSyncedSteps0 = false;
+//     }
+//   }
+
+//   catchUp(is1) {
+//     // PRE JUMP LOGS
+//     // console.log("Before Jump:");
+//     // console.log(`Accumulated Distance: ${this.accumulatedDistance}`);
+//     // console.log(`Progress: ${this.progress}`);
+//     // console.log(`Step 0 Distance: ${this.step0Distance}`);
+//     // console.log(`Step 1 Distance: ${this.step1Distance}`);
+
+//     let jumpDistance =
+//       (is1 ? this.step1Distance : this.step0Distance) - this.progress;
+
+//     // If jump distance is negative, wrap it around the cycle
+//     if (jumpDistance < 0) jumpDistance += this.cycle;
+//     this.jumpUpdate(jumpDistance);
+//     this.jumpCount++;
+
+//     // POST JUMP LOGS:
+//     // console.log('After Jump:');
+//     // console.log(`New Accumulated Distance: ${this.accumulatedDistance}`);
+//     // console.log(`New Progress: ${this.progress}`);
+//     // console.log(`phase`, this.phase);
+//     // console.log(`followerPhase`, this.followerPhase);
+//   }
+// }
+
+
+  export default class GaitState {                                                                                                                                                                                                                   
+    constructor(speedScalar, reverseSpeedScalar, energyConfig) {                                                                                                                                                                                     
+      this.TAU = Math.PI * 2;                                                                                                                                                                                                                        
+      this.gaitDistanceCorrection = 0;
+      this.accumulatedDistance = 0;
+      this.inputDistance = 0;
+      this.finalDistance = 0;
+
+      this.maxAdvanceRate = 0.03;
+      this.catchUpGain = 0.15;
+      this.speedScalar = speedScalar;
+      this.reverseSpeedScalar = reverseSpeedScalar;
+
+      this.stepCount = 0;
+      this.scalar = this.speedScalar;
+
+      this.threshold = 0.94;
+      this.cycle = 1 / this.scalar;
+      this.jumpCount = 0;
+      this.frontCenterAngle = 0;
+
+      this.step0Distance = Math.asin(this.threshold) / (this.TAU * this.scalar);
+      this.step1Distance = -Math.asin(this.threshold) / (this.TAU * this.scalar);
+
+      this.externalDistanceDriver = 0;
+
+      this.takeStep0 = false;
+      this.takeStep1 = false;
+      this.syncedStepOffset = 0.1;
+      this.takeSyncedSteps0 = false;
+      this.takeSyncedSteps1 = false;
+
+      this.swayBodyFront = false;
+      this.isReversing = false;
+
+      this.energy = energyConfig.energy ?? 1.0;
+      this.surplusEnergy = energyConfig.surplus_energy ?? 0.0;
+      this.stepFatiguePerStep = energyConfig.step_fatigue_per_step ?? 0;
+      this.rechargePerSecond = energyConfig.recharge_per_second ?? 0;
+      this.streakFatigueMultiplier = energyConfig.streak_fatigue_multiplier ?? 0.25;
+      this.streakRechargePerSecond = energyConfig.streak_recharge_per_second ?? 0;
+      this.surplusCap = energyConfig.surplus_cap ?? 2.0;
+      this.stamina = energyConfig.stamina ?? 1.0;
+
+      this.multiplier = energyConfig.multiplier ?? 1;
+      this.baseMultiplier = energyConfig.base_multiplier ?? 1;
+      this.lastUpdateTime = performance.now();
+
+      // NEW — window accumulators, reset by consumeWindowTotals()
+      this.windowFatigue = 0;
+      this.windowRecharge = 0;
+    }
+
+    // NEW — call this when building the sync payload
+    consumeWindowTotals() {
+      const out = {
+        fatigue: this.windowFatigue,
+        recharge: this.windowRecharge,
+      };
+      this.windowFatigue = 0;
+      this.windowRecharge = 0;
+      return out;
+    }
+
+    get phaseAngle() {
+      const direction = this.isReversing ? -1 : 1;
+      return this.finalDistance * this.TAU * this.scalar * direction;
+    }
+
+    get phase() {
+      return Math.sin(this.phaseAngle);
+    }
+
+    get followerPhase() {
+      return Math.sin(this.phaseAngle - this.syncedStepOffset);
+    }
+
+    get progress() {
+      return this.finalDistance % this.cycle;
+    }
+
+    updateSpeedScalar(scalar) {
+      this.scalar = scalar;
+      this.cycle = 1 / scalar;
+      this.step0Distance = Math.asin(this.threshold) / (this.TAU * scalar);
+      this.step1Distance = -Math.asin(this.threshold) / (this.TAU * scalar);
+    }
+
+    update(externalDistanceDriver, goingBackwards) {
+      const now = performance.now();
+      const dt = (now - this.lastUpdateTime) / 1000;
+      this.lastUpdateTime = now;
+
+      // NEW — recharge model now mirrors backend:
+      // streak: streakRechargePerSecond, otherwise: rechargePerSecond
+      if (this.energy > 0 && this.energy < 1.0) {
+        const rate =
+          this.multiplier > this.baseMultiplier
+            ? this.streakRechargePerSecond
+            : this.rechargePerSecond;
+        const recharge = rate * this.stamina * dt;
+        const before = this.energy;
+        this.energy = Math.min(1.0, this.energy + recharge);
+        this.windowRecharge += this.energy - before; // actual applied (clamp-aware)
       }
-      this.stepCount++; 
-      console.log(this.stepCount)
+
+      this.isReversing = goingBackwards;
+
+      if (this.isReversing) {
+        this.updateSpeedScalar(this.reverseSpeedScalar);
+      } else {
+        this.updateSpeedScalar(this.speedScalar);
+      }
+
+      this.externalDistanceDriver = externalDistanceDriver;
+      this.finalDistance = externalDistanceDriver + this.gaitDistanceCorrection;
+
+      if (this.isReversing) {
+        if (this.phase < -0.89) this.takeStep0 = true;
+        if (this.phase > 0.89) this.takeStep1 = true;
+        if (this.followerPhase < -0.89) this.takeSyncedSteps0 = true;
+        else if (this.followerPhase > 0.89) this.takeSyncedSteps1 = true;
+      } else {
+        if (this.phase > 0.89) this.takeStep0 = true;
+        if (this.phase < -0.89) this.takeStep1 = true;
+        if (this.followerPhase > 0.89) this.takeSyncedSteps0 = true;
+        else if (this.followerPhase < -0.89) this.takeSyncedSteps1 = true;
+      }
+
+      if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
+        this.swayBodyFront = true;
+      } else {
+        this.swayBodyFront = false;
+      }
+    }
+
+    jumpUpdate(inputDistance, dt = 1) {
+      this.gaitDistanceCorrection += inputDistance;
+      this.finalDistance =
+        this.externalDistanceDriver + this.gaitDistanceCorrection;
+
+      if (this.isReversing) {
+        if (this.phase < -0.89) this.takeStep0 = true;
+        if (this.phase > 0.89) this.takeStep1 = true;
+        if (this.followerPhase < -0.89) this.takeSyncedSteps0 = true;
+        else if (this.followerPhase > 0.89) this.takeSyncedSteps1 = true;
+      } else {
+        if (this.phase > 0.89) this.takeStep0 = true;
+        if (this.phase < -0.89) this.takeStep1 = true;
+        if (this.followerPhase > 0.89) this.takeSyncedSteps0 = true;
+        else if (this.followerPhase < -0.89) this.takeSyncedSteps1 = true;
+      }
+
+      if (this.followerPhase > 0.94 || this.followerPhase < -0.94) {
+        this.swayBodyFront = true;
+      } else {
+        this.swayBodyFront = false;
+      }
+    }
+
+    stepCompleted(is1) {
+      if (is1) {
+        this.takeStep1 = false;
+      } else {
+        this.takeStep0 = false;
+      }
+      this.stepCount++;
 
       let fatigue = this.stepFatiguePerStep / this.stamina;
       if (this.multiplier > this.baseMultiplier) {
-          fatigue *= this.streakFatigueMultiplier;
+        fatigue *= this.streakFatigueMultiplier;
       }
+
+      // NEW — track actual fatigue applied to energy+surplus for this window
+      const energyBefore = this.energy;
+      const surplusBefore = this.surplusEnergy;
+
       if (this.surplusEnergy >= fatigue) {
-          this.surplusEnergy -= fatigue;
+        this.surplusEnergy -= fatigue;
       } else {
-          const remaining = fatigue - this.surplusEnergy;
-          this.surplusEnergy = 0;
-          this.energy = Math.max(0, this.energy - remaining);
+        const remaining = fatigue - this.surplusEnergy;
+        this.surplusEnergy = 0;
+        this.energy = Math.max(0, this.energy - remaining);
       }
-       console.log(this.energy);
-  }
-  syncedStepsCompleted(is1) {
-    if (is1) {
-      this.takeSyncedSteps1 = false;
-    } else {
-      this.takeSyncedSteps0 = false;
+
+      this.windowFatigue +=
+        (surplusBefore - this.surplusEnergy) + (energyBefore - this.energy);
+    }
+
+    syncedStepsCompleted(is1) {
+      if (is1) {
+        this.takeSyncedSteps1 = false;
+      } else {
+        this.takeSyncedSteps0 = false;
+      }
+    }
+
+    catchUp(is1) {
+      let jumpDistance =
+        (is1 ? this.step1Distance : this.step0Distance) - this.progress;
+      if (jumpDistance < 0) jumpDistance += this.cycle;
+      this.jumpUpdate(jumpDistance);
+      this.jumpCount++;
     }
   }
-
-  catchUp(is1) {
-    // PRE JUMP LOGS
-    // console.log("Before Jump:");
-    // console.log(`Accumulated Distance: ${this.accumulatedDistance}`);
-    // console.log(`Progress: ${this.progress}`);
-    // console.log(`Step 0 Distance: ${this.step0Distance}`);
-    // console.log(`Step 1 Distance: ${this.step1Distance}`);
-
-    let jumpDistance =
-      (is1 ? this.step1Distance : this.step0Distance) - this.progress;
-
-    // If jump distance is negative, wrap it around the cycle
-    if (jumpDistance < 0) jumpDistance += this.cycle;
-    this.jumpUpdate(jumpDistance);
-    this.jumpCount++;
-
-    // POST JUMP LOGS:
-    // console.log('After Jump:');
-    // console.log(`New Accumulated Distance: ${this.accumulatedDistance}`);
-    // console.log(`New Progress: ${this.progress}`);
-    // console.log(`phase`, this.phase);
-    // console.log(`followerPhase`, this.followerPhase);
-  }
-}
+ 
+ 

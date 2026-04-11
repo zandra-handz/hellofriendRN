@@ -112,6 +112,7 @@ type Props = {
 
 const MomentsSkia = ({
   updateGeckoData,
+  sendGeckoPositionRef,
   handleUpdateMomentCoords,
   handleUpdateGeckoData,
   handleGetMoment,
@@ -144,7 +145,7 @@ const MomentsSkia = ({
   recenterTrigger,
   backTrigger,
   geckoScoreState,
-  energyRef,
+ 
   liveScoreStateRef, 
   hasReceivedInitialScoreStateRef,
   initialBackendEnergyUpdatedAtRef,
@@ -381,13 +382,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
     //     gecko.current.gait.surplusEnergy = latest.surplus_energy;
     // }
 
-    console.log("[SESSION DEBUG]", {
-      startedOn: new Date(sessionStartRef.current).toISOString(),
-      endedOn: new Date(sessionEndRef.current).toISOString(),
-      durationSec: (sessionEndRef.current - sessionStartRef.current) / 1000,
-      steps: gecko.current.gait.stepCount - stepsRef.current,
-      frontendEnergy: gecko.current.gait.energy,
-    });
+ 
 
     console.log("[FRONTEND BATCH SNAPSHOT]", {
       startedOn: new Date(sessionStartRef.current).toISOString(),
@@ -413,13 +408,23 @@ const applyLiveScoreStateToGait = useCallback(() => {
     //   pointsEarnedList: newPoints,
     // });
 
-    const payload = {
-      steps: gecko.current.gait.stepCount - stepsRef.current,
-      distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
-      started_on: new Date(sessionStartRef.current).toISOString(),
-      ended_on: new Date(sessionEndRef.current).toISOString(),
-      points_earned: newPoints,
-    };
+  const { fatigue: client_fatigue, recharge: client_recharge } =                                                                                                                                                                                         gecko.current.gait.consumeWindowTotals();                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                     
+  const payload = {
+    steps: gecko.current.gait.stepCount - stepsRef.current,
+    distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
+    started_on: new Date(sessionStartRef.current).toISOString(),
+    ended_on: new Date(sessionEndRef.current).toISOString(),
+    points_earned: newPoints,
+    //NEW FOR ANALYZING SYNC VIA BACKEND
+    client_energy: gecko.current.gait.energy,
+    client_surplus_energy: gecko.current.gait.surplusEnergy,
+    client_multiplier: gecko.current.gait.multiplier,
+    client_computed_at: new Date().toISOString(),
+    client_fatigue,
+    client_recharge,
+  };
+
 
     console.log("[FRONTEND SEND PAYLOAD]", payload);
 
@@ -921,6 +926,8 @@ const applyLiveScoreStateToGait = useCallback(() => {
         leadPoint.current.isMoving,
       );
 
+   
+
       //       geckoStepsRef.current = gecko.current.legs.frontLegs.stepCount;
       // geckoDistanceRef.current = leadPoint.current.leadDistanceTraveled;
 
@@ -1059,6 +1066,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
           updateTrigger.value += 1;
         }
       }
+         sendGeckoPositionRef.current(leadPoint.current.lead);
 
       frame = requestAnimationFrame(animate);
     };

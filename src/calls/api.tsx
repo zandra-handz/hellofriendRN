@@ -299,6 +299,78 @@ export const updateGeckoScoreState = async (fieldUpdates: object) => {
 
 
 
+  // export const fetchGeckoSyncLog = async ({                                                                                                                                                                                                                
+  //   page = 1,                                                                                                                                                                                                                                                  }: {                                                                                                                                                                                                                                                       
+  //   page?: number;                                                                                                                                                                                                                                           
+  // }) => {
+  //   try {
+  //     const response = await helloFriendApiClient.get(
+  //       `/users/gecko/energy-sync/?page=${page}`
+  //     );
+  //     if (response?.data && response?.data?.results) {
+  //       console.log(`SYNC LOG!: `, response.data)
+  //       return response.data;
+  //     } else {
+  //       console.log("No data returned from fetchGeckoSyncLog.");
+  //       return { results: [], next: null, previous: null };
+  //     }
+  //   } catch (e: unknown) {
+  //     handleApiError(e, "Error during fetchGeckoSyncLog");
+  //   }
+  // };
+
+
+
+  
+  export const fetchGeckoSyncLog = async ({                                                                                                                                                                                                              page = 1,
+    trigger,
+    excludeTriggers,
+    since,
+    until,
+  }: {
+    page?: number;
+    trigger?: string;
+    excludeTriggers?: string[];
+    since?: string;
+    until?: string;
+  }) => {
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      if (trigger) params.set('trigger', trigger);
+      if (excludeTriggers) {
+        excludeTriggers.forEach(t => params.append('exclude_trigger', t));
+      }
+      if (since) params.set('since', since);
+      if (until) params.set('until', until);
+
+      const response = await helloFriendApiClient.get(
+        `/users/gecko/energy-sync/?${params.toString()}`
+      );
+      if (response?.data && response?.data?.results) {
+        // console.log(`SYNC LOG!: `, response.data);
+        return response.data;
+      } else {
+        console.log("No data returned from fetchGeckoSyncLog.");
+        return { results: [], next: null, previous: null };
+      }
+    } catch (e: unknown) {
+      handleApiError(e, "Error during fetchGeckoSyncLog");
+    }
+  };
+
+  // Then the call sites become:
+
+  // // only real drift data (the useful rows)
+  // fetchGeckoSyncLog({ trigger: 'update_gecko_data' });
+
+  // // everything except streak activations and state fetches
+  // fetchGeckoSyncLog({
+  //   excludeTriggers: ['streak_activate', 'get_score_state'],
+  // });
+
+
+
   export const fetchGeckoEnergyLog = async ({                                                                                                                                                                                                                
     page = 1,                                                                                                                                                                                                                                                  }: {                                                                                                                                                                                                                                                       
     page?: number;                                                                                                                                                                                                                                           

@@ -19,6 +19,7 @@ import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserPoints from "@/src/hooks/useUserPoints";
+import EnergyText from "@/app/components/fidget/EnergyText";
 import useGeckoSynthesizer from "@/src/hooks/useGeckoSynthesizer";
 import useGeckoSynthesizer_WS from "@/src/hooks/useGeckoSynthesizer_WS";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
@@ -47,6 +48,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
 import { freezeEnabled } from "react-native-screens";
 import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
+import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 
 type Props = {
   skiaFontLarge: SkFont;
@@ -93,7 +95,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const multiplierRef = useRef(1);
 
-  const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
+  // const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
   // const geckoScoreStateRef = useRef(geckoScoreState);
   // useEffect(() => {
 
@@ -149,8 +151,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     socketStatus,
     scoreStateRef,
     liveScoreState,
+    energySV,
     getScoreState,
     updateGeckoData,
+    sendGeckoPosition,
+    peerGeckoPositionSV,
+    registerOnGeckoCoords,
+
     flush,
     registerOnScoreState,
     registerOnSync,
@@ -164,15 +171,26 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       showFlashMessage(`Socket ${socketStatus}`, false, 1000);
     }
   }, [socketStatus]);
+  // useEffect(() => {
+  //   registerOnScoreState((data: any) => {
+  //     if (!data) return;
+  //     energyRef.current = {
+  //       energy: data.energy ?? energyRef.current.energy,
+  //       surplusEnergy: data.surplus_energy ?? energyRef.current.surplusEnergy,
+  //     };
+  //   });
+  // }, [registerOnScoreState]);
+
+
   useEffect(() => {
-    registerOnScoreState((data: any) => {
-      if (!data) return;
-      energyRef.current = {
-        energy: data.energy ?? energyRef.current.energy,
-        surplusEnergy: data.surplus_energy ?? energyRef.current.surplusEnergy,
-      };
-    });
-  }, [registerOnScoreState]);
+registerOnGeckoCoords((data) => {
+  peerGeckoPositionSV.value = {
+    from_user: data.from_user,
+    position: data.position,
+    received_at: performance.now(),
+  };
+});
+}, [registerOnGeckoCoords]);
 
   // const {
   //     gecko,
@@ -1069,10 +1087,15 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const categoryStreakRef = useRef(0);
   const updateGeckoDataRef = useRef(updateGeckoData);
+  const sendGeckoPositionRef = useRef(sendGeckoPosition);
 
   useEffect(() => {
     updateGeckoDataRef.current = updateGeckoData;
   }, [updateGeckoData]);
+
+  useEffect(() => {
+    sendGeckoPositionRef.current = sendGeckoPosition;
+  }, [sendGeckoPosition]);
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -1112,6 +1135,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
             setTimeout(
               () =>
                 updateGeckoDataRef.current({
+                  event_type: "streak_activate",
                   score_state: { multiplier: 2 },
                 }),
               0,
@@ -1189,12 +1213,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       <View style={[StyleSheet.absoluteFill]}>
         <MomentsSkia
           updateGeckoData={updateGeckoData}
+          sendGeckoPositionRef={sendGeckoPositionRef}
           liveScoreStateRef={scoreStateRef}
           hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
           initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}
           latestBackendEnergyUpdatedAtRef={latestBackendEnergyUpdatedAtRef}
           handleUpdateMomentCoords={handleUpdateMomentCoords}
-          handleUpdateGeckoData={handleUpdateGeckoData}
+          // handleUpdateGeckoData={handleUpdateGeckoData}
           handleGetMoment={handleGetMoment}
           color1={manualGradientColors.lightColor}
           color2={manualGradientColors.homeDarkColor}
@@ -1223,7 +1248,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           recenterTrigger={recenterTrigger}
           backTrigger={backTrigger}
           geckoScoreState={geckoScoreState}
-          energyRef={energyRef}
+   
           liveScoreStateRef={scoreStateRef}
           // geckoScoreStateRef={geckoScoreStateRef}
         />
@@ -1250,7 +1275,10 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
             fontSmall={skiaFontSmall}
           />
         )}
-        <Text>{liveScoreState?.energy?.toFixed(2)}</Text>
+        {/* <Text>{liveScoreState?.energy?.toFixed(2)}</Text>  */}
+        <EnergyText energySV={energySV} />
+<PeerGeckoPositionText peerGeckoPositionSV={peerGeckoPositionSV} />
+     
       </View>
 
       <GlassPreviewBottom

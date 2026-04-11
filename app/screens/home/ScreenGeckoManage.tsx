@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useUser from "@/src/hooks/useUser";
@@ -12,6 +12,9 @@ import useUpdateGeckoConfigs from "@/src/hooks/GeckoCalls/useUpdateGeckoConfigs"
 import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
 import HoursSelector from "./HoursSelector";
 import GeckoEnergyLogList from "@/app/components/helloes/GeckoEnergyLogList";
+import GeckoSyncLogList from "@/app/components/helloes/GeckoSyncLogList";
+import GeckoSyncLogChartStack from "@/app/components/helloes/GeckoSyncLogChartStack";
+import useUserGeckoSyncLog from "@/src/hooks/GeckoCalls/useUserGeckoSyncLog";
 import useUserGeckoEnergyLog from "@/src/hooks/GeckoCalls/useUserGeckoEnergyLog";
 // ─── Map gecko section ids to backend field names ───────────────
 const SECTION_CONFIG_MAP = {
@@ -57,9 +60,29 @@ const ScreenGeckoManage = (props: Props) => {
     fetchNextPage,
     hasNextPage,
   } = useUserGeckoEnergyLog({ fetchAll: false });
-  const { updateGeckoConfigs } = useUpdateGeckoConfigs({ userId: user?.id });
 
   const [viewCategoryId, setViewCategoryId] = useState<string | null>(null);
+  const [syncLogView, setSyncLogView] = useState<"list" | "chart">("chart");
+  const [syncRange, setSyncRange] = useState<"24h" | "7d" | "30d" | "all">(
+    "24h",
+  );
+
+  const sinceISO = useMemo(() => {
+    if (syncRange === "all") return undefined;
+    const now = Date.now();
+    const hours =
+      syncRange === "24h" ? 24 : syncRange === "7d" ? 24 * 7 : 24 * 30;
+    return new Date(now - hours * 60 * 60 * 1000).toISOString();
+  }, [syncRange]);
+
+  const {
+    userGeckoSyncLogFlattened,
+    isFetchingNextPage: syncLogIsFetchingNextPage,
+    fetchNextPage: fetchNextSyncLogPage,
+    hasNextPage: hasNextSyncLogPage,
+  } = useUserGeckoSyncLog({ fetchAll: syncLogView === "chart", since: sinceISO });
+
+  const { updateGeckoConfigs } = useUpdateGeckoConfigs({ userId: user?.id });
 
   // useEffect(() => {
   //   if (viewCategoryId){
@@ -199,7 +222,7 @@ const ScreenGeckoManage = (props: Props) => {
             )}
           </Animated.View>
         )}
-
+{/* 
         <GeckoEnergyLogList
           userId={user?.id}
           listData={userGeckoEnergyLogFlattened}
@@ -207,7 +230,231 @@ const ScreenGeckoManage = (props: Props) => {
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}
           primaryColor={textColor}
-        />
+        /> */}
+
+        <View style={styles.syncToggleRow}>
+          <Pressable
+            onPress={() => setSyncLogView("list")}
+            style={[
+              styles.syncToggleBtn,
+              {
+                borderColor: textColor,
+                backgroundColor:
+                  syncLogView === "list" ? textColor : "transparent",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.syncToggleText,
+                {
+                  color:
+                    syncLogView === "list"
+                      ? lightDarkTheme.primaryBackground
+                      : textColor,
+                },
+              ]}
+            >
+              list
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setSyncLogView("chart")}
+            style={[
+              styles.syncToggleBtn,
+              {
+                borderColor: textColor,
+                backgroundColor:
+                  syncLogView === "chart" ? textColor : "transparent",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.syncToggleText,
+                {
+                  color:
+                    syncLogView === "chart"
+                      ? lightDarkTheme.primaryBackground
+                      : textColor,
+                },
+              ]}
+            >
+              chart
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.syncToggleRow}>
+          {(["24h", "7d", "30d", "all"] as const).map((r) => {
+            const active = syncRange === r;
+            return (
+              <Pressable
+                key={r}
+                onPress={() => setSyncRange(r)}
+                style={[
+                  styles.syncToggleBtn,
+                  {
+                    borderColor: textColor,
+                    backgroundColor: active ? textColor : "transparent",
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.syncToggleText,
+                    {
+                      color: active
+                        ? lightDarkTheme.primaryBackground
+                        : textColor,
+                    },
+                  ]}
+                >
+                  {r}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {syncLogView === "list" ? (
+          <GeckoSyncLogList
+            userId={user?.id}
+            listData={userGeckoSyncLogFlattened}
+            isFetchingNextPage={syncLogIsFetchingNextPage}
+            fetchNextPage={fetchNextSyncLogPage}
+            hasNextPage={hasNextSyncLogPage}
+            primaryColor={textColor}
+          />
+        ) : (
+          <ScrollView
+            style={styles.chartScroll}
+            contentContainerStyle={styles.chartScrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+          <GeckoSyncLogChartStack
+            listData={userGeckoSyncLogFlattened}
+            primaryColor={textColor}
+            charts={[
+              {
+                key: "energy",
+                title: "energy",
+                series: [
+                  {
+                    key: "client_energy",
+                    label: "client_energy",
+                    color: "#4FC3F7",
+                    accessor: (e) => e.client_energy,
+                  },
+                  {
+                    key: "server_energy_after",
+                    label: "server_energy_after",
+                    color: "#FF8A65",
+                    accessor: (e) => e.server_energy_after,
+                  },
+                ],
+              },
+              {
+                kind: "strip",
+                key: "variance_strip",
+                title: "client divergence (vs server truth)",
+                height: 60,
+                accessor: (e) =>
+                  e.client_energy != null && e.server_energy_after != null
+                    ? e.client_energy - e.server_energy_after
+                    : null,
+              },
+              {
+                key: "energy_variance",
+                title: "client divergence (client − server)",
+                series: [
+                  {
+                    key: "energy_variance",
+                    label: "+ ahead / − behind",
+                    color: "#BA68C8",
+                    accessor: (e) =>
+                      e.client_energy != null && e.server_energy_after != null
+                        ? e.client_energy - e.server_energy_after
+                        : null,
+                  },
+                ],
+              },
+              {
+                key: "surplus",
+                title: "surplus energy",
+                yMin: -1,
+                yMax: 2,
+                series: [
+                  {
+                    key: "server_surplus_after",
+                    label: "server",
+                    color: "#FF8A65",
+                    accessor: (e) => e.server_surplus_after,
+                  },
+                  {
+                    key: "client_surplus",
+                    label: "client",
+                    color: "#4FC3F7",
+                    accessor: (e) => e.client_surplus,
+                  },
+                ],
+              },
+              {
+                key: "recharge",
+                title: "recharge",
+                series: [
+                  {
+                    key: "server_recharge",
+                    label: "server",
+                    color: "#FF8A65",
+                    accessor: (e) => e.recompute_recharge,
+                  },
+                  {
+                    key: "client_recharge",
+                    label: "client",
+                    color: "#4FC3F7",
+                    accessor: (e) => e.client_recharge,
+                  },
+                ],
+              },
+              {
+                key: "fatigue",
+                title: "fatigue",
+                series: [
+                  {
+                    key: "server_fatigue",
+                    label: "server",
+                    color: "#FF8A65",
+                    accessor: (e) => e.recompute_fatigue,
+                  },
+                  {
+                    key: "client_fatigue",
+                    label: "client",
+                    color: "#4FC3F7",
+                    accessor: (e) => e.client_fatigue,
+                  },
+                ],
+              },
+              {
+                kind: "strip",
+                key: "start_time_gap_strip",
+                title: "client_started_on − server_updated_at_before (sec)",
+                height: 60,
+                redThreshold: 2,
+                accessor: (e) => {
+                  if (!e.client_started_on || !e.server_updated_at_before)
+                    return null;
+                  const client = new Date(e.client_started_on).getTime();
+                  const server = new Date(e.server_updated_at_before).getTime();
+                  if (!Number.isFinite(client) || !Number.isFinite(server))
+                    return null;
+                  return (client - server) / 1000;
+                },
+              },
+            ]}
+          />
+          </ScrollView>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -233,7 +480,31 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: 'pink',
      marginVertical: 20,
-  }
+  },
+  syncToggleRow: {
+    flexDirection: "row",
+    gap: 8,
+    paddingHorizontal: 4,
+    marginBottom: 6,
+  },
+  syncToggleBtn: {
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderRadius: 6,
+  },
+  syncToggleText: {
+    fontSize: 11,
+    fontWeight: "700",
+    textTransform: "uppercase",
+  },
+  chartScroll: {
+    flex: 1,
+    width: "100%",
+  },
+  chartScrollContent: {
+    paddingBottom: 20,
+  },
 });
 
 export default ScreenGeckoManage;
