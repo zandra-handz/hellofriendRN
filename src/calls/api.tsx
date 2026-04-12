@@ -287,8 +287,9 @@ export const getFriendLinkCode = async () => {
 };
 
 export const linkUserToFriendWithCode = async (friendId: number, code: string) => {
+  console.log('link to user friend payload', friendId, code)
   try {
-    const response = await helloFriendApiClient.post(`friend/${friendId}/link/`, { code });
+    const response = await helloFriendApiClient.post(`friends/${friendId}/link/`, { code });
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during linkUserToFriendWithCode");
@@ -1202,6 +1203,47 @@ export const fetchFriendDashboard = async (friendId: number) => {
     throw error;
   }
 };
+
+
+  export const getCurrentLiveSesh = async () => {                                                                                                                                                                                                        try {
+      const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);                                                                                                                                                                  
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during getCurrentLiveSesh");
+    }
+  };
+
+  export const getLiveSeshInvites = async () => {
+    try {
+      const response = await helloFriendApiClient.get(`/users/live-sesh/invites/`);
+      return response.data; // { sent: [...], pending: [...] }
+    } catch (e: unknown) {
+      handleApiError(e, "Error during getLiveSeshInvites");
+    }
+  };
+
+  export const acceptLiveSeshInvite = async (inviteId: number) => {
+    try {
+      const response = await helloFriendApiClient.post(
+        `/users/live-sesh/invites/${inviteId}/accept/`,
+      );
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during acceptLiveSeshInvite");
+    }
+  };
+
+
+    export const createLiveSeshInvite = async (friendId: number) => {
+    try {
+      const response = await helloFriendApiClient.post(
+        `/friends/${friendId}/live-sesh/invite/`,
+      );
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during createLiveSeshInvite");
+    }
+  };
 
 export const remixAllNextHelloes = async (userId: number) => {
   try {

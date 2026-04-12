@@ -12,13 +12,14 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import useLinkUserToFriend from "@/src/hooks/FriendCalls/useLinkUserToFriend";
 
 interface Props {
+  userId: number;
   friendId: number;
   color: string;
   viewCode: boolean;
 }
 
-const LinkUserWithCode: React.FC<Props> = ({ friendId, color, viewCode }) => {
-  const { handleLinkUser, linkMutation } = useLinkUserToFriend({ friendId });
+const LinkUserWithCode: React.FC<Props> = ({ userId, friendId, color, viewCode }) => {
+  const { handleLinkUser, linkMutation } = useLinkUserToFriend({ userId, friendId });
   const [code, setCode] = useState("");
   const [scanning, setScanning] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();

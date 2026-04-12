@@ -32,6 +32,7 @@ import { AppFontStyles } from "@/app/styles/AppFonts";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { formatDurationFromSeconds } from "@/app/components/headers/util_formatDurationFromSeconds";
 import { ScrollView } from "react-native-gesture-handler";
+import LiveSeshInvitesPanel from "@/app/components/liveSesh/LiveSeshInvitesPanel";
 const getDayLabel = () => {
   const now = new Date();
   const day = now.toLocaleDateString("en-US", { weekday: "long" });
@@ -197,12 +198,14 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
           >
             {settings?.id && friendListLength > 0 && (
               <>
+                   <LiveSeshInvitesPanel/>
                 <WelcomeCard
                   eyebrow="Gecko:"
                   headingLine1={`Hi ${user.username}!`}
                   headingLine2="Welcome back!"
                   subtitle={`${getDayLabel()}`}
                 />
+           
                 <UpNextCard
                   name={upcomingFriendName}
                   date={upcomingFutureDate}

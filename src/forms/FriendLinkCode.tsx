@@ -5,6 +5,7 @@ import {
   Text,
   ActivityIndicator,
   Pressable,
+  AppState,
 } from "react-native";
 import useFriendLinkCode from "../hooks/useFriendLinkCode";
 import manualGradientColors from "@/app/styles/StaticColors";
@@ -44,6 +45,21 @@ const FriendLinkCode: React.FC<FriendLinkCodeProps> = ({
     }, 1000);
     return () => clearInterval(id);
   }, [data?.expires_at]);
+
+  const appState = useRef(AppState.currentState);
+  useEffect(() => {
+    if (!viewCode) return;
+    const sub = AppState.addEventListener("change", (nextState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextState === "active"
+      ) {
+        refetch();
+      }
+      appState.current = nextState;
+    });
+    return () => sub.remove();
+  }, [viewCode, refetch]);
 
   return (
     <View style={styles.container}>

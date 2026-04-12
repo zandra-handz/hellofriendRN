@@ -6,6 +6,7 @@ import AppModal from "../alerts/AppModal";
 import DeleteFriend from "../friends/DeleteFriend";
 import LinkUser from "../appwide/button/LinkUser";
 import LinkUserWithCode from "../appwide/button/LinkUserWithCode";
+import StartLiveSesh from "../appwide/button/StartLiveSesh";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import useUpdateFriendSettings from "@/src/hooks/useUpdateFriendSettings";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -193,9 +194,24 @@ const FriendSettingsModal: React.FC<Props> = ({
             <BouncyEntrance delay={0} style={{ width: "100%" }}>
               <View style={styles.sectionContainer}>
                 <LinkUserWithCode
+                  userId={userId}
                   friendId={friendId}
                   color={textColor}
                   viewCode={viewLinkCode}
+                />
+              </View>
+            </BouncyEntrance>
+          )}
+          {!!friendDash?.linked_user && (
+            <BouncyEntrance delay={30} style={{ width: "100%" }}>
+              <View style={styles.sectionContainer}>
+                <StartLiveSesh
+                  userId={userId}
+                  friendId={friendId}
+                  primaryColor={textColor}
+                  backgroundColor={backgroundColor}
+                  buttonColor={manualGradientColors.lightColor}
+                  textStyle={AppFontStyles.subWelcomeText}
                 />
               </View>
             </BouncyEntrance>
