@@ -63,7 +63,6 @@ const ScreenQRCode = (props: Props) => {
 
       setIsCreating(true);
       try {
-        // ✅ IMPORTANT: wipe old session/poll state for this friend before creating a new one
         queryClient.cancelQueries({ queryKey: ["PickSessionPoll"] });
         queryClient.removeQueries({ queryKey: ["PickSessionPoll"] });
         queryClient.setQueryData(["PickSession", friendId], null);
@@ -74,7 +73,6 @@ const ScreenQRCode = (props: Props) => {
         })) as Session;
 
         if (session?.id) {
-          // ✅ IMPORTANT: push NEW session into cache so Gecko doesn't see old pressed session
           queryClient.setQueryData(["PickSession", friendId], session);
 
           setSessionId(session.id);
@@ -110,7 +108,9 @@ const ScreenQRCode = (props: Props) => {
     const message = `Hey ${friendName}! Tap this link when you're ready to pick: ${qrValue}`;
 
     if (friendNumber) {
-      Linking.openURL(`sms:${friendNumber}?body=${encodeURIComponent(message)}`);
+      Linking.openURL(
+        `sms:${friendNumber}?body=${encodeURIComponent(message)}`,
+      );
     } else {
       try {
         await Share.share({ message });
@@ -151,23 +151,40 @@ const ScreenQRCode = (props: Props) => {
       {friendName && (
         <Animated.View style={[styles.firstContainer, animatedStyle]}>
           <View style={styles.headerWrapper}>
-            <Text style={[styles.headerText, { color: lightDarkTheme.primaryText }]}>
+            <Text
+              style={[styles.headerText, { color: lightDarkTheme.primaryText }]}
+            >
               Let {friendName} pick
             </Text>
           </View>
 
           <View style={styles.qrWrapper}>
             {isCreating ? (
-              <ActivityIndicator size="large" color={lightDarkTheme.primaryText} />
+              <ActivityIndicator
+                size="large"
+                color={lightDarkTheme.primaryText}
+              />
             ) : qrValue ? (
-              <QRCode color={lightDarkTheme.primaryText} size={150} value={qrValue} />
+              <QRCode
+                color={lightDarkTheme.primaryText}
+                size={150}
+                value={qrValue}
+              />
             ) : null}
           </View>
 
           <View style={styles.questionWrapper}>
-            <Text style={[styles.cancelAcceptText, { color: lightDarkTheme.primaryText }]}>
+            <Text
+              style={[
+                styles.cancelAcceptText,
+                { color: lightDarkTheme.primaryText },
+              ]}
+            >
               Let {friendName} scan the QR code above, or{" "}
-              <Text onPress={handleSendLink} style={{ textDecorationLine: "underline" }}>
+              <Text
+                onPress={handleSendLink}
+                style={{ textDecorationLine: "underline" }}
+              >
                 send a link instead
               </Text>
               . When you are ready, press the checkmark to start!
@@ -182,7 +199,11 @@ const ScreenQRCode = (props: Props) => {
                 { backgroundColor: lightDarkTheme.lighterOverlayBackground },
               ]}
             >
-              <SvgIcon name="close" size={40} color={lightDarkTheme.primaryText} />
+              <SvgIcon
+                name="close"
+                size={40}
+                color={lightDarkTheme.primaryText}
+              />
             </Pressable>
 
             <Pressable
@@ -193,7 +214,11 @@ const ScreenQRCode = (props: Props) => {
               ]}
               disabled={!sessionId || isCreating}
             >
-              <SvgIcon name="check" size={40} color={lightDarkTheme.primaryText} />
+              <SvgIcon
+                name="check"
+                size={40}
+                color={lightDarkTheme.primaryText}
+              />
             </Pressable>
           </View>
         </Animated.View>

@@ -242,7 +242,8 @@ const DeleteFriend = ({
   return (
     <OptionNoToggle
       label={`Delete`}
-      icon={`trash`}
+      iconName={`trash`}
+      iconColor={textColor}
       primaryColor={textColor}
       backgroundColor={backgroundColor}
       buttonColor={buttonColor}

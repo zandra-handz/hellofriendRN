@@ -5,7 +5,6 @@ import * as SecureStore from "expo-secure-store";
 //export const API_URL = 'https://badrainbowz.com/';
 import { helloFriendApiClientPublic } from "./helloFriendApiClientPublic";
 
-
 import { helloFriendApiClient, setAuthHeader } from "./helloFriendApiClient";
 import axios from "axios";
 import { MomentFromBackendType } from "../types/MomentContextTypes";
@@ -28,9 +27,10 @@ export function handleApiError(e: unknown, contextMessage = "API error") {
     if (e.response) {
       console.log("Server responded with: REMOVED THIS it is html doc"); //, e.response.data);
 
-const msg = (e.response.data as { msg?: string; error?: string })?.msg
-  || (e.response.data as { error?: string })?.error;
-throw new Error(msg || "Something went wrong");
+      const msg =
+        (e.response.data as { msg?: string; error?: string })?.msg ||
+        (e.response.data as { error?: string })?.error;
+      throw new Error(msg || "Something went wrong");
     } else if (e.request) {
       console.log("No response from server:", e.request);
       throw new Error("No response from server, please check your network");
@@ -117,7 +117,7 @@ export const verifyResetCodeEmail = async ({
       {
         email: email,
         reset_code: resetCode,
-      }
+      },
     );
 
     return response;
@@ -224,38 +224,31 @@ export const getUserSettings = async () => {
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
 
-   
     return response.data;
   } catch (e: unknown) {
-  
     handleApiError(e, "Error during getUserSettings");
   }
 };
 
-
-
 // this call's serializer currently adds categories
 export const getUserGeckoConfigs = async () => {
-
   const today = new Date();
-  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
- 
-  
+  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
   // console.log("Default common headers:", helloFriendApiClient.defaults.headers);
 
   try {
     //         const start = Date.now(); // log start time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
 
-    const response = await helloFriendApiClient.get(`/users/gecko/configs/`,
-         { params: { local_date: localDate } }
-    );
+    const response = await helloFriendApiClient.get(`/users/gecko/configs/`, {
+      params: { local_date: localDate },
+    });
     // console.log("API GET Call getUserGeckoConfigs", response.data);
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
 
-   
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getUserGeckoConfigs");
@@ -265,7 +258,7 @@ export const getUserGeckoConfigs = async () => {
 export const getUserGeckoCombinedData = async () => {
   try {
     const response = await helloFriendApiClient.get(`/users/gecko/totals/`);
-   // console.log("API GET Call getGeckoData", response.data);
+    // console.log("API GET Call getGeckoData", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoData");
@@ -274,22 +267,40 @@ export const getUserGeckoCombinedData = async () => {
 
 export const getGeckoScoreState = async () => {
   try {
-    const response = await helloFriendApiClient.get(`/users/gecko/score-state/`);
-     console.log(" API GET Call getGeckoScoreState", response.data);
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/score-state/`,
+    );
+    console.log(" API GET Call getGeckoScoreState", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoScoreState");
   }
 };
 
+export const getFriendLinkCode = async () => {
+  try {
+    const response = await helloFriendApiClient.post(`users/friend-link-code/`);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during getFriendLinkCode");
+  }
+};
+
+export const linkUserToFriendWithCode = async (friendId: number, code: string) => {
+  try {
+    const response = await helloFriendApiClient.post(`friend/${friendId}/link/`, { code });
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during linkUserToFriendWithCode");
+  }
+};
 
 export const updateGeckoScoreState = async (fieldUpdates: object) => {
- 
   try {
     const response = await helloFriendApiClient.patch(
       `/users/gecko/score-state/`,
-      fieldUpdates
-    ); 
+      fieldUpdates,
+    );
     // console.log("~~~~~~~``000`~~~~~~~~~~~~API GET Call updateGeckoScoreState", response.data);
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
@@ -297,142 +308,130 @@ export const updateGeckoScoreState = async (fieldUpdates: object) => {
   }
 };
 
+// export const fetchGeckoSyncLog = async ({
+//   page = 1,                                                                                                                                                                                                                                                  }: {
+//   page?: number;
+// }) => {
+//   try {
+//     const response = await helloFriendApiClient.get(
+//       `/users/gecko/energy-sync/?page=${page}`
+//     );
+//     if (response?.data && response?.data?.results) {
+//       console.log(`SYNC LOG!: `, response.data)
+//       return response.data;
+//     } else {
+//       console.log("No data returned from fetchGeckoSyncLog.");
+//       return { results: [], next: null, previous: null };
+//     }
+//   } catch (e: unknown) {
+//     handleApiError(e, "Error during fetchGeckoSyncLog");
+//   }
+// };
 
-
-  // export const fetchGeckoSyncLog = async ({                                                                                                                                                                                                                
-  //   page = 1,                                                                                                                                                                                                                                                  }: {                                                                                                                                                                                                                                                       
-  //   page?: number;                                                                                                                                                                                                                                           
-  // }) => {
-  //   try {
-  //     const response = await helloFriendApiClient.get(
-  //       `/users/gecko/energy-sync/?page=${page}`
-  //     );
-  //     if (response?.data && response?.data?.results) {
-  //       console.log(`SYNC LOG!: `, response.data)
-  //       return response.data;
-  //     } else {
-  //       console.log("No data returned from fetchGeckoSyncLog.");
-  //       return { results: [], next: null, previous: null };
-  //     }
-  //   } catch (e: unknown) {
-  //     handleApiError(e, "Error during fetchGeckoSyncLog");
-  //   }
-  // };
-
-
-
-  
-  export const fetchGeckoSyncLog = async ({                                                                                                                                                                                                              page = 1,
-    trigger,
-    excludeTriggers,
-    since,
-    until,
-  }: {
-    page?: number;
-    trigger?: string;
-    excludeTriggers?: string[];
-    since?: string;
-    until?: string;
-  }) => {
-    try {
-      const params = new URLSearchParams();
-      params.set('page', String(page));
-      if (trigger) params.set('trigger', trigger);
-      if (excludeTriggers) {
-        excludeTriggers.forEach(t => params.append('exclude_trigger', t));
-      }
-      if (since) params.set('since', since);
-      if (until) params.set('until', until);
-
-      const response = await helloFriendApiClient.get(
-        `/users/gecko/energy-sync/?${params.toString()}`
-      );
-      if (response?.data && response?.data?.results) {
-        // console.log(`SYNC LOG!: `, response.data);
-        return response.data;
-      } else {
-        console.log("No data returned from fetchGeckoSyncLog.");
-        return { results: [], next: null, previous: null };
-      }
-    } catch (e: unknown) {
-      handleApiError(e, "Error during fetchGeckoSyncLog");
+export const fetchGeckoSyncLog = async ({
+  page = 1,
+  trigger,
+  excludeTriggers,
+  since,
+  until,
+}: {
+  page?: number;
+  trigger?: string;
+  excludeTriggers?: string[];
+  since?: string;
+  until?: string;
+}) => {
+  try {
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    if (trigger) params.set("trigger", trigger);
+    if (excludeTriggers) {
+      excludeTriggers.forEach((t) => params.append("exclude_trigger", t));
     }
-  };
+    if (since) params.set("since", since);
+    if (until) params.set("until", until);
 
-  // Then the call sites become:
-
-  // // only real drift data (the useful rows)
-  // fetchGeckoSyncLog({ trigger: 'update_gecko_data' });
-
-  // // everything except streak activations and state fetches
-  // fetchGeckoSyncLog({
-  //   excludeTriggers: ['streak_activate', 'get_score_state'],
-  // });
-
-
-
-  export const fetchGeckoEnergyLog = async ({                                                                                                                                                                                                                
-    page = 1,                                                                                                                                                                                                                                                  }: {                                                                                                                                                                                                                                                       
-    page?: number;                                                                                                                                                                                                                                           
-  }) => {
-    try {
-      const response = await helloFriendApiClient.get(
-        `/users/gecko/energy-log/?page=${page}`
-      );
-      if (response?.data && response?.data?.results) {
-        return response.data;
-      } else {
-        console.log("No data returned from fetchGeckoEnergyLog.");
-        return { results: [], next: null, previous: null };
-      }
-    } catch (e: unknown) {
-      handleApiError(e, "Error during fetchGeckoEnergyLog");
-    }
-  };
-
-  export const devResetEnergy = async () => {
-    try {
-      const response = await helloFriendApiClient.post(
-        `/users/gecko/dev/reset-energy/`
-      );
-      console.log("API POST Call devResetEnergy", response.data);
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/energy-sync/?${params.toString()}`,
+    );
+    if (response?.data && response?.data?.results) {
+      // console.log(`SYNC LOG!: `, response.data);
       return response.data;
-    } catch (e: unknown) {
-      handleApiError(e, "Error during devResetEnergy");
+    } else {
+      console.log("No data returned from fetchGeckoSyncLog.");
+      return { results: [], next: null, previous: null };
     }
-  };
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoSyncLog");
+  }
+};
 
-  export const devDepleteEnergy = async () => {
-    try {
-      const response = await helloFriendApiClient.post(
-        `/users/gecko/dev/deplete-energy/`
-      );
-      console.log("API POST Call devDepleteEnergy", response.data);
+// Then the call sites become:
+
+// // only real drift data (the useful rows)
+// fetchGeckoSyncLog({ trigger: 'update_gecko_data' });
+
+// // everything except streak activations and state fetches
+// fetchGeckoSyncLog({
+//   excludeTriggers: ['streak_activate', 'get_score_state'],
+// });
+
+export const fetchGeckoEnergyLog = async ({ page = 1 }: { page?: number }) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/energy-log/?page=${page}`,
+    );
+    if (response?.data && response?.data?.results) {
       return response.data;
-    } catch (e: unknown) {
-      handleApiError(e, "Error during devDepleteEnergy");
+    } else {
+      console.log("No data returned from fetchGeckoEnergyLog.");
+      return { results: [], next: null, previous: null };
     }
-  };
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoEnergyLog");
+  }
+};
 
- 
+export const devResetEnergy = async () => {
+  try {
+    const response = await helloFriendApiClient.post(
+      `/users/gecko/dev/reset-energy/`,
+    );
+    console.log("API POST Call devResetEnergy", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during devResetEnergy");
+  }
+};
 
+export const devDepleteEnergy = async () => {
+  try {
+    const response = await helloFriendApiClient.post(
+      `/users/gecko/dev/deplete-energy/`,
+    );
+    console.log("API POST Call devDepleteEnergy", response.data);
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during devDepleteEnergy");
+  }
+};
 
 export const getGeckoScriptsData = async () => {
   try {
     const response = await helloFriendApiClient.get(`/geckoscripts/welcome/`);
-   // console.log("API GET Call getGeckoScriptData", response.data);
+    // console.log("API GET Call getGeckoScriptData", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoScriptData");
   }
 };
 
-
-
 export const loadAllStaticData = async () => {
   try {
-    const response = await helloFriendApiClient.get(`/geckoscripts/load-all-static-data/`);
-   // console.log("API GET Call getGeckoScriptData", response.data);
+    const response = await helloFriendApiClient.get(
+      `/geckoscripts/load-all-static-data/`,
+    );
+    // console.log("API GET Call getGeckoScriptData", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during loadAllStaticData");
@@ -446,7 +445,7 @@ export const fetchGeckoPointsLedger = async ({
 }) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/users/gecko/points/all/ledger/?page=${page}`
+      `/users/gecko/points/all/ledger/?page=${page}`,
     );
     if (response?.data && response?.data?.results) {
       // console.log("API GET Call fetchGeckoPointsLedger", response.data);
@@ -467,11 +466,11 @@ export const fetchGeckoScriptsLedger = async ({
 }) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/geckoscripts/ledger/all/?page=${page}`
+      `/geckoscripts/ledger/all/?page=${page}`,
     );
     if (response?.data && response?.data?.results) {
       // console.log("API GET Call fetchGeckoScriptsLedger", response.data);
-      
+
       return response.data;
     } else {
       console.log("No data returned from fetchGeckoScriptsLedger.");
@@ -482,9 +481,14 @@ export const fetchGeckoScriptsLedger = async ({
   }
 };
 
-export const logWelcomeScripts = async (entries: { script_id: number; shown_at: string }[]) => {
+export const logWelcomeScripts = async (
+  entries: { script_id: number; shown_at: string }[],
+) => {
   try {
-    const response = await helloFriendApiClient.post(`/geckoscripts/ledger/all/`, { entries });
+    const response = await helloFriendApiClient.post(
+      `/geckoscripts/ledger/all/`,
+      { entries },
+    );
     console.log("API POST Call logWelcomeScripts", response.data);
     return response.data;
   } catch (e: unknown) {
@@ -492,27 +496,23 @@ export const logWelcomeScripts = async (entries: { script_id: number; shown_at: 
   }
 };
 
-
-
 export const fetchdGeckoCombinedSessions = async ({
- 
   page = 1,
-}: { 
+}: {
   page: number;
 }) => {
   try {
     const params = new URLSearchParams();
 
     params.append("page", String(page));
- 
-    const response = await helloFriendApiClient.get(
-      `/users/gecko/sessions/?${params.toString()}`
-    ); 
-    if (response?.data && response?.data?.results) { 
 
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/sessions/?${params.toString()}`,
+    );
+    if (response?.data && response?.data?.results) {
       // console.log(`gecko sessions: `, response.data)
 
-      return response.data; 
+      return response.data;
     } else {
       console.log("No data returned from fetchdGeckoCombinedSessions.");
       return { results: [], next: null, previous: null };
@@ -521,7 +521,6 @@ export const fetchdGeckoCombinedSessions = async ({
     handleApiError(e, "Error during fetchdGeckoCombinedSessions");
   }
 };
-
 
 export const fetchGeckoCombinedSessionsTimeRange = async ({
   minutes,
@@ -532,7 +531,7 @@ export const fetchGeckoCombinedSessionsTimeRange = async ({
 }) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/users/gecko/sessions/range/?minutes=${minutes}&page=${page}`
+      `/users/gecko/sessions/range/?minutes=${minutes}&page=${page}`,
     );
     if (response?.data && response?.data?.results) {
       // console.log(`USER GECKO SESSIONS`,response.data)
@@ -557,15 +556,14 @@ export const fetchFriendGeckoSessions = async ({
     const params = new URLSearchParams();
 
     params.append("page", String(page));
- 
-    const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/gecko/sessions/?${params.toString()}`
-    ); 
-    if (response?.data && response?.data?.results) { 
 
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/gecko/sessions/?${params.toString()}`,
+    );
+    if (response?.data && response?.data?.results) {
       // console.log(`gecko sessions: `, response.data)
 
-      return response.data; 
+      return response.data;
     } else {
       console.log("No data returned from fetchFriendGeckoSessions.");
       return { results: [], next: null, previous: null };
@@ -574,7 +572,6 @@ export const fetchFriendGeckoSessions = async ({
     handleApiError(e, "Error during fetchFriendGeckoSessions");
   }
 };
-
 
 export const fetchFriendGeckoSessionsTimeRange = async ({
   friendId,
@@ -585,7 +582,7 @@ export const fetchFriendGeckoSessionsTimeRange = async ({
 }) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/gecko/sessions/range/?minutes=${minutes}`
+      `/friends/${friendId}/gecko/sessions/range/?minutes=${minutes}`,
     );
     if (response?.data) {
       // console.log(`gecko sessions time range: `, response.data);
@@ -609,7 +606,7 @@ export const getUserCategories = async (userId: number) => {
     // );
 
     const response = await helloFriendApiClient.get(
-      `/users/${userId}/categories/`
+      `/users/${userId}/categories/`,
     );
     // console.log("API GET Call getUserCategories", response.data);
     // const end = Date.now(); // log end time
@@ -653,7 +650,6 @@ export const getUserCategories = async (userId: number) => {
 //   }
 // };
 
-
 // NEW AS OF !0/!2 THIS NOW GROUPS BY HELLO AND RETURNS LITE HELLO OBJECT
 // NOT SURE IF I LIKE THE REDUNDANCY WTIH HELLOESLIST BUT THIS VIEW IS MORE USEFUL
 export const fetchCapsulesHistoryAPI = async ({
@@ -670,17 +666,17 @@ export const fetchCapsulesHistoryAPI = async ({
   try {
     const params = new URLSearchParams();
 
-    if (categoryId && categoryId !== 'all') params.append("user_category_id", String(categoryId));
+    if (categoryId && categoryId !== "all")
+      params.append("user_category_id", String(categoryId));
     if (friendId) params.append("friend_id", String(friendId));
     if (returnNonZeroesOnly) params.append("only_with_capsules", "true");
     params.append("page", String(page));
 
     const response = await helloFriendApiClient.get(
-      `/friends/categories/history/capsules/?${params.toString()}`
+      `/friends/categories/history/capsules/?${params.toString()}`,
     );
-   //  console.log(`response from capsules history`, response.data);
+    //  console.log(`response from capsules history`, response.data);
     if (response?.data) {
-    
       return response.data; // DRF-style: { count, next, previous, results }
     } else {
       console.log("No data returned from fetchCapsulesHistoryAPI.");
@@ -700,14 +696,14 @@ export const fetchCategoriesHistoryCountAPI = async ({
 }) => {
   console.log(
     "~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryCountAPI  called, friendid: ",
-    friendId
+    friendId,
   );
   try {
     const params = new URLSearchParams();
     params.append("only_with_capsules", returnNonZeroesOnly.toString());
     if (friendId != null) {
       console.warn(
-        "gettin friend stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo"
+        "gettin friend stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo",
       );
       params.append("friend_id", friendId.toString());
     } else {
@@ -716,7 +712,7 @@ export const fetchCategoriesHistoryCountAPI = async ({
     // const url = `/users/categories/history/summary/?${params.toString()}`;
 
     const response = await helloFriendApiClient.get(
-      `/users/categories/history/summary/?${params.toString()}`
+      `/users/categories/history/summary/?${params.toString()}`,
     );
     // console.log(`COUNT ONLY`, response.data);
     if (response && response.data) {
@@ -732,7 +728,7 @@ export const fetchCategoriesHistoryCountAPI = async ({
 
 export const createUserCategory = async (
   userId: number,
-  newCategoryData: object
+  newCategoryData: object,
 ) => {
   try {
     console.log(userId);
@@ -745,7 +741,7 @@ export const createUserCategory = async (
     console.log(requestData);
     const response = await helloFriendApiClient.post(
       `/users/${userId}/categories/add/`,
-      requestData
+      requestData,
     );
     return response.data;
   } catch (e: unknown) {
@@ -756,14 +752,14 @@ export const createUserCategory = async (
 export const updateUserCategory = async (
   userId: number,
   categoryId: number,
-  updates: object
+  updates: object,
 ) => {
   // console.log(`updates for user category: `, updates);
-// console.log(updates)
+  // console.log(updates)
   try {
     const response = await helloFriendApiClient.patch(
       `/users/${userId}/category/${categoryId}/`,
-      updates
+      updates,
     );
     console.log("API PATCH CALL updateUserCategory", response.data);
     return response.data;
@@ -774,12 +770,12 @@ export const updateUserCategory = async (
 
 export const deleteUserCategory = async (
   userId: number,
-  categoryId: number
+  categoryId: number,
 ) => {
   console.log(`delete category with: `, userId, categoryId);
   try {
     const response = await helloFriendApiClient.delete(
-      `/users/${userId}/category/${categoryId}/`
+      `/users/${userId}/category/${categoryId}/`,
     );
     console.log("API DELTE CALL deleteUserCategory");
     //console.log('API response:', response.data); // Log the response data
@@ -791,8 +787,6 @@ export const deleteUserCategory = async (
 
 export const getCurrentUser = async () => {
   try {
-
-  
     // const start = Date.now(); // log start time
     // console.log(
     //   "\x1b[30m%s\x1b[30m",
@@ -817,13 +811,13 @@ export const getCurrentUser = async () => {
 
 export const updateSubscription = async (
   userId: number,
-  fieldUpdates: object
+  fieldUpdates: object,
 ) => {
   //is_subscribed_user, subscription_id, subscription_expiration_date
   try {
     const response = await helloFriendApiClient.patch(
       `/users/${userId}/subscription/update/`,
-      fieldUpdates
+      fieldUpdates,
     );
     console.log("API PATCH CALL updateSubscription");
     return response.data;
@@ -869,15 +863,14 @@ export const fetchFriendList = async () => {
   }
 };
 
-
 export const fetchMomentsAPI = async (friendId: number) => {
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/thoughtcapsules/`
+      `/friends/${friendId}/thoughtcapsules/`,
     );
     //  console.log(response.data);
-    if (response && response.data) { 
+    if (response && response.data) {
       const capsules = response.data.map((capsule: MomentFromBackendType) => ({
         id: capsule.id,
         friend: capsule.friend,
@@ -901,7 +894,6 @@ export const fetchMomentsAPI = async (friendId: number) => {
         generic_score: capsule.generic_score,
       }));
 
-
       return capsules;
     } else {
       // console.log("fetchThoughtCapsules: no capsules added yet");
@@ -916,7 +908,7 @@ export const fetchCompletedMomentsAPI = async (friendId: number) => {
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/thoughtcapsules/completed/`
+      `/friends/${friendId}/thoughtcapsules/completed/`,
     );
     //  console.log(`COMPLETED MOMENTS!!!!!~~~~~~~~~~~~~~~~~`, response.data);
     if (response && response.data) {
@@ -941,7 +933,7 @@ export const fetchFriendAddresses = async (friendId: number) => {
   try {
     console.log("fetching friend addresses");
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/addresses/all/`
+      `/friends/${friendId}/addresses/all/`,
     );
     return response.data;
   } catch (e: unknown) {
@@ -951,12 +943,12 @@ export const fetchFriendAddresses = async (friendId: number) => {
 
 export const addFriendAddress = async (
   friendId: number,
-  addressData: object
+  addressData: object,
 ) => {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/${friendId}/addresses/add/`,
-      addressData
+      addressData,
     );
     return response.data;
   } catch (e: unknown) {
@@ -967,12 +959,12 @@ export const addFriendAddress = async (
 export const updateFriendAddress = async (
   friendId: number,
   addressId: number,
-  fieldUpdates: object
+  fieldUpdates: object,
 ) => {
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/address/${addressId}/`,
-      fieldUpdates
+      fieldUpdates,
     );
 
     // console.log(
@@ -989,11 +981,11 @@ export const updateFriendAddress = async (
 
 export const removeFriendAddress = async (
   friendId: number,
-  addressId: number
+  addressId: number,
 ) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `/friends/${friendId}/address/${addressId}/`
+      `/friends/${friendId}/address/${addressId}/`,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1028,7 +1020,7 @@ export const addUserAddress = async (addressData: object) => {
   try {
     const response = await helloFriendApiClient.post(
       `/users/addresses/add/`,
-      addressData
+      addressData,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1039,12 +1031,12 @@ export const addUserAddress = async (addressData: object) => {
 //not finished yet 12/13/2024
 export const updateUserAddress = async (
   addressId: number,
-  fieldUpdates: object
+  fieldUpdates: object,
 ) => {
   try {
     const response = await helloFriendApiClient.patch(
       `/users/address/${addressId}/`,
-      fieldUpdates
+      fieldUpdates,
     );
 
     console.log("API PATCH CALL updateUserAddress: ", addressId, fieldUpdates);
@@ -1058,7 +1050,7 @@ export const updateUserAddress = async (
 export const removeUserAddress = async (addressId: number) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `/users/address/${addressId}/`
+      `/users/address/${addressId}/`,
     );
 
     if (response.status === 200) {
@@ -1079,7 +1071,7 @@ export const validateAddress = async (userId: number, address: string) => {
       {
         user: userId,
         address: address,
-      }
+      },
     );
     return response.data;
   } catch (e: unknown) {
@@ -1091,7 +1083,7 @@ export const validateAddress = async (userId: number, address: string) => {
 export const GetTravelComparisons = async (
   userAddress: addressType,
   friendAddress: addressType,
-  location: addressTypeVariant
+  location: addressTypeVariant,
 ) => {
   console.log("getting travel comparison");
   try {
@@ -1110,7 +1102,7 @@ export const GetTravelComparisons = async (
 
     const response = await helloFriendApiClient.post(
       `/friends/places/`,
-      locationData
+      locationData,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1122,7 +1114,7 @@ export const SearchForMidpointLocations = async (locationData: object) => {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/places/near-midpoint/`,
-      locationData
+      locationData,
     );
     return response.data.suggested_places;
   } catch (e: unknown) {
@@ -1135,7 +1127,7 @@ export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
   try {
     const response = await helloFriendApiClient.patch(
       `/users/settings/update/`,
-      fieldUpdates
+      fieldUpdates,
     );
     console.log("API PATCH CALL updateUserAccessibilitySettings");
     console.log("API response:", response.data); // Log the response data
@@ -1145,17 +1137,16 @@ export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
   }
 };
 
-
 export const updateUserGeckoConfigs = async (fieldUpdates: object) => {
   // console.log(`payload in api call`, fieldUpdates);
   try {
     const response = await helloFriendApiClient.patch(
       `/users/gecko/configs/`,
-      fieldUpdates
+      fieldUpdates,
     );
     // console.log("API PATCH CALL updateUserGeckoConfigs");
     // console.log("API response:", response.data); // Log the response data
-    
+
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
     handleApiError(e, "Error during updateUserGeckoConfigs");
@@ -1168,7 +1159,7 @@ export const updateUserProfile = async (
   lastName: string,
   dateOfBirth: string, // not sure what data type this is
   gender: string,
-  address: string
+  address: string,
 ) => {
   try {
     await helloFriendApiClient.put(`/users/${userId}/profile/update/`, {
@@ -1185,13 +1176,12 @@ export const updateUserProfile = async (
 };
 
 export const fetchFriendDashboard = async (friendId: number) => {
-
   // console.log('fetching friend dashboard')
   // const startTime = Date.now(); // TIMER START
 
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/dashboard/`
+      `/friends/${friendId}/dashboard/`,
     );
 
     // const endTime = Date.now(); // TIMER END
@@ -1199,7 +1189,7 @@ export const fetchFriendDashboard = async (friendId: number) => {
 
     // console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
-    // console.log(response.data[0])
+     console.log(response.data[0])
 
     return response.data[0] || null;
   } catch (error) {
@@ -1207,7 +1197,7 @@ export const fetchFriendDashboard = async (friendId: number) => {
     // const duration = endTime - startTime;
     console.error(
       `Error fetching friend dashboard (after ${duration}ms):`,
-      error
+      error,
     );
     throw error;
   }
@@ -1217,7 +1207,7 @@ export const remixAllNextHelloes = async (userId: number) => {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/remix/all/`,
-      userId
+      userId,
     );
     return response.status;
   } catch (e: unknown) {
@@ -1232,7 +1222,7 @@ export type FriendFaveLocationDataType = {
 };
 
 export const addToFriendFavesLocations = async (
-  data: FriendFaveLocationDataType
+  data: FriendFaveLocationDataType,
 ) => {
   try {
     const response = await helloFriendApiClient.patch(
@@ -1241,7 +1231,7 @@ export const addToFriendFavesLocations = async (
         friend: data.friendId,
         user: data.userId,
         location_id: data.locationId, // Use an array if locationId is a single ID
-      }
+      },
     );
     return response.data;
   } catch (e: unknown) {
@@ -1250,7 +1240,7 @@ export const addToFriendFavesLocations = async (
 };
 
 export const removeFromFriendFavesLocations = async (
-  data: FriendFaveLocationDataType
+  data: FriendFaveLocationDataType,
 ) => {
   try {
     const response = await helloFriendApiClient.patch(
@@ -1259,7 +1249,7 @@ export const removeFromFriendFavesLocations = async (
         user: data.userId,
         friend: data.friendId,
         location_id: data.locationId,
-      }
+      },
     );
     return response.data;
   } catch (e: unknown) {
@@ -1283,7 +1273,7 @@ export const updateFriendDefaultCategory = async ({
         friend: friendId,
         user: userId,
         friend_default_category: categoryId,
-      }
+      },
     );
 
     // console.log("API PATCH CALL updateFriendDefaultCategory");
@@ -1307,7 +1297,6 @@ export const updateFriendFavesColorThemeSetting = async ({
   manualTheme: boolean;
 }) => {
   try {
-
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/faves/`,
       {
@@ -1316,7 +1305,7 @@ export const updateFriendFavesColorThemeSetting = async ({
         dark_color: darkColor,
         light_color: lightColor,
         use_friend_color_theme: manualTheme,
-      }
+      },
     );
 
     // console.log("API PATCH CALL updateFriendFavesColorThemeSetting", response.data);
@@ -1325,7 +1314,6 @@ export const updateFriendFavesColorThemeSetting = async ({
     handleApiError(e, "Error during updateFriendFavesColorThemeSetting");
   }
 };
-
 
 export const addPoints = async (amount: number, reason: string) => {
   try {
@@ -1375,7 +1363,7 @@ export const fetchPointsLedger = async () => {
 export const updateFriendFavesColorThemeGradientDirection = async (
   userId: number,
   friendId: number,
-  setting: object
+  setting: object,
 ) => {
   //console.log(`color theme gradient direction call, ${userId}, ${friendId}, ${setting}`);
   try {
@@ -1385,17 +1373,17 @@ export const updateFriendFavesColorThemeGradientDirection = async (
         friend: friendId,
         user: userId,
         second_color_option: setting,
-      }
+      },
     );
     console.log(
       "Color theme gradient direction for friend updated: ",
-      response.data
+      response.data,
     );
     return response.data;
   } catch (e: unknown) {
     handleApiError(
       e,
-      "Error during updateFriendFavesColorThemeGradientDirection"
+      "Error during updateFriendFavesColorThemeGradientDirection",
     );
   }
 };
@@ -1406,7 +1394,7 @@ export const updateFriendFavesColorTheme = async (
   darkColor: string,
   lightColor: string,
   fontColor: string,
-  fontColorSecondary: string
+  fontColorSecondary: string,
 ) => {
   try {
     const response = await helloFriendApiClient.patch(
@@ -1419,7 +1407,7 @@ export const updateFriendFavesColorTheme = async (
         font_color: fontColor,
         font_color_secondary: fontColorSecondary,
         use_friend_color_theme: true,
-      }
+      },
     );
     console.log("Color theme for friend updated: ", response.data);
     return response.data;
@@ -1428,13 +1416,11 @@ export const updateFriendFavesColorTheme = async (
   }
 };
 
-export const enableManualColorTheme = async (
-  friendId: number,
-) => {
+export const enableManualColorTheme = async (friendId: number) => {
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/faves/saved-toggle-on/`,
-      {}
+      {},
     );
     console.log("Manual color theme enabled: ", response.data);
     return response.data;
@@ -1491,7 +1477,7 @@ export const fetchUpcomingHelloes = async () => {
     //   new Date(end).toISOString()
     // );
     // console.log("\x1b[32m%s\x1b[32m", "Duration (ms):", end - start);
-    
+
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
@@ -1514,24 +1500,23 @@ export const fetchUpcomingHelloes = async () => {
 
 export const fetchUpcomingHelloesAndFriends = async () => {
   const today = new Date();
-  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
- 
+  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
   try {
     const response = await helloFriendApiClient.get(
       "/friends/upcoming/friends-included/",
-      { params: { local_date: localDate } }
+      { params: { local_date: localDate } },
     );
-    console.log(`API CALL: fetchUpcomingHelloesAndFriends`)
+    console.log(`API CALL: fetchUpcomingHelloesAndFriends`);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
   }
 };
 
-
 export const fetchCategoriesFriendHistoryAPI = async (
   friendId: number,
-  returnNonZeroesOnly: boolean
+  returnNonZeroesOnly: boolean,
 ) => {
   // console.log(`non zeros: `, returnNonZeroesOnly);
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
@@ -1541,7 +1526,7 @@ export const fetchCategoriesFriendHistoryAPI = async (
     // );
 
     const response = await helloFriendApiClient.get(
-      `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}&friend_id=${friendId}`
+      `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}&friend_id=${friendId}`,
     );
 
     // console.log(`FRIEND HISTORY`, response.data);
@@ -1559,7 +1544,7 @@ export const fetchCategoriesFriendHistoryAPI = async (
 export const deleteHelloAPI = async (data: { friend: number; id: number }) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `/friends/${data.friend}/helloes/${data.id}/`
+      `/friends/${data.friend}/helloes/${data.id}/`,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1589,11 +1574,11 @@ export const deleteHelloAPI = async (data: { friend: number; id: number }) => {
 export const fetchPastHelloes = async (friendId: number) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/combinedhelloes/summary/`
+      `/friends/${friendId}/combinedhelloes/summary/`,
     );
 
     if (response && response.data) {
-     //  console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
+      //  console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
 
       return response.data;
     } else {
@@ -1609,7 +1594,7 @@ export const saveMomentAPI = async (requestData: { friend: number }) => {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/${requestData.friend}/thoughtcapsules/add/`,
-      requestData
+      requestData,
     );
     console.log(`saved moment: `, response.data);
     return response.data;
@@ -1629,12 +1614,11 @@ export const fetchPastHelloesFull = async ({
     const params = new URLSearchParams();
 
     params.append("page", String(page));
- 
-    const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/helloes/?${params.toString()}`
-    ); 
-    if (response?.data && response?.data?.results) { 
 
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/helloes/?${params.toString()}`,
+    );
+    if (response?.data && response?.data?.results) {
       return response.data; // DRF-style: { count, next, previous, results }
     } else {
       console.log("No data returned from fetchCategoriesHistoryAPI.");
@@ -1649,9 +1633,9 @@ export const saveHello = async (requestData: { friend: number }) => {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/${requestData.friend}/helloes/add/`,
-      requestData
+      requestData,
     );
-    console.log('hello save! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', response.data)
+    console.log("hello save! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during saveHello");
@@ -1661,7 +1645,7 @@ export const saveHello = async (requestData: { friend: number }) => {
 export const deleteMomentAPI = async (data: { friend: number; id: number }) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `/friends/${data.friend}/thoughtcapsule/${data.id}/`
+      `/friends/${data.friend}/thoughtcapsule/${data.id}/`,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1672,12 +1656,12 @@ export const deleteMomentAPI = async (data: { friend: number; id: number }) => {
 export const updateMomentAPI = async (
   friendId: number,
   capsuleId: number,
-  capsuleData: object
+  capsuleData: object,
 ) => {
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsule/${capsuleId}/`,
-      capsuleData
+      capsuleData,
     );
     // console.log(response.data);
     return response.data;
@@ -1688,14 +1672,14 @@ export const updateMomentAPI = async (
 
 // returns udapted ids
 export const updateMomentCoordsAPI = async (
-  friendId: number, 
-  capsuleData: object
+  friendId: number,
+  capsuleData: object,
 ) => {
-  console.log('updateMomentCoordsAPI triggered');
+  console.log("updateMomentCoordsAPI triggered");
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsules/coords-update/`,
-      capsuleData
+      capsuleData,
     );
     // console.log(response.data);
     return response.data;
@@ -1710,7 +1694,7 @@ export type CapsulesAndChangesDataType = {
 
 export const updateMultMomentsAPI = async (
   friendId: number,
-  capsulesAndChanges: []
+  capsulesAndChanges: [],
 ) => {
   try {
     const capsuleData = {
@@ -1718,7 +1702,7 @@ export const updateMultMomentsAPI = async (
         (capsule: CapsulesAndChangesDataType) => ({
           id: capsule.id,
           fields_to_update: capsule.fieldsToUpdate,
-        })
+        }),
       ),
     };
 
@@ -1726,7 +1710,7 @@ export const updateMultMomentsAPI = async (
 
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsules/batch-update/`,
-      capsuleData
+      capsuleData,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1785,7 +1769,7 @@ export const fetchAllLocations = async () => {
               name: friend,
             }))
           : [],
-      })
+      }),
     );
 
     // const dataManipTime = Date.now();
@@ -1804,7 +1788,7 @@ export const createLocation = async (locationData: object) => {
   try {
     const response = await helloFriendApiClient.post(
       "/friends/locations/add/",
-      locationData
+      locationData,
     );
     //  console.log('API Response:', response);
     return response.data;
@@ -1816,7 +1800,7 @@ export const createLocation = async (locationData: object) => {
 export const deleteLocation = async (locationId: number) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `friends/location/${locationId}/`
+      `friends/location/${locationId}/`,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1826,13 +1810,13 @@ export const deleteLocation = async (locationId: number) => {
 
 export const updateLocation = async (
   locationId: number,
-  locationData: object
+  locationData: object,
 ) => {
   // console.log("updateLocation payload in api file: ", locationData);
   try {
     const response = await helloFriendApiClient.patch(
       `friends/location/${locationId}/`,
-      locationData
+      locationData,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1883,9 +1867,8 @@ export const createFriend = async (friendData: object) => {
   }
 };
 
-
 export const groqCall = async (promptData: object) => {
-  try { 
+  try {
     const res = await helloFriendApiClient.post("/friends/groq/", promptData);
     return res.data;
   } catch (e: unknown) {
@@ -1893,10 +1876,12 @@ export const groqCall = async (promptData: object) => {
   }
 };
 
-
 export const geckoReadMoments = async (friendId: number, ids: string[]) => {
   try {
-    const res = await helloFriendApiClient.post(`/friends/${friendId}/gecko/read/moments/`, { ids });
+    const res = await helloFriendApiClient.post(
+      `/friends/${friendId}/gecko/read/moments/`,
+      { ids },
+    );
     return res.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during gecko read moments");
@@ -1906,7 +1891,7 @@ export const geckoReadMoments = async (friendId: number, ids: string[]) => {
 export const deleteFriend = async (friendId: number) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `/friends/${friendId}/info/`
+      `/friends/${friendId}/info/`,
     );
     return response.data;
   } catch (e: unknown) {
@@ -1914,19 +1899,17 @@ export const deleteFriend = async (friendId: number) => {
   }
 };
 
-
-export const editFriend = async ( updateData: object) => {
-
+export const editFriend = async (updateData: object) => {
   try {
     const response = await helloFriendApiClient.patch(
-      `/friends/${updateData.friend}/info/`, updateData
+      `/friends/${updateData.friend}/info/`,
+      updateData,
     );
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during deleteFriend");
   }
 };
-
 
 export const updateFriendSugSettings = async (SugSettingsData: {
   friend: number;
@@ -1934,7 +1917,7 @@ export const updateFriendSugSettings = async (SugSettingsData: {
   try {
     const res = await helloFriendApiClient.put(
       `/friends/${SugSettingsData.friend}/settings/update/`,
-      SugSettingsData
+      SugSettingsData,
     );
 
     return res.data;
@@ -1943,16 +1926,12 @@ export const updateFriendSugSettings = async (SugSettingsData: {
   }
 };
 
-
-
-export const updateFriendGeckoData = async (GeckoData: {
-  friend: number;
-}) => {
-  console.log(`updatefriendgeckodata payload: `, GeckoData)
+export const updateFriendGeckoData = async (GeckoData: { friend: number }) => {
+  console.log(`updatefriendgeckodata payload: `, GeckoData);
   try {
     const res = await helloFriendApiClient.patch(
       `/friends/${GeckoData.friend}/gecko/data/update/`,
-      GeckoData
+      GeckoData,
     );
 
     return res.data;
@@ -1964,7 +1943,7 @@ export const updateFriendGeckoData = async (GeckoData: {
 export const updateAppSetup = async () => {
   try {
     const response = await helloFriendApiClient.post(
-      "/friends/update-app-setup/"
+      "/friends/update-app-setup/",
     );
     return response.data;
   } catch (e: unknown) {
@@ -1975,7 +1954,7 @@ export const updateAppSetup = async () => {
 export const fetchFriendImagesByCategory = async (friendId: number) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/images/by-category/`
+      `/friends/${friendId}/images/by-category/`,
     );
     // console.log("API GET CALL fetchFriendImagesByCategory");
     return response.data;
@@ -1995,7 +1974,7 @@ export const createFriendImage = async (friendId: number, formData: object) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
 
     console.log("Image created successfully:", response.data);
@@ -2008,7 +1987,7 @@ export const createFriendImage = async (friendId: number, formData: object) => {
 export const fetchFriendImage = async (friendId: number, imageId: number) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/image/${imageId}/`
+      `/friends/${friendId}/image/${imageId}/`,
     );
 
     console.log("API fetchFriendImage response: ", response.data);
@@ -2021,7 +2000,7 @@ export const fetchFriendImage = async (friendId: number, imageId: number) => {
 export const updateFriendImage = async (friendId: number, imageId: number) => {
   try {
     const response = await helloFriendApiClient.patch(
-      `/friends/${friendId}/image/${imageId}/`
+      `/friends/${friendId}/image/${imageId}/`,
     );
 
     console.log("API updateFriendImage response: ", response.data);
@@ -2034,7 +2013,7 @@ export const updateFriendImage = async (friendId: number, imageId: number) => {
 export const deleteFriendImage = async (friendId: number, imageId: number) => {
   try {
     const response = await helloFriendApiClient.delete(
-      `/friends/${friendId}/image/${imageId}/`
+      `/friends/${friendId}/image/${imageId}/`,
     );
 
     console.log("API fetchFriendImage response: ", response.data);
@@ -2047,7 +2026,7 @@ export const deleteFriendImage = async (friendId: number, imageId: number) => {
 export const fetchTypeChoices = async () => {
   try {
     const response = await helloFriendApiClient.get(
-      "friends/dropdown/hello-type-choices/"
+      "friends/dropdown/hello-type-choices/",
     );
     return response.data.type_choices;
   } catch (e: unknown) {
@@ -2058,7 +2037,7 @@ export const fetchTypeChoices = async () => {
 export const fetchParkingChoices = async () => {
   try {
     const response = await helloFriendApiClient.get(
-      "friends/dropdown/location-parking-type-choices/"
+      "friends/dropdown/location-parking-type-choices/",
     );
     console.log("fetchParkingChoices: ", response.data.type_choices);
     return response.data.type_choices;
@@ -2071,7 +2050,7 @@ export const fetchLocationDetails = async (locationData: object) => {
   try {
     const response = await helloFriendApiClient.post(
       "/friends/places/get-details/",
-      locationData
+      locationData,
     );
 
     // console.log(`API POST CALL fetchLocationDetails`, response.data);
@@ -2081,9 +2060,6 @@ export const fetchLocationDetails = async (locationData: object) => {
   }
 };
 
-
-
-
 // Create a pick session (call this when QR screen mounts)
 export const createFriendPickSession = async (data: {
   friend: number;
@@ -2092,7 +2068,7 @@ export const createFriendPickSession = async (data: {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/pick-session/create/`,
-      data
+      data,
     );
     console.log("API POST createFriendPickSession", response.data);
     return response.data;
@@ -2105,7 +2081,7 @@ export const createFriendPickSession = async (data: {
 export const getFriendPickSession = async (sessionId: string) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/pick-session/${sessionId}/`
+      `/friends/pick-session/${sessionId}/`,
     );
     return response.data;
   } catch (e: unknown) {

@@ -1,6 +1,9 @@
 import React from "react";
+import { Alert } from "react-native";
 import ButtonResetHelloes from "../../buttons/helloes/ButtonResetHelloes";
 import OptionNoToggle from "../../headers/OptionNoToggle";
+
+import { useRemixUpcomingHelloes } from "@/src/hooks/useRemixUpcomingHelloes";
 interface Props {
   userId: number;
   label: string;
@@ -21,20 +24,37 @@ const Reset: React.FC<Props> = ({
   backgroundColor,
   buttonColor,
   textStyle,
-  buttonPadding = 4,
-  onPressRow,
+  buttonPadding = 4, 
 }) => {
+  const { handleRemixAllNextHelloes } = useRemixUpcomingHelloes({ userId });
+
+  const handleOnPress = () => {
+    Alert.alert(
+      "Warning!",
+      "Reset all suggested hello dates? (You can run this reset three times a day.)",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Reset", onPress: () => handleRemixAllNextHelloes() },
+      ],
+    );
+  };
+
+  const LABEL = `Reset all hello dates`;
+  const ICON = `refresh`;
+  const ICON_SIZE = 20;
+
   return (
     <OptionNoToggle
-      label={label}
-      icon={icon}
+      label={LABEL}
+      iconName={ICON}
+      iconSize={ICON_SIZE}
+      iconColor={primaryColor}
       primaryColor={primaryColor}
       backgroundColor={backgroundColor}
       buttonColor={buttonColor}
       textStyle={textStyle}
       buttonPadding={buttonPadding}
-      onPress={onPressRow}
-      rightSlot={<ButtonResetHelloes userId={userId} />}
+      onPress={handleOnPress} 
     />
   );
 };

@@ -101,6 +101,7 @@ export interface SuggestionSettings {
 }
 
 export interface FriendDashboardData {
+  linked_user: string | null;
   category_activations_left: number;
   date: string;
   days_since: number;

@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { View, ScrollView, StyleSheet, Alert } from "react-native";
- 
+
 import ValueSlider from "../friends/ValueSlider";
 import AppModal from "../alerts/AppModal";
 import DeleteFriend from "../friends/DeleteFriend";
+import LinkUser from "../appwide/button/LinkUser";
+import LinkUserWithCode from "../appwide/button/LinkUserWithCode";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import useUpdateFriendSettings from "@/src/hooks/useUpdateFriendSettings";
 import { AppFontStyles } from "@/app/styles/AppFonts";
@@ -31,8 +33,6 @@ interface Props {
 
 const phoneRegex = /^\+?1?\d{9,15}$/;
 
-const delays = [0, 60, 120];
-
 const FriendSettingsModal: React.FC<Props> = ({
   userId,
   isVisible,
@@ -46,6 +46,9 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendDarkColor,
   closeModal,
 }) => {
+  const [viewLinkCode, setViewLinkCode] = useState(false);
+  const toggleViewLinkCode = () => setViewLinkCode((prev) => !prev);
+
   const { friendDash } = useFriendDash({ userId, friendId });
   const { handleUpdateFriendSettings } = useUpdateFriendSettings({
     userId,
@@ -173,7 +176,32 @@ const FriendSettingsModal: React.FC<Props> = ({
     >
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.innerContainer}>
-          <BouncyEntrance delay={delays[0]} style={{ width: "100%" }}>
+          <BouncyEntrance delay={0} style={{ width: "100%" }}>
+            <View style={styles.sectionContainer}>
+              <LinkUser
+                primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+                textStyle={AppFontStyles.subWelcomeText}
+                viewCode={viewLinkCode}
+                toggleViewCode={toggleViewLinkCode}
+                linkedUser={friendDash?.linked_user ?? null}
+              />
+            </View>
+          </BouncyEntrance>
+          {viewLinkCode && !friendDash?.linked_user && (
+            <BouncyEntrance delay={0} style={{ width: "100%" }}>
+              <View style={styles.sectionContainer}>
+                <LinkUserWithCode
+                  friendId={friendId}
+                  color={textColor}
+                  viewCode={viewLinkCode}
+                />
+              </View>
+            </BouncyEntrance>
+          )}
+
+          <BouncyEntrance delay={60} style={{ width: "100%" }}>
             <View style={styles.sectionContainer}>
               <OptionContainer
                 backgroundColor={backgroundColor}
@@ -200,7 +228,7 @@ const FriendSettingsModal: React.FC<Props> = ({
             </View>
           </BouncyEntrance>
 
-          <BouncyEntrance delay={delays[1]} style={{ width: "100%" }}>
+          <BouncyEntrance delay={120} style={{ width: "100%" }}>
             <View style={styles.sectionContainer}>
               <OptionContainer
                 backgroundColor={backgroundColor}
@@ -228,7 +256,7 @@ const FriendSettingsModal: React.FC<Props> = ({
             </View>
           </BouncyEntrance>
 
-          <BouncyEntrance delay={delays[2]} style={{ width: "100%" }}>
+          <BouncyEntrance delay={180} style={{ width: "100%" }}>
             <View style={styles.sectionContainer}>
               <OptionInputEdit
                 label="Phone"
@@ -245,7 +273,7 @@ const FriendSettingsModal: React.FC<Props> = ({
             </View>
           </BouncyEntrance>
 
-          <BouncyEntrance delay={delays[2]} style={{ width: "100%" }}>
+          <BouncyEntrance delay={180} style={{ width: "100%" }}>
             <View style={styles.sectionContainer}>
               <OptionInputEdit
                 label="Name"
@@ -262,7 +290,7 @@ const FriendSettingsModal: React.FC<Props> = ({
             </View>
           </BouncyEntrance>
 
-          <BouncyEntrance delay={delays[2]} style={{ width: "100%" }}>
+          <BouncyEntrance delay={180} style={{ width: "100%" }}>
             <View style={styles.sectionContainer}>
               <DeleteFriend
                 userId={userId}

@@ -18,7 +18,7 @@ const geckoScoreStateQueryOptions = (userId: number) => ({
       isSuccess: geckoScoreStateLoaded,
     } = useQuery({
       ...geckoScoreStateQueryOptions(user?.id ?? 0),
-      enabled: !!user?.id && !isInitializing,
+      //enabled: !!user?.id && !isInitializing,
       refetchInterval: (query) => {
         const data = query.state.data;
         if (data?.revives_at) {

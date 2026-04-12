@@ -1,6 +1,8 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Alert } from "react-native";
 
+import ShareCode from "../appwide/button/ShareCode";
+import FriendLinkCode from "@/src/forms/FriendLinkCode";
 import SvgIcon from "@/app/styles/SvgIcons";
 import OptionToggle from "../headers/OptionToggle";
 import AppModalWithToast from "../alerts/AppModalWithToast";
@@ -53,6 +55,12 @@ const UserSettingsModal: React.FC<Props> = ({
   useEffect(() => {
     if (updateSettingsMutation.isError) setFlashMessage(settingsUpdateError);
   }, [updateSettingsMutation.isError]);
+
+  const [viewCode, setViewCode] = useState(false);
+
+  const toggleViewCode = () => {
+    setViewCode((prev) => !prev);
+  };
 
   const subWelcomeTextStyle = AppFontStyles.subWelcomeText;
   const BUTTON_COLOR = manualGradientColors.lightColor;
@@ -111,10 +119,6 @@ const UserSettingsModal: React.FC<Props> = ({
     );
   };
 
- 
-
- 
-
   const toggleUseAutoSelect = () => {
     if (!settings) return;
     updateSettings({ use_auto_select: !settings.use_auto_select });
@@ -166,7 +170,7 @@ const UserSettingsModal: React.FC<Props> = ({
     >
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          <View style={styles.sectionContainer}>
+          {/* <View style={styles.sectionContainer}>
             <BouncyEntrance
               delay={staggeredDelays[i++]}
               style={{ width: "100%" }}
@@ -180,7 +184,38 @@ const UserSettingsModal: React.FC<Props> = ({
                 buttonColor={manualGradientColors.lightColor}
               />
             </BouncyEntrance>
+          </View> */}
+
+          <View style={styles.sectionContainer}>
+            <BouncyEntrance
+              delay={staggeredDelays[i++]}
+              style={{ width: "100%" }}
+            >
+              <ShareCode
+                userId={userId}
+                primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+                viewCode={viewCode}
+                toggleViewCode={toggleViewCode}
+              />
+            </BouncyEntrance>
           </View>
+          {viewCode && (
+            <View style={styles.sectionContainer}>
+              <BouncyEntrance
+                delay={staggeredDelays[i++]}
+                style={{ width: "100%" }}
+              >
+                <FriendLinkCode 
+                userId={userId}
+                color={textColor}
+                viewCode={viewCode}
+                
+                />
+              </BouncyEntrance>
+            </View>
+          )}
 
           <View style={styles.sectionContainer}>
             <BouncyEntrance
@@ -320,7 +355,7 @@ const UserSettingsModal: React.FC<Props> = ({
                 {...sharedToggleProps}
                 label=" Autoselect Next Friend"
                 icon={<SvgIcon name="account" size={20} color={textColor} />}
-               value={!!settings.use_auto_select}
+                value={!!settings.use_auto_select}
                 onPress={toggleUseAutoSelect}
               />
             </BouncyEntrance>

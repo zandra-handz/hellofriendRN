@@ -221,7 +221,7 @@ const FriendThemeModal: React.FC<Props> = ({
     >
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          {/* 1) Manual theme toggle */}
+      
           <View style={styles.sectionContainer}>
             <BouncyEntrance delay={delays[i++]} style={{ width: "100%" }}>
               <OptionToggle
@@ -237,7 +237,7 @@ const FriendThemeModal: React.FC<Props> = ({
             </BouncyEntrance>
           </View>
 
-          {/* 2) Preview pill row (separate row so it can animate independently) */}
+   
           {manualTheme && (
             <View style={styles.sectionContainer}>
               <BouncyEntrance delay={delays[i++]} style={{ width: "100%" }}>

@@ -1,7 +1,7 @@
 // OptionNoToggle.tsx
 import React from "react";
 import { View, Text, Pressable, StyleSheet, TextStyle } from "react-native";
-
+import SvgIcon from "@/app/styles/SvgIcons";
 type Props = {
   label: string;
   primaryColor: string;
@@ -10,6 +10,9 @@ type Props = {
   textStyle: TextStyle;
   rightSlot?: React.ReactElement;
   icon?: React.ReactElement;
+  iconName?: string;
+  iconSize?: number;
+  iconColor?: string;
   buttonPadding?: number;
   onPress?: () => void;
   bold?: boolean;
@@ -22,7 +25,9 @@ const OptionNoToggle = ({
   buttonColor,
   textStyle,
   rightSlot,
-  icon,
+  iconName = `refresh`,
+  iconSize = 20,
+  iconColor = "orange",
   buttonPadding = 4,
   onPress,
   bold = false,
@@ -31,12 +36,20 @@ const OptionNoToggle = ({
     <Pressable
       onPress={onPress}
       disabled={!onPress}
-      style={[styles.button, { padding: buttonPadding, backgroundColor: buttonColor }]}
-      android_ripple={onPress ? { color: "rgba(255,255,255,0.08)" } : undefined}
+      style={[
+        styles.button,
+        { padding: buttonPadding, backgroundColor: buttonColor },
+      ]}
+      // android_ripple={onPress ? { color: "rgba(255,255,255,0.08)" } : undefined}
+    
     >
       <View style={[styles.inner, { backgroundColor }]}>
         <View style={styles.left}>
-          {!!icon && <View style={styles.iconWrap}>{icon}</View>}
+          {!!iconName && (
+            <View style={styles.iconWrap}>
+              <SvgIcon name={iconName} size={iconSize} color={iconColor} />
+            </View>
+          )}
           <Text
             style={[
               textStyle,
@@ -51,11 +64,7 @@ const OptionNoToggle = ({
             {label}
           </Text>
         </View>
-        {!!rightSlot && (
-          <View style={styles.rightSlot}>
-            {rightSlot}
-          </View>
-        )}
+        {!!rightSlot && <View style={styles.rightSlot}>{rightSlot}</View>}
       </View>
     </Pressable>
   );
@@ -69,7 +78,7 @@ const styles = StyleSheet.create({
   inner: {
     borderRadius: 6,
     paddingVertical: 1,
-    paddingHorizontal: 0,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

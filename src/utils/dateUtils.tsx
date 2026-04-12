@@ -82,6 +82,20 @@ export const formatDayOfWeekAbbrevMonth = (dateString, { locale = "en-US" } = {}
  * e.g. "2026-03-28T16:55:38.014345Z" → 0  (less than a year old)
  *      "2024-03-28T16:55:38.014345Z" → 2
  */
+/**
+ * Returns the number of whole seconds remaining until an ISO 8601 datetime.
+ * Returns 0 if the time has already passed.
+ * e.g. "2026-04-12T16:07:01.011432Z" → 42
+ */
+export const secondsUntil = (isoDatetime: string): number => {
+  const ms = new Date(isoDatetime).getTime() - Date.now();
+  return Math.max(0, Math.floor(ms / 1000));
+};
+
+export const convertDjangoISO8601Time_toDateNow = (isoDatetime: string): number => {
+  return new Date(isoDatetime).getTime();
+};
+
 export const getAgeFromDate = (dateStr: string): number => {
   if (!dateStr) return 0;
 

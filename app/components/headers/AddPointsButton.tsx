@@ -37,8 +37,9 @@ const AddPointsButton: React.FC<Props> = ({
 
   return (
     <OptionNoToggle
-      label={label}
-      icon={icon}
+      label={label} 
+      iconName={'plus'}
+      iconColor={primaryColor}
       primaryColor={primaryColor}
       backgroundColor={backgroundColor}
       buttonColor={buttonColor}

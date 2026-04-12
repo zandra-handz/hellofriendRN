@@ -15,14 +15,20 @@ type Props = {
   enabled?: boolean;
 };
 
+
+const categoriesQueryOptions = (userId: number) => ({
+    queryKey: ["categories", userId],
+    queryFn: () => getUserCategories(userId),
+    enabled: !!userId,
+  });
+
 const useCategories = ({
   userId,
   isInitializing = false,
   enabled = true,
 }: Props) => {
   const { data, isLoading, isSuccess } = useQuery({
-    queryKey: ["categories", userId],
-    queryFn: () => getUserCategories(userId),
+    ...categoriesQueryOptions(userId ?? 0),
     enabled: !!(userId && !isInitializing && enabled),
    // staleTime: 1000 * 60 * 60 * 10,
   });
