@@ -84,6 +84,7 @@ import ScreenAddImage from "./app/screens/images/ScreenAddImage";
 import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 // import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 import ScreenGecko from "./app/screens/fidget/ScreenGecko";
+import ScreenSecretGecko from "./app/screens/fidget/ScreenSecretGecko";
 import ScreenGeckoSelectSettings from "./app/screens/moments/ScreenGeckoSelectSettings";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
@@ -108,7 +109,7 @@ const queryClient = new QueryClient({
       gcTime: 1000 * 60 * 60 * 24, // 24 hours
       retry: 3,
     },
-        mutations: {
+    mutations: {
       networkMode: "online", // change this — pauses and resumes automatically
     },
     // mutations: {
@@ -228,7 +229,7 @@ export default Sentry.wrap(function App() {
                 "friendDashboardData",
                 "userGeckoCombinedData",
                 "userGeckoConfigs",
-                "groqConversationHistory"
+                "groqConversationHistory",
               ];
               return includedKeys.includes(query.queryKey[0] as string);
             },
@@ -432,7 +433,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
             component={ScreenHistory}
             options={{ headerShown: false }}
           />
-                    <Stack.Screen
+          <Stack.Screen
             name="GeckoManage"
             component={ScreenGeckoManage}
             options={{ headerShown: false }}
@@ -446,6 +447,22 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
               animation: "none",
             }}
           />
+                  <Stack.Screen
+          name="SecretGecko"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
+        >
+          {(props) => (
+            <ScreenSecretGecko
+              {...props}
+              skiaFontLarge={skiaFontLarge}
+              skiaFontSmall={skiaFontSmall}
+            />
+          )}
+        </Stack.Screen>
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
@@ -526,7 +543,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
         <Stack.Screen
           name="MomentView"
           component={ScreenMomentView}
-          options={{ headerShown: false, animation: "none", gestureEnabled: false }}
+          options={{
+            headerShown: false,
+            animation: "none",
+            gestureEnabled: false,
+          }}
         />
         <Stack.Screen
           name="ImageView"

@@ -380,6 +380,7 @@ interface hookReturns {
     timestamp,
     sessionId,
   }: NavToGeckoProp) => void;
+  navigateToSecretGecko: () => void;
   navigateToGeckoSelectSettings: ({
     selection,
   }: NavToGeckoSelectSettingsProp) => void;
@@ -558,6 +559,10 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
+    const navigateToSecretGecko = () => {
+    navigation.navigate("SecretGecko");
+  }
+
   const navigateToGeckoSelectSettings = ({
     selection,
   }: NavToGeckoSelectSettingsProp) => {
@@ -656,6 +661,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToMomentFocus,
     navigateToMomentFocusWithText,
     navigateToGecko,
+    navigateToSecretGecko,
     navigateToGeckoSelectSettings,
     navigateToQRCode,
     navigateToMoments,

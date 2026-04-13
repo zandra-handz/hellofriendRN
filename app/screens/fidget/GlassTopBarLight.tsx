@@ -7,6 +7,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
+import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
+import useUser from "@/src/hooks/useUser";
 type Props = {
   textColor: string;
   backgroundColor: string;
@@ -29,6 +31,16 @@ const GlassTopBarLight = ({
   const hasAnimated = useRef(false);
 
   const { geckoScoreState } = useGeckoScoreState();
+  const { user } = useUser();
+  const { currentLiveSesh } = useCurrentLiveSesh({
+    userId: user?.id ?? 0,
+    enabled: !!user?.id,
+  });
+
+  const isHostingLiveSesh =
+    !!currentLiveSesh?.is_host &&
+    !!currentLiveSesh?.expires_at &&
+    new Date(currentLiveSesh.expires_at).getTime() > Date.now();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -74,10 +86,18 @@ const GlassTopBarLight = ({
         </Text>
         
       </Text>
-         <Text style={[styles.statsText, { color: textColor }]}>
-     
-          DEBUG Energy: {geckoScoreState?.energy}
-        </Text>
+        {isHostingLiveSesh ? (
+          <View style={styles.liveSeshRow}>
+            <View style={styles.liveDot} />
+            <Text style={[styles.statsText, { color: textColor }]}>
+              Hosting live sesh with {currentLiveSesh?.other_user_username}
+            </Text>
+          </View>
+        ) : (
+          <Text style={[styles.statsText, { color: textColor }]}>
+            DEBUG Energy: {geckoScoreState?.energy}
+          </Text>
+        )}
     </Animated.View>
   );
 };
@@ -113,6 +133,17 @@ const styles = StyleSheet.create({
     // fontWeight: "bold",
     fontSize: 16,
     lineHeight: 22,
+  },
+  liveSeshRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  liveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#7FE629",
   },
   friendText: {
     fontWeight: "bold",

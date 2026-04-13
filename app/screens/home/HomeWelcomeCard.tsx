@@ -81,7 +81,7 @@ export function WelcomeCard({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
-    paddingTop: 32,
+    paddingTop: 22, //32
     paddingBottom: 0,
   },
   eyebrow: {

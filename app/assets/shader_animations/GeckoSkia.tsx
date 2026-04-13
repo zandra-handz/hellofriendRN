@@ -423,12 +423,7 @@ const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06));
         u_gecko_size: gecko_size,
         u_time: 0,
         u_resolution: [width, height], // Use window dimensions as fallback
-        u_aspect: aspect || 1,
-        // u_lead: [-100, -100],
-        // u_lead_screen_space: [-100, -100],
-        // u_soul: [-100, -100],
-        // u_selected: [-100, -100],
-        // u_lastSelected: [-100, -100],
+        u_aspect: aspect || 1, 
         u_hint: [-100, -100], 
         u_geckoPoints: geckoPointsUniformSV.value,
       };
@@ -440,12 +435,7 @@ const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06));
       u_gecko_size: gecko_size,
       u_time: (Date.now() - start.current) / 1000,
       u_resolution: [size.width, size.height],
-      u_aspect: aspect || 1,
-      // u_lead: leadUniformSV.value,
-      // u_lead_screen_space: leadScreenSpaceUniformSV.value,
-      // u_soul: soulUniformSV.value,
-      // u_selected: selectedUniformSV.value,
-      // u_lastSelected: lastSelectedUniformSV.value,
+      u_aspect: aspect || 1, 
       u_hint: hintUniformSV.value, 
       u_geckoPoints: geckoPointsUniformSV.value,
     };

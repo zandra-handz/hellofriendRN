@@ -6,6 +6,7 @@ import useLiveSeshInvites from "@/src/hooks/LiveSeshCalls/useLiveSeshInvites";
 import useAcceptLiveSeshInvite from "@/src/hooks/LiveSeshCalls/useAcceptLiveSeshInvite";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import SvgIcon from "@/app/styles/SvgIcons";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 type Invite = {
   id: number;
@@ -22,6 +23,7 @@ const LiveSeshInvitesPanel: React.FC = () => {
   const { user } = useUser();
   const userId = user?.id;
   const { lightDarkTheme } = useLDTheme();
+  const { navigateToSecretGecko} = useAppNavigations();
 
   const { data, pending, sent, isLoading } = useLiveSeshInvites({
     userId: userId ?? 0,
@@ -77,6 +79,15 @@ const LiveSeshInvitesPanel: React.FC = () => {
         <Text style={[styles.headerText, { color: lightDarkTheme.primaryText }]}>
           Live Sesh Invites
         </Text>
+        {sessionIsActive && !currentLiveSesh?.is_host && (
+          <Pressable
+            onPress={navigateToSecretGecko}
+            style={styles.joinChevron}
+            hitSlop={8}
+          >
+            <SvgIcon name="chevron_right" size={18} color="#000000" />
+          </Pressable>
+        )}
       </View>
 
       {isLoading ? (
@@ -104,11 +115,6 @@ const LiveSeshInvitesPanel: React.FC = () => {
         ))
       )}
 
-      {sessionIsActive && (
-        <Pressable style={styles.activeSessionBtn}>
-          <Text style={styles.activeSessionText}>Join active live sesh</Text>
-        </Pressable>
-      )}
     </View>
   );
 };
@@ -127,6 +133,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     marginBottom: 4,
+  },
+  joinChevron: {
+    marginLeft: "auto",
+    backgroundColor: "#7FE629",
+    borderRadius: 50,
+    width: 26,
+    height: 26,
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerText: {
     fontFamily: "Poppins_700Bold",

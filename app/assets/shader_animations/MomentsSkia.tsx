@@ -620,14 +620,9 @@ const applyLiveScoreStateToGait = useCallback(() => {
   const color2Converted = hexToVec3(color2);
   const bckgColor1Converted = hexToVec3(bckgColor1);
   const bckgColor2Converted = hexToVec3(bckgColor2);
-
-  // const soul = useRef(new Soul(restPoint, 0.02));
-  // const leadPoint = useRef(new Mover(startingCoord));
-  // const gecko = useRef(new Gecko(startingCoord, 0.06));
-
+ 
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
-  const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
-  // const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState));
+  const leadPoint = useRef(new Mover(startingCoord0, startingCoord1)); 
   const gecko = useRef(
     new Gecko(
       startingCoord0,
@@ -748,38 +743,25 @@ const applyLiveScoreStateToGait = useCallback(() => {
     if (!internalReset || !reset) {
       console.log("conditions not met for a reset");
       return;
-    } else {
-      // console.log("TRUE RESET", startingCoord0, startingCoord1);
-    }
+    }  
 
-    // start.current = Date.now();
-    // soul.current = new Soul(restPoint, 0.02);
-    // leadPoint.current = new Mover(startingCoord);
-    // gecko.current = new Gecko(startingCoord, 0.06);
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
     leadPoint.current = new Mover(startingCoord0, startingCoord1);
-    // gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06, geckoScoreState);
-
+ 
     gecko.current = new Gecko(
       startingCoord0,
       startingCoord1,
       0.06,
       liveScoreStateRef?.current ?? geckoScoreState ?? {},
     );
-
-    // Reset buffers
-    workingBuffers.soul.fill(0);
-    // workingBuffers.walk.fill(0);
-    // workingBuffers.hint.fill(0);
+ 
+    workingBuffers.soul.fill(0); 
     workingBuffers.selected.fill(0);
     workingBuffers.lastSelected.fill(0);
     workingBuffers.heldCoords.fill(0);
     workingBuffers.geckoPoints.fill(0);
     workingBuffers.moments.fill(0);
-
-    // Reset SVs
-    // walk0UniformSV.value = [0, 0];
-    // hintUniformSV.value = [0, 0];
+ 
     selectedUniformSV.value = [0, 0];
     lastSelectedUniformSV.value = [0, 0];
 
@@ -799,8 +781,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
   const lastPawsClearedRef = useRef(false);
   const clearAllPawsInUIRef = useRef(() => {});
   const syncPawsInUIRef = useRef<() => void>(() => {});
-
-  // triggers animation to update when updateHold or clearHolding run in momentsClass
+ 
   const lastHoldingsVersionRef = useRef(0);
 
   useEffect(() => {

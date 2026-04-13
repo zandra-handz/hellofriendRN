@@ -1206,7 +1206,8 @@ export const fetchFriendDashboard = async (friendId: number) => {
 
 
   export const getCurrentLiveSesh = async () => {                                                                                                                                                                                                        try {
-      const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);                                                                                                                                                                  
+      const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);   
+      console.log(`livesession`, response.data)                                                                                                                                                               
       return response.data;
     } catch (e: unknown) {
       handleApiError(e, "Error during getCurrentLiveSesh");
@@ -1899,15 +1900,18 @@ export const updateLocation = async (
 //   }
 // };
 
-export const createFriend = async (friendData: object) => {
-  try {
-    console.log(friendData);
-    const res = await helloFriendApiClient.post("/friends/create/", friendData);
-    return res.data;
-  } catch (e: unknown) {
-    handleApiError(e, "Error during createFriend");
-  }
-};
+ export const createFriend = async (friendData: object) => {                                                                                                                                                                                            try {
+      console.log(friendData);                                                                                                                                                                                                                       
+      const res = await helloFriendApiClient.post("/friends/create/", friendData);
+      return res.data;
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e) && e.response) {
+        console.log("createFriend 400 body:", e.response.data);
+      }
+      handleApiError(e, "Error during createFriend");
+    }
+  };
+
 
 export const groqCall = async (promptData: object) => {
   try {

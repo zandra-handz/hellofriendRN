@@ -65,7 +65,7 @@ const useCreateFriend = ({ userId, selectFriend }: Props) => {
       }
     },
     onError: (error) => {
-      console.error("Error deleting friend in mutation function: ", error);
+      console.error("Error creating friend in mutation function: ", error);
     },
   });
 

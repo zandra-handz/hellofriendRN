@@ -247,7 +247,9 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
                   onPress={navigateToGeckoManage}
                   backgroundColor={backgroundColor}
                   textColor={textColor}
-                />   
+                />  
+                <View style={{height: 400}}>
+                  </View> 
                 </ScrollView>
                 
                 </View>
