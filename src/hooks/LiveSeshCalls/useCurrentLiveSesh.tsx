@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentLiveSesh } from "@/src/calls/api";
+import { useMemo} from "react";
 
 type Props = {
   userId: number;
@@ -14,8 +15,20 @@ const useCurrentLiveSesh = ({ userId, enabled = true }: Props) => {
     staleTime: 0,
   });
 
+
+  const isHost = useMemo(() => {
+    if (data) {
+      return data?.is_host
+    }
+    return undefined
+
+  }, [data]);
+
+
+
   return {
     currentLiveSesh: data,
+    isHost,
     isLoading,
     isSuccess,
     refetch,

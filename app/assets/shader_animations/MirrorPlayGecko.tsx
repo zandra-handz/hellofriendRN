@@ -34,7 +34,7 @@ import {
   Skia,
 } from "@shopify/react-native-skia";
 
-type PeerGeckoPosition = {
+type hostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
   received_at: number;
@@ -53,8 +53,8 @@ type Props = {
   gecko_scale?: number;
   gecko_size?: number;
   reset?: number | null;
-  peerGeckoPositionSV: SharedValue<PeerGeckoPosition>;
-  sendGeckoPositionRef?: React.MutableRefObject<
+  hostPeerGeckoPositionSV: SharedValue<hostPeerGeckoPosition>;
+  sendGuestGeckoPositionRef?: React.MutableRefObject<
     (position: [number, number], force?: boolean) => void
   > | null;
   dotColor?: string;
@@ -74,8 +74,8 @@ const MirrorPlayGecko = ({
   gecko_scale = 1,
   gecko_size = 1.2,
   reset = 0,
-  peerGeckoPositionSV,
-  sendGeckoPositionRef = null,
+  hostPeerGeckoPositionSV,
+  sendGuestGeckoPositionRef: sendGuestGeckoPositionRef = null,
   dotColor = "#7FE629",
   dotRadius = 14,
 }: Props) => {
@@ -307,7 +307,7 @@ const MirrorPlayGecko = ({
         }
       }
 
-     // sendGeckoPositionRef?.current?.(leadPoint.current.lead);
+     sendGuestGeckoPositionRef?.current?.(leadPoint.current.lead);
 
       frame = requestAnimationFrame(animate);
     };
@@ -331,7 +331,7 @@ const MirrorPlayGecko = ({
         u_time: 0,
         u_resolution: [width, height],
         u_aspect: aspect || 1,  
-           u_peerDot: peerGeckoPositionSV.value,
+           u_peerDot: hostPeerGeckoPositionSV.value,
       
    
         u_geckoPoints: geckoPointsUniformSV.value,
@@ -345,7 +345,7 @@ const MirrorPlayGecko = ({
       u_time: shaderTimeSV.value,
       u_resolution: [size.width, size.height],
       u_aspect: aspect || 1,  
-      u_peerDot: peerGeckoPositionSV.value,
+      u_peerDot: hostPeerGeckoPositionSV.value,
       u_geckoPoints: geckoPointsUniformSV.value,
     };
   }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
@@ -353,19 +353,19 @@ const MirrorPlayGecko = ({
   // Peer dot: treat incoming [x, y] as normalized screen coords [0..1].
   // If the sender transmits gecko-space instead, swap this mapping later.
   const dotCx = useDerivedValue(() => {
-    const p = peerGeckoPositionSV.value;
+    const p = hostPeerGeckoPositionSV.value;
     if (!p || !size.width) return -1000;
     return p.position[0] * size.width;
   }, [size.width]);
 
   const dotCy = useDerivedValue(() => {
-    const p = peerGeckoPositionSV.value;
+    const p = hostPeerGeckoPositionSV.value;
     if (!p || !size.height) return -1000;
     return p.position[1] * size.height;
   }, [size.height]);
 
   const peerUniforms = useDerivedValue(() => {
-    const p = peerGeckoPositionSV.value;
+    const p = hostPeerGeckoPositionSV.value;
     const hx = p && size.width ? p.position[0] * size.width : -1000;
     const hy = p && size.height ? p.position[1] * size.height : -1000;
     return {

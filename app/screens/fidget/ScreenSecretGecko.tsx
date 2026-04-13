@@ -2,10 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import MemoizedMirrorPlayGecko from "@/app/assets/shader_animations/MirrorPlayGecko";
 import manualGradientColors from "@/app/styles/StaticColors";
 import GradientBackgroundAppDefault from "@/app/components/appwide/format/GradientBackgroundAppDefault";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
+import useUser from "@/src/hooks/useUser";
 // optional (only if you added backend broadcast)
 // import PeerEnergyText from "@/app/components/debug/PeerEnergyText";
 
@@ -17,16 +19,28 @@ const ScreenSecretGecko = (props: Props) => {
     liveSeshPartnerId,
     energySV,
     peerGeckoPositionSV,
+    hostPeerGeckoPositionSV,
+
     // peerEnergySV, // only if you added it
     joinLiveSesh,
     leaveLiveSesh,
     sendGeckoPosition,
+    sendGuestGeckoPosition,
+    registerOnHostGeckoCoords,
   } = useGeckoEnergySocket(null);
 
-  const sendGeckoPositionRef = useRef(sendGeckoPosition);
+const { user } = useUser();
+  const { isHost } = useCurrentLiveSesh({userId: user?.id, enabled: true})
+
+  const noopSendGuestGeckoPosition = useRef(() => {}).current;
+  const sendGuestGeckoPositionRef = useRef(
+    !isHost ? sendGuestGeckoPosition : noopSendGuestGeckoPosition
+  );
   useEffect(() => {
-    sendGeckoPositionRef.current = sendGeckoPosition;
-  }, [sendGeckoPosition]);
+    sendGuestGeckoPositionRef.current = !isHost
+      ? sendGuestGeckoPosition
+      : noopSendGuestGeckoPosition;
+  }, [sendGuestGeckoPosition, isHost, noopSendGuestGeckoPosition]);
 
   useEffect(() => {
     // auto join when screen mounts
@@ -50,7 +64,7 @@ const ScreenSecretGecko = (props: Props) => {
       </Text>
  
       <PeerGeckoPositionText
-        peerGeckoPositionSV={peerGeckoPositionSV}
+        peerGeckoPositionSV={hostPeerGeckoPositionSV}
         color="white"
       />
  
@@ -84,8 +98,8 @@ const ScreenSecretGecko = (props: Props) => {
             //   gecko_size={1.6}
                 gecko_size={1.7}
               reset={0}
-              peerGeckoPositionSV={peerGeckoPositionSV}
-              sendGeckoPositionRef={sendGeckoPositionRef}
+              hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
+              sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
             />
           </View>
     </GradientBackgroundAppDefault>

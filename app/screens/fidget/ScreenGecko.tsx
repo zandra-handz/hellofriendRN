@@ -20,6 +20,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserPoints from "@/src/hooks/useUserPoints";
 import EnergyText from "@/app/components/fidget/EnergyText";
+import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import useGeckoSynthesizer from "@/src/hooks/useGeckoSynthesizer";
 import useGeckoSynthesizer_WS from "@/src/hooks/useGeckoSynthesizer_WS";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
@@ -80,6 +81,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const sessionId = route.params?.sessionId ?? null;
 
   const { user } = useUser();
+  const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
@@ -156,7 +159,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     updateGeckoData,
     sendGeckoPosition,
     peerGeckoPositionSV,
+    hostPeerGeckoPositionSV,
+    guestPeerGeckoPositionSV,
     registerOnGeckoCoords,
+    registerOnHostGeckoCoords,
+    sendHostGeckoPosition,
 
     flush,
     registerOnScoreState,
@@ -164,7 +171,22 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     hasReceivedInitialScoreStateRef,
     initialBackendEnergyUpdatedAtRef,
     latestBackendEnergyUpdatedAtRef,
+
+    joinLiveSesh,
+    leaveLiveSesh
   } = useGeckoEnergySocket(selectedFriend?.id ?? null);
+
+
+  useEffect(() => {
+    // auto join when screen mounts
+    joinLiveSesh();
+
+    return () => {
+      leaveLiveSesh();
+    };
+  }, [joinLiveSesh, leaveLiveSesh]);
+
+  
 
   useEffect(() => {
     if (socketStatus) {
@@ -181,16 +203,27 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   //   });
   // }, [registerOnScoreState]);
 
+  useEffect(() => {
+    registerOnGeckoCoords((data) => {
+      peerGeckoPositionSV.value = {
+        from_user: data.from_user,
+        position: data.position,
+        received_at: performance.now(),
+      };
+    });
+  }, [registerOnGeckoCoords]);
 
   useEffect(() => {
-registerOnGeckoCoords((data) => {
-  peerGeckoPositionSV.value = {
-    from_user: data.from_user,
-    position: data.position,
-    received_at: performance.now(),
-  };
-});
-}, [registerOnGeckoCoords]);
+    if (isHost) { 
+      registerOnHostGeckoCoords((data) => {
+        hostPeerGeckoPositionSV.value = {
+          from_user: data.from_user,
+          position: data.position,
+          received_at: performance.now(),
+        };
+      });
+    }
+  }, [registerOnHostGeckoCoords, isHost]);
 
   // const {
   //     gecko,
@@ -1088,6 +1121,10 @@ registerOnGeckoCoords((data) => {
   const categoryStreakRef = useRef(0);
   const updateGeckoDataRef = useRef(updateGeckoData);
   const sendGeckoPositionRef = useRef(sendGeckoPosition);
+  const noopSendHostGeckoPosition = useRef(() => {}).current;
+  const sendHostGeckoPositionRef = useRef(
+    isHost ? sendHostGeckoPosition : noopSendHostGeckoPosition
+  );
 
   useEffect(() => {
     updateGeckoDataRef.current = updateGeckoData;
@@ -1096,6 +1133,13 @@ registerOnGeckoCoords((data) => {
   useEffect(() => {
     sendGeckoPositionRef.current = sendGeckoPosition;
   }, [sendGeckoPosition]);
+
+  useEffect(() => {
+    sendHostGeckoPositionRef.current = isHost
+      ? sendHostGeckoPosition
+      : noopSendHostGeckoPosition;
+
+  }, [sendHostGeckoPosition, isHost, noopSendHostGeckoPosition]);
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -1214,6 +1258,7 @@ registerOnGeckoCoords((data) => {
         <MomentsSkia
           updateGeckoData={updateGeckoData}
           sendGeckoPositionRef={sendGeckoPositionRef}
+          sendHostGeckoPositionRef={sendHostGeckoPositionRef}
           liveScoreStateRef={scoreStateRef}
           hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
           initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}
@@ -1248,7 +1293,6 @@ registerOnGeckoCoords((data) => {
           recenterTrigger={recenterTrigger}
           backTrigger={backTrigger}
           geckoScoreState={geckoScoreState}
-   
           liveScoreStateRef={scoreStateRef}
           // geckoScoreStateRef={geckoScoreStateRef}
         />
@@ -1276,9 +1320,9 @@ registerOnGeckoCoords((data) => {
           />
         )}
         {/* <Text>{liveScoreState?.energy?.toFixed(2)}</Text>  */}
-        <EnergyText energySV={energySV} />
-<PeerGeckoPositionText peerGeckoPositionSV={peerGeckoPositionSV} />
-     
+        <EnergyText energySV={energySV} /> 
+        <PeerGeckoPositionText peerGeckoPositionSV={hostPeerGeckoPositionSV} />
+        <PeerGeckoPositionText peerGeckoPositionSV={guestPeerGeckoPositionSV} />
       </View>
 
       <GlassPreviewBottom

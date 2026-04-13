@@ -113,6 +113,7 @@ type Props = {
 const MomentsSkia = ({
   updateGeckoData,
   sendGeckoPositionRef,
+  sendHostGeckoPositionRef,
   handleUpdateMomentCoords,
   handleUpdateGeckoData,
   handleGetMoment,
@@ -1048,6 +1049,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
         }
       }
          sendGeckoPositionRef.current(leadPoint.current.lead);
+         sendHostGeckoPositionRef.current(leadPoint.current.lead);
 
       frame = requestAnimationFrame(animate);
     };
