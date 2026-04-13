@@ -98,7 +98,7 @@ const { user } = useUser();
             //   gecko_size={1.6}
                 gecko_size={1.7}
               reset={0}
-              hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
+              hostPeerGeckoPositionSV={peerGeckoPositionSV}
               sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
             />
           </View>

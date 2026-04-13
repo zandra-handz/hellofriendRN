@@ -364,10 +364,12 @@ import { useEffect, useRef, useCallback, useState } from "react";
       setSocketStatus("connecting");
       console.log("[WS] connecting...");
 
-      const ws = new WebSocket(
-        `wss://badrainbowz.com/ws/gecko-energy/?token=${token}`,
-      );
-
+      // if selectedFriend {ScreenGecko) pass that in the param, otherwise (ScreenSecretGecko) don't
+      // backend: host can only connect if their friend id matches what's on the session
+      // this way guest doesn't see notes that aren't meant for them
+      const fid = friendIdRef.current;                                                                                                                                                                                                                                                                                        const url = fid != null                                                                                                                                                                                                                                                                                                   ? `wss://badrainbowz.com/ws/gecko-energy/?token=${token}&friend_id=${fid}`                                                                                                                                                                                                                                          
+        : `wss://badrainbowz.com/ws/gecko-energy/?token=${token}`;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+      const ws = new WebSocket(url);        
       ws.onopen = () => {
         console.log("[WS] connected");
         setSocketStatus("connected");

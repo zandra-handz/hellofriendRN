@@ -27,6 +27,7 @@ import {
   // GECKO_DEBUG_DOTS_SKSL,
   // GECKO_SKELETON_SKSL,
 } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
+import { PEER_DOT_SKSL } from "./shaderCode/peerDotShader";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -114,6 +115,7 @@ const MomentsSkia = ({
   updateGeckoData,
   sendGeckoPositionRef,
   sendHostGeckoPositionRef,
+  peerGeckoPositionSV,
   handleUpdateMomentCoords,
   handleUpdateGeckoData,
   handleGetMoment,
@@ -697,6 +699,23 @@ const applyLiveScoreStateToGait = useCallback(() => {
     bckgColor2Converted,
   ]);
 
+  const peerDotSource = useMemo(() => {
+    return Skia.RuntimeEffect.Make(PEER_DOT_SKSL);
+  }, []);
+
+  const peerDotUniforms = useDerivedValue(() => {
+    const p = peerGeckoPositionSV?.value;
+    const point = p?.position ?? [-1000, -1000];
+    return {
+      u_resolution: [size.width || width, size.height || height],
+      u_aspect: aspect || 1,
+      u_gecko_scale: gecko_scale,
+      u_gecko_size: gecko_size,
+      u_time: shaderTimeSV.value,
+      u_peerPoint: point,
+    };
+  }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
+
   if (!source) {
     console.error("❌ Shader failed to compile");
     return null;
@@ -1139,6 +1158,14 @@ const applyLiveScoreStateToGait = useCallback(() => {
               />
             </Rect>
           </Canvas>
+
+          {peerDotSource && (
+            <Canvas style={[StyleSheet.absoluteFill]} pointerEvents="none">
+              <Rect x={0} y={0} width={size.width} height={size.height}>
+                <Shader source={peerDotSource} uniforms={peerDotUniforms} />
+              </Rect>
+            </Canvas>
+          )}
         </View>
       </GestureDetector>
 

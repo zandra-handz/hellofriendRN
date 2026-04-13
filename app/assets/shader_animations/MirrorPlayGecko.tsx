@@ -11,6 +11,7 @@ import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import { packGeckoOnlyProdCompact_56 } from "./animUtils";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
+import { PEER_DOT_SKSL } from "./shaderCode/peerDotShader";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -168,35 +169,7 @@ const MirrorPlayGecko = ({
   `;
 
   const peerDotSource = useMemo(() => {
-    return Skia.RuntimeEffect.Make(`
-      uniform float2 u_resolution;
-      uniform float  u_time;
-      uniform float2 u_heldPx;
-
-      half4 main(float2 fragCoord) {
-        float3 color = float3(0.0);
-
-        float d = length(fragCoord - u_heldPx);
-
-        float pulseSpeed  = 2.5;
-        float pulseAmount = 0.15;
-
-        float outerPulse  = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
-        float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
-        float corePulse   = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
-
-        float outerR  = 21.0 * outerPulse;
-        float middleR = 11.0 * middlePulse;
-        float coreR   =  8.0 * corePulse;
-
-        float outerGlow  = smoothstep(outerR, 0.0, d) * 0.45;
-        float middleRing = smoothstep(middleR, middleR * 0.70, d) * 0.70;
-        float coreDot    = smoothstep(coreR, 0.0, d) * 1.00;
-
-        float intensity = outerGlow + middleRing + coreDot;
-        return half4(half3(intensity), half(intensity));
-      }
-    `);
+    return Skia.RuntimeEffect.Make(PEER_DOT_SKSL);
   }, []);
 
   const source = useMemo(() => {
@@ -366,14 +339,16 @@ const MirrorPlayGecko = ({
 
   const peerUniforms = useDerivedValue(() => {
     const p = hostPeerGeckoPositionSV.value;
-    const hx = p && size.width ? p.position[0] * size.width : -1000;
-    const hy = p && size.height ? p.position[1] * size.height : -1000;
+    const point = p?.position ?? [-1000, -1000];
     return {
       u_resolution: [size.width || width, size.height || height],
+      u_aspect: aspect || 1,
+      u_gecko_scale: gecko_scale,
+      u_gecko_size: gecko_size,
       u_time: shaderTimeSV.value,
-      u_heldPx: [hx, hy],
+      u_peerPoint: point,
     };
-  }, [size.width, size.height, width, height]);
+  }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
 
   return (
     <GestureDetector gesture={panGesture}>

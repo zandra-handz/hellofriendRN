@@ -1259,6 +1259,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           updateGeckoData={updateGeckoData}
           sendGeckoPositionRef={sendGeckoPositionRef}
           sendHostGeckoPositionRef={sendHostGeckoPositionRef}
+          peerGeckoPositionSV={guestPeerGeckoPositionSV}
           liveScoreStateRef={scoreStateRef}
           hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
           initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}
