@@ -355,16 +355,6 @@ const ScreenGeckoManage = (props: Props) => {
                 ],
               },
               {
-                kind: "strip",
-                key: "variance_strip",
-                title: "client divergence (vs server truth)",
-                height: 60,
-                accessor: (e) =>
-                  e.client_energy != null && e.server_energy_after != null
-                    ? e.client_energy - e.server_energy_after
-                    : null,
-              },
-              {
                 key: "energy_variance",
                 title: "client divergence (client − server)",
                 series: [
@@ -437,8 +427,37 @@ const ScreenGeckoManage = (props: Props) => {
               },
               {
                 kind: "strip",
+                key: "variance_strip",
+                title: "energy divergence: frontend − backend (green = in sync, red = drift)",
+                height: 60,
+                okColor: "#A5D6A7",
+                accessor: (e) =>
+                  e.client_energy != null && e.server_energy_after != null
+                    ? e.client_energy - e.server_energy_after
+                    : null,
+              },
+              {
+                kind: "dualRange",
+                key: "time_ranges",
+                title: "sync window: server (top) vs client (bottom) — width = duration",
+                height: 50,
+                topLabel: "server",
+                topColor: "#FF8A65",
+                topRange: (e) => ({
+                  start: e.server_updated_at_before,
+                  end: e.server_updated_at_after,
+                }),
+                bottomLabel: "client",
+                bottomColor: "#4FC3F7",
+                bottomRange: (e) => ({
+                  start: e.client_started_on,
+                  end: e.client_ended_on,
+                }),
+              },
+              {
+                kind: "strip",
                 key: "start_time_gap_strip",
-                title: "client_started_on − server_updated_at_before (sec)",
+                title: "start-time gap: client_started_on − server_updated_at_before (sec, red > 2s)",
                 height: 60,
                 redThreshold: 2,
                 accessor: (e) => {

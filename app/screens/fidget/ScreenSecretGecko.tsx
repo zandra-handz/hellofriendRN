@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
+import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
 import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
@@ -8,6 +9,8 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import GradientBackgroundAppDefault from "@/app/components/appwide/format/GradientBackgroundAppDefault";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 import useUser from "@/src/hooks/useUser";
+import { useNavigation } from "@react-navigation/native";
+import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
 // optional (only if you added backend broadcast)
 // import PeerEnergyText from "@/app/components/debug/PeerEnergyText";
 
@@ -30,6 +33,33 @@ const ScreenSecretGecko = (props: Props) => {
   } = useGeckoEnergySocket(null);
 
 const { user } = useUser();
+  const { lightDarkTheme } = useLDTheme();
+  const navigation = useNavigation();
+  const handleExit = React.useCallback(() => {
+    leaveLiveSesh();
+    navigation.goBack();
+  }, [leaveLiveSesh, navigation]);
+  const { handleCancelCurrentLiveSesh } = useCancelCurrentLiveSesh({
+    userId: user?.id,
+  });
+  const handleCancelPress = React.useCallback(() => {
+    Alert.alert(
+      "End session?",
+      "This will end the session for both you and your partner.",
+      [
+        { text: "Keep it", style: "cancel" },
+        {
+          text: "End session",
+          style: "destructive",
+          onPress: async () => {
+            await handleCancelCurrentLiveSesh();
+            leaveLiveSesh();
+            navigation.goBack();
+          },
+        },
+      ],
+    );
+  }, [handleCancelCurrentLiveSesh, leaveLiveSesh, navigation]);
   const { isHost } = useCurrentLiveSesh({userId: user?.id, enabled: true})
 
   const noopSendGuestGeckoPosition = useRef(() => {}).current;
@@ -53,7 +83,7 @@ const { user } = useUser();
 
   return (
     <GradientBackgroundAppDefault style={styles.backgroundContainer}>
-      <Text style={styles.title}>Secret Gecko</Text>
+ 
 
       <Text style={styles.label}>
         socket: {socketStatus}
@@ -102,6 +132,13 @@ const { user } = useUser();
               sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
             />
           </View>
+      <GlassPreviewBottomSecret
+        color={lightDarkTheme.primaryText}
+        backgroundColor={lightDarkTheme.darkerGlassBackground}
+        borderColor={"transparent"}
+        onPress_exit={handleExit}
+        onPress_cancel={handleCancelPress}
+      />
     </GradientBackgroundAppDefault>
   );
 };

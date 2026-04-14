@@ -1302,6 +1302,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       <GlassTopBarLight
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
+        friendId={selectedFriend.id}
         friendName={selectedFriend.name}
         TIME_SCORE={TIME_SCORE}
         DAYS_SINCE={DAYS_SINCE}

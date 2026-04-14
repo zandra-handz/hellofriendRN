@@ -11,9 +11,9 @@ import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import useUser from "@/src/hooks/useUser";
 type Props = {
   textColor: string;
-  backgroundColor: string;
-
-  selectedFriend: { name: string };
+  backgroundColor: string; 
+  friendId: number;
+  friendName: string;
   TIME_SCORE: number;
   DAYS_SINCE: number;
   highlight: boolean;
@@ -22,6 +22,7 @@ type Props = {
 const GlassTopBarLight = ({
   textColor,
   backgroundColor,
+  friendId,
   friendName,
   TIME_SCORE,
   DAYS_SINCE,
@@ -32,7 +33,7 @@ const GlassTopBarLight = ({
 
   const { geckoScoreState } = useGeckoScoreState();
   const { user } = useUser();
-  const { currentLiveSesh } = useCurrentLiveSesh({
+  const { currentLiveSesh, sessionFriendId, isHost } = useCurrentLiveSesh({
     userId: user?.id ?? 0,
     enabled: !!user?.id,
   });
@@ -40,6 +41,7 @@ const GlassTopBarLight = ({
   const isHostingLiveSesh =
     !!currentLiveSesh?.is_host &&
     !!currentLiveSesh?.expires_at &&
+    friendId === sessionFriendId &&
     new Date(currentLiveSesh.expires_at).getTime() > Date.now();
 
   useFocusEffect(

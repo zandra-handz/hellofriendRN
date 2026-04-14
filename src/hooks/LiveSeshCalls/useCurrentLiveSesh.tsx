@@ -16,22 +16,15 @@ const useCurrentLiveSesh = ({ userId, enabled = true }: Props) => {
   });
 
 
-  const isHost = useMemo(() => {
-    if (data) {
-      return data?.is_host
-    }
-    return undefined
-
-  }, [data]);
-
+ 
 
 
   return {
-    currentLiveSesh: data,
-    isHost,
-    isLoading,
-    isSuccess,
-    refetch,
+    currentLiveSesh: data,                
+    isHost: data?.is_host ?? false,
+    sessionFriendId: data?.friend != null ? Number(data.friend) : null,                                                                                                                                                                                                                                                     isLoading,
+    isSuccess,                                                                                                                                                                                                                                                                                                          
+    refetch,      
   };
 };
 

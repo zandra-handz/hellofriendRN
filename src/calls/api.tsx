@@ -356,7 +356,7 @@ export const fetchGeckoSyncLog = async ({
       `/users/gecko/energy-sync/?${params.toString()}`,
     );
     if (response?.data && response?.data?.results) {
-      // console.log(`SYNC LOG!: `, response.data);
+     // console.log(`SYNC LOG!: `, response.data);
       return response.data;
     } else {
       console.log("No data returned from fetchGeckoSyncLog.");
@@ -1205,7 +1205,8 @@ export const fetchFriendDashboard = async (friendId: number) => {
 };
 
 
-  export const getCurrentLiveSesh = async () => {                                                                                                                                                                                                        try {
+  export const getCurrentLiveSesh = async () => { 
+     try {
       const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);   
       console.log(`livesession`, response.data)                                                                                                                                                               
       return response.data;
@@ -1213,6 +1214,16 @@ export const fetchFriendDashboard = async (friendId: number) => {
       handleApiError(e, "Error during getCurrentLiveSesh");
     }
   };
+
+
+  export const cancelCurrentLiveSesh = async () => {
+    try {
+      const response = await helloFriendApiClient.post(`/users/live-sesh/current/cancel/`);
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during cancelCurrentLiveSesh");
+    }
+  }
 
   export const getLiveSeshInvites = async () => {
     try {

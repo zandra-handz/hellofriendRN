@@ -10,63 +10,22 @@ import {
 import Svg, { Path, G, Text as SvgText } from "react-native-svg";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 
-type SyncLogEntry = {
-  id: number;
-  created_at: string;
-  trigger: string;
-  client_energy: number | null;
-  client_surplus: number | null;
-  client_multiplier: number | null;
-  client_computed_at: string | null;
-  client_steps_in_payload: number | null;
-  client_distance_in_payload: number | null;
-  client_started_on: string | null;
-  client_ended_on: string | null;
-  client_fatigue: number | null;
-  client_recharge: number | null;
-  server_energy_before: number | null;
-  server_energy_after: number | null;
-  server_surplus_before: number | null;
-  server_surplus_after: number | null;
-  server_updated_at_before: string | null;
-  server_updated_at_after: string | null;
-  recompute_window_seconds: number | null;
-  recompute_active_seconds: number | null;
-  recompute_new_steps: number | null;
-  recompute_fatigue: number | null;
-  recompute_recharge: number | null;
-  recompute_net: number | null;
-  pending_entries_count: number | null;
-  pending_entries_in_window: number | null;
-  pending_entries_stale: number | null;
-  pending_total_steps_all: number | null;
-  pending_total_steps_in_window: number | null;
-  energy_delta: number | null;
-  phantom_steps: number | null;
-  multiplier_active: boolean | null;
-  streak_expires_at: string | null;
-  total_steps_all_time: number | null;
-};
-
-export type SyncLogSeries = {
+export type PreparedSeries = {
   key: string;
   label: string;
   color: string;
-  accessor: (entry: SyncLogEntry) => number | null;
+  values: Array<number | null>;
 };
 
 type Props = {
-  listData: SyncLogEntry[];
-  series?: SyncLogSeries[];
+  timestamps: string[];
+  series: PreparedSeries[];
   title?: string;
   height?: number;
   pointWidth?: number;
   yMin?: number;
   yMax?: number;
   primaryColor?: string;
-  isFetchingNextPage?: boolean;
-  fetchNextPage?: () => void;
-  hasNextPage?: boolean;
   scrollRef?: (ref: ScrollView | null) => void;
   onScrollX?: (x: number) => void;
   onScrollRelease?: () => void;
@@ -77,68 +36,35 @@ const PADDING_BOTTOM = 22;
 const PADDING_LEFT = 60;
 const PADDING_RIGHT = 12;
 
-const DEFAULT_SERIES: SyncLogSeries[] = [
-  {
-    key: "client_energy",
-    label: "client_energy",
-    color: "#4FC3F7",
-    accessor: (e) => e.client_energy,
-  },
-  {
-    key: "server_energy_after",
-    label: "server_energy_after",
-    color: "#FF8A65",
-    accessor: (e) => e.server_energy_after,
-  },
-];
-
 const GeckoSyncLogLineChart = ({
-  listData,
-  series = DEFAULT_SERIES,
+  timestamps,
+  series,
   title = "energy",
   height = 160,
   pointWidth = 36,
   yMin,
   yMax,
-  primaryColor = "orange",
   scrollRef,
   onScrollX,
   onScrollRelease,
 }: Props) => {
+  const { lightDarkTheme } = useLDTheme();
+  const textColor = lightDarkTheme.primaryText;
+
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e?.nativeEvent?.contentOffset?.x;
     if (x == null) return;
     onScrollX?.(x);
   };
-  const { lightDarkTheme } = useLDTheme();
-  const textColor = lightDarkTheme.primaryText;
 
-  const chronological = useMemo(() => {
-    const copy = [...(listData ?? [])];
-    copy.sort(
-      (a, b) =>
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-    );
-    return copy;
-  }, [listData]);
-
-  const { innerWidth, innerHeight, totalWidth, yLo, yHi, xFor, yFor } = useMemo(() => {
-    const n = chronological.length;
+  const { innerWidth, totalWidth, yLo, yHi, xFor, yFor } = useMemo(() => {
+    const n = timestamps.length;
     const innerH = height - PADDING_TOP - PADDING_BOTTOM;
     const innerW = Math.max((n - 1) * pointWidth, pointWidth);
     const totalW = innerW + PADDING_LEFT + PADDING_RIGHT;
 
-    const vals: number[] = [];
-    for (const entry of chronological) {
-      for (const s of series) {
-        const v = s.accessor(entry);
-        if (v != null && Number.isFinite(v)) vals.push(v);
-      }
-    }
-    const computedMin = vals.length ? Math.min(...vals) : 0;
-    const computedMax = vals.length ? Math.max(...vals) : 1;
-    let lo = yMin ?? computedMin;
-    let hi = yMax ?? computedMax;
+    let lo = yMin ?? 0;
+    let hi = yMax ?? 1;
     if (lo === hi) {
       lo -= 1;
       hi += 1;
@@ -151,14 +77,13 @@ const GeckoSyncLogLineChart = ({
 
     return {
       innerWidth: innerW,
-      innerHeight: innerH,
       totalWidth: totalW,
       yLo: lo,
       yHi: hi,
       xFor: x,
       yFor: y,
     };
-  }, [chronological, series, height, pointWidth, yMin, yMax]);
+  }, [timestamps.length, height, pointWidth, yMin, yMax]);
 
   const paths = useMemo(() => {
     const buildSmoothPath = (pts: Array<{ x: number; y: number }>) => {
@@ -187,20 +112,20 @@ const GeckoSyncLogLineChart = ({
       const yOffset = (sIdx - centerIdx) * offsetStep;
       const segments: Array<Array<{ x: number; y: number }>> = [];
       let current: Array<{ x: number; y: number }> = [];
-      chronological.forEach((entry, i) => {
-        const v = s.accessor(entry);
-        if (v == null || !Number.isFinite(v)) {
+      for (let i = 0; i < s.values.length; i++) {
+        const v = s.values[i];
+        if (v == null) {
           if (current.length) segments.push(current);
           current = [];
-          return;
+          continue;
         }
         current.push({ x: xFor(i), y: yFor(v) + yOffset });
-      });
+      }
       if (current.length) segments.push(current);
       const d = segments.map(buildSmoothPath).join(" ");
       return { series: s, d };
     });
-  }, [series, chronological, xFor, yFor]);
+  }, [series, xFor, yFor]);
 
   const yTicks = useMemo(() => {
     const count = 4;
@@ -212,7 +137,7 @@ const GeckoSyncLogLineChart = ({
   }, [yLo, yHi]);
 
   const xTickIndices = useMemo(() => {
-    const n = chronological.length;
+    const n = timestamps.length;
     if (n === 0) return [];
     const maxLabels = Math.max(2, Math.floor(innerWidth / 80));
     const step = Math.max(1, Math.floor(n / maxLabels));
@@ -220,7 +145,7 @@ const GeckoSyncLogLineChart = ({
     for (let i = 0; i < n; i += step) idxs.push(i);
     if (idxs[idxs.length - 1] !== n - 1) idxs.push(n - 1);
     return idxs;
-  }, [chronological.length, innerWidth]);
+  }, [timestamps.length, innerWidth]);
 
   const formatTime = (iso: string) => {
     const d = new Date(iso);
@@ -248,52 +173,52 @@ const GeckoSyncLogLineChart = ({
       </View>
 
       <View style={{ position: "relative" }}>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ height }}
-        scrollEventThrottle={16}
-        onScroll={handleScroll}
-        onScrollEndDrag={onScrollRelease}
-        onMomentumScrollEnd={onScrollRelease}
-      >
-        <Svg width={totalWidth} height={height}>
-          <G>
-            {xTickIndices.map((i) => {
-              const entry = chronological[i];
-              if (!entry) return null;
-              return (
-                <SvgText
-                  key={`xlabel-${i}`}
-                  x={xFor(i)}
-                  y={height - 6}
-                  fontSize={9}
-                  textAnchor="middle"
-                  fill={textColor as string}
-                  opacity={0.5}
-                >
-                  {formatTime(entry.created_at)}
-                </SvgText>
-              );
-            })}
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ height }}
+          scrollEventThrottle={16}
+          onScroll={handleScroll}
+          onScrollEndDrag={onScrollRelease}
+          onMomentumScrollEnd={onScrollRelease}
+        >
+          <Svg width={totalWidth} height={height}>
+            <G>
+              {xTickIndices.map((i) => {
+                const ts = timestamps[i];
+                if (!ts) return null;
+                return (
+                  <SvgText
+                    key={`xlabel-${i}`}
+                    x={xFor(i)}
+                    y={height - 6}
+                    fontSize={9}
+                    textAnchor="middle"
+                    fill={textColor as string}
+                    opacity={0.5}
+                  >
+                    {formatTime(ts)}
+                  </SvgText>
+                );
+              })}
 
-            {paths.map(({ series: s, d }) =>
-              d ? (
-                <Path
-                  key={`path-${s.key}`}
-                  d={d}
-                  stroke={s.color}
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              ) : null,
-            )}
-          </G>
-        </Svg>
-      </ScrollView>
+              {paths.map(({ series: s, d }) =>
+                d ? (
+                  <Path
+                    key={`path-${s.key}`}
+                    d={d}
+                    stroke={s.color}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                ) : null,
+              )}
+            </G>
+          </Svg>
+        </ScrollView>
 
         <View
           pointerEvents="none"

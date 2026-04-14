@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     bottom: 100,
     width: '100%',
     zIndex: 1000,
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
