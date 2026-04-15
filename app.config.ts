@@ -84,8 +84,6 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
         'expo-share-intent',
         'expo-secure-store',
         'expo-font',
-        '@react-native-firebase/app',
-        '@react-native-firebase/messaging',
         [
           'expo-build-properties',
           {
