@@ -12,6 +12,7 @@ import Gecko from "./geckoClass";
 import { packGeckoOnlyProdCompact_56 } from "./animUtils";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { PEER_DOT_SKSL } from "./shaderCode/peerDotShader";
+import { STEP_DOTS_SKSL } from "./shaderCode/stepDotsShader";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -104,6 +105,12 @@ const MirrorPlayGecko = ({
 
   const workingBuffers = useRef({
     geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
+    stepTargets: [
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+    ] as [number, number][],
   }).current;
 
   const geckoPointsUniformSV = useSharedValue<number[]>(
@@ -171,6 +178,10 @@ const MirrorPlayGecko = ({
 
   const peerDotSource = useMemo(() => {
     return Skia.RuntimeEffect.Make(PEER_DOT_SKSL);
+  }, []);
+
+  const stepDotsSource = useMemo(() => {
+    return Skia.RuntimeEffect.Make(STEP_DOTS_SKSL);
   }, []);
 
   const source = useMemo(() => {
@@ -394,6 +405,21 @@ const MirrorPlayGecko = ({
 
   const stepDotRadius = dotRadius * 0.6;
 
+  const stepDotsUniforms = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    const off: [number, number] = [-1000, -1000];
+    return {
+      u_resolution: [size.width || width, size.height || height],
+      u_aspect: aspect || 1,
+      u_gecko_scale: gecko_scale,
+      u_gecko_size: gecko_size,
+      u_step0: (s && s[0]) ? s[0] : off,
+      u_step1: (s && s[1]) ? s[1] : off,
+      u_step2: (s && s[2]) ? s[2] : off,
+      u_step3: (s && s[3]) ? s[3] : off,
+    };
+  }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
+
   const peerUniforms = useDerivedValue(() => {
     const p = hostPeerGeckoPositionSV.value;
     const point = p?.position ?? [-1000, -1000];
@@ -423,12 +449,17 @@ const MirrorPlayGecko = ({
           </Rect>
         </Canvas>
 
-        {/* Step dots canvas */}
+        {/* Step dots canvas — same transform as peer dot, small white, no glow */}
         <Canvas style={StyleSheet.absoluteFill}>
-          <Circle cx={stepDot0x} cy={stepDot0y} r={stepDotRadius} color={dotColor} />
-          <Circle cx={stepDot1x} cy={stepDot1y} r={stepDotRadius} color={dotColor} />
-          <Circle cx={stepDot2x} cy={stepDot2y} r={stepDotRadius} color={dotColor} />
-          <Circle cx={stepDot3x} cy={stepDot3y} r={stepDotRadius} color={dotColor} />
+          <Rect
+            x={0}
+            y={0}
+            width={size.width}
+            height={size.height}
+            color="lightblue"
+          >
+            <Shader source={stepDotsSource!} uniforms={stepDotsUniforms} />
+          </Rect>
         </Canvas>
 
         {/* Gecko canvas */}

@@ -84,14 +84,16 @@ const ScreenSecretGecko = (props: Props) => {
 
   return (
     <GradientBackgroundAppDefault style={styles.backgroundContainer}>
-      <Text style={styles.label}>socket: {socketStatus}</Text>
+      {/* <View style={{ width: "100%", alignItems: "center", bottom: -50 }}>
+        <Text style={styles.label}>socket: {socketStatus}</Text>
 
-      <Text style={styles.label}>partner: {liveSeshPartnerId ?? "—"}</Text>
+        <Text style={styles.label}>partner: {liveSeshPartnerId ?? "—"}</Text>
 
-      <PeerGeckoPositionText
-        peerGeckoPositionSV={guestPeerGeckoPositionSV}
-        color="white"
-      />
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={hostPeerGeckoPositionSV}
+          color="white"
+        />
+      </View> */}
 
       {/* <EnergyText
         energySV={energySV}
@@ -123,7 +125,7 @@ const ScreenSecretGecko = (props: Props) => {
           //   gecko_size={1.6}
           gecko_size={1.7}
           reset={0}
-          hostPeerGeckoPositionSV={peerGeckoPositionSV}
+          hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
         />
       </View>
