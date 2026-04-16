@@ -8,21 +8,20 @@
     "icon": "./app/assets/shapes/gecko-mine.png",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "jsEngine": "hermes",  
-      "bundleIdentifier": "com.badrainbowz.sampleproject",  
-      "buildNumber": "1.0.0",                        
-      "supportsTablet": true, 
-      "googleServicesFile": "./GoogleService-Info.plist",                               
+      "jsEngine": "hermes",
+      "bundleIdentifier": "com.badrainbowz.sampleproject",
+      "buildNumber": "1.0.1",
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses your location to show your current position on the map." // Example permission
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to show your current position on the map."
       },
       "config": {
-        "usesNonExemptEncryption": false                 
+        "usesNonExemptEncryption": false
       }
-       
     },
-    "android": {  
-      "jsEngine": "hermes",  
+    "android": {
+      "jsEngine": "hermes",
       "permissions": [
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_MEDIA_VIDEO",
@@ -40,7 +39,7 @@
         }
       },
       "intentFilters": [
-        { 
+        {
           "action": "VIEW",
           "data": [
             {
@@ -64,13 +63,12 @@
           ]
         }
       ]
-
     },
     "splash": {
       "image": "./app/assets/shapes/happyskull.png",
       "resizeMode": "contain",
       "backgroundColor": "#000002"
-    }, 
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -78,7 +76,7 @@
       "favicon": "./app/assets/favicon.png"
     },
     "plugins": [
-        [
+      [
         "@sentry/react-native/expo",
         {
           "url": "https://sentry.io/",
@@ -89,12 +87,12 @@
       "expo-secure-store",
       "expo-font",
       [
-        "expo-build-properties", 
+        "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static",
-            "useModularHeaders": true     
-          } 
+            "useModularHeaders": true
+          }
         }
       ]
     ],

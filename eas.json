@@ -21,7 +21,7 @@
         "GOOGLE_API_KEY": "AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg"
       },
       "ios": {
-        "autoIncrement": "buildNumber"
+        "autoIncrement": true
       },
       "android": {
         "buildType": "apk"
