@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createUserCategory } from "@/src/calls/api";
 
 type Props = {
-  userId: string;
+  userId: number;
 };
 
 const useCreateNewCategory = ({ userId }: Props) => {

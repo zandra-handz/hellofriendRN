@@ -1,7 +1,8 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
   import { useSharedValue } from "react-native-reanimated";
-  import * as SecureStore from "expo-secure-store";                                                                                                                                                                                                  
+  import * as SecureStore from "expo-secure-store";
+  import notepack from "notepack.io";                                                                                                                                                                                                  
                                                                                                                                                                                                                                                        type GeckoCoordsMessage = {                                                                                                                                                                                                                        
     from_user: number;                                                                                                                                                                                                                               
     position: [number, number];
@@ -62,6 +63,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
     const hostPeerGeckoPositionSV = useSharedValue<{
       from_user: number;
       position: [number, number];
+      steps?: [number, number][];
       received_at: number;
     } | null>(null);
 
@@ -88,7 +90,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
     const lastSentGuestGeckoPositionAtRef = useRef(0);
 
     const FLUSH_INTERVAL_MS = 10000;
-    const GECKO_POSITION_THROTTLE_MS = 50;
+    const GECKO_POSITION_THROTTLE_MS = 50; // 33;
 
     const flushIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -259,53 +261,38 @@ import { useEffect, useRef, useCallback, useState } from "react";
       }
     }, []);
 
+    // ============================================================
+    // OLD JSON gecko-position senders — commented out, msgpack versions below
+    // ============================================================
+    /*
     const sendGeckoPosition = useCallback((position: [number, number], force = false) => {
       const now = Date.now();
-
       if (!force && now - lastSentGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS) {
         return false;
       }
-
       lastSentGeckoPositionAtRef.current = now;
-
       if (wsRef.current?.readyState !== WebSocket.OPEN) {
         return false;
       }
-
       wsRef.current.send(
-        JSON.stringify({
-          action: "update_gecko_position",
-          data: { position },
-        }),
+        JSON.stringify({ action: "update_gecko_position", data: { position } }),
       );
-
       return true;
     }, []);
 
     const sendHostGeckoPosition = useCallback(
-      (position: [number, number], force = false) => { 
+      (position: [number, number], steps: [], force = false) => {
         const now = Date.now();
-
-        if (
-          !force &&
-          now - lastSentHostGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS
-        ) {
+        if (!force && now - lastSentHostGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS) {
           return false;
         }
-
         lastSentHostGeckoPositionAtRef.current = now;
-
         if (wsRef.current?.readyState !== WebSocket.OPEN) {
           return false;
         }
-
         wsRef.current.send(
-          JSON.stringify({
-            action: "update_host_gecko_position",
-            data: { position },
-          }),
+          JSON.stringify({ action: "update_host_gecko_position", data: { position } }),
         );
-
         return true;
       },
       [],
@@ -314,27 +301,80 @@ import { useEffect, useRef, useCallback, useState } from "react";
     const sendGuestGeckoPosition = useCallback(
       (position: [number, number], force = false) => {
         const now = Date.now();
+        if (!force && now - lastSentGuestGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS) {
+          return false;
+        }
+        lastSentGuestGeckoPositionAtRef.current = now;
+        if (wsRef.current?.readyState !== WebSocket.OPEN) {
+          return false;
+        }
+        wsRef.current.send(
+          JSON.stringify({ action: "update_guest_gecko_position", data: { position } }),
+        );
+        return true;
+      },
+      [],
+    );
+    */
 
+    // ============================================================
+    // NEW msgpack gecko-position senders — same { action, data } structure, binary encoding
+    // ============================================================
+
+    const sendGeckoPosition = useCallback((position: [number, number], force = false) => {
+      const now = Date.now();
+      if (!force && now - lastSentGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS) {
+        return false;
+      }
+      lastSentGeckoPositionAtRef.current = now;
+      if (wsRef.current?.readyState !== WebSocket.OPEN) {
+        return false;
+      }
+      wsRef.current.send(
+        notepack.encode({ action: "update_gecko_position", data: { position } }),
+      );
+      return true;
+    }, []);
+
+    const sendHostGeckoPosition = useCallback(
+      (position: [number, number], steps: [] = [], moments: [] = [], force = false) => {
+        const now = Date.now();
+        if (
+          !force &&
+          now - lastSentHostGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS
+        ) {
+          return false;
+        }
+        lastSentHostGeckoPositionAtRef.current = now;
+        if (wsRef.current?.readyState !== WebSocket.OPEN) {
+          return false;
+        }
+        const stepsArr = steps.map((s: any) => [s[0], s[1]]);
+        const momentsArr = moments.map((m: any) => [m[0], m[1]]);
+        wsRef.current.send(
+          notepack.encode({ action: "update_host_gecko_position", data: { position, steps: stepsArr, moments: momentsArr } }),
+        );
+        return true;
+      },
+      [],
+    );
+
+    const sendGuestGeckoPosition = useCallback(
+      (position: [number, number], force = false) => {
+        const now = Date.now();
         if (
           !force &&
           now - lastSentGuestGeckoPositionAtRef.current < GECKO_POSITION_THROTTLE_MS
         ) {
           return false;
         }
-
         lastSentGuestGeckoPositionAtRef.current = now;
-
         if (wsRef.current?.readyState !== WebSocket.OPEN) {
           return false;
         }
-
         wsRef.current.send(
-          JSON.stringify({
-            action: "update_guest_gecko_position",
-            data: { position },
-          }),
+          notepack.encode({ action: "update_guest_gecko_position", data: { position } }),
         );
-
         return true;
       },
       [],
@@ -369,7 +409,8 @@ import { useEffect, useRef, useCallback, useState } from "react";
       // this way guest doesn't see notes that aren't meant for them
       const fid = friendIdRef.current;                                                                                                                                                                                                                                                                                        const url = fid != null                                                                                                                                                                                                                                                                                                   ? `wss://badrainbowz.com/ws/gecko-energy/?token=${token}&friend_id=${fid}`                                                                                                                                                                                                                                          
         : `wss://badrainbowz.com/ws/gecko-energy/?token=${token}`;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-      const ws = new WebSocket(url);        
+      const ws = new WebSocket(url);
+      ws.binaryType = "arraybuffer";
       ws.onopen = () => {
         console.log("[WS] connected");
         setSocketStatus("connected");
@@ -393,7 +434,12 @@ import { useEffect, useRef, useCallback, useState } from "react";
       };
 
       ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
+        let message: any;
+        if (event.data instanceof ArrayBuffer) {
+          message = notepack.decode(new Uint8Array(event.data)) as any;
+        } else {
+          message = JSON.parse(event.data);
+        }
 
         if (
           message.action !== "gecko_coords" &&
@@ -486,6 +532,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
             hostPeerGeckoPositionSV.value = {
               from_user: message.data.from_user,
               position: message.data.position,
+              steps: message.data.steps,
               received_at: performance.now(),
             };
             onHostGeckoCoordsRef.current?.(message.data);
@@ -500,6 +547,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
             guestPeerGeckoPositionSV.value = {
               from_user: message.data.from_user,
               position: message.data.position,
+              steps: message.data.steps,
               received_at: performance.now(),
             };
             onGuestGeckoCoordsRef.current?.(message.data);

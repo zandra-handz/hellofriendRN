@@ -13,6 +13,8 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateGeckoData from "@/src/hooks/useUpdateGeckoData";
 import DebugPanel from "../moments/DebugPanel";
+import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
+
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
@@ -82,6 +84,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const { user } = useUser();
   const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+
+  const { isAwake } = useUserGeckoConfigs({userId: user?.id});
 
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
@@ -250,7 +254,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     hasReadAll,
     hasInitialized,
     markInitialized,
-    isAwake,
+    // isAwake,
   } = useGeckoSynthesizer_WS({
     userId: user?.id,
     geckoCombinedData,
@@ -302,16 +306,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   useEffect(() => {
     if (gecko && !hasShownReadAll.current && effectiveHasReadAll) {
       stopReading();
-
       hasShownReadAll.current = true;
-
       handleFreezeForTalking();
-      showModalMessage({
-        title: "Read em all!",
-        body: "Thanks!",
-        onClose: handleUnfreezeForTalking,
-        autoCloseTime: 1000,
-      });
+
+      const id = setTimeout(() => {
+        showModalMessage({
+          title: "Read em all!",
+          body: "Thanks!",
+          onClose: handleUnfreezeForTalking,
+          autoCloseTime: 1000,
+        });
+      }, 1000);
+
+      return () => clearTimeout(id);
     }
   }, [gecko, effectiveHasReadAll]);
 
@@ -779,14 +786,18 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     hasShownWelcome.current = true;
 
     handleFreezeForTalking();
-    showModalMessage({
-      title: "Hi!",
-      body: "I'm going to start reading these, if ya don't mind!",
-      autoCloseTime: 1000,
-      onClose: () => {
-        startReading();
-      },
-    });
+    const id = setTimeout(() => {
+      showModalMessage({
+        title: "Hi!",
+        body: "I'm going to start reading these, if ya don't mind!",
+        autoCloseTime: 1000,
+        onClose: () => {
+          startReading();
+        },
+      });
+    }, 1000);
+
+    return () => clearTimeout(id);
   }, [gecko, effectiveHasReadAll]);
 
   const clearRandomAutoTimeouts = useCallback(() => {
@@ -1120,7 +1131,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const categoryStreakRef = useRef(0);
   const updateGeckoDataRef = useRef(updateGeckoData);
-  const sendGeckoPositionRef = useRef(sendGeckoPosition);
+  // const sendGeckoPositionRef = useRef(sendGeckoPosition);
   const noopSendHostGeckoPosition = useRef(() => {}).current;
   const sendHostGeckoPositionRef = useRef(
     isHost ? sendHostGeckoPosition : noopSendHostGeckoPosition
@@ -1130,9 +1141,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     updateGeckoDataRef.current = updateGeckoData;
   }, [updateGeckoData]);
 
-  useEffect(() => {
-    sendGeckoPositionRef.current = sendGeckoPosition;
-  }, [sendGeckoPosition]);
+  // useEffect(() => {
+  //   sendGeckoPositionRef.current = sendGeckoPosition;
+  // }, [sendGeckoPosition]);
 
   useEffect(() => {
     sendHostGeckoPositionRef.current = isHost
@@ -1257,7 +1268,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       <View style={[StyleSheet.absoluteFill]}>
         <MomentsSkia
           updateGeckoData={updateGeckoData}
-          sendGeckoPositionRef={sendGeckoPositionRef}
+          // sendGeckoPositionRef={sendGeckoPositionRef}
           sendHostGeckoPositionRef={sendHostGeckoPositionRef}
           peerGeckoPositionSV={guestPeerGeckoPositionSV}
           liveScoreStateRef={scoreStateRef}

@@ -242,6 +242,7 @@ const CategoryCreator = ({
                   textStyle={AppFontStyles.subWelcomeText}
                 >
                   <AddNewCategory
+                  userId={userId}
                     primaryColor={primaryColor}
                     primaryBackground={primaryBackground}
                     userCategories={userCategories}

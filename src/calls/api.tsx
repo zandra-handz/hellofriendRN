@@ -730,7 +730,8 @@ export const fetchCategoriesHistoryCountAPI = async ({
 export const createUserCategory = async (
   userId: number,
   newCategoryData: object,
-) => {
+) => { 
+
   try {
     console.log(userId);
     console.log(newCategoryData);

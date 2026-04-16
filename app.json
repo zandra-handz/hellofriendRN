@@ -89,7 +89,7 @@
       "expo-secure-store",
       "expo-font",
       [
-        "expo-build-properties",
+        "expo-build-properties", 
         {
           "ios": {
             "useFrameworks": "static",

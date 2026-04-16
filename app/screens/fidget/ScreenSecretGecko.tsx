@@ -22,6 +22,7 @@ const ScreenSecretGecko = (props: Props) => {
     liveSeshPartnerId,
     energySV,
     peerGeckoPositionSV,
+    guestPeerGeckoPositionSV,
     hostPeerGeckoPositionSV,
 
     // peerEnergySV, // only if you added it
@@ -32,7 +33,7 @@ const ScreenSecretGecko = (props: Props) => {
     registerOnHostGeckoCoords,
   } = useGeckoEnergySocket(null);
 
-const { user } = useUser();
+  const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const navigation = useNavigation();
   const handleExit = React.useCallback(() => {
@@ -60,11 +61,11 @@ const { user } = useUser();
       ],
     );
   }, [handleCancelCurrentLiveSesh, leaveLiveSesh, navigation]);
-  const { isHost } = useCurrentLiveSesh({userId: user?.id, enabled: true})
+  const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
 
   const noopSendGuestGeckoPosition = useRef(() => {}).current;
   const sendGuestGeckoPositionRef = useRef(
-    !isHost ? sendGuestGeckoPosition : noopSendGuestGeckoPosition
+    !isHost ? sendGuestGeckoPosition : noopSendGuestGeckoPosition,
   );
   useEffect(() => {
     sendGuestGeckoPositionRef.current = !isHost
@@ -83,55 +84,49 @@ const { user } = useUser();
 
   return (
     <GradientBackgroundAppDefault style={styles.backgroundContainer}>
- 
+      <Text style={styles.label}>socket: {socketStatus}</Text>
 
-      <Text style={styles.label}>
-        socket: {socketStatus}
-      </Text>
+      <Text style={styles.label}>partner: {liveSeshPartnerId ?? "—"}</Text>
 
-      <Text style={styles.label}>
-        partner: {liveSeshPartnerId ?? "—"}
-      </Text>
- 
       <PeerGeckoPositionText
-        peerGeckoPositionSV={hostPeerGeckoPositionSV}
+        peerGeckoPositionSV={guestPeerGeckoPositionSV}
         color="white"
       />
- 
+
       {/* <EnergyText
         energySV={energySV}
         color="white"
       /> */}
- 
+
       {/* 
       <PeerEnergyText
         peerEnergySV={peerEnergySV}
         color="white"
       />
       */}
-                <View style={[StyleSheet.absoluteFill]}>
-            <MemoizedMirrorPlayGecko
-              color1={manualGradientColors.lightColor}
-              color2={manualGradientColors.homeLightColor}
-              bckgColor1={manualGradientColors.lightColor}
-              bckgColor2={manualGradientColors.homeLightColor}
-            //   startingCoord0={0.2}
-            //   startingCoord1={-1}
-            //   restPoint0={0.5}
-            //   restPoint1={0.7}
-                startingCoord0={0.1}
+      <View style={[StyleSheet.absoluteFill]}>
+        <MemoizedMirrorPlayGecko
+          color1={manualGradientColors.lightColor}
+          color2={manualGradientColors.homeLightColor}
+          bckgColor1={manualGradientColors.lightColor}
+          bckgColor2={manualGradientColors.homeLightColor}
+          //   startingCoord0={0.2}
+          //   startingCoord1={-1}
+          //   restPoint0={0.5}
+          //   restPoint1={0.7}
+          startingCoord0={0.1}
           startingCoord1={-0.5}
           restPoint0={0.5}
           restPoint1={0.6}
-              scale={1}
-              gecko_scale={1}
-            //   gecko_size={1.6}
-                gecko_size={1.7}
-              reset={0}
-              hostPeerGeckoPositionSV={peerGeckoPositionSV}
-              sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
-            />
-          </View>
+          scale={1}
+          gecko_scale={1}
+          //   gecko_size={1.6}
+          gecko_size={1.7}
+          reset={0}
+          hostPeerGeckoPositionSV={peerGeckoPositionSV}
+          sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
+        />
+      </View>
       <GlassPreviewBottomSecret
         color={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerGlassBackground}

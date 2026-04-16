@@ -38,6 +38,7 @@ import {
 type hostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
+  steps?: [number, number][];
   received_at: number;
 } | null;
 
@@ -271,6 +272,16 @@ const MirrorPlayGecko = ({
           workingBuffers.geckoPoints,
           gecko_scale,
         );
+
+              workingBuffers.stepTargets[0] =
+        gecko.current.legs.frontLegs.stepTargets[0];
+      workingBuffers.stepTargets[1] =
+        gecko.current.legs.frontLegs.stepTargets[1];
+      workingBuffers.stepTargets[2] =
+        gecko.current.legs.backLegs.stepTargets[0];
+      workingBuffers.stepTargets[3] =
+        gecko.current.legs.backLegs.stepTargets[1];
+
         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
 
         const now = Date.now();
@@ -280,7 +291,7 @@ const MirrorPlayGecko = ({
         }
       }
 
-     sendGuestGeckoPositionRef?.current?.(leadPoint.current.lead);
+     sendGuestGeckoPositionRef?.current?.(leadPoint.current.lead, workingBuffers.stepTargets);
 
       frame = requestAnimationFrame(animate);
     };
@@ -337,6 +348,52 @@ const MirrorPlayGecko = ({
     return p.position[1] * size.height;
   }, [size.height]);
 
+  const stepDot0x = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[0] || !size.width) return -1000;
+    return s[0][0] * size.width;
+  }, [size.width]);
+  const stepDot0y = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[0] || !size.height) return -1000;
+    return s[0][1] * size.height;
+  }, [size.height]);
+
+  const stepDot1x = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[1] || !size.width) return -1000;
+    return s[1][0] * size.width;
+  }, [size.width]);
+  const stepDot1y = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[1] || !size.height) return -1000;
+    return s[1][1] * size.height;
+  }, [size.height]);
+
+  const stepDot2x = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[2] || !size.width) return -1000;
+    return s[2][0] * size.width;
+  }, [size.width]);
+  const stepDot2y = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[2] || !size.height) return -1000;
+    return s[2][1] * size.height;
+  }, [size.height]);
+
+  const stepDot3x = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[3] || !size.width) return -1000;
+    return s[3][0] * size.width;
+  }, [size.width]);
+  const stepDot3y = useDerivedValue(() => {
+    const s = hostPeerGeckoPositionSV.value?.steps;
+    if (!s || !s[3] || !size.height) return -1000;
+    return s[3][1] * size.height;
+  }, [size.height]);
+
+  const stepDotRadius = dotRadius * 0.6;
+
   const peerUniforms = useDerivedValue(() => {
     const p = hostPeerGeckoPositionSV.value;
     const point = p?.position ?? [-1000, -1000];
@@ -364,6 +421,14 @@ const MirrorPlayGecko = ({
           >
             <Shader source={peerDotSource!} uniforms={peerUniforms} />
           </Rect>
+        </Canvas>
+
+        {/* Step dots canvas */}
+        <Canvas style={StyleSheet.absoluteFill}>
+          <Circle cx={stepDot0x} cy={stepDot0y} r={stepDotRadius} color={dotColor} />
+          <Circle cx={stepDot1x} cy={stepDot1y} r={stepDotRadius} color={dotColor} />
+          <Circle cx={stepDot2x} cy={stepDot2y} r={stepDotRadius} color={dotColor} />
+          <Circle cx={stepDot3x} cy={stepDot3y} r={stepDotRadius} color={dotColor} />
         </Canvas>
 
         {/* Gecko canvas */}
