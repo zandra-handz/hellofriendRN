@@ -45,6 +45,8 @@ export default class FourLegs {
     this.stepWiggleRoom = forwardStepThreshhold / 3;
     this.reverseStepWiggleRoom = reverseStepThreshold / 3;
 
+    
+
     this.stepAheadJointFront = spine.first; // head
     this.jointAngles = spine.jointAngles;
     this.stepAheadJointFrontAngle = spine.jointAngles[0];
@@ -130,6 +132,16 @@ export default class FourLegs {
       backUpLegLen,
       backLowLegLen,
     );
+
+  this.allStepTargets = [    
+    this.frontLegs.stepTargets[0], 
+    this.frontLegs.stepTargets[1],   
+    this.backLegs.stepTargets[0],   
+  this.backLegs.stepTargets[1],                                                                                                                                                                                     
+  ];
+
+
+
   }
 
   // jumpUpdate() {

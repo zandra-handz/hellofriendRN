@@ -20,6 +20,7 @@ import {
   runOnJS,
   useSharedValue,
   useDerivedValue,
+  useAnimatedReaction,
 } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 import {
@@ -40,6 +41,8 @@ type hostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
   steps?: [number, number][];
+  moments?: any[][];
+  moments_len?: number;
   received_at: number;
 } | null;
 
@@ -433,6 +436,29 @@ const MirrorPlayGecko = ({
     };
   }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
 
+  const [momentDots, setMomentDots] = useState<{ x: number; y: number }[]>([]);
+
+  useAnimatedReaction(
+    () => {
+      const v = hostPeerGeckoPositionSV.value;
+      if (!v?.moments) return null;
+      const len = v.moments_len ?? v.moments.length;
+      const out: { x: number; y: number }[] = [];
+      for (let i = 0; i < len; i++) {
+        const m = v.moments[i];
+        if (!m) continue;
+        out.push({ x: m[1], y: m[2] });
+      }
+      return out;
+    },
+    (next) => {
+      if (next) runOnJS(setMomentDots)(next);
+    },
+    [],
+  );
+
+  const momentDotRadius = 8;
+
   return (
     <GestureDetector gesture={panGesture}>
       <View style={StyleSheet.absoluteFill}>
@@ -460,6 +486,19 @@ const MirrorPlayGecko = ({
           >
             <Shader source={stepDotsSource!} uniforms={stepDotsUniforms} />
           </Rect>
+        </Canvas>
+
+        {/* Moment dots — non-interactive transparent circles from peer */}
+        <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
+          {momentDots.map((d, i) => (
+            <Circle
+              key={i}
+              cx={d.x * size.width}
+              cy={d.y * size.height}
+              r={momentDotRadius}
+              color="rgba(255,255,255,0.3)"
+            />
+          ))}
         </Canvas>
 
         {/* Gecko canvas */}

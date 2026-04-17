@@ -85,7 +85,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { user } = useUser();
   const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
 
-  const { isAwake } = useUserGeckoConfigs({userId: user?.id});
+  const { isAwake } = useUserGeckoConfigs({ userId: user?.id });
 
   const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
@@ -102,6 +102,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const multiplierRef = useRef(1);
 
+
+  const rerenderCountRef = useRef(0);
+
+
+  rerenderCountRef.current += 1;
+
+  console.log(`ScreenGecko renders: `, rerenderCountRef.current)
+
   // const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
   // const geckoScoreStateRef = useRef(geckoScoreState);
   // useEffect(() => {
@@ -115,13 +123,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   // }, [geckoScoreState]);
 
   useEffect(() => {
-    // console.log(`[geckoScoreState changed]`, geckoScoreState);
+    console.log(`[geckoScoreState changed]`, geckoScoreState);
     if (!geckoScoreState) return;
     const expired =
       !geckoScoreState.expires_at ||
       new Date(geckoScoreState.expires_at).getTime() <= Date.now();
     multiplierRef.current = expired ? 1 : (geckoScoreState.multiplier ?? 1);
   }, [geckoScoreState]);
+
+
+
 
   const { scoreRules } = useGeckoStaticData();
 
@@ -161,11 +172,10 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     energySV,
     getScoreState,
     updateGeckoData,
-    sendGeckoPosition,
-    peerGeckoPositionSV,
+    // peerGeckoPositionSV,
     hostPeerGeckoPositionSV,
     guestPeerGeckoPositionSV,
-    registerOnGeckoCoords,
+    // registerOnGeckoCoords,
     registerOnHostGeckoCoords,
     sendHostGeckoPosition,
 
@@ -177,9 +187,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     latestBackendEnergyUpdatedAtRef,
 
     joinLiveSesh,
-    leaveLiveSesh
+    leaveLiveSesh,
   } = useGeckoEnergySocket(selectedFriend?.id ?? null);
-
 
   useEffect(() => {
     // auto join when screen mounts
@@ -189,8 +198,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       leaveLiveSesh();
     };
   }, [joinLiveSesh, leaveLiveSesh]);
-
-  
 
   useEffect(() => {
     if (socketStatus) {
@@ -207,27 +214,27 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   //   });
   // }, [registerOnScoreState]);
 
-  useEffect(() => {
-    registerOnGeckoCoords((data) => {
-      peerGeckoPositionSV.value = {
-        from_user: data.from_user,
-        position: data.position,
-        received_at: performance.now(),
-      };
-    });
-  }, [registerOnGeckoCoords]);
+  // useEffect(() => {
+  //   registerOnGeckoCoords((data) => {
+  //     peerGeckoPositionSV.value = {
+  //       from_user: data.from_user,
+  //       position: data.position,
+  //       received_at: performance.now(),
+  //     };
+  //   });
+  // }, [registerOnGeckoCoords]);
 
-  useEffect(() => {
-    if (isHost) { 
-      registerOnHostGeckoCoords((data) => {
-        hostPeerGeckoPositionSV.value = {
-          from_user: data.from_user,
-          position: data.position,
-          received_at: performance.now(),
-        };
-      });
-    }
-  }, [registerOnHostGeckoCoords, isHost]);
+  // useEffect(() => {
+  //   if (isHost) {
+  //     registerOnHostGeckoCoords((data) => {
+  //       hostPeerGeckoPositionSV.value = {
+  //         from_user: data.from_user,
+  //         position: data.position,
+  //         received_at: performance.now(),
+  //       };
+  //     });
+  //   }
+  // }, [registerOnHostGeckoCoords, isHost]);
 
   // const {
   //     gecko,
@@ -270,6 +277,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const hasShownWelcome = useRef(false);
   const hasShownReadAll = useRef(false);
   const [localHasReadAll, setLocalHasReadAll] = useState(false);
+
+
+  useEffect(() => {
+    if (liveScoreState){
+      console.log(`live score state`, liveScoreState);
+    }
+
+  }, [liveScoreState]);
 
   const HISTORY_SIZE = 20;
   const momentHistoryRef = useRef({
@@ -584,6 +599,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     id: null,
   });
 
+  const momentSV = useSharedValue({
+    category: null,
+    capsule: null,
+    uniqueIndex: null,
+    id: null,
+  });
+
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
@@ -601,16 +623,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       setIsPollMode(false);
       setActiveSessionId(null);
 
-      if (moment && !pressedMomentId) {
-        updatePressedMoment(moment?.id);
-        handleNavigateToMoment(moment);
+      if (momentSV && momentSV?.current?.id && !pressedMomentId) {
+        updatePressedMoment(momentSV.current.id);
+        handleNavigateToMoment(momentSV.current.id);
       }
     }
   }, [
     isPressed,
     sessionId,
     pressedAt,
-    moment,
+    momentSV,
     pressedMomentId,
     isExpired,
     updatePressedMoment,
@@ -732,7 +754,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }
   }, [capsuleMap]);
 
-  // sort by angle from center
+  // sort by angle from center, so gecko goes in circle around the screen
   const momentCoords = useMemo(() => {
     return [...capsuleList]
       .sort((a, b) => {
@@ -1054,12 +1076,18 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   }, [momentCoords]);
 
   useEffect(() => {
-    setMoment({
+    // setMoment({
+    //   category: null,
+    //   capsule: null,
+    //   uniqueIndex: null,
+    //   id: null,
+    // });
+    momentSV.value = {
       category: null,
       capsule: null,
       uniqueIndex: null,
       id: null,
-    });
+    };
   }, [resetSkia]);
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
@@ -1134,7 +1162,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   // const sendGeckoPositionRef = useRef(sendGeckoPosition);
   const noopSendHostGeckoPosition = useRef(() => {}).current;
   const sendHostGeckoPositionRef = useRef(
-    isHost ? sendHostGeckoPosition : noopSendHostGeckoPosition
+    isHost ? sendHostGeckoPosition : noopSendHostGeckoPosition,
   );
 
   useEffect(() => {
@@ -1149,7 +1177,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendHostGeckoPositionRef.current = isHost
       ? sendHostGeckoPosition
       : noopSendHostGeckoPosition;
-
   }, [sendHostGeckoPosition, isHost, noopSendHostGeckoPosition]);
 
   const handleGetMoment = useCallback(
@@ -1157,12 +1184,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       const foundMoment = capsuleMap.get(id);
 
       if (!foundMoment?.id) {
-        setMoment({
+        // setMoment({
+        //   category: null,
+        //   capsule: null,
+        //   uniqueIndex: null,
+        //   id: null,
+        // });
+
+        momentSV.value = {
           category: null,
           capsule: null,
           uniqueIndex: null,
           id: null,
-        });
+        };
         return;
       }
 
@@ -1223,12 +1257,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       h.count = Math.min(h.count + 1, HISTORY_SIZE);
       // console.log(`history: ${h.count} / ${HISTORY_SIZE}`, h.buffer.slice(0, h.count));
 
-      setMoment({
+      momentSV.value = {
         category: foundMoment.user_category_name,
         capsule: foundMoment.capsule,
         uniqueIndex: foundMoment.uniqueIndex,
         id: foundMoment.id,
-      });
+      };
+ 
+      // setMoment({
+      //   category: foundMoment.user_category_name,
+      //   capsule: foundMoment.capsule,
+      //   uniqueIndex: foundMoment.uniqueIndex,
+      //   id: foundMoment.id,
+      // });
 
       // const charCount = Number(foundMoment?.charCount) || 0;
       // const isSubtracting = loopCount.current % 2 !== 0;
@@ -1333,12 +1374,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           />
         )}
         {/* <Text>{liveScoreState?.energy?.toFixed(2)}</Text>  */}
-        <EnergyText energySV={energySV} /> 
+        {/* <EnergyText energySV={energySV} />
         <PeerGeckoPositionText peerGeckoPositionSV={hostPeerGeckoPositionSV} />
-        <PeerGeckoPositionText peerGeckoPositionSV={guestPeerGeckoPositionSV} />
+        <PeerGeckoPositionText peerGeckoPositionSV={guestPeerGeckoPositionSV} /> */}
       </View>
 
       <GlassPreviewBottom
+      fontSmall={skiaFontSmall}
         readingMode={!manualOnly}
         speedSetting={speedSetting}
         autoPickUp={autoPickUp}
@@ -1347,7 +1389,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         highlightColor={selectedFriend.lightColor}
         backgroundColor={darkerOverlayColor}
         borderColor={"transparent"}
-        moment={moment.id ? moment : null}
+        // moment={moment.id ? moment : null}
+        momentSV={momentSV}
         hasContent={scatteredMoments.length > 0}
         noContentText={BLANK_WINDOW_MESSAGE}
         onPressEdit={handleNavigateToMoment}

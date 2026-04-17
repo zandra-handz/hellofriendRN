@@ -171,6 +171,9 @@ const MomentsSkia = ({
   const stepsRef = useRef<number>(0);
   const distanceRef = useRef<number>(0);
 
+
+ 
+
   useEffect(() => {
     if (size && size.width > 0 && size.height > 0) {
       const newAspect = size.width / size.height;
@@ -450,26 +453,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
     prevPointsLengthRef.current = endPointsIndex;
   };
 
-  ///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  //  useEffect(() => {
-  // if (geckoScoreState && gecko.current) {
-  //         gecko.current.gait.energy = geckoScoreState.energy;
-  //         gecko.current.gait.surplusEnergy = geckoScoreState.surplus_energy;
-  //     }
-  // }, [geckoScoreState]);
-
-  //   useEffect(() => {
-  //     if (geckoScoreState && gecko.current) {
-  //         gecko.current.gait.energy = geckoScoreState.energy;
-  //         gecko.current.gait.surplusEnergy = geckoScoreState.surplus_energy;
-  //         gecko.current.gait.expiresAt = geckoScoreState.expires_at
-  //             ? new Date(geckoScoreState.expires_at).getTime()
-  //             : 0;
-  //         gecko.current.gait.multiplier = geckoScoreState.multiplier ?? 1;
-  //         gecko.current.gait.baseMultiplier = geckoScoreState.base_multiplier ?? 1;
-  //     }
-  // }, [geckoScoreState]);
+ 
 
   useEffect(() => {
     const oneMinute = 60000;
@@ -510,7 +494,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
     geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
     moments: new Float32Array(MAX_MOMENTS * 2),
 
-    stepTargets: [null, null, null, null] as any[],
+stepTargets: new Float32Array(8),
   }).current;
 
   // Shared values (simple arrays, created fresh when needed)
@@ -1068,7 +1052,7 @@ const applyLiveScoreStateToGait = useCallback(() => {
         }
       }
         //  sendGeckoPositionRef.current(leadPoint.current.lead);
-         sendHostGeckoPositionRef.current(leadPoint.current.lead, workingBuffers.stepTargets);
+         sendHostGeckoPositionRef.current(leadPoint.current.lead, gecko.current.legs.allStepTargets, moments.current.moments);
 
       frame = requestAnimationFrame(animate);
     };
