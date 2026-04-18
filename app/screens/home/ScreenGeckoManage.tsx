@@ -221,17 +221,8 @@ const ScreenGeckoManage = (props: Props) => {
               />
             )}
           </Animated.View>
-        )}
+        )} 
 {/* 
-        <GeckoEnergyLogList
-          userId={user?.id}
-          listData={userGeckoEnergyLogFlattened}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
-          primaryColor={textColor}
-        /> */}
-
         <View style={styles.syncToggleRow}>
           <Pressable
             onPress={() => setSyncLogView("list")}
@@ -283,9 +274,9 @@ const ScreenGeckoManage = (props: Props) => {
               chart
             </Text>
           </Pressable>
-        </View>
+        </View> */}
 
-        <View style={styles.syncToggleRow}>
+        {/* <View style={styles.syncToggleRow}>
           {(["24h", "7d", "30d", "all"] as const).map((r) => {
             const active = syncRange === r;
             return (
@@ -315,9 +306,9 @@ const ScreenGeckoManage = (props: Props) => {
               </Pressable>
             );
           })}
-        </View>
+        </View> */}
 
-        {syncLogView === "list" ? (
+        {/* {syncLogView === "list" ? (
           <GeckoSyncLogList
             userId={user?.id}
             listData={userGeckoSyncLogFlattened}
@@ -473,7 +464,7 @@ const ScreenGeckoManage = (props: Props) => {
             ]}
           />
           </ScrollView>
-        )}
+        )} */}
       </View>
     </SafeAreaView>
   );

@@ -4,12 +4,15 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   useSharedValue,
+  SharedValue,
 } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
+import SocketStatusLight from "@/app/components/liveSesh/SocketStatusLight";
 import useUser from "@/src/hooks/useUser";
 type Props = {
+  socketStatusSV: SharedValue;
   textColor: string;
   backgroundColor: string; 
   friendId: number;
@@ -20,6 +23,7 @@ type Props = {
 };
 
 const GlassTopBarLight = ({
+  socketStatusSV,
   textColor,
   backgroundColor,
   friendId,
@@ -77,18 +81,10 @@ const GlassTopBarLight = ({
         },
       ]}
     >
-      <Text style={[styles.friendText, { color: textColor }]}>
-        {friendName}
-      </Text>
-
-      <Text style={[styles.statsText, { color: textColor }]}>
-        Health: {TIME_SCORE}%{"     "}
-        <Text style={[styles.statsText, { color: textColor }]}>
-          Days since: {DAYS_SINCE} 
-        </Text>
-        
-      </Text>
-        {isHostingLiveSesh ? (
+ 
+<SocketStatusLight socketStatusSV={socketStatusSV}/>
+ 
+        {/* {isHostingLiveSesh ? (
           <View style={styles.liveSeshRow}>
             <View style={styles.liveDot} />
             <Text style={[styles.statsText, { color: textColor }]}>
@@ -99,7 +95,7 @@ const GlassTopBarLight = ({
           <Text style={[styles.statsText, { color: textColor }]}>
             DEBUG Energy: {geckoScoreState?.energy}
           </Text>
-        )}
+        )} */}
     </Animated.View>
   );
 };

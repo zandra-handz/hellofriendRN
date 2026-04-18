@@ -148,8 +148,8 @@ const MomentsSkia = ({
   recenterTrigger,
   backTrigger,
   geckoScoreState,
- 
-  liveScoreStateRef, 
+
+  liveScoreStateRef,
   hasReceivedInitialScoreStateRef,
   initialBackendEnergyUpdatedAtRef,
   latestBackendEnergyUpdatedAtRef,
@@ -170,9 +170,6 @@ const MomentsSkia = ({
 
   const stepsRef = useRef<number>(0);
   const distanceRef = useRef<number>(0);
-
-
- 
 
   useEffect(() => {
     if (size && size.width > 0 && size.height > 0) {
@@ -196,29 +193,26 @@ const MomentsSkia = ({
 
   const didInitSessionWindowRef = useRef(false);
 
-useEffect(() => {
-  if (didInitSessionWindowRef.current) return;
-  if (!hasReceivedInitialScoreStateRef.current) return;
+  useEffect(() => {
+    if (didInitSessionWindowRef.current) return;
+    if (!hasReceivedInitialScoreStateRef.current) return;
 
-  const iso = initialBackendEnergyUpdatedAtRef.current;
-  if (!iso) return;
+    const iso = initialBackendEnergyUpdatedAtRef.current;
+    if (!iso) return;
 
-  const ms = new Date(iso).getTime();
-  if (!Number.isFinite(ms)) return;
+    const ms = new Date(iso).getTime();
+    if (!Number.isFinite(ms)) return;
 
-  sessionStartRef.current = ms;
-  sessionEndRef.current = ms;
-  didInitSessionWindowRef.current = true;
+    sessionStartRef.current = ms;
+    sessionEndRef.current = ms;
+    didInitSessionWindowRef.current = true;
 
-  console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
-    initialBackendEnergyUpdatedAt: iso,
-    sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-    sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-  });
-}, [
-  hasReceivedInitialScoreStateRef,
-  initialBackendEnergyUpdatedAtRef,
-]);
+    console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
+      initialBackendEnergyUpdatedAt: iso,
+      sessionStartIso: new Date(sessionStartRef.current).toISOString(),
+      sessionEndIso: new Date(sessionEndRef.current).toISOString(),
+    });
+  }, [hasReceivedInitialScoreStateRef, initialBackendEnergyUpdatedAtRef]);
 
   const handleRescatterMoments_useMomentClass = () => {
     handleRescatterMomentsInternal(moments.current.moments);
@@ -246,54 +240,53 @@ useEffect(() => {
     }
   }, [recenterTrigger]);
 
-const applyLiveScoreStateToGait = useCallback(() => {
-  const live = liveScoreStateRef?.current;
-  if (!live || !gecko.current) return;
+  const applyLiveScoreStateToGait = useCallback(() => {
+    const live = liveScoreStateRef?.current;
+    if (!live || !gecko.current) return;
 
-  gecko.current.gait.energy = live.energy ?? gecko.current.gait.energy;
-  gecko.current.gait.surplusEnergy =
-    live.surplus_energy ?? gecko.current.gait.surplusEnergy;
-  gecko.current.gait.expiresAt = live.expires_at
-    ? new Date(live.expires_at).getTime()
-    : 0;
-  gecko.current.gait.multiplier = live.multiplier ?? 1;
-  gecko.current.gait.baseMultiplier = live.base_multiplier ?? 1;
-  gecko.current.gait.stepFatiguePerStep =
-    live.step_fatigue_per_step ?? gecko.current.gait.stepFatiguePerStep;
-  gecko.current.gait.rechargePerSecond =
-    live.recharge_per_second ?? gecko.current.gait.rechargePerSecond;
-  gecko.current.gait.streakFatigueMultiplier =
-    live.streak_fatigue_multiplier ??
-    gecko.current.gait.streakFatigueMultiplier;
-  gecko.current.gait.streakRechargePerSecond =
-    live.streak_recharge_per_second ??
-    gecko.current.gait.streakRechargePerSecond;
-  gecko.current.gait.surplusCap =
-    live.surplus_cap ?? gecko.current.gait.surplusCap;
-  gecko.current.gait.stamina =
-    live.stamina ?? gecko.current.gait.stamina;
+    gecko.current.gait.energy = live.energy ?? gecko.current.gait.energy;
+    gecko.current.gait.surplusEnergy =
+      live.surplus_energy ?? gecko.current.gait.surplusEnergy;
+    gecko.current.gait.expiresAt = live.expires_at
+      ? new Date(live.expires_at).getTime()
+      : 0;
+    gecko.current.gait.multiplier = live.multiplier ?? 1;
+    gecko.current.gait.baseMultiplier = live.base_multiplier ?? 1;
+    gecko.current.gait.stepFatiguePerStep =
+      live.step_fatigue_per_step ?? gecko.current.gait.stepFatiguePerStep;
+    gecko.current.gait.rechargePerSecond =
+      live.recharge_per_second ?? gecko.current.gait.rechargePerSecond;
+    gecko.current.gait.streakFatigueMultiplier =
+      live.streak_fatigue_multiplier ??
+      gecko.current.gait.streakFatigueMultiplier;
+    gecko.current.gait.streakRechargePerSecond =
+      live.streak_recharge_per_second ??
+      gecko.current.gait.streakRechargePerSecond;
+    gecko.current.gait.surplusCap =
+      live.surplus_cap ?? gecko.current.gait.surplusCap;
+    gecko.current.gait.stamina = live.stamina ?? gecko.current.gait.stamina;
 
-  // Re-anchor gait's local timing to the latest backend truth
-  gecko.current.gait.lastUpdateTime =
-    global.performance?.now?.() ?? Date.now();
+    // Re-anchor gait's local timing to the latest backend truth
+    gecko.current.gait.lastUpdateTime =
+      global.performance?.now?.() ?? Date.now();
 
-  // One-time session window init from backend
-  if (!didInitSessionWindowRef.current && live.energy_updated_at) {
-    const ms = new Date(live.energy_updated_at).getTime();
+    // One-time session window init from backend
+    if (!didInitSessionWindowRef.current && live.energy_updated_at) {
+      const ms = new Date(live.energy_updated_at).getTime();
 
-    if (Number.isFinite(ms)) {
-      sessionStartRef.current = ms;
-      sessionEndRef.current = ms;
-      didInitSessionWindowRef.current = true;
+      if (Number.isFinite(ms)) {
+        sessionStartRef.current = ms;
+        sessionEndRef.current = ms;
+        didInitSessionWindowRef.current = true;
 
-      console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
-        backendEnergyUpdatedAt: live.energy_updated_at,
-        sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-        sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-      });
+        console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
+          backendEnergyUpdatedAt: live.energy_updated_at,
+          sessionStartIso: new Date(sessionStartRef.current).toISOString(),
+          sessionEndIso: new Date(sessionEndRef.current).toISOString(),
+        });
+      }
     }
-  }
-}, [liveScoreStateRef]);
+  }, [liveScoreStateRef]);
 
   useEffect(() => {
     applyLiveScoreStateToGait();
@@ -342,37 +335,37 @@ const applyLiveScoreStateToGait = useCallback(() => {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~can yo
 
   const handleUpdateGeckoDataState = async () => {
-
     if (!didInitSessionWindowRef.current) {
-  const iso = initialBackendEnergyUpdatedAtRef.current ?? liveScoreStateRef?.current?.energy_updated_at;
+      const iso =
+        initialBackendEnergyUpdatedAtRef.current ??
+        liveScoreStateRef?.current?.energy_updated_at;
 
-  if (iso) {
-    const ms = new Date(iso).getTime();
-    if (Number.isFinite(ms)) {
-      sessionStartRef.current = ms;
-      sessionEndRef.current = ms;
-      didInitSessionWindowRef.current = true;
+      if (iso) {
+        const ms = new Date(iso).getTime();
+        if (Number.isFinite(ms)) {
+          sessionStartRef.current = ms;
+          sessionEndRef.current = ms;
+          didInitSessionWindowRef.current = true;
 
-      console.log("[FRONTEND WINDOW INIT FROM SOCKET - FORCED IN SEND]", {
-        backendEnergyUpdatedAt: iso,
-        sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-        sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-      });
+          console.log("[FRONTEND WINDOW INIT FROM SOCKET - FORCED IN SEND]", {
+            backendEnergyUpdatedAt: iso,
+            sessionStartIso: new Date(sessionStartRef.current).toISOString(),
+            sessionEndIso: new Date(sessionEndRef.current).toISOString(),
+          });
+        }
+      }
     }
-  }
-}
     sessionStartRef.current = sessionEndRef.current;
     sessionEndRef.current = Date.now();
-
 
     console.log("[FRONTEND VS BACKEND START]", {
       frontend_started_on: new Date(sessionStartRef.current).toISOString(),
       frontend_ended_on: new Date(sessionEndRef.current).toISOString(),
-      initial_backend_energy_updated_at: initialBackendEnergyUpdatedAtRef.current,
+      initial_backend_energy_updated_at:
+        initialBackendEnergyUpdatedAtRef.current,
       latest_backend_energy_updated_at: latestBackendEnergyUpdatedAtRef.current,
       didInitSessionWindow: didInitSessionWindowRef.current,
     });
-
 
     const startPointsIndex = prevPointsLengthRef.current;
     const endPointsIndex = pointsEarnedList.current.length;
@@ -387,8 +380,6 @@ const applyLiveScoreStateToGait = useCallback(() => {
     //     gecko.current.gait.energy = latest.energy;
     //     gecko.current.gait.surplusEnergy = latest.surplus_energy;
     // }
-
- 
 
     console.log("[FRONTEND BATCH SNAPSHOT]", {
       startedOn: new Date(sessionStartRef.current).toISOString(),
@@ -414,23 +405,23 @@ const applyLiveScoreStateToGait = useCallback(() => {
     //   pointsEarnedList: newPoints,
     // });
 
-  const { fatigue: client_fatigue, recharge: client_recharge } =                                                                                                                                                                                         gecko.current.gait.consumeWindowTotals();                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                     
-  const payload = {
-    steps: gecko.current.gait.stepCount - stepsRef.current,
-    distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
-    started_on: new Date(sessionStartRef.current).toISOString(),
-    ended_on: new Date(sessionEndRef.current).toISOString(),
-    points_earned: newPoints,
-    //NEW FOR ANALYZING SYNC VIA BACKEND
-    client_energy: gecko.current.gait.energy,
-    client_surplus_energy: gecko.current.gait.surplusEnergy,
-    client_multiplier: gecko.current.gait.multiplier,
-    client_computed_at: new Date().toISOString(),
-    client_fatigue,
-    client_recharge,
-  };
+    const { fatigue: client_fatigue, recharge: client_recharge } =
+      gecko.current.gait.consumeWindowTotals();
 
+    const payload = {
+      steps: gecko.current.gait.stepCount - stepsRef.current,
+      distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
+      started_on: new Date(sessionStartRef.current).toISOString(),
+      ended_on: new Date(sessionEndRef.current).toISOString(),
+      points_earned: newPoints,
+      //NEW FOR ANALYZING SYNC VIA BACKEND
+      client_energy: gecko.current.gait.energy,
+      client_surplus_energy: gecko.current.gait.surplusEnergy,
+      client_multiplier: gecko.current.gait.multiplier,
+      client_computed_at: new Date().toISOString(),
+      client_fatigue,
+      client_recharge,
+    };
 
     console.log("[FRONTEND SEND PAYLOAD]", payload);
 
@@ -452,8 +443,6 @@ const applyLiveScoreStateToGait = useCallback(() => {
     distanceRef.current = leadPoint.current.leadDistanceTraveled;
     prevPointsLengthRef.current = endPointsIndex;
   };
-
- 
 
   useEffect(() => {
     const oneMinute = 60000;
@@ -494,7 +483,8 @@ const applyLiveScoreStateToGait = useCallback(() => {
     geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
     moments: new Float32Array(MAX_MOMENTS * 2),
 
-stepTargets: new Float32Array(8),
+    stepTargets: new Float32Array(8),
+    // stepTargets: [null, null, null, null] as any[],
   }).current;
 
   // Shared values (simple arrays, created fresh when needed)
@@ -607,9 +597,9 @@ stepTargets: new Float32Array(8),
   const color2Converted = hexToVec3(color2);
   const bckgColor1Converted = hexToVec3(bckgColor1);
   const bckgColor2Converted = hexToVec3(bckgColor2);
- 
+
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
-  const leadPoint = useRef(new Mover(startingCoord0, startingCoord1)); 
+  const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
   const gecko = useRef(
     new Gecko(
       startingCoord0,
@@ -747,25 +737,25 @@ stepTargets: new Float32Array(8),
     if (!internalReset || !reset) {
       console.log("conditions not met for a reset");
       return;
-    }  
+    }
 
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
     leadPoint.current = new Mover(startingCoord0, startingCoord1);
- 
+
     gecko.current = new Gecko(
       startingCoord0,
       startingCoord1,
       0.06,
       liveScoreStateRef?.current ?? geckoScoreState ?? {},
     );
- 
-    workingBuffers.soul.fill(0); 
+
+    workingBuffers.soul.fill(0);
     workingBuffers.selected.fill(0);
     workingBuffers.lastSelected.fill(0);
     workingBuffers.heldCoords.fill(0);
     workingBuffers.geckoPoints.fill(0);
     workingBuffers.moments.fill(0);
- 
+
     selectedUniformSV.value = [0, 0];
     lastSelectedUniformSV.value = [0, 0];
 
@@ -785,7 +775,7 @@ stepTargets: new Float32Array(8),
   const lastPawsClearedRef = useRef(false);
   const clearAllPawsInUIRef = useRef(() => {});
   const syncPawsInUIRef = useRef<() => void>(() => {});
- 
+
   const lastHoldingsVersionRef = useRef(0);
 
   useEffect(() => {
@@ -911,23 +901,24 @@ stepTargets: new Float32Array(8),
         leadPoint.current.isMoving,
       );
 
-   
-
       //       geckoStepsRef.current = gecko.current.legs.frontLegs.stepCount;
       // geckoDistanceRef.current = leadPoint.current.leadDistanceTraveled;
 
       const spine = gecko.current.body.spine;
       hintRef.current = spine.hintJoint || [0, 0];
 
-      // step targets (no alloc)
-      workingBuffers.stepTargets[0] =
-        gecko.current.legs.frontLegs.stepTargets[0];
-      workingBuffers.stepTargets[1] =
-        gecko.current.legs.frontLegs.stepTargets[1];
-      workingBuffers.stepTargets[2] =
-        gecko.current.legs.backLegs.stepTargets[0];
-      workingBuffers.stepTargets[3] =
-        gecko.current.legs.backLegs.stepTargets[1];
+      const front = gecko.current.legs.frontLegs.stepTargets;
+      const back = gecko.current.legs.backLegs.stepTargets;
+
+      workingBuffers.stepTargets[0] = front[0][0];
+      workingBuffers.stepTargets[1] = front[0][1];
+      workingBuffers.stepTargets[2] = front[1][0];
+      workingBuffers.stepTargets[3] = front[1][1];
+
+      workingBuffers.stepTargets[4] = back[0][0];
+      workingBuffers.stepTargets[5] = back[0][1];
+      workingBuffers.stepTargets[6] = back[1][0];
+      workingBuffers.stepTargets[7] = back[1][1];
 
       moments.current.update(
         userPointSV.value,
@@ -1051,8 +1042,18 @@ stepTargets: new Float32Array(8),
           updateTrigger.value += 1;
         }
       }
-        //  sendGeckoPositionRef.current(leadPoint.current.lead);
-         sendHostGeckoPositionRef.current(leadPoint.current.lead, gecko.current.legs.allStepTargets, moments.current.moments);
+      //  sendGeckoPositionRef.current(leadPoint.current.lead);
+      // add fingers. other option is to get the angle in the step and just draw the fingers in the shader
+      // add direction to get direction going in
+
+      sendHostGeckoPositionRef.current(
+        leadPoint.current.lead,
+        gecko.current.legs.allStepTargets,
+        gecko.current.legs.allStepTargetAngles,
+        workingBuffers.heldCoords,
+
+        moments.current.moments,
+      );
 
       frame = requestAnimationFrame(animate);
     };

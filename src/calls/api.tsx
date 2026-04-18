@@ -1247,6 +1247,19 @@ export const fetchFriendDashboard = async (friendId: number) => {
   };
 
 
+export const declineLiveSeshInvite = async (inviteId: number) => {
+  try {
+    const response = await helloFriendApiClient.post(
+      `/users/live-sesh/invites/${inviteId}/decline/`,
+    );
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during declineLiveSeshInvite");
+  }
+};
+
+
+
     export const createLiveSeshInvite = async (friendId: number) => {
     try {
       const response = await helloFriendApiClient.post(

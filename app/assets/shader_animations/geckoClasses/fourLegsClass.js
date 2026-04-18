@@ -40,12 +40,8 @@ export default class FourLegs {
     this.spine = spine;
     this.valuesForReversing = valuesForReversing;
 
-    
-
     this.stepWiggleRoom = forwardStepThreshhold / 3;
     this.reverseStepWiggleRoom = reverseStepThreshold / 3;
-
-    
 
     this.stepAheadJointFront = spine.first; // head
     this.jointAngles = spine.jointAngles;
@@ -55,11 +51,10 @@ export default class FourLegs {
     this.stepCenterJointFrontAngle = spine.jointAngles[2];
     this.distanceOutRadiusFront = 0.02;
     this.joints = spine.joints;
- 
-    this.stepBehindJointFront = spine.joints[0]; // guessing
-   this.anchorJointIndex = 2;
-    this.frontAheadAngleIndex = 0;
 
+    this.stepBehindJointFront = spine.joints[0]; // guessing
+    this.anchorJointIndex = 2;
+    this.frontAheadAngleIndex = 0;
 
     this.back_anchorJIndex = 13;
     this.back_aheadJIndex = 2;
@@ -106,8 +101,8 @@ export default class FourLegs {
       this.valuesForReversing,
       this.joints,
       this.jointAngles,
-         this.back_anchorJIndex,
-    this.back_aheadJIndex,
+      this.back_anchorJIndex,
+      this.back_aheadJIndex,
       motion,
       this.frontLegs.stepTargets,
       this.hipSpineJoint,
@@ -133,15 +128,42 @@ export default class FourLegs {
       backLowLegLen,
     );
 
-  this.allStepTargets = [    
-    this.frontLegs.stepTargets[0], 
-    this.frontLegs.stepTargets[1],   
-    this.backLegs.stepTargets[0],   
-  this.backLegs.stepTargets[1],                                                                                                                                                                                     
-  ];
+    this.allStepTargets = [
+      this.frontLegs.stepTargets[0],
+      this.frontLegs.stepTargets[1],
+      this.backLegs.stepTargets[0],
+      this.backLegs.stepTargets[1],
+    ];
+
+    this.allStepTargetAngles = new Float32Array(4);
+
+    // this.allFingers = [
+    //   this.frontLegs.fingers[0][0],
+    //   this.frontLegs.fingers[0][1],
+    //   this.frontLegs.fingers[0][2],
+    //   this.frontLegs.fingers[0][3],
+    //   this.frontLegs.fingers[0][4],
+
+    //   this.frontLegs.fingers[1][0],
+    //   this.frontLegs.fingers[1][1],
+    //   this.frontLegs.fingers[1][2],
+    //   this.frontLegs.fingers[1][3],
+    //   this.frontLegs.fingers[1][4],
+
+    //   this.backLegs.fingers[0][0],
+    //   this.backLegs.fingers[0][1],
+    //   this.backLegs.fingers[0][2],
+    //   this.backLegs.fingers[0][3],
+    //   this.backLegs.fingers[0][4],
+
+    //   this.backLegs.fingers[1][0],
+    //   this.backLegs.fingers[1][1],
+    //   this.backLegs.fingers[1][2],
+    //   this.backLegs.fingers[1][3],
+    //   this.backLegs.fingers[1][4],
 
 
-
+    // ];
   }
 
   // jumpUpdate() {
@@ -190,6 +212,11 @@ export default class FourLegs {
     // console.log('no jump',this.frontLegs.stepTargets)
     this.frontLegs.update();
     this.backLegs.update();
+
+    this.allStepTargetAngles[0] = this.frontLegs.stepTargetAngle0;
+    this.allStepTargetAngles[1] = this.frontLegs.stepTargetAngle1;
+    this.allStepTargetAngles[2] = this.backLegs.stepTargetAngles[0];
+    this.allStepTargetAngles[3] = this.backLegs.stepTargetAngles[1];
 
     // }
   }

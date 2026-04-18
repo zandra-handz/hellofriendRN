@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert } from "react-native";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useUser from "@/src/hooks/useUser";
 import useLiveSeshInvites from "@/src/hooks/LiveSeshCalls/useLiveSeshInvites";
 import useAcceptLiveSeshInvite from "@/src/hooks/LiveSeshCalls/useAcceptLiveSeshInvite";
+import useDeclineLiveSeshInvite from "@/src/hooks/LiveSeshCalls/useDeclineLiveSeshInvite";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
+import SocketStatusLight from "./SocketStatusLight";
+import { useNotificationsSocket } from "@/src/hooks/useNotificationsSocket";
 
 type Invite = {
   id: number;
@@ -25,15 +29,61 @@ const LiveSeshInvitesPanel: React.FC = () => {
   const { lightDarkTheme } = useLDTheme();
   const { navigateToSecretGecko} = useAppNavigations();
 
-  const { data, pending, sent, isLoading } = useLiveSeshInvites({
+
+    const {
+      socketStatus,
+      socketStatusSV,
+    wsRef,
+    sendRaw,
+    sendLiveSeshInvite,
+    acceptLiveSeshInvite,
+    declineLiveSeshInvite,
+    endLiveSesh,
+    registerOnLiveSeshInvite,
+    registerOnLiveSeshInviteAccepted,
+    registerOnLiveSeshInviteDeclined,
+    registerOnLiveSeshEnded,
+    registerOnGenericNotification,
+    } = useNotificationsSocket();
+
+  const { data, pending, sent, isLoading, refetch } = useLiveSeshInvites({
     userId: userId ?? 0,
     enabled: !!userId,
   });
+
+  // Refresh invites list whenever a notification arrives that could change it
+  useEffect(() => {
+    registerOnLiveSeshInvite(() => {
+      console.log("[LiveSeshInvitesPanel] invite received — refetching");
+      refetch();
+    });
+    registerOnLiveSeshInviteAccepted(() => {
+      console.log("[LiveSeshInvitesPanel] invite accepted — refetching");
+      refetch();
+    });
+    registerOnLiveSeshInviteDeclined(() => {
+      console.log("[LiveSeshInvitesPanel] invite declined — refetching");
+      refetch();
+    });
+    registerOnLiveSeshEnded(() => {
+      console.log("[LiveSeshInvitesPanel] sesh ended — refetching");
+      refetch();
+    });
+  }, [
+    registerOnLiveSeshInvite,
+    registerOnLiveSeshInviteAccepted,
+    registerOnLiveSeshInviteDeclined,
+    registerOnLiveSeshEnded,
+    refetch,
+  ]);
 
   const { handleAcceptInvite, acceptMutation } = useAcceptLiveSeshInvite({
     userId: userId ?? 0,
   });
 
+    const { handleDeclineInvite, declineMutation } = useDeclineLiveSeshInvite({
+    userId: userId ?? 0,
+  });
   const { currentLiveSesh } = useCurrentLiveSesh({
     userId: userId ?? 0,
     enabled: !!userId,
@@ -62,6 +112,22 @@ const LiveSeshInvitesPanel: React.FC = () => {
     );
   };
 
+  const confirmDecline = (invite: Invite) => {
+    Alert.alert(
+      "Decline invite?",
+      `Decline live sesh invite from ${invite.sender_username}?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Decline",
+          style: "destructive",
+             onPress: () => handleDeclineInvite(invite.id),
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
   if (!userId) return null;
 
   return (
@@ -74,7 +140,9 @@ const LiveSeshInvitesPanel: React.FC = () => {
         },
       ]}
     >
+ 
       <View style={styles.header}>
+             <SocketStatusLight socketStatusSV={socketStatusSV}/>
         <SvgIcon name="account_plus" size={16} color={lightDarkTheme.primaryText} />
         <Text style={[styles.headerText, { color: lightDarkTheme.primaryText }]}>
           Live Sesh Invites
@@ -95,12 +163,28 @@ const LiveSeshInvitesPanel: React.FC = () => {
       ) : (
         pending.map((invite: Invite) => (
           <View key={invite.id} style={styles.row}>
-            <Text
-              style={[styles.rowText, { color: lightDarkTheme.primaryText }]}
-              numberOfLines={1}
-            >
-              {invite.sender_username}
-            </Text>
+            <View style={styles.rowTextWrap}>
+              <Text
+                style={[styles.rowText, { color: lightDarkTheme.primaryText }]}
+                numberOfLines={1}
+              >
+                {invite.sender_username}
+              </Text>
+              <Text
+                style={[
+                  styles.rowSubText,
+                  { color: lightDarkTheme.primaryText, opacity: 0.6 },
+                ]}
+                numberOfLines={1}
+              >
+                {new Date(invite.updated_on).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
+              </Text>
+            </View>
             <Pressable
               onPress={() => confirmAccept(invite)}
               disabled={acceptMutation.isPending}
@@ -110,6 +194,22 @@ const LiveSeshInvitesPanel: React.FC = () => {
               ]}
             >
               <Text style={styles.acceptText}>Accept</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => confirmDecline(invite)}
+              style={[
+                styles.declineBtn,
+                { borderColor: lightDarkTheme.primaryText },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.declineText,
+                  { color: lightDarkTheme.primaryText },
+                ]}
+              >
+                Decline
+              </Text>
             </Pressable>
           </View>
         ))
@@ -154,10 +254,17 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 6,
   },
-  rowText: {
+  rowTextWrap: {
     flex: 1,
+  },
+  rowText: {
     fontFamily: "Poppins_400Regular",
     fontSize: 14,
+  },
+  rowSubText: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: 11,
+    marginTop: 2,
   },
   acceptBtn: {
     backgroundColor: "#7FE629",
@@ -169,6 +276,17 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_700Bold",
     fontSize: 12,
     color: "#000000",
+  },
+  declineBtn: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  declineText: {
+    fontFamily: "Poppins_700Bold",
+    fontSize: 12,
   },
   activeSessionBtn: {
     marginTop: 8,

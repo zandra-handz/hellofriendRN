@@ -2,6 +2,7 @@
 
 import { geckoToMoment_inPlace } from "./animUtils";
 
+ 
 export default class Moments {
   constructor(
     moments = [],
@@ -287,7 +288,7 @@ export default class Moments {
       this.trigger_remote = false;
     }
 
-    // ✅ Clear stored_index for ALL moments, not just held ones
+    // Clear stored_index for ALL moments, not just held ones
     for (let i = 0; i < this.moments.length; i++) {
       if (this.moments[i].stored_index !== null) {
         this.moments[i].stored_index = null;
@@ -358,6 +359,13 @@ export default class Moments {
     let ux = userPointer[0];
     let uy = userPointer[1];
 
+
+//     console.log(holdingCoords)
+//     if (!Number.isFinite(holdingCoords[0])) {
+//   console.error("Bad holdingCoords buffer", holdingCoords);
+// }
+ 
+
     if (
       this.sleepWalk0.current.auto_pick_up.current &&
       !this.sleepWalk0.current.paws_cleared_for_auto
@@ -374,7 +382,7 @@ export default class Moments {
       const idx = this.momentIndexById.get(this.sleepWalk0.current.pickUpNextId);
       const m = idx !== undefined ? this.moments[idx] : null;
       
-      // ✅ Find first free holding slot
+      // Find first free holding slot
       let h_index = -1;
       for (let i = 0; i < 4; i++) {
         if (this.holdings[i].id === null) {
@@ -427,8 +435,11 @@ export default class Moments {
     for (let i = 0; i < 4; i++) {
       const holding = this.holdings[i];
       if (holding.id !== null) {
-        holding.coord[0] = holdingCoords[i][0];
-        holding.coord[1] = holdingCoords[i][1];
+        // holding.coord[0] = holdingCoords[i][0];
+        // holding.coord[1] = holdingCoords[i][1];
+
+        holding.coord[0] = holdingCoords[i * 2];
+holding.coord[1] = holdingCoords[i * 2 + 1];
 
         const idx = this.momentIndexById.get(holding.id);
         const moment = idx !== undefined ? this.moments[idx] : null;

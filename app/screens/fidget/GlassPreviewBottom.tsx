@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import {
   View,
   Pressable,
@@ -18,18 +18,17 @@ import Animated, {
 
 import {
   Canvas,
-  Text as SkText,
   Group,
+  Paragraph,
+  Skia,
+  TextAlign,
 } from "@shopify/react-native-skia";
 
 import FooterButtonRowConditional from "./FooterButtonRowConditional";
 
 const HORIZONTAL_PADDING = 60;
-const CANVAS_HEIGHT = 30;
-const HEADER_Y = 24;
-const CAPSULE_START_Y = 58;
-const LINE_HEIGHT = 24;
-const MAX_LINES = 3;
+const CANVAS_HEIGHT = 110;
+const MAX_LINES = 4; // 1 category + 3 capsule lines
 
 const GlassPreviewBottom = ({
   fontSmall,
@@ -91,6 +90,25 @@ const GlassPreviewBottom = ({
   const hasMoment = useDerivedValue(() => momentIdSV.value !== null);
 
   // ----------------------------
+  // FONT MANAGER (for emoji fallback)
+  // ----------------------------
+  // Using System fontMgr so the OS emoji font is used as per-glyph fallback.
+  // Trade-off: the custom `fontSmall` typeface is NOT used here — only its size.
+  //
+  // To render with the custom font AND keep emoji fallback:
+  //   1. Bundle an emoji font with the app (e.g. assets/fonts/NotoColorEmoji.ttf).
+  //   2. Load both typefaces (e.g. via useFonts or Skia.Typeface.MakeFreeTypeFaceFromData).
+  //   3. Build a TypefaceFontProvider and register both:
+  //        const provider = Skia.TypefaceFontProvider.Make();
+  //        provider.registerFont(customTypeface, "AppFont");
+  //        provider.registerFont(emojiTypeface,  "EmojiFont");
+  //      Use `provider` as the fontMgr below.
+  //   4. In the textStyle, set fontFamilies: ["AppFont", "EmojiFont"] so
+  //      glyphs missing from AppFont fall back to EmojiFont.
+  const fontSize = useMemo(() => fontSmall?.getSize() ?? 14, [fontSmall]);
+  const fontMgr = useMemo(() => Skia.FontMgr.System(), []);
+
+  // ----------------------------
   // ANIMATION
   // ----------------------------
   useFocusEffect(
@@ -118,65 +136,30 @@ const GlassPreviewBottom = ({
   const canvasWidth = screenWidth - HORIZONTAL_PADDING;
 
   // ----------------------------
-  // SKIA DERIVED VALUES
+  // PARAGRAPH (supports emoji fallback via system fontMgr)
   // ----------------------------
-  const categoryText = useDerivedValue(() => categorySV.value);
+  const paragraph = useDerivedValue(() => {
+    const cat = categorySV.value;
+    const cap = capsuleSV.value;
 
-  const wrappedCapsule = useDerivedValue(() => {
-    const result = ["", "", ""];
-    if (!fontSmall) return result;
+    const textStyle = {
+      color: Skia.Color(color),
+      fontSize,
+    };
 
-    const text = capsuleSV.value;
-    if (!text) return result;
+    const paraStyle = {
+      textAlign: TextAlign.Center,
+      maxLines: MAX_LINES,
+    };
 
-    const words = text.split(" ");
-    let lineIdx = 0;
-    let current = "";
-
-    for (let i = 0; i < words.length && lineIdx < MAX_LINES; i++) {
-      const word = words[i];
-      const test = current ? current + " " + word : word;
-
-      if (fontSmall.measureText(test).width <= canvasWidth) {
-        current = test;
-      } else {
-        if (current) {
-          result[lineIdx] = current;
-          lineIdx++;
-        }
-        current = word;
-      }
-    }
-
-    if (current && lineIdx < MAX_LINES) result[lineIdx] = current;
-    return result;
-  });
-
-  const capsuleLine0 = useDerivedValue(() => wrappedCapsule.value[0]);
-  const capsuleLine1 = useDerivedValue(() => wrappedCapsule.value[1]);
-  const capsuleLine2 = useDerivedValue(() => wrappedCapsule.value[2]);
-
-  // ----------------------------
-  // LAYOUT
-  // ----------------------------
-  const categoryX = useDerivedValue(() => {
-    if (!fontSmall) return 0;
-    return (canvasWidth - fontSmall.measureText(categoryText.value).width) / 2;
-  });
-
-  const line0X = useDerivedValue(() => {
-    if (!fontSmall) return 0;
-    return (canvasWidth - fontSmall.measureText(capsuleLine0.value).width) / 2;
-  });
-
-  const line1X = useDerivedValue(() => {
-    if (!fontSmall) return 0;
-    return (canvasWidth - fontSmall.measureText(capsuleLine1.value).width) / 2;
-  });
-
-  const line2X = useDerivedValue(() => {
-    if (!fontSmall) return 0;
-    return (canvasWidth - fontSmall.measureText(capsuleLine2.value).width) / 2;
+    const builder = Skia.ParagraphBuilder.Make(paraStyle, fontMgr);
+    builder.pushStyle(textStyle);
+    if (cat) builder.addText(cat + "\n");
+    if (cap) builder.addText(cap);
+    builder.pop();
+    const p = builder.build();
+    p.layout(canvasWidth);
+    return p;
   });
 
   if (!fontSmall) return null;
@@ -205,39 +188,12 @@ const GlassPreviewBottom = ({
           <View style={styles.scrollViewContainer}>
             <Canvas style={{ width: canvasWidth, height: CANVAS_HEIGHT }}>
               <Group opacity={hasMoment}>
-
-                <SkText
-                  x={categoryX}
-                  y={HEADER_Y}
-                  text={categoryText}
-                  font={fontSmall}
-                  color={color}
+                <Paragraph
+                  paragraph={paragraph}
+                  x={0}
+                  y={0}
+                  width={canvasWidth}
                 />
-
-                <SkText
-                  x={line0X}
-                  y={CAPSULE_START_Y}
-                  text={capsuleLine0}
-                  font={fontSmall}
-                  color={color}
-                />
-
-                <SkText
-                  x={line1X}
-                  y={CAPSULE_START_Y + LINE_HEIGHT}
-                  text={capsuleLine1}
-                  font={fontSmall}
-                  color={color}
-                />
-
-                <SkText
-                  x={line2X}
-                  y={CAPSULE_START_Y + LINE_HEIGHT * 2}
-                  text={capsuleLine2}
-                  font={fontSmall}
-                  color={color}
-                />
-
               </Group>
             </Canvas>
           </View>

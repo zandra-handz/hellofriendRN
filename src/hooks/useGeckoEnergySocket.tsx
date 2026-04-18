@@ -31,6 +31,8 @@ export function useGeckoEnergySocket(friendId: number | null) {
     "connecting" | "connected" | "disconnected"
   >("connecting");
 
+  const socketStatusSV = useSharedValue("disconnected");
+
   const [liveScoreState, setLiveScoreState] = useState<any>(null);
   const [liveSeshPartnerId, setLiveSeshPartnerId] = useState<number | null>(
     null,
@@ -65,6 +67,8 @@ export function useGeckoEnergySocket(friendId: number | null) {
     from_user: number;
     position: [number, number];
     steps?: [number, number][];
+    step_angles?: [],
+    held_moments?:  [],
     moments?: any[][];
     moments_len?: number;
     received_at: number;
@@ -100,12 +104,13 @@ export function useGeckoEnergySocket(friendId: number | null) {
     [0, 0],
     [0, 0],
   ]);
+  const stepAnglesScratchRef = useRef<number[]>([0, 0, 0, 0]);
   // Per-moment layout: [id, x, y, stored_index]
   const momentsScratchRef = useRef<number[][]>(
     Array.from({ length: 30 }, () => [0, 0, 0, 0]),
   );
 
-  const FLUSH_INTERVAL_MS = 20000;//10000;
+  const FLUSH_INTERVAL_MS = 20000; //10000;
   const GECKO_POSITION_THROTTLE_MS = 50; // 33;
 
   const flushIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -370,11 +375,20 @@ export function useGeckoEnergySocket(friendId: number | null) {
     [],
   );
 
+
+        const heldScratchRef = useRef(new Float32Array(8));
+
   const sendHostGeckoPosition = useCallback(
     (
       position: [number, number],
       steps: [number, number][] = [],
-      moments: { id: number; coord: [number, number]; stored_index: number }[] = [],
+      step_angles: Float32Array | number[] | null = null,
+      held_moments: Float32Array | number[] | null = null,
+      moments: {
+        id: number;
+        coord: [number, number];
+        stored_index: number;
+      }[] = [],
       force = false,
     ) => {
       const now = Date.now();
@@ -396,6 +410,14 @@ export function useGeckoEnergySocket(friendId: number | null) {
         stepsScratch[i][1] = steps[i][1];
       }
 
+      const stepAnglesScratch = stepAnglesScratchRef.current;
+      if (step_angles) {
+        stepAnglesScratch[0] = step_angles[0];
+        stepAnglesScratch[1] = step_angles[1];
+        stepAnglesScratch[2] = step_angles[2];
+        stepAnglesScratch[3] = step_angles[3];
+      }
+
       const momentsScratch = momentsScratchRef.current;
       const momentsLen = Math.min(moments.length, momentsScratch.length);
       for (let i = 0; i < momentsLen; i++) {
@@ -406,6 +428,19 @@ export function useGeckoEnergySocket(friendId: number | null) {
         momentsScratch[i][3] = m.stored_index;
       }
 
+
+
+      const heldScratch = heldScratchRef.current;
+
+      const heldLen = 8; // 4 vecs, flattened array
+
+      if (held_moments) {
+        const heldLen = Math.min(held_moments.length, heldScratch.length);
+        for (let i = 0; i < heldLen; i++) {
+          heldScratch[i] = held_moments[i];
+        }
+      }
+
       wsRef.current.send(
         notepack.encode({
           action: "update_host_gecko_position",
@@ -413,6 +448,10 @@ export function useGeckoEnergySocket(friendId: number | null) {
             position,
             steps: stepsScratch,
             steps_len: stepsLen,
+            step_angles: stepAnglesScratch,
+            held_moments: Array.from(heldScratch),
+            held_moments_len: heldLen, 
+
             moments: momentsScratch,
             moments_len: momentsLen,
             timestamp: now,
@@ -467,11 +506,12 @@ export function useGeckoEnergySocket(friendId: number | null) {
     if (!token) {
       console.log("[WS] no access token — skipping connection");
       setSocketStatus("disconnected");
+      socketStatusSV.value = "disconnected";
       return;
     }
 
     setSocketStatus("connecting");
-    console.log("[WS] connecting...");
+    socketStatusSV.value = "connecting";
 
     // if selectedFriend {ScreenGecko) pass that in the param, otherwise (ScreenSecretGecko) don't
     // backend: host can only connect if their friend id matches what's on the session
@@ -486,6 +526,7 @@ export function useGeckoEnergySocket(friendId: number | null) {
     ws.onopen = () => {
       // console.log("[WS] connected");
       setSocketStatus("connected");
+      socketStatusSV.value = "connected";
       startFlushInterval();
 
       getScoreState();
@@ -583,7 +624,7 @@ export function useGeckoEnergySocket(friendId: number | null) {
       // }
 
       if (message.action === "gecko_coords") {
-        console.log('gecko coords')
+        console.log("gecko coords");
         if (
           Array.isArray(message.data?.position) &&
           message.data.position.length === 2
@@ -612,6 +653,9 @@ export function useGeckoEnergySocket(friendId: number | null) {
             from_user: message.data.from_user,
             position: message.data.position,
             steps: message.data.steps,
+            step_angles: message.data.step_angles,
+            held_moments: message.data.held_moments,
+            held_moments_len: message.data.held_moments_len,
             moments: message.data.moments,
             moments_len: message.data.moments_len,
             received_at: performance.now(),
@@ -663,6 +707,7 @@ export function useGeckoEnergySocket(friendId: number | null) {
         `[WS] disconnected — code=${event.code} reason=${event.reason}`,
       );
       setSocketStatus("disconnected");
+      socketStatusSV.value = "disconnected";
       stopFlushInterval();
 
       reconnectTimeoutRef.current = setTimeout(() => {
@@ -714,6 +759,7 @@ export function useGeckoEnergySocket(friendId: number | null) {
 
   return {
     socketStatus,
+    socketStatusSV,
     scoreStateRef,
     liveScoreState,
     liveSeshPartnerId,

@@ -321,6 +321,8 @@ const MirrorPlayGecko = ({
   const uniforms = useDerivedValue(() => {
     updateTrigger.value;
 
+
+
     if (!size.width || !size.height) {
       return {
         u_scale: scale,
@@ -409,6 +411,7 @@ const MirrorPlayGecko = ({
   const stepDotRadius = dotRadius * 0.6;
 
   const stepDotsUniforms = useDerivedValue(() => {
+    console.log(hostPeerGeckoPositionSV.value)
     const s = hostPeerGeckoPositionSV.value?.steps;
     const off: [number, number] = [-1000, -1000];
     return {
