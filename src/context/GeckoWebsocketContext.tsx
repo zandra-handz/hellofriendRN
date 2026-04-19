@@ -24,7 +24,7 @@ type HostGeckoCoordsMessage = {
   friend_id?: number;
   position: [number, number];
   steps?: [number, number][];
-  first_fingers?: number[];
+  first_fingers?: [number, number][];
   held_moments?: number[] | Float32Array;
   held_moments_len?: number;
   moments?: number[][];
@@ -101,7 +101,7 @@ type HostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
   steps?: [number, number][];
-  first_fingers?: number[];
+  first_fingers?: [number, number][];
   held_moments?: number[] | Float32Array;
   held_moments_len?: number;
   moments?: number[][];
@@ -153,7 +153,7 @@ type GeckoWebsocketContextValue = {
   sendHostGeckoPosition: (
     position: [number, number],
     steps?: [number, number][],
-    first_fingers?: Float32Array | number[] | null,
+    first_fingers?: [number, number][],
     held_moments?: Float32Array | number[] | null,
     moments?: {
       id: number;
@@ -235,7 +235,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [0, 0],
     [0, 0],
   ]);
-  const stepAnglesScratchRef = useRef<number[][]>([
+  const firstFingersScratchRef = useRef<number[][]>([
         [0, 0],
     [0, 0],
     [0, 0],
@@ -579,12 +579,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         stepsScratch[i][1] = steps[i][1];
       }
 
-      const stepAnglesScratch = stepAnglesScratchRef.current;
+      const firstFingersScratch = firstFingersScratchRef.current;
       if (first_fingers) {
-        stepAnglesScratch[0] = first_fingers[0];
-        stepAnglesScratch[1] = first_fingers[1];
-        stepAnglesScratch[2] = first_fingers[2];
-        stepAnglesScratch[3] = first_fingers[3];
+        firstFingersScratch[0] = first_fingers[0];
+        firstFingersScratch[1] = first_fingers[1];
+        firstFingersScratch[2] = first_fingers[2];
+        firstFingersScratch[3] = first_fingers[3];
       }
 
       const momentsScratch = momentsScratchRef.current;
@@ -613,7 +613,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
             position,
             steps: stepsScratch,
             steps_len: stepsLen,
-            first_fingers: stepAnglesScratch,
+            first_fingers: firstFingersScratch,
             held_moments: heldScratch,
             held_moments_len: heldLen,
             moments: momentsScratch,

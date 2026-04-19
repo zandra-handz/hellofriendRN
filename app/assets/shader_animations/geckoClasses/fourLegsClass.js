@@ -140,7 +140,7 @@ export default class FourLegs {
       this.frontLegs.fingers[0][0],
       this.frontLegs.fingers[1][0],
       this.backLegs.fingers[0][0],
-      this.backLegs.fingers[0][1]
+      this.backLegs.fingers[1][0]
     ]
 
     this.allStepTargetAngles = new Float32Array(4);

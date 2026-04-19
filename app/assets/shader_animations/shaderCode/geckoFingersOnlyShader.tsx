@@ -125,50 +125,6 @@ float boxSDF(vec2 p, vec2 center, float halfW, float halfH) {
 }
 
 // ------------------------------------------------
-// Original commented-out finger calculation logic
-// ------------------------------------------------
-vec2 calculateFinger(vec2 stepTarget, vec2 firstFinger, int fingerIndex, float s) {
-    float fingerLen = 0.024 * s;
-
-    vec2 diff = firstFinger - stepTarget;
-    float baseAngle = atan(diff.y, diff.x);
-
-    float gapAngle = TWO_PI / 1.7;
-    float fanAngle = TWO_PI - gapAngle;
-
-    float t = float(fingerIndex) / 4.0;
-    float angleOffset = t * fanAngle;
-
-    float angle = baseAngle + angleOffset;
-
-    return vec2(
-        stepTarget.x + cos(angle) * fingerLen,
-        stepTarget.y + sin(angle) * fingerLen
-    );
-}
-
-// same fan, just shorter so the lines attach near the paw
-vec2 calculateFingerRoot(vec2 stepTarget, vec2 firstFinger, int fingerIndex, float s) {
-    float rootLen = 0.0065 * s;
-
-    vec2 diff = firstFinger - stepTarget;
-    float baseAngle = atan(diff.y, diff.x);
-
-    float gapAngle = TWO_PI / 1.7;
-    float fanAngle = TWO_PI - gapAngle;
-
-    float t = float(fingerIndex) / 4.0;
-    float angleOffset = t * fanAngle;
-
-    float angle = baseAngle + angleOffset;
-
-    return vec2(
-        stepTarget.x + cos(angle) * rootLen,
-        stepTarget.y + sin(angle) * rootLen
-    );
-}
-
-// ------------------------------------------------
 // Per-foot finger mask
 // ------------------------------------------------
 float footFingerMaskDerived(
@@ -179,18 +135,27 @@ float footFingerMaskDerived(
 ) {
     float mask = 0.0;
 
-    float fThick = 0.0025 * s;
-    float fRadius = 0.0045 * s;
+    float fThick = 0.0020 * s;
+    float fRadius = 0.0036 * s;
     float fRadius2 = fRadius * fRadius;
+    float fingerLen = 0.019 * s;
+    float rootLen = 0.0052 * s;
 
     // paw dot at the planted step
-    float pawRadius = 0.0085 * s;
+    float pawRadius = 0.0070 * s;
     float paw = step(distFCircle(gecko_uv, stepTarget, pawRadius), 0.0);
     mask = max(mask, paw);
 
+    // base angle + fan are constant for all 5 toes — hoist out of the loop
+    vec2 diff = firstFinger - stepTarget;
+    float baseAngle = atan(diff.y, diff.x);
+    float fanStep = (TWO_PI - TWO_PI / 1.7) / 4.0;
+
     for (int toe = 0; toe < 5; toe++) {
-        vec2 root = calculateFingerRoot(stepTarget, firstFinger, toe, s);
-        vec2 tip  = calculateFinger(stepTarget, firstFinger, toe, s);
+        float angle = baseAngle + float(toe) * fanStep;
+        vec2 dir = vec2(cos(angle), sin(angle));
+        vec2 root = stepTarget + dir * rootLen;
+        vec2 tip  = stepTarget + dir * fingerLen;
 
         float line = lineSegmentSDF(gecko_uv, root, tip);
         mask = max(mask, step(line, fThick));
@@ -223,8 +188,9 @@ half4 main(float2 fragCoord) {
     vec2 firstFingerBL = u_first_fingers[2];
     vec2 firstFingerBR = u_first_fingers[3];
 
-    float halfW = 0.050 * s;
-    float halfH = 0.050 * s;
+    // tight bound: fingerLen (0.019) + tip radius (0.0036) ≈ 0.023, +small slack
+    float halfW = 0.025 * s;
+    float halfH = 0.025 * s;
 
     float boxFL = boxSDF(gecko_uv, stepFL, halfW, halfH);
     float boxFR = boxSDF(gecko_uv, stepFR, halfW, halfH);
@@ -243,7 +209,8 @@ half4 main(float2 fragCoord) {
     if (boxBL <= 0.0) mask = max(mask, footFingerMaskDerived(gecko_uv, stepBL, firstFingerBL, s));
     if (boxBR <= 0.0) mask = max(mask, footFingerMaskDerived(gecko_uv, stepBR, firstFingerBR, s));
 
-    vec3 fingerColor = endColor * mask;
-    return half4(fingerColor, mask);
+    float alpha = mask * 0.40;
+    vec3 fingerColor = endColor * alpha;
+    return half4(fingerColor, alpha);
 }
 `;

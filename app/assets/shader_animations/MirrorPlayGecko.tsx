@@ -564,7 +564,7 @@ type hostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
   steps?: [number, number][];
-  first_fingers?: number[];
+  first_fingers?: [number, number][];
   moments?: any[][];
   moments_len?: number;
   received_at: number;
@@ -655,7 +655,7 @@ const MirrorPlayGecko = ({
   );
 
   const packedPeerfirstFingersSV = useSharedValue<number[]>(
-    Array(PEER_STEP_COUNT).fill(0),
+    Array(PEER_STEP_COUNT * 2).fill(0),
   );
 
   const userPointSV = useSharedValue([restPoint0, restPoint1]);
@@ -764,7 +764,7 @@ const stepDotsSource = useMemo(() => {
     peerWorkingBuffers.packedSteps.fill(-1000);
     peerWorkingBuffers.packedFirstFingers.fill(0);
     packedPeerStepsSV.value = Array(PEER_STEP_COUNT * 2).fill(-1000);
-    packedPeerfirstFingersSV.value = Array(PEER_STEP_COUNT).fill(0);
+    packedPeerfirstFingersSV.value = Array(PEER_STEP_COUNT * 2).fill(0);
 
     userPointSV.value = [restPoint0, restPoint1];
     userPoint_geckoSpaceRef.current[0] = startingCoord0;
@@ -896,6 +896,10 @@ const stepDotsSource = useMemo(() => {
       packedFirstFingers[1] = 0;
       packedFirstFingers[2] = 0;
       packedFirstFingers[3] = 0;
+      packedFirstFingers[4] = 0;
+      packedFirstFingers[5] = 0;
+      packedFirstFingers[6] = 0;
+      packedFirstFingers[7] = 0;
 
       if (steps?.[0]) {
         packedSteps[0] = (steps[0][0] - 0.5) / gecko_scale;
@@ -914,10 +918,22 @@ const stepDotsSource = useMemo(() => {
         packedSteps[7] = (steps[3][1] - 0.5) / gecko_scale;
       }
 
-      if (firstFingers?.[0] != null) packedFirstFingers[0] = firstFingers[0];
-      if (firstFingers?.[1] != null) packedFirstFingers[1] = firstFingers[1];
-      if (firstFingers?.[2] != null) packedFirstFingers[2] = firstFingers[2];
-      if (firstFingers?.[3] != null) packedFirstFingers[3] = firstFingers[3];
+      if (firstFingers?.[0]) {
+        packedFirstFingers[0] = (firstFingers[0][0] - 0.5) / gecko_scale;
+        packedFirstFingers[1] = (firstFingers[0][1] - 0.5) / gecko_scale;
+      }
+      if (firstFingers?.[1]) {
+        packedFirstFingers[2] = (firstFingers[1][0] - 0.5) / gecko_scale;
+        packedFirstFingers[3] = (firstFingers[1][1] - 0.5) / gecko_scale;
+      }
+      if (firstFingers?.[2]) {
+        packedFirstFingers[4] = (firstFingers[2][0] - 0.5) / gecko_scale;
+        packedFirstFingers[5] = (firstFingers[2][1] - 0.5) / gecko_scale;
+      }
+      if (firstFingers?.[3]) {
+        packedFirstFingers[6] = (firstFingers[3][0] - 0.5) / gecko_scale;
+        packedFirstFingers[7] = (firstFingers[3][1] - 0.5) / gecko_scale;
+      }
 
       packedPeerStepsSV.value = Array.from(packedSteps);
       packedPeerfirstFingersSV.value = Array.from(packedFirstFingers);
