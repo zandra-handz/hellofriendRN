@@ -411,7 +411,7 @@ const MirrorPlayGecko = ({
   const stepDotRadius = dotRadius * 0.6;
 
   const stepDotsUniforms = useDerivedValue(() => {
-    console.log(hostPeerGeckoPositionSV.value)
+
     const s = hostPeerGeckoPositionSV.value?.steps;
     const off: [number, number] = [-1000, -1000];
     return {
@@ -445,7 +445,8 @@ const MirrorPlayGecko = ({
     () => {
       const v = hostPeerGeckoPositionSV.value;
       if (!v?.moments) return null;
-      const len = v.moments_len ?? v.moments.length;
+      // const len = v.moments_len ?? v.moments.length;
+            const len =   v.moments.length;
       const out: { x: number; y: number }[] = [];
       for (let i = 0; i < len; i++) {
         const m = v.moments[i];

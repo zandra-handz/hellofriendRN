@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
 import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
+import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import MemoizedMirrorPlayGecko from "@/app/assets/shader_animations/MirrorPlayGecko";
@@ -31,7 +32,9 @@ const ScreenSecretGecko = (props: Props) => {
     sendGeckoPosition,
     sendGuestGeckoPosition,
     registerOnHostGeckoCoords,
-  } = useGeckoEnergySocket(null);
+  } = useGeckoWebsocket();
+
+  
 
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();

@@ -49,6 +49,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import useTopLevelUserSettings from "./src/hooks/useTopLevelUserSettings";
 import { LDThemeProvider } from "./src/context/LDThemeContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  GeckoWebsocketProvider,
+  useGeckoWebsocket,
+} from "./src/context/GeckoWebsocketContext";
 
 import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
@@ -363,6 +367,7 @@ import { useSelectedFriend } from "./src/context/SelectedFriendContext";
 
 const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend } = useSelectedFriend();
+  const { bindFriend, clearFriendBinding } = useGeckoWebsocket();
   const { lightDarkTheme } = useLDTheme();
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
   const spinnerShownRef = useRef(false);
@@ -371,6 +376,20 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   //   isReady: selectedFriend?.isReady,
   //   id: selectedFriend?.id,
   // });
+
+useEffect(() => {
+  if (!selectedFriend?.isReady) {
+    return;
+  }
+
+  if (selectedFriend?.id) {
+    console.log(`BINDING FRIEND ${selectedFriend.name} to socket`)
+    bindFriend(selectedFriend.id);
+  } else {
+    console.log('friend binding cleared')
+    clearFriendBinding();
+  }
+}, [selectedFriend?.isReady, selectedFriend?.id, bindFriend, clearFriendBinding]);
 
   if (!selectedFriend?.isReady) {
     if (!spinnerShownRef.current) {
@@ -447,22 +466,22 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
               animation: "none",
             }}
           />
-                  <Stack.Screen
-          name="SecretGecko"
-          options={{
-            headerShown: false,
-            gestureEnabled: false,
-            animation: "none",
-          }}
-        >
-          {(props) => (
-            <ScreenSecretGecko
-              {...props}
-              skiaFontLarge={skiaFontLarge}
-              skiaFontSmall={skiaFontSmall}
-            />
-          )}
-        </Stack.Screen>
+          <Stack.Screen
+            name="SecretGecko"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              animation: "none",
+            }}
+          >
+            {(props) => (
+              <ScreenSecretGecko
+                {...props}
+                skiaFontLarge={skiaFontLarge}
+                skiaFontSmall={skiaFontSmall}
+              />
+            )}
+          </Stack.Screen>
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
@@ -676,11 +695,13 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
         //   colors: { background: "hotpink", ...DefaultTheme.colors },
         // }}
       >
-        <LayoutInner
-          key={sessionKey}
-          skiaFontLarge={skiaFontLarge}
-          skiaFontSmall={skiaFontSmall}
-        />
+        <GeckoWebsocketProvider>
+          <LayoutInner
+            key={sessionKey}
+            skiaFontLarge={skiaFontLarge}
+            skiaFontSmall={skiaFontSmall}
+          />
+        </GeckoWebsocketProvider>
       </NavigationContainer>
     </AuthActionsContext.Provider>
   );

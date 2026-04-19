@@ -449,7 +449,7 @@ export function useGeckoEnergySocket(friendId: number | null) {
             steps: stepsScratch,
             steps_len: stepsLen,
             step_angles: stepAnglesScratch,
-            held_moments: Array.from(heldScratch),
+            held_moments: heldScratch,
             held_moments_len: heldLen, 
 
             moments: momentsScratch,

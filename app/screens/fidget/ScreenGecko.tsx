@@ -52,6 +52,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
 import { freezeEnabled } from "react-native-screens";
 import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
+import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 
 type Props = {
@@ -132,7 +133,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     multiplierRef.current = expired ? 1 : (geckoScoreState.multiplier ?? 1);
   }, [geckoScoreState]);
 
-
+ 
+  
 
 
   const { scoreRules } = useGeckoStaticData();
@@ -180,6 +182,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     // registerOnGeckoCoords,
     registerOnHostGeckoCoords,
     sendHostGeckoPosition,
+    sendGeckoPosition,
+    boundFriendId,
 
     flush,
     registerOnScoreState,
@@ -187,19 +191,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     hasReceivedInitialScoreStateRef,
     initialBackendEnergyUpdatedAtRef,
     latestBackendEnergyUpdatedAtRef,
-
-    joinLiveSesh,
-    leaveLiveSesh,
-  } = useGeckoEnergySocket(selectedFriend?.id ?? null);
-
-  useEffect(() => {
-    // auto join when screen mounts
-    joinLiveSesh();
-
-    return () => {
-      leaveLiveSesh();
-    };
-  }, [joinLiveSesh, leaveLiveSesh]);
+  } = useGeckoWebsocket();
 
  
   // useEffect(() => {
@@ -1156,24 +1148,43 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const categoryStreakRef = useRef(0);
   const updateGeckoDataRef = useRef(updateGeckoData);
   // const sendGeckoPositionRef = useRef(sendGeckoPosition);
-  const noopSendHostGeckoPosition = useRef(() => {}).current;
-  const sendHostGeckoPositionRef = useRef(
-    isHost ? sendHostGeckoPosition : noopSendHostGeckoPosition,
+  const sendHostOrSoloPosition = useCallback(
+    (
+      position: [number, number],
+      steps: [number, number][] = [],
+      step_angles: Float32Array | number[] | null = null,
+      held_moments: Float32Array | number[] | null = null,
+      moments: {
+        id: number;
+        coord: [number, number];
+        stored_index: number;
+      }[] = [],
+      force = false,
+    ) => {
+      if (isHost) {
+        return sendHostGeckoPosition(
+          position,
+          steps,
+          step_angles,
+          held_moments,
+          moments,
+          force,
+        );
+      }
+      return sendGeckoPosition(position, force);
+    },
+    [isHost, sendHostGeckoPosition, sendGeckoPosition],
   );
+
+  const sendHostGeckoPositionRef = useRef(sendHostOrSoloPosition);
 
   useEffect(() => {
     updateGeckoDataRef.current = updateGeckoData;
   }, [updateGeckoData]);
 
-  // useEffect(() => {
-  //   sendGeckoPositionRef.current = sendGeckoPosition;
-  // }, [sendGeckoPosition]);
-
   useEffect(() => {
-    sendHostGeckoPositionRef.current = isHost
-      ? sendHostGeckoPosition
-      : noopSendHostGeckoPosition;
-  }, [sendHostGeckoPosition, isHost, noopSendHostGeckoPosition]);
+    sendHostGeckoPositionRef.current = sendHostOrSoloPosition;
+  }, [sendHostOrSoloPosition]);
 
   const handleGetMoment = useCallback(
     (id) => {
@@ -1307,7 +1318,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           updateGeckoData={updateGeckoData}
           // sendGeckoPositionRef={sendGeckoPositionRef}
           sendHostGeckoPositionRef={sendHostGeckoPositionRef}
-          peerGeckoPositionSV={guestPeerGeckoPositionSV}
+          peerGeckoPositionSV={
+            isHost &&
+            selectedFriend?.id != null &&
+            selectedFriend.id === boundFriendId
+              ? guestPeerGeckoPositionSV
+              : null
+          }
           liveScoreStateRef={scoreStateRef}
           hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
           initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}

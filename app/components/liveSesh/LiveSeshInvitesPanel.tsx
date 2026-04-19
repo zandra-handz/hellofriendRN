@@ -8,7 +8,7 @@ import useDeclineLiveSeshInvite from "@/src/hooks/LiveSeshCalls/useDeclineLiveSe
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
+ 
 import SocketStatusLight from "./SocketStatusLight";
 import { useNotificationsSocket } from "@/src/hooks/useNotificationsSocket";
 
@@ -54,19 +54,23 @@ const LiveSeshInvitesPanel: React.FC = () => {
   // Refresh invites list whenever a notification arrives that could change it
   useEffect(() => {
     registerOnLiveSeshInvite(() => {
-      console.log("[LiveSeshInvitesPanel] invite received — refetching");
+      // console.log("[LiveSeshInvitesPanel] invite received — refetching");
+     
       refetch();
     });
     registerOnLiveSeshInviteAccepted(() => {
-      console.log("[LiveSeshInvitesPanel] invite accepted — refetching");
+      // console.log("[LiveSeshInvitesPanel] invite accepted — refetching");
+     
       refetch();
     });
     registerOnLiveSeshInviteDeclined(() => {
-      console.log("[LiveSeshInvitesPanel] invite declined — refetching");
+      // console.log("[LiveSeshInvitesPanel] invite declined — refetching");
+     
       refetch();
     });
     registerOnLiveSeshEnded(() => {
-      console.log("[LiveSeshInvitesPanel] sesh ended — refetching");
+      // console.log("[LiveSeshInvitesPanel] sesh ended — refetching");
+      
       refetch();
     });
   }, [
@@ -94,7 +98,7 @@ const LiveSeshInvitesPanel: React.FC = () => {
     new Date(currentLiveSesh.expires_at).getTime() > Date.now()
   );
 
-  console.log("[LiveSeshInvitesPanel]", { userId, isLoading, data, pending, sent });
+  // console.log("[LiveSeshInvitesPanel]", { userId, isLoading, data, pending, sent });
 
   const confirmAccept = (invite: Invite) => {
     Alert.alert(
