@@ -24,7 +24,7 @@ type HostGeckoCoordsMessage = {
   friend_id?: number;
   position: [number, number];
   steps?: [number, number][];
-  step_angles?: number[];
+  first_fingers?: number[];
   held_moments?: number[] | Float32Array;
   held_moments_len?: number;
   moments?: number[][];
@@ -101,7 +101,7 @@ type HostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
   steps?: [number, number][];
-  step_angles?: number[];
+  first_fingers?: number[];
   held_moments?: number[] | Float32Array;
   held_moments_len?: number;
   moments?: number[][];
@@ -153,7 +153,7 @@ type GeckoWebsocketContextValue = {
   sendHostGeckoPosition: (
     position: [number, number],
     steps?: [number, number][],
-    step_angles?: Float32Array | number[] | null,
+    first_fingers?: Float32Array | number[] | null,
     held_moments?: Float32Array | number[] | null,
     moments?: {
       id: number;
@@ -235,7 +235,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [0, 0],
     [0, 0],
   ]);
-  const stepAnglesScratchRef = useRef<number[]>([0, 0, 0, 0]);
+  const stepAnglesScratchRef = useRef<number[][]>([
+        [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+  ]);
   const momentsScratchRef = useRef<number[][]>(
     Array.from({ length: 30 }, () => [0, 0, 0, 0]),
   );
@@ -456,14 +461,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     setIsFriendBound(false);
     setBoundFriendId(null);
 
-    peerGeckoPositionSV.value = null;
-    hostPeerGeckoPositionSV.value = null;
-    guestPeerGeckoPositionSV.value = null;
-
     pendingDataActionsRef.current = [];
 
     return true;
-  }, [guestPeerGeckoPositionSV, hostPeerGeckoPositionSV, peerGeckoPositionSV]);
+  }, []);
 
   const updateGeckoData = useCallback(
     (payload: UpdateGeckoDataPayload) => {
@@ -542,7 +543,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     (
       position: [number, number],
       steps: [number, number][] = [],
-      step_angles: Float32Array | number[] | null = null,
+      first_fingers: [number, number][] = [],
       held_moments: Float32Array | number[] | null = null,
       moments: {
         id: number;
@@ -579,11 +580,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       }
 
       const stepAnglesScratch = stepAnglesScratchRef.current;
-      if (step_angles) {
-        stepAnglesScratch[0] = step_angles[0];
-        stepAnglesScratch[1] = step_angles[1];
-        stepAnglesScratch[2] = step_angles[2];
-        stepAnglesScratch[3] = step_angles[3];
+      if (first_fingers) {
+        stepAnglesScratch[0] = first_fingers[0];
+        stepAnglesScratch[1] = first_fingers[1];
+        stepAnglesScratch[2] = first_fingers[2];
+        stepAnglesScratch[3] = first_fingers[3];
       }
 
       const momentsScratch = momentsScratchRef.current;
@@ -612,7 +613,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
             position,
             steps: stepsScratch,
             steps_len: stepsLen,
-            step_angles: stepAnglesScratch,
+            first_fingers: stepAnglesScratch,
             held_moments: heldScratch,
             held_moments_len: heldLen,
             moments: momentsScratch,
@@ -815,7 +816,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
             from_user: message.data.from_user,
             position: message.data.position,
             steps: message.data.steps,
-            step_angles: message.data.step_angles,
+            first_fingers: message.data.first_fingers,
             held_moments: message.data.held_moments,
             held_moments_len: message.data.held_moments_len,
             moments: message.data.moments,

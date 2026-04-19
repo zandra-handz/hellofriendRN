@@ -1049,7 +1049,7 @@ const MomentsSkia = ({
       sendHostGeckoPositionRef.current(
         leadPoint.current.lead,
         gecko.current.legs.allStepTargets,
-        gecko.current.legs.allStepTargetAngles,
+        gecko.current.legs.firstFingers,
         workingBuffers.heldCoords,
 
         moments.current.moments,

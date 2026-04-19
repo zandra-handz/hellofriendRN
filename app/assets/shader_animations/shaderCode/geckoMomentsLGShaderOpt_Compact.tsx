@@ -448,7 +448,7 @@ half4 main(float2 fragCoord) {
 
 //     return half4(color, totalMask);
 // }
-// `;
+ `;
 
 //56 uniform version
 
