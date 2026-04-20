@@ -751,7 +751,7 @@ const stepDotsSource = useMemo(() => {
 
   const [internalReset, setInternalReset] = useState(0);
 
-  useEffect(() => {
+useEffect(() => {
     if (!internalReset && !reset) return;
 
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
@@ -766,12 +766,31 @@ const stepDotsSource = useMemo(() => {
     packedPeerStepsSV.value = Array(PEER_STEP_COUNT * 2).fill(-1000);
     packedPeerfirstFingersSV.value = Array(PEER_STEP_COUNT * 2).fill(0);
 
+    momentsMapRef.current.clear();
+    setMomentDots([]);
+
     userPointSV.value = [restPoint0, restPoint1];
     userPoint_geckoSpaceRef.current[0] = startingCoord0;
     userPoint_geckoSpaceRef.current[1] = startingCoord1;
 
     startMsRef.current = nowMs();
   }, [reset, internalReset]);
+
+
+    useAnimatedReaction(
+    () => hostPeerGeckoPositionSV.value === null,
+    (isNull, prev) => {
+      if (isNull && prev === false) {
+        runOnJS(clearMomentDots)();
+      }
+    },
+    [],
+  );
+
+  const clearMomentDots = useCallback(() => {
+    momentsMapRef.current.clear();
+    setMomentDots([]);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -996,24 +1015,56 @@ const stepDotsSource = useMemo(() => {
 
   const [momentDots, setMomentDots] = useState<{ x: number; y: number }[]>([]);
 
+  // useAnimatedReaction(
+  //   () => {
+  //     const v = hostPeerGeckoPositionSV.value;
+  //     if (!v?.moments) return null;
+  //     const len = v.moments.length;
+  //     const out: { x: number; y: number }[] = [];
+  //     for (let i = 0; i < len; i++) {
+  //       const m = v.moments[i];
+  //       if (!m) continue;
+  //       out.push({ x: m[1], y: m[2] });
+  //     }
+  //     return out;
+  //   },
+  //   (next) => {
+  //     if (next) runOnJS(setMomentDots)(next);
+  //   },
+  //   [],
+  // );
+
+  
+  const momentsMapRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+
   useAnimatedReaction(
     () => {
       const v = hostPeerGeckoPositionSV.value;
       if (!v?.moments) return null;
-      const len = v.moments.length;
-      const out: { x: number; y: number }[] = [];
+      const len = v.moments_len ?? v.moments.length;
+      // return a stable-ish snapshot of the delta
+      const out: number[][] = [];
       for (let i = 0; i < len; i++) {
         const m = v.moments[i];
         if (!m) continue;
-        out.push({ x: m[1], y: m[2] });
+        out.push([m[0], m[1], m[2]]); // id, x, y
       }
       return out;
     },
     (next) => {
-      if (next) runOnJS(setMomentDots)(next);
+      if (!next || next.length === 0) return;
+      runOnJS(mergeMomentDots)(next);
     },
     [],
   );
+
+  const mergeMomentDots = useCallback((delta: number[][]) => {
+    const map = momentsMapRef.current;
+    for (const [id, x, y] of delta) {
+      map.set(id, { x, y });
+    }
+    setMomentDots(Array.from(map.values()));
+  }, []);
 
   const momentDotRadius = 8;
 

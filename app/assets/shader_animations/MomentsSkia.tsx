@@ -714,6 +714,9 @@ const MomentsSkia = ({
     moments.current.updateOrAddMoments(momentsData);
     moments.current.updateAllCoords(momentsData);
 
+
+     moments.current._markAllDirty();
+
     //  PACK + COPY the moments uniform RIGHT NOW
     if (aspect && size.width && size.height) {
       workingBuffers.moments.fill(0);
@@ -1046,14 +1049,33 @@ const MomentsSkia = ({
       // add fingers. other option is to get the angle in the step and just draw the fingers in the shader
       // add direction to get direction going in
 
-      sendHostGeckoPositionRef.current(
-        leadPoint.current.lead,
-        gecko.current.legs.allStepTargets,
-        gecko.current.legs.firstFingers,
-        workingBuffers.heldCoords,
+      // sendHostGeckoPositionRef.current(
+      //   leadPoint.current.lead,
+      //   gecko.current.legs.allStepTargets,
+      //   gecko.current.legs.firstFingers,
+      //   workingBuffers.heldCoords,
 
-        moments.current.moments,
-      );
+      //   moments.current.moments,
+      // );
+
+              const dirtyMoments = moments.current.flushDirty();
+
+        const shouldSendNetwork =
+          leadPoint.current.isMoving ||
+          isDragging.value ||
+          dirtyMoments !== null ||
+          holdingsVersion !== lastHoldingsVersionRef.current;
+
+        if (shouldSendNetwork) {
+          sendHostGeckoPositionRef.current(
+            leadPoint.current.lead,
+            gecko.current.legs.allStepTargets,
+            gecko.current.legs.firstFingers,
+            workingBuffers.heldCoords,
+            dirtyMoments ?? [],
+          );
+        }
+
 
       frame = requestAnimationFrame(animate);
     };
