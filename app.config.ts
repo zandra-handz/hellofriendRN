@@ -16,7 +16,7 @@ const config = ({ config: baseConfig }: ConfigContext): ExpoConfig => {
       ios: {
         jsEngine: "hermes",  
         bundleIdentifier: 'com.badrainbowz.sampleproject',
-        buildNumber: '9', 
+        buildNumber: '10', 
         supportsTablet: true,
         googleServicesFile: './GoogleService-Info.plist',
         infoPlist: {

@@ -1170,8 +1170,10 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           moments,
           force,
         );
+      } else {
+  return sendGeckoPosition(position, force);
       }
-      return sendGeckoPosition(position, force);
+    
     },
     [isHost, sendHostGeckoPosition, sendGeckoPosition],
   );

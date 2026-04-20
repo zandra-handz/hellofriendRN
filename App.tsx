@@ -694,14 +694,12 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
         //   dark: true,
         //   colors: { background: "hotpink", ...DefaultTheme.colors },
         // }}
-      >
-        <GeckoWebsocketProvider>
+      > 
           <LayoutInner
             key={sessionKey}
             skiaFontLarge={skiaFontLarge}
             skiaFontSmall={skiaFontSmall}
-          />
-        </GeckoWebsocketProvider>
+          /> 
       </NavigationContainer>
     </AuthActionsContext.Provider>
   );
@@ -753,7 +751,9 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
 
       {user?.id && !isInitializing ? (
-        <>
+
+        <GeckoWebsocketProvider>
+          
           <NotificationsHandler
             receiveNotifications={receiveNotifications}
             expoPushToken={expoPushToken}
@@ -771,7 +771,8 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
             skiaFontLarge={skiaFontLarge}
             skiaFontSmall={skiaFontSmall}
           />
-        </>
+        
+        </GeckoWebsocketProvider>
       ) : (
         // : userIsPending ? (
         //   <PeacefulGradientSpinner />
