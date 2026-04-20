@@ -1033,21 +1033,38 @@ useEffect(() => {
   //   },
   //   [],
   // );
+ const momentsMapRef = useRef<Map<number, { x: number; y: number }>>(new Map());                                                                                                                                                                                                                                                                                                                                                                                                   
+   
 
-  
-  const momentsMapRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const mergeMomentDots = useCallback((delta: number[][]) => {
+    const map = momentsMapRef.current;
+    for (const [id, x, y] of delta) {
+      map.set(id, { x, y });
+    }
+    setMomentDots(Array.from(map.values()));
+  }, []);
+
+  // 2. THEN the reactions that reference them
+  useAnimatedReaction(
+    () => hostPeerGeckoPositionSV.value === null,
+    (isNull, prev) => {
+      if (isNull && prev === false) {
+        runOnJS(clearMomentDots)();
+      }
+    },
+    [],
+  );
 
   useAnimatedReaction(
     () => {
       const v = hostPeerGeckoPositionSV.value;
       if (!v?.moments) return null;
       const len = v.moments_len ?? v.moments.length;
-      // return a stable-ish snapshot of the delta
       const out: number[][] = [];
       for (let i = 0; i < len; i++) {
         const m = v.moments[i];
         if (!m) continue;
-        out.push([m[0], m[1], m[2]]); // id, x, y
+        out.push([m[0], m[1], m[2]]);
       }
       return out;
     },
@@ -1057,14 +1074,6 @@ useEffect(() => {
     },
     [],
   );
-
-  const mergeMomentDots = useCallback((delta: number[][]) => {
-    const map = momentsMapRef.current;
-    for (const [id, x, y] of delta) {
-      map.set(id, { x, y });
-    }
-    setMomentDots(Array.from(map.values()));
-  }, []);
 
   const momentDotRadius = 8;
 
