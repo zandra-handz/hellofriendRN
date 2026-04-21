@@ -85,13 +85,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const sessionId = route.params?.sessionId ?? null;
 
   const { user } = useUser();
-  const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+
+    const { lightDarkTheme } = useLDTheme();
+  const { capsuleList } = useCapsuleList();
+  const { selectedFriend } = useSelectedFriend();
+
+  const { isHost, sessionFriendId } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+
+
+  
 
   const { isAwake } = useUserGeckoConfigs({ userId: user?.id });
 
-  const { lightDarkTheme } = useLDTheme();
-  const { capsuleList } = useCapsuleList();
-  const { selectedFriend } = useSelectedFriend();
+
 
   const { geckoCombinedData } = useUserGeckoCombinedData();
   const { sessionTotals } = useFriendGeckoSessionsTimeRange({
@@ -106,6 +112,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
 
   const rerenderCountRef = useRef(0);
+
+  const shouldUseGuestPeer =
+  !!isHost &&
+  sessionFriendId != null &&
+  selectedFriend?.id != null &&
+  Number(sessionFriendId) === Number(selectedFriend.id);
 
 
   rerenderCountRef.current += 1;
@@ -125,7 +137,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   // }, [geckoScoreState]);
 
   useEffect(() => {
-    console.log(`[geckoScoreState changed]`, geckoScoreState);
+    // console.log(`[geckoScoreState changed]`, geckoScoreState);
     if (!geckoScoreState) return;
     const expired =
       !geckoScoreState.expires_at ||
@@ -183,7 +195,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnHostGeckoCoords,
     sendHostGeckoPosition,
     sendGeckoPosition,
-    boundFriendId,
+    // boundFriendId,
 
     flush,
     registerOnScoreState,
@@ -191,7 +203,46 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     hasReceivedInitialScoreStateRef,
     initialBackendEnergyUpdatedAtRef,
     latestBackendEnergyUpdatedAtRef,
+
+          connect,
+      disconnect,
+      bindFriend,
+      clearFriendBinding,
+      leaveLiveSesh,
   } = useGeckoWebsocket();
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const setup = async () => {
+        await connect();
+
+        if (!isActive) return;
+        if (!selectedFriend?.id) return;
+
+        bindFriend(selectedFriend.id);
+      };
+
+      setup();
+
+      return () => {
+        isActive = false;
+        leaveLiveSesh();
+        clearFriendBinding();
+        disconnect();
+      };
+    }, [
+      connect,
+      disconnect,
+      bindFriend,
+      clearFriendBinding,
+      leaveLiveSesh,
+      selectedFriend?.id,
+    ]),
+  );
 
  
   // useEffect(() => {
@@ -269,12 +320,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const [localHasReadAll, setLocalHasReadAll] = useState(false);
 
 
-  useEffect(() => {
-    if (liveScoreState){
-      console.log(`live score state`, liveScoreState);
-    }
+  // useEffect(() => {
+  //   if (liveScoreState){
+  //     console.log(`live score state`, liveScoreState);
+  //   }
 
-  }, [liveScoreState]);
+  // }, [liveScoreState]);
 
   const HISTORY_SIZE = 20;
   const momentHistoryRef = useRef({
@@ -1171,6 +1222,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           force,
         );
       } else {
+        console.log('NOT UPDATING HOST !!!! UPDATING REGULAR')
   return sendGeckoPosition(position, force);
       }
     
@@ -1320,13 +1372,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           updateGeckoData={updateGeckoData}
           // sendGeckoPositionRef={sendGeckoPositionRef}
           sendHostGeckoPositionRef={sendHostGeckoPositionRef}
+          // peerGeckoPositionSV={
+
+          //   guestPeerGeckoPositionSV
+          //   // isHost 
+          //   // // &&
+          //   // // selectedFriend?.id != null &&
+          //   // // selectedFriend.id === boundFriendId
+          //   //   ? guestPeerGeckoPositionSV
+          //   //   : null
+          // }
           peerGeckoPositionSV={
-            isHost &&
-            selectedFriend?.id != null &&
-            selectedFriend.id === boundFriendId
-              ? guestPeerGeckoPositionSV
-              : null
-          }
+  shouldUseGuestPeer ? guestPeerGeckoPositionSV : null
+}
           liveScoreStateRef={scoreStateRef}
           hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
           initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}

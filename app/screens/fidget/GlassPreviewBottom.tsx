@@ -281,12 +281,12 @@ const GlassPreviewBottom = ({
 const styles = StyleSheet.create({
   previewOuter: {
     width: "100%",
-    height: 220,
-    paddingBottom: 300,
+    height: 120,
+    paddingBottom: 200,
   },
   previewWrapper: {
     width: "100%",
-    height: 280,
+    height: 180,
     borderRadius: 70,
     padding: 30,
     paddingHorizontal: 10,

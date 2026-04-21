@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
 import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
@@ -18,22 +19,21 @@ import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
 type Props = {};
 
 const ScreenSecretGecko = (props: Props) => {
-  const {
-    socketStatus,
-    liveSeshPartnerId,
-    energySV,
-    peerGeckoPositionSV,
-    guestPeerGeckoPositionSV,
-    hostPeerGeckoPositionSV,
-
-    // peerEnergySV, // only if you added it
-    joinLiveSesh,
-    leaveLiveSesh,
-    sendGeckoPosition,
-    sendGuestGeckoPosition,
-    registerOnHostGeckoCoords,
-  } = useGeckoWebsocket();
-
+const {
+  socketStatus,
+  liveSeshPartnerId,
+  energySV,
+  peerGeckoPositionSV,
+  guestPeerGeckoPositionSV,
+  hostPeerGeckoPositionSV,
+  connect,
+  disconnect,
+  joinLiveSesh,
+  leaveLiveSesh,
+  sendGeckoPosition,
+  sendGuestGeckoPosition,
+  registerOnHostGeckoCoords,
+} = useGeckoWebsocket();
   
 
   const { user } = useUser();
@@ -76,14 +76,40 @@ const ScreenSecretGecko = (props: Props) => {
       : noopSendGuestGeckoPosition;
   }, [sendGuestGeckoPosition, isHost, noopSendGuestGeckoPosition]);
 
-  useEffect(() => {
-    // auto join when screen mounts
-    joinLiveSesh();
+  // useEffect(() => {
+  //   // auto join when screen mounts
+  //   joinLiveSesh();
+
+  //   return () => {
+  //     leaveLiveSesh();
+  //   };
+  // }, [joinLiveSesh, leaveLiveSesh]);
+
+
+useFocusEffect(
+  useCallback(() => {
+    let isActive = true;
+
+    const setup = async () => {
+      console.log("[SECRET GECKO] focus -> connect");
+      await connect();
+
+      if (!isActive) return;
+
+      console.log("[SECRET GECKO] focus -> joinLiveSesh");
+      joinLiveSesh();
+    };
+
+    setup();
 
     return () => {
+      isActive = false;
+      console.log("[SECRET GECKO] blur -> leaveLiveSesh + disconnect");
       leaveLiveSesh();
+      disconnect();
     };
-  }, [joinLiveSesh, leaveLiveSesh]);
+  }, [connect, disconnect, joinLiveSesh, leaveLiveSesh]),
+);
 
   return (
     <GradientBackgroundAppDefault style={styles.backgroundContainer}>

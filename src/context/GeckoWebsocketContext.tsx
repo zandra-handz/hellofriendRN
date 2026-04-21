@@ -379,9 +379,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const joinLiveSesh = useCallback(() => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) {
+ 
       return false;
     }
     wsRef.current.send(JSON.stringify({ action: "join_live_sesh" }));
+   
     return true;
   }, []);
 
@@ -555,6 +557,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       const now = Date.now();
 
       if (!isFriendBoundRef.current) {
+   
         return false;
       }
 
@@ -605,6 +608,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
           heldScratch[i] = held_moments[i];
         }
       }
+
+//       console.log("[WS SEND host position]", {
+//   position,
+//   stepsLen,
+//   momentsLen
+// });
 
       wsRef.current.send(
         notepack.encode({
@@ -694,6 +703,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   }, [clearReconnectTimeout, socketStatusSV, stopFlushInterval]);
 
   const connect = useCallback(async () => {
+    console.log('starting connect..................................................')
     clearReconnectTimeout();
 
     if (wsRef.current) {
@@ -721,6 +731,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     ws.binaryType = "arraybuffer";
 
     ws.onopen = () => {
+
       setSocketStatus("connected");
       socketStatusSV.value = "connected";
       startFlushInterval();
@@ -729,10 +740,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
       if (fid != null) {
         sendSetFriend(fid);
+        console.log('sending friend')
       } else {
         getScoreState();
         getGeckoScreenPosition();
-        joinLiveSesh();
+        console.log('join sessionnnn')
+       // joinLiveSesh();
       }
     };
 
@@ -908,14 +921,14 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     stopFlushInterval,
   ]);
 
-  useEffect(() => {
-    shouldReconnectRef.current = true;
-    connect();
+  // useEffect(() => {
+  //   shouldReconnectRef.current = true;
+  //   connect();
 
-    return () => {
-      disconnect();
-    };
-  }, [connect, disconnect]);
+  //   return () => {
+  //     disconnect();
+  //   };
+  // }, [connect, disconnect]);
 
   useEffect(() => {
     if (isFriendBound) {

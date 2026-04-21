@@ -270,7 +270,7 @@ export const getGeckoScoreState = async () => {
     const response = await helloFriendApiClient.get(
       `/users/gecko/score-state/`,
     );
-    console.log(" API GET Call getGeckoScoreState", response.data);
+    // console.log(" API GET Call getGeckoScoreState", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoScoreState");
@@ -695,10 +695,10 @@ export const fetchCategoriesHistoryCountAPI = async ({
   friendId: number;
   returnNonZeroesOnly: boolean;
 }) => {
-  console.log(
-    "~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryCountAPI  called, friendid: ",
-    friendId,
-  );
+  // console.log(
+  //   "~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryCountAPI  called, friendid: ",
+  //   friendId,
+  // );
   try {
     const params = new URLSearchParams();
     params.append("only_with_capsules", returnNonZeroesOnly.toString());
@@ -1209,7 +1209,7 @@ export const fetchFriendDashboard = async (friendId: number) => {
   export const getCurrentLiveSesh = async () => { 
      try {
       const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);   
-      console.log(`livesession`, response.data)                                                                                                                                                               
+      // console.log(`livesession`, response.data)                                                                                                                                                               
       return response.data;
     } catch (e: unknown) {
       handleApiError(e, "Error during getCurrentLiveSesh");

@@ -679,6 +679,7 @@ const MomentsSkia = ({
 
   const peerDotUniforms = useDerivedValue(() => {
     const p = peerGeckoPositionSV?.value;
+   
     const point = p?.position ?? [-1000, -1000];
     return {
       u_resolution: [size.width || width, size.height || height],
@@ -716,6 +717,7 @@ const MomentsSkia = ({
 
 
      moments.current._markAllDirty();
+     console.log('MARKING ALL DIRTY')
 
     //  PACK + COPY the moments uniform RIGHT NOW
     if (aspect && size.width && size.height) {
@@ -1087,6 +1089,7 @@ const MomentsSkia = ({
       if (frame) cancelAnimationFrame(frame);
     };
   }, [aspect, gecko_scale, gecko_size, scale, size.width, size.height]);
+  
 
   const uniforms = useDerivedValue(() => {
     // Reanimated dependency gate

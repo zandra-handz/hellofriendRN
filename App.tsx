@@ -377,19 +377,19 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   //   id: selectedFriend?.id,
   // });
 
-useEffect(() => {
-  if (!selectedFriend?.isReady) {
-    return;
-  }
+// useEffect(() => {
+//   if (!selectedFriend?.isReady) {
+//     return;
+//   }
 
-  if (selectedFriend?.id) {
-    console.log(`BINDING FRIEND ${selectedFriend.name} to socket`)
-    bindFriend(selectedFriend.id);
-  } else {
-    console.log('friend binding cleared')
-    clearFriendBinding();
-  }
-}, [selectedFriend?.isReady, selectedFriend?.id, bindFriend, clearFriendBinding]);
+//   if (selectedFriend?.id) {
+//     console.log(`BINDING FRIEND ${selectedFriend.name} to socket`)
+//     bindFriend(selectedFriend.id);
+//   } else {
+//     console.log('friend binding cleared')
+//     clearFriendBinding();
+//   }
+// }, [selectedFriend?.isReady, selectedFriend?.id, bindFriend, clearFriendBinding]);
 
   if (!selectedFriend?.isReady) {
     if (!spinnerShownRef.current) {
