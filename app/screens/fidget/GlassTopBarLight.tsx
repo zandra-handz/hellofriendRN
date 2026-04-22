@@ -1,26 +1,40 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { useRef } from "react";
+import { View, StyleSheet, useWindowDimensions } from "react-native";
+import React, { useRef, useMemo } from "react";
 import Animated, {
   useAnimatedStyle,
   withSpring,
   useSharedValue,
+  useDerivedValue,
   SharedValue,
 } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  Canvas,
+  Paragraph,
+  Skia,
+  TextAlign,
+} from "@shopify/react-native-skia";
+import type { SkFont } from "@shopify/react-native-skia";
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import SocketStatusLight from "@/app/components/liveSesh/SocketStatusLight";
+import SvgIcon from "@/app/styles/SvgIcons";
 import useUser from "@/src/hooks/useUser";
+
 type Props = {
   socketStatusSV: SharedValue;
   textColor: string;
-  backgroundColor: string; 
+  backgroundColor: string;
   friendId: number;
   friendName: string;
   TIME_SCORE: number;
   DAYS_SINCE: number;
   highlight: boolean;
+  fontSmall?: SkFont;
 };
+
+const PARAGRAPH_HEIGHT = 20;
+const HORIZONTAL_INSET = 120; // account for outer paddingHorizontal + dot + icon + gaps
 
 const GlassTopBarLight = ({
   socketStatusSV,
@@ -31,6 +45,7 @@ const GlassTopBarLight = ({
   TIME_SCORE,
   DAYS_SINCE,
   highlight,
+  fontSmall,
 }: Props) => {
   const translateY = useSharedValue(-300); // Start off-screen above
   const hasAnimated = useRef(false);
@@ -69,6 +84,42 @@ const GlassTopBarLight = ({
     transform: [{ translateY: translateY.value }],
   }));
 
+  const fontSize = useMemo(() => fontSmall?.getSize() ?? 13, [fontSmall]);
+  const fontMgr = useMemo(() => Skia.FontMgr.System(), []);
+
+  const { width: screenWidth } = useWindowDimensions();
+  const canvasWidth = Math.max(
+    0,
+    Math.floor(screenWidth * 0.9) - HORIZONTAL_INSET,
+  );
+
+  const friendNameSV = useSharedValue(friendName ?? "");
+  React.useEffect(() => {
+    friendNameSV.value = friendName ?? "";
+  }, [friendName]);
+
+  const paragraph = useDerivedValue(() => {
+    const textStyle = {
+      color: Skia.Color(textColor),
+      fontSize,
+      fontFamilies: ["Poppins", "System"],
+      fontStyle: { weight: 700 },
+    };
+
+    const paraStyle = {
+      textAlign: TextAlign.Left,
+      maxLines: 1,
+    };
+
+    const builder = Skia.ParagraphBuilder.Make(paraStyle, fontMgr);
+    builder.pushStyle(textStyle);
+    builder.addText(friendNameSV.value);
+    builder.pop();
+    const p = builder.build();
+    p.layout(canvasWidth);
+    return p;
+  });
+
   return (
     <Animated.View
       style={[
@@ -81,72 +132,41 @@ const GlassTopBarLight = ({
         },
       ]}
     >
- 
-<SocketStatusLight socketStatusSV={socketStatusSV}/>
- 
-        {/* {isHostingLiveSesh ? (
-          <View style={styles.liveSeshRow}>
-            <View style={styles.liveDot} />
-            <Text style={[styles.statsText, { color: textColor }]}>
-              Hosting live sesh with {currentLiveSesh?.other_user_username}
-            </Text>
-          </View>
-        ) : (
-          <Text style={[styles.statsText, { color: textColor }]}>
-            DEBUG Energy: {geckoScoreState?.energy}
-          </Text>
-        )} */}
+      <View style={styles.header}>
+        <Canvas style={{ width: canvasWidth, height: PARAGRAPH_HEIGHT }}>
+          <Paragraph
+            paragraph={paragraph}
+            x={0}
+            y={0}
+            width={canvasWidth}
+          />
+        </Canvas>
+        <SvgIcon name="chat" size={16} color={textColor} />
+        <SocketStatusLight socketStatusSV={socketStatusSV} />
+      </View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  //   statsWrapper: {
-  //     height: 106,
-  //     padding: 20,
-  //     paddingHorizontal: 20,
-  //     top: 60,
-  //     left: 16,
-  //     flex: 1,
-  //     position: "absolute",
-  //     flexDirection: "column",
-  //     borderRadius: 30,
-  //   },
   statsWrapper: {
-    // height: 110,
     padding: 20,
     paddingHorizontal: 40,
     paddingTop: 20,
     width: "90%",
     alignSelf: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     top: 60,
-    // left: 16,
     flex: 1,
     position: "absolute",
     flexDirection: "column",
     borderRadius: 70,
   },
-  statsText: {
-    // fontWeight: "bold",
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  liveSeshRow: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  liveDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#7FE629",
-  },
-  friendText: {
-    fontWeight: "bold",
-    fontSize: 18,
-    lineHeight: 32,
+    marginBottom: 4,
   },
 });
 

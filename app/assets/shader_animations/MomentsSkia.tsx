@@ -207,11 +207,11 @@ const MomentsSkia = ({
     sessionEndRef.current = ms;
     didInitSessionWindowRef.current = true;
 
-    console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
-      initialBackendEnergyUpdatedAt: iso,
-      sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-      sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-    });
+    // console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
+    //   initialBackendEnergyUpdatedAt: iso,
+    //   sessionStartIso: new Date(sessionStartRef.current).toISOString(),
+    //   sessionEndIso: new Date(sessionEndRef.current).toISOString(),
+    // });
   }, [hasReceivedInitialScoreStateRef, initialBackendEnergyUpdatedAtRef]);
 
   const handleRescatterMoments_useMomentClass = () => {
@@ -292,48 +292,7 @@ const MomentsSkia = ({
     applyLiveScoreStateToGait();
   }, [applyLiveScoreStateToGait]);
 
-  // const handleUpdateGeckoDataState = async () => {
-  //   sessionStartRef.current = sessionEndRef.current;
-  //   sessionEndRef.current = Date.now();
-
-  //   const startPointsIndex = prevPointsLengthRef.current;
-  //   const endPointsIndex = pointsEarnedList.current.length;
-
-  //   const handleUpdateGeckoDataState = async () => {
-  //     sessionStartRef.current = sessionEndRef.current;
-  //     sessionEndRef.current = Date.now();
-
-  //     const startPointsIndex = prevPointsLengthRef.current;
-  //     const endPointsIndex = pointsEarnedList.current.length;
-
-  //     const success = await handleUpdateGeckoData({
-  //       steps: gecko.current.gait.stepCount - stepsRef.current,
-  //       distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
-  //       startedOn: new Date(sessionStartRef.current).toISOString(),
-  //       endedOn: new Date(sessionEndRef.current).toISOString(),
-  //       pointsEarnedList: pointsEarnedList.current.slice(
-  //         startPointsIndex,
-  //         endPointsIndex,
-  //       ),
-  //     });
-
-  //     if (!success)
-  //       {
-
-  //         return;
-  //       }
-
-  //     // {1}, {2}, {3}, {4}, {5} // saved as 5, .length is the index of the next one
-  //     // {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}
-
-  //     stepsRef.current = gecko.current.gait.stepCount;
-  //     distanceRef.current = leadPoint.current.leadDistanceTraveled;
-  //     prevPointsLengthRef.current = endPointsIndex;
-  //   };
-  // };
-
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~can yo
-
+ 
   const handleUpdateGeckoDataState = async () => {
     if (!didInitSessionWindowRef.current) {
       const iso =
@@ -710,7 +669,14 @@ const MomentsSkia = ({
 
   // THIS WAS GIVEN TO ME BY CHATGPT TO ENSURE MOMENT RESCATTERING UPDATES OUTSIDE OF ANIMATION LOOP (WHEN GECKO IS STILL)
   useEffect(() => {
+
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~FIRST MOEMNTS', momentsData, reset, aspect, scale, size.width, size.height)
     // console.log("resetting");
+
+    if (!momentsData) {
+      
+      return
+    }
 
     moments.current.updateOrAddMoments(momentsData);
     moments.current.updateAllCoords(momentsData);
@@ -737,6 +703,9 @@ const MomentsSkia = ({
 
     updateTrigger.value += 1;
   }, [momentsData, reset, aspect, scale, size.width, size.height]);
+
+
+
 
   useEffect(() => {
     if (!internalReset || !reset) {
@@ -1211,7 +1180,7 @@ const MomentsSkia = ({
 };
 
 const styles = StyleSheet.create({
-  pawSetterContainer: { position: "absolute", bottom: 270, left: 16 },
+  pawSetterContainer: { position: "absolute", bottom: 180, left: 16 },
 });
 
 const MemoizedMomentsSkia = React.memo(MomentsSkia);

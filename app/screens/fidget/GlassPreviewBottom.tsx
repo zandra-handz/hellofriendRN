@@ -27,7 +27,7 @@ import {
 import FooterButtonRowConditional from "./FooterButtonRowConditional";
 
 const HORIZONTAL_PADDING = 60;
-const CANVAS_HEIGHT = 110;
+const CANVAS_HEIGHT = 40;
 const MAX_LINES = 4; // 1 category + 3 capsule lines
 
 const GlassPreviewBottom = ({
@@ -282,11 +282,11 @@ const styles = StyleSheet.create({
   previewOuter: {
     width: "100%",
     height: 120,
-    paddingBottom: 200,
+    paddingBottom: 230,
   },
   previewWrapper: {
     width: "100%",
-    height: 180,
+    height: 280,
     borderRadius: 70,
     padding: 30,
     paddingHorizontal: 10,
@@ -296,7 +296,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   scrollViewContainer: {
-    height: 110,
+    height: 40,
+ 
     width: "100%",
   },
   momentViewButton: {

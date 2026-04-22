@@ -28,7 +28,7 @@ import useGeckoSynthesizer_WS from "@/src/hooks/useGeckoSynthesizer_WS";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
- 
+
 // import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
@@ -50,8 +50,7 @@ import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession"
 import { SkFont } from "@shopify/react-native-skia";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
-import { freezeEnabled } from "react-native-screens";
-import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
+import { freezeEnabled } from "react-native-screens"; 
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 
@@ -86,18 +85,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const { user } = useUser();
 
-    const { lightDarkTheme } = useLDTheme();
+  const { lightDarkTheme } = useLDTheme();
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
-  const { isHost, sessionFriendId } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
-
-
-  
+  const { isHost, sessionFriendId } = useCurrentLiveSesh({
+    userId: user?.id,
+    enabled: true,
+  });
 
   const { isAwake } = useUserGeckoConfigs({ userId: user?.id });
-
-
 
   const { geckoCombinedData } = useUserGeckoCombinedData();
   const { sessionTotals } = useFriendGeckoSessionsTimeRange({
@@ -110,19 +107,17 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const multiplierRef = useRef(1);
 
-
   const rerenderCountRef = useRef(0);
 
   const shouldUseGuestPeer =
-  !!isHost &&
-  sessionFriendId != null &&
-  selectedFriend?.id != null &&
-  Number(sessionFriendId) === Number(selectedFriend.id);
-
+    !!isHost &&
+    sessionFriendId != null &&
+    selectedFriend?.id != null &&
+    Number(sessionFriendId) === Number(selectedFriend.id);
 
   rerenderCountRef.current += 1;
 
-  console.log(`ScreenGecko renders: `, rerenderCountRef.current)
+  console.log(`ScreenGecko renders: `, rerenderCountRef.current);
 
   // const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
   // const geckoScoreStateRef = useRef(geckoScoreState);
@@ -144,10 +139,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       new Date(geckoScoreState.expires_at).getTime() <= Date.now();
     multiplierRef.current = expired ? 1 : (geckoScoreState.multiplier ?? 1);
   }, [geckoScoreState]);
-
- 
-  
-
 
   const { scoreRules } = useGeckoStaticData();
 
@@ -187,9 +178,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     liveScoreState,
     energySV,
     getScoreState,
-    updateGeckoData,
-    // peerGeckoPositionSV,
-    hostPeerGeckoPositionSV,
+    updateGeckoData, 
     guestPeerGeckoPositionSV,
     // registerOnGeckoCoords,
     registerOnHostGeckoCoords,
@@ -204,14 +193,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     initialBackendEnergyUpdatedAtRef,
     latestBackendEnergyUpdatedAtRef,
 
-          connect,
-      disconnect,
-      bindFriend,
-      clearFriendBinding,
-      leaveLiveSesh,
+    connect,
+    disconnect,
+    bindFriend,
+    clearFriendBinding,
+    leaveLiveSesh,
   } = useGeckoWebsocket();
-
-
 
   useFocusEffect(
     useCallback(() => {
@@ -244,7 +231,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     ]),
   );
 
- 
   // useEffect(() => {
   //   registerOnScoreState((data: any) => {
   //     if (!data) return;
@@ -319,7 +305,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const hasShownReadAll = useRef(false);
   const [localHasReadAll, setLocalHasReadAll] = useState(false);
 
-
   // useEffect(() => {
   //   if (liveScoreState){
   //     console.log(`live score state`, liveScoreState);
@@ -349,11 +334,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const effectiveHasReadAll = hasReadAll || localHasReadAll;
   const [freezeForTalking, setFreezeForTalking] = useState(false);
 
-  const handleFreezeForTalking = () => { 
+  const handleFreezeForTalking = () => {
     setFreezeForTalking(true);
   };
 
-  const handleUnfreezeForTalking = () => { 
+  const handleUnfreezeForTalking = () => {
     setFreezeForTalking(false);
   };
 
@@ -1222,10 +1207,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           force,
         );
       } else {
-        console.log('NOT UPDATING HOST !!!! UPDATING REGULAR')
-  return sendGeckoPosition(position, force);
+        console.log("NOT UPDATING HOST !!!! UPDATING REGULAR");
+        return sendGeckoPosition(position, force);
       }
-    
     },
     [isHost, sendHostGeckoPosition, sendGeckoPosition],
   );
@@ -1324,7 +1308,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         uniqueIndex: foundMoment.uniqueIndex,
         id: foundMoment.id,
       };
- 
+
       // setMoment({
       //   category: foundMoment.user_category_name,
       //   capsule: foundMoment.capsule,
@@ -1375,7 +1359,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           // peerGeckoPositionSV={
 
           //   guestPeerGeckoPositionSV
-          //   // isHost 
+          //   // isHost
           //   // // &&
           //   // // selectedFriend?.id != null &&
           //   // // selectedFriend.id === boundFriendId
@@ -1383,8 +1367,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           //   //   : null
           // }
           peerGeckoPositionSV={
-  shouldUseGuestPeer ? guestPeerGeckoPositionSV : null
-}
+            shouldUseGuestPeer ? guestPeerGeckoPositionSV : null
+          }
           liveScoreStateRef={scoreStateRef}
           hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
           initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}
@@ -1425,7 +1409,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       </View>
       {/* <DebugPanel /> */}
       <GlassTopBarLight
-      socketStatusSV={socketStatusSV}
+        socketStatusSV={socketStatusSV}
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
@@ -1433,7 +1417,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         TIME_SCORE={TIME_SCORE}
         DAYS_SINCE={DAYS_SINCE}
         highlight={!!isPollMode}
-      /> 
+        fontSmall={skiaFontSmall}
+      />
 
       <View style={styles.animatedCounterWrapper}>
         {selectedFriend && count && (
@@ -1454,7 +1439,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       </View>
 
       <GlassPreviewBottom
-      fontSmall={skiaFontSmall}
+        fontSmall={skiaFontSmall}
         readingMode={!manualOnly}
         speedSetting={speedSetting}
         autoPickUp={autoPickUp}

@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
-import { useGeckoEnergySocket } from "@/src/hooks/useGeckoEnergySocket";
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";

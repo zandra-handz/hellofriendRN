@@ -173,7 +173,7 @@ export default Sentry.wrap(function App() {
   });
 
   const skiaFontLarge = useFont(Poppins_400Regular, 34);
-  const skiaFontSmall = useFont(Poppins_400Regular, 20);
+  const skiaFontSmall = useFont(Poppins_400Regular, 16);
 
   useEffect(() => {
     async function requestPermissions() {
