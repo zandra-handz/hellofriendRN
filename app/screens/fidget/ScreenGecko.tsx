@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Text, Vibration } from "react-native";
+import { AppState, View, StyleSheet, Pressable, Text, Vibration } from "react-native";
 import React, {
   useState,
   useRef,
@@ -80,8 +80,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const selection = route.params?.selection ?? null;
   const autoPick = route.params?.autoPick ?? false;
   const timestamp = route.params?.timestamp ?? null;
+
+
+  // QR
   // const pollMode = route.params?.pollMode ?? false;
-  const sessionId = route.params?.sessionId ?? null;
+  // const sessionId = route.params?.sessionId ?? null;
 
   const { user } = useUser();
 
@@ -171,9 +174,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   //   capsuleCount: capsuleList.length,
   // });
 
-  const {
-    // socketStatus,
+  const { 
     socketStatusSV,
+    peerJoinedStatusSV,
     scoreStateRef,
     liveScoreState,
     energySV,
@@ -195,16 +198,40 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
     connect,
     disconnect,
+    setWantsConnection,
     bindFriend,
     clearFriendBinding,
     leaveLiveSesh,
+    sendReadStatusToGecko,
+    sendFETextToGecko,
+    
+    geckoMessageSV,
+    
+
+    requestPresenceStatus,
   } = useGeckoWebsocket();
+
+
+    useFocusEffect(
+    useCallback(() => {
+      requestPresenceStatus();
+    }, [requestPresenceStatus])
+  );
+
+  // and for background -> foreground
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") requestPresenceStatus();
+    });
+    return () => sub.remove();
+  }, [requestPresenceStatus]);
 
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
 
       const setup = async () => {
+        setWantsConnection(true);
         await connect();
 
         if (!isActive) return;
@@ -219,15 +246,17 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         isActive = false;
         leaveLiveSesh();
         clearFriendBinding();
-        disconnect();
+        setWantsConnection(false);
+        geckoMessageSV.value = null;
       };
     }, [
       connect,
-      disconnect,
+      setWantsConnection,
       bindFriend,
       clearFriendBinding,
       leaveLiveSesh,
       selectedFriend?.id,
+      geckoMessageSV,
     ]),
   );
 
@@ -342,27 +371,51 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     setFreezeForTalking(false);
   };
 
+
+    const sendReadStatusToGeckoRef = useRef(sendReadStatusToGecko);
+  const sendFETextToGeckoRef = useRef(sendFETextToGecko)
+
+
+
+    useEffect(() => {
+    sendReadStatusToGeckoRef.current = sendReadStatusToGecko;
+
+  }, [sendReadStatusToGecko]);
+
+
+  
+    useEffect(() => {
+    sendFETextToGeckoRef.current = sendFETextToGecko;
+
+  }, [sendFETextToGecko]);
+
   useEffect(() => {
     if (gecko && !hasShownReadAll.current && effectiveHasReadAll) {
       stopReading();
       hasShownReadAll.current = true;
       handleFreezeForTalking();
 
-      const id = setTimeout(() => {
-        showModalMessage({
-          title: "Read em all!",
-          body: "Thanks!",
-          onClose: handleUnfreezeForTalking,
-          autoCloseTime: 1000,
-        });
-      }, 1000);
+       sendReadStatusToGeckoRef.current(2)
 
-      return () => clearTimeout(id);
+      // const id = setTimeout(() => {
+      //      sendReadStatusToGeckoRef.current(2)
+      //   // showModalMessage({
+      //   //   title: "Read em all!",
+      //   //   body: "Thanks!",
+      //   //   onClose: handleUnfreezeForTalking,
+      //   //   autoCloseTime: 1000,
+      //   // });
+      // }, 1000);
+
+      // return () => clearTimeout(id);
     }
   }, [gecko, effectiveHasReadAll]);
 
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [isPollMode, setIsPollMode] = useState(false);
+
+  // ~~~~~~~~~~~~~~ QR CODE 
+  // const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  // const [isPollMode, setIsPollMode] = useState(false);
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const { fetchGeckoMoments, loading: geckoReadLoading } = useGeckoReadMoments({
     friendId: selectedFriend?.id,
@@ -442,12 +495,16 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         JSON.stringify(pickedMoment),
       );
 
+
+      sendFETextToGeckoRef.current(reply)
+
       //   setTimeout(() => {
       //     showModalMessage({ title: "Gecko says", body: reply });
       //      setTimeout(() => oneTimeSelectIdRef.current = null, GROQ_MESSAGE_PAUSE_TIME);
 
       // }  , 2000);
     } catch (e: any) {
+      
       showModalMessage({
         title: "Gecko error",
         body: e?.message || "Something went wrong",
@@ -564,44 +621,44 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
 
-  useFocusEffect(
-    useCallback(() => {
-      const newSessionId = route.params?.sessionId ?? null;
-      const newPollMode = route.params?.pollMode ?? false;
 
-      // console.log("Screen focused, params:", { newSessionId, newPollMode });
 
-      setActiveSessionId(newSessionId);
-      setIsPollMode(newPollMode);
-    }, [route.params?.sessionId, route.params?.pollMode]),
-  );
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~  OLD QR CODE METHOD OF INVOLVING FRIEND
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const newSessionId = route.params?.sessionId ?? null;
+  //     const newPollMode = route.params?.pollMode ?? false;
 
-  const {
-    isPressed,
-    isExpired,
-    pressedAt,
-    pressedMomentId,
-    updatePressedMoment,
-  } = useFriendPickSession({
-    friendId: selectedFriend?.id,
-    friendName: selectedFriend?.name,
-    sessionId: activeSessionId,
-    enabled: isPollMode && !!activeSessionId,
-  });
+  //     // console.log("Screen focused, params:", { newSessionId, newPollMode });
 
-  // console.log(
-  //   `PICK SESSION VALUES: `,
+  //     setActiveSessionId(newSessionId);
+  //     setIsPollMode(newPollMode);
+  //   }, [route.params?.sessionId, route.params?.pollMode]),
+  // );
+
+  // const {
   //   isPressed,
   //   isExpired,
   //   pressedAt,
-  //   activeSessionId,
-  // );
+  //   pressedMomentId,
+  //   updatePressedMoment,
+  // } = useFriendPickSession({
+  //   friendId: selectedFriend?.id,
+  //   friendName: selectedFriend?.name,
+  //   sessionId: activeSessionId,
+  //   enabled: isPollMode && !!activeSessionId,
+  // });
+
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ 
 
   const {
     navigateToMomentView,
     navigateToMomentFocus,
     navigateToGeckoSelectSettings,
-    navigateToQRCode,
+    // navigateToQRCode,
     navigateToFriendHome,
   } = useAppNavigations();
 
@@ -615,13 +672,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     },
     [navigateToMomentView],
   );
-
-  // const [moment, setMoment] = useState({
-  //   category: null,
-  //   capsule: null,
-  //   uniqueIndex: null,
-  //   id: null,
-  // });
+ 
 
   const momentSV = useSharedValue({
     category: null,
@@ -634,39 +685,48 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-  useEffect(() => {
-    if (isExpired) {
-      console.log("Session expired");
-      setIsPollMode(false);
-      setActiveSessionId(null);
-    }
-  }, [isExpired]);
 
-  useEffect(() => {
-    if (isPressed && sessionId) {
-      setIsPollMode(false);
-      setActiveSessionId(null);
 
-      if (momentSV && momentSV?.current?.id && !pressedMomentId) {
-        updatePressedMoment(momentSV.current.id);
-        handleNavigateToMoment(momentSV.current.id);
-      }
-    }
-  }, [
-    isPressed,
-    sessionId,
-    pressedAt,
-    momentSV,
-    pressedMomentId,
-    isExpired,
-    updatePressedMoment,
-    handleNavigateToMoment,
-  ]);
 
-  // const { handleUpdateGeckoData } = useUpdateGeckoData({
-  //   userId: user?.id,
-  //   friendId: selectedFriend?.id,
-  // });
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ OLD QR CODE METHOD
+
+
+
+  //   useEffect(() => {
+  //   if (isExpired) {
+  //     console.log("Session expired");
+  //     setIsPollMode(false);
+  //     setActiveSessionId(null);
+  //   }
+  // }, [isExpired]);
+
+
+
+  // useEffect(() => {
+  //   if (isPressed && sessionId) {
+  //     setIsPollMode(false);
+  //     setActiveSessionId(null);
+
+  //     if (momentSV && momentSV?.current?.id && !pressedMomentId) {
+  //       updatePressedMoment(momentSV.current.id);
+  //       handleNavigateToMoment(momentSV.current.id);
+  //     }
+  //   }
+  // }, [
+  //   isPressed,
+  //   sessionId,
+  //   pressedAt,
+  //   momentSV,
+  //   pressedMomentId,
+  //   isExpired,
+  //   updatePressedMoment,
+  //   handleNavigateToMoment,
+  // ]);
+
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -826,24 +886,30 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     // handleUnfreezeForTalking(); keep froze because modal opens after this finishes
   }, []);
 
+  
+
   useEffect(() => {
     if (!gecko || hasShownWelcome.current || effectiveHasReadAll) return;
 
     hasShownWelcome.current = true;
 
     handleFreezeForTalking();
-    const id = setTimeout(() => {
-      showModalMessage({
-        title: "Hi!",
-        body: "I'm going to start reading these, if ya don't mind!",
-        autoCloseTime: 1000,
-        onClose: () => {
-          startReading();
-        },
-      });
-    }, 1000);
+       sendReadStatusToGeckoRef.current(0)
+    
+    // const id = setTimeout(() => {
 
-    return () => clearTimeout(id);
+    //   //  sendReadStatusToGeckoRef.current(0)
+    //   // showModalMessage({
+    //   //   title: "Hi!",
+    //   //   body: "I'm going to start reading these, if ya don't mind!",
+    //   //   autoCloseTime: 1000,
+    //   //   onClose: () => {
+    //   //     startReading();
+    //   //   },
+    //   // });
+    // }, 1000);
+
+    // return () => clearTimeout(id);
   }, [gecko, effectiveHasReadAll]);
 
   const clearRandomAutoTimeouts = useCallback(() => {
@@ -958,14 +1024,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }
   }, [autoPickUp, autoSelectType, navigateToGeckoSelectSettings]);
 
-  const handleNavToQRCode = useCallback(() => {
-    navigateToQRCode({
-      selection: autoSelectType,
-      friendName: selectedFriend.name,
-      friendId: selectedFriend.id,
-      friendNumber: friendDash?.suggestion_settings.phone_number,
-    });
-  }, [selectedFriend, autoSelectType, friendDash, navigateToQRCode]);
+  // const handleNavToQRCode = useCallback(() => {
+  //   navigateToQRCode({
+  //     selection: autoSelectType,
+  //     friendName: selectedFriend.name,
+  //     friendId: selectedFriend.id,
+  //     friendNumber: friendDash?.suggestion_settings.phone_number,
+  //   });
+  // }, [selectedFriend, autoSelectType, friendDash, navigateToQRCode]);
 
   useEffect(() => {
     if (!manualOnly) {
@@ -1183,6 +1249,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const categoryStreakRef = useRef(0);
   const updateGeckoDataRef = useRef(updateGeckoData);
+
+ 
   // const sendGeckoPositionRef = useRef(sendGeckoPosition);
   const sendHostOrSoloPosition = useCallback(
     (
@@ -1224,17 +1292,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendHostGeckoPositionRef.current = sendHostOrSoloPosition;
   }, [sendHostOrSoloPosition]);
 
+
+
   const handleGetMoment = useCallback(
     (id) => {
       const foundMoment = capsuleMap.get(id);
 
       if (!foundMoment?.id) {
-        // setMoment({
-        //   category: null,
-        //   capsule: null,
-        //   uniqueIndex: null,
-        //   id: null,
-        // });
+
 
         momentSV.value = {
           category: null,
@@ -1308,19 +1373,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         uniqueIndex: foundMoment.uniqueIndex,
         id: foundMoment.id,
       };
-
-      // setMoment({
-      //   category: foundMoment.user_category_name,
-      //   capsule: foundMoment.capsule,
-      //   uniqueIndex: foundMoment.uniqueIndex,
-      //   id: foundMoment.id,
-      // });
-
-      // const charCount = Number(foundMoment?.charCount) || 0;
-      // const isSubtracting = loopCount.current % 2 !== 0;
-      // const delta = isSubtracting ? -charCount : charCount;
-
-      // count.value = count.value + delta;
+ 
+ 
 
       pickupCountInCurrentLoop.current += 1;
       if (pickupCountInCurrentLoop.current >= capsuleMap.size) {
@@ -1410,13 +1464,15 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       {/* <DebugPanel /> */}
       <GlassTopBarLight
         socketStatusSV={socketStatusSV}
+        peerJoinedStatusSV={peerJoinedStatusSV}
+        geckoMessageSV={geckoMessageSV}
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
         friendName={selectedFriend.name}
         TIME_SCORE={TIME_SCORE}
         DAYS_SINCE={DAYS_SINCE}
-        highlight={!!isPollMode}
+        highlight={false}
         fontSmall={skiaFontSmall}
       />
 
@@ -1442,8 +1498,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         fontSmall={skiaFontSmall}
         readingMode={!manualOnly}
         speedSetting={speedSetting}
-        autoPickUp={autoPickUp}
-        isPollMode={isPollMode}
+        autoPickUp={autoPickUp} 
         color={textColor}
         highlightColor={selectedFriend.lightColor}
         backgroundColor={darkerOverlayColor}
@@ -1461,7 +1516,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         onPress_changeSpeed={handleChangeSpeed}
         onPress_geckoVoice={handleGeckoReadAndAsk}
         onPress_autoPickUpScreen={handleNavToSelect}
-        onPress_QRCodeScreen={handleNavToQRCode}
+        // onPress_QRCodeScreen={handleNavToQRCode}
       />
     </NoGradientBackground>
   );

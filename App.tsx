@@ -148,7 +148,7 @@ const asyncStoragePersister = createAsyncStoragePersister({
 // debugQueryKeyStructure(queryClient, "friendListAndUpcoming");
 
 import * as Sentry from "@sentry/react-native";
-import ScreenQRCode from "./app/screens/fidget/ScreenQRCode";
+// import ScreenQRCode from "./app/screens/fidget/ScreenQRCode";
 
 Sentry.init({
   dsn: "https://59c9aeed4bccc9cfaf418f4733827937@o4509079411752960.ingest.us.sentry.io/4509293682360320",
@@ -529,11 +529,11 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           component={ScreenGeckoSelectSettings}
           options={{ headerShown: false, gestureEnabled: false }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="QRCode"
           component={ScreenQRCode}
           options={{ headerShown: false, gestureEnabled: false }}
-        />
+        /> */}
         <Stack.Screen
           name="MomentFocus"
           component={ScreenMomentFocus}

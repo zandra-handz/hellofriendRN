@@ -7,11 +7,14 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { AppState, type AppStateStatus } from "react-native";
 import { useSharedValue, type SharedValue } from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import notepack from "notepack.io";
 
 type SocketStatus = "connecting" | "connected" | "disconnected";
+
+type PeerJoinedStatus = boolean;
 
 type GeckoCoordsMessage = {
   from_user: number;
@@ -38,6 +41,12 @@ type GuestGeckoCoordsMessage = {
   steps?: [number, number][];
   timestamp?: number;
 };
+
+type GeckoMessage = {
+  from_user: number;
+  message: string | null;
+  received_at: number;
+} | null;
 
 type ScoreState = {
   user?: number;
@@ -122,8 +131,10 @@ type EnergyState = {
 };
 
 type GeckoWebsocketContextValue = {
-  socketStatus: SocketStatus;
+  // socketStatus: SocketStatus;
   socketStatusSV: SharedValue<SocketStatus>;
+  peerJoinedStatusSV: SharedValue<PeerJoinedStatus>;
+
   isFriendBound: boolean;
   pendingFriendId: number | null;
   boundFriendId: number | null;
@@ -137,13 +148,21 @@ type GeckoWebsocketContextValue = {
   hasReceivedInitialScoreStateRef: React.MutableRefObject<boolean>;
   initialBackendEnergyUpdatedAtRef: React.MutableRefObject<string | null>;
   latestBackendEnergyUpdatedAtRef: React.MutableRefObject<string | null>;
+  geckoMessageSV: SharedValue<GeckoMessage>;
+  registerOnGeckoMessage: (
+    cb: (data: { from_user: number; message: string | null }) => void,
+  ) => void;
   wsRef: React.MutableRefObject<WebSocket | null>;
   connect: () => Promise<void>;
   disconnect: () => void;
+  setWantsConnection: (wants: boolean) => void;
   bindFriend: (friendId: number) => boolean;
   clearFriendBinding: () => boolean;
   flush: () => void;
-  sendRaw: (payload: object, options?: { requireFriendBound?: boolean }) => boolean;
+  sendRaw: (
+    payload: object,
+    options?: { requireFriendBound?: boolean },
+  ) => boolean;
   getScoreState: () => boolean;
   getGeckoScreenPosition: () => boolean;
   joinLiveSesh: () => boolean;
@@ -166,31 +185,53 @@ type GeckoWebsocketContextValue = {
     position: [number, number],
     force?: boolean,
   ) => boolean;
+
   registerOnScoreState: (cb: (data: ScoreState) => void) => void;
   registerOnSync: (cb: () => void) => void;
   registerOnGeckoCoords: (cb: (data: GeckoCoordsMessage) => void) => void;
-  registerOnHostGeckoCoords: (cb: (data: HostGeckoCoordsMessage) => void) => void;
-  registerOnGuestGeckoCoords: (cb: (data: GuestGeckoCoordsMessage) => void) => void;
+  registerOnHostGeckoCoords: (
+    cb: (data: HostGeckoCoordsMessage) => void,
+  ) => void;
+  registerOnGuestGeckoCoords: (
+    cb: (data: GuestGeckoCoordsMessage) => void,
+  ) => void;
   registerOnJoinLiveSesh: (cb: (partnerId: number | null) => void) => void;
   registerOnLeaveLiveSesh: (cb: () => void) => void;
   registerOnLiveSeshCancelled: (cb: (data: any) => void) => void;
+  requestPresenceStatus: () => boolean;
+  sendReadStatusToGecko: (
+   messageCode: 0 | 1 | 2,
+   
+  ) => boolean;
+  sendFETextToGecko: (message: string) => void;
 };
 
-const GeckoWebsocketContext = createContext<GeckoWebsocketContextValue | null>(null);
+
+const GeckoWebsocketContext = createContext<GeckoWebsocketContextValue | null>(
+  null,
+);
 
 type ProviderProps = {
   children: React.ReactNode;
 };
 
 export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
-  const [socketStatus, setSocketStatus] = useState<SocketStatus>("connecting");
+  // const [socketStatus, setSocketStatus] = useState<SocketStatus>("connecting");
   const [liveScoreState, setLiveScoreState] = useState<ScoreState | null>(null);
-  const [liveSeshPartnerId, setLiveSeshPartnerId] = useState<number | null>(null);
+  const [liveSeshPartnerId, setLiveSeshPartnerId] = useState<number | null>(
+    null,
+  );
   const [isFriendBound, setIsFriendBound] = useState(false);
   const [boundFriendId, setBoundFriendId] = useState<number | null>(null);
   const [pendingFriendId, setPendingFriendId] = useState<number | null>(null);
 
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
+  const peerJoinedStatusSV = useSharedValue<PeerJoinedStatus>(false);
+
+  const geckoMessageSV = useSharedValue<GeckoMessage>(null);
+  const onGeckoMessageRef = useRef<
+    ((d: { from_user: number; message: string | null }) => void) | null
+  >(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const scoreStateRef = useRef<ScoreState | null>(null);
@@ -200,10 +241,18 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const onScoreStateRef = useRef<((data: ScoreState) => void) | null>(null);
   const onSyncRef = useRef<(() => void) | null>(null);
-  const onGeckoCoordsRef = useRef<((data: GeckoCoordsMessage) => void) | null>(null);
-  const onHostGeckoCoordsRef = useRef<((data: HostGeckoCoordsMessage) => void) | null>(null);
-  const onGuestGeckoCoordsRef = useRef<((data: GuestGeckoCoordsMessage) => void) | null>(null);
-  const onJoinLiveSeshRef = useRef<((partnerId: number | null) => void) | null>(null);
+  const onGeckoCoordsRef = useRef<((data: GeckoCoordsMessage) => void) | null>(
+    null,
+  );
+  const onHostGeckoCoordsRef = useRef<
+    ((data: HostGeckoCoordsMessage) => void) | null
+  >(null);
+  const onGuestGeckoCoordsRef = useRef<
+    ((data: GuestGeckoCoordsMessage) => void) | null
+  >(null);
+  const onJoinLiveSeshRef = useRef<((partnerId: number | null) => void) | null>(
+    null,
+  );
   const onLeaveLiveSeshRef = useRef<(() => void) | null>(null);
   const onLiveSeshCancelledRef = useRef<((data: any) => void) | null>(null);
 
@@ -217,9 +266,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   });
 
   const pendingDataActionsRef = useRef<UpdateGeckoDataPayload[]>([]);
-  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const flushIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const shouldReconnectRef = useRef(true);
+  const wantsConnectionRef = useRef(false);
 
   const hasReceivedInitialScoreStateRef = useRef(false);
   const initialBackendEnergyUpdatedAtRef = useRef<string | null>(null);
@@ -236,7 +288,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [0, 0],
   ]);
   const firstFingersScratchRef = useRef<number[][]>([
-        [0, 0],
+    [0, 0],
     [0, 0],
     [0, 0],
     [0, 0],
@@ -253,13 +305,23 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     onScoreStateRef.current = cb;
   }, []);
 
+  const registerOnGeckoMessage = useCallback(
+    (cb: (d: { from_user: number; message: string | null }) => void) => {
+      onGeckoMessageRef.current = cb;
+    },
+    [],
+  );
+
   const registerOnSync = useCallback((cb: () => void) => {
     onSyncRef.current = cb;
   }, []);
 
-  const registerOnGeckoCoords = useCallback((cb: (data: GeckoCoordsMessage) => void) => {
-    onGeckoCoordsRef.current = cb;
-  }, []);
+  const registerOnGeckoCoords = useCallback(
+    (cb: (data: GeckoCoordsMessage) => void) => {
+      onGeckoCoordsRef.current = cb;
+    },
+    [],
+  );
 
   const registerOnHostGeckoCoords = useCallback(
     (cb: (data: HostGeckoCoordsMessage) => void) => {
@@ -379,11 +441,49 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const joinLiveSesh = useCallback(() => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) {
- 
       return false;
     }
     wsRef.current.send(JSON.stringify({ action: "join_live_sesh" }));
-   
+
+    return true;
+  }, []);
+
+  const requestPresenceStatus = useCallback(() => {
+    if (wsRef.current?.readyState !== WebSocket.OPEN) {
+      return false;
+    }
+    peerJoinedStatusSV.value = false;
+    wsRef.current.send(JSON.stringify({ action: "request_peer_presence" }));
+    return true;
+  }, [peerJoinedStatusSV]);
+
+  const sendReadStatusToGecko = useCallback((messageCode: 0 | 1 | 2) => {
+   console.log('sending read status?')
+    if (wsRef.current?.readyState !== WebSocket.OPEN) {
+      return false;
+    }
+ 
+    wsRef.current.send(
+      JSON.stringify({
+        action: "send_read_status_to_gecko",
+        data: { message_code: messageCode },
+      }),
+    );
+    return true;
+  }, []);
+
+  const sendFETextToGecko = useCallback((message) => {
+ 
+    if (wsRef.current?.readyState !== WebSocket.OPEN) {
+      return false;
+    }
+ 
+    wsRef.current.send(
+      JSON.stringify({
+        action: "send_front_end_text_to_gecko",
+        data: { message: message },
+      }),
+    );
     return true;
   }, []);
 
@@ -396,7 +496,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   }, []);
 
   const flushPendingUpdateGeckoData = useCallback(() => {
-    if (wsRef.current?.readyState !== WebSocket.OPEN || !isFriendBoundRef.current) {
+    if (
+      wsRef.current?.readyState !== WebSocket.OPEN ||
+      !isFriendBoundRef.current
+    ) {
       return;
     }
 
@@ -419,10 +522,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const bindFriend = useCallback(
     (friendId: number) => {
-      if (
-        boundFriendIdRef.current === friendId &&
-        isFriendBoundRef.current
-      ) {
+      if (boundFriendIdRef.current === friendId && isFriendBoundRef.current) {
         return true;
       }
 
@@ -495,7 +595,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
           payload.client_computed_at ?? new Date().toISOString(),
       };
 
-      if (wsRef.current?.readyState === WebSocket.OPEN && isFriendBoundRef.current) {
+      if (
+        wsRef.current?.readyState === WebSocket.OPEN &&
+        isFriendBoundRef.current
+      ) {
         wsRef.current.send(
           JSON.stringify({ action: "update_gecko_data", data: full }),
         );
@@ -557,7 +660,6 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       const now = Date.now();
 
       if (!isFriendBoundRef.current) {
-   
         return false;
       }
 
@@ -609,11 +711,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         }
       }
 
-//       console.log("[WS SEND host position]", {
-//   position,
-//   stepsLen,
-//   momentsLen
-// });
+      //       console.log("[WS SEND host position]", {
+      //   position,
+      //   stepsLen,
+      //   momentsLen
+      // });
 
       wsRef.current.send(
         notepack.encode({
@@ -640,7 +742,6 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const sendGuestGeckoPosition = useCallback(
     (position: [number, number], force = false) => {
       const now = Date.now();
-     
 
       if (
         !force &&
@@ -691,7 +792,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       wsRef.current = null;
     }
 
-    setSocketStatus("disconnected");
+    // setSocketStatus("disconnected");
     socketStatusSV.value = "disconnected";
     isFriendBoundRef.current = false;
     boundFriendIdRef.current = null;
@@ -703,7 +804,9 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   }, [clearReconnectTimeout, socketStatusSV, stopFlushInterval]);
 
   const connect = useCallback(async () => {
-    console.log('starting connect..................................................')
+    console.log(
+      "starting connect..................................................",
+    );
     clearReconnectTimeout();
 
     if (wsRef.current) {
@@ -714,12 +817,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
     const token = await SecureStore.getItemAsync("accessToken");
     if (!token) {
-      setSocketStatus("disconnected");
+      // setSocketStatus("disconnected");
       socketStatusSV.value = "disconnected";
       return;
     }
 
-    setSocketStatus("connecting");
+    // setSocketStatus("connecting");
     socketStatusSV.value = "connecting";
     isFriendBoundRef.current = false;
     boundFriendIdRef.current = null;
@@ -731,8 +834,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     ws.binaryType = "arraybuffer";
 
     ws.onopen = () => {
-
-      setSocketStatus("connected");
+      // setSocketStatus("connected");
       socketStatusSV.value = "connected";
       startFlushInterval();
 
@@ -740,12 +842,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
       if (fid != null) {
         sendSetFriend(fid);
-        console.log('sending friend')
+        console.log("sending friend");
       } else {
         getScoreState();
         getGeckoScreenPosition();
-        console.log('join sessionnnn')
-       // joinLiveSesh();
+        console.log("join sessionnnn");
+        // joinLiveSesh();
       }
     };
 
@@ -789,6 +891,16 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         return;
       }
 
+      if (message.action === "peer_presence") {
+        const isPresent = message.data?.online;
+
+        console.log(`DATA`, isPresent);
+
+        peerJoinedStatusSV.value = message.data?.online ?? false;
+
+        console.log(`PEER PRESENCE DETECTED`);
+      }
+
       if (message.action === "score_state") {
         const backendEnergyUpdatedAt = message.data?.energy_updated_at ?? null;
 
@@ -802,6 +914,16 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
         latestBackendEnergyUpdatedAtRef.current = backendEnergyUpdatedAt;
         publishScoreState(message.data);
+        return;
+      }
+
+      if (message.action === "gecko_message") {
+        geckoMessageSV.value = {
+          from_user: message.data?.from_user,
+          message: message.data?.message ?? null,
+          received_at: performance.now(),
+        };
+        onGeckoMessageRef.current?.(message.data);
         return;
       }
 
@@ -861,6 +983,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         const partnerId = message.data?.partner_id ?? null;
         setLiveSeshPartnerId(partnerId);
         onJoinLiveSeshRef.current?.(partnerId);
+        requestPresenceStatus();
         return;
       }
 
@@ -883,7 +1006,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     };
 
     ws.onclose = (event) => {
-      setSocketStatus("disconnected");
+      // setSocketStatus("disconnected");
       socketStatusSV.value = "disconnected";
       stopFlushInterval();
       isFriendBoundRef.current = false;
@@ -916,6 +1039,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     joinLiveSesh,
     publishScoreState,
     sendSetFriend,
+    peerJoinedStatusSV,
     socketStatusSV,
     startFlushInterval,
     stopFlushInterval,
@@ -936,10 +1060,40 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     }
   }, [flushPendingUpdateGeckoData, isFriendBound]);
 
+  const setWantsConnection = useCallback(
+    (wants: boolean) => {
+      wantsConnectionRef.current = wants;
+      if (!wants) {
+        disconnect();
+      }
+    },
+    [disconnect],
+  );
+
+  useEffect(() => {
+    const handleAppStateChange = (state: AppStateStatus) => {
+      if (state === "background" || state === "inactive") {
+        if (wsRef.current) {
+          disconnect();
+        }
+      } else if (state === "active") {
+        if (
+          wantsConnectionRef.current &&
+          wsRef.current?.readyState !== WebSocket.OPEN
+        ) {
+          connect();
+        }
+      }
+    };
+
+    const sub = AppState.addEventListener("change", handleAppStateChange);
+    return () => sub.remove();
+  }, [connect, disconnect]);
+
   const value = useMemo<GeckoWebsocketContextValue>(
     () => ({
-      socketStatus,
       socketStatusSV,
+      peerJoinedStatusSV,
       isFriendBound,
       pendingFriendId,
       boundFriendId,
@@ -956,6 +1110,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       wsRef,
       connect,
       disconnect,
+      setWantsConnection,
       bindFriend,
       clearFriendBinding,
       flush,
@@ -976,6 +1131,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnJoinLiveSesh,
       registerOnLeaveLiveSesh,
       registerOnLiveSeshCancelled,
+      requestPresenceStatus,
+      geckoMessageSV,
+      registerOnGeckoMessage,
+      sendReadStatusToGecko,
+      sendFETextToGecko
     }),
     [
       bindFriend,
@@ -983,6 +1143,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       clearFriendBinding,
       connect,
       disconnect,
+      setWantsConnection,
       energySV,
       flush,
       getGeckoScreenPosition,
@@ -1004,13 +1165,19 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnLiveSeshCancelled,
       registerOnScoreState,
       registerOnSync,
+      requestPresenceStatus,
       sendGeckoPosition,
       sendGuestGeckoPosition,
       sendHostGeckoPosition,
       sendRaw,
-      socketStatus,
+      // socketStatus,
       socketStatusSV,
+      peerJoinedStatusSV,
       updateGeckoData,
+      geckoMessageSV,
+      registerOnGeckoMessage,
+      sendReadStatusToGecko,
+      sendFETextToGecko
     ],
   );
 
@@ -1024,7 +1191,9 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 export const useGeckoWebsocket = () => {
   const ctx = useContext(GeckoWebsocketContext);
   if (!ctx) {
-    throw new Error("useGeckoWebsocket must be used inside GeckoWebsocketProvider");
+    throw new Error(
+      "useGeckoWebsocket must be used inside GeckoWebsocketProvider",
+    );
   }
   return ctx;
 };

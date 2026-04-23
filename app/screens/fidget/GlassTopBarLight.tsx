@@ -1,28 +1,29 @@
-import { View, StyleSheet, useWindowDimensions } from "react-native";
-import React, { useRef, useMemo } from "react";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import React, { useRef, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   withSpring,
   useSharedValue,
-  useDerivedValue,
   SharedValue,
 } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  Canvas,
-  Paragraph,
-  Skia,
-  TextAlign,
-} from "@shopify/react-native-skia";
 import type { SkFont } from "@shopify/react-native-skia";
-import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
-import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import SocketStatusLight from "@/app/components/liveSesh/SocketStatusLight";
+import BoolSocketStatusLight from "@/app/components/liveSesh/BoolSocketStatusLight";
+import ChatBubblesSkia from "@/app/components/liveSesh/ChatBubblesSkia";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useUser from "@/src/hooks/useUser";
 
+type GeckoMessage = {
+  from_user: number;
+  message: string | null;
+  received_at: number;
+} | null;
+
 type Props = {
   socketStatusSV: SharedValue;
+  peerJoinedStatusSV: SharedValue;
+  geckoMessageSV: SharedValue<GeckoMessage>;
   textColor: string;
   backgroundColor: string;
   friendId: number;
@@ -33,11 +34,14 @@ type Props = {
   fontSmall?: SkFont;
 };
 
-const PARAGRAPH_HEIGHT = 20;
-const HORIZONTAL_INSET = 120; // account for outer paddingHorizontal + dot + icon + gaps
+const CHAT_HEIGHT = 70;
+const STATUS_COL_WIDTH = 90;
+const CHAT_ICON_SPACE = 28;
 
 const GlassTopBarLight = ({
   socketStatusSV,
+  peerJoinedStatusSV,
+  geckoMessageSV,
   textColor,
   backgroundColor,
   friendId,
@@ -47,29 +51,15 @@ const GlassTopBarLight = ({
   highlight,
   fontSmall,
 }: Props) => {
-  const translateY = useSharedValue(-300); // Start off-screen above
+  const translateY = useSharedValue(-300);
   const hasAnimated = useRef(false);
 
-  const { geckoScoreState } = useGeckoScoreState();
   const { user } = useUser();
-  const { currentLiveSesh, sessionFriendId, isHost } = useCurrentLiveSesh({
-    userId: user?.id ?? 0,
-    enabled: !!user?.id,
-  });
-
-  const isHostingLiveSesh =
-    !!currentLiveSesh?.is_host &&
-    !!currentLiveSesh?.expires_at &&
-    friendId === sessionFriendId &&
-    new Date(currentLiveSesh.expires_at).getTime() > Date.now();
 
   useFocusEffect(
     React.useCallback(() => {
       if (!hasAnimated.current) {
-        translateY.value = withSpring(0, {
-          damping: 40,
-          stiffness: 500,
-        });
+        translateY.value = withSpring(0, { damping: 40, stiffness: 500 });
         hasAnimated.current = true;
       }
 
@@ -84,41 +74,11 @@ const GlassTopBarLight = ({
     transform: [{ translateY: translateY.value }],
   }));
 
-  const fontSize = useMemo(() => fontSmall?.getSize() ?? 13, [fontSmall]);
-  const fontMgr = useMemo(() => Skia.FontMgr.System(), []);
-
-  const { width: screenWidth } = useWindowDimensions();
-  const canvasWidth = Math.max(
-    0,
-    Math.floor(screenWidth * 0.9) - HORIZONTAL_INSET,
-  );
-
-  const friendNameSV = useSharedValue(friendName ?? "");
-  React.useEffect(() => {
-    friendNameSV.value = friendName ?? "";
-  }, [friendName]);
-
-  const paragraph = useDerivedValue(() => {
-    const textStyle = {
-      color: Skia.Color(textColor),
-      fontSize,
-      fontFamilies: ["Poppins", "System"],
-      fontStyle: { weight: 700 },
-    };
-
-    const paraStyle = {
-      textAlign: TextAlign.Left,
-      maxLines: 1,
-    };
-
-    const builder = Skia.ParagraphBuilder.Make(paraStyle, fontMgr);
-    builder.pushStyle(textStyle);
-    builder.addText(friendNameSV.value);
-    builder.pop();
-    const p = builder.build();
-    p.layout(canvasWidth);
-    return p;
-  });
+  const [bubblesWidth, setBubblesWidth] = useState(0);
+  const onBubblesLayout = (e: LayoutChangeEvent) => {
+    const w = Math.floor(e.nativeEvent.layout.width);
+    if (w !== bubblesWidth) setBubblesWidth(w);
+  };
 
   return (
     <Animated.View
@@ -132,17 +92,39 @@ const GlassTopBarLight = ({
         },
       ]}
     >
-      <View style={styles.header}>
-        <Canvas style={{ width: canvasWidth, height: PARAGRAPH_HEIGHT }}>
-          <Paragraph
-            paragraph={paragraph}
-            x={0}
-            y={0}
-            width={canvasWidth}
+      <View style={styles.row}>
+        <View style={[styles.statusLights, { width: STATUS_COL_WIDTH }]}>
+          <SocketStatusLight
+            socketStatusSV={socketStatusSV}
+            size={6}
+            label={user?.username}
+            labelColor={textColor}
           />
-        </Canvas>
+          <BoolSocketStatusLight
+            peerJoinedStatusSV={peerJoinedStatusSV}
+            size={6}
+            label={friendName}
+            labelColor={textColor}
+          />
+        </View>
+        <View
+          style={[styles.bubblesWrapper, { height: CHAT_HEIGHT }]}
+          onLayout={onBubblesLayout}
+        >
+          {bubblesWidth > 0 && (
+            <ChatBubblesSkia
+              geckoMessageSV={geckoMessageSV}
+              width={bubblesWidth}
+              height={CHAT_HEIGHT}
+              textColor={textColor}
+              bubbleColor={backgroundColor}
+              fontSmall={fontSmall}
+            />
+          )}
+        </View>
+      </View>
+      <View style={styles.chatIconWrapper} pointerEvents="none">
         <SvgIcon name="chat" size={16} color={textColor} />
-        <SocketStatusLight socketStatusSV={socketStatusSV} />
       </View>
     </Animated.View>
   );
@@ -155,18 +137,31 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     width: "90%",
     alignSelf: "center",
-    alignItems: "flex-start",
+    alignItems: "stretch",
     top: 60,
-    flex: 1,
     position: "absolute",
     flexDirection: "column",
     borderRadius: 70,
   },
-  header: {
+  row: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 4,
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  statusLights: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 4,
+  },
+  bubblesWrapper: {
+    flex: 1,
+    marginRight: CHAT_ICON_SPACE,
+    overflow: "hidden",
+  },
+  chatIconWrapper: {
+    position: "absolute",
+    top: 16,
+    right: 20,
   },
 });
 

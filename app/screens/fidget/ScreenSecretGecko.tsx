@@ -19,7 +19,7 @@ type Props = {};
 
 const ScreenSecretGecko = (props: Props) => {
 const {
-  socketStatus,
+ 
   liveSeshPartnerId,
   energySV,
   peerGeckoPositionSV,
@@ -27,6 +27,7 @@ const {
   hostPeerGeckoPositionSV,
   connect,
   disconnect,
+  setWantsConnection,
   joinLiveSesh,
   leaveLiveSesh,
   sendGeckoPosition,
@@ -91,6 +92,7 @@ useFocusEffect(
 
     const setup = async () => {
       console.log("[SECRET GECKO] focus -> connect");
+      setWantsConnection(true);
       await connect();
 
       if (!isActive) return;
@@ -103,11 +105,11 @@ useFocusEffect(
 
     return () => {
       isActive = false;
-      console.log("[SECRET GECKO] blur -> leaveLiveSesh + disconnect");
+      console.log("[SECRET GECKO] blur -> leaveLiveSesh + setWantsConnection(false)");
       leaveLiveSesh();
-      disconnect();
+      setWantsConnection(false);
     };
-  }, [connect, disconnect, joinLiveSesh, leaveLiveSesh]),
+  }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
 );
 
   return (

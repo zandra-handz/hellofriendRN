@@ -4,6 +4,7 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     env: {
       production: {
+
         plugins: ["transform-remove-console"],
       },
       development: {

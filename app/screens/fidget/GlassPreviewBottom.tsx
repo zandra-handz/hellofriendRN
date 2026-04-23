@@ -34,8 +34,7 @@ const GlassPreviewBottom = ({
   fontSmall,
   readingMode = false,
   speedSetting = 1,
-  autoPickUp = false,
-  isPollMode = false,
+  autoPickUp = false, 
   color = "red",
   highlightColor = "yellow",
   backgroundColor = "orange",
@@ -51,7 +50,7 @@ const GlassPreviewBottom = ({
   onPress_changeSpeed,
   onPress_geckoVoice,
   onPress_autoPickUpScreen,
-  onPress_QRCodeScreen,
+  // onPress_QRCodeScreen,
 }) => {
   const translateY = useSharedValue(300);
   const hasAnimated = useRef(false);
@@ -231,12 +230,12 @@ const GlassPreviewBottom = ({
               label: "Reset",
               onPress: onPress_recenterMoments,
             },
-            {
-              iconName: "qrcode_scan",
-              label: isPollMode ? "Polling..." : "Scan",
-              color: isPollMode ? highlightColor : color,
-              onPress: onPress_QRCodeScreen,
-            },
+            // {
+            //   iconName: "qrcode_scan",
+            //   label: isPollMode ? "Polling..." : "Scan",
+            //   color: isPollMode ? highlightColor : color,
+            //   onPress: onPress_QRCodeScreen,
+            // },
           ]}
           secondaryButtons={[
             {
@@ -265,12 +264,12 @@ const GlassPreviewBottom = ({
               label: "Scatter",
               onPress: onPress_rescatterMoments,
             },
-            {
-              iconName: "qrcode_scan",
-              label: isPollMode ? "Polling..." : "Scan",
-              color: isPollMode ? highlightColor : color,
-              onPress: onPress_QRCodeScreen,
-            },
+            // {
+            //   iconName: "qrcode_scan",
+            //   label: isPollMode ? "Polling..." : "Scan",
+            //   color: isPollMode ? highlightColor : color,
+            //   onPress: onPress_QRCodeScreen,
+            // },
           ]}
         />
       </View>

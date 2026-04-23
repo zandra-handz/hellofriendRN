@@ -195,7 +195,7 @@ const useGroqBeta = ({ userId, friendId, pauseTime=7000 }: Props) => {
   const openModal = useCallback(
     (title: string, body: string) => {
       setIsModalOpen(true);
-      showModalMessage({ title, body, onConfirm: closeModal });
+      // showModalMessage({ title, body, onConfirm: closeModal });
       autoCloseTimerRef.current = setTimeout(closeModal, pauseTime);
     },
     [closeModal],

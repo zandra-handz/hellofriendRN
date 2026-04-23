@@ -7,26 +7,22 @@ import Animated, {
 import manualGradientColors from "@/app/styles/StaticColors";
 
 type Props = {
-  socketStatusSV: SharedValue<"connected" | "connecting" | "disconnected" | string>;
+  peerJoinedStatusSV: SharedValue<boolean>;
   size?: number;
   label?: string;
   labelColor?: string;
 };
 
-const SocketStatusLight = ({
-  socketStatusSV,
+const BoolSocketStatusLight = ({
+  peerJoinedStatusSV,
   size = 12,
   label,
   labelColor = "#ffffff",
 }: Props) => {
   const dotStyle = useAnimatedStyle(() => {
-    const status = socketStatusSV.value;
-    const backgroundColor =
-      status === "connected"
-        ? manualGradientColors.lightColor
-        : status === "connecting"
-          ? "#f39c12"
-          : "#888888";
+    const backgroundColor = peerJoinedStatusSV?.value
+      ? manualGradientColors.lightColor
+      : "#888888";
     return { backgroundColor };
   }, []);
 
@@ -63,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SocketStatusLight;
+export default BoolSocketStatusLight;
