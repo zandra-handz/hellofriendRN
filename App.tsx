@@ -231,8 +231,7 @@ export default Sentry.wrap(function App() {
                 "categories",
                 "Moments",
                 "friendDashboardData",
-                "userGeckoCombinedData",
-                "userGeckoConfigs",
+                "userGeckoCombinedData", 
                 "groqConversationHistory",
               ];
               return includedKeys.includes(query.queryKey[0] as string);

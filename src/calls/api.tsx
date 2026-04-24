@@ -234,20 +234,13 @@ export const getUserSettings = async () => {
 export const getUserGeckoConfigs = async () => {
   const today = new Date();
   const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+ 
 
-  // console.log("Default common headers:", helloFriendApiClient.defaults.headers);
+  try { 
 
-  try {
-    //         const start = Date.now(); // log start time
-    // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
-
-    const response = await helloFriendApiClient.get(`/users/gecko/configs/`, {
+    const response = await helloFriendApiClient.get(`/users/gecko/score-state/configs/`, {
       params: { local_date: localDate },
-    });
-    // console.log("API GET Call getUserGeckoConfigs", response.data);
-    // const end = Date.now(); // log end time
-    // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
-    // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
+    }); 
 
     return response.data;
   } catch (e: unknown) {
@@ -1143,7 +1136,7 @@ export const updateUserGeckoConfigs = async (fieldUpdates: object) => {
   // console.log(`payload in api call`, fieldUpdates);
   try {
     const response = await helloFriendApiClient.patch(
-      `/users/gecko/configs/`,
+      `/users/gecko/score-state/configs/`,
       fieldUpdates,
     );
     // console.log("API PATCH CALL updateUserGeckoConfigs");

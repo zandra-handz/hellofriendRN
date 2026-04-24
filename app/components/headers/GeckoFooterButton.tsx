@@ -193,8 +193,7 @@ import { showModalMessage, showModalMessageAndList } from "@/src/utils/ShowModal
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
 import ScrollList from "../helloes/ScrollList";
-import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
-import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs";
+import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds"; 
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 const formatMinutesLabel = (minutes: number): string => {
   if (minutes < 60) return `${minutes}m`;
@@ -242,9 +241,8 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
   confirmationActionWord = "Yes",
 }) => {
   const [isHighlighted, setIsHighlighted] = useState(false);
-  const { friendDash } = useFriendDash({ userId, friendId });
-  const {   isAwake } = useUserGeckoConfigs({userId: userId});
-  const { geckoScoreState, geckoEnergyLevel} = useGeckoScoreState();
+  const { friendDash } = useFriendDash({ userId, friendId }); 
+  const {   geckoEnergyLevel} = useGeckoScoreState();
 
 
  
@@ -273,8 +271,8 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
       return;
     }
 
-    if (!isAwake || geckoEnergyLevel === 0) {
-      showFlashMessage(`Gecko is asleep. Ssssshh!`, false, 1000);
+    if ( geckoEnergyLevel === 0) {
+      showFlashMessage(`Gecko is resting for a little bit!`, false, 1000);
       return;
     }
 
@@ -290,7 +288,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
     } else {
       onPress();
     }
-  }, [geckoEnergyLevel, isAwake]);
+  }, [geckoEnergyLevel]);
 
   useEffect(() => {
     if (!isHighlighted) return;
@@ -346,7 +344,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
       onPress={handleOnPress}
       style={styles.container}
     >
-      <View style={[iconStyle, {opacity: (isAwake && (geckoEnergyLevel > 0)) ? 1 : .4}]}>
+      <View style={[iconStyle, {opacity: (  (geckoEnergyLevel > 0)) ? 1 : .4}]}>
         <GeckoMineSvg
           width={size}
           height={size}

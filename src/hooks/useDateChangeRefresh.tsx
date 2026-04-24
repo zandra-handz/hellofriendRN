@@ -51,7 +51,7 @@ const useDateChangeRefresh = () => {
       console.log(
         `[useDateChangeRefresh] hourly gecko config refresh at ${new Date().toLocaleTimeString()}`,
       );
-      queryClient.refetchQueries({ queryKey: ["userGeckoConfigs"] });
+      queryClient.refetchQueries({ queryKey: ["userGeckoScoreState"] });
     };
 
     const handleSync = () => {

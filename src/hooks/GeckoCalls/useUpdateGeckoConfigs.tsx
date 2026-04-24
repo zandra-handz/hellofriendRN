@@ -17,7 +17,7 @@ const useUpdateGeckoConfigs = ({ userId }: Props) => {
       showFlashMessage(`Gecko settings updated!`, false, 1000);
       console.log("updating gecko configs!", serverData);
 
-      queryClient.setQueryData(["userGeckoConfigs", userId], (oldData: any) => {
+      queryClient.setQueryData(["userGeckoScoreState", userId], (oldData: any) => {
         if (!oldData) return serverData;
         return {
           ...oldData,

@@ -6,8 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TextHeader from "@/app/components/appwide/format/TextHeader";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import GeckoChart from "../helloes/GeckoChart"; 
-import useUserGeckoConfigs from "@/src/hooks/GeckoCalls/useUserGeckoConfigs"; 
+import GeckoChart from "../helloes/GeckoChart";  
+import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useUpdateGeckoConfigs from "@/src/hooks/GeckoCalls/useUpdateGeckoConfigs";
 import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
 import HoursSelector from "./HoursSelector";
@@ -53,7 +53,7 @@ type Props = {};
 const ScreenGeckoManage = (props: Props) => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
-  const { geckoConfigs } = useUserGeckoConfigs({ userId: user?.id });
+  const { geckoConfigs } = useGeckoScoreState();
   const {
     userGeckoEnergyLogFlattened,
     isFetchingNextPage,
@@ -75,23 +75,16 @@ const ScreenGeckoManage = (props: Props) => {
     return new Date(now - hours * 60 * 60 * 1000).toISOString();
   }, [syncRange]);
 
-  const {
-    userGeckoSyncLogFlattened,
-    isFetchingNextPage: syncLogIsFetchingNextPage,
-    fetchNextPage: fetchNextSyncLogPage,
-    hasNextPage: hasNextSyncLogPage,
-  } = useUserGeckoSyncLog({ fetchAll: syncLogView === "chart", since: sinceISO });
+  // const {
+  //   userGeckoSyncLogFlattened,
+  //   isFetchingNextPage: syncLogIsFetchingNextPage,
+  //   fetchNextPage: fetchNextSyncLogPage,
+  //   hasNextPage: hasNextSyncLogPage,
+  // } = useUserGeckoSyncLog({ fetchAll: syncLogView === "chart", since: sinceISO });
 
   const { updateGeckoConfigs } = useUpdateGeckoConfigs({ userId: user?.id });
 
-  // useEffect(() => {
-  //   if (viewCategoryId){
-  //     console.log(viewCategoryId)
-  //     console.log(currentValue)
-  //     console.log(geckoConfigs?.thresholds)
-  //   }
-
-  // },[viewCategoryId, geckoConfigs]);
+ 
 
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;

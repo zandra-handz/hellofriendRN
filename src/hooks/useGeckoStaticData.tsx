@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useUser from "./useUser";
 import { loadAllStaticData } from "@/src/calls/api";
@@ -39,15 +40,18 @@ const useGeckoStaticData = () => {
   });
 
   const welcomeScripts = data?.welcome_scripts;
-  const rawScoreRules = data?.score_rules ?? [];
+  const rawScoreRules = data?.score_rules;
 
-  const scoreRules = {
-    all: rawScoreRules,
-    codes: (code: number) => rawScoreRules.find((r) => r.code === code),
-    labels: (label: string) => rawScoreRules.find((r) => r.label === label),
-    points: (code: number) =>
-      rawScoreRules.find((r) => r.code === code)?.points,
-  };
+  const scoreRules = useMemo(() => {
+    const rules = rawScoreRules ?? [];
+    return {
+      all: rules,
+      codes: (code: number) => rules.find((r) => r.code === code),
+      labels: (label: string) => rules.find((r) => r.label === label),
+      points: (code: number) =>
+        rules.find((r) => r.code === code)?.points,
+    };
+  }, [rawScoreRules]);
 
   return {
     welcomeScripts,
