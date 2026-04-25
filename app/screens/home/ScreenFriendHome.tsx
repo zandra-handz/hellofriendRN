@@ -219,7 +219,7 @@ const ScreenFriendHome = ({
               shadowColorA="transparent"
               outlineColorA="transparent"
             />
-            <DevEnergyButtons/>
+            {/* <DevEnergyButtons/> */}
 
             <SelectedFriendFooter
               userId={user.id}

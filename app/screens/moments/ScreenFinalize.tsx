@@ -53,7 +53,7 @@ const ScreenFinalize = () => {
       handlePreAddMoment({
         friendId: selectedFriend.id,
         capsuleId: moment.id,
-        isPreAdded: !moment.preAdded,
+        isPreAdded: !moment.pre_added_to_hello,
       });
     });
     navigateToAddHello();
@@ -65,7 +65,7 @@ const ScreenFinalize = () => {
     useCallback(() => {
       const categories: string[] = [
         ...new Set(
-          allCapsulesList.map((moment: Moment) => moment.typedCategory),
+          allCapsulesList.map((moment: Moment) => moment.typed_category),
         ),
       ];
       setUniqueCategories(categories);

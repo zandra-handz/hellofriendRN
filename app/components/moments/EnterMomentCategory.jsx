@@ -29,7 +29,7 @@ const EnterMomentCategory = ({ userEntryCapsule, viewOldStyle=false }) => {
 
   useEffect(() => {
     // Filter unique categories from the capsuleList
-    const categories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
+    const categories = [...new Set(capsuleList.map(capsule => capsule.typed_category))];
     setUniqueCategories(categories);
   }, [capsuleList]);
 
@@ -72,7 +72,7 @@ const EnterMomentCategory = ({ userEntryCapsule, viewOldStyle=false }) => {
   };
 
   const onSave = async (data) => { 
-    const updatedCategories = [...uniqueCategories, data.typedCategory];
+    const updatedCategories = [...uniqueCategories, data.typed_category];
     setUniqueCategories(updatedCategories);
   };
 
@@ -93,7 +93,7 @@ const EnterMomentCategory = ({ userEntryCapsule, viewOldStyle=false }) => {
           ...capsuleList,
           {
             id: response.id,
-            typedCategory: response.typed_category,
+            typed_category: response.typed_category,
             capsule: response.capsule,
           }
         ];
@@ -159,7 +159,7 @@ const EnterMomentCategory = ({ userEntryCapsule, viewOldStyle=false }) => {
        
     ) : (
         <ContainerEditCapsules
-        capsulesForSelectedCategory={capsuleList.filter(capsule => capsule.typedCategory === selectedCategory)}
+        capsulesForSelectedCategory={capsuleList.filter(capsule => capsule.typed_category === selectedCategory)}
           remainingCategories={remainingCategories}
           handleDelete={handleDelete}
         />

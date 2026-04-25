@@ -29,24 +29,16 @@ const DraftSyncHandler = () => {
           const formatted = {
             id: data.id,
             friend: data.friend,
-            typedCategory: data.typed_category || "Uncategorized",
+            typed_category: data.typed_category || "Uncategorized",
             capsule: data.capsule,
-            created: data.created_on,
-            preAdded: data.pre_added_to_hello,
+            created_on: data.created_on,
+            pre_added_to_hello: data.pre_added_to_hello,
             user_category: data.user_category || null,
             user_category_name: data.user_category_name || "No category",
             screen_x: data.screen_x,
             screen_y: data.screen_y,
-            coord: [data.screen_x, data.screen_x],
             stored_index: null,
-            easy_score: data.easy_score,
-            hard_score: data.hard_score,
-            quick_score: data.quick_score,
-            long_score: data.long_score,
-            relevant_score: data.relevant_score,
-            random_score: data.random_score,
-            unique_score: data.unique_score,
-            generic_score: data.generic_score,
+            //add gecko type and match only here?
             isDraft: false,
           };
 

@@ -225,6 +225,29 @@ const GlassMoment = ({
             </View>
           )}
 
+          {dangerVisible && moment && (
+            <View
+              style={[
+                styles.dangerTray,
+                { backgroundColor: darkerOverlayColor },
+              ]}
+            >
+              <FooterButtonItem
+                iconName="pencil"
+                label="Edit"
+                onPress={handleEditMoment}
+              />
+              <FooterButtonItem
+                iconName="delete"
+                label="Delete"
+                onPress={() => handleDelete(moment)}
+                confirmationRequired
+                confirmationTitle="Delete moment?"
+                confirmationMessage="This can't be undone."
+              />
+            </View>
+          )}
+
           <FooterButtonRow
             backgroundColor={darkerOverlayColor}
             color={color}

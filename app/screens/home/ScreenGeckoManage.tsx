@@ -6,11 +6,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TextHeader from "@/app/components/appwide/format/TextHeader";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
-import GeckoChart from "../helloes/GeckoChart";  
+import GeckoChart from "../helloes/GeckoChart";
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useUpdateGeckoConfigs from "@/src/hooks/GeckoCalls/useUpdateGeckoConfigs";
 import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
 import HoursSelector from "./HoursSelector";
+import OptionToggle from "@/app/components/headers/OptionToggle";
+import SvgIcon from "@/app/styles/SvgIcons";
+import manualGradientColors from "@/app/styles/StaticColors";
 import GeckoEnergyLogList from "@/app/components/helloes/GeckoEnergyLogList";
 import GeckoSyncLogList from "@/app/components/helloes/GeckoSyncLogList";
 import GeckoSyncLogChartStack from "@/app/components/helloes/GeckoSyncLogChartStack";
@@ -84,8 +87,6 @@ const ScreenGeckoManage = (props: Props) => {
 
   const { updateGeckoConfigs } = useUpdateGeckoConfigs({ userId: user?.id });
 
- 
-
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;
   const welcomeTextStyle = AppFontStyles.welcomeText;
@@ -112,20 +113,23 @@ const ScreenGeckoManage = (props: Props) => {
     : null;
 
   // Current value for the selected section
-  const currentValue = activeConfig && geckoConfigs
-    ? geckoConfigs[activeConfig.valueField]
-    : null;
+  const currentValue =
+    activeConfig && geckoConfigs ? geckoConfigs[activeConfig.valueField] : null;
 
   const THRESHOLDS = geckoConfigs ? geckoConfigs?.thresholds : null;
 
   const activeHours = geckoConfigs ? geckoConfigs?.active_hours : [];
 
+  const [typeCapsulesOnly, setTypeCapsulesOnly] = useState(false);
 
-
-
+useEffect(() => {
+  if (geckoConfigs?.use_game_type_capsules_only !== undefined) {
+    setTypeCapsulesOnly(geckoConfigs.use_game_type_capsules_only);
+  }
+}, [geckoConfigs]);
   // useEffect(() => {
   //   if (activeHours){
-  //     console.log(`gecko active hours`,geckoConfigs?.active_hours) 
+  //     console.log(`gecko active hours`,geckoConfigs?.active_hours)
   //   }
 
   // }, [geckoConfigs]);
@@ -143,7 +147,6 @@ const ScreenGeckoManage = (props: Props) => {
   }, [activeConfig, geckoConfigs]);
 
   const handleChoiceChange = useCallback(
-    
     (newValue: number | string) => {
       if (!activeConfig) return;
       updateGeckoConfigs({ [activeConfig.valueField]: newValue });
@@ -151,7 +154,7 @@ const ScreenGeckoManage = (props: Props) => {
     [activeConfig, updateGeckoConfigs],
   );
 
-    const handleActiveHours = useCallback(
+  const handleActiveHours = useCallback(
     (hours: number[], newHourType: number) => {
       if (!activeConfig) return;
       updateGeckoConfigs({
@@ -162,10 +165,19 @@ const ScreenGeckoManage = (props: Props) => {
     [activeConfig, updateGeckoConfigs],
   );
 
+  const handleTypesOnly = useCallback(
+    (value: boolean) => {
+      setTypeCapsulesOnly(value);
+
+      updateGeckoConfigs({
+        use_game_type_capsules_only: value,
+      });
+    },
+    [updateGeckoConfigs],
+  );
+
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor }]}
-    >
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <TextHeader
         label="Your Gecko"
         color={textColor}
@@ -200,6 +212,20 @@ const ScreenGeckoManage = (props: Props) => {
               buttonColor={lightDarkTheme.darkerGlassBackground}
               textStyle={subWelcomeTextStyle}
             />
+
+            {viewCategoryId === "head" && (
+              <OptionToggle
+                primaryColor={textColor}
+                backgroundColor={backgroundColor}
+                buttonColor={manualGradientColors.lightColor}
+                textStyle={AppFontStyles.subWelcomeText}
+                label="Use type capsules only"
+                icon={<SvgIcon name="scatter_plot" size={20} color={textColor} />}
+                value={typeCapsulesOnly}
+                onPress={() => handleTypesOnly(!typeCapsulesOnly)}
+              />
+            )}
+
             {viewCategoryId === "feet" && (
               <HoursSelector
                 key={`${currentValue}-${(geckoConfigs?.active_hours ?? []).join(",")}`}
@@ -214,8 +240,8 @@ const ScreenGeckoManage = (props: Props) => {
               />
             )}
           </Animated.View>
-        )} 
-{/* 
+        )}
+        {/* 
         <View style={styles.syncToggleRow}>
           <Pressable
             onPress={() => setSyncLogView("list")}
@@ -479,10 +505,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   hourSelectorWrapper: {
-    width: '100%',
+    width: "100%",
     height: 60,
-    backgroundColor: 'pink',
-     marginVertical: 20,
+    backgroundColor: "pink",
+    marginVertical: 20,
   },
   syncToggleRow: {
     flexDirection: "row",

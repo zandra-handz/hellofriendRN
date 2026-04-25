@@ -73,6 +73,17 @@ const ScreenMomentFocus = () => {
   const CARD_PADDING = 4;
   const SPACER_BETWEEN_BAR_AND_CARD = 2; // low bc there is already parent padding
 
+
+  const [geckoGameTypesVisible, setGeckoGameTypesVisible ] = useState(false);
+
+
+  const handleOpenTypes = () => {
+  setGeckoGameTypesVisible(true)
+  };
+
+  const handleCloseTypes = () => {
+    setGeckoGameTypesVisible(false)
+  }
   // only used to tell background screen when to turn dark
   const handleOpenCatCreator = () => {
     setCatCreatorVisible(true);
@@ -122,6 +133,7 @@ const ScreenMomentFocus = () => {
         defaultCategory={settings?.user_default_category}
         friendId={selectedFriend?.id}
         friendName={selectedFriend?.name}
+        hiddenTypesUnlocked={selectedFriend?.hidden_game_options_unlocked_on}
         userId={user?.id}
         primaryColor={lightDarkTheme.primaryText}
         primaryBackground={lightDarkTheme.primaryBackground}
@@ -140,6 +152,9 @@ const ScreenMomentFocus = () => {
         catCreatorVisible={catCreatorVisible}
         openCatCreator={handleOpenCatCreator}
         closeCatCreator={handleCloseCatCreator}
+        openTypes={handleOpenTypes}
+        closeTypes={handleCloseTypes}
+        typesVisible={geckoGameTypesVisible}
         momentText={momentText}
         updateExistingMoment={updateExistingMoment}
         existingMomentObject={existingMomentObject}

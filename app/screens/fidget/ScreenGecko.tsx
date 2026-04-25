@@ -105,6 +105,10 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const { geckoScoreState } = useGeckoScoreState();
 
+
+  const useTypeCapsulesOnly =
+  geckoScoreState?.use_game_type_capsules_only ?? false;
+
   const rerenderCountRef = useRef(0);
 
   const shouldUseGuestPeer =
@@ -614,6 +618,7 @@ const handleNavBack = useCallback(() => {
     capsule: null,
     uniqueIndex: null,
     id: null,
+    geckoGameType: null
   });
 
   const handleNavigateToCreateNew = useCallback(() => {
@@ -774,22 +779,56 @@ const handleNavBack = useCallback(() => {
   }, [capsuleMap]);
 
   // sort by angle from center, so gecko goes in circle around the screen
-  const momentCoords = useMemo(() => {
-    return [...capsuleList]
-      .sort((a, b) => {
-        const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
-        const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
-        return angleA - angleB;
-      })
-      .slice(0, MAX_MOMENTS)
-      .map((m) => ({
-        id: m.id,
-        coord: [m.screen_x, m.screen_y],
-        stored_index: m.stored_index,
-      }));
+  // const momentCoords = useMemo(() => {
+  //   return [...capsuleList]
+  //     .sort((a, b) => {
+  //       const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+  //       const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+  //       return angleA - angleB;
+  //     })
+  //     .slice(0, MAX_MOMENTS)
+  //     .map((m) => ({
+  //       id: m.id,
+  //       coord: [m.screen_x, m.screen_y],
+  //       stored_index: m.stored_index,
+  //     }));
 
     
-  }, [capsuleList]);
+  // }, [capsuleList, geckoScoreState]);
+
+  const momentCoords = useMemo(() => {
+  if (!capsuleList) return [];
+
+  const useTypeCapsulesOnly =
+    geckoScoreState?.use_game_type_capsules_only ?? false;
+
+  return [...capsuleList]
+    // 🔑 filter FIRST
+    .filter((m) => {
+      if (!useTypeCapsulesOnly) return true;
+
+      const val = m.gecko_game_type;
+      return (
+        typeof val === "number" &&
+        Number.isFinite(val) &&
+        val > 1
+      );
+    })
+    // then sort
+    .sort((a, b) => {
+      const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+      const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+      return angleA - angleB;
+    })
+    // then slice
+    .slice(0, MAX_MOMENTS)
+    // then map
+    .map((m) => ({
+      id: m.id,
+      coord: [m.screen_x, m.screen_y],
+      stored_index: m.stored_index,
+    }));
+}, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
 
   const [resetSkia, setResetSkia] = useState<number | null>(null);
 
@@ -939,14 +978,17 @@ const handleNavBack = useCallback(() => {
     setSpeedSetting(next);
   }, [speedSetting]);
 
-  const handleNavToSelect = useCallback(() => {
-    if (autoPickUp) {
-      setAutoPickUp(false);
-      autoPickUpRef.current = false;
-    } else {
-      navigateToGeckoSelectSettings({ selection: autoSelectType });
-    }
-  }, [autoPickUp, autoSelectType, navigateToGeckoSelectSettings]);
+
+  // ~~~~~~~~~~~~~~~~~~~~ DON'T DELETE YET 
+  // const handleNavToSelect = useCallback(() => {
+  //   if (autoPickUp) {
+  //     setAutoPickUp(false);
+  //     autoPickUpRef.current = false;
+  //   } else {
+  //     navigateToGeckoSelectSettings({ selection: autoSelectType });
+  //   }
+  // }, [autoPickUp, autoSelectType, navigateToGeckoSelectSettings]);
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // const handleNavToQRCode = useCallback(() => {
   //   navigateToQRCode({
@@ -1113,6 +1155,7 @@ useEffect(() => {
       capsule: null,
       uniqueIndex: null,
       id: null,
+      geckoGameType: null
     };
   }, [resetSkia]);
 
@@ -1242,6 +1285,7 @@ useEffect(() => {
           capsule: null,
           uniqueIndex: null,
           id: null,
+          geckoGameType: null
         };
         return;
       }
@@ -1308,6 +1352,7 @@ useEffect(() => {
         capsule: foundMoment.capsule,
         uniqueIndex: foundMoment.uniqueIndex,
         id: foundMoment.id,
+        geckoGameType: foundMoment.gecko_game_type
       };
  
  
@@ -1505,7 +1550,7 @@ useEffect(() => {
         onPress_toggleReadMode={handleToggleManual}
         onPress_changeSpeed={handleChangeSpeed}
         onPress_geckoVoice={handleGeckoReadAndAsk}
-        onPress_autoPickUpScreen={handleNavToSelect}
+        // onPress_autoPickUpScreen={handleNavToSelect}
         // onPress_QRCodeScreen={handleNavToQRCode}
       />
     </NoGradientBackground>

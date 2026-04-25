@@ -6,6 +6,7 @@ import {
   Alert,
   StyleSheet,
   Text,
+  Pressable
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextHeader from "../appwide/format/TextHeader";
@@ -20,9 +21,12 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { FriendDashboardData } from "@/src/types/FriendTypes";
 import { AppFontStyles } from "@/app/styles/AppFonts";
 import MomentFocusTray from "./MomentFocusTray";
+import SelectedCategoryButton from "./SelectedCategoryButton";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
+import GeckoGameTypesUI from "./GeckoGameTypesUI";
+import SvgIcon from "@/app/styles/SvgIcons";
+import useUserSettings from "@/src/hooks/useUserSettings";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 
 type Props = {
@@ -31,6 +35,7 @@ type Props = {
   catCreatorVisible: boolean;
   closeCatCreator: () => void;
   openCatCreator: () => void;
+  
   updateExistingMoment: boolean;
   existingMomentObject?: Moment;
   triggerSaveFromLateral: boolean;
@@ -44,7 +49,7 @@ const MomentWriteEditView = ({
   paddingHorizontal,
   defaultCategory,
   themeColors,
-
+hiddenTypesUnlocked,
   darkGlassBackground,
   userId,
   screenCameFromToParent,
@@ -55,6 +60,9 @@ const MomentWriteEditView = ({
   lighterOverlayColor,
   openCatCreator,
   closeCatCreator,
+  openTypes,
+  closeTypes,
+  typesVisible,
   updateExistingMoment,
   existingMomentObject,
   triggerSaveFromLateral,
@@ -76,20 +84,14 @@ const MomentWriteEditView = ({
   const { navigateBack, navigateToMomentView } = useAppNavigations();
 
   const { capsuleList } = useCapsuleList();
+  const { geckoGameTypes } = useUserSettings();
 
-  const yTranslateValue = useSharedValue(-850);
 
   const handleOpenCat = () => {
-    openCatCreator();
-
-    // yTranslateValue.value = withTiming(0, { duration: 100 });
+    openCatCreator(); 
     Keyboard.dismiss();
   };
-
-  // const handleCloseCat = () => {
-  //   closeCatCreator();
-  //   // yTranslateValue.value = withTiming(-850, { duration: 100 });
-  // };
+ 
 
   const TOPPER_PADDING_TOP = 0;
 
@@ -101,20 +103,20 @@ const MomentWriteEditView = ({
   const [userChangedCategory, setUserChangedCategory] =
     useState<boolean>(false);
 
-  const extractScoresFromMoment = (moment?: Moment): MomentScores => {
-    if (!moment) return DEFAULT_SCORES;
+  // const extractScoresFromMoment = (moment?: Moment): MomentScores => {
+  //   if (!moment) return DEFAULT_SCORES;
 
-    return {
-      easy_score: moment.easy_score ?? DEFAULT_SCORES.easy_score,
-      hard_score: moment.hard_score ?? DEFAULT_SCORES.hard_score,
-      quick_score: moment.quick_score ?? DEFAULT_SCORES.quick_score,
-      long_score: moment.long_score ?? DEFAULT_SCORES.long_score,
-      relevant_score: moment.relevant_score ?? DEFAULT_SCORES.relevant_score,
-      random_score: moment.random_score ?? DEFAULT_SCORES.random_score,
-      unique_score: moment.unique_score ?? DEFAULT_SCORES.unique_score,
-      generic_score: moment.generic_score ?? DEFAULT_SCORES.generic_score,
-    };
-  };
+  //   return {
+  //     easy_score: moment.easy_score ?? DEFAULT_SCORES.easy_score,
+  //     hard_score: moment.hard_score ?? DEFAULT_SCORES.hard_score,
+  //     quick_score: moment.quick_score ?? DEFAULT_SCORES.quick_score,
+  //     long_score: moment.long_score ?? DEFAULT_SCORES.long_score,
+  //     relevant_score: moment.relevant_score ?? DEFAULT_SCORES.relevant_score,
+  //     random_score: moment.random_score ?? DEFAULT_SCORES.random_score,
+  //     unique_score: moment.unique_score ?? DEFAULT_SCORES.unique_score,
+  //     generic_score: moment.generic_score ?? DEFAULT_SCORES.generic_score,
+  //   };
+  // };
 
   const handleUserChangedCategoryState = () => {
     if (!userChangedCategory) {
@@ -190,6 +192,30 @@ const MomentWriteEditView = ({
     Number(existingMomentObject?.user_category ?? 0),
   );
 
+    const [selectedGameType, setSelectedGameType] = useState(
+    existingMomentObject?.gecko_game_type ?? 1, // for NONE
+  );
+
+  const updateSelectedType = (newValue: number) => {
+    setSelectedGameType(newValue);
+  };
+
+  const selectedGameTypeLabel = useMemo(() => {
+    const found = geckoGameTypes?.find((t: any) => t.value === selectedGameType);
+    return found?.label ?? "Pick a game type";
+  }, [geckoGameTypes, selectedGameType]);
+
+  const [selectorMode, setSelectorMode] = useState<"category" | "game_type">(
+    existingMomentObject?.user_category &&
+      (!existingMomentObject?.gecko_game_type ||
+        existingMomentObject.gecko_game_type === 1)
+      ? "category"
+      : "game_type",
+  );
+
+  const toggleSelectorMode = () =>
+    setSelectorMode((m) => (m === "category" ? "game_type" : "category"));
+
   type MomentScores = {
     easy_score: number;
     hard_score: number;
@@ -212,66 +238,37 @@ const MomentWriteEditView = ({
     generic_score: 2,
   };
 
-  // In your component:
-  // const [scoresObject, setScoresObject] = useState<MomentScores>(DEFAULT_SCORES);
-
-  const [scoresObject, setScoresObject] = useState<MomentScores>(() =>
-    extractScoresFromMoment(existingMomentObject),
-  );
-
+ 
   const textLength = useMemo(() => {
     console.log("textLength: ", momentTextToSave?.length);
     return momentTextToSave?.length;
   }, [momentTextToSave]);
-  // Update individual score:
-  const handleScoreChange = (field: keyof MomentScores, value: number) => {
-    setScoresObject((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
+ 
   const handleUserCategorySelect = ({ name: name, id: id }) => {
     setSelectedUserCategory(id);
     setSelectedCategory(name);
   };
 
   const handleSave = async () => {
-    // console.log(scoresObject);
-    if (!selectedUserCategory) {
-      Alert.alert(`DEV MODE`, `Oops! SelectedUserCategory is null`, [
-        {
-          text: "Back",
-          onPress: () => {},
-          style: "cancel",
-        },
-      ]);
-      return;
-    }
-    // const textLength = momentTextToSave.length;
-
     if (!textLength) {
       Alert.alert(
         `Oops!`,
         `Please enter your talking point first before saving it.`,
-        [
-          {
-            text: "Back",
-            onPress: () => {},
-            style: "cancel",
-          },
-        ],
+        [{ text: "Back", onPress: () => {}, style: "cancel" }],
       );
       return;
     }
 
-    if (!selectedUserCategory) {
+    if (selectorMode === "category" && !selectedUserCategory) {
       Alert.alert(`Oops!`, `Please select a category before trying to save.`, [
-        {
-          text: "Back",
-          onPress: () => {},
-          style: "cancel",
-        },
+        { text: "Back", onPress: () => {}, style: "cancel" },
+      ]);
+      return;
+    }
+
+    if (selectorMode === "game_type" && (!selectedGameType || selectedGameType === 1)) {
+      Alert.alert(`Oops!`, `Please pick a gecko game type before trying to save.`, [
+        { text: "Back", onPress: () => {}, style: "cancel" },
       ]);
       return;
     }
@@ -284,14 +281,15 @@ const MomentWriteEditView = ({
             selectedUserCategory: selectedUserCategory,
             selectedUserCategoryName: selectedCategory,
             moment: momentTextToSave,
-            easy_score: scoresObject.easy_score,
-            hard_score: scoresObject.hard_score,
-            quick_score: scoresObject.quick_score,
-            long_score: scoresObject.long_score,
-            relevant_score: scoresObject.relevant_score,
-            random_score: scoresObject.random_score,
-            unique_score: scoresObject.unique_score,
-            generic_score: scoresObject.generic_score,
+            geckoGameType: selectedGameType,
+            // easy_score: scoresObject.easy_score,
+            // hard_score: scoresObject.hard_score,
+            // quick_score: scoresObject.quick_score,
+            // long_score: scoresObject.long_score,
+            // relevant_score: scoresObject.relevant_score,
+            // random_score: scoresObject.random_score,
+            // unique_score: scoresObject.unique_score,
+            // generic_score: scoresObject.generic_score,
           };
           showFlashMessage("Idea saved!", false, 2000);
           await handleCreateMoment(requestData);
@@ -300,16 +298,18 @@ const MomentWriteEditView = ({
             //these are the actual backend fields
             typed_category: selectedCategory,
             user_category: selectedUserCategory,
+            gecko_game_type: selectedGameType,
+
             // capsule: momentTextRef.current.getText(),
             capsule: momentTextToSave,
-            easy_score: scoresObject.easy_score,
-            hard_score: scoresObject.hard_score,
-            quick_score: scoresObject.quick_score,
-            long_score: scoresObject.long_score,
-            relevant_score: scoresObject.relevant_score,
-            random_score: scoresObject.random_score,
-            unique_score: scoresObject.unique_score,
-            generic_score: scoresObject.generic_score,
+            // easy_score: scoresObject.easy_score,
+            // hard_score: scoresObject.hard_score,
+            // quick_score: scoresObject.quick_score,
+            // long_score: scoresObject.long_score,
+            // relevant_score: scoresObject.relevant_score,
+            // random_score: scoresObject.random_score,
+            // unique_score: scoresObject.unique_score,
+            // generic_score: scoresObject.generic_score,
           };
           showFlashMessage("Changes saved!", false, 1000);
           await handleEditMoment(existingMomentObject?.id, editData);
@@ -372,6 +372,17 @@ const MomentWriteEditView = ({
   return (
     <TouchableWithoutFeedback style={styles.container} onPress={() => {}}>
       <View style={{ flex: 1 }}>
+        <GeckoGameTypesUI
+        hiddenTypesUnlocked={hiddenTypesUnlocked}
+        isVisible={typesVisible}
+        onClose={closeTypes}
+        color={primaryColor}
+        highlightColor={manualGradientColors.lightColor}
+        backgroundColor={primaryBackground}
+        selectedValue={selectedGameType}
+        onSelect={updateSelectedType}
+        
+        />
         <CategoryCreator
           userId={userId}
           primaryColor={primaryColor}
@@ -389,9 +400,9 @@ const MomentWriteEditView = ({
           updatingExisting={updateExistingMoment}
           existingId={Number(existingMomentObject?.user_category) || null}
           onClose={handleCloseCatCreator}
-          yTranslateValue={yTranslateValue}
-          scoresObject={scoresObject}
-          handleScoreChange={handleScoreChange}
+          // yTranslateValue={yTranslateValue}
+          // scoresObject={scoresObject}
+          // handleScoreChange={handleScoreChange}
         />
 
         <View
@@ -410,7 +421,12 @@ const MomentWriteEditView = ({
               color={primaryColor}
               fontStyle={welcomeTextStyle}
               showNext={true}
-              nextEnabled={!!(textLength && selectedCategory)}
+              nextEnabled={
+                !!textLength &&
+                (selectorMode === "category"
+                  ? !!selectedCategory
+                  : !!selectedGameType && selectedGameType !== 1)
+              }
               onNext={handleSave}
               onBack={navigateBack}
               nextColor={manualGradientColors.homeDarkColor}
@@ -419,28 +435,79 @@ const MomentWriteEditView = ({
               nextDisabledBackgroundColor={"gray"}
             />
 
-            <MomentFocusTray
-              userId={userId}
-              userDefaultCategory={defaultCategory}
-              themeColors={themeColors}
-              primaryColor={primaryColor}
-              lighterOverlayColor={lighterOverlayColor}
-              primaryBackground={primaryBackground}
-              capsuleList={capsuleList}
-              navigateBack={navigateBack}
-              handleSave={handleSave}
-              paddingTop={TOPPER_PADDING_TOP}
-              friendDefaultCategory={
-                friendFaves?.friend_default_category || null
-              }
-              updateExistingMoment={updateExistingMoment}
-              freezeCategory={userChangedCategory}
-              onPress={handleOpenCat}
-              label={selectedCategory}
-              categoryId={selectedUserCategory}
-              friendId={friendId}
-              friendName={friendName}
-            />
+            <View style={styles.trayRow}>
+              <MomentFocusTray
+                updateExistingMoment={updateExistingMoment}
+                primaryColor={primaryColor}
+                userId={userId}
+                friendId={friendId}
+                themeColors={themeColors}
+              />
+              <Pressable
+                onPress={toggleSelectorMode}
+                hitSlop={6}
+                style={({ pressed }) => [
+                  styles.modeToggleCorner,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <SvgIcon
+                  name={selectorMode === "game_type" ? "pencil" : "scatter_plot"}
+                  color={primaryColor}
+                  size={12}
+                />
+                <Text style={[styles.modeToggleCornerLabel, { color: primaryColor }]}>
+                  {selectorMode === "game_type" ? "use category" : "use gecko game"}
+                </Text>
+              </Pressable>
+            </View>
+
+            {selectorMode === "category" ? (
+              <SelectedCategoryButton
+                userId={userId}
+                friendId={friendId}
+                friendName={friendName}
+                userDefaultCategory={defaultCategory}
+                themeColors={themeColors}
+                primaryColor={primaryColor}
+                lighterOverlayColor={lighterOverlayColor}
+                primaryBackground={primaryBackground}
+                capsuleList={capsuleList}
+                friendDefaultCategory={friendFaves?.friend_default_category || null}
+                fontSize={14}
+                fontSizeEditMode={14}
+                freezeCategory={userChangedCategory}
+                onPress={handleOpenCat}
+                label={selectedCategory}
+                categoryId={selectedUserCategory}
+                iconSize={18}
+              />
+            ) : (
+              <Pressable
+                onPress={openTypes}
+                style={({ pressed }) => [
+                  styles.gameTypeButton,
+                  {
+                    borderColor: `${primaryColor}30`,
+                    backgroundColor: `${primaryColor}0D`,
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}
+              >
+                <SvgIcon name="scatter_plot" color={primaryColor} size={22} />
+                <View style={styles.gameTypeButtonTextWrap}>
+                  <Text style={[styles.gameTypeButtonHint, { color: primaryColor }]}>
+                    Gecko game
+                  </Text>
+                  <Text
+                    style={[styles.gameTypeButtonLabel, { color: primaryColor }]}
+                    numberOfLines={1}
+                  >
+                    {selectedGameTypeLabel}
+                  </Text>
+                </View>
+              </Pressable>
+            )}
             {createMomentMutation.isPending && (
               <View
                 style={{
@@ -496,6 +563,52 @@ const styles = StyleSheet.create({
   rowContainer: { flexDirection: "row" },
   labelWrapper: {},
   label: {},
+  trayRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: -8,
+    marginBottom: 0,
+  },
+  modeToggleCorner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  modeToggleCornerLabel: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 11,
+    letterSpacing: 0.3,
+  },
+  gameTypeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 18,
+    borderWidth: 2,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  gameTypeButtonTextWrap: {
+    flex: 1,
+  },
+  gameTypeButtonHint: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 11,
+    opacity: 0.6,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  gameTypeButtonLabel: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 15,
+    marginTop: 2,
+  },
 });
 
 export default MomentWriteEditView;

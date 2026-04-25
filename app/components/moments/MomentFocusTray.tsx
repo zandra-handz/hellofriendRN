@@ -1,134 +1,72 @@
-import { View, StyleSheet} from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import React from "react";
-import SwitchFriend from "../home/SwitchFriend";
-import { AppFontStyles } from "@/app/styles/AppFonts";
-import SelectedCategoryButton from "./SelectedCategoryButton"; 
+import SvgIcon from "@/app/styles/SvgIcons";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import LoadingPage from "../appwide/spinner/LoadingPage";
- 
 
 type Props = {
   updateExistingMoment: boolean;
-  paddingTop: number;
-  freezeCategory: boolean;
-  onPress: () => void;
-  label: string;
-  categoryId: number;
-  friendId: number;
-  friendName: string;
+  primaryColor: string;
   userId: number;
-  userDefaultCategory: number;
-
+  friendId: number;
+  themeColors: { darkColor?: string };
 };
 
 const MomentFocusTray = ({
-  userId,
-  userDefaultCategory,
- 
-  themeColors,
-  primaryColor,
-  primaryBackground,
-  lighterOverlayColor,
- 
-  capsuleList,
- 
-
   updateExistingMoment,
-  freezeCategory,
-  onPress,
-  label,
-  categoryId,
+  primaryColor,
+  userId,
   friendId,
-  friendName,
-  friendDefaultCategory,
+  themeColors,
 }: Props) => {
-  const ICON_SIZE = 16;
+  const { navigateToSelectFriend } = useAppNavigations();
+  const { loadingDash } = useFriendDash({ userId, friendId });
 
-  const FONT_SIZE = 12;
-  const { loadingDash } = useFriendDash({ userId: userId, friendId: friendId });
+  const onPress = () => {
+    if (updateExistingMoment) return;
+    navigateToSelectFriend({ useNavigateBack: true });
+  };
 
-  const welcomeTextStyle = AppFontStyles.welcomeText;
   return (
-    <View style={styles.container}>
-        {loadingDash && (
-          <View style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-start'}}>
-            <View>
-
-            <LoadingPage
-              loading={true}
-              color={themeColors.darkColor}
-              spinnerType="flow"
-              spinnerSize={30}
-              includeLabel={false}
-            />
-            </View>
-          </View>
-        )}
-
-
-   {!loadingDash && (
-      <View
-        style={styles.innerContainer}
-      >
-  
-          <View style={{ maxWidth: "100%" }}>
-              <SwitchFriend
-              lighterOverlayColor={lighterOverlayColor}
-              nameLabel={friendName}
-                primaryColor={primaryColor}
-                welcomeTextStyle={welcomeTextStyle}
-                maxWidth={"100%"}
-                fontSize={FONT_SIZE}
-                editMode={!updateExistingMoment}
-                iconSize={ICON_SIZE}
-              />
-            </View>
-            <View style={{ maxWidth: "65%", flexShrink: 1 }}>
-              <SelectedCategoryButton
-                userId={userId}
-                friendId={friendId}
-                friendName={friendName}
-                userDefaultCategory={userDefaultCategory}
-                themeColors={themeColors}
-                primaryColor={primaryColor}
-                lighterOverlayColor={lighterOverlayColor}
-                primaryBackground={primaryBackground}
-                capsuleList={capsuleList}
-                friendDefaultCategory={friendDefaultCategory}
-                fontSize={FONT_SIZE}
-                fontSizeEditMode={FONT_SIZE}
-                freezeCategory={freezeCategory}
-                onPress={onPress}
-                label={label}
-                categoryId={categoryId}
-                iconSize={ICON_SIZE}
-              />
-            </View>
-         
-    
-      </View>
-           )}
-    </View>
+    <Pressable
+      onPress={onPress}
+      hitSlop={8}
+      style={({ pressed }) => [
+        styles.container,
+        { opacity: pressed ? 0.5 : 1 },
+      ]}
+    >
+      {loadingDash ? (
+        <View style={styles.spinnerWrap}>
+          <LoadingPage
+            loading={true}
+            color={themeColors?.darkColor ?? primaryColor}
+            spinnerType="flow"
+            spinnerSize={14}
+            includeLabel={false}
+          />
+        </View>
+      ) : (
+        <SvgIcon name="account" size={14} color={primaryColor} />
+      )}
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: 50,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center", 
-
-  },
-  innerContainer: {
-    width: "100%",
-    flexDirection: "row",
-    flex: 1,
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    width: 28,
+    height: 28,
   },
-  
+  spinnerWrap: {
+    width: 14,
+    height: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 export default MomentFocusTray;

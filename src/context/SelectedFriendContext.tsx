@@ -22,6 +22,7 @@ const DEFAULT_FRIEND = {
   suggestion_settings: null,
   created_on: null,
   updated_on: null,
+  hidden_game_options_unlocked_on: null,
   lightColor: manualGradientColors.lightColor,
   darkColor: manualGradientColors.darkColor,
   fontColor: manualGradientColors.homeDarkColor,
@@ -63,6 +64,7 @@ const shapeFriend = (friend: any) => ({
   suggestion_settings: friend?.suggestion_settings,
   created_on: friend?.created_on,
   updated_on: friend?.updated_on,
+  hidden_game_options_unlocked_on: friend?.hidden_game_options_unlocked_on,
   ...safeColors(friend),
 });
 

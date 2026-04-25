@@ -49,7 +49,7 @@ const GlassPreviewBottom = ({
   onPress_toggleReadMode,
   onPress_changeSpeed,
   onPress_geckoVoice,
-  onPress_autoPickUpScreen,
+  // onPress_autoPickUpScreen,
   // onPress_QRCodeScreen,
 }) => {
   const translateY = useSharedValue(300);
@@ -80,8 +80,19 @@ const GlassPreviewBottom = ({
 
       momentIdSV.value = current?.id ?? null;
       categorySV.value = current?.category ?? "";
-      capsuleSV.value = current?.capsule ?? "";
+      // capsuleSV.value = current?.capsule ?? "";
 
+          const val = current?.geckoGameType;
+       
+
+const isValidType =
+  typeof val === "number" &&
+  // Number.isFinite(val) &&
+  val > 1;
+
+capsuleSV.value = isValidType
+  ? "???"
+  : current?.capsule ?? "";
       runOnJS(updateMomentRef)(current?.id ?? null);
     }
   );
@@ -253,12 +264,12 @@ const GlassPreviewBottom = ({
               label: "Speed",
               onPress: onPress_changeSpeed,
             },
-            {
-              iconName: "auto_mode",
-              color: autoPickUp ? highlightColor : color,
-              label: autoPickUp ? "Auto on" : "Auto off",
-              onPress: onPress_autoPickUpScreen,
-            },
+            // {
+            //   iconName: "auto_mode",
+            //   color: autoPickUp ? highlightColor : color,
+            //   label: autoPickUp ? "Auto on" : "Auto off",
+            //   onPress: onPress_autoPickUpScreen,
+            // },
             {
               iconName: "scatter_plot",
               label: "Scatter",

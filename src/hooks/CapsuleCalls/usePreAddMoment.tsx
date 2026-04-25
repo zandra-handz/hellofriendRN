@@ -15,7 +15,7 @@ const usePreAddMoment = ({ userId, friendId }: Props) => {
 
   const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
     queryClient.setQueryData(["Moments", userId, friendId], (oldMoments) => {
-      if (!oldMoments) return [{ ...momentData, preAdded: isPreAdded }];
+      if (!oldMoments) return [{ ...momentData, pre_added_to_hello: isPreAdded }];
 
       const updatedMoments = [...oldMoments];
       const momentIndex = updatedMoments.findIndex(
@@ -26,13 +26,12 @@ const usePreAddMoment = ({ userId, friendId }: Props) => {
         updatedMoments[momentIndex] = {
           ...updatedMoments[momentIndex],
           ...momentData,
-          preAdded: isPreAdded,
+          pre_added_to_hello: isPreAdded,
         };
       } else {
-        // Insert new moment with preAdded status
         updatedMoments.unshift({
           ...momentData,
-          preAdded: isPreAdded,
+          pre_added_to_hello: isPreAdded,
         });
       }
 

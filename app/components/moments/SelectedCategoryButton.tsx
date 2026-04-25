@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import GlobalPressable from "../appwide/button/GlobalPressable";
 import CategoryFriendHistoryCombinedModal from "../headers/CategoryFriendHistoryCombinedModal";
 
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -116,40 +115,36 @@ const SelectedCategoryButton = ({
 
   return (
     <>
-      <GlobalPressable
-        zIndex={3}
-        style={[styles.container, { borderColor: lighterOverlayColor }]}
+      <Pressable
         onPress={handleOnPress}
         onLongPress={handleLongPress}
+        style={({ pressed }) => [
+          styles.container,
+          {
+            borderColor: `${primaryColor}30`,
+            backgroundColor: `${primaryColor}0D`,
+            opacity: pressed ? 0.7 : 1,
+          },
+        ]}
       >
-        <View>
-          <View style={styles.topRowWrapper}>
+        <SvgIcon name="pencil" color={primaryColor} size={22} />
+        <View style={styles.textWrap}>
+          <View style={styles.hintRow}>
+            <Text style={[styles.hint, { color: primaryColor }]}>Category</Text>
             {isFriendDefault && (
-              <SvgIcon name={"star"} size={12} color={primaryColor} />
+              <SvgIcon name="star" size={11} color={primaryColor} />
             )}
-            {isFrozen && (
-              <SvgIcon name={"pin"} size={12} color={primaryColor} />
-            )}
+            {isFrozen && <SvgIcon name="pin" size={11} color={primaryColor} />}
           </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={[
-                // welcomeTextStyle,
-                {
-                  zIndex: 2,
-                  color: primaryColor,
-                  fontSize: editMode ? fontSizeEditMode : fontSize,
-                  width: "100%",
-                },
-              ]}
-            >
-              {label ? label : `Pick category`}
-            </Text>
-          </View>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[styles.label, { color: primaryColor }]}
+          >
+            {label ? label : "Pick category"}
+          </Text>
         </View>
-      </GlobalPressable>
+      </Pressable>
       {detailsModalVisible && (
         <View>
           <CategoryFriendHistoryCombinedModal
@@ -176,27 +171,37 @@ const SelectedCategoryButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8,
-    paddingHorizontal: 18,
-    paddingTop: 3,
-    // flex: 1,
-    height: 40,
-
-    borderWidth: 0.8,
-    borderRadius: 999,
-    width: "100%",
-    flexDirection: "column",
-  },
-  topRowWrapper: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 18,
+    borderWidth: 2,
+    marginTop: 0,
+    marginBottom: 0,
     width: "100%",
-    height: 10,
   },
-  innerContainer: { flexDirection: "column" },
-  rowContainer: { flexDirection: "row" },
-  labelWrapper: {},
-  label: {},
+  textWrap: {
+    flex: 1,
+  },
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  hint: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 11,
+    opacity: 0.6,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  label: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 15,
+    marginTop: 2,
+  },
 });
 
 //export default SelectedCategoryButton;

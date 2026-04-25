@@ -858,44 +858,17 @@ export const fetchFriendList = async () => {
   }
 };
 
-export const fetchMomentsAPI = async (friendId: number) => {
-  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+export const fetchMomentsAPI = async (
+  friendId: number,
+): Promise<MomentFromBackendType[]> => {
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`,
     );
-    //  console.log(response.data);
-    if (response && response.data) {
-      const capsules = response.data.map((capsule: MomentFromBackendType) => ({
-        id: capsule.id,
-        friend: capsule.friend,
-        typedCategory: capsule.typed_category || "Uncategorized",
-        capsule: capsule.capsule,
-        created: capsule.created_on,
-        preAdded: capsule.pre_added_to_hello,
-        user_category: capsule.user_category,
-        user_category_name: capsule.user_category_name || "No category",
-        screen_x: capsule.screen_x,
-        screen_y: capsule.screen_y,
-        stored_index: capsule.stored_index,
-        coord: [capsule.screen_x, capsule.screen_x],
-        easy_score: capsule.easy_score,
-        hard_score: capsule.hard_score,
-        quick_score: capsule.quick_score,
-        long_score: capsule.long_score,
-        relevant_score: capsule.relevant_score,
-        random_score: capsule.random_score,
-        unique_score: capsule.unique_score,
-        generic_score: capsule.generic_score,
-      }));
-
-      return capsules;
-    } else {
-      // console.log("fetchThoughtCapsules: no capsules added yet");
-      return []; // Return an empty array if no capsules
-    }
+    return response?.data ?? [];
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchMomentsAPI");
+    return [];
   }
 };
 
@@ -1568,7 +1541,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
       "/friends/upcoming/friends-included/",
       { params: { local_date: localDate } },
     );
-    console.log(`API CALL: fetchUpcomingHelloesAndFriends`);
+    console.log(`API CALL: fetchUpcomingHelloesAndFriends`, response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
