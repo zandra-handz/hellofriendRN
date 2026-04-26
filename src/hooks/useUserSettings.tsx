@@ -56,7 +56,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useEffect } from "react";
 import useUser from "./useUser";
-import { getUserSettings, getUserGeckoConfigs } from "@/src/calls/api";
+import { getUserSettings, getGeckoScoreState } from "@/src/calls/api";
 
 export type GeckoGameType = {
   value: number;
@@ -76,7 +76,7 @@ const userSettingsQueryOptions = (userId: number) => ({
 
 const geckoScoreStateQueryOptions = (userId: number) => ({
   queryKey: ["userGeckoScoreState", userId],
-  queryFn: () => getUserGeckoConfigs(),
+  queryFn: () => getGeckoScoreState(),
   enabled: !!userId,
   retry: 3,
 });

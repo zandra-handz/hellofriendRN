@@ -29,6 +29,7 @@ import CameraOutlineSvg from "./svgs/camera-outline";
 import CancelSvg from "./svgs/cancel";
 import CarSvg from "./svgs/car";
 import CarCogSvg from "./svgs/car-cog";
+import CardsPlayingSpadeSvg from "./svgs/cards-playing-spade";
 import CircleSvg from "./svgs/circle";
 import CircleOutlineSvg from "./svgs/circle-outline";
 import ChartBubbleSvg from "./svgs/chart-bubble";
@@ -185,6 +186,7 @@ const svgIcons = {
   note_text: NoteTextSvg, // location notes
   car: CarSvg,
   car_cog: CarCogSvg,
+  cards_playing_spade: CardsPlayingSpadeSvg,
   circle: CircleSvg,
   circle_outline: CircleOutlineSvg,
   pen_plus: PenPlusSvg,

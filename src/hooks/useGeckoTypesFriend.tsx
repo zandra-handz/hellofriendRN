@@ -1,9 +1,9 @@
 
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+ 
 import useUser from "./useUser";
-import { getUserSettings, getUserGeckoConfigs } from "@/src/calls/api";
+import { getUserSettings  } from "@/src/calls/api";
 
 const userSettingsQueryOptions = (userId: number) => ({
   queryKey: ["userSettings", userId],

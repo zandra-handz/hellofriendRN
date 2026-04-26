@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import useGroqBeta from "@/src/hooks/useGroqBeta";
 import useGeckoReadMoments from "@/src/hooks/useGeckoReadMoments";
+import Matches from "@/app/assets/shader_animations/Matches";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -159,7 +160,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     // isFriendBound,
     // pendingFriendId,
     // boundFriendId,
-    liveSeshPartnerId,
+    liveSeshPartner,
     guestPeerGeckoPositionSV,
     // registerOnGeckoCoords,
     registerOnHostGeckoCoords,
@@ -187,6 +188,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     
 
     requestPresenceStatus,
+    matchesSV,
+    sendMatchRequest,
   } = useGeckoWebsocket();
 
 
@@ -1263,9 +1266,18 @@ useEffect(() => {
 
   const sendHostGeckoPositionRef = useRef(sendHostOrSoloPosition);
 
+  const sendMatchRequestRef = useRef(sendMatchRequest);
+
   useEffect(() => {
     updateGeckoDataRef.current = updateGeckoData;
   }, [updateGeckoData]);
+
+
+  useEffect(() => {
+
+    sendMatchRequestRef.current = sendMatchRequest;
+
+  }, [sendMatchRequest]);
 
   useEffect(() => {
     sendHostGeckoPositionRef.current = sendHostOrSoloPosition;
@@ -1505,8 +1517,8 @@ useEffect(() => {
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
         friendName={selectedFriend.name}
-        TIME_SCORE={TIME_SCORE}
-        DAYS_SINCE={DAYS_SINCE}
+             requestPresenceStatus={requestPresenceStatus}
+    
         highlight={false}
         fontSmall={skiaFontSmall}
       />
@@ -1527,6 +1539,14 @@ useEffect(() => {
         {/* <EnergyText energySV={energySV} />
         <PeerGeckoPositionText peerGeckoPositionSV={hostPeerGeckoPositionSV} />
         <PeerGeckoPositionText peerGeckoPositionSV={guestPeerGeckoPositionSV} /> */}
+      </View>
+
+      <View style={styles.matchesContainer}>
+  <Matches
+    color={lightDarkTheme.primaryText}
+    matchesSV={matchesSV}
+    onSelect={sendMatchRequest}
+  />
       </View>
 
       <GlassPreviewBottom
@@ -1562,128 +1582,20 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-end",
-  },
-  statsWrapper: {
-    height: 106,
-    padding: 20,
-    paddingHorizontal: 20,
-    top: 60,
-    left: 16,
-    flex: 1,
-    position: "absolute",
-    flexDirection: "column",
-    borderRadius: 30,
-  },
-  scoreWrapper: {
-    height: 80,
-    padding: 20,
-    paddingHorizontal: 20,
-    top: 150,
-    left: 16,
-    flex: 1,
-    position: "absolute",
-    flexDirection: "column",
-    borderRadius: 30,
-  },
-  buttonText: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  statsText: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  typeText: {
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  movementSettingsRow: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    width: "100%",
-    height: 80,
-    top: 168,
-    left: 0,
-    alignItems: "center",
-    position: "absolute",
-    padding: 20,
-  },
-  manualButtonWrapper: {
-    borderRadius: 30,
-  },
-  manualButton: {
-    paddingVertical: 20,
-    borderRadius: 999,
-    height: 60,
-    width: 60,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-  },
-  qRCodeWrapper: {
-    width: 100,
-    left: 0,
-    padding: 20,
-    bottom: 286,
-    position: "absolute",
-  },
-  autoPickUpWrapper: {
-    width: 100,
-    left: 0,
-    padding: 20,
-    bottom: 246,
-    position: "absolute",
-  },
-  noMomentWrapper: {
-    width: "100%",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  noMomentText: {
-    fontSize: 17,
-  },
-  previewText: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  previewHeader: {
-    fontSize: 15,
-    fontWeight: "bold",
-    lineHeight: 22,
-  },
-  momentViewButton: {
-    padding: 20,
-    width: "100%",
-    height: 50,
-    top: 0,
-    right: 0,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    zIndex: 9000,
-    position: "absolute",
-  },
-  holdMomentButton: {
-    width: "auto",
-    maxWidth: 90,
-    flexDirection: "row",
-    justifyContent: "center",
-    padding: 8,
-    borderRadius: 999,
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  holdMomentText: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
+  },      
+  
   animatedCounterWrapper: {
     position: "absolute",
     width: "100%",
     top: 140,
     alignItems: "center",
   },
+
+  matchesContainer: {
+
+    position: "absolute", bottom: 166, left: 16 
+
+  }
 });
 
 export default ScreenGecko;

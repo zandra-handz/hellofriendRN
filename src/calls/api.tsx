@@ -230,23 +230,7 @@ export const getUserSettings = async () => {
   }
 };
 
-// this call's serializer currently adds categories
-export const getUserGeckoConfigs = async () => {
-  const today = new Date();
-  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
  
-
-  try { 
-
-    const response = await helloFriendApiClient.get(`/users/gecko/score-state/configs/`, {
-      params: { local_date: localDate },
-    }); 
-
-    return response.data;
-  } catch (e: unknown) {
-    handleApiError(e, "Error during getUserGeckoConfigs");
-  }
-};
 
 export const getUserGeckoCombinedData = async () => {
   try {

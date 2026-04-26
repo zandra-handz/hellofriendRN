@@ -12,6 +12,7 @@ import SleepWalk0 from "./sleepWalkOneClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
 import Moments from "./momentsClass";
+
 import {
   // packGeckoOnlyProdCompact40,
   packGeckoOnlyProdCompact_56,
@@ -1180,7 +1181,7 @@ const MomentsSkia = ({
 };
 
 const styles = StyleSheet.create({
-  pawSetterContainer: { position: "absolute", bottom: 180, left: 16 },
+  pawSetterContainer: { position: "absolute", bottom: 240, left: 16 },
 });
 
 const MemoizedMomentsSkia = React.memo(MomentsSkia);

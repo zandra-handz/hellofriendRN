@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, AppState } from "react-native";
 import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -12,15 +12,26 @@ import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText
 import useUser from "@/src/hooks/useUser";
 import { useNavigation } from "@react-navigation/native";
 import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
+import GlassTopBarLight from "./GlassTopBarLight";
+import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // optional (only if you added backend broadcast)
 // import PeerEnergyText from "@/app/components/debug/PeerEnergyText";
 
-type Props = {};
+type Props = {
+  skiaFontLarge: SkFont;
+  skiaFontSmall: SkFont;
+};
 
-const ScreenSecretGecko = (props: Props) => {
-const {
+
+const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props)=> {
+
+
+  const {
+  socketStatusSV,
+  peerJoinedStatusSV,
+  geckoMessageSV,
  
-  liveSeshPartnerId,
+    liveSeshPartner,
   energySV,
   peerGeckoPositionSV,
   guestPeerGeckoPositionSV,
@@ -33,10 +44,12 @@ const {
   sendGeckoPosition,
   sendGuestGeckoPosition,
   registerOnHostGeckoCoords,
+  requestPresenceStatus
 } = useGeckoWebsocket();
-  
+  const { user } = useUser(); 
+ 
 
-  const { user } = useUser();
+
   const { lightDarkTheme } = useLDTheme();
   const navigation = useNavigation();
   const handleExit = React.useCallback(() => {
@@ -85,6 +98,18 @@ const {
   //   };
   // }, [joinLiveSesh, leaveLiveSesh]);
 
+    useFocusEffect(                                                                                                                                                                                                                          
+    useCallback(() => {                                                                                                                                                                                                                    
+      requestPresenceStatus();                                                                                                                                                                                                             
+    }, [requestPresenceStatus]),                                                                                                                                                                                                           
+  );                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                           
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") requestPresenceStatus();
+    });
+    return () => sub.remove();
+  }, [requestPresenceStatus]);
 
 useFocusEffect(
   useCallback(() => {
@@ -110,7 +135,13 @@ useFocusEffect(
       setWantsConnection(false);
     };
   }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
+
+
+  
 );
+
+
+
 
   return (
     <GradientBackgroundAppDefault style={styles.backgroundContainer}>
@@ -159,6 +190,21 @@ useFocusEffect(
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
         />
       </View>
+
+            <GlassTopBarLight
+              socketStatusSV={socketStatusSV}
+              peerJoinedStatusSV={peerJoinedStatusSV}
+              geckoMessageSV={geckoMessageSV}
+              liveSeshPartner={liveSeshPartner}
+              textColor={lightDarkTheme.primaryText}
+              backgroundColor={lightDarkTheme.darkerOverlayBackground}
+              requestPresenceStatus={requestPresenceStatus}
+              // friendId={selectedFriend.id}
+              friendName={'Unknown'}
+          
+              highlight={false}
+              fontSmall={skiaFontSmall}
+            />
       <GlassPreviewBottomSecret
         color={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerGlassBackground}
