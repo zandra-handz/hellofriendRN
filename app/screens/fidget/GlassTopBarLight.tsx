@@ -96,9 +96,9 @@
           containerAnimationStyle,
           styles.statsWrapper,
           {
-            backgroundColor: backgroundColor,
-            borderWidth: highlight ? 2 : 0,
-            borderColor: textColor,
+          backgroundColor: backgroundColor,
+            // borderWidth: highlight ? 2 : 1,
+            // borderColor: textColor,
           },
         ]}
       >
@@ -153,7 +153,7 @@
     statsWrapper: {
       padding: 20,
       paddingHorizontal: 40,
-      paddingTop: 20,
+    //  paddingTop: 10,
       width: "90%",
       alignSelf: "center",
       alignItems: "stretch",

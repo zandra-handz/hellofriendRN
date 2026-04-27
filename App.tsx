@@ -89,6 +89,7 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 // import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 import ScreenGecko from "./app/screens/fidget/ScreenGecko";
 import ScreenSecretGecko from "./app/screens/fidget/ScreenSecretGecko";
+import ScreenGeckoWinAccept from "./app/screens/moments/ScreenGeckoWinAccept";
 // import ScreenGeckoSelectSettings from "./app/screens/moments/ScreenGeckoSelectSettings";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
@@ -231,7 +232,7 @@ export default Sentry.wrap(function App() {
                 "categories",
                 "Moments",
                 "friendDashboardData",
-                "userGeckoCombinedData", 
+                "userGeckoCombinedData",
                 "groqConversationHistory",
               ];
               return includedKeys.includes(query.queryKey[0] as string);
@@ -376,19 +377,19 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   //   id: selectedFriend?.id,
   // });
 
-// useEffect(() => {
-//   if (!selectedFriend?.isReady) {
-//     return;
-//   }
+  // useEffect(() => {
+  //   if (!selectedFriend?.isReady) {
+  //     return;
+  //   }
 
-//   if (selectedFriend?.id) {
-//     console.log(`BINDING FRIEND ${selectedFriend.name} to socket`)
-//     bindFriend(selectedFriend.id);
-//   } else {
-//     console.log('friend binding cleared')
-//     clearFriendBinding();
-//   }
-// }, [selectedFriend?.isReady, selectedFriend?.id, bindFriend, clearFriendBinding]);
+  //   if (selectedFriend?.id) {
+  //     console.log(`BINDING FRIEND ${selectedFriend.name} to socket`)
+  //     bindFriend(selectedFriend.id);
+  //   } else {
+  //     console.log('friend binding cleared')
+  //     clearFriendBinding();
+  //   }
+  // }, [selectedFriend?.isReady, selectedFriend?.id, bindFriend, clearFriendBinding]);
 
   if (!selectedFriend?.isReady) {
     if (!spinnerShownRef.current) {
@@ -481,6 +482,22 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
               />
             )}
           </Stack.Screen>
+          <Stack.Screen
+            name="SecretGeckoWinAccept"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              animation: "none",
+            }}
+          >
+            {(props) => (
+              <ScreenGeckoWinAccept
+                {...props}
+                // skiaFontLarge={skiaFontLarge}
+                // skiaFontSmall={skiaFontSmall}
+              />
+            )}
+          </Stack.Screen>
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
@@ -523,6 +540,23 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
             />
           )}
         </Stack.Screen>
+          <Stack.Screen
+            name="GeckoWinAccept"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              animation: "none",
+            }}
+          >
+            {(props) => (
+              <ScreenGeckoWinAccept
+                {...props}
+                // skiaFontLarge={skiaFontLarge}
+                // skiaFontSmall={skiaFontSmall}
+              />
+            )}
+          </Stack.Screen>
+ 
         {/* <Stack.Screen
           name="GeckoSelectSettings"
           component={ScreenGeckoSelectSettings}
@@ -693,12 +727,12 @@ export const Layout = ({ skiaFontLarge, skiaFontSmall }) => {
         //   dark: true,
         //   colors: { background: "hotpink", ...DefaultTheme.colors },
         // }}
-      > 
-          <LayoutInner
-            key={sessionKey}
-            skiaFontLarge={skiaFontLarge}
-            skiaFontSmall={skiaFontSmall}
-          /> 
+      >
+        <LayoutInner
+          key={sessionKey}
+          skiaFontLarge={skiaFontLarge}
+          skiaFontSmall={skiaFontSmall}
+        />
       </NavigationContainer>
     </AuthActionsContext.Provider>
   );
@@ -750,9 +784,7 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
 
       {user?.id && !isInitializing ? (
-
         <GeckoWebsocketProvider>
-          
           <NotificationsHandler
             receiveNotifications={receiveNotifications}
             expoPushToken={expoPushToken}
@@ -770,7 +802,6 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
             skiaFontLarge={skiaFontLarge}
             skiaFontSmall={skiaFontSmall}
           />
-        
         </GeckoWebsocketProvider>
       ) : (
         // : userIsPending ? (

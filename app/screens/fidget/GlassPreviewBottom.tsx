@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useCallback } from "react";
 import {
   View,
   Pressable,
@@ -49,6 +49,7 @@ const GlassPreviewBottom = ({
   onPress_toggleReadMode,
   onPress_changeSpeed,
   onPress_geckoVoice,
+  onPress_debugSendWin
   // onPress_autoPickUpScreen,
   // onPress_QRCodeScreen,
 }) => {
@@ -174,8 +175,34 @@ capsuleSV.value = isValidType
 
   if (!fontSmall) return null;
 
+
+
+  const handleDebug = useCallback(() => {
+    if (momentIdRef && momentIdRef.current) {
+      onPress_debugSendWin(momentIdRef.current)
+    }
+
+
+  },[momentIdRef])
+  
+
   return (
     <Animated.View style={[containerAnimationStyle, styles.previewOuter]}>
+
+        
+            {/* <Pressable
+            onPress={handleDebug}
+              style={{
+                width: 50,
+                height: 50,
+                position: "absolute",
+                bottom: 520,
+                left: 20,
+                backgroundColor: "orange",
+                borderRadius: 999,
+              }}
+            ></Pressable> */}
+      
       <View
         style={[
           styles.previewWrapper,

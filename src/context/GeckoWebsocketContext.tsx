@@ -1,3 +1,42 @@
+
+// ● Update(hellofriend\hfroot\users\consumers.py)                                                                                                                                                                                            
+//   ⎿  Added 19 lines                                                                                                                                                                                                                        
+//       2001              },                                                                                                                                                                                                                 
+//       2002          }))                                                                                                                                                                                                                    
+//       2003                                                                                                                                                                                                                                 
+//       2004 +    async def gecko_win_match_pending_accept_partner(self, event):                                                                                                                                                             
+//       2005 +        await self.send(text_data=json.dumps({                                                                                                                                                                          
+//       2006 +            'action': 'gecko_win_match_pending_accept_partner',                                                                                                                                                                
+//       2007 +            'data': {                                                                                                                                                                                                   
+//       2008 +                'pending_id': event.get('pending_id'),                                                                                                                                                                         
+//       2009 +                'match_key': event.get('match_key'),                                                                                                                                                                         
+//       2010 +                'accepted_by_user_id': event.get('accepted_by_user_id'),                                                                                                                                                     
+//       2011 +            },                                                                                                                                                                                                                 
+//       2012 +        }))                                                                                                                                                                                                                    
+//       2013 +                                                                                                                                                                                                                        
+//       2014 +    async def gecko_win_match_finalized(self, event):                                                                                                                                                                   
+//       2015 +        await self.send(text_data=json.dumps({                                                                                                                                                                          
+//       2016 +            'action': 'gecko_win_match_finalized',                                                                                                                                                                      
+//       2017 +            'data': {                                                                                                                                                                                                   
+//       2018 +                'match_key': event.get('match_key'),                                                                                                                                                                    
+//       2019 +                'partner_user_id': event.get('partner_user_id'),                                                                                                                                                        
+//       2020 +            },                                                                                                                                                                                                          
+//       2021 +        }))                                                                                                                                                                                                             
+//       2022 +                                                                                                                                                                                                                        
+//       2023      @database_sync_to_async
+//       2024      def _propose_gecko_match_win_db(self, my_capsule_id, partner_capsule_id, partner_user_id):
+//       2025          from friends.models import ThoughtCapsulez
+
+// ● Added. FE listens for:           
+//   - gecko_win_match_pending_accept_partner → "your peer has accepted, your acceptance still needed"
+//   - gecko_win_match_finalized → "both accepted, the win is recorded, source capsules are gone"
+
+
+
+
+
+
+
 import React, {
   createContext,
   useCallback,
@@ -15,13 +54,12 @@ import notepack from "notepack.io";
 type SocketStatus = "connecting" | "connected" | "disconnected";
 type PeerJoinedStatus = boolean;
 
-
-  type LiveSeshPartner = {
-    userId: number;                                                                                                                                                                                                                       
-    username: string | null;
-    friendId: number | null;                                                                                                                                                                                                              
-    friendName: string | null;
-  } | null;
+type LiveSeshPartner = {
+  userId: number;
+  username: string | null;
+  friendId: number | null;
+  friendName: string | null;
+} | null;
 
 type GeckoCoordsMessage = {
   from_user: number;
@@ -132,6 +170,12 @@ type GuestPeerGeckoPosition = {
   received_at: number;
 } | null;
 
+type GeckoWinProposed = {
+  sender_user_id: number;
+  // pending_id: number;
+  received_at: number;
+};
+
 type EnergyState = {
   energy: number;
   surplusEnergy: number;
@@ -222,6 +266,9 @@ type GeckoWebsocketContextValue = {
   requestPresenceStatus: () => boolean;
   sendReadStatusToGecko: (messageCode: 0 | 1 | 2) => boolean;
   sendFETextToGecko: (message: string) => boolean;
+
+  proposeGeckoWin: (capsuleId: string) => boolean;
+  registerOnGeckoWinProposed: (cb: (data: GeckoWinProposed) => void) => void;
 };
 
 const GeckoWebsocketContext = createContext<GeckoWebsocketContextValue | null>(
@@ -237,7 +284,9 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   //   null,
   // );
 
-    const [liveSeshPartner, setLiveSeshPartner] = useState<LiveSeshPartner>(null);
+  const [liveSeshPartner, setLiveSeshPartner] = useState<LiveSeshPartner>(null);
+ const [triggerNav, setTriggerNav] = useState(null);
+ 
 
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
   const peerJoinedStatusSV = useSharedValue<PeerJoinedStatus>(false);
@@ -277,6 +326,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const peerGeckoPositionSV = useSharedValue<PeerGeckoPosition>(null);
   const hostPeerGeckoPositionSV = useSharedValue<HostPeerGeckoPosition>(null);
   const guestPeerGeckoPositionSV = useSharedValue<GuestPeerGeckoPosition>(null);
+
+  const onGeckoWinProposedRef = useRef<((d: GeckoWinProposed) => void) | null>(
+    null,
+  );
 
   const energySV = useSharedValue<EnergyState>({
     energy: 1.0,
@@ -329,6 +382,13 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const FLUSH_INTERVAL_MS = 20000;
   const GECKO_POSITION_THROTTLE_MS = 50;
+
+  const registerOnGeckoWinProposed = useCallback(
+    (cb: (d: GeckoWinProposed) => void) => {
+      onGeckoWinProposedRef.current = cb;
+    },
+    [],
+  );
 
   const registerOnScoreState = useCallback((cb: (data: ScoreState) => void) => {
     onScoreStateRef.current = cb;
@@ -815,15 +875,39 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const repullCapsuleMatches = useCallback(() => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
     wsRef.current.send(JSON.stringify({ action: "resync_capsule_matches" }));
-    return true;                                                                                                                                                                                                                          
+    return true;
   }, []);
 
   const sendMatchRequest = useCallback((geckoGameType: number) => {
-    console.log(`gecko game type sending: `, geckoGameType)
+    console.log(`gecko game type sending: `, geckoGameType);
     if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
     wsRef.current.send(
       JSON.stringify({
         action: "send_match_request",
+        data: { gecko_game_type: geckoGameType },
+      }),
+    );
+    return true;
+  }, []);
+
+  const proposeGeckoWin = useCallback((capsuleId: string) => {
+    if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
+    wsRef.current.send(
+      JSON.stringify({
+        action: "propose_gecko_win",
+        data: { capsule_id: capsuleId },
+      }),
+    );
+    return true;
+  }, []);
+
+
+    const proposeGeckoMatchWin = useCallback((geckoGameType: number) => {
+    console.log(`gecko game type sending: `, geckoGameType);
+    if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
+    wsRef.current.send(
+      JSON.stringify({
+        action: "propose_gecko_match_win",
         data: { gecko_game_type: geckoGameType },
       }),
     );
@@ -941,8 +1025,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         getGeckoScreenPosition();
         console.log("join sessionnnn");
 
-            // was taken out when I added peer presence but I am not sure why
-          joinLiveSesh(); 
+        // was taken out when I added peer presence but I am not sure why
+        joinLiveSesh();
       }
     };
 
@@ -1009,6 +1093,41 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
       if (message.action === "peer_presence") {
         peerJoinedStatusSV.value = message.data?.online ?? false;
+        return;
+      }
+
+      // nav to pending screen  using data.pending_id.       
+      if (message.action === "gecko_win_proposed") {
+        console.log("[WS] gecko_win_proposed", message.data);
+        onGeckoWinProposedRef.current?.({
+          sender_user_id: message.data?.sender_user_id,
+          // pending_id: message.data?.pending_id,
+          received_at: performance.now(),
+        });
+        return;
+      }
+
+      if (message.action === "propose_gecko_win_ok") {
+      
+        console.log("[WS] propose_gecko_win_ok", message.data);
+        return;
+      }
+
+      
+      if (message.action === "propose_gecko_match_win_ok") {
+
+        if (message.data?.capsule_id) {
+          setTriggerNav(performance.now())
+
+        }
+      
+        console.log("[WS] propose_gecko_match_win_ok", message.data);
+        return;
+      }
+
+
+      if (message.action === "propose_gecko_win_failed") {
+        console.log("[WS] propose_gecko_win_failed", message.data);
         return;
       }
 
@@ -1097,23 +1216,23 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         return;
       }
 
-  if (message.action === "join_live_sesh_ok") {
-    const partnerId = message.data?.partner_id ?? null;
-    setLiveSeshPartner(
-      partnerId == null
-        ? null
-        : {
-            userId: partnerId,
-            username: message.data?.partner_username ?? null,
-            friendId: message.data?.partner_friend_id ?? null,
-            friendName: message.data?.partner_friend_name ?? null,
-          }
-    );
-    console.log(`SESSSIONNNNNNNNNN`,message.data)
-    onJoinLiveSeshRef.current?.(partnerId);
-    requestPresenceStatus();
-    return;
-  }
+      if (message.action === "join_live_sesh_ok") {
+        const partnerId = message.data?.partner_id ?? null;
+        setLiveSeshPartner(
+          partnerId == null
+            ? null
+            : {
+                userId: partnerId,
+                username: message.data?.partner_username ?? null,
+                friendId: message.data?.partner_friend_id ?? null,
+                friendName: message.data?.partner_friend_name ?? null,
+              },
+        );
+        console.log(`SESSSIONNNNNNNNNN`, message.data);
+        onJoinLiveSeshRef.current?.(partnerId);
+        requestPresenceStatus();
+        return;
+      }
       if (message.action === "join_live_sesh_failed") {
         setLiveSeshPartner(null);
         onJoinLiveSeshRef.current?.(null);
@@ -1121,7 +1240,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       }
 
       if (message.action === "leave_live_sesh_ok") {
-         setLiveSeshPartner(null);
+        setLiveSeshPartner(null);
         onLeaveLiveSeshRef.current?.();
         return;
       }
@@ -1264,6 +1383,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendFETextToGecko,
       matchesSV,
       sendMatchRequest,
+      proposeGeckoWin,
+      registerOnGeckoWinProposed,
+      proposeGeckoMatchWin,
+      triggerNav
     }),
     [
       bindFriend,
@@ -1304,6 +1427,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       updateGeckoData,
       matchesSV,
       sendMatchRequest,
+      proposeGeckoWin,
+      registerOnGeckoWinProposed,
+      proposeGeckoMatchWin,
+      triggerNav
     ],
   );
 

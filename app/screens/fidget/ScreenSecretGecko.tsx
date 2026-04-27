@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, StyleSheet, Alert, AppState } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  AppState,
+  Pressable,
+} from "react-native";
 import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import { useLDTheme } from "@/src/context/LDThemeContext";
@@ -10,9 +17,9 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import GradientBackgroundAppDefault from "@/app/components/appwide/format/GradientBackgroundAppDefault";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 import useUser from "@/src/hooks/useUser";
-import { useNavigation } from "@react-navigation/native";
 import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
 import GlassTopBarLight from "./GlassTopBarLight";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 // optional (only if you added backend broadcast)
 // import PeerEnergyText from "@/app/components/debug/PeerEnergyText";
@@ -22,40 +29,36 @@ type Props = {
   skiaFontSmall: SkFont;
 };
 
-
-const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props)=> {
-
-
+const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const {
-  socketStatusSV,
-  peerJoinedStatusSV,
-  geckoMessageSV,
- 
-    liveSeshPartner,
-  energySV,
-  peerGeckoPositionSV,
-  guestPeerGeckoPositionSV,
-  hostPeerGeckoPositionSV,
-  connect,
-  disconnect,
-  setWantsConnection,
-  joinLiveSesh,
-  leaveLiveSesh,
-  sendGeckoPosition,
-  sendGuestGeckoPosition,
-  registerOnHostGeckoCoords,
-  requestPresenceStatus
-} = useGeckoWebsocket();
-  const { user } = useUser(); 
- 
+    socketStatusSV,
+    peerJoinedStatusSV,
+    geckoMessageSV,
 
+    liveSeshPartner,
+    energySV,
+    peerGeckoPositionSV,
+    guestPeerGeckoPositionSV,
+    hostPeerGeckoPositionSV,
+    connect,
+    disconnect,
+    setWantsConnection,
+    joinLiveSesh,
+    leaveLiveSesh,
+    sendGeckoPosition,
+    sendGuestGeckoPosition,
+    registerOnHostGeckoCoords,
+    requestPresenceStatus,
+  } = useGeckoWebsocket();
+  const { user } = useUser();
 
   const { lightDarkTheme } = useLDTheme();
-  const navigation = useNavigation();
+
+  const { navigateBack, navigateToSecretGeckoWinAccept } = useAppNavigations();
   const handleExit = React.useCallback(() => {
     leaveLiveSesh();
-    navigation.goBack();
-  }, [leaveLiveSesh, navigation]);
+    navigateBack();
+  }, [leaveLiveSesh, navigateBack]);
   const { handleCancelCurrentLiveSesh } = useCancelCurrentLiveSesh({
     userId: user?.id,
   });
@@ -71,12 +74,12 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props)=> {
           onPress: async () => {
             await handleCancelCurrentLiveSesh();
             leaveLiveSesh();
-            navigation.goBack();
+            navigateBack();
           },
         },
       ],
     );
-  }, [handleCancelCurrentLiveSesh, leaveLiveSesh, navigation]);
+  }, [handleCancelCurrentLiveSesh, leaveLiveSesh, navigateBack]);
   const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
 
   const noopSendGuestGeckoPosition = useRef(() => {}).current;
@@ -98,12 +101,12 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props)=> {
   //   };
   // }, [joinLiveSesh, leaveLiveSesh]);
 
-    useFocusEffect(                                                                                                                                                                                                                          
-    useCallback(() => {                                                                                                                                                                                                                    
-      requestPresenceStatus();                                                                                                                                                                                                             
-    }, [requestPresenceStatus]),                                                                                                                                                                                                           
-  );                                                                                                                                                                                                                                       
-                                                                                                                                                                                                                                           
+  useFocusEffect(
+    useCallback(() => {
+      requestPresenceStatus();
+    }, [requestPresenceStatus]),
+  );
+
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
       if (state === "active") requestPresenceStatus();
@@ -111,37 +114,33 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props)=> {
     return () => sub.remove();
   }, [requestPresenceStatus]);
 
-useFocusEffect(
-  useCallback(() => {
-    let isActive = true;
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-    const setup = async () => {
-      console.log("[SECRET GECKO] focus -> connect");
-      setWantsConnection(true);
-      await connect();
+      const setup = async () => {
+        console.log("[SECRET GECKO] focus -> connect");
+        setWantsConnection(true);
+        await connect();
 
-      if (!isActive) return;
+        if (!isActive) return;
 
-      console.log("[SECRET GECKO] focus -> joinLiveSesh");
-      joinLiveSesh();
-    };
+        console.log("[SECRET GECKO] focus -> joinLiveSesh");
+        joinLiveSesh();
+      };
 
-    setup();
+      setup();
 
-    return () => {
-      isActive = false;
-      console.log("[SECRET GECKO] blur -> leaveLiveSesh + setWantsConnection(false)");
-      leaveLiveSesh();
-      setWantsConnection(false);
-    };
-  }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
-
-
-  
-);
-
-
-
+      return () => {
+        isActive = false;
+        console.log(
+          "[SECRET GECKO] blur -> leaveLiveSesh + setWantsConnection(false)",
+        );
+        leaveLiveSesh();
+        setWantsConnection(false);
+      };
+    }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
+  );
 
   return (
     <GradientBackgroundAppDefault style={styles.backgroundContainer}>
@@ -191,20 +190,32 @@ useFocusEffect(
         />
       </View>
 
-            <GlassTopBarLight
-              socketStatusSV={socketStatusSV}
-              peerJoinedStatusSV={peerJoinedStatusSV}
-              geckoMessageSV={geckoMessageSV}
-              liveSeshPartner={liveSeshPartner}
-              textColor={lightDarkTheme.primaryText}
-              backgroundColor={lightDarkTheme.darkerOverlayBackground}
-              requestPresenceStatus={requestPresenceStatus}
-              // friendId={selectedFriend.id}
-              friendName={'Unknown'}
-          
-              highlight={false}
-              fontSmall={skiaFontSmall}
-            />
+      <GlassTopBarLight
+        socketStatusSV={socketStatusSV}
+        peerJoinedStatusSV={peerJoinedStatusSV}
+        geckoMessageSV={geckoMessageSV}
+        liveSeshPartner={liveSeshPartner}
+        textColor={lightDarkTheme.primaryText}
+        backgroundColor={lightDarkTheme.darkerOverlayBackground}
+        requestPresenceStatus={requestPresenceStatus}
+        // friendId={selectedFriend.id}
+        friendName={"Unknown"}
+        highlight={false}
+        fontSmall={skiaFontSmall}
+      />
+
+      <Pressable
+      onPress={navigateToSecretGeckoWinAccept}
+        style={{
+          width: 50,
+          height: 50,
+          position: "absolute",
+          bottom: 120,
+          left: 20,
+          backgroundColor: "orange",
+          borderRadius: 999,
+        }}
+      ></Pressable>
       <GlassPreviewBottomSecret
         color={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerGlassBackground}

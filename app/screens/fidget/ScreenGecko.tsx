@@ -190,7 +190,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     requestPresenceStatus,
     matchesSV,
     sendMatchRequest,
+    proposeGeckoWin,
+    proposeGeckoMatchWin,
+    triggerNav //  = (capsule.id) =>
   } = useGeckoWebsocket();
+    const {
+    navigateToMomentView,
+    navigateToMomentFocus,
+    navigateToGeckoSelectSettings,
+    navigateToGeckoWinAccept,
+    // navigateToQRCode,
+    navigateToFriendHome,
+  } = useAppNavigations();
+
 
 
     useFocusEffect(
@@ -199,6 +211,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }, [requestPresenceStatus])
   );
 
+
+  const prefTriggerNavRef = useRef(triggerNav);
+
+
+  // make this better in future. wanna move into socket but socket isn't storing host/guest identity
+  useEffect(() => {
+    if (triggerNav && (triggerNav != prefTriggerNavRef?.current)) {
+      navigateToGeckoWinAccept();
+      
+
+    }
+
+  }, [triggerNav]);
   // and for background -> foreground
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
@@ -596,13 +621,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
  
 
-  const {
-    navigateToMomentView,
-    navigateToMomentFocus,
-    navigateToGeckoSelectSettings,
-    // navigateToQRCode,
-    navigateToFriendHome,
-  } = useAppNavigations();
 
 const handleNavBack = useCallback(() => {
   navigateToFriendHome({ backdropTimestamp: Date.now() });
@@ -1545,7 +1563,7 @@ useEffect(() => {
   <Matches
     color={lightDarkTheme.primaryText}
     matchesSV={matchesSV}
-    onSelect={sendMatchRequest}
+    onSelect={proposeGeckoMatchWin}
   />
       </View>
 
@@ -1570,6 +1588,7 @@ useEffect(() => {
         onPress_toggleReadMode={handleToggleManual}
         onPress_changeSpeed={handleChangeSpeed}
         onPress_geckoVoice={handleGeckoReadAndAsk}
+        onPress_debugSendWin={proposeGeckoWin}
         // onPress_autoPickUpScreen={handleNavToSelect}
         // onPress_QRCodeScreen={handleNavToQRCode}
       />

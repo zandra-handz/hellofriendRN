@@ -232,6 +232,52 @@ export const getUserSettings = async () => {
 
  
 
+export const fetchGeckoGameWins = async () => {
+    try {
+      const response = await helloFriendApiClient.get(`/users/gecko/game-wins/`);
+      return response.data;               
+    } catch (e: unknown) {
+      handleApiError(e, "Error during fetchGeckoGameWins");                                                                                                                                                                                
+    }
+  };                                                                                                                                                                                                                                       
+                       
+  export const fetchGeckoGameWinsGiven = async () => {
+    try {
+      const response = await helloFriendApiClient.get(
+        `/users/gecko/game-wins/given/`,
+      );
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during fetchGeckoGameWinsGiven");
+    }
+  };
+
+  export const fetchGeckoGameWinPending = async () => {
+    try {
+      const response = await helloFriendApiClient.get(
+        `/users/gecko/game-wins/pending/`,
+      );
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during fetchGeckoGameWinPending");
+    }
+  };
+
+  export const decideGeckoGameWinPending = async (
+    decision: "accept" | "decline",
+  ) => {
+    try {
+      const response = await helloFriendApiClient.post(
+        `/users/gecko/game-wins/pending/`,
+        { decision },
+      );
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during decideGeckoGameWinPending");
+    }
+  };
+
+
 export const getUserGeckoCombinedData = async () => {
   try {
     const response = await helloFriendApiClient.get(`/users/gecko/totals/`);
