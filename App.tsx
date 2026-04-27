@@ -562,7 +562,7 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
           name="GeckoWinAccept"
           options={{
             headerShown: false,
-            gestureEnabled: false,
+           // gestureEnabled: false,
             animation: "none",
           }}
         >

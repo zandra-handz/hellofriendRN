@@ -108,14 +108,13 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }, [requestPresenceStatus]),
   );
 
-
-const prevTriggerNavRef = useRef<typeof triggerNav>(null);
+const prevPendingIdRef = useRef<number | null>(null);
 
 useEffect(() => {
-  if (!triggerNav) return;
-  if (triggerNav === prevTriggerNavRef.current) return;
+  if (!triggerNav?.pending_id) return;
+  if (triggerNav.pending_id === prevPendingIdRef.current) return;
 
-  prevTriggerNavRef.current = triggerNav;
+  prevPendingIdRef.current = triggerNav.pending_id;
 
   navigateToSecretGeckoWinAccept({
     pendingId: triggerNav.pending_id,

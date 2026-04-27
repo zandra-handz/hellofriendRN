@@ -36,6 +36,7 @@ type Props = {
   senderCapsule: SenderCapsule | null;
   onAccept: () => void;
   onDecline: () => void;
+  onBack: () => void;
   triggerClose?: number | boolean;
   disabled?: boolean;
 };
@@ -48,6 +49,7 @@ const GlassGeckoWinAccept = ({
   senderCapsule,
   onAccept,
   onDecline,
+  onBack,
   triggerClose,
   disabled = false,
 }: Props) => {
@@ -143,6 +145,11 @@ const GlassGeckoWinAccept = ({
             backgroundColor={darkerOverlayColor}
             color={color}
             buttons={[
+                  {
+                iconName: "chevron_left",
+                label: "Back",
+                onPress: onBack,
+              },
               {
                 iconName: "close",
                 label: "Decline",

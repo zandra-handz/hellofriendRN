@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 
 import useUser from "@/src/hooks/useUser";
@@ -8,7 +8,10 @@ import GlassGeckoWinAccept from "../fidget/GlassGeckoWinAccept";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useDecideGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useDecideGeckoGameMatchWinPending";
- import useGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useGeckoGameMatchWinPending";
+import useGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useGeckoGameMatchWinPending";
+
+import useConfirmBeforeLeave from "@/src/hooks/useConfirmScreenLeave";
+
 type GeckoWinAcceptRouteParams = {
   pendingId?: number | null;
 };
@@ -32,34 +35,37 @@ const ScreenGeckoWinAccept = () => {
 
   const senderCapsule = geckoGameMatchWinPending?.sender_capsule ?? null;
 
-  const {
-    decideGeckoGameMatchWinPendingAsync,
-    decideGeckoGameMatchWinPendingIsPending,
-    decideGeckoGameMatchWinPendingIsSuccess,
-  } = useDecideGeckoGameMatchWinPending();
+  const { decide, isLoading, isSuccess } =
+    useDecideGeckoGameMatchWinPending();  
 
-  const [triggerClose, setTriggerClose] = useState(0);
+
+    useConfirmBeforeLeave(!!pendingId && !isSuccess);
 
   useEffect(() => {
-    if (decideGeckoGameMatchWinPendingIsSuccess) {
-      setTriggerClose(Date.now());
+    if (isSuccess) 
+ 
+ 
+      navigateBack();
+   
+  }, [isSuccess, navigateBack]);
 
-      const t = setTimeout(() => {
-        navigateBack();
-      }, 220);
-
-      return () => clearTimeout(t);
-    }
-  }, [decideGeckoGameMatchWinPendingIsSuccess, navigateBack]);
-
-  const decide = async (decision: "accept" | "decline") => {
+  const handleAccept = useCallback(async () => {
     if (!pendingId || !user?.id) return;
 
-    await decideGeckoGameMatchWinPendingAsync({
+    await decide({
       pendingId,
-      decision,
+      decision: "accept",
     });
-  };
+  }, [pendingId, user?.id, decide]);
+
+  const handleDecline = useCallback(async () => {
+    if (!pendingId || !user?.id) return;
+
+    await decide({
+      pendingId,
+      decision: "decline",
+    });
+  }, [pendingId, user?.id, decide]);
 
   return (
     <>
@@ -77,10 +83,10 @@ const ScreenGeckoWinAccept = () => {
         borderColor="transparent"
         darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
         senderCapsule={senderCapsule}
-        onAccept={() => decide("accept")}
-        onDecline={() => decide("decline")}
-        triggerClose={triggerClose}
-        disabled={!pendingId || decideGeckoGameMatchWinPendingIsPending}
+        onAccept={handleAccept}
+        onDecline={handleDecline}
+        onBack={navigateBack}
+        disabled={!pendingId || isLoading}
       />
     </>
   );

@@ -308,6 +308,8 @@ export const decideGeckoGameMatchWinPending = async (
       },
     );
 
+    console.log(`decideGeckoGameMatchWinPending response: `, response.data)
+
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during decideGeckoGameMatchWinPending");
