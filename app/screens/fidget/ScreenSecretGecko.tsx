@@ -49,6 +49,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendGuestGeckoPosition,
     registerOnHostGeckoCoords,
     requestPresenceStatus,
+    triggerNav,
   } = useGeckoWebsocket();
   const { user } = useUser();
 
@@ -106,6 +107,20 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       requestPresenceStatus();
     }, [requestPresenceStatus]),
   );
+
+
+    const prefTriggerNavRef = useRef(triggerNav);
+  
+  
+    // make this better in future. wanna move into socket but socket isn't storing host/guest identity
+    useEffect(() => {
+      if (triggerNav && (triggerNav != prefTriggerNavRef?.current)) {
+        navigateToSecretGeckoWinAccept();
+        
+  
+      }
+  
+    }, [triggerNav]);
 
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
@@ -203,7 +218,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         highlight={false}
         fontSmall={skiaFontSmall}
       />
-
+{/* 
       <Pressable
       onPress={navigateToSecretGeckoWinAccept}
         style={{
@@ -215,7 +230,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           backgroundColor: "orange",
           borderRadius: 999,
         }}
-      ></Pressable>
+      ></Pressable> */}
       <GlassPreviewBottomSecret
         color={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerGlassBackground}
