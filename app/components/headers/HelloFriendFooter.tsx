@@ -23,6 +23,7 @@ type Props = {
   userId: number;
   username: string;
   lightDarkTheme: LDTheme;
+  onPress_navigateToGeckoWins: () => void;
 };
 const HelloFriendFooter = ({
   // skiaFontLarge,
@@ -30,6 +31,7 @@ const HelloFriendFooter = ({
   userId,
   username,
   lightDarkTheme, 
+  onPress_navigateToGeckoWins,
 }: Props) => {
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);

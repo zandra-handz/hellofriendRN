@@ -172,13 +172,25 @@ type GuestPeerGeckoPosition = {
 
 type GeckoWinProposed = {
   sender_user_id: number;
-  // pending_id: number;
+  gecko_game_type?: number;
+  pending_id: number;
+  my_capsule_id?: string;
+  partner_capsule_id?: string;
   received_at: number;
 };
 
 type EnergyState = {
   energy: number;
   surplusEnergy: number;
+};
+
+type GeckoMatchWinNavigatePayload = {
+  pending_id: number;
+  sender_user_id?: number;
+  gecko_game_type?: number;
+  my_capsule_id?: string;
+  partner_capsule_id?: string;
+  received_at: number;
 };
 
 type GeckoWebsocketContextValue = {
@@ -285,8 +297,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   // );
 
   const [liveSeshPartner, setLiveSeshPartner] = useState<LiveSeshPartner>(null);
- const [triggerNav, setTriggerNav] = useState(null);
- 
+const [triggerNav, setTriggerNav] =
+  useState<GeckoMatchWinNavigatePayload | null>(null);
 
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
   const peerJoinedStatusSV = useSharedValue<PeerJoinedStatus>(false);
@@ -1096,17 +1108,35 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         return;
       }
 
-      // nav to pending screen  using data.pending_id.       
-      if (message.action === "gecko_win_proposed") {
-        console.log("[WS] gecko_win_proposed", message.data);
-        onGeckoWinProposedRef.current?.({
-          sender_user_id: message.data?.sender_user_id,
-          // pending_id: message.data?.pending_id,
-          received_at: performance.now(),
-        });
-        return;
-      }
+if (message.action === "gecko_win_proposed") {
+  console.log("[WS] gecko_win_proposed", message.data);
 
+  const pendingId = Number(message.data?.pending_id);
+
+  if (Number.isFinite(pendingId)) {
+    const navPayload: GeckoMatchWinNavigatePayload = {
+      pending_id: pendingId,
+      sender_user_id: message.data?.sender_user_id,
+      gecko_game_type: message.data?.gecko_game_type,
+      my_capsule_id: message.data?.my_capsule_id,
+      partner_capsule_id: message.data?.partner_capsule_id,
+      received_at: performance.now(),
+    };
+
+    setTriggerNav(navPayload);
+
+    onGeckoWinProposedRef.current?.({
+      sender_user_id: message.data?.sender_user_id,
+      gecko_game_type: message.data?.gecko_game_type,
+      pending_id: pendingId,
+      my_capsule_id: message.data?.my_capsule_id,
+      partner_capsule_id: message.data?.partner_capsule_id,
+      received_at: navPayload.received_at,
+    });
+  }
+
+  return;
+}
       if (message.action === "propose_gecko_win_ok") {
       
         console.log("[WS] propose_gecko_win_ok", message.data);
@@ -1116,10 +1146,10 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       
       if (message.action === "propose_gecko_match_win_ok") {
 
-        if (message.data?.capsule_id) {
-          setTriggerNav(performance.now())
+        // if (message.data?.capsule_id) {
+        //   setTriggerNav(performance.now())
 
-        }
+        // }
       
         console.log("[WS] propose_gecko_match_win_ok", message.data);
         return;

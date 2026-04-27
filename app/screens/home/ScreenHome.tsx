@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
@@ -15,7 +15,8 @@ import { WelcomeCard } from "./HomeWelcomeCard";
 import useSelectFriend from "@/src/hooks/useSelectFriend";
 import useUser from "@/src/hooks/useUser";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
-import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import DebugButton from "../fidget/DebugButton";
 // import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
 // import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
@@ -46,29 +47,28 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   const { user } = useUser();
   const { settings } = useUserSettings();
   // const { geckoCombinedData } = useUserGeckoCombinedData();
-  
-  
-  const { welcomeScripts } = useGeckoStaticData();
 
+  const { welcomeScripts } = useGeckoStaticData();
 
   useEffect(() => {
     if (welcomeScripts) {
-      console.log(`gecko scripts!!!`, welcomeScripts)
+      console.log(`gecko scripts!!!`, welcomeScripts);
     }
-
   }, [welcomeScripts]);
-  
-  
+
   const queryClient = useQueryClient();
   // const { isOnline } = useNetworkStatus();
   const [isDelaying, setIsDelaying] = React.useState(shouldDelayAnimation);
-  const { navigateToCategories, navigateToHistory, navigateToGeckoManage } = useAppNavigations();
+  const {
+    navigateToCategories,
+    navigateToHistory,
+    navigateToGeckoManage,
+    navigateToGeckoWins,
+  } = useAppNavigations();
 
   const FOOTER_SPACER = 120;
   const MANAGE_CARDS_SCROLL_HEIGHT = 180;
- 
 
- 
   useEffect(() => {
     if (shouldDelayAnimation) {
       setIsDelaying(true);
@@ -198,14 +198,14 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
           >
             {settings?.id && friendListLength > 0 && (
               <>
-                   <LiveSeshInvitesPanel/>
+                <LiveSeshInvitesPanel />
                 <WelcomeCard
                   eyebrow="Gecko:"
                   headingLine1={`Hi ${user.username}!`}
                   headingLine2="Welcome back!"
                   subtitle={`${getDayLabel()}`}
                 />
-           
+
                 <UpNextCard
                   name={upcomingFriendName}
                   date={upcomingFutureDate}
@@ -229,40 +229,39 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
                   borderRadius={10}
                   borderColor="black"
                 />
-                <View style={{height: MANAGE_CARDS_SCROLL_HEIGHT}}>
-                  
-                <ScrollView >
-                  <CategoriesCard
-                    onPress={navigateToCategories}
-                    backgroundColor={backgroundColor}
-                    textColor={textColor}
-                  />
-              
-                <StatsCard
-                  onPress={navigateToHistory}
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                />
-                <GeckoCard
-                  onPress={navigateToGeckoManage}
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                />  
-                <View style={{height: 400}}>
-                  </View> 
-                </ScrollView>
-                
+                <View style={{ height: MANAGE_CARDS_SCROLL_HEIGHT }}>
+                  <ScrollView>
+                    <CategoriesCard
+                      onPress={navigateToCategories}
+                      backgroundColor={backgroundColor}
+                      textColor={textColor}
+                    />
+
+                    <StatsCard
+                      onPress={navigateToHistory}
+                      backgroundColor={backgroundColor}
+                      textColor={textColor}
+                    />
+                    <GeckoCard
+                      onPress={navigateToGeckoManage}
+                      backgroundColor={backgroundColor}
+                      textColor={textColor}
+                    />
+                    <View style={{ height: 400 }}></View>
+                  </ScrollView>
                 </View>
               </>
-            )}s
+            )}
+            s
           </View>
 
+          <DebugButton onPress={navigateToGeckoWins} />
+
           <HelloFriendFooter
-            // skiaFontLarge={skiaFontLarge}
-            skiaFontSmall={skiaFontSmall}
             userId={user.id}
             username={user.username}
-            lightDarkTheme={lightDarkTheme} 
+            lightDarkTheme={lightDarkTheme}
+            onPress_navigateToGeckoWins={navigateToGeckoWins}
           />
         </>
       )}

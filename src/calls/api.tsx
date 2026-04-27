@@ -263,6 +263,23 @@ export const fetchGeckoGameWins = async () => {
     }
   };
 
+export const fetchGeckoGameMatchWinPending = async (pendingId: number) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/game-wins/match/pending/`,
+      {
+        params: {
+          pending_id: pendingId,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoGameMatchWinPending");
+  }
+};
+
   export const decideGeckoGameWinPending = async (
     decision: "accept" | "decline",
   ) => {
@@ -277,6 +294,25 @@ export const fetchGeckoGameWins = async () => {
     }
   };
 
+
+export const decideGeckoGameMatchWinPending = async (
+  pendingId: number,
+  decision: "accept" | "decline",
+) => {
+  try {
+    const response = await helloFriendApiClient.post(
+      `/users/gecko/game-wins/match/pending/`,
+      {
+        pending_id: pendingId,
+        decision,
+      },
+    );
+
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during decideGeckoGameMatchWinPending");
+  }
+};
 
 export const getUserGeckoCombinedData = async () => {
   try {

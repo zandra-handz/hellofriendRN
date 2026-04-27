@@ -90,6 +90,7 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 import ScreenGecko from "./app/screens/fidget/ScreenGecko";
 import ScreenSecretGecko from "./app/screens/fidget/ScreenSecretGecko";
 import ScreenGeckoWinAccept from "./app/screens/moments/ScreenGeckoWinAccept";
+import ScreenGeckoWins from "./app/screens/moments/ScreenGeckoWins";
 // import ScreenGeckoSelectSettings from "./app/screens/moments/ScreenGeckoSelectSettings";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
@@ -498,6 +499,23 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
               />
             )}
           </Stack.Screen>
+
+          <Stack.Screen
+            name="GeckoWins"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              animation: "none",
+            }}
+          >
+            {(props) => (
+              <ScreenGeckoWins
+                {...props}
+                // skiaFontLarge={skiaFontLarge}
+                // skiaFontSmall={skiaFontSmall}
+              />
+            )}
+          </Stack.Screen>
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
@@ -540,23 +558,23 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
             />
           )}
         </Stack.Screen>
-          <Stack.Screen
-            name="GeckoWinAccept"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-              animation: "none",
-            }}
-          >
-            {(props) => (
-              <ScreenGeckoWinAccept
-                {...props}
-                // skiaFontLarge={skiaFontLarge}
-                // skiaFontSmall={skiaFontSmall}
-              />
-            )}
-          </Stack.Screen>
- 
+        <Stack.Screen
+          name="GeckoWinAccept"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            animation: "none",
+          }}
+        >
+          {(props) => (
+            <ScreenGeckoWinAccept
+              {...props}
+              // skiaFontLarge={skiaFontLarge}
+              // skiaFontSmall={skiaFontSmall}
+            />
+          )}
+        </Stack.Screen>
+
         {/* <Stack.Screen
           name="GeckoSelectSettings"
           component={ScreenGeckoSelectSettings}

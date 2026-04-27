@@ -212,18 +212,19 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   );
 
 
-  const prefTriggerNavRef = useRef(triggerNav);
+const prevTriggerNavRef = useRef<typeof triggerNav>(null);
 
+useEffect(() => {
+  if (!triggerNav) return;
+  if (triggerNav === prevTriggerNavRef.current) return;
 
-  // make this better in future. wanna move into socket but socket isn't storing host/guest identity
-  useEffect(() => {
-    if (triggerNav && (triggerNav != prefTriggerNavRef?.current)) {
-      navigateToGeckoWinAccept();
-      
+  prevTriggerNavRef.current = triggerNav;
 
-    }
+  navigateToGeckoWinAccept({
+    pendingId: triggerNav.pending_id,
+  });
+}, [triggerNav, navigateToGeckoWinAccept]);
 
-  }, [triggerNav]);
   // and for background -> foreground
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {

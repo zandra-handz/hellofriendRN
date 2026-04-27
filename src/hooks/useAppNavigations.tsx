@@ -1,4 +1,3 @@
- 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { Moment } from "../types/MomentContextTypes";
@@ -42,7 +41,7 @@ type NavToMomentsProp = {
 };
 
 type NavToMomentViewProps = {
-  moment: Moment; // can this be empty?  
+  moment: Moment; // can this be empty?
   index: number;
   startWithBackdropTimestamp?: number | null;
   momentId: number;
@@ -65,10 +64,13 @@ type NavToGeckoProp = {
   pollMode?: boolean | null;
 };
 
-type NavToGeckoSelectSettingsProp = {
-  selection: number;
+type NavToGeckoWinAcceptProps = {
+  pendingId?: number | null;
 };
 
+type NavToSecretGeckoWinAcceptProps = {
+  pendingId?: number | null;
+};
 type NavToQRCodeProp = {
   selection: number;
   friendName: string;
@@ -107,7 +109,7 @@ interface hookReturns {
   navigateToHelloes: () => void;
   navigateToHelloView: ({
     startingIndex,
-    inPersonFilter, 
+    inPersonFilter,
   }: NavToHelloViewProps) => void;
   navigateToAddHello: () => void;
   navigateToAddImage: ({ imageUri }: NavToAddImageProps) => void;
@@ -128,10 +130,13 @@ interface hookReturns {
     autoPick,
     timestamp,
     sessionId,
-  }: NavToGeckoProp) => void;
-  navigateToGeckoWinAccept: () => void;
+  }: NavToGeckoProp) => void; 
   navigateToSecretGecko: () => void;
-  navigateToSecretGeckoWinAccept: () => void;
+ navigateToGeckoWinAccept: ({ pendingId }?: NavToGeckoWinAcceptProps) => void;
+navigateToSecretGeckoWinAccept: ({
+  pendingId,
+}?: NavToSecretGeckoWinAcceptProps) => void;
+  navigateToGeckoWins: () => void;
   navigateToGeckoSelectSettings: ({
     selection,
   }: NavToGeckoSelectSettingsProp) => void;
@@ -142,7 +147,12 @@ interface hookReturns {
   }: NavToQRCodeProp) => void;
 
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
-  navigateToMomentView: ({ moment, index, startWithBackdropTimestamp, momentId }: NavToMomentViewProps) => void;
+  navigateToMomentView: ({
+    moment,
+    index,
+    startWithBackdropTimestamp,
+    momentId,
+  }: NavToMomentViewProps) => void;
 
   navigateToFidget: () => void;
   navigateToAuth: ({
@@ -168,10 +178,9 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Categories");
   };
 
-    const navigateToAddFirstFriend = () => {
+  const navigateToAddFirstFriend = () => {
     navigation.navigate("AddFirstFriend");
   };
-
 
   //   const navigateToFriendHome = ({idToSelect=null, backdropTimestamp=null, friendName="", friendNextDate="", friendChangeTimestamp=null}) => {
   //   navigation.navigate("FriendHome", {idToSelect, backdropTimestamp, friendName, friendNextDate, friendChangeTimestamp});
@@ -196,22 +205,22 @@ const useAppNavigations = (): hookReturns => {
   // };
 
   const navigateToFriendHome = ({
-  idToSelect = null,
-  backdropTimestamp = null,
-  friendName = "",
-  friendNextDate = "",
-  friendChangeTimestamp = null,
-  resetTimestamp = null,
-} = {}) => {
-  navigation.navigate("FriendHome", {
-    idToSelect,
-    backdropTimestamp,
-    friendName,
-    friendNextDate,
-    friendChangeTimestamp,
-    resetTimestamp,
-  });
-};
+    idToSelect = null,
+    backdropTimestamp = null,
+    friendName = "",
+    friendNextDate = "",
+    friendChangeTimestamp = null,
+    resetTimestamp = null,
+  } = {}) => {
+    navigation.navigate("FriendHome", {
+      idToSelect,
+      backdropTimestamp,
+      friendName,
+      friendNextDate,
+      friendChangeTimestamp,
+      resetTimestamp,
+    });
+  };
 
   const navigateToAddFriend = () => {
     navigation.navigate("AddFriend");
@@ -229,11 +238,10 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToGeckoManage = () => {
     navigation.navigate("GeckoManage");
-  }
+  };
 
   const navigateToFriendHistory = () => {
     navigation.navigate("FriendHistory");
-
   };
 
   const navigateToHelloes = () => {
@@ -247,10 +255,9 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("HelloView", { startingIndex, inPersonFilter });
   };
 
-
   const navigateToAddHello = () => {
-    navigation.navigate("AddHello")
-  }
+    navigation.navigate("AddHello");
+  };
 
   const navigateToAddImage = ({ imageUri }: NavToAddImageProps) => {
     navigation.navigate("AddImage", { imageUri });
@@ -310,19 +317,31 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
-  const navigateToGeckoWinAccept = () => {
-     navigation.navigate("GeckoWinAccept");
+ 
 
-  }
-
-    const navigateToSecretGecko = () => {
+  const navigateToSecretGecko = () => {
     navigation.navigate("SecretGecko");
-  }
+  };
+ 
+  const navigateToGeckoWinAccept = ({
+  pendingId = null,
+}: NavToGeckoWinAcceptProps = {}) => {
+  navigation.navigate("GeckoWinAccept", {
+    pendingId,
+  });
+};
 
-    const navigateToSecretGeckoWinAccept = () => {
-     navigation.navigate("SecretGeckoWinAccept");
+const navigateToSecretGeckoWinAccept = ({
+  pendingId = null,
+}: NavToSecretGeckoWinAcceptProps = {}) => {
+  navigation.navigate("SecretGeckoWinAccept", {
+    pendingId,
+  });
+};
 
-  }
+  const navigateToGeckoWins = () => {
+    navigation.navigate("GeckoWins");
+  };
 
   const navigateToGeckoSelectSettings = ({
     selection,
@@ -350,8 +369,18 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
 
-  const navigateToMomentView = ({ moment, index, startWithBackdropTimestamp=null, momentId=null }: NavToMomentViewProps) => {
-    navigation.navigate("MomentView", { moment, index, startWithBackdropTimestamp, momentId });
+  const navigateToMomentView = ({
+    moment,
+    index,
+    startWithBackdropTimestamp = null,
+    momentId = null,
+  }: NavToMomentViewProps) => {
+    navigation.navigate("MomentView", {
+      moment,
+      index,
+      startWithBackdropTimestamp,
+      momentId,
+    });
   };
 
   const navigateToLocationSearch = () => {
@@ -362,7 +391,7 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Finalize");
   };
 
-    const navigateToPreAdded = () => {
+  const navigateToPreAdded = () => {
     navigation.navigate("PreAdded");
   };
 
@@ -425,6 +454,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToGeckoWinAccept,
     navigateToSecretGecko,
     navigateToSecretGeckoWinAccept,
+    navigateToGeckoWins,
     navigateToGeckoSelectSettings,
     navigateToQRCode,
     navigateToMoments,

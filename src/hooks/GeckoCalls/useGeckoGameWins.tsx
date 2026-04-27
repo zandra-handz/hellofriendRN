@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import useUser from "../useUser";
+
 import { fetchGeckoGameWins } from "@/src/calls/api";
 
-const useGeckoGameWins = () => {
-  const { user, isInitializing } = useUser();
+type Props = {
+  userId: number;
+}
+
+const useGeckoGameWins = ({ userId } : Props) => {
 
   const {
     data: geckoGameWins,
@@ -12,9 +15,9 @@ const useGeckoGameWins = () => {
     isError: geckoGameWinsIsError,
     refetch: refetchGeckoGameWins,
   } = useQuery({
-    queryKey: ["geckoGameWins", user?.id ?? 0],
+    queryKey: ["geckoGameWins", userId ?? 0],
     queryFn: () => fetchGeckoGameWins(),
-    enabled: !!user?.id && !isInitializing,
+    enabled: !!userId,
     retry: 3,
   });
 
