@@ -9,7 +9,7 @@ import manualGradientColors from "@/app/styles/StaticColors";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useDecideGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useDecideGeckoGameMatchWinPending";
 import useGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useGeckoGameMatchWinPending";
-
+import useGeckoGameWinPending from "@/src/hooks/GeckoCalls/useGeckoGameWinPending";
 import useConfirmBeforeLeave from "@/src/hooks/useConfirmScreenLeave";
 
 type GeckoWinAcceptRouteParams = {
@@ -28,12 +28,23 @@ const ScreenGeckoWinAccept = () => {
 
   const route = useRoute<GeckoWinAcceptRoute>();
   const pendingId = route.params?.pendingId ?? null;
+const hasPendingId = !!pendingId;
 
-  const { geckoGameMatchWinPending } = useGeckoGameMatchWinPending({
-    pendingId,
-  });
+const { geckoGameMatchWinPending } = useGeckoGameMatchWinPending({
+  pendingId,
+});
 
-  const senderCapsule = geckoGameMatchWinPending?.sender_capsule ?? null;
+const { geckoGameWinPending } = useGeckoGameWinPending({
+  userId: user?.id,
+  disable: hasPendingId,
+});
+
+const activePending = hasPendingId
+  ? geckoGameMatchWinPending
+  : geckoGameWinPending;
+
+const senderCapsule = activePending?.sender_capsule ?? null;
+ 
 
   const { decide, isLoading, isSuccess } =
     useDecideGeckoGameMatchWinPending();  

@@ -281,6 +281,9 @@ type GeckoWebsocketContextValue = {
 
   proposeGeckoWin: (capsuleId: string) => boolean;
   registerOnGeckoWinProposed: (cb: (data: GeckoWinProposed) => void) => void;
+  registerOnGeckoMatchWinNavigate: (
+    cb: (data: GeckoMatchWinNavigatePayload) => void,
+  ) => void;
 };
 
 const GeckoWebsocketContext = createContext<GeckoWebsocketContextValue | null>(
@@ -297,8 +300,6 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   // );
 
   const [liveSeshPartner, setLiveSeshPartner] = useState<LiveSeshPartner>(null);
-const [triggerNav, setTriggerNav] =
-  useState<GeckoMatchWinNavigatePayload | null>(null);
 
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
   const peerJoinedStatusSV = useSharedValue<PeerJoinedStatus>(false);
@@ -342,6 +343,9 @@ const [triggerNav, setTriggerNav] =
   const onGeckoWinProposedRef = useRef<((d: GeckoWinProposed) => void) | null>(
     null,
   );
+  const onGeckoMatchWinNavigateRef = useRef<
+    ((d: GeckoMatchWinNavigatePayload) => void) | null
+  >(null);
 
   const energySV = useSharedValue<EnergyState>({
     energy: 1.0,
@@ -398,6 +402,13 @@ const [triggerNav, setTriggerNav] =
   const registerOnGeckoWinProposed = useCallback(
     (cb: (d: GeckoWinProposed) => void) => {
       onGeckoWinProposedRef.current = cb;
+    },
+    [],
+  );
+
+  const registerOnGeckoMatchWinNavigate = useCallback(
+    (cb: (d: GeckoMatchWinNavigatePayload) => void) => {
+      onGeckoMatchWinNavigateRef.current = cb;
     },
     [],
   );
@@ -902,18 +913,23 @@ const [triggerNav, setTriggerNav] =
     return true;
   }, []);
 
-  const proposeGeckoWin = useCallback((capsuleId: string) => {
-    if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
-    wsRef.current.send(
-      JSON.stringify({
-        action: "propose_gecko_win",
-        data: { capsule_id: capsuleId },
-      }),
-    );
-    return true;
-  }, []);
+  const proposeGeckoWin = useCallback(                                                                                                                                                                                                                                                                                            
+    (capsuleId: string, geckoGameType: number) => {
+      if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
 
-
+      console.log('sending propseGeckoWin in socket: ', capsuleId, geckoGameType)
+      
+      
+      wsRef.current.send(
+        JSON.stringify({
+          action: "propose_gecko_win",
+          data: { capsule_id: capsuleId, gecko_game_type: geckoGameType },
+        }),
+      );
+      return true;
+    },
+    [],
+  );
     const proposeGeckoMatchWin = useCallback((geckoGameType: number) => {
     console.log(`gecko game type sending: `, geckoGameType);
     if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
@@ -1123,7 +1139,7 @@ if (message.action === "gecko_win_proposed") {
       received_at: performance.now(),
     };
 
-    setTriggerNav(navPayload);
+    onGeckoMatchWinNavigateRef.current?.(navPayload);
 
     onGeckoWinProposedRef.current?.({
       sender_user_id: message.data?.sender_user_id,
@@ -1416,7 +1432,7 @@ if (message.action === "gecko_win_proposed") {
       proposeGeckoWin,
       registerOnGeckoWinProposed,
       proposeGeckoMatchWin,
-      triggerNav
+      registerOnGeckoMatchWinNavigate,
     }),
     [
       bindFriend,
@@ -1460,7 +1476,7 @@ if (message.action === "gecko_win_proposed") {
       proposeGeckoWin,
       registerOnGeckoWinProposed,
       proposeGeckoMatchWin,
-      triggerNav
+      registerOnGeckoMatchWinNavigate,
     ],
   );
 

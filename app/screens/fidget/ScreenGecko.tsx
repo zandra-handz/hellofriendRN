@@ -1,4 +1,11 @@
-import { AppState, View, StyleSheet, Pressable, Text, Vibration } from "react-native";
+import {
+  AppState,
+  View,
+  StyleSheet,
+  Pressable,
+  Text,
+  Vibration,
+} from "react-native";
 import React, {
   useState,
   useRef,
@@ -13,8 +20,8 @@ import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateGeckoData from "@/src/hooks/useUpdateGeckoData";
-import DebugPanel from "../moments/DebugPanel"; 
-
+import DebugPanel from "../moments/DebugPanel";
+import YieldMoment from "@/app/assets/shader_animations/YieldMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useUpdateMomentCoords from "@/src/hooks/CapsuleCalls/useUpdateCoords";
@@ -23,12 +30,12 @@ import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserPoints from "@/src/hooks/useUserPoints";
 import EnergyText from "@/app/components/fidget/EnergyText";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
- 
+
 import useGeckoRead from "@/src/hooks/useGeckoRead";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
- 
+
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -49,7 +56,7 @@ import useFriendPickSession from "@/src/hooks/CapsuleCalls/useFriendPickSession"
 import { SkFont } from "@shopify/react-native-skia";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useSharedValue } from "react-native-reanimated";
-import { freezeEnabled } from "react-native-screens"; 
+import { freezeEnabled } from "react-native-screens";
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 
@@ -80,7 +87,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const autoPick = route.params?.autoPick ?? false;
   const timestamp = route.params?.timestamp ?? null;
 
-
   // QR
   // const pollMode = route.params?.pollMode ?? false;
   // const sessionId = route.params?.sessionId ?? null;
@@ -95,7 +101,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     userId: user?.id,
     enabled: true,
   });
- 
 
   const { geckoCombinedData } = useUserGeckoCombinedData();
   const { sessionTotals } = useFriendGeckoSessionsTimeRange({
@@ -106,9 +111,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 
   const { geckoScoreState } = useGeckoScoreState();
 
-
   const useTypeCapsulesOnly =
-  geckoScoreState?.use_game_type_capsules_only ?? false;
+    geckoScoreState?.use_game_type_capsules_only ?? false;
 
   const rerenderCountRef = useRef(0);
 
@@ -121,7 +125,6 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   rerenderCountRef.current += 1;
 
   console.log(`ScreenGecko renders: `, rerenderCountRef.current);
-
 
   // const energyRef = useRef({ energy: 1.0, surplusEnergy: 0.0 });
   // const geckoScoreStateRef = useRef(geckoScoreState);
@@ -148,9 +151,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     };
   }, [scoreRules]);
 
- 
-
-  const { 
+  const {
     socketStatusSV,
     peerJoinedStatusSV,
     scoreStateRef,
@@ -183,18 +184,17 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     leaveLiveSesh,
     sendReadStatusToGecko,
     sendFETextToGecko,
-    
+
     geckoMessageSV,
-    
 
     requestPresenceStatus,
     matchesSV,
     sendMatchRequest,
     proposeGeckoWin,
     proposeGeckoMatchWin,
-    triggerNav //  = (capsule.id) =>
+    registerOnGeckoMatchWinNavigate,
   } = useGeckoWebsocket();
-    const {
+  const {
     navigateToMomentView,
     navigateToMomentFocus,
     navigateToGeckoSelectSettings,
@@ -203,27 +203,22 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     navigateToFriendHome,
   } = useAppNavigations();
 
-
-
-    useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       requestPresenceStatus();
-    }, [requestPresenceStatus])
+    }, [requestPresenceStatus]),
   );
 
+  useEffect(() => {
+    registerOnGeckoMatchWinNavigate((payload) => {
+      if (!payload?.pending_id) return;
+      navigateToGeckoWinAccept({ pendingId: payload.pending_id });
+    });
 
-const prevTriggerNavRef = useRef<typeof triggerNav>(null);
-
-useEffect(() => {
-  if (!triggerNav) return;
-  if (triggerNav === prevTriggerNavRef.current) return;
-
-  prevTriggerNavRef.current = triggerNav;
-
-  navigateToGeckoWinAccept({
-    pendingId: triggerNav.pending_id,
-  });
-}, [triggerNav, navigateToGeckoWinAccept]);
+    return () => {
+      registerOnGeckoMatchWinNavigate(() => {});
+    };
+  }, [registerOnGeckoMatchWinNavigate, navigateToGeckoWinAccept]);
 
   // and for background -> foreground
   useEffect(() => {
@@ -299,8 +294,6 @@ useEffect(() => {
   //   }
   // }, [registerOnHostGeckoCoords, isHost]);
 
- 
-
   const {
     gecko,
     updateReadIds,
@@ -308,7 +301,6 @@ useEffect(() => {
     hasReadAll,
     hasInitializedRef,
     markInitialized,
-
   } = useGeckoRead({
     userId: user?.id,
     geckoCombinedData,
@@ -322,8 +314,6 @@ useEffect(() => {
   const hasShownWelcome = useRef(false);
   const hasShownReadAll = useRef(false);
   const [localHasReadAll, setLocalHasReadAll] = useState(false);
-
- 
 
   const HISTORY_SIZE = 20;
   const momentHistoryRef = useRef({
@@ -355,38 +345,28 @@ useEffect(() => {
     setFreezeForTalking(false);
   };
 
+  const sendReadStatusToGeckoRef = useRef(sendReadStatusToGecko);
+  const sendFETextToGeckoRef = useRef(sendFETextToGecko);
 
-    const sendReadStatusToGeckoRef = useRef(sendReadStatusToGecko);
-  const sendFETextToGeckoRef = useRef(sendFETextToGecko)
-
-
-
-    useEffect(() => {
+  useEffect(() => {
     sendReadStatusToGeckoRef.current = sendReadStatusToGecko;
-
   }, [sendReadStatusToGecko]);
 
-
-  
-    useEffect(() => {
+  useEffect(() => {
     sendFETextToGeckoRef.current = sendFETextToGecko;
-
   }, [sendFETextToGecko]);
 
   useEffect(() => {
-    if (  !hasShownReadAll.current && effectiveHasReadAll) {
+    if (!hasShownReadAll.current && effectiveHasReadAll) {
       stopReading();
       hasShownReadAll.current = true;
       handleFreezeForTalking();
 
-       sendReadStatusToGeckoRef.current(2)
- 
- 
+      sendReadStatusToGeckoRef.current(2);
     }
-  }, [ effectiveHasReadAll]);
+  }, [effectiveHasReadAll]);
 
-
-  // ~~~~~~~~~~~~~~ QR CODE 
+  // ~~~~~~~~~~~~~~ QR CODE
   // const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   // const [isPollMode, setIsPollMode] = useState(false);
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -405,7 +385,6 @@ useEffect(() => {
   const triggerRescatter = () => setRescatterTrigger((prev) => prev + 1);
   const triggerRecenter = () => setRecenterTrigger((prev) => prev + 1);
   const triggerBack = () => setBackTrigger((prev) => prev + 1);
- 
 
   const GROQ_MESSAGE_PAUSE_TIME = 10000;
   const { askGroq, onModalCloseRef } = useGroqBeta({
@@ -463,8 +442,7 @@ useEffect(() => {
         JSON.stringify(pickedMoment),
       );
 
-
-      sendFETextToGeckoRef.current(reply)
+      sendFETextToGeckoRef.current(reply);
 
       //   setTimeout(() => {
       //     showModalMessage({ title: "Gecko says", body: reply });
@@ -472,7 +450,6 @@ useEffect(() => {
 
       // }  , 2000);
     } catch (e: any) {
-      
       // showModalMessage({
       //   title: "Gecko error",
       //   body: e?.message || "Something went wrong",
@@ -589,8 +566,6 @@ useEffect(() => {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~  OLD QR CODE METHOD OF INVOLVING FRIEND
   // useFocusEffect(
   //   useCallback(() => {
@@ -617,15 +592,11 @@ useEffect(() => {
   //   enabled: isPollMode && !!activeSessionId,
   // });
 
-
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- 
-
-
-const handleNavBack = useCallback(() => {
-  navigateToFriendHome({ backdropTimestamp: Date.now() });
-}, [navigateToFriendHome]);
+  const handleNavBack = useCallback(() => {
+    navigateToFriendHome({ backdropTimestamp: Date.now() });
+  }, [navigateToFriendHome]);
 
   const handleNavigateToMoment = useCallback(
     (m) => {
@@ -633,27 +604,20 @@ const handleNavBack = useCallback(() => {
     },
     [navigateToMomentView],
   );
- 
 
   const momentSV = useSharedValue({
     category: null,
     capsule: null,
     uniqueIndex: null,
     id: null,
-    geckoGameType: null
+    geckoGameType: null,
   });
 
   const handleNavigateToCreateNew = useCallback(() => {
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-
-
-
-
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ OLD QR CODE METHOD
-
-
 
   //   useEffect(() => {
   //   if (isExpired) {
@@ -662,8 +626,6 @@ const handleNavBack = useCallback(() => {
   //     setActiveSessionId(null);
   //   }
   // }, [isExpired]);
-
-
 
   // useEffect(() => {
   //   if (isPressed && sessionId) {
@@ -686,9 +648,7 @@ const handleNavBack = useCallback(() => {
   //   handleNavigateToMoment,
   // ]);
 
-
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
 
   const { friendDash } = useFriendDash({
     userId: user?.id,
@@ -815,42 +775,39 @@ const handleNavBack = useCallback(() => {
   //       stored_index: m.stored_index,
   //     }));
 
-    
   // }, [capsuleList, geckoScoreState]);
 
   const momentCoords = useMemo(() => {
-  if (!capsuleList) return [];
+    if (!capsuleList) return [];
 
-  const useTypeCapsulesOnly =
-    geckoScoreState?.use_game_type_capsules_only ?? false;
+    const useTypeCapsulesOnly =
+      geckoScoreState?.use_game_type_capsules_only ?? false;
 
-  return [...capsuleList]
-    // 🔑 filter FIRST
-    .filter((m) => {
-      if (!useTypeCapsulesOnly) return true;
+    return (
+      [...capsuleList]
+        // 🔑 filter FIRST
+        .filter((m) => {
+          if (!useTypeCapsulesOnly) return true;
 
-      const val = m.gecko_game_type;
-      return (
-        typeof val === "number" &&
-        Number.isFinite(val) &&
-        val > 1
-      );
-    })
-    // then sort
-    .sort((a, b) => {
-      const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
-      const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
-      return angleA - angleB;
-    })
-    // then slice
-    .slice(0, MAX_MOMENTS)
-    // then map
-    .map((m) => ({
-      id: m.id,
-      coord: [m.screen_x, m.screen_y],
-      stored_index: m.stored_index,
-    }));
-}, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
+          const val = m.gecko_game_type;
+          return typeof val === "number" && Number.isFinite(val) && val > 1;
+        })
+        // then sort
+        .sort((a, b) => {
+          const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+          const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+          return angleA - angleB;
+        })
+        // then slice
+        .slice(0, MAX_MOMENTS)
+        // then map
+        .map((m) => ({
+          id: m.id,
+          coord: [m.screen_x, m.screen_y],
+          stored_index: m.stored_index,
+        }))
+    );
+  }, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
 
   const [resetSkia, setResetSkia] = useState<number | null>(null);
 
@@ -884,17 +841,13 @@ const handleNavBack = useCallback(() => {
     // handleUnfreezeForTalking(); keep froze because modal opens after this finishes
   }, []);
 
-  
-
   useEffect(() => {
-    if ( hasShownWelcome.current || effectiveHasReadAll) return;
+    if (hasShownWelcome.current || effectiveHasReadAll) return;
 
     hasShownWelcome.current = true;
 
     handleFreezeForTalking();
-       sendReadStatusToGeckoRef.current(0)
- 
- 
+    sendReadStatusToGeckoRef.current(0);
   }, [effectiveHasReadAll]);
 
   const clearRandomAutoTimeouts = useCallback(() => {
@@ -1000,8 +953,7 @@ const handleNavBack = useCallback(() => {
     setSpeedSetting(next);
   }, [speedSetting]);
 
-
-  // ~~~~~~~~~~~~~~~~~~~~ DON'T DELETE YET 
+  // ~~~~~~~~~~~~~~~~~~~~ DON'T DELETE YET
   // const handleNavToSelect = useCallback(() => {
   //   if (autoPickUp) {
   //     setAutoPickUp(false);
@@ -1154,30 +1106,28 @@ const handleNavBack = useCallback(() => {
   //   //setResetSkia(Date.now());
   // }, [momentCoords]);
 
-
   const momentCoordsKey = useMemo(() => {
-  return momentCoords
-    .map((m) => `${m.id}:${m.coord[0]}:${m.coord[1]}:${m.stored_index}`)
-    .join("|");
-}, [momentCoords]);
+    return momentCoords
+      .map((m) => `${m.id}:${m.coord[0]}:${m.coord[1]}:${m.stored_index}`)
+      .join("|");
+  }, [momentCoords]);
 
-const prevMomentCoordsKeyRef = useRef<string | null>(null);
-
-useEffect(() => {
-  if (prevMomentCoordsKeyRef.current === momentCoordsKey) return;
-
-  prevMomentCoordsKeyRef.current = momentCoordsKey;
-  setScatteredMoments(momentCoords);
-}, [momentCoordsKey, momentCoords]);
+  const prevMomentCoordsKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
- 
+    if (prevMomentCoordsKeyRef.current === momentCoordsKey) return;
+
+    prevMomentCoordsKeyRef.current = momentCoordsKey;
+    setScatteredMoments(momentCoords);
+  }, [momentCoordsKey, momentCoords]);
+
+  useEffect(() => {
     momentSV.value = {
       category: null,
       capsule: null,
       uniqueIndex: null,
       id: null,
-      geckoGameType: null
+      geckoGameType: null,
     };
   }, [resetSkia]);
 
@@ -1251,7 +1201,6 @@ useEffect(() => {
   const categoryStreakRef = useRef(0);
   const updateGeckoDataRef = useRef(updateGeckoData);
 
- 
   // const sendGeckoPositionRef = useRef(sendGeckoPosition);
   const sendHostOrSoloPosition = useCallback(
     (
@@ -1291,32 +1240,25 @@ useEffect(() => {
     updateGeckoDataRef.current = updateGeckoData;
   }, [updateGeckoData]);
 
-
   useEffect(() => {
-
     sendMatchRequestRef.current = sendMatchRequest;
-
   }, [sendMatchRequest]);
 
   useEffect(() => {
     sendHostGeckoPositionRef.current = sendHostOrSoloPosition;
   }, [sendHostOrSoloPosition]);
 
-
-
   const handleGetMoment = useCallback(
     (id) => {
       const foundMoment = capsuleMap.get(id);
 
       if (!foundMoment?.id) {
-
-
         momentSV.value = {
           category: null,
           capsule: null,
           uniqueIndex: null,
           id: null,
-          geckoGameType: null
+          geckoGameType: null,
         };
         return;
       }
@@ -1383,10 +1325,8 @@ useEffect(() => {
         capsule: foundMoment.capsule,
         uniqueIndex: foundMoment.uniqueIndex,
         id: foundMoment.id,
-        geckoGameType: foundMoment.gecko_game_type
+        geckoGameType: foundMoment.gecko_game_type,
       };
- 
- 
 
       pickupCountInCurrentLoop.current += 1;
       if (pickupCountInCurrentLoop.current >= capsuleMap.size) {
@@ -1536,8 +1476,7 @@ useEffect(() => {
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
         friendName={selectedFriend.name}
-             requestPresenceStatus={requestPresenceStatus}
-    
+        requestPresenceStatus={requestPresenceStatus}
         highlight={false}
         fontSmall={skiaFontSmall}
       />
@@ -1561,18 +1500,25 @@ useEffect(() => {
       </View>
 
       <View style={styles.matchesContainer}>
-  <Matches
-    color={lightDarkTheme.primaryText}
-    matchesSV={matchesSV}
-    onSelect={proposeGeckoMatchWin}
-  />
+        <Matches
+          color={lightDarkTheme.primaryText}
+          matchesSV={matchesSV}
+          onSelect={proposeGeckoMatchWin}
+        />
+      </View>
+            <View style={styles.yieldContainer}>
+        <YieldMoment
+          color={lightDarkTheme.primaryText}
+          momentSV={momentSV}
+          onSelect={proposeGeckoWin}
+        />
       </View>
 
       <GlassPreviewBottom
         fontSmall={skiaFontSmall}
         readingMode={!manualOnly}
         speedSetting={speedSetting}
-        autoPickUp={autoPickUp} 
+        autoPickUp={autoPickUp}
         color={textColor}
         highlightColor={selectedFriend.lightColor}
         backgroundColor={darkerOverlayColor}
@@ -1602,8 +1548,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-end",
-  },      
-  
+  },
+
   animatedCounterWrapper: {
     position: "absolute",
     width: "100%",
@@ -1612,10 +1558,15 @@ const styles = StyleSheet.create({
   },
 
   matchesContainer: {
-
-    position: "absolute", bottom: 166, left: 16 
-
-  }
+    position: "absolute",
+    bottom: 166,
+    left: 16,
+  },
+  yieldContainer: {
+    position: "absolute",
+    bottom: 266,
+    left: 16,
+  },
 });
 
 export default ScreenGecko;

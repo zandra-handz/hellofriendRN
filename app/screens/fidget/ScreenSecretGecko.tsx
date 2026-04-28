@@ -49,7 +49,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendGuestGeckoPosition,
     registerOnHostGeckoCoords,
     requestPresenceStatus,
-    triggerNav,
+    registerOnGeckoMatchWinNavigate,
   } = useGeckoWebsocket();
   const { user } = useUser();
 
@@ -108,18 +108,16 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }, [requestPresenceStatus]),
   );
 
-const prevPendingIdRef = useRef<number | null>(null);
-
 useEffect(() => {
-  if (!triggerNav?.pending_id) return;
-  if (triggerNav.pending_id === prevPendingIdRef.current) return;
-
-  prevPendingIdRef.current = triggerNav.pending_id;
-
-  navigateToSecretGeckoWinAccept({
-    pendingId: triggerNav.pending_id,
+  registerOnGeckoMatchWinNavigate((payload) => {
+    if (!payload?.pending_id) return;
+    navigateToSecretGeckoWinAccept({ pendingId: payload.pending_id });
   });
-}, [triggerNav, navigateToSecretGeckoWinAccept]);
+
+  return () => {
+    registerOnGeckoMatchWinNavigate(() => {});
+  };
+}, [registerOnGeckoMatchWinNavigate, navigateToSecretGeckoWinAccept]);
 
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {

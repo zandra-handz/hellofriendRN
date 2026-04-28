@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import useUser from "../useUser";
+ 
 import { fetchGeckoGameWinPending } from "@/src/calls/api";
 
-type Props = {
-  userId: number;
-}
-const useGeckoGameWinPending = ({userId}: Props) => {
-  const { user } = useUser();
+ type Props = {
+  userId?: number | null;
+  disable?: boolean;
+};
 
+const useGeckoGameWinPending = ({ userId, disable = false }: Props) => {
   const {
     data: geckoGameWinPending,
     isLoading: geckoGameWinPendingIsLoading,
@@ -15,9 +15,9 @@ const useGeckoGameWinPending = ({userId}: Props) => {
     isError: geckoGameWinPendingIsError,
     refetch: refetchGeckoGameWinPending,
   } = useQuery({
-    queryKey: ["geckoGameWinPending", user?.id ?? 0],
+    queryKey: ["geckoGameWinPending", userId ?? 0],
     queryFn: () => fetchGeckoGameWinPending(),
-    enabled: !!userId,
+    enabled: !!userId && !disable,
     retry: 3,
   });
 

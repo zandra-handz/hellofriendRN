@@ -232,15 +232,42 @@ export const getUserSettings = async () => {
 
  
 
-export const fetchGeckoGameWins = async () => {
-    try {
-      const response = await helloFriendApiClient.get(`/users/gecko/game-wins/`);
-      return response.data;               
-    } catch (e: unknown) {
-      handleApiError(e, "Error during fetchGeckoGameWins");                                                                                                                                                                                
+export const fetchGeckoGameWins = async ({
+  page = 1,
+}: {
+  page?: number;
+}) => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/game-wins/?page=${page}`,
+    );
+    if (response?.data && response?.data?.results) {
+      return response.data;
+    } else {
+      console.log("No data returned from fetchGeckoGameWins.");
+      return { results: [], next: null, previous: null };
     }
-  };                                                                                                                                                                                                                                       
-                       
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoGameWins");
+  }
+};                                                                                                                                                                                                                                       
+     
+
+  export const updateGeckoGameWinPin = async (                                                                                                                                                                                                                                                                                    
+    winId: number,                                                                                                                                                                                                                                                                                                                
+    pinned: boolean,                                                                                                                                                                                                                                                                                                              
+  ) => {          
+    try {
+      const response = await helloFriendApiClient.patch(
+        `/users/gecko/game-wins/${winId}/pin/`,
+        { pinned },
+      );
+      return response.data;
+    } catch (e: unknown) {
+      handleApiError(e, "Error during updateGeckoGameWinPin");
+    }
+  };
+  
   export const fetchGeckoGameWinsGiven = async () => {
     try {
       const response = await helloFriendApiClient.get(

@@ -91,6 +91,7 @@ import ScreenGecko from "./app/screens/fidget/ScreenGecko";
 import ScreenSecretGecko from "./app/screens/fidget/ScreenSecretGecko";
 import ScreenGeckoWinAccept from "./app/screens/moments/ScreenGeckoWinAccept";
 import ScreenGeckoWins from "./app/screens/moments/ScreenGeckoWins";
+import ScreenGeckoWinView from "./app/screens/moments/ScreenGeckoWinView";
 // import ScreenGeckoSelectSettings from "./app/screens/moments/ScreenGeckoSelectSettings";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
@@ -516,6 +517,15 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
               />
             )}
           </Stack.Screen>
+
+          <Stack.Screen
+            name="GeckoWinView"
+            component={ScreenGeckoWinView}
+            options={{
+              headerShown: false,
+              animation: "none",
+            }}
+          />
         </Stack.Navigator>
       </FriendCategoryColorsProvider>
     );
