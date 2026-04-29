@@ -4,9 +4,8 @@ import { decideGeckoGameWinPending } from "@/src/calls/api";
 
 type Props = {
   userId: number;
-}
-const useDecideGeckoGameWinPending = ({userId} : Props) => {
- 
+};
+const useDecideGeckoGameWinPending = ({ userId }: Props) => {
   const queryClient = useQueryClient();
 
   const decideGeckoGameWinPendingMutation = useMutation({
@@ -37,6 +36,8 @@ const useDecideGeckoGameWinPending = ({userId} : Props) => {
   return {
     decide,
     decideGeckoGameWinPendingMutation,
+    isLoading: decideGeckoGameWinPendingMutation.isLoading,
+    isSuccess: decideGeckoGameWinPendingMutation.isSuccess,
     isPending: decideGeckoGameWinPendingMutation.isPending,
   };
 };

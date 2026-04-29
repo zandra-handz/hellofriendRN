@@ -308,8 +308,12 @@ export const fetchGeckoGameMatchWinPending = async (pendingId: number) => {
 };
 
   export const decideGeckoGameWinPending = async (
+
+  
     decision: "accept" | "decline",
   ) => {
+
+    console.log('sending decision!')
     try {
       const response = await helloFriendApiClient.post(
         `/users/gecko/game-wins/pending/`,

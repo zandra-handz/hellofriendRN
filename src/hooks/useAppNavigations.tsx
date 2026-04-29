@@ -66,10 +66,12 @@ type NavToGeckoProp = {
 
 type NavToGeckoWinAcceptProps = {
   pendingId?: number | null;
+  oneDirectional?: boolean | null;
 };
 
 type NavToSecretGeckoWinAcceptProps = {
   pendingId?: number | null;
+  oneDirectional?: boolean | null;
 };
 type NavToQRCodeProp = {
   selection: number;
@@ -130,12 +132,16 @@ interface hookReturns {
     autoPick,
     timestamp,
     sessionId,
-  }: NavToGeckoProp) => void; 
+  }: NavToGeckoProp) => void;
   navigateToSecretGecko: () => void;
- navigateToGeckoWinAccept: ({ pendingId }?: NavToGeckoWinAcceptProps) => void;
-navigateToSecretGeckoWinAccept: ({
-  pendingId,
-}?: NavToSecretGeckoWinAcceptProps) => void;
+  navigateToGeckoWinAccept: ({
+    pendingId,
+    oneDirectional,
+  }?: NavToGeckoWinAcceptProps) => void;
+  navigateToSecretGeckoWinAccept: ({
+    pendingId,
+    oneDirectional,
+  }?: NavToSecretGeckoWinAcceptProps) => void;
   navigateToGeckoWins: () => void;
   navigateToGeckoSelectSettings: ({
     selection,
@@ -317,27 +323,29 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
- 
-
   const navigateToSecretGecko = () => {
     navigation.navigate("SecretGecko");
   };
- 
-  const navigateToGeckoWinAccept = ({
-  pendingId = null,
-}: NavToGeckoWinAcceptProps = {}) => {
-  navigation.navigate("GeckoWinAccept", {
-    pendingId,
-  });
-};
 
-const navigateToSecretGeckoWinAccept = ({
-  pendingId = null,
-}: NavToSecretGeckoWinAcceptProps = {}) => {
-  navigation.navigate("SecretGeckoWinAccept", {
-    pendingId,
-  });
-};
+  const navigateToGeckoWinAccept = ({
+    pendingId = null,
+    oneDirectional = false,
+  }: NavToGeckoWinAcceptProps = {}) => {
+    navigation.navigate("GeckoWinAccept", {
+      pendingId,
+      oneDirectional,
+    });
+  };
+
+  const navigateToSecretGeckoWinAccept = ({
+    pendingId = null,
+    oneDirectional = false,
+  }: NavToSecretGeckoWinAcceptProps = {}) => {
+    navigation.navigate("SecretGeckoWinAccept", {
+      pendingId,
+      oneDirectional,
+    });
+  };
 
   const navigateToGeckoWins = () => {
     navigation.navigate("GeckoWins");

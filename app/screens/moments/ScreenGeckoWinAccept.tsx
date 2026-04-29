@@ -8,12 +8,14 @@ import GlassGeckoWinAccept from "../fidget/GlassGeckoWinAccept";
 import manualGradientColors from "@/app/styles/StaticColors";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useDecideGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useDecideGeckoGameMatchWinPending";
+import useDecideGeckoGameWinPending from "@/src/hooks/GeckoCalls/useDecideGeckoGameWinPending";
 import useGeckoGameMatchWinPending from "@/src/hooks/GeckoCalls/useGeckoGameMatchWinPending";
 import useGeckoGameWinPending from "@/src/hooks/GeckoCalls/useGeckoGameWinPending";
 import useConfirmBeforeLeave from "@/src/hooks/useConfirmScreenLeave";
 
 type GeckoWinAcceptRouteParams = {
   pendingId?: number | null;
+  oneDirectional?: boolean | null;
 };
 
 type GeckoWinAcceptRoute = RouteProp<
@@ -21,6 +23,8 @@ type GeckoWinAcceptRoute = RouteProp<
   "GeckoWinAccept"
 >;
 
+// if pendingId is sent to this screen, uses the Gecko match flow
+// if not, uses the one sided flow
 const ScreenGeckoWinAccept = () => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
@@ -28,55 +32,75 @@ const ScreenGeckoWinAccept = () => {
 
   const route = useRoute<GeckoWinAcceptRoute>();
   const pendingId = route.params?.pendingId ?? null;
-const hasPendingId = !!pendingId;
+  const hasPendingId = !!pendingId;
 
-const { geckoGameMatchWinPending } = useGeckoGameMatchWinPending({
-  pendingId,
-});
+  const oneDirectional = route.params?.oneDirectional ?? false;
 
-const { geckoGameWinPending } = useGeckoGameWinPending({
-  userId: user?.id,
-  disable: hasPendingId,
-});
+  const { geckoGameMatchWinPending } = useGeckoGameMatchWinPending({
+    pendingId,
+  });
 
-const activePending = hasPendingId
-  ? geckoGameMatchWinPending
-  : geckoGameWinPending;
+  const { geckoGameWinPending } = useGeckoGameWinPending({
+    userId: user?.id,
+    disable: hasPendingId,
+  });
 
-const senderCapsule = activePending?.sender_capsule ?? null;
- 
+  const activePending = hasPendingId
+    ? geckoGameMatchWinPending
+    : geckoGameWinPending;
 
-  const { decide, isLoading, isSuccess } =
-    useDecideGeckoGameMatchWinPending();  
+  const senderCapsule = activePending?.sender_capsule ?? null;
 
+  const { decide, isLoading, isSuccess } = useDecideGeckoGameWinPending({userId: user?.id});
 
-    useConfirmBeforeLeave(!!pendingId && !isSuccess);
+  const {
+    decide: decideMatch,
+    isLoading: isLoadingMatch,
+    isSuccess: isSuccessMatch,
+  } = useDecideGeckoGameMatchWinPending();
+
+  // BOTH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  useConfirmBeforeLeave(!!pendingId && !isSuccessMatch && !isSuccess);
 
   useEffect(() => {
-    if (isSuccess) 
- 
- 
-      navigateBack();
-   
-  }, [isSuccess, navigateBack]);
+    if (isSuccessMatch || isSuccess) navigateBack();
+  }, [isSuccessMatch, isSuccess, navigateBack]);
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleAccept = useCallback(async () => {
-    if (!pendingId || !user?.id) return;
 
-    await decide({
-      pendingId,
-      decision: "accept",
-    });
-  }, [pendingId, user?.id, decide]);
+   
+    if (!user?.id) return;
+
+     console.log('accept pressed!!')
+
+    if (pendingId && !oneDirectional) {
+      console.log('sending to match')
+      await decideMatch({
+        pendingId,
+        decision: "accept",
+      });
+    }
+
+    if (!pendingId && oneDirectional) {
+      console.log('sending to one direction')
+      await decide(
+         "accept",
+      );
+    }
+
+
+  }, [pendingId, oneDirectional, user?.id, decideMatch, decide]);
 
   const handleDecline = useCallback(async () => {
     if (!pendingId || !user?.id) return;
 
-    await decide({
+    await decideMatch({
       pendingId,
       decision: "decline",
     });
-  }, [pendingId, user?.id, decide]);
+  }, [pendingId, user?.id, decideMatch, decide]);
 
   return (
     <>
@@ -97,7 +121,7 @@ const senderCapsule = activePending?.sender_capsule ?? null;
         onAccept={handleAccept}
         onDecline={handleDecline}
         onBack={navigateBack}
-        disabled={!pendingId || isLoading}
+        disabled={false}
       />
     </>
   );

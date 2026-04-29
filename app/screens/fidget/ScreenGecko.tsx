@@ -239,7 +239,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         if (!isActive) return;
         if (!selectedFriend?.id) return;
 
-        bindFriend(selectedFriend.id);
+        bindFriend(selectedFriend.id, selectedFriend.lightColor, selectedFriend.darkColor);
       };
 
       setup();

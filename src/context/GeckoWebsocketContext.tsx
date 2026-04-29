@@ -1,41 +1,34 @@
-
-// ● Update(hellofriend\hfroot\users\consumers.py)                                                                                                                                                                                            
-//   ⎿  Added 19 lines                                                                                                                                                                                                                        
-//       2001              },                                                                                                                                                                                                                 
-//       2002          }))                                                                                                                                                                                                                    
-//       2003                                                                                                                                                                                                                                 
-//       2004 +    async def gecko_win_match_pending_accept_partner(self, event):                                                                                                                                                             
-//       2005 +        await self.send(text_data=json.dumps({                                                                                                                                                                          
-//       2006 +            'action': 'gecko_win_match_pending_accept_partner',                                                                                                                                                                
-//       2007 +            'data': {                                                                                                                                                                                                   
-//       2008 +                'pending_id': event.get('pending_id'),                                                                                                                                                                         
-//       2009 +                'match_key': event.get('match_key'),                                                                                                                                                                         
-//       2010 +                'accepted_by_user_id': event.get('accepted_by_user_id'),                                                                                                                                                     
-//       2011 +            },                                                                                                                                                                                                                 
-//       2012 +        }))                                                                                                                                                                                                                    
-//       2013 +                                                                                                                                                                                                                        
-//       2014 +    async def gecko_win_match_finalized(self, event):                                                                                                                                                                   
-//       2015 +        await self.send(text_data=json.dumps({                                                                                                                                                                          
-//       2016 +            'action': 'gecko_win_match_finalized',                                                                                                                                                                      
-//       2017 +            'data': {                                                                                                                                                                                                   
-//       2018 +                'match_key': event.get('match_key'),                                                                                                                                                                    
-//       2019 +                'partner_user_id': event.get('partner_user_id'),                                                                                                                                                        
-//       2020 +            },                                                                                                                                                                                                          
-//       2021 +        }))                                                                                                                                                                                                             
-//       2022 +                                                                                                                                                                                                                        
+// ● Update(hellofriend\hfroot\users\consumers.py)
+//   ⎿  Added 19 lines
+//       2001              },
+//       2002          }))
+//       2003
+//       2004 +    async def gecko_win_match_pending_accept_partner(self, event):
+//       2005 +        await self.send(text_data=json.dumps({
+//       2006 +            'action': 'gecko_win_match_pending_accept_partner',
+//       2007 +            'data': {
+//       2008 +                'pending_id': event.get('pending_id'),
+//       2009 +                'match_key': event.get('match_key'),
+//       2010 +                'accepted_by_user_id': event.get('accepted_by_user_id'),
+//       2011 +            },
+//       2012 +        }))
+//       2013 +
+//       2014 +    async def gecko_win_match_finalized(self, event):
+//       2015 +        await self.send(text_data=json.dumps({
+//       2016 +            'action': 'gecko_win_match_finalized',
+//       2017 +            'data': {
+//       2018 +                'match_key': event.get('match_key'),
+//       2019 +                'partner_user_id': event.get('partner_user_id'),
+//       2020 +            },
+//       2021 +        }))
+//       2022 +
 //       2023      @database_sync_to_async
 //       2024      def _propose_gecko_match_win_db(self, my_capsule_id, partner_capsule_id, partner_user_id):
 //       2025          from friends.models import ThoughtCapsulez
 
-// ● Added. FE listens for:           
+// ● Added. FE listens for:
 //   - gecko_win_match_pending_accept_partner → "your peer has accepted, your acceptance still needed"
 //   - gecko_win_match_finalized → "both accepted, the win is recorded, source capsules are gone"
-
-
-
-
-
-
 
 import React, {
   createContext,
@@ -196,6 +189,8 @@ type GeckoMatchWinNavigatePayload = {
 type GeckoWebsocketContextValue = {
   socketStatusSV: SharedValue<SocketStatus>;
   peerJoinedStatusSV: SharedValue<PeerJoinedStatus>;
+  sharedColorLightSV: SharedValue;
+  sharedColorDarkSV: SharedValue;
 
   scoreStateRef: React.MutableRefObject<ScoreState | null>;
   // liveSeshPartnerId: number | null;
@@ -218,7 +213,11 @@ type GeckoWebsocketContextValue = {
   disconnect: () => void;
   setWantsConnection: (wants: boolean) => void;
 
-  bindFriend: (friendId: number) => boolean;
+  bindFriend: (
+    friendId: number,
+    friendLightColor: string,
+    friendDarkColor: string,
+  ) => boolean;
   clearFriendBinding: () => boolean;
   getFriendBindingState: () => {
     isFriendBound: boolean;
@@ -304,12 +303,17 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
   const peerJoinedStatusSV = useSharedValue<PeerJoinedStatus>(false);
 
+  const sharedColorDarkSV = useSharedValue(null);
+  const sharedColorLightSV = useSharedValue(null);
+
   const geckoMessageSV = useSharedValue<GeckoMessage>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const scoreStateRef = useRef<ScoreState | null>(null);
 
   const pendingFriendIdRef = useRef<number | null>(null);
+  const pendingFriendLightColorRef = useRef<string | null>(null);
+  const pendingFriendDarkColorRef = useRef<string | null>(null);
   const boundFriendIdRef = useRef<number | null>(null);
   const isFriendBoundRef = useRef(false);
 
@@ -523,20 +527,31 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     }
   }, []);
 
-  const sendSetFriend = useCallback((fid: number | null) => {
-    if (wsRef.current?.readyState !== WebSocket.OPEN || fid == null) {
-      return false;
-    }
+  const sendSetFriend = useCallback(
+    (
+      fid: number | null,
+      fLightColor: string | null,
+      fDarkColor: string | null,
+    ) => {
+      if (wsRef.current?.readyState !== WebSocket.OPEN || fid == null) {
+        return false;
+      }
 
-    wsRef.current.send(
-      JSON.stringify({
-        action: "set_friend",
-        data: { friend_id: fid },
-      }),
-    );
+      wsRef.current.send(
+        JSON.stringify({
+          action: "set_friend",
+          data: {
+            friend_id: fid,
+            friend_light_color: fLightColor,
+            friend_dark_color: fDarkColor,
+          },
+        }),
+      );
 
-    return true;
-  }, []);
+      return true;
+    },
+    [],
+  );
 
   const sendRaw = useCallback(
     (payload: object, options?: { requireFriendBound?: boolean }) => {
@@ -615,9 +630,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     }
 
     peerJoinedStatusSV.value = false;
+    sharedColorLightSV.value = null;
+    sharedColorDarkSV.value = null;
     wsRef.current.send(JSON.stringify({ action: "request_peer_presence" }));
     return true;
-  }, [peerJoinedStatusSV]);
+  }, [peerJoinedStatusSV, sharedColorLightSV, sharedColorDarkSV]);
 
   const sendReadStatusToGecko = useCallback((messageCode: 0 | 1 | 2) => {
     console.log("sending read status?");
@@ -677,7 +694,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   }, []);
 
   const bindFriend = useCallback(
-    (friendId: number) => {
+    (friendId: number, friendLightColor: string, friendDarkColor: string) => {
       if (boundFriendIdRef.current === friendId && isFriendBoundRef.current) {
         return true;
       }
@@ -687,6 +704,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       }
 
       pendingFriendIdRef.current = friendId;
+      pendingFriendLightColorRef.current = friendLightColor;
+      pendingFriendDarkColorRef.current = friendDarkColor;
       isFriendBoundRef.current = false;
       boundFriendIdRef.current = null;
 
@@ -695,7 +714,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       guestPeerGeckoPositionSV.value = null;
 
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        return sendSetFriend(friendId);
+        return sendSetFriend(friendId, friendLightColor, friendDarkColor);
       }
 
       return false;
@@ -913,13 +932,16 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     return true;
   }, []);
 
-  const proposeGeckoWin = useCallback(                                                                                                                                                                                                                                                                                            
+  const proposeGeckoWin = useCallback(
     (capsuleId: string, geckoGameType: number) => {
       if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
 
-      console.log('sending propseGeckoWin in socket: ', capsuleId, geckoGameType)
-      
-      
+      console.log(
+        "sending propseGeckoWin in socket: ",
+        capsuleId,
+        geckoGameType,
+      );
+
       wsRef.current.send(
         JSON.stringify({
           action: "propose_gecko_win",
@@ -930,7 +952,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     },
     [],
   );
-    const proposeGeckoMatchWin = useCallback((geckoGameType: number) => {
+  const proposeGeckoMatchWin = useCallback((geckoGameType: number) => {
     console.log(`gecko game type sending: `, geckoGameType);
     if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
     wsRef.current.send(
@@ -1044,9 +1066,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       startFlushInterval();
 
       const fid = pendingFriendIdRef.current;
+      const fLightColor = pendingFriendLightColorRef.current;
+      const fDarkColor = pendingFriendDarkColorRef.current;
 
       if (fid != null) {
-        sendSetFriend(fid);
+        sendSetFriend(fid, fLightColor, fDarkColor);
         console.log("sending friend");
       } else {
         getScoreState();
@@ -1121,59 +1145,91 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
       if (message.action === "peer_presence") {
         peerJoinedStatusSV.value = message.data?.online ?? false;
+
+        // used by guest, sets their background to be the host's colors for their friend profile
+        sharedColorLightSV.value = message.data?.friend_light_color ?? null;
+        sharedColorDarkSV.value = message.data?.friend_dark_color ?? null;
+
         return;
       }
 
-if (message.action === "gecko_win_proposed") {
-  console.log("[WS] gecko_win_proposed", message.data);
+      if (message.action === "gecko_win_proposed") {
+        console.log("[WS] gecko_win_proposed", message.data);
 
-  const pendingIdRaw = message.data?.pending_id;
-  const pendingId = Number(pendingIdRaw);
-  const receivedAt = performance.now();
+        const pendingIdRaw = message.data?.pending_id;
+        const pendingId = Number(pendingIdRaw);
+        const receivedAt = performance.now();
 
-  if (pendingIdRaw != null && Number.isFinite(pendingId)) {
-    onGeckoMatchWinNavigateRef.current?.({
-      pending_id: pendingId,
-      sender_user_id: message.data?.sender_user_id,
-      gecko_game_type: message.data?.gecko_game_type,
-      my_capsule_id: message.data?.my_capsule_id,
-      partner_capsule_id: message.data?.partner_capsule_id,
-      received_at: receivedAt,
-    });
-  } else {
-    onGeckoWinProposedRef.current?.({
-      sender_user_id: message.data?.sender_user_id,
-      gecko_game_type: message.data?.gecko_game_type,
-      pending_id: pendingId,
-      my_capsule_id: message.data?.my_capsule_id,
-      partner_capsule_id: message.data?.partner_capsule_id,
-      received_at: receivedAt,
-    });
-  }
+        if (pendingIdRaw != null && Number.isFinite(pendingId)) {
+          onGeckoMatchWinNavigateRef.current?.({
+            pending_id: pendingId,
+            sender_user_id: message.data?.sender_user_id,
+            gecko_game_type: message.data?.gecko_game_type,
+            my_capsule_id: message.data?.my_capsule_id,
+            partner_capsule_id: message.data?.partner_capsule_id,
+            received_at: receivedAt,
+          });
+        } else {
+          onGeckoWinProposedRef.current?.({
+            sender_user_id: message.data?.sender_user_id,
+            gecko_game_type: message.data?.gecko_game_type,
+            pending_id: pendingId,
+            my_capsule_id: message.data?.my_capsule_id,
+            partner_capsule_id: message.data?.partner_capsule_id,
+            received_at: receivedAt,
+          });
+        }
 
-  return;
-}
+        return;
+      }
       if (message.action === "propose_gecko_win_ok") {
-      
         console.log("[WS] propose_gecko_win_ok", message.data);
         return;
       }
 
-      
       if (message.action === "propose_gecko_match_win_ok") {
-
         // if (message.data?.capsule_id) {
         //   setTriggerNav(performance.now())
 
         // }
-      
+
         console.log("[WS] propose_gecko_match_win_ok", message.data);
         return;
       }
 
-
       if (message.action === "propose_gecko_win_failed") {
         console.log("[WS] propose_gecko_win_failed", message.data);
+        return;
+      }
+
+      if (message.action === "gecko_win_accepted") {
+        // BE payload: { pending_id, deleted_capsule_id, source: 'one_sided' | 'match' }
+        // Fires once per user whose original capsule was deleted.
+        // FE TODO: remove deleted_capsule_id from cached capsule list / refetch.
+        console.log("[WS] gecko_win_accepted", message.data);
+        const pendingId = Number(message.data?.pending_id);
+        const deletedCapsuleId = message.data?.deleted_capsule_id ?? null;
+        const source = message.data?.source ?? null;
+
+        if (deletedCapsuleId) {
+          // TODO: trigger capsule purge / cache invalidation
+          // e.g. onGeckoWinAcceptedRef.current?.({ pendingId, deletedCapsuleId, source });
+        }
+
+        return;
+      }
+
+      if (message.action === "gecko_win_declined") {
+        // BE payload: { pending_id, declined_by_user_id, source: 'one_sided' | 'match' }
+        // Sent to the partner only. Pure UI reaction — nothing was deleted.
+        console.log("[WS] gecko_win_declined", message.data);
+        const pendingId = Number(message.data?.pending_id);
+        const declinedByUserId = message.data?.declined_by_user_id ?? null;
+        const source = message.data?.source ?? null;
+
+        // TODO: trigger UI reaction (toast / clear pending screen / etc.)
+        // e.g. onGeckoWinDeclinedRef.current?.({ pendingId, declinedByUserId, source });
+
         return;
       }
 
@@ -1332,6 +1388,8 @@ if (message.action === "gecko_win_proposed") {
     joinLiveSesh,
     peerGeckoPositionSV,
     peerJoinedStatusSV,
+    sharedColorLightSV,
+    sharedColorDarkSV,
     publishScoreState,
     requestPresenceStatus,
     sendSetFriend,

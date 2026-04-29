@@ -113,11 +113,11 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
 useEffect(() => {
   registerOnGeckoMatchWinNavigate((payload) => {
     if (!payload?.pending_id) return;
-    navigateToSecretGeckoWinAccept({ pendingId: payload.pending_id });
+    navigateToSecretGeckoWinAccept({ pendingId: payload.pending_id, oneDirectional: false });
   });
 
   registerOnGeckoWinProposed(() => {
-    navigateToSecretGeckoWinAccept({ pendingId: null });
+    navigateToSecretGeckoWinAccept({ pendingId: null, oneDirectional: true });
   });
 
   return () => {
