@@ -49,7 +49,9 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendGuestGeckoPosition,
     registerOnHostGeckoCoords,
     requestPresenceStatus,
+    registerOnGeckoWinProposed,
     registerOnGeckoMatchWinNavigate,
+    
   } = useGeckoWebsocket();
   const { user } = useUser();
 
@@ -114,10 +116,19 @@ useEffect(() => {
     navigateToSecretGeckoWinAccept({ pendingId: payload.pending_id });
   });
 
+  registerOnGeckoWinProposed(() => {
+    navigateToSecretGeckoWinAccept({ pendingId: null });
+  });
+
   return () => {
     registerOnGeckoMatchWinNavigate(() => {});
+    registerOnGeckoWinProposed(() => {});
   };
-}, [registerOnGeckoMatchWinNavigate, navigateToSecretGeckoWinAccept]);
+}, [
+  registerOnGeckoMatchWinNavigate,
+  registerOnGeckoWinProposed,
+  navigateToSecretGeckoWinAccept,
+]);
 
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {

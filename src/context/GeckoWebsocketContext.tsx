@@ -1127,27 +1127,27 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 if (message.action === "gecko_win_proposed") {
   console.log("[WS] gecko_win_proposed", message.data);
 
-  const pendingId = Number(message.data?.pending_id);
+  const pendingIdRaw = message.data?.pending_id;
+  const pendingId = Number(pendingIdRaw);
+  const receivedAt = performance.now();
 
-  if (Number.isFinite(pendingId)) {
-    const navPayload: GeckoMatchWinNavigatePayload = {
+  if (pendingIdRaw != null && Number.isFinite(pendingId)) {
+    onGeckoMatchWinNavigateRef.current?.({
       pending_id: pendingId,
       sender_user_id: message.data?.sender_user_id,
       gecko_game_type: message.data?.gecko_game_type,
       my_capsule_id: message.data?.my_capsule_id,
       partner_capsule_id: message.data?.partner_capsule_id,
-      received_at: performance.now(),
-    };
-
-    onGeckoMatchWinNavigateRef.current?.(navPayload);
-
+      received_at: receivedAt,
+    });
+  } else {
     onGeckoWinProposedRef.current?.({
       sender_user_id: message.data?.sender_user_id,
       gecko_game_type: message.data?.gecko_game_type,
       pending_id: pendingId,
       my_capsule_id: message.data?.my_capsule_id,
       partner_capsule_id: message.data?.partner_capsule_id,
-      received_at: navPayload.received_at,
+      received_at: receivedAt,
     });
   }
 
