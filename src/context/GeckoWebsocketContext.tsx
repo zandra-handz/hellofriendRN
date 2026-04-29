@@ -283,6 +283,9 @@ type GeckoWebsocketContextValue = {
   registerOnGeckoMatchWinNavigate: (
     cb: (data: GeckoMatchWinNavigatePayload) => void,
   ) => void;
+
+  registerOnRemoveCapsule: (capsuleId: string) => void;
+  onRemoveCapsuleRef: React.MutableRefObject<string>;
 };
 
 const GeckoWebsocketContext = createContext<GeckoWebsocketContextValue | null>(
@@ -351,6 +354,9 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     ((d: GeckoMatchWinNavigatePayload) => void) | null
   >(null);
 
+
+ const onRemoveCapsuleRef = useRef<((capsuleId: string) => void) | null>(null);
+
   const energySV = useSharedValue<EnergyState>({
     energy: 1.0,
     surplusEnergy: 0.0,
@@ -417,6 +423,19 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [],
   );
 
+
+const registerOnRemoveCapsule = useCallback(
+  (cb: (capsuleId: string) => void) => {
+    onRemoveCapsuleRef.current = cb;
+
+    return () => {
+      if (onRemoveCapsuleRef.current === cb) {
+        onRemoveCapsuleRef.current = null;
+      }
+    };
+  },
+  []
+);
   const registerOnScoreState = useCallback((cb: (data: ScoreState) => void) => {
     onScoreStateRef.current = cb;
   }, []);
@@ -1209,6 +1228,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         console.log("[WS] gecko_win_accepted", message.data);
         const pendingId = Number(message.data?.pending_id);
         const deletedCapsuleId = message.data?.deleted_capsule_id ?? null;
+
+        onRemoveCapsuleRef.current?.(deletedCapsuleId);
         const source = message.data?.source ?? null;
 
         if (deletedCapsuleId) {
@@ -1491,6 +1512,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnGeckoWinProposed,
       proposeGeckoMatchWin,
       registerOnGeckoMatchWinNavigate,
+      registerOnRemoveCapsule
     }),
     [
       bindFriend,
@@ -1535,6 +1557,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnGeckoWinProposed,
       proposeGeckoMatchWin,
       registerOnGeckoMatchWinNavigate,
+      registerOnRemoveCapsule
     ],
   );
 

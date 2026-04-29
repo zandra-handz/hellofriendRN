@@ -21,6 +21,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useUpdateGeckoData from "@/src/hooks/useUpdateGeckoData";
 import DebugPanel from "../moments/DebugPanel";
+import useRemoveMomentFEOnly from "@/src/hooks/CapsuleCalls/useRemoveMomentFEOnly";
 import YieldMoment from "@/app/assets/shader_animations/YieldMoment";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -100,6 +101,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { isHost, sessionFriendId } = useCurrentLiveSesh({
     userId: user?.id,
     enabled: true,
+  });
+
+  const { handleRemoveMoment } = useRemoveMomentFEOnly({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
   });
 
   const { geckoCombinedData } = useUserGeckoCombinedData();
@@ -193,6 +199,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     proposeGeckoWin,
     proposeGeckoMatchWin,
     registerOnGeckoMatchWinNavigate,
+    registerOnRemoveCapsule,
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -220,6 +227,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     };
   }, [registerOnGeckoMatchWinNavigate, navigateToGeckoWinAccept]);
 
+useEffect(() => {
+  const unregister = registerOnRemoveCapsule((capsuleId) => {
+    handleRemoveMoment(capsuleId);
+  });
+
+  return unregister;
+}, [registerOnRemoveCapsule, handleRemoveMoment]);
+
   // and for background -> foreground
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
@@ -239,7 +254,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         if (!isActive) return;
         if (!selectedFriend?.id) return;
 
-        bindFriend(selectedFriend.id, selectedFriend.lightColor, selectedFriend.darkColor);
+        bindFriend(
+          selectedFriend.id,
+          selectedFriend.lightColor,
+          selectedFriend.darkColor,
+        );
       };
 
       setup();
@@ -1506,7 +1525,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           onSelect={proposeGeckoMatchWin}
         />
       </View>
-            <View style={styles.yieldContainer}>
+      <View style={styles.yieldContainer}>
         <YieldMoment
           color={lightDarkTheme.primaryText}
           momentSV={momentSV}
