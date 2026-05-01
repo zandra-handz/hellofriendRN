@@ -27,7 +27,7 @@ const LiveSeshInvitesPanel: React.FC = () => {
   const { user } = useUser();
   const userId = user?.id;
   const { lightDarkTheme } = useLDTheme();
-  const { navigateToSecretGecko} = useAppNavigations();
+  const { navigateToGeckoAcceptInvite, navigateToSecretGecko} = useAppNavigations();
 
 
     const {
@@ -100,6 +100,12 @@ const LiveSeshInvitesPanel: React.FC = () => {
 
   // console.log("[LiveSeshInvitesPanel]", { userId, isLoading, data, pending, sent });
 
+const handleAcceptButtonPress = (invite: Invite) => {
+  navigateToGeckoAcceptInvite({
+    inviteId: invite.id,
+    senderName: invite.sender_username,
+  });
+};
   const confirmAccept = (invite: Invite) => {
     Alert.alert(
       "Accept invite?",
@@ -190,7 +196,7 @@ const LiveSeshInvitesPanel: React.FC = () => {
               </Text>
             </View>
             <Pressable
-              onPress={() => confirmAccept(invite)}
+              onPress={() => handleAcceptButtonPress(invite)}
               disabled={acceptMutation.isPending}
               style={[
                 styles.acceptBtn,

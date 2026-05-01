@@ -15,37 +15,12 @@ const useCurrentLiveSesh = ({ userId, enabled = true }: Props) => {
     enabled: !!userId && enabled,
     staleTime: 0,
   });
-
-
-  // const isHost = useMemo(()=> {
-  //   if (data?.is_host && (Number(data?.friend) === Number(selectedFriend?.id)) ) {
-  //     return true
-  //   } else {
-  //     return false
-  //   }
-
-  // }, [data?.is_host, data?.friend,  selectedFriend?.id]);
  
-// const backendFriendId =
-//   data?.friend != null ? Number(data.friend) : null;
-// const selectedFriendId =
-//   selectedFriend?.id != null ? Number(selectedFriend.id) : null;
-
-// if (
-//   data?.is_host &&
-//   backendFriendId != null &&
-//   selectedFriendId != null &&
-//   backendFriendId !== selectedFriendId
-// ) {
-//   console.log("[HOST FRIEND MISMATCH]", {
-//     backendFriendId,
-//     selectedFriendId,
-//     currentLiveSesh: data,
-//   });
-// }
 
   return {
-    currentLiveSesh: data,                
+    currentLiveSesh: data,  
+    playMode: data?.gecko_play_mode ?? null,       
+    playModeLabel: data?.gecko_play_mode_label ?? null,       
     isHost: data?.is_host ?? false,
     sessionFriendId: data?.friend != null ? Number(data.friend) : null,                                                                                                                                                                                                                                                     isLoading,
     isSuccess,                                                                                                                                                                                                                                                                                                          

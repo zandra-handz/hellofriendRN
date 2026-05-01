@@ -64,6 +64,12 @@ type NavToGeckoProp = {
   pollMode?: boolean | null;
 };
 
+
+type NavToGeckoAcceptInviteProps = {
+  inviteId?: number | null;
+  senderName?: boolean | null;
+};
+
 type NavToGeckoWinAcceptProps = {
   pendingId?: number | null;
   oneDirectional?: boolean | null;
@@ -134,6 +140,11 @@ interface hookReturns {
     sessionId,
   }: NavToGeckoProp) => void;
   navigateToSecretGecko: () => void;
+
+    navigateToGeckoAcceptInvite: ({
+    inviteId,
+   senderName,
+  }?: NavToGeckoAcceptInviteProps) => void;
   navigateToGeckoWinAccept: ({
     pendingId,
     oneDirectional,
@@ -323,6 +334,17 @@ const useAppNavigations = (): hookReturns => {
     });
   };
 
+  const navigateToGeckoAcceptInvite = ({
+    inviteId = null,
+    senderName = null,
+  }: NavToGeckoAcceptInviteProps = {}) => {
+    navigation.navigate("GeckoAcceptInvite", {
+      inviteId,
+      senderName,
+    })
+
+  };
+
   const navigateToSecretGecko = () => {
     navigation.navigate("SecretGecko");
   };
@@ -461,6 +483,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToGecko,
     navigateToGeckoWinAccept,
     navigateToSecretGecko,
+   navigateToGeckoAcceptInvite,
     navigateToSecretGeckoWinAccept,
     navigateToGeckoWins,
     navigateToGeckoSelectSettings,

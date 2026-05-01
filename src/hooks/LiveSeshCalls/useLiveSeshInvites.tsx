@@ -17,11 +17,13 @@ const useLiveSeshInvites = ({ userId, enabled = true }: Props) => {
 
   const sent = useMemo(() => data?.sent ?? [], [data?.sent]);
   const pending = useMemo(() => data?.pending ?? [], [data?.pending]);
+    const playModes = useMemo(() => data?.play_modes ?? [], [data?.play_modes]);
 
   return {
     data,
     sent,
     pending,
+    playModes,
     isLoading,
     isSuccess,
     refetch,

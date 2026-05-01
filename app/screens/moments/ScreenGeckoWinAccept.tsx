@@ -105,8 +105,10 @@ const ScreenGeckoWinAccept = () => {
   return (
     <>
       <SafeViewFriendStatic
-        friendColorLight={manualGradientColors.lightColor}
-        friendColorDark={manualGradientColors.darkColor}
+        // friendColorLight={manualGradientColors.lightColor}
+        // friendColorDark={manualGradientColors.darkColor}
+                friendColorLight={lightDarkTheme.primaryBackground}
+        friendColorDark={lightDarkTheme.primaryBackground}
         useOverlay={false}
         backgroundOverlayColor={lightDarkTheme.primaryBackground}
         style={[{ flex: 1, padding: 10 }]}

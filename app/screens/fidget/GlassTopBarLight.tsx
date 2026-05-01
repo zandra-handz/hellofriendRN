@@ -1,4 +1,4 @@
- import { View, StyleSheet, LayoutChangeEvent, Pressable } from "react-native";                                                                                                                                                           
+ import { View, StyleSheet, LayoutChangeEvent, Pressable, Text } from "react-native";                                                                                                                                                           
   import React, { useMemo, useRef, useState } from "react";                                                                                                                                                                                
   import Animated, {                                                                                                                                                                                                                       
     useAnimatedStyle,                                                                                                                                                                                                                      
@@ -47,6 +47,7 @@
     socketStatusSV,
     peerJoinedStatusSV,
     geckoMessageSV,
+    playModeLabel,
     textColor,
     backgroundColor,
     liveSeshPartner,
@@ -116,7 +117,11 @@
               label={peerLabel}
               labelColor={textColor}
             />
+                <Text style={{color: textColor}}>Play mode:{" "}
+            {playModeLabel}
+          </Text>
           </View>
+      
           <View
             style={[styles.bubblesWrapper, { height: CHAT_HEIGHT }]}
             onLayout={onBubblesLayout}

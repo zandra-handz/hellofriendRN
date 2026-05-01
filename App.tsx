@@ -89,6 +89,7 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 // import ScreenFidget from "./app/screens/fidget/ScreenFidget";
 import ScreenGecko from "./app/screens/fidget/ScreenGecko";
 import ScreenSecretGecko from "./app/screens/fidget/ScreenSecretGecko";
+import ScreenGeckoAcceptInvite from "./app/screens/fidget/ScreenGeckoInviteAccept";
 import ScreenGeckoWinAccept from "./app/screens/moments/ScreenGeckoWinAccept";
 import ScreenGeckoWins from "./app/screens/moments/ScreenGeckoWins";
 import ScreenGeckoWinView from "./app/screens/moments/ScreenGeckoWinView";
@@ -481,6 +482,23 @@ const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
                 {...props}
                 skiaFontLarge={skiaFontLarge}
                 skiaFontSmall={skiaFontSmall}
+              />
+            )}
+          </Stack.Screen>
+
+            <Stack.Screen
+            name="GeckoAcceptInvite"
+            options={{
+              headerShown: false,
+              gestureEnabled: true,
+             // animation: "none",
+            }}
+          >
+            {(props) => (
+              <ScreenGeckoAcceptInvite
+                {...props}
+                // skiaFontLarge={skiaFontLarge}
+                // skiaFontSmall={skiaFontSmall}
               />
             )}
           </Stack.Screen>

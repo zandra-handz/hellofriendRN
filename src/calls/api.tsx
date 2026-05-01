@@ -1274,7 +1274,7 @@ export const fetchFriendDashboard = async (friendId: number) => {
   export const getCurrentLiveSesh = async () => { 
      try {
       const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);   
-      // console.log(`livesession`, response.data)                                                                                                                                                               
+    console.log(`livesession`, response.data)                                                                                                                                                               
       return response.data;
     } catch (e: unknown) {
       handleApiError(e, "Error during getCurrentLiveSesh");
@@ -1300,17 +1300,22 @@ export const fetchFriendDashboard = async (friendId: number) => {
     }
   };
 
-  export const acceptLiveSeshInvite = async (inviteId: number) => {
-    try {
-      const response = await helloFriendApiClient.post(
-        `/users/live-sesh/invites/${inviteId}/accept/`,
-      );
-      return response.data;
-    } catch (e: unknown) {
-      handleApiError(e, "Error during acceptLiveSeshInvite");
-    }
-  };
-
+export const acceptLiveSeshInvite = async (
+  inviteId: number,
+  geckoPlayMode: number
+) => {
+  try {
+    const response = await helloFriendApiClient.post(
+      `/users/live-sesh/invites/${inviteId}/accept/`,
+      {
+        gecko_play_mode: geckoPlayMode,
+      }
+    );
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error during acceptLiveSeshInvite");
+  }
+};
 
 export const declineLiveSeshInvite = async (inviteId: number) => {
   try {

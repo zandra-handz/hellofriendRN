@@ -40,9 +40,12 @@ import React, {
   useState,
 } from "react";
 import { AppState, type AppStateStatus } from "react-native";
-import { useSharedValue, type SharedValue } from "react-native-reanimated";
+import { useSharedValue, withTiming, type SharedValue } from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import notepack from "notepack.io";
+
+
+import manualGradientColors from "@/app/styles/StaticColors";
 
 type SocketStatus = "connecting" | "connected" | "disconnected";
 type PeerJoinedStatus = boolean;
@@ -306,8 +309,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
   const peerJoinedStatusSV = useSharedValue<PeerJoinedStatus>(false);
 
-  const sharedColorDarkSV = useSharedValue(null);
-  const sharedColorLightSV = useSharedValue(null);
+  const sharedColorDarkSV = useSharedValue(manualGradientColors.darkColor);
+  const sharedColorLightSV = useSharedValue(manualGradientColors.lightColor);
 
   const geckoMessageSV = useSharedValue<GeckoMessage>(null);
 
@@ -649,8 +652,12 @@ const registerOnRemoveCapsule = useCallback(
     }
 
     peerJoinedStatusSV.value = false;
-    sharedColorLightSV.value = null;
-    sharedColorDarkSV.value = null;
+    sharedColorLightSV.value = withTiming(manualGradientColors.lightColor, {
+      duration: 600,
+    });
+    sharedColorDarkSV.value = withTiming(manualGradientColors.darkColor, {
+      duration: 600,
+    });
     wsRef.current.send(JSON.stringify({ action: "request_peer_presence" }));
     return true;
   }, [peerJoinedStatusSV, sharedColorLightSV, sharedColorDarkSV]);
@@ -1058,6 +1065,16 @@ const registerOnRemoveCapsule = useCallback(
     shouldReconnectRef.current = true;
     clearReconnectTimeout();
 
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log("[WS] connect() skipped — socket already OPEN");
+      return;
+    }
+
+    if (wsRef.current?.readyState === WebSocket.CONNECTING) {
+      console.log("[WS] connect() skipped — socket already CONNECTING");
+      return;
+    }
+
     if (wsRef.current) {
       wsRef.current.onclose = null;
       wsRef.current.close();
@@ -1163,11 +1180,18 @@ const registerOnRemoveCapsule = useCallback(
       }
 
       if (message.action === "peer_presence") {
+        console.log(`PEER PRESENCE!`, message.data)
         peerJoinedStatusSV.value = message.data?.online ?? false;
 
         // used by guest, sets their background to be the host's colors for their friend profile
-        sharedColorLightSV.value = message.data?.friend_light_color ?? null;
-        sharedColorDarkSV.value = message.data?.friend_dark_color ?? null;
+        sharedColorLightSV.value = withTiming(
+          message.data?.friend_light_color ?? manualGradientColors.lightColor,
+          { duration: 600 },
+        );
+        sharedColorDarkSV.value = withTiming(
+          message.data?.friend_dark_color ?? manualGradientColors.darkColor,
+          { duration: 600 },
+        );
 
         return;
       }
@@ -1454,6 +1478,8 @@ const registerOnRemoveCapsule = useCallback(
     () => ({
       socketStatusSV,
       peerJoinedStatusSV,
+      sharedColorLightSV,
+      sharedColorDarkSV,
 
       scoreStateRef,
       liveSeshPartner,

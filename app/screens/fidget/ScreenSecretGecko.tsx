@@ -20,7 +20,10 @@ import useUser from "@/src/hooks/useUser";
 import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
 import GlassTopBarLight from "./GlassTopBarLight";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+
+import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
+import SafeViewSecretGecko from "@/app/components/appwide/format/SafeViewSecretGecko";
 // optional (only if you added backend broadcast)
 // import PeerEnergyText from "@/app/components/debug/PeerEnergyText";
 
@@ -40,6 +43,9 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     peerGeckoPositionSV,
     guestPeerGeckoPositionSV,
     hostPeerGeckoPositionSV,
+    sharedColorLightSV,
+    sharedColorDarkSV,
+
     connect,
     disconnect,
     setWantsConnection,
@@ -83,7 +89,14 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       ],
     );
   }, [handleCancelCurrentLiveSesh, leaveLiveSesh, navigateBack]);
-  const { isHost } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+  const { isHost, playMode, playModeLabel } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+
+    const rerenderCountRef = useRef(0);
+   
+  
+    rerenderCountRef.current += 1;
+  
+    console.log(`ScreenGecko renders: `, rerenderCountRef.current);
 
   const noopSendGuestGeckoPosition = useRef(() => {}).current;
   const sendGuestGeckoPositionRef = useRef(
@@ -166,7 +179,13 @@ useEffect(() => {
   );
 
   return (
-    <GradientBackgroundAppDefault style={styles.backgroundContainer}>
+    // <GradientBackgroundAppDefault style={styles.backgroundContainer}>
+      <SafeViewSecretGecko
+      sharedColorLightSV={sharedColorLightSV}
+      sharedColorDarkSV={sharedColorDarkSV}>
+
+
+
       {/* <View style={{ width: "100%", alignItems: "center", bottom: -50 }}>
         <Text style={styles.label}>socket: {socketStatus}</Text>
 
@@ -217,6 +236,7 @@ useEffect(() => {
         socketStatusSV={socketStatusSV}
         peerJoinedStatusSV={peerJoinedStatusSV}
         geckoMessageSV={geckoMessageSV}
+        playModeLabel={playModeLabel}
         liveSeshPartner={liveSeshPartner}
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
@@ -246,7 +266,8 @@ useEffect(() => {
         onPress_exit={handleExit}
         onPress_cancel={handleCancelPress}
       />
-    </GradientBackgroundAppDefault>
+    {/* </GradientBackgroundAppDefault> */}
+          </SafeViewSecretGecko>
   );
 };
 

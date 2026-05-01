@@ -3,16 +3,16 @@ module.exports = function (api) {
   return {
     presets: ["babel-preset-expo"],
     env: {
-      // production: {
+      production: {
 
-      //   plugins: ["transform-remove-console"],
-      // },
-      // development: {
-      //   plugins: ["transform-remove-console"],
-      // },
-      // preview: {
-      //   plugins: ["transform-remove-console"],
-      // },
+        plugins: ["transform-remove-console"],
+      },
+      development: {
+        plugins: ["transform-remove-console"],
+      },
+      preview: {
+        plugins: ["transform-remove-console"],
+      },
     },
     plugins: [
       [

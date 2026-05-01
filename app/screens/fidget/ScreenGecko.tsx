@@ -98,7 +98,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
-  const { isHost, sessionFriendId } = useCurrentLiveSesh({
+  const { isHost, playMode, playModeLabel, sessionFriendId } = useCurrentLiveSesh({
     userId: user?.id,
     enabled: true,
   });
@@ -277,6 +277,8 @@ useEffect(() => {
       clearFriendBinding,
       leaveLiveSesh,
       selectedFriend?.id,
+      selectedFriend?.lightColor,
+      selectedFriend?.darkColor,
       geckoMessageSV,
     ]),
   );
@@ -1491,6 +1493,7 @@ useEffect(() => {
         socketStatusSV={socketStatusSV}
         peerJoinedStatusSV={peerJoinedStatusSV}
         geckoMessageSV={geckoMessageSV}
+            playModeLabel={playModeLabel}
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
