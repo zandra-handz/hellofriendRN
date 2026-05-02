@@ -57,7 +57,8 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     requestPresenceStatus,
     registerOnGeckoWinProposed,
     registerOnGeckoMatchWinNavigate,
-    sendCapsuleProgress
+    sendCapsuleProgress,
+    hostCapsulesSV
     
   } = useGeckoWebsocket();
   const { user } = useUser();
@@ -231,6 +232,7 @@ useEffect(() => {
           gecko_size={1.7}
           reset={0}
           hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
+          hostCapsulesSV={hostCapsulesSV}
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
           playMode={playMode}
         />

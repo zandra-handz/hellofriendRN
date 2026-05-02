@@ -98,10 +98,11 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
 
-  const { isHost, playMode, playModeLabel, sessionFriendId } = useCurrentLiveSesh({
-    userId: user?.id,
-    enabled: true,
-  });
+  const { isHost, playMode, playModeLabel, sessionFriendId } =
+    useCurrentLiveSesh({
+      userId: user?.id,
+      enabled: true,
+    });
 
   const { handleRemoveMoment } = useRemoveMomentFEOnly({
     userId: user?.id,
@@ -173,7 +174,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnHostGeckoCoords,
     sendHostGeckoPosition,
     sendGeckoPosition,
-    
+
     // boundFriendId,
 
     flush,
@@ -201,7 +202,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     proposeGeckoMatchWin,
     registerOnGeckoMatchWinNavigate,
     registerOnRemoveCapsule,
-    sendAllHostCapsules
+    sendAllHostCapsules,
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -229,13 +230,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     };
   }, [registerOnGeckoMatchWinNavigate, navigateToGeckoWinAccept]);
 
-useEffect(() => {
-  const unregister = registerOnRemoveCapsule((capsuleId) => {
-    handleRemoveMoment(capsuleId);
-  });
+  useEffect(() => {
+    const unregister = registerOnRemoveCapsule((capsuleId) => {
+      handleRemoveMoment(capsuleId);
+    });
 
-  return unregister;
-}, [registerOnRemoveCapsule, handleRemoveMoment]);
+    return unregister;
+  }, [registerOnRemoveCapsule, handleRemoveMoment]);
 
   // and for background -> foreground
   useEffect(() => {
@@ -800,33 +801,32 @@ useEffect(() => {
 
   // }, [capsuleList, geckoScoreState]);
 
+  const momentCoords = useMemo(() => {
+    if (!capsuleList) return [];
 
-const momentCoords = useMemo(() => {
-  if (!capsuleList) return [];
+    const useTypeCapsulesOnly =
+      geckoScoreState?.use_game_type_capsules_only ?? false;
 
-  const useTypeCapsulesOnly =
-    geckoScoreState?.use_game_type_capsules_only ?? false;
+    return [...capsuleList]
+      .filter((m) => {
+        if (!useTypeCapsulesOnly) return true;
 
-  return [...capsuleList]
-    .filter((m) => {
-      if (!useTypeCapsulesOnly) return true;
-
-      const val = m.gecko_game_type;
-      return typeof val === "number" && Number.isFinite(val) && val > 1;
-    })
-    .sort((a, b) => {
-      const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
-      const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
-      return angleA - angleB;
-    })
-    .slice(0, MAX_MOMENTS)
-    .map((m) => ({
-      id: m.id,
-      coord: [m.screen_x, m.screen_y] as [number, number],
-      stored_index: m.stored_index,
-      guest_progress: 0,
-    }));
-}, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
+        const val = m.gecko_game_type;
+        return typeof val === "number" && Number.isFinite(val) && val > 1;
+      })
+      .sort((a, b) => {
+        const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+        const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+        return angleA - angleB;
+      })
+      .slice(0, MAX_MOMENTS)
+      .map((m) => ({
+        id: m.id,
+        coord: [m.screen_x, m.screen_y] as [number, number],
+        stored_index: m.stored_index,
+        guest_progress: 0,
+      }));
+  }, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
 
   // const momentCoords = useMemo(() => {
   //   if (!capsuleList) return [];
@@ -835,7 +835,7 @@ const momentCoords = useMemo(() => {
   //     geckoScoreState?.use_game_type_capsules_only ?? false;
 
   //   return (
-  //     [...capsuleList] 
+  //     [...capsuleList]
   //       .filter((m) => {
   //         if (!useTypeCapsulesOnly) return true;
 
@@ -1176,7 +1176,15 @@ const momentCoords = useMemo(() => {
     if (prevMomentCoordsKeyRef.current === momentCoordsKey) return;
 
     prevMomentCoordsKeyRef.current = momentCoordsKey;
-    setScatteredMoments(momentCoords);
+    // setScatteredMoments(momentCoords);
+    setScatteredMoments((prev) => {
+      const prevMap = new Map(prev.map((m) => [m.id, m]));
+
+      return momentCoords.map((m) => ({
+        ...m,
+        guest_progress: prevMap.get(m.id)?.guest_progress ?? 0,
+      }));
+    });
   }, [momentCoordsKey, momentCoords]);
 
   useEffect(() => {
@@ -1191,22 +1199,19 @@ const momentCoords = useMemo(() => {
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
-
   const handleSendAllHostCapsules = useCallback(() => {
-  if (!isHost) return false;
-  if (!scatteredMoments || scatteredMoments.length === 0) return false;
+    if (!isHost) return false;
+    if (!scatteredMoments || scatteredMoments.length === 0) return false;
 
-  return sendAllHostCapsules(scatteredMoments);
-}, [isHost, scatteredMoments, sendAllHostCapsules]);
+    return sendAllHostCapsules(scatteredMoments);
+  }, [isHost, scatteredMoments, sendAllHostCapsules]);
 
+  useEffect(() => {
+    if (!isHost) return;
+    if (!scatteredMoments || scatteredMoments.length === 0) return;
 
-useEffect(() => {
-  if (!isHost) return;
-  if (!scatteredMoments || scatteredMoments.length === 0) return;
-
-  sendAllHostCapsules(scatteredMoments);
-}, [isHost, scatteredMoments, sendAllHostCapsules]);
-
+    sendAllHostCapsules(scatteredMoments);
+  }, [isHost, scatteredMoments, sendAllHostCapsules]);
 
   const handleRescatterMoments_insideMS = useCallback((newData) => {
     const minY = 0.2;
@@ -1547,7 +1552,7 @@ useEffect(() => {
         socketStatusSV={socketStatusSV}
         peerJoinedStatusSV={peerJoinedStatusSV}
         geckoMessageSV={geckoMessageSV}
-            playModeLabel={playModeLabel}
+        playModeLabel={playModeLabel}
         textColor={lightDarkTheme.primaryText}
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
@@ -1589,7 +1594,12 @@ useEffect(() => {
           onSelect={proposeGeckoWin}
         />
       </View>
-      <DebugButton onPress={handleSendAllHostCapsules} bottom={460} left={32} color={'yellow'}/>
+      <DebugButton
+        onPress={handleSendAllHostCapsules}
+        bottom={460}
+        left={32}
+        color={"yellow"}
+      />
 
       <GlassPreviewBottom
         fontSmall={skiaFontSmall}

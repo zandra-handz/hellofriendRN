@@ -87,6 +87,7 @@ const MirrorPlayGecko = ({
   gecko_size = 1.2,
   reset = 0,
   hostPeerGeckoPositionSV,
+  hostCapsulesSV,
   sendGuestGeckoPositionRef: sendGuestGeckoPositionRef = null,
   playMode,
   dotColor = "#7FE629",
@@ -350,6 +351,8 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
     },
     [],
   );
+
+
 
   const clearMomentDots = useCallback(() => {
     momentsMapRef.current.clear();
@@ -688,10 +691,7 @@ useAnimatedReaction(
 
     const slice = mirrorMomentsBuffer.slice(0, i);
 
-
-  mirrorMoments.current.initialLoad(slice);
-
-
+ 
 
 if (!hasInitialLoadedMirrorMomentsRef.current) {
   mirrorMoments.current.initialLoad(slice);
@@ -721,6 +721,37 @@ if (!hasInitialLoadedMirrorMomentsRef.current) {
     updateTrigger.value += 1;
   }, []);
 
+
+    useAnimatedReaction(
+  () => {
+    const v = hostCapsulesSV.value;
+    if (!v?.moments) return null;
+
+    const len = v.moments_len ?? v.moments.length;
+    const out: number[][] = [];
+
+    for (let i = 0; i < len; i++) {
+      const m = v.moments[i];
+      if (!m) continue;
+
+      out.push([
+        m[0], // id
+        m[1], // x
+        m[2], // y
+        m[3], // stored_index
+        m[4], // guest_progress
+      ]);
+    }
+
+    return out;
+  },
+  (next) => {
+    if (!next || next.length === 0) return;
+    runOnJS(applyMirrorMomentsDelta)(next);
+  },
+  [],
+);
+
   // 2. THEN the reactions that reference them
   useAnimatedReaction(
     () => hostPeerGeckoPositionSV.value === null,
@@ -746,7 +777,7 @@ if (!hasInitialLoadedMirrorMomentsRef.current) {
       for (let i = 0; i < len; i++) {
         const m = v.moments[i];
         if (!m) continue;
-        out.push([m[0], m[1], m[2]]);
+       out.push([m[0], m[1], m[2], m[3], m[4]]);
       }
       return out;
     },

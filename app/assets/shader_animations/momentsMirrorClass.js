@@ -379,7 +379,7 @@ initialLoad(momentsData = []) {
       let ux = userPointer[0];
       let uy = userPointer[1];
  
- console.log(this.moments[0])
+//  console.log(this.moments[0])
 
       // if (wasDoubleTap && this.lastSelected.id !== -1) {
       //   this.lastSelected.id = -1;

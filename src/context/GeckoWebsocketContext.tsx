@@ -150,6 +150,14 @@ type PeerGeckoPosition = {
   received_at: number;
 } | null;
 
+
+type HostCapsulesSV = {
+  from_user: number;
+  moments?: any[][];
+  moments_len?: number;
+  received_at: number;
+} | null;
+
 type HostPeerGeckoPosition = {
   from_user: number;
   position: [number, number];
@@ -360,6 +368,14 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const peerGeckoPositionSV = useSharedValue<PeerGeckoPosition>(null);
   const hostPeerGeckoPositionSV = useSharedValue<HostPeerGeckoPosition>(null);
+
+  const hostCapsulesSV = useSharedValue<{
+    from_user: number;
+    moments: any[][];
+    moments_len: number;
+    received_at: number;
+  } | null>(null);
+
   const guestPeerGeckoPositionSV = useSharedValue<GuestPeerGeckoPosition>(null);
 
   const onGeckoWinProposedRef = useRef<((d: GeckoWinProposed) => void) | null>(
@@ -922,7 +938,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         momentsScratch[i][1] = m.coord[0];
         momentsScratch[i][2] = m.coord[1];
         momentsScratch[i][3] = m.stored_index;
-       momentsScratch[i][4] = m.guest_progress ?? 0;
+        momentsScratch[i][4] = m.guest_progress ?? 0;
       }
 
       const heldScratch = heldScratchRef.current;
@@ -964,11 +980,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         return false;
       }
 
-
-    
-      
       if (!isFriendBoundRef.current) {
-        console.log('not sending because friend bound ref doesnt exist')
+        console.log("not sending because friend bound ref doesnt exist");
         return false;
       }
 
@@ -980,7 +993,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       for (let i = 0; i < momentsLen; i++) {
         const m = moments[i];
 
-        momentsScratch[i][0] = Number(m.id);
+        momentsScratch[i][0] = m.id;
         momentsScratch[i][1] = m.coord?.[0] ?? 0.5;
         momentsScratch[i][2] = m.coord?.[1] ?? 0.5;
         momentsScratch[i][3] = m.stored_index ?? -1;
@@ -1441,9 +1454,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         const moments = message.data?.moments ?? [];
         const momentsLen = message.data?.moments_len ?? moments.length;
 
-        hostPeerGeckoPositionSV.value = {
+        hostCapsulesSV.value = {
           from_user: message.data?.from_user,
-          position: [-1000, -1000], // dummy, not used, just here because of my types
           moments,
           moments_len: momentsLen,
           received_at: performance.now(),
@@ -1451,7 +1463,6 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
         return;
       }
-
       if (message.action === "capsule_progress") {
         console.log(
           `HURRAY! capsule progress update received: `,
@@ -1655,6 +1666,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnRemoveCapsule,
       sendCapsuleProgress,
       sendAllHostCapsules,
+      hostCapsulesSV,
     }),
     [
       bindFriend,
@@ -1702,6 +1714,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnRemoveCapsule,
       sendCapsuleProgress,
       sendAllHostCapsules,
+      hostCapsulesSV,
     ],
   );
 
