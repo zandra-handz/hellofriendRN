@@ -126,7 +126,7 @@
             style={[styles.bubblesWrapper, { height: CHAT_HEIGHT }]}
             onLayout={onBubblesLayout}
           >
-            {bubblesWidth > 0 && (
+            {bubblesWidth > 0 && fontSmall && (
               <ChatBubblesSkia
                 geckoMessageSV={geckoMessageSV}
                 width={bubblesWidth}

@@ -964,6 +964,7 @@ export const fetchMomentsAPI = async (
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`,
     );
+    console.log(response?.data)
     return response?.data ?? [];
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchMomentsAPI");
@@ -1797,6 +1798,8 @@ export const updateMomentAPI = async (
   capsuleData: object,
 ) => {
   try {
+
+    console.log('trying to update preadded on backend', capsuleData)
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsule/${capsuleId}/`,
       capsuleData,

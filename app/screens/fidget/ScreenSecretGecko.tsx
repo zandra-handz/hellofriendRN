@@ -44,7 +44,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     guestPeerGeckoPositionSV,
     hostPeerGeckoPositionSV,
     sharedColorLightSV,
-    sharedColorDarkSV,
+    sharedColorDarkSV, 
 
     connect,
     disconnect,
@@ -57,6 +57,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     requestPresenceStatus,
     registerOnGeckoWinProposed,
     registerOnGeckoMatchWinNavigate,
+    sendCapsuleProgress
     
   } = useGeckoWebsocket();
   const { user } = useUser();
@@ -214,6 +215,8 @@ useEffect(() => {
           color2={manualGradientColors.homeLightColor}
           bckgColor1={manualGradientColors.lightColor}
           bckgColor2={manualGradientColors.homeLightColor}
+          sharedColorLightSV={sharedColorLightSV}
+          sharedColorDarkSV={sharedColorDarkSV}
           //   startingCoord0={0.2}
           //   startingCoord1={-1}
           //   restPoint0={0.5}
@@ -229,6 +232,7 @@ useEffect(() => {
           reset={0}
           hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
+          playMode={playMode}
         />
       </View>
 
@@ -245,6 +249,7 @@ useEffect(() => {
         friendName={"Unknown"}
         highlight={false}
         fontSmall={skiaFontSmall}
+
       />
 {/* 
       <Pressable

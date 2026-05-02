@@ -40,10 +40,13 @@ import React, {
   useState,
 } from "react";
 import { AppState, type AppStateStatus } from "react-native";
-import { useSharedValue, withTiming, type SharedValue } from "react-native-reanimated";
+import {
+  useSharedValue,
+  withTiming,
+  type SharedValue,
+} from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import notepack from "notepack.io";
-
 
 import manualGradientColors from "@/app/styles/StaticColors";
 
@@ -158,6 +161,13 @@ type HostPeerGeckoPosition = {
   moments_len?: number;
   received_at: number;
 } | null;
+
+type HostCapsuleMoment = {
+  id: number;
+  coord: [number, number];
+  stored_index: number | null;
+  guest_progress?: number;
+};
 
 type GuestPeerGeckoPosition = {
   from_user: number;
@@ -289,6 +299,8 @@ type GeckoWebsocketContextValue = {
 
   registerOnRemoveCapsule: (capsuleId: string) => void;
   onRemoveCapsuleRef: React.MutableRefObject<string>;
+  sendCapsuleProgress: (capsule_id: string, new_progress: number) => boolean;
+  sendAllHostCapsules: (moments?: HostCapsuleMoment[]) => boolean; // used for initial load
 };
 
 const GeckoWebsocketContext = createContext<GeckoWebsocketContextValue | null>(
@@ -357,8 +369,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     ((d: GeckoMatchWinNavigatePayload) => void) | null
   >(null);
 
-
- const onRemoveCapsuleRef = useRef<((capsuleId: string) => void) | null>(null);
+  const onRemoveCapsuleRef = useRef<((capsuleId: string) => void) | null>(null);
 
   const energySV = useSharedValue<EnergyState>({
     energy: 1.0,
@@ -403,8 +414,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [0, 0],
   ]);
 
+  // const momentsScratchRef = useRef<number[][]>(
+  //   Array.from({ length: 30 }, () => [0, 0, 0, 0]),
+  // );
+
   const momentsScratchRef = useRef<number[][]>(
-    Array.from({ length: 30 }, () => [0, 0, 0, 0]),
+    Array.from({ length: 30 }, () => [0, 0, 0, 0, 0]), // added one for progress
   );
 
   const heldScratchRef = useRef(new Float32Array(8));
@@ -426,19 +441,18 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [],
   );
 
+  const registerOnRemoveCapsule = useCallback(
+    (cb: (capsuleId: string) => void) => {
+      onRemoveCapsuleRef.current = cb;
 
-const registerOnRemoveCapsule = useCallback(
-  (cb: (capsuleId: string) => void) => {
-    onRemoveCapsuleRef.current = cb;
-
-    return () => {
-      if (onRemoveCapsuleRef.current === cb) {
-        onRemoveCapsuleRef.current = null;
-      }
-    };
-  },
-  []
-);
+      return () => {
+        if (onRemoveCapsuleRef.current === cb) {
+          onRemoveCapsuleRef.current = null;
+        }
+      };
+    },
+    [],
+  );
   const registerOnScoreState = useCallback((cb: (data: ScoreState) => void) => {
     onScoreStateRef.current = cb;
   }, []);
@@ -652,12 +666,16 @@ const registerOnRemoveCapsule = useCallback(
     }
 
     peerJoinedStatusSV.value = false;
-    sharedColorLightSV.value = withTiming(manualGradientColors.lightColor, {
-      duration: 600,
-    });
-    sharedColorDarkSV.value = withTiming(manualGradientColors.darkColor, {
-      duration: 600,
-    });
+    // sharedColorLightSV.value = withTiming(manualGradientColors.lightColor, {
+    //   duration: 600,
+    // });
+    // sharedColorDarkSV.value = withTiming(manualGradientColors.darkColor, {
+    //   duration: 600,
+    // });
+
+    sharedColorLightSV.value = manualGradientColors.lightColor;
+    sharedColorDarkSV.value = manualGradientColors.darkColor;
+
     wsRef.current.send(JSON.stringify({ action: "request_peer_presence" }));
     return true;
   }, [peerJoinedStatusSV, sharedColorLightSV, sharedColorDarkSV]);
@@ -904,6 +922,7 @@ const registerOnRemoveCapsule = useCallback(
         momentsScratch[i][1] = m.coord[0];
         momentsScratch[i][2] = m.coord[1];
         momentsScratch[i][3] = m.stored_index;
+       momentsScratch[i][4] = m.guest_progress ?? 0;
       }
 
       const heldScratch = heldScratchRef.current;
@@ -934,6 +953,70 @@ const registerOnRemoveCapsule = useCallback(
         }),
       );
 
+      return true;
+    },
+    [],
+  );
+
+  const sendAllHostCapsules = useCallback(
+    (moments: HostCapsuleMoment[] = []) => {
+      if (wsRef.current?.readyState !== WebSocket.OPEN) {
+        return false;
+      }
+
+
+    
+      
+      if (!isFriendBoundRef.current) {
+        console.log('not sending because friend bound ref doesnt exist')
+        return false;
+      }
+
+      const now = Date.now();
+
+      const momentsScratch = momentsScratchRef.current;
+      const momentsLen = Math.min(moments.length, momentsScratch.length);
+
+      for (let i = 0; i < momentsLen; i++) {
+        const m = moments[i];
+
+        momentsScratch[i][0] = Number(m.id);
+        momentsScratch[i][1] = m.coord?.[0] ?? 0.5;
+        momentsScratch[i][2] = m.coord?.[1] ?? 0.5;
+        momentsScratch[i][3] = m.stored_index ?? -1;
+        momentsScratch[i][4] = m.guest_progress ?? 0;
+      }
+
+      wsRef.current.send(
+        notepack.encode({
+          action: "send_all_host_capsules",
+          data: {
+            moments: momentsScratch,
+            moments_len: momentsLen,
+            timestamp: now,
+          },
+        }),
+      );
+
+      return true;
+    },
+    [],
+  );
+
+  const sendCapsuleProgress = useCallback(
+    (capsule_id: string, new_progress: number) => {
+      if (wsRef.current?.readyState !== WebSocket.OPEN) {
+        return false;
+      }
+
+      const now = Date.now();
+
+      wsRef.current.send(
+        notepack.encode({
+          action: "update_capsule_progress",
+          data: { capsule_id, new_progress, timestamp: now },
+        }),
+      );
       return true;
     },
     [],
@@ -1180,18 +1263,27 @@ const registerOnRemoveCapsule = useCallback(
       }
 
       if (message.action === "peer_presence") {
-        console.log(`PEER PRESENCE!`, message.data)
+        console.log(`PEER PRESENCE!`, message.data);
         peerJoinedStatusSV.value = message.data?.online ?? false;
 
         // used by guest, sets their background to be the host's colors for their friend profile
-        sharedColorLightSV.value = withTiming(
-          message.data?.friend_light_color ?? manualGradientColors.lightColor,
-          { duration: 600 },
-        );
-        sharedColorDarkSV.value = withTiming(
-          message.data?.friend_dark_color ?? manualGradientColors.darkColor,
-          { duration: 600 },
-        );
+        // sharedColorLightSV.value = withTiming(
+        //   message.data?.friend_light_color ?? manualGradientColors.lightColor,
+        //   { duration: 600 },
+        // );
+        // sharedColorDarkSV.value = withTiming(
+        //   message.data?.friend_dark_color ?? manualGradientColors.darkColor,
+        //   { duration: 600 },
+        // );
+
+        const light =
+          message.data?.friend_light_color ?? manualGradientColors.lightColor;
+
+        const dark =
+          message.data?.friend_dark_color ?? manualGradientColors.darkColor;
+
+        sharedColorLightSV.value = light;
+        sharedColorDarkSV.value = dark;
 
         return;
       }
@@ -1343,6 +1435,28 @@ const registerOnRemoveCapsule = useCallback(
         }
 
         return;
+      }
+
+      if (message.action === "all_host_capsules") {
+        const moments = message.data?.moments ?? [];
+        const momentsLen = message.data?.moments_len ?? moments.length;
+
+        hostPeerGeckoPositionSV.value = {
+          from_user: message.data?.from_user,
+          position: [-1000, -1000], // dummy, not used, just here because of my types
+          moments,
+          moments_len: momentsLen,
+          received_at: performance.now(),
+        };
+
+        return;
+      }
+
+      if (message.action === "capsule_progress") {
+        console.log(
+          `HURRAY! capsule progress update received: `,
+          message?.data,
+        );
       }
 
       if (message.action === "guest_gecko_coords") {
@@ -1538,7 +1652,9 @@ const registerOnRemoveCapsule = useCallback(
       registerOnGeckoWinProposed,
       proposeGeckoMatchWin,
       registerOnGeckoMatchWinNavigate,
-      registerOnRemoveCapsule
+      registerOnRemoveCapsule,
+      sendCapsuleProgress,
+      sendAllHostCapsules,
     }),
     [
       bindFriend,
@@ -1583,7 +1699,9 @@ const registerOnRemoveCapsule = useCallback(
       registerOnGeckoWinProposed,
       proposeGeckoMatchWin,
       registerOnGeckoMatchWinNavigate,
-      registerOnRemoveCapsule
+      registerOnRemoveCapsule,
+      sendCapsuleProgress,
+      sendAllHostCapsules,
     ],
   );
 

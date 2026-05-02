@@ -1,5 +1,5 @@
 import { View, Text, Pressable, FlatList, StyleSheet } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { CheckBox } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
@@ -45,6 +45,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     );
     setVisibleCategories(filtered);
   };
+
+ 
 
   const handleShowAllCategoriesPress = () => {
     setVisibleCategories(data);

@@ -22,7 +22,7 @@ import { useCallback } from "react";
 const useMomentContextFunctions = () => {
   const getPreAdded = useCallback((sortedList) => {
     return sortedList.reduce((ids, capsule) => {
-      if (capsule.preAdded) ids.push(capsule.id);
+      if (capsule.pre_added_to_hello) ids.push(capsule.id);
       return ids;
     }, []);
   }, []);

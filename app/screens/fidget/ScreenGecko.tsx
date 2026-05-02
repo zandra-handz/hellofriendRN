@@ -31,7 +31,7 @@ import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useUserPoints from "@/src/hooks/useUserPoints";
 import EnergyText from "@/app/components/fidget/EnergyText";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
-
+import DebugButton from "./DebugButton";
 import useGeckoRead from "@/src/hooks/useGeckoRead";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
@@ -173,6 +173,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnHostGeckoCoords,
     sendHostGeckoPosition,
     sendGeckoPosition,
+    
     // boundFriendId,
 
     flush,
@@ -200,6 +201,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     proposeGeckoMatchWin,
     registerOnGeckoMatchWinNavigate,
     registerOnRemoveCapsule,
+    sendAllHostCapsules
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -798,39 +800,74 @@ useEffect(() => {
 
   // }, [capsuleList, geckoScoreState]);
 
-  const momentCoords = useMemo(() => {
-    if (!capsuleList) return [];
 
-    const useTypeCapsulesOnly =
-      geckoScoreState?.use_game_type_capsules_only ?? false;
+const momentCoords = useMemo(() => {
+  if (!capsuleList) return [];
 
-    return (
-      [...capsuleList]
-        // 🔑 filter FIRST
-        .filter((m) => {
-          if (!useTypeCapsulesOnly) return true;
+  const useTypeCapsulesOnly =
+    geckoScoreState?.use_game_type_capsules_only ?? false;
 
-          const val = m.gecko_game_type;
-          return typeof val === "number" && Number.isFinite(val) && val > 1;
-        })
-        // then sort
-        .sort((a, b) => {
-          const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
-          const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
-          return angleA - angleB;
-        })
-        // then slice
-        .slice(0, MAX_MOMENTS)
-        // then map
-        .map((m) => ({
-          id: m.id,
-          coord: [m.screen_x, m.screen_y],
-          stored_index: m.stored_index,
-        }))
-    );
-  }, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
+  return [...capsuleList]
+    .filter((m) => {
+      if (!useTypeCapsulesOnly) return true;
+
+      const val = m.gecko_game_type;
+      return typeof val === "number" && Number.isFinite(val) && val > 1;
+    })
+    .sort((a, b) => {
+      const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+      const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+      return angleA - angleB;
+    })
+    .slice(0, MAX_MOMENTS)
+    .map((m) => ({
+      id: m.id,
+      coord: [m.screen_x, m.screen_y] as [number, number],
+      stored_index: m.stored_index,
+      guest_progress: 0,
+    }));
+}, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
+
+  // const momentCoords = useMemo(() => {
+  //   if (!capsuleList) return [];
+
+  //   const useTypeCapsulesOnly =
+  //     geckoScoreState?.use_game_type_capsules_only ?? false;
+
+  //   return (
+  //     [...capsuleList] 
+  //       .filter((m) => {
+  //         if (!useTypeCapsulesOnly) return true;
+
+  //         const val = m.gecko_game_type;
+  //         return typeof val === "number" && Number.isFinite(val) && val > 1;
+  //       })
+  //       // then sort
+  //       .sort((a, b) => {
+  //         const angleA = Math.atan2(a.screen_y - 0.5, a.screen_x - 0.5);
+  //         const angleB = Math.atan2(b.screen_y - 0.5, b.screen_x - 0.5);
+  //         return angleA - angleB;
+  //       })
+  //       // then slice
+  //       .slice(0, MAX_MOMENTS)
+  //       // then map
+  //       .map((m) => ({
+  //         id: m.id,
+  //         coord: [m.screen_x, m.screen_y],
+  //         stored_index: m.stored_index,
+  //         guest_progress: 0 // progress source of truth is GUEST and will get broadcast
+  //       }))
+  //   );
+  // }, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
 
   const [resetSkia, setResetSkia] = useState<number | null>(null);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (s) => {
+      if (s === "active") setResetSkia(Date.now());
+    });
+    return () => sub.remove();
+  }, []);
 
   const [manualOnly, setManualOnly] = useState(true);
   const [speedSetting, setSpeedSetting] = useState(2);
@@ -1153,6 +1190,23 @@ useEffect(() => {
   }, [resetSkia]);
 
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
+
+
+  const handleSendAllHostCapsules = useCallback(() => {
+  if (!isHost) return false;
+  if (!scatteredMoments || scatteredMoments.length === 0) return false;
+
+  return sendAllHostCapsules(scatteredMoments);
+}, [isHost, scatteredMoments, sendAllHostCapsules]);
+
+
+useEffect(() => {
+  if (!isHost) return;
+  if (!scatteredMoments || scatteredMoments.length === 0) return;
+
+  sendAllHostCapsules(scatteredMoments);
+}, [isHost, scatteredMoments, sendAllHostCapsules]);
+
 
   const handleRescatterMoments_insideMS = useCallback((newData) => {
     const minY = 0.2;
@@ -1535,6 +1589,7 @@ useEffect(() => {
           onSelect={proposeGeckoWin}
         />
       </View>
+      <DebugButton onPress={handleSendAllHostCapsules} bottom={460} left={32} color={'yellow'}/>
 
       <GlassPreviewBottom
         fontSmall={skiaFontSmall}

@@ -1169,3 +1169,25 @@ export const hexToVec3 = (hex) => {
   return `${r.toFixed(4)}, ${g.toFixed(4)}, ${b.toFixed(4)}`;
 };
 
+
+export const hexToVec3Int = (
+  hex?: string | null,
+  fallback: [number, number, number] = [1, 0, 0],
+): [number, number, number] => {
+  "worklet";
+
+  if (!hex || typeof hex !== "string") return fallback;
+
+  const clean = hex.replace("#", "");
+  if (clean.length !== 6) return fallback;
+
+  const r = parseInt(clean.slice(0, 2), 16) / 255;
+  const g = parseInt(clean.slice(2, 4), 16) / 255;
+  const b = parseInt(clean.slice(4, 6), 16) / 255;
+
+  if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) {
+    return fallback;
+  }
+
+  return [r, g, b];
+};

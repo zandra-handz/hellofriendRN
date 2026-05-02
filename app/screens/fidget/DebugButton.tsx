@@ -5,9 +5,10 @@ type Props = {
   onPress: () => void;
   bottom?: number;
   left?: number;
+  color?: string;
 };
 
-const DebugButton = ({ onPress, bottom=120, left=20 }: Props) => {
+const DebugButton = ({ onPress, bottom=120, left=20, color="orange" }: Props) => {
   return (
     <Pressable
       onPress={onPress}
@@ -17,7 +18,7 @@ const DebugButton = ({ onPress, bottom=120, left=20 }: Props) => {
         position: "absolute",
         bottom: bottom,
         left: left,
-        backgroundColor: "orange",
+        backgroundColor: color,
         borderRadius: 999,
       }}
     ></Pressable>

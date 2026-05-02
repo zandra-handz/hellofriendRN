@@ -59,13 +59,13 @@ const CategoryFriendCurrentList = ({
             name={"comment-outline"}
             size={20}
             color={primaryColor}
-            style={{ opacity: item.preAdded ? 0.4 : 1 }}
+            style={{ opacity: item.pre_added_to_hello ? 0.4 : 1 }}
           />
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
           <Text
-            style={{ color: primaryColor, opacity: item.preAdded ? 0.4 : 1 }}
+            style={{ color: primaryColor, opacity: item.pre_added_to_hello ? 0.4 : 1 }}
           >
             {item.capsule}
           </Text>

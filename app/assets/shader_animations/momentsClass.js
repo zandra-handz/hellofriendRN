@@ -947,6 +947,7 @@
       let ux = userPointer[0];
       let uy = userPointer[1];
 
+     
       if (
         this.sleepWalk0.current.auto_pick_up.current &&
         !this.sleepWalk0.current.paws_cleared_for_auto

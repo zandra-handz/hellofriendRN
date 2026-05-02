@@ -848,3 +848,795 @@ half4 main(float2 fragCoord) {
 }
 
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const MIRROR_MOMENTS_BG_SKSL_OPT_BOXED = `
+
+uniform float2 u_resolution;
+uniform float  u_aspect;
+uniform float  u_scale; 
+uniform float u_time;
+uniform float u_gecko_scale;
+uniform float u_gecko_size;
+uniform float2 u_mirrorMoments[30];
+uniform float2 u_heldMoments[4];
+
+uniform int u_mirrorMomentsLength;
+
+uniform float2 u_selected;
+uniform float2 u_lastSelected; 
+
+
+// ------------------------------------------------
+// SDF + glass helpers
+// ------------------------------------------------
+
+float distFCircle(vec2 uv, vec2 center, float radius) {
+    return length(uv - center) - radius;
+}
+
+float smoothMin(float a, float b, float k) {
+    float h = clamp(0.5 + 0.5*(b - a)/k, 0.0, 1.0);
+    return mix(b, a, h) - k*h*(1.0 - h);
+}
+
+float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
+    vec2 pa = p - a;
+    vec2 ba = b - a;
+    float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
+    return length(pa - ba*h);
+}
+
+float sdfRect(float2 c, float2 s, float2 p, float r) {
+    float2 q = abs(p - c) - s;
+    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+float heightFunc(float sd, float thickness) {
+    if (sd >= 0.0) return 0.0;
+    if (sd < -thickness) return thickness;
+    float x = thickness + sd;
+    return sqrt(max(thickness * thickness - x*x, 0.0));
+}
+
+float3 getNormal(
+    float2 frag,
+    float2 c,
+    float2 s,
+    float r,
+    float sd,
+    float thickness
+) {
+    float eps = 2.0;
+    float dx = sdfRect(c, s, frag + float2(eps,0), r)
+             - sdfRect(c, s, frag - float2(eps,0), r);
+    float dy = sdfRect(c, s, frag + float2(0,eps), r)
+             - sdfRect(c, s, frag - float2(0,eps), r);
+
+    float2 g = normalize(float2(dx, dy));
+    float n_cos = max(thickness + sd, 0.0) / thickness;
+    float n_sin = sqrt(max(1.0 - n_cos*n_cos, 0.0));
+
+    return normalize(float3(g * n_cos, n_sin));
+}
+
+
+
+float3 getCheapNormal(
+    float2 frag,
+    float2 c,
+    float2 s,
+    float r,
+    float sd,
+    float thickness
+) {
+    float eps = 1.5;
+
+    // Forward differences (2 SDF samples instead of 4)
+    float sd_x = sdfRect(c, s, frag + float2(eps, 0.0), r);
+    float sd_y = sdfRect(c, s, frag + float2(0.0, eps), r);
+
+    float2 g = float2(sd_x - sd, sd_y - sd);
+
+    // Z = thickness biases the normal "up" for glass bulge
+    return normalize(float3(g, thickness));
+}
+  
+
+
+// ------------------------------------------------
+// Background sampling - NO STRIPES
+// ------------------------------------------------
+
+float3 sampleBackground(float2 fragCoord) {
+    float2 uv = fragCoord / u_resolution;
+    uv -= 0.5;
+    uv.x *= u_aspect;
+    uv /= u_scale;
+
+    // Simple vertical gradient without stripes
+    float t = clamp(uv.y + 0.5, 0.0, 1.0);
+   float3 grad = mix(backgroundStartColor, backgroundEndColor, t);
+
+    return grad;
+}
+
+// ------------------------------------------------
+// Liquid glass lens
+// ------------------------------------------------
+
+float3 applyGlass(
+    float2 fragCoord,
+    float2 centerPx,
+    float radius,
+    float thickness,
+    float ior,
+    float3 baseColor
+) {
+    float baseHeight = thickness * 30.0; // 10 for stripes
+    float2 size = float2(2.0);
+
+    float sd = sdfRect(centerPx, size, fragCoord , radius);
+    if (sd >= 0.0) return baseColor;
+
+ 
+ 
+    
+    float3 normal = getNormal(
+        fragCoord,
+        centerPx,
+        size,
+        radius,
+        sd,
+        thickness
+    );
+
+
+    float h = heightFunc(sd, thickness);
+
+    // CHEAPER/ADDED: cut off
+        if (h < 0.001) {
+        return baseColor;
+    }
+
+    float3 incident = float3(0.0, 0.0, -1.0);
+    float3 refr = refract(incident, normal, 1.0 / ior);
+
+    float travel = (h + baseHeight) / max(0.001, abs(refr.z));
+    float2 refrCoord = fragCoord + refr.xy * travel * 3.5;
+
+
+    // CHEAPER option 1:
+    float edge = smoothstep(0.0, thickness * 0.5, -sd);
+    float3 refractedColor = mix(baseColor, sampleBackground(refrCoord), edge);
+ 
+    // float3 refractedColor = sampleBackground(refrCoord);
+ 
+    //option 1:
+    // float fresnel = pow(1.0 - normal.z, 2.0);
+
+    //CHEAPER option 2:
+    float t = 1.0 - normal.z;
+    float fresnel = t * t;
+
+
+    float3 reflectCol = float3(fresnel * 0.4);
+
+    float3 col = mix(refractedColor, reflectCol, fresnel);
+    return mix(col, float3(1.0), 0.25);
+}
+
+
+
+float3 applyGlassDotSq(
+    float dist2,
+    float radius,
+    float3 baseColor
+) {
+    float r0 = radius - 1.0;
+    float r1 = radius + 1.0;
+
+    float circle = smoothstep(r1*r1, r0*r0, dist2);
+    float highlight = smoothstep((radius*0.5)*(radius*0.5), 0.0, dist2) * 0.3;
+
+    float3 dotColor = float3(circle + highlight);
+    return mix(baseColor, dotColor, circle * 0.8);
+}
+
+
+float3 applyDotSq(float dist2, float radius, float3 baseColor) {
+    float r0 = radius - 1.0;
+    float r1 = radius + 1.0;
+
+    // single soft circle
+    float a = smoothstep(r1*r1, r0*r0, dist2);
+
+    // just brighten slightly
+    return baseColor + float3(a * 0.65);
+}
+  
+
+float3 applyGlowingHeldMoment(float2 fragCoord, float2 heldPx, float3 baseColor) {
+    float d = length(fragCoord - heldPx);
+
+    float pulseSpeed  = 2.5;
+    float pulseAmount = 0.15;
+
+    float outerPulse = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+    float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+    float corePulse = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
+
+    // Pixel radii
+    float outerR  = 21.0 * outerPulse;
+    float middleR = 11.0 * middlePulse;
+    float coreR   =  8.0 * corePulse;
+
+    float outerGlow = smoothstep(outerR, 0.0, d) * 0.45;
+    float middleRing = smoothstep(middleR, middleR * 0.70, d) * 0.70;
+    float coreDot = smoothstep(coreR, 0.0, d) * 1.00;
+
+    // Add light directly (no endColor)
+    float intensity = outerGlow + middleRing + coreDot;
+    return baseColor + float3(intensity);
+}
+
+
+
+
+
+// ------------------------------------------------
+// MAIN
+// ------------------------------------------------
+
+half4 main(float2 fragCoord) {
+    // BACKGROUND DISABLED — this shader is used as a transparent overlay
+    // for mirrored moments. Only the moment dots should be visible; the rest
+    // of the canvas must be transparent so the layer below shows through.
+    //
+    // TO RE-ENABLE A FULL OPAQUE GRADIENT BACKGROUND:
+    //   1. Replace float3 color = float3(0.0); with the two commented lines
+    //      directly below (so color starts from sampleBackground()).
+    //   2. At the bottom of main(), change the final return to:
+    //          return half4(color, 1.0);
+    //      (drop the alpha-from-luma trick).
+    //
+    // float3 baseBackground = sampleBackground(fragCoord);
+    // float3 color = baseBackground;
+    float3 color = float3(0.0);
+    float alpha = 0.0;
+
+    vec2 uv = fragCoord / u_resolution;
+
+    float s = 1.0 / u_gecko_scale;
+    vec2 gecko_uv = uv * s * u_gecko_size;
+
+
+    float selectedMask = step(distance(uv, u_selected), 0.02);
+    vec3 selectedColor = endColor * selectedMask;
+
+
+    float2 selectedPx = u_selected * u_resolution;
+    float2 d = fragCoord - selectedPx;
+    float dist2 = dot(d, d);
+
+    // ------------------------------------------------
+    // Debug: RED box around selected (applyGlassDotSq)
+    // ------------------------------------------------
+    float boxHalfSelected = 30.0;
+    float2 boxDistSelected = abs(fragCoord - selectedPx);
+    float boxSDFSelected = max(boxDistSelected.x - boxHalfSelected, boxDistSelected.y - boxHalfSelected);
+
+    float borderThick = 2.0;
+    float boxOutlineSelected = step(boxSDFSelected, 0.0) - step(boxSDFSelected + borderThick, 0.0);
+
+    // DEBUG BOX
+    // if (boxOutlineSelected > 0.0) {
+    //     return half4(1.0, 0.0, 0.0, 1.0);  // Red
+    // }
+
+    // float maxR = 19.0;
+    // if (dist2 < maxR * maxR) {
+    //     color = applyGlassDotSq(dist2, 60.0, color);
+    // }
+
+
+
+       if (boxSDFSelected < 0.0) {
+        color = applyGlassDotSq(dist2, 14.0, color);
+        // mirror the coverage from applyGlassDotSq for explicit alpha
+        float gr0 = 14.0 - 1.0;
+        float gr1 = 14.0 + 1.0;
+        float gCov = smoothstep(gr1 * gr1, gr0 * gr0, dist2);
+        alpha = max(alpha, gCov * 0.8);
+    }
+
+
+    vec2 lastSelected_uv = u_lastSelected;
+
+
+    vec2 lastSelected_screen = lastSelected_uv / (s * u_gecko_size);
+    lastSelected_screen.x /= u_aspect;
+    lastSelected_screen += 0.5;
+    float2 lastSelected_px = lastSelected_screen * u_resolution;
+
+    // ------------------------------------------------
+    // Debug: GREEN box around lastSelected (applyGlass)
+    // ------------------------------------------------
+    float boxHalfLast = 50.0;
+    float2 boxDistLast = abs(fragCoord - lastSelected_px);
+    float boxSDFLast = max(boxDistLast.x - boxHalfLast, boxDistLast.y - boxHalfLast);
+
+    // DEBUG BOX
+    // float boxOutlineLast = step(boxSDFLast, 0.0) - step(boxSDFLast + borderThick, 0.0);
+    // if (boxOutlineLast > 0.0) {
+    //     return half4(0.0, 1.0, 0.0, 1.0);  // Green
+    // }
+
+
+
+
+    // DONT DELETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
+    //     if (length(u_lastSelected) > 0.0001 && boxSDFLast < 0.0) {
+    //     color = applyGlass(
+    //         fragCoord,
+    //         lastSelected_px,
+    //         34.0,
+    //         10.0,
+    //         1.8,
+    //         color
+    //     );
+    // }
+
+
+    // for (int i = 0; i < 4; i++) {
+    //     vec2 holding_uv = u_heldMoments[i];
+
+    //     if (abs(holding_uv.x) > 50.0 || abs(holding_uv.y) > 50.0) continue;
+
+    //     vec2 holding_screen = holding_uv / (s * u_gecko_size);
+    //     holding_screen.x /= u_aspect;
+    //     holding_screen += 0.5;
+    //     float2 holding_px = holding_screen * u_resolution;
+
+    //     color = applyGlowingHeldMoment(fragCoord, holding_px, color);
+    // }
+
+    for (int i = 0; i < 4; i++) {
+        vec2 holding_uv = u_heldMoments[i];
+
+        if (abs(holding_uv.x) > 50.0 || abs(holding_uv.y) > 50.0) continue;
+
+        vec2 holding_screen = holding_uv / (s * u_gecko_size);
+        holding_screen.x /= u_aspect;
+        holding_screen += 0.5;
+        float2 holding_px = holding_screen * u_resolution;
+
+        float heldBoxHalf = 30.0;
+        float2 heldBoxDist = abs(fragCoord - holding_px);
+        float heldBoxSDF = max(heldBoxDist.x - heldBoxHalf, heldBoxDist.y - heldBoxHalf);
+
+        if (heldBoxSDF > 0.0) continue;
+
+        // Inline the glow math so we can use intensity for both color and alpha
+        float dh = length(fragCoord - holding_px);
+        float pulseSpeed  = 2.5;
+        float pulseAmount = 0.15;
+        float outerPulse  = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+        float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+        float corePulse   = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
+
+        float outerR  = 21.0 * outerPulse;
+        float middleR = 11.0 * middlePulse;
+        float coreR   =  8.0 * corePulse;
+
+        float outerGlow  = smoothstep(outerR, 0.0, dh) * 0.45;
+        float middleRing = smoothstep(middleR, middleR * 0.70, dh) * 0.70;
+        float coreDot    = smoothstep(coreR, 0.0, dh) * 1.00;
+
+        float intensity = clamp(outerGlow + middleRing + coreDot, 0.0, 1.0);
+
+        color = mix(color, float3(1.0), intensity);
+        alpha = max(alpha, intensity);
+    }
+
+
+    for (int i = 0; i < 30; i++) {
+        if (i >= u_mirrorMomentsLength) break;
+
+
+        float2 dm = u_mirrorMoments[i] - u_lastSelected;
+        if (dot(dm, dm) < 1e-6) continue;
+
+        float2 deNormalizedCenter = u_mirrorMoments[i] * u_resolution;
+        float2 d = fragCoord - deNormalizedCenter;
+        float dist2 = dot(d, d);
+        float maxR = 19.0;
+        if (dist2 > maxR * maxR) continue;
+
+        // Solid white dot with smoothstep coverage — coverage doubles as alpha
+        float dotR = 5.0;
+        float r0 = dotR - 1.0;
+        float r1 = dotR + 1.0;
+        float cov = smoothstep(r1 * r1, r0 * r0, dist2);
+
+        color = mix(color, float3(1.0), cov);
+        alpha = max(alpha, cov);
+    }
+
+    // Premultiplied output. alpha was tracked per-dot above so empty pixels
+    // stay fully transparent (no luma-based hack).
+    return half4(color * alpha, alpha);
+}
+
+`;
+
+// Same as MIRROR_MOMENTS_BG_SKSL_OPT_BOXED but with the gradient background ENABLED.
+// Use this when you want the mirror-moments shader to draw the full background too
+// (opaque output). Otherwise prefer MIRROR_MOMENTS_BG_SKSL_OPT_BOXED for transparent overlay.
+export const MIRROR_MOMENTS_WITH_BG_SKSL_OPT_BOXED = `
+
+uniform float2 u_resolution;
+uniform float  u_aspect;
+uniform float  u_scale;
+uniform float u_time;
+uniform float u_gecko_scale;
+uniform float u_gecko_size;
+uniform float2 u_mirrorMoments[30];
+uniform float2 u_heldMoments[4];
+
+uniform int u_mirrorMomentsLength;
+
+uniform float2 u_selected;
+uniform float2 u_lastSelected;
+
+uniform vec3 u_sharedColorLight;
+uniform vec3 u_sharedColorDark;
+
+
+
+
+// ------------------------------------------------
+// SDF + glass helpers
+// ------------------------------------------------
+
+float distFCircle(vec2 uv, vec2 center, float radius) {
+    return length(uv - center) - radius;
+}
+
+float smoothMin(float a, float b, float k) {
+    float h = clamp(0.5 + 0.5*(b - a)/k, 0.0, 1.0);
+    return mix(b, a, h) - k*h*(1.0 - h);
+}
+
+float lineSegmentSDF(vec2 p, vec2 a, vec2 b) {
+    vec2 pa = p - a;
+    vec2 ba = b - a;
+    float h = clamp(dot(pa, ba)/dot(ba,ba), 0.0, 1.0);
+    return length(pa - ba*h);
+}
+
+float sdfRect(float2 c, float2 s, float2 p, float r) {
+    float2 q = abs(p - c) - s;
+    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+float heightFunc(float sd, float thickness) {
+    if (sd >= 0.0) return 0.0;
+    if (sd < -thickness) return thickness;
+    float x = thickness + sd;
+    return sqrt(max(thickness * thickness - x*x, 0.0));
+}
+
+float3 getNormal(
+    float2 frag,
+    float2 c,
+    float2 s,
+    float r,
+    float sd,
+    float thickness
+) {
+    float eps = 2.0;
+    float dx = sdfRect(c, s, frag + float2(eps,0), r)
+             - sdfRect(c, s, frag - float2(eps,0), r);
+    float dy = sdfRect(c, s, frag + float2(0,eps), r)
+             - sdfRect(c, s, frag - float2(0,eps), r);
+
+    float2 g = normalize(float2(dx, dy));
+    float n_cos = max(thickness + sd, 0.0) / thickness;
+    float n_sin = sqrt(max(1.0 - n_cos*n_cos, 0.0));
+
+    return normalize(float3(g * n_cos, n_sin));
+}
+
+float3 getCheapNormal(
+    float2 frag,
+    float2 c,
+    float2 s,
+    float r,
+    float sd,
+    float thickness
+) {
+    float eps = 1.5;
+
+    float sd_x = sdfRect(c, s, frag + float2(eps, 0.0), r);
+    float sd_y = sdfRect(c, s, frag + float2(0.0, eps), r);
+
+    float2 g = float2(sd_x - sd, sd_y - sd);
+
+    return normalize(float3(g, thickness));
+}
+
+
+// ------------------------------------------------
+// Background sampling - NO STRIPES
+// ------------------------------------------------
+
+float3 sampleBackground(float2 fragCoord) {
+    float2 uv = fragCoord / u_resolution;
+    uv -= 0.5;
+    uv.x *= u_aspect;
+    uv /= u_scale;
+
+    float t = clamp(uv.y + 0.5, 0.0, 1.0);
+    // float3 grad = mix(backgroundStartColor, backgroundEndColor, t);
+        float3 grad = mix(u_sharedColorLight, u_sharedColorDark, t);
+
+    return grad;
+}
+
+// ------------------------------------------------
+// Liquid glass lens
+// ------------------------------------------------
+
+float3 applyGlass(
+    float2 fragCoord,
+    float2 centerPx,
+    float radius,
+    float thickness,
+    float ior,
+    float3 baseColor
+) {
+    float baseHeight = thickness * 30.0;
+    float2 size = float2(2.0);
+
+    float sd = sdfRect(centerPx, size, fragCoord , radius);
+    if (sd >= 0.0) return baseColor;
+
+    float3 normal = getNormal(
+        fragCoord,
+        centerPx,
+        size,
+        radius,
+        sd,
+        thickness
+    );
+
+    float h = heightFunc(sd, thickness);
+
+    if (h < 0.001) {
+        return baseColor;
+    }
+
+    float3 incident = float3(0.0, 0.0, -1.0);
+    float3 refr = refract(incident, normal, 1.0 / ior);
+
+    float travel = (h + baseHeight) / max(0.001, abs(refr.z));
+    float2 refrCoord = fragCoord + refr.xy * travel * 3.5;
+
+    float edge = smoothstep(0.0, thickness * 0.5, -sd);
+    float3 refractedColor = mix(baseColor, sampleBackground(refrCoord), edge);
+
+    float t = 1.0 - normal.z;
+    float fresnel = t * t;
+
+    float3 reflectCol = float3(fresnel * 0.4);
+
+    float3 col = mix(refractedColor, reflectCol, fresnel);
+    return mix(col, float3(1.0), 0.25);
+}
+
+
+float3 applyGlassDotSq(
+    float dist2,
+    float radius,
+    float3 baseColor
+) {
+    float r0 = radius - 1.0;
+    float r1 = radius + 1.0;
+
+    float circle = smoothstep(r1*r1, r0*r0, dist2);
+    float highlight = smoothstep((radius*0.5)*(radius*0.5), 0.0, dist2) * 0.3;
+
+    float3 dotColor = float3(circle + highlight);
+    return mix(baseColor, dotColor, circle * 0.8);
+}
+
+
+float3 applyDotSq(float dist2, float radius, float3 baseColor) {
+    float r0 = radius - 1.0;
+    float r1 = radius + 1.0;
+
+    float a = smoothstep(r1*r1, r0*r0, dist2);
+
+    return baseColor + float3(a * 0.65);
+}
+
+
+float3 applyGlowingHeldMoment(float2 fragCoord, float2 heldPx, float3 baseColor) {
+    float d = length(fragCoord - heldPx);
+
+    float pulseSpeed  = 2.5;
+    float pulseAmount = 0.15;
+
+    float outerPulse = 1.0 + pulseAmount * sin(u_time * pulseSpeed);
+    float middlePulse = 1.0 + pulseAmount * 0.5 * sin(u_time * pulseSpeed + 1.0);
+    float corePulse = 1.0 + pulseAmount * 0.3 * sin(u_time * pulseSpeed + 2.0);
+
+    float outerR  = 21.0 * outerPulse;
+    float middleR = 11.0 * middlePulse;
+    float coreR   =  8.0 * corePulse;
+
+    float outerGlow = smoothstep(outerR, 0.0, d) * 0.45;
+    float middleRing = smoothstep(middleR, middleR * 0.70, d) * 0.70;
+    float coreDot = smoothstep(coreR, 0.0, d) * 1.00;
+
+    float intensity = outerGlow + middleRing + coreDot;
+    return baseColor + float3(intensity);
+}
+
+
+// ------------------------------------------------
+// MAIN
+// ------------------------------------------------
+
+half4 main(float2 fragCoord) {
+    float3 baseBackground = sampleBackground(fragCoord);
+    float3 color = baseBackground;
+
+    vec2 uv = fragCoord / u_resolution;
+
+    float s = 1.0 / u_gecko_scale;
+    vec2 gecko_uv = uv * s * u_gecko_size;
+
+
+    float selectedMask = step(distance(uv, u_selected), 0.02);
+    vec3 selectedColor = endColor * selectedMask;
+
+
+    float2 selectedPx = u_selected * u_resolution;
+    float2 d = fragCoord - selectedPx;
+    float dist2 = dot(d, d);
+
+    float boxHalfSelected = 30.0;
+    float2 boxDistSelected = abs(fragCoord - selectedPx);
+    float boxSDFSelected = max(boxDistSelected.x - boxHalfSelected, boxDistSelected.y - boxHalfSelected);
+
+    float borderThick = 2.0;
+    float boxOutlineSelected = step(boxSDFSelected, 0.0) - step(boxSDFSelected + borderThick, 0.0);
+
+    if (boxSDFSelected < 0.0) {
+        color = applyGlassDotSq(dist2, 14.0, color);
+    }
+
+
+    vec2 lastSelected_uv = u_lastSelected;
+
+    vec2 lastSelected_screen = lastSelected_uv / (s * u_gecko_size);
+    lastSelected_screen.x /= u_aspect;
+    lastSelected_screen += 0.5;
+    float2 lastSelected_px = lastSelected_screen * u_resolution;
+
+    float boxHalfLast = 50.0;
+    float2 boxDistLast = abs(fragCoord - lastSelected_px);
+    float boxSDFLast = max(boxDistLast.x - boxHalfLast, boxDistLast.y - boxHalfLast);
+
+
+    for (int i = 0; i < 4; i++) {
+        vec2 holding_uv = u_heldMoments[i];
+
+        if (abs(holding_uv.x) > 50.0 || abs(holding_uv.y) > 50.0) continue;
+
+        vec2 holding_screen = holding_uv / (s * u_gecko_size);
+        holding_screen.x /= u_aspect;
+        holding_screen += 0.5;
+        float2 holding_px = holding_screen * u_resolution;
+
+        float heldBoxHalf = 30.0;
+        float2 heldBoxDist = abs(fragCoord - holding_px);
+        float heldBoxSDF = max(heldBoxDist.x - heldBoxHalf, heldBoxDist.y - heldBoxHalf);
+
+        if (heldBoxSDF > 0.0) continue;
+
+        color = applyGlowingHeldMoment(fragCoord, holding_px, color);
+    }
+
+
+    for (int i = 0; i < 30; i++) {
+        if (i >= u_mirrorMomentsLength) break;
+
+        float2 dm = u_mirrorMoments[i] - u_lastSelected;
+        if (dot(dm, dm) < 1e-6) continue;
+
+        float2 deNormalizedCenter = u_mirrorMoments[i] * u_resolution;
+        float2 d = fragCoord - deNormalizedCenter;
+        float dist2 = dot(d, d);
+        float maxR = 19.0;
+        if (dist2 > maxR * maxR) continue;
+
+        color = applyDotSq(dist2, 5.0, color);
+    }
+
+    return half4(color, 1.0);
+}
+
+`;

@@ -1,5 +1,3 @@
- 
-
 import { View, StyleSheet } from "react-native";
 import React, {
   useEffect,
@@ -11,13 +9,17 @@ import React, {
 import Soul from "./soulClass";
 import Mover from "./leadPointClass";
 import Gecko from "./geckoClass";
-import { packGeckoOnlyProdCompact_56 } from "./animUtils";
+import {
+  packGeckoOnlyProdCompact_56,
+  packVec2Uniform_withRecenter_moments,
+} from "./animUtils";
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { PEER_DOT_SKSL } from "./shaderCode/peerDotShader";
 import { BackHandler } from "react-native";
+import { MIRROR_MOMENTS_BG_SKSL_OPT_BOXED, MIRROR_MOMENTS_WITH_BG_SKSL_OPT_BOXED } from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_FINGERS_ONLY_SKSL } from "./shaderCode/geckoFingersOnlyShader";
 import { useFocusEffect } from "@react-navigation/native";
-
+import MirrorMoments from "./momentsMirrorClass";
 import {
   SharedValue,
   runOnJS,
@@ -26,10 +28,7 @@ import {
   useAnimatedReaction,
 } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
-import {
-  hexToVec3,
-  toGeckoPointerScaled_inPlace,
-} from "./animUtils";
+import { hexToVec3,hexToVec3Int, toGeckoPointerScaled_inPlace } from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
   Canvas,
@@ -69,6 +68,7 @@ type Props = {
   > | null;
   dotColor?: string;
   dotRadius?: number;
+  playMode: number;
 };
 
 const MirrorPlayGecko = ({
@@ -76,6 +76,8 @@ const MirrorPlayGecko = ({
   color2,
   bckgColor1,
   bckgColor2,
+  sharedColorLightSV, 
+  sharedColorDarkSV, 
   startingCoord0,
   startingCoord1,
   restPoint0,
@@ -86,13 +88,18 @@ const MirrorPlayGecko = ({
   reset = 0,
   hostPeerGeckoPositionSV,
   sendGuestGeckoPositionRef: sendGuestGeckoPositionRef = null,
+  playMode,
   dotColor = "#7FE629",
   dotRadius = 14,
+  
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
 
   const [aspect, setAspect] = useState<number>(width / height);
+
+  const MAX_MOMENTS = 30;
+  //const MAX_HELD = 4; only for other gecko so far
 
   useEffect(() => {
     if (size && size.width > 0 && size.height > 0) {
@@ -123,8 +130,13 @@ const MirrorPlayGecko = ({
 
   const peerWorkingBuffers = useRef({
     packedSteps: new Float32Array(PEER_STEP_COUNT * 2), // 8 floats
-    packedFirstFingers: new Float32Array(PEER_STEP_COUNT * 2),    // 8 floats
+    packedFirstFingers: new Float32Array(PEER_STEP_COUNT * 2), // 8 floats
+    mirrorMoments: new Float32Array(MAX_MOMENTS * 2),
   }).current;
+
+  const mirrorMomentsUniformSV = useSharedValue<number[]>(
+    Array(MAX_MOMENTS * 2).fill(0),
+  );
 
   const geckoPointsUniformSV = useSharedValue<number[]>(
     Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0),
@@ -137,7 +149,7 @@ const MirrorPlayGecko = ({
   const packedPeerfirstFingersSV = useSharedValue<number[]>(
     Array(PEER_STEP_COUNT * 2).fill(0),
   );
-
+  const mirrorMomentsLengthSV = useSharedValue(0);
   const userPointSV = useSharedValue([restPoint0, restPoint1]);
   const userPoint_geckoSpaceRef = useRef<[number, number]>([0, 0]);
   const isDragging = useSharedValue(false);
@@ -152,6 +164,14 @@ const MirrorPlayGecko = ({
       };
     }, []),
   );
+
+  const onDoublePress = () => {
+    // handleGetMoment(-1);
+    console.log("double press");
+  };
+
+  const wasTapSV = useSharedValue(false);
+  const wasDoubleTapSV = useSharedValue(false);
 
   const panGesture = Gesture.Pan()
     .onTouchesDown((e) => {
@@ -169,16 +189,58 @@ const MirrorPlayGecko = ({
       isDragging.value = false;
     });
 
+  const singleTapGesture = Gesture.Tap()
+    .numberOfTaps(1)
+    .onEnd((_event, success) => {
+      if (success) {
+        wasTapSV.value = true;
+        setTimeout(() => {
+          wasTapSV.value = false;
+        }, 100);
+      }
+    });
+
+  const doubleTapGesture = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd((_event, success) => {
+      if (success) {
+        wasDoubleTapSV.value = true;
+        runOnJS(onDoublePress)();
+        setTimeout(() => {
+          wasDoubleTapSV.value = false;
+        }, 100);
+      }
+    });
+
+
+
+
+  const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
+  const composedGesture = Gesture.Simultaneous(panGesture, taps);
+
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
   const bckgColor1Converted = hexToVec3(bckgColor1);
   const bckgColor2Converted = hexToVec3(bckgColor2);
 
+
+ 
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
   const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
-  const gecko = useRef(
-    new Gecko(startingCoord0, startingCoord1, 0.06, {}),
+  const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, {}));
+const hasInitialLoadedMirrorMomentsRef = useRef(false);
+  const mirrorMoments = useRef(
+    new MirrorMoments([], playMode, gecko_size, [0.5, 0.5], 0.05),
   );
+
+  const mirrorMomentsBuffer = useRef(
+    Array.from({ length: MAX_MOMENTS }, (_, i) => ({
+      id: -1,
+      coord: new Float32Array(2),
+      stored_index: i,
+    })),
+  ).current;
+  const mirrorMomentsLenRef = useRef(0);
 
   const SHARED_SKSL_PRELUDE = (c1, c2, b1, b2) => `
     vec3 startColor = vec3(${c1});
@@ -191,8 +253,20 @@ const MirrorPlayGecko = ({
     return Skia.RuntimeEffect.Make(PEER_DOT_SKSL);
   }, []);
 
-const stepDotsSource = useMemo(() => {
-  return Skia.RuntimeEffect.Make(`
+  const sourceTwo = useMemo(() => {
+    return Skia.RuntimeEffect.Make(`
+        ${SHARED_SKSL_PRELUDE(color1Converted, color2Converted, bckgColor1Converted, bckgColor2Converted)}
+        ${MIRROR_MOMENTS_WITH_BG_SKSL_OPT_BOXED}
+      `);
+  }, [
+    color1Converted,
+    color2Converted,
+    bckgColor1Converted,
+    bckgColor2Converted,
+  ]);
+
+  const stepDotsSource = useMemo(() => {
+    return Skia.RuntimeEffect.Make(`
     ${SHARED_SKSL_PRELUDE(
       color1Converted,
       color2Converted,
@@ -201,12 +275,12 @@ const stepDotsSource = useMemo(() => {
     )}
     ${GECKO_FINGERS_ONLY_SKSL}
   `);
-}, [
-  color1Converted,
-  color2Converted,
-  bckgColor1Converted,
-  bckgColor2Converted,
-]);
+  }, [
+    color1Converted,
+    color2Converted,
+    bckgColor1Converted,
+    bckgColor2Converted,
+  ]);
   const source = useMemo(() => {
     return Skia.RuntimeEffect.Make(`
       ${SHARED_SKSL_PRELUDE(
@@ -229,9 +303,15 @@ const stepDotsSource = useMemo(() => {
     return null;
   }
 
+  useEffect(() => {
+    if (aspect) {
+      mirrorMoments.current.setAspect(aspect); 
+    }
+  }, [aspect]);
+
   const [internalReset, setInternalReset] = useState(0);
 
-useEffect(() => {
+  useEffect(() => {
     if (!internalReset && !reset) return;
 
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
@@ -246,8 +326,11 @@ useEffect(() => {
     packedPeerStepsSV.value = Array(PEER_STEP_COUNT * 2).fill(-1000);
     packedPeerfirstFingersSV.value = Array(PEER_STEP_COUNT * 2).fill(0);
 
+    // to add
+    // peerWorkingBuffers.mirrorMoments.fill(0)
+    // mirrorMomentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0)
+
     momentsMapRef.current.clear();
-    setMomentDots([]);
 
     userPointSV.value = [restPoint0, restPoint1];
     userPoint_geckoSpaceRef.current[0] = startingCoord0;
@@ -257,7 +340,8 @@ useEffect(() => {
   }, [reset, internalReset]);
 
 
-    useAnimatedReaction(
+
+  useAnimatedReaction(
     () => hostPeerGeckoPositionSV.value === null,
     (isNull, prev) => {
       if (isNull && prev === false) {
@@ -269,7 +353,12 @@ useEffect(() => {
 
   const clearMomentDots = useCallback(() => {
     momentsMapRef.current.clear();
-    setMomentDots([]);
+    mirrorMomentsLenRef.current = 0;
+    mirrorMoments.current.reset([], [0.5, 0.5], 0.05);
+    peerWorkingBuffers.mirrorMoments.fill(0);
+    mirrorMomentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
+    mirrorMomentsLengthSV.value = 0;
+    updateTrigger.value += 1;
   }, []);
 
   useEffect(() => {
@@ -319,8 +408,7 @@ useEffect(() => {
         leadPoint.current.isMoving,
       );
 
-      const shouldUpdate =
-        leadPoint.current.isMoving || isDragging.value;
+      const shouldUpdate = leadPoint.current.isMoving || isDragging.value;
 
       shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
@@ -340,6 +428,18 @@ useEffect(() => {
           gecko.current.legs.backLegs.stepTargets[0];
         workingBuffers.stepTargets[3] =
           gecko.current.legs.backLegs.stepTargets[1];
+
+
+
+
+                mirrorMoments.current.update(
+        userPointSV.value,
+        false, //just set isdragging to always false for rn
+        wasTapSV.value,
+        wasDoubleTapSV.value,
+        leadPoint.current.lead,
+ 
+      );
 
         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
 
@@ -376,11 +476,15 @@ useEffect(() => {
       };
     },
     (next) => {
-      const steps = next.steps; 
+      const steps = next.steps;
       const firstFingers = next.first_fingers;
 
       const packedSteps = peerWorkingBuffers.packedSteps;
       const packedFirstFingers = peerWorkingBuffers.packedFirstFingers;
+
+      const mirrorMoments = peerWorkingBuffers.mirrorMoments;
+
+      // const mirrorMoments
 
       packedSteps[0] = -1000;
       packedSteps[1] = -1000;
@@ -439,7 +543,6 @@ useEffect(() => {
     },
     [gecko_scale],
   );
-
   const uniforms = useDerivedValue(() => {
     updateTrigger.value;
 
@@ -453,6 +556,10 @@ useEffect(() => {
         u_aspect: aspect || 1,
         u_peerDot: hostPeerGeckoPositionSV.value,
         u_geckoPoints: geckoPointsUniformSV.value,
+        u_mirrorMoments: mirrorMomentsUniformSV.value,
+        u_mirrorMomentsLength: mirrorMomentsLengthSV.value,
+        u_selected: [0.5, 5],
+        u_lastSelected: [0.5, 0.5],
       };
     }
 
@@ -465,9 +572,59 @@ useEffect(() => {
       u_aspect: aspect || 1,
       u_peerDot: hostPeerGeckoPositionSV.value,
       u_geckoPoints: geckoPointsUniformSV.value,
+      u_mirrorMoments: mirrorMomentsUniformSV.value,
+      u_mirrorMomentsLength: mirrorMomentsLengthSV.value,
+      u_selected: [0.5, 5],
+      u_lastSelected: [0.5, 0.5],
     };
-  }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
+  }, [
+    scale,
+    gecko_scale,
+    aspect,
+    size.width,
+    size.height,
+    width,
+    height,
+  ]);
+ 
 
+
+const mirrorBgUniforms = useDerivedValue(() => {
+  updateTrigger.value;
+
+  return {
+    u_resolution: [size.width || width, size.height || height],
+    u_aspect: aspect || 1,
+    u_scale: scale,
+    u_time: shaderTimeSV.value,
+    u_gecko_scale: gecko_scale,
+    u_gecko_size: gecko_size,
+    u_mirrorMoments: mirrorMomentsUniformSV.value,
+    u_mirrorMomentsLength: mirrorMomentsLengthSV.value,
+    u_heldMoments: [0, 0, 0, 0, 0, 0, 0, 0],
+    u_selected: [0.5, 0.5],
+    u_lastSelected: [0.5, 0.5],
+    u_sharedColorLight: hexToVec3Int(sharedColorLightSV.value),
+    u_sharedColorDark: hexToVec3Int(sharedColorDarkSV.value),
+  };
+}, [
+  size.width,
+  size.height,
+  width,
+  height,
+  aspect,
+  scale,
+  gecko_scale,
+  gecko_size,
+]);
+
+useAnimatedReaction(
+  () => `${sharedColorLightSV.value}|${sharedColorDarkSV.value}`,
+  () => {
+    updateTrigger.value += 1;
+  },
+  [],
+);
   const stepDotsUniforms = useDerivedValue(() => {
     return {
       u_resolution: [size.width || width, size.height || height],
@@ -478,7 +635,16 @@ useEffect(() => {
       u_steps: packedPeerStepsSV.value,
       u_first_fingers: packedPeerfirstFingersSV.value,
     };
-  }, [size.width, size.height, width, height, aspect, scale, gecko_scale, gecko_size]);
+  }, [
+    size.width,
+    size.height,
+    width,
+    height,
+    aspect,
+    scale,
+    gecko_scale,
+    gecko_size,
+  ]);
 
   const peerUniforms = useDerivedValue(() => {
     const p = hostPeerGeckoPositionSV.value;
@@ -493,35 +659,66 @@ useEffect(() => {
     };
   }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
 
-  const [momentDots, setMomentDots] = useState<{ x: number; y: number }[]>([]);
+  const momentsMapRef = useRef<Map<number, { x: number; y: number }>>(
+    new Map(),
+  );
 
-  // useAnimatedReaction(
-  //   () => {
-  //     const v = hostPeerGeckoPositionSV.value;
-  //     if (!v?.moments) return null;
-  //     const len = v.moments.length;
-  //     const out: { x: number; y: number }[] = [];
-  //     for (let i = 0; i < len; i++) {
-  //       const m = v.moments[i];
-  //       if (!m) continue;
-  //       out.push({ x: m[1], y: m[2] });
-  //     }
-  //     return out;
-  //   },
-  //   (next) => {
-  //     if (next) runOnJS(setMomentDots)(next);
-  //   },
-  //   [],
-  // );
- const momentsMapRef = useRef<Map<number, { x: number; y: number }>>(new Map());                                                                                                                                                                                                                                                                                                                                                                                                   
-   
+  const packCtxRef = useRef({ aspect, scale, w: size.width, h: size.height });
+  packCtxRef.current.aspect = aspect;
+  packCtxRef.current.scale = scale;
+  packCtxRef.current.w = size.width;
+  packCtxRef.current.h = size.height;
 
-  const mergeMomentDots = useCallback((delta: number[][]) => {
+  const applyMirrorMomentsDelta = useCallback((delta: number[][]) => {
     const map = momentsMapRef.current;
     for (const [id, x, y] of delta) {
       map.set(id, { x, y });
     }
-    setMomentDots(Array.from(map.values()));
+
+    let i = 0;
+    for (const [id, pt] of map) {
+      if (i >= MAX_MOMENTS) break;
+      mirrorMomentsBuffer[i].id = id;
+      mirrorMomentsBuffer[i].coord[0] = pt.x;
+      mirrorMomentsBuffer[i].coord[1] = pt.y;
+      mirrorMomentsBuffer[i].stored_index = i;
+      i++;
+    }
+    mirrorMomentsLenRef.current = i;
+
+    const slice = mirrorMomentsBuffer.slice(0, i);
+
+
+  mirrorMoments.current.initialLoad(slice);
+
+
+
+if (!hasInitialLoadedMirrorMomentsRef.current) {
+  mirrorMoments.current.initialLoad(slice);
+  hasInitialLoadedMirrorMomentsRef.current = true;
+} else {
+  mirrorMoments.current.updateOrAddMoments(slice);
+  mirrorMoments.current.updateAllCoords(slice);
+}
+   // mirrorMoments.current._markAllDirty?.();
+
+    const { aspect: a, scale: s, w, h } = packCtxRef.current;
+    if (a && w && h) {
+      peerWorkingBuffers.mirrorMoments.fill(0);
+      packVec2Uniform_withRecenter_moments(
+        mirrorMoments.current.moments,
+        peerWorkingBuffers.mirrorMoments as any,
+        mirrorMoments.current.momentsLength,
+        a,
+        s,
+      );
+      mirrorMomentsUniformSV.value = Array.from(
+        peerWorkingBuffers.mirrorMoments,
+      );
+      mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
+    }
+
+    updateTrigger.value += 1;
   }, []);
 
   // 2. THEN the reactions that reference them
@@ -534,6 +731,11 @@ useEffect(() => {
     },
     [],
   );
+
+ 
+ 
+
+
 
   useAnimatedReaction(
     () => {
@@ -550,23 +752,38 @@ useEffect(() => {
     },
     (next) => {
       if (!next || next.length === 0) return;
-      runOnJS(mergeMomentDots)(next);
+      runOnJS(applyMirrorMomentsDelta)(next);
     },
     [],
   );
 
-  const momentDotRadius = 8;
-
   return (
-    <GestureDetector gesture={panGesture}>
+    // <GestureDetector gesture={panGesture}>
+    <GestureDetector gesture={composedGesture}>
       <View style={StyleSheet.absoluteFill}>
+        <Canvas style={StyleSheet.absoluteFill}>
+          <Rect
+            x={0}
+            y={0}
+            width={size.width}
+            height={size.height}
+           color="white"
+          >
+            <Shader
+             // style={{ backgroundColor: "transparent" }}
+              source={sourceTwo!}
+              uniforms={mirrorBgUniforms}
+            />
+          </Rect>
+        </Canvas>
+
         <Canvas ref={ref} style={StyleSheet.absoluteFill}>
           <Rect
             x={0}
             y={0}
             width={size.width}
             height={size.height}
-            color="lightblue"
+            color="white"
           >
             <Shader source={peerDotSource!} uniforms={peerUniforms} />
           </Rect>
@@ -584,17 +801,22 @@ useEffect(() => {
           </Rect>
         </Canvas>
 
-        <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
-          {momentDots.map((d, i) => (
-            <Circle
-              key={i}
-              cx={d.x * size.width}
-              cy={d.y * size.height}
-              r={momentDotRadius}
-              color="rgba(255,255,255,0.3)"
+        {/*
+        <Canvas ref={ref} style={[StyleSheet.absoluteFill]}>
+          <Rect
+            x={0}
+            y={0}
+            width={size.width}
+            height={size.height}
+            color="lightblue"
+          >
+            <Shader
+              style={{ backgroundColor: "transparent" }}
+              source={sourceTwo}
+              uniforms={uniforms}
             />
-          ))}
-        </Canvas>
+          </Rect>
+        </Canvas> */}
 
         <Canvas ref={ref} style={StyleSheet.absoluteFill}>
           <Rect
@@ -602,7 +824,7 @@ useEffect(() => {
             y={0}
             width={size.width}
             height={size.height}
-            color="lightblue"
+            color="white"
           >
             <Shader
               style={{ backgroundColor: "transparent" }}
