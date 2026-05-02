@@ -27,7 +27,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   darkerOverlayColor,
 }) => {
 
-  const height = 270;
+  const height = 140;
   
   const navigation = useNavigation();
 
@@ -63,7 +63,7 @@ const renderItem = useCallback(
     <View style={[styles.container, { height }]}>
       <Text style={[styles.header, { color: primaryColor }]}>Soon</Text>
       <FlatList
-        data={upcomingHelloes?.slice(startAtIndex, 5)}
+        data={upcomingHelloes?.slice(startAtIndex, 3)}
         renderItem={renderItem}
         keyExtractor={(item, i) => item?.id?.toString() ?? `soon-${i}`}
         initialNumToRender={6}

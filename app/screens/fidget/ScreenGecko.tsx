@@ -203,6 +203,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnGeckoMatchWinNavigate,
     registerOnRemoveCapsule,
     sendAllHostCapsules,
+    registerOnPeerPresence
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -1206,13 +1207,25 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     return sendAllHostCapsules(scatteredMoments);
   }, [isHost, scatteredMoments, sendAllHostCapsules]);
 
-useEffect(() => {
-  if (!isHost) return;
-  if (!scatteredMoments || scatteredMoments.length === 0) return;
-  if (!peerJoinedStatusSV.value) return;
+// useEffect(() => {
+//   if (!isHost) return;
+//   if (!scatteredMoments || scatteredMoments.length === 0) return;
+//   if (!peerJoinedStatusSV.value) return;
 
-  sendAllHostCapsules(scatteredMoments);
-}, [isHost, scatteredMoments, sendAllHostCapsules, peerJoinedStatusSV.value]);
+//   sendAllHostCapsules(scatteredMoments);
+// }, [isHost, scatteredMoments, sendAllHostCapsules, peerJoinedStatusSV.value]);
+
+useEffect(() => {
+  const unregister = registerOnPeerPresence((online) => {
+    if (!online) return;
+    if (!isHost) return;
+    if (!scatteredMoments?.length) return;
+
+    sendAllHostCapsules(scatteredMoments);
+  });
+
+  return unregister;
+}, [registerOnPeerPresence, isHost, scatteredMoments, sendAllHostCapsules]);
 
   const handleRescatterMoments_insideMS = useCallback((newData) => {
     const minY = 0.2;

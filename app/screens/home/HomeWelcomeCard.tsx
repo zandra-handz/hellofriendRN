@@ -57,12 +57,12 @@ export function WelcomeCard({
         <Text style={[styles.headingLine, { color: textColor }]}>
           {headingLine2}
         </Text>
-        <LinearGradient
+        {/* <LinearGradient
           colors={dotColors}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.accentDot}
-        />
+        /> */}
       </View>
 
       {/* Subtitle */}

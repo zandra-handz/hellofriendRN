@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useUser from "@/src/hooks/useUser";
 import useLiveSeshInvites from "@/src/hooks/LiveSeshCalls/useLiveSeshInvites";
@@ -8,7 +15,7 @@ import useDeclineLiveSeshInvite from "@/src/hooks/LiveSeshCalls/useDeclineLiveSe
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import SvgIcon from "@/app/styles/SvgIcons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
- 
+
 import SocketStatusLight from "./SocketStatusLight";
 import { useNotificationsSocket } from "@/src/hooks/useNotificationsSocket";
 
@@ -27,12 +34,12 @@ const LiveSeshInvitesPanel: React.FC = () => {
   const { user } = useUser();
   const userId = user?.id;
   const { lightDarkTheme } = useLDTheme();
-  const { navigateToGeckoAcceptInvite, navigateToSecretGecko} = useAppNavigations();
+  const { navigateToGeckoAcceptInvite, navigateToSecretGecko } =
+    useAppNavigations();
 
-
-    const {
-      socketStatus,
-      socketStatusSV,
+  const {
+    socketStatus,
+    socketStatusSV,
     wsRef,
     sendRaw,
     sendLiveSeshInvite,
@@ -44,7 +51,7 @@ const LiveSeshInvitesPanel: React.FC = () => {
     registerOnLiveSeshInviteDeclined,
     registerOnLiveSeshEnded,
     registerOnGenericNotification,
-    } = useNotificationsSocket();
+  } = useNotificationsSocket();
 
   const { data, pending, sent, isLoading, refetch } = useLiveSeshInvites({
     userId: userId ?? 0,
@@ -55,22 +62,22 @@ const LiveSeshInvitesPanel: React.FC = () => {
   useEffect(() => {
     registerOnLiveSeshInvite(() => {
       // console.log("[LiveSeshInvitesPanel] invite received — refetching");
-     
+
       refetch();
     });
     registerOnLiveSeshInviteAccepted(() => {
       // console.log("[LiveSeshInvitesPanel] invite accepted — refetching");
-     
+
       refetch();
     });
     registerOnLiveSeshInviteDeclined(() => {
       // console.log("[LiveSeshInvitesPanel] invite declined — refetching");
-     
+
       refetch();
     });
     registerOnLiveSeshEnded(() => {
       // console.log("[LiveSeshInvitesPanel] sesh ended — refetching");
-      
+
       refetch();
     });
   }, [
@@ -85,7 +92,7 @@ const LiveSeshInvitesPanel: React.FC = () => {
     userId: userId ?? 0,
   });
 
-    const { handleDeclineInvite, declineMutation } = useDeclineLiveSeshInvite({
+  const { handleDeclineInvite, declineMutation } = useDeclineLiveSeshInvite({
     userId: userId ?? 0,
   });
   const { currentLiveSesh } = useCurrentLiveSesh({
@@ -100,12 +107,12 @@ const LiveSeshInvitesPanel: React.FC = () => {
 
   // console.log("[LiveSeshInvitesPanel]", { userId, isLoading, data, pending, sent });
 
-const handleAcceptButtonPress = (invite: Invite) => {
-  navigateToGeckoAcceptInvite({
-    inviteId: invite.id,
-    senderName: invite.sender_username,
-  });
-};
+  const handleAcceptButtonPress = (invite: Invite) => {
+    navigateToGeckoAcceptInvite({
+      inviteId: invite.id,
+      senderName: invite.sender_username,
+    });
+  };
   const confirmAccept = (invite: Invite) => {
     Alert.alert(
       "Accept invite?",
@@ -131,7 +138,7 @@ const handleAcceptButtonPress = (invite: Invite) => {
         {
           text: "Decline",
           style: "destructive",
-             onPress: () => handleDeclineInvite(invite.id),
+          onPress: () => handleDeclineInvite(invite.id),
         },
       ],
       { cancelable: true },
@@ -150,13 +157,28 @@ const handleAcceptButtonPress = (invite: Invite) => {
         },
       ]}
     >
- 
       <View style={styles.header}>
-             <SocketStatusLight socketStatusSV={socketStatusSV}/>
-        <SvgIcon name="account_plus" size={16} color={lightDarkTheme.primaryText} />
-        <Text style={[styles.headerText, { color: lightDarkTheme.primaryText }]}>
-          Live Sesh Invites
-        </Text>
+        <SocketStatusLight socketStatusSV={socketStatusSV} />
+        <SvgIcon
+          name="account_plus"
+          size={16}
+          color={lightDarkTheme.primaryText}
+        />
+        {!sessionIsActive ||
+          (currentLiveSesh?.is_host && (
+            <Text
+              style={[styles.headerText, { color: lightDarkTheme.primaryText }]}
+            >
+              Live Sesh Invites
+            </Text>
+          ))}
+        {sessionIsActive && !currentLiveSesh?.is_host && (
+          <Text
+            style={[styles.headerText, { color: lightDarkTheme.primaryText }]}
+          >
+            Resume session
+          </Text>
+        )}
         {sessionIsActive && !currentLiveSesh?.is_host && (
           <Pressable
             onPress={navigateToSecretGecko}
@@ -224,7 +246,6 @@ const handleAcceptButtonPress = (invite: Invite) => {
           </View>
         ))
       )}
-
     </View>
   );
 };

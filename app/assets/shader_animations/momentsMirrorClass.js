@@ -118,6 +118,10 @@
       this.lastSelectedCoord[0] = 0;
       this.lastSelectedCoord[1] = 0;
 
+
+      this.lastTap = null;
+      this.lastTapId = null;
+
       for (let i = 0; i < 4; i++) {
         this.holdings[i].id = null;
         this.holdings[i].stored_index = null;
@@ -371,68 +375,36 @@ initialLoad(momentsData = []) {
     update(
       userPointer,
       isDragging,
-      wasTap,
+      newTap,
       wasDoubleTap,
       altCoord,
       // holdingCoords,
     ) { 
       let ux = userPointer[0];
       let uy = userPointer[1];
+
+      // console.log(newTap)
+
+
+      if (!this.lastTap) {
+        this.lastTap = performance.now();
+      }
  
-//  console.log(this.moments[0])
+  //  console.log(this.selected)
 
       // if (wasDoubleTap && this.lastSelected.id !== -1) {
       //   this.lastSelected.id = -1;
       // }
 
       const fallbackLastSelectedCoord = altCoord;
-      let lastSelectedIsHeld = false;
+      // let lastSelectedIsHeld = false;
  
 
-      if (!lastSelectedIsHeld) {
+      // if (!lastSelectedIsHeld) {
         this.lastSelectedCoord[0] = fallbackLastSelectedCoord[0];
         this.lastSelectedCoord[1] = fallbackLastSelectedCoord[1];
-      }
-
-      if (
-        !isDragging 
-        // &&
-        // this.sleepWalk0.current.autoSelectCoord[0] === -100
-      ) {
-        this.draggingMomentIndex = -1;
-        this.selectedMomentIndex = -1;
-        this.selected.coord[0] = -100;
-        this.selected.coord[1] = -100;
-
-        if (!lastSelectedIsHeld) {
-          this.lastSelected.coord[0] = this.lastSelectedCoord[0];
-          this.lastSelected.coord[1] = this.lastSelectedCoord[1];
-        }
-
-        return;
-      }
-
-      if (
-        this.draggingMomentIndex >= 0 &&
-        this.sleepWalk0.current.autoSelectId === -1
-      ) {
-        const dragMoment = this.moments[this.draggingMomentIndex];
-        const coord = dragMoment.coord;
-        if (coord[0] !== ux || coord[1] !== uy) {
-          coord[0] = ux;
-          coord[1] = uy;
-          // this._markDirty(dragMoment.id);
-        }
-
-        this.selectedMomentIndex = this.draggingMomentIndex;
-        this.selected.coord[0] = ux;
-        this.selected.coord[1] = uy;
-        this.lastSelected.coord[0] = this.lastSelectedCoord[0];
-        this.lastSelected.coord[1] = this.lastSelectedCoord[1];
-
-        return;
-      }
-
+    
+ 
       let closestIndex = -1;
       let closestDistSquared = Infinity;
 
@@ -451,6 +423,9 @@ initialLoad(momentsData = []) {
       const SELECT_RADIUS_SQ = SELECT_RADIUS * SELECT_RADIUS;
 
       if (closestDistSquared > SELECT_RADIUS_SQ) {
+
+        // console.log('deselecting...')
+
         this.draggingMomentIndex = -1;
         this.selectedMomentIndex = -1;
 
@@ -458,16 +433,17 @@ initialLoad(momentsData = []) {
         this.selected.coord[0] = -100;
         this.selected.coord[1] = -100;
 
-        if (!lastSelectedIsHeld) {
+        // if (!lastSelectedIsHeld) {
           this.lastSelected.id = -1;
           this.lastSelected.coord[0] = altCoord[0];
           this.lastSelected.coord[1] = altCoord[1];
-        }
+        // }
 
         return;
       }
 
-      if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap)) {
+      // if (closestIndex >= 0 && (!lastSelectedIsHeld || wasTap)) {
+          if (closestIndex >= 0 && newTap) {
         const pickedMoment = this.moments[closestIndex];
         const coord = pickedMoment.coord;
         if (coord[0] !== ux || coord[1] !== uy) {
@@ -483,11 +459,26 @@ initialLoad(momentsData = []) {
         this.selected.id = pickedMoment.id;
         this.lastSelected.id = pickedMoment.id;
 
-        if (!lastSelectedIsHeld) {
+        // if (!lastSelectedIsHeld) {
           this.lastSelected.coord[0] = this.lastSelectedCoord[0];
           this.lastSelected.coord[1] = this.lastSelectedCoord[1];
+        // }
+      if (newTap && this.selected.id && this.selected.id != -1) {
+        if (newTap != this.lastTap) {
+            console.log('new tap!')
+            this.lastTap = newTap;
+            
+             this.moments[closestIndex].conseq_press_count += 1;
+             console.log(this.moments[closestIndex])
+
         }
+ 
       }
+
+
+      }
+
+
     }
   }
 

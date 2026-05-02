@@ -145,14 +145,14 @@ export const UpNextCard: React.FC<UpNextCardProps> = ({
         </View>
 
         {/* Arrow button */}
-        <LinearGradient
+        {/* <LinearGradient
           colors={arrowColors}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.arrow}
         >
           <Text style={styles.arrowText}>›</Text>
-        </LinearGradient>
+        </LinearGradient> */}
       </View>
     </Pressable>
   );

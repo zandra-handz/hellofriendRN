@@ -150,7 +150,6 @@ type PeerGeckoPosition = {
   received_at: number;
 } | null;
 
-
 type HostCapsulesSV = {
   from_user: number;
   moments?: any[][];
@@ -453,6 +452,21 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const registerOnGeckoMatchWinNavigate = useCallback(
     (cb: (d: GeckoMatchWinNavigatePayload) => void) => {
       onGeckoMatchWinNavigateRef.current = cb;
+    },
+    [],
+  );
+
+  const onPeerPresenceRef = useRef<((online: boolean) => void) | null>(null);
+
+  const registerOnPeerPresence = useCallback(
+    (cb: (online: boolean) => void) => {
+      onPeerPresenceRef.current = cb;
+
+      return () => {
+        if (onPeerPresenceRef.current === cb) {
+          onPeerPresenceRef.current = null;
+        }
+      };
     },
     [],
   );
@@ -1277,7 +1291,9 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
       if (message.action === "peer_presence") {
         console.log(`PEER PRESENCE!`, message.data);
-        peerJoinedStatusSV.value = message.data?.online ?? false;
+        const online = message.data?.online ?? false;
+        peerJoinedStatusSV.value = online;
+        onPeerPresenceRef.current?.(online);
 
         // used by guest, sets their background to be the host's colors for their friend profile
         // sharedColorLightSV.value = withTiming(
@@ -1667,6 +1683,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendCapsuleProgress,
       sendAllHostCapsules,
       hostCapsulesSV,
+      registerOnPeerPresence
     }),
     [
       bindFriend,
@@ -1715,6 +1732,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendCapsuleProgress,
       sendAllHostCapsules,
       hostCapsulesSV,
+      registerOnPeerPresence
     ],
   );
 

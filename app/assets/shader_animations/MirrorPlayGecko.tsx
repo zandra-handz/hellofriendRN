@@ -174,6 +174,9 @@ const MirrorPlayGecko = ({
   const wasTapSV = useSharedValue(false);
   const wasDoubleTapSV = useSharedValue(false);
 
+
+  const newTapSV = useSharedValue(null);
+
   const panGesture = Gesture.Pan()
     .onTouchesDown((e) => {
       isDragging.value = true;
@@ -195,9 +198,11 @@ const MirrorPlayGecko = ({
     .onEnd((_event, success) => {
       if (success) {
         wasTapSV.value = true;
+        newTapSV.value = performance.now();
+       
         setTimeout(() => {
           wasTapSV.value = false;
-        }, 100);
+        }, 10); //100
       }
     });
 
@@ -216,8 +221,8 @@ const MirrorPlayGecko = ({
 
 
 
-  const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
-  const composedGesture = Gesture.Simultaneous(panGesture, taps);
+  // const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
+  const composedGesture = Gesture.Simultaneous(panGesture, singleTapGesture);
 
   const color1Converted = hexToVec3(color1);
   const color2Converted = hexToVec3(color2);
@@ -438,7 +443,7 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
                 mirrorMoments.current.update(
         userPointSV.value,
         false, //just set isdragging to always false for rn
-        wasTapSV.value,
+        newTapSV.value,
         wasDoubleTapSV.value,
         leadPoint.current.lead,
  
@@ -662,65 +667,134 @@ useAnimatedReaction(
     };
   }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
 
-  const momentsMapRef = useRef<Map<number, { x: number; y: number }>>(
-    new Map(),
-  );
-
+const momentsMapRef = useRef<
+  Map<string | number, { x: number; y: number; stored_index: number | null; guest_progress: number }>
+>(new Map());
   const packCtxRef = useRef({ aspect, scale, w: size.width, h: size.height });
   packCtxRef.current.aspect = aspect;
   packCtxRef.current.scale = scale;
   packCtxRef.current.w = size.width;
   packCtxRef.current.h = size.height;
 
-  const applyMirrorMomentsDelta = useCallback((delta: number[][]) => {
-    const map = momentsMapRef.current;
-    for (const [id, x, y] of delta) {
-      map.set(id, { x, y });
-    }
+//   const applyMirrorMomentsDelta = useCallback((delta: number[][]) => {
+//     const map = momentsMapRef.current;
+//     for (const [id, x, y] of delta) {
+//       map.set(id, { x, y });
+//     }
 
-    let i = 0;
-    for (const [id, pt] of map) {
-      if (i >= MAX_MOMENTS) break;
-      mirrorMomentsBuffer[i].id = id;
-      mirrorMomentsBuffer[i].coord[0] = pt.x;
-      mirrorMomentsBuffer[i].coord[1] = pt.y;
-      mirrorMomentsBuffer[i].stored_index = i;
-      i++;
-    }
-    mirrorMomentsLenRef.current = i;
+//     let i = 0;
+//     for (const [id, pt] of map) {
+//       if (i >= MAX_MOMENTS) break;
+//       mirrorMomentsBuffer[i].id = id;
+//       mirrorMomentsBuffer[i].coord[0] = pt.x;
+//       mirrorMomentsBuffer[i].coord[1] = pt.y;
+//       mirrorMomentsBuffer[i].stored_index = i;
+//       i++;
+//     }
+//     mirrorMomentsLenRef.current = i;
 
-    const slice = mirrorMomentsBuffer.slice(0, i);
+//     const slice = mirrorMomentsBuffer.slice(0, i);
 
  
 
-if (!hasInitialLoadedMirrorMomentsRef.current) {
-  mirrorMoments.current.initialLoad(slice);
-  hasInitialLoadedMirrorMomentsRef.current = true;
-} else {
-  mirrorMoments.current.updateOrAddMoments(slice);
-  mirrorMoments.current.updateAllCoords(slice);
-}
-   // mirrorMoments.current._markAllDirty?.();
+// if (!hasInitialLoadedMirrorMomentsRef.current) {
+//   mirrorMoments.current.initialLoad(slice);
+//   hasInitialLoadedMirrorMomentsRef.current = true;
+// } else {
+//   mirrorMoments.current.updateOrAddMoments(slice);
+//   mirrorMoments.current.updateAllCoords(slice);
+// }
+//    // mirrorMoments.current._markAllDirty?.();
 
-    const { aspect: a, scale: s, w, h } = packCtxRef.current;
-    if (a && w && h) {
-      peerWorkingBuffers.mirrorMoments.fill(0);
-      packVec2Uniform_withRecenter_moments(
-        mirrorMoments.current.moments,
-        peerWorkingBuffers.mirrorMoments as any,
-        mirrorMoments.current.momentsLength,
-        a,
-        s,
-      );
-      mirrorMomentsUniformSV.value = Array.from(
-        peerWorkingBuffers.mirrorMoments,
-      );
-      mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
-    }
+//     const { aspect: a, scale: s, w, h } = packCtxRef.current;
+//     if (a && w && h) {
+//       peerWorkingBuffers.mirrorMoments.fill(0);
+//       packVec2Uniform_withRecenter_moments(
+//         mirrorMoments.current.moments,
+//         peerWorkingBuffers.mirrorMoments as any,
+//         mirrorMoments.current.momentsLength,
+//         a,
+//         s,
+//       );
+//       mirrorMomentsUniformSV.value = Array.from(
+//         peerWorkingBuffers.mirrorMoments,
+//       );
+//       mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
+//     }
 
-    updateTrigger.value += 1;
-  }, []);
+//     updateTrigger.value += 1;
+//   }, []);
 
+const applyMirrorMomentsDelta = useCallback((delta: any[][]) => {
+  const map = momentsMapRef.current;
+
+  for (const [id, x, y, storedIndex, incomingProgress] of delta) {
+    if (id == null) continue;
+
+    const existing = map.get(id);
+
+    map.set(id, {
+      x,
+      y,
+      stored_index:
+        storedIndex !== undefined && storedIndex !== null
+          ? storedIndex
+          : existing?.stored_index ?? -1,
+      guest_progress:
+        incomingProgress !== undefined && incomingProgress !== null
+          ? incomingProgress
+          : existing?.guest_progress ?? 0,
+    });
+  }
+
+  let i = 0;
+
+  for (const [id, pt] of map) {
+    if (i >= MAX_MOMENTS) break;
+
+    mirrorMomentsBuffer[i].id = id;
+    mirrorMomentsBuffer[i].coord[0] = pt.x;
+    mirrorMomentsBuffer[i].coord[1] = pt.y;
+    mirrorMomentsBuffer[i].stored_index = pt.stored_index ?? -1;
+    mirrorMomentsBuffer[i].guest_progress = pt.guest_progress ?? 0;
+
+    i++;
+  }
+
+  mirrorMomentsLenRef.current = i;
+
+  const slice = mirrorMomentsBuffer.slice(0, i);
+
+  if (!hasInitialLoadedMirrorMomentsRef.current) {
+    mirrorMoments.current.initialLoad(slice);
+    hasInitialLoadedMirrorMomentsRef.current = true;
+  } else {
+    mirrorMoments.current.updateOrAddMoments(slice);
+    mirrorMoments.current.updateAllCoords(slice);
+  }
+
+  const { aspect: a, scale: s, w, h } = packCtxRef.current;
+
+  if (a && w && h) {
+    peerWorkingBuffers.mirrorMoments.fill(0);
+
+    packVec2Uniform_withRecenter_moments(
+      mirrorMoments.current.moments,
+      peerWorkingBuffers.mirrorMoments as any,
+      mirrorMoments.current.momentsLength,
+      a,
+      s,
+    );
+
+    mirrorMomentsUniformSV.value = Array.from(
+      peerWorkingBuffers.mirrorMoments,
+    );
+
+    mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
+  }
+
+  updateTrigger.value += 1;
+}, []);
 
     useAnimatedReaction(
   () => {
