@@ -1206,12 +1206,13 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     return sendAllHostCapsules(scatteredMoments);
   }, [isHost, scatteredMoments, sendAllHostCapsules]);
 
-  useEffect(() => {
-    if (!isHost) return;
-    if (!scatteredMoments || scatteredMoments.length === 0) return;
+useEffect(() => {
+  if (!isHost) return;
+  if (!scatteredMoments || scatteredMoments.length === 0) return;
+  if (!peerJoinedStatusSV.value) return;
 
-    sendAllHostCapsules(scatteredMoments);
-  }, [isHost, scatteredMoments, sendAllHostCapsules]);
+  sendAllHostCapsules(scatteredMoments);
+}, [isHost, scatteredMoments, sendAllHostCapsules, peerJoinedStatusSV.value]);
 
   const handleRescatterMoments_insideMS = useCallback((newData) => {
     const minY = 0.2;
