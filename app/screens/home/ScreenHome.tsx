@@ -5,8 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
 import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
+import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 import { useLDTheme } from "@/src/context/LDThemeContext";
+import FourButtons from "./FourButtons";
 import CategoriesCard from "./CategoriesCard";
 import StatsCard from "./StatsCard";
 import GeckoCard from "./GeckoCard";
@@ -64,6 +66,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
     navigateToHistory,
     navigateToGeckoManage,
     navigateToGeckoWins,
+    navigateToSecretGecko 
   } = useAppNavigations();
 
   const FOOTER_SPACER = 120;
@@ -87,6 +90,16 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
 
   const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
     useFriendListAndUpcoming({ userId: user.id });
+
+
+      const { currentLiveSesh, isHost } = useCurrentLiveSesh({
+    userId: user?.id ?? 0,
+    enabled: !!user?.id
+  });
+    const sessionIsActive = !!(
+    currentLiveSesh?.expires_at &&
+    new Date(currentLiveSesh.expires_at).getTime() > Date.now()
+  );
 
   const friendList = friendListAndUpcoming?.friends;
   const friendListLength = friendList?.length || 0;
@@ -125,6 +138,13 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
     friendList,
   });
 
+
+  const handleOnPress1 = useCallback(() => {
+    if (sessionIsActive && !isHost) {
+      navigateToSecretGecko();
+    }
+
+  }, [sessionIsActive, isHost]);
   const onNextPress = useCallback(() => {
     if (upcomingId) {
       handleSelectFriend(upcomingId);
@@ -152,6 +172,9 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   const backgroundColor = lightDarkTheme.primaryBackground;
   const overlayColor = lightDarkTheme.overlayBackground;
 
+
+  
+
   useEffect(() => {
     if (isDelaying) {
       showSpinner(backgroundColor);
@@ -159,6 +182,12 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
       hideSpinner();
     }
   }, [isDelaying, backgroundColor]);
+
+  const shouldShowFourButtons =
+    friendListAndUpcomingIsSuccess &&
+    !isDelaying &&
+    !!settings?.id &&
+    friendListLength > 0;
 
   // useEffect(() => {
   //   if (isOnline === null) return;
@@ -193,26 +222,35 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
           <View
             style={[
               styles.parentToScrollView,
-              { paddingBottom: FOOTER_SPACER },
+              { paddingBottom: FOOTER_SPACER, paddingTop: 20 },
             ]}
           >
             {settings?.id && friendListLength > 0 && (
               <>
+         
+ 
                 <LiveSeshInvitesPanel />
+                 
                 <WelcomeCard
                   eyebrow="Gecko:"
-                  headingLine1={`Hi ${user.username}!`}
+                  headingLine1={`Hi ${user.username},`}
                   headingLine2="Welcome back!"
                   subtitle={`${getDayLabel()}`}
                 />
 
+
+
+
+                <View style={{ height: MANAGE_CARDS_SCROLL_HEIGHT + 320, paddingTop: 320, marginTop: 50 }}>
+                  <ScrollView style={{zIndex: 10}}>
+                    
                 <UpNextCard
                   name={upcomingFriendName}
                   date={upcomingFutureDate}
                   futureDateInWords={upcomingFutureDateInWords}
                   onPress={onNextPress}
                 />
-                <HomeScrollSoon
+                                <HomeScrollSoon
                   lighterOverlayColor={lightDarkTheme.lighterOverlayBackground}
                   darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
                   isLoading={isLoading}
@@ -229,33 +267,30 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
                   borderRadius={10}
                   borderColor="black"
                 />
-                <View style={{ height: MANAGE_CARDS_SCROLL_HEIGHT }}>
-                  <ScrollView>
-                    <CategoriesCard
+                    {/* <CategoriesCard
                       onPress={navigateToCategories}
                       backgroundColor={backgroundColor}
                       textColor={textColor}
-                    />
+                    /> */}
 
-                    <StatsCard
+                    {/* <StatsCard
                       onPress={navigateToHistory}
                       backgroundColor={backgroundColor}
                       textColor={textColor}
-                    />
-                    <GeckoCard
+                    /> */}
+                    {/* <GeckoCard
                       onPress={navigateToGeckoManage}
                       backgroundColor={backgroundColor}
                       textColor={textColor}
-                    />
+                    /> */}
                     <View style={{ height: 400 }}></View>
                   </ScrollView>
                 </View>
               </>
             )}
-            s
           </View>
 
-          <DebugButton onPress={navigateToGeckoWins} />
+          {/* <DebugButton onPress={navigateToGeckoWins} /> */}
 
           <HelloFriendFooter
             userId={user.id}
@@ -263,6 +298,18 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
             lightDarkTheme={lightDarkTheme}
             onPress_navigateToGeckoWins={navigateToGeckoWins}
           />
+
+          {shouldShowFourButtons && currentLiveSesh && (
+            <FourButtons
+              sessionIsActive={sessionIsActive}
+              initialSelectedIndex={sessionIsActive ? 1 : 2}
+              textColor={textColor}
+                onPress1={handleOnPress1}
+                onPress2={navigateToCategories}
+                onPress3={navigateToHistory}
+                onPress4={navigateToGeckoManage}
+            />
+          )}
         </>
       )}
     </SafeAreaView>
@@ -278,6 +325,23 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     // paddingBottom: 60
+  },
+  fourButtonsWrapper: {
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: 30,
+
+  },
+  fourButtonsCenter: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   parentToScrollView: {},
 });

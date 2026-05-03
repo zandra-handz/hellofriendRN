@@ -101,7 +101,7 @@ half4 main(vec2 fragCoord) {
 `);
 
   if (!source) {
-    console.error("❌ SpinnerFive shader failed to compile");
+    console.error("  SpinnerFive shader failed to compile");
     return null;
   }
 

@@ -43,9 +43,7 @@ export function WelcomeCard({
   style,
 }: WelcomeCardProps) {
   return (
-    <View style={[styles.container, style]}>
-      {/* Eyebrow */}
-      <Text style={styles.eyebrow}>{eyebrow}</Text>
+    <View style={[styles.container, style]}> 
 
       {/* Heading line 1 */}
       <Text style={[styles.headingLine, { color: textColor }]}>

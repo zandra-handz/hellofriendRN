@@ -14,6 +14,7 @@ import { useLDTheme } from "@/src/context/LDThemeContext";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import MemoizedMirrorPlayGecko from "@/app/assets/shader_animations/MirrorPlayGecko";
 import manualGradientColors from "@/app/styles/StaticColors";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import GradientBackgroundAppDefault from "@/app/components/appwide/format/GradientBackgroundAppDefault";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
 import useUser from "@/src/hooks/useUser";
@@ -101,6 +102,15 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     console.log(`ScreenGecko renders: `, rerenderCountRef.current);
 
   const noopSendGuestGeckoPosition = useRef(() => {}).current;
+
+  const sendCapsuleProgressRef = useRef(!isHost ? sendCapsuleProgress : () => {});
+
+
+  useEffect(() => {
+    sendCapsuleProgressRef.current = !isHost ? sendCapsuleProgress : () => {};
+
+  }, [sendCapsuleProgress]);
+
   const sendGuestGeckoPositionRef = useRef(
     !isHost ? sendGuestGeckoPosition : noopSendGuestGeckoPosition,
   );
@@ -145,12 +155,53 @@ useEffect(() => {
   navigateToSecretGeckoWinAccept,
 ]);
 
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") requestPresenceStatus();
-    });
-    return () => sub.remove();
-  }, [requestPresenceStatus]);
+  // useEffect(() => {
+  //   const sub = AppState.addEventListener("change", (state) => {
+  //     if (state === "active") {
+        
+  //         showFlashMessage(`Appstate active, requesting presence status`, false, 1000);
+  //       requestPresenceStatus();
+  //     }
+  //   });
+  //   return () => sub.remove();
+  // }, [requestPresenceStatus]);
+
+
+
+// NEW THING TO TRY INSTEAD OF APP STATE ABOVE
+// IF ITS STILL HERE I HAVENT TRIED IT YET
+
+//   const resumePresenceCheck = useCallback(() => {
+//   console.log("[SECRET GECKO] resumePresenceCheck");
+
+//   setWantsConnection(true);
+
+//   connect().then(() => {
+//     joinLiveSesh();
+//     requestPresenceStatus();
+
+//     setTimeout(() => {
+//       requestPresenceStatus();
+//     }, 350);
+//   });
+// }, [
+//   setWantsConnection,
+//   connect,
+//   joinLiveSesh,
+//   requestPresenceStatus,
+// ]);
+
+// useEffect(() => {
+//   const sub = AppState.addEventListener("change", (state) => {
+//     console.log("[SECRET GECKO] AppState:", state);
+
+//     if (state === "active") {
+//       resumePresenceCheck();
+//     }
+//   });
+
+//   return () => sub.remove();
+// }, [resumePresenceCheck]);
 
   useFocusEffect(
     useCallback(() => {
@@ -179,6 +230,42 @@ useEffect(() => {
       };
     }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
   );
+
+
+
+  useEffect(() => {
+  const sub = AppState.addEventListener("change", (state) => {
+    const socketStatus = socketStatusSV.value;
+    const peerJoined = peerJoinedStatusSV.value;
+    const hasPartner = !!liveSeshPartner;
+
+    if (state === "active") {
+      showFlashMessage(
+        `ACTIVE | socket:${socketStatus} | peer:${peerJoined ? "Y" : "N"} | partner:${hasPartner ? "Y" : "N"} | host:${isHost ? "Y" : "N"}`,
+        false,
+        2500
+      );
+
+      requestPresenceStatus();
+
+      setTimeout(() => {
+        showFlashMessage(
+          `+350ms | socket:${socketStatusSV.value} | peer:${peerJoinedStatusSV.value ? "Y" : "N"} | partner:${liveSeshPartner ? "Y" : "N"}`,
+          false,
+          2500
+        );
+      }, 350);
+    }
+  });
+
+  return () => sub.remove();
+}, [
+  requestPresenceStatus,
+  socketStatusSV,
+  peerJoinedStatusSV,
+  liveSeshPartner,
+  isHost,
+]);
 
   return (
     // <GradientBackgroundAppDefault style={styles.backgroundContainer}>
@@ -235,6 +322,7 @@ useEffect(() => {
           hostCapsulesSV={hostCapsulesSV}
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
           playMode={playMode}
+          sendCapsuleProgressRef={sendCapsuleProgressRef}
         />
       </View>
 

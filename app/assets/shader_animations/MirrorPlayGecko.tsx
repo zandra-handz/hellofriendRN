@@ -90,6 +90,7 @@ const MirrorPlayGecko = ({
   hostCapsulesSV,
   sendGuestGeckoPositionRef: sendGuestGeckoPositionRef = null,
   playMode,
+  sendCapsuleProgressRef,
   dotColor = "#7FE629",
   dotRadius = 14,
   
@@ -111,6 +112,8 @@ const MirrorPlayGecko = ({
   const nowMs = () => global.performance?.now?.() ?? Date.now();
   const shaderTimeSV = useSharedValue(0);
   const startMsRef = useRef(nowMs());
+
+  const lastGuestProgressUpdateRef = useRef(Date.now());
 
   const updateTrigger = useSharedValue(0);
   const lastRenderRef = useRef(0);
@@ -416,7 +419,7 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
         leadPoint.current.isMoving,
       );
 
-      const shouldUpdate = leadPoint.current.isMoving || isDragging.value;
+      const shouldUpdate = leadPoint.current.isMoving || isDragging.value || wasTapSV.value;
 
       shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
@@ -440,14 +443,27 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
 
 
 
-                mirrorMoments.current.update(
+        mirrorMoments.current.update(
         userPointSV.value,
-        false, //just set isdragging to always false for rn
+        // false, //just set isdragging to always false for rn
         newTapSV.value,
-        wasDoubleTapSV.value,
+        // wasDoubleTapSV.value,
         leadPoint.current.lead,
  
       );
+
+
+      if (mirrorMoments.current.trigger_update_host_with_guest_progress) {
+        if (mirrorMoments.current.trigger_update_host_with_guest_progress != lastGuestProgressUpdateRef.current) {
+          console.log('update guests progress data', mirrorMoments.current.newProgress, mirrorMoments.current.selected.id);
+         
+          sendCapsuleProgressRef?.current?.({
+            capsule_id: mirrorMoments.current.selected.id,
+            new_progress: mirrorMoments.current.trigger_update_host_with_guest_progress
+          })
+           lastGuestProgressUpdateRef.current = mirrorMoments.current.trigger_update_host_with_guest_progress;
+        }
+      }
 
         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
 

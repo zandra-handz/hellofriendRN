@@ -113,21 +113,21 @@ const LiveSeshInvitesPanel: React.FC = () => {
       senderName: invite.sender_username,
     });
   };
-  const confirmAccept = (invite: Invite) => {
-    Alert.alert(
-      "Accept invite?",
-      `Accept live sesh invite from ${invite.sender_username}?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Accept",
-          style: "default",
-          onPress: () => handleAcceptInvite(invite.id),
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+  // const confirmAccept = (invite: Invite) => {
+  //   Alert.alert(
+  //     "Accept invite?",
+  //     `Accept live sesh invite from ${invite.sender_username}?`,
+  //     [
+  //       { text: "Cancel", style: "cancel" },
+  //       {
+  //         text: "Accept",
+  //         style: "default",
+  //         onPress: () => handleAcceptInvite(invite.id),
+  //       },
+  //     ],
+  //     { cancelable: true },
+  //   );
+  // };
 
   const confirmDecline = (invite: Invite) => {
     Alert.alert(
@@ -148,6 +148,10 @@ const LiveSeshInvitesPanel: React.FC = () => {
   if (!userId) return null;
 
   return (
+    <>
+    {pending && pending?.length > 0 && (
+
+  
     <View
       style={[
         styles.container,
@@ -247,6 +251,9 @@ const LiveSeshInvitesPanel: React.FC = () => {
         ))
       )}
     </View>
+   
+      )}
+      </>
   );
 };
 
@@ -257,6 +264,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     gap: 8,
+    zIndex: 10000,
+    position: 'absolute'
     //height: 100,
   },
   header: {

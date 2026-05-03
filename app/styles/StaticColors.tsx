@@ -7,6 +7,8 @@ const manualGradientColors = {
   homeLightColor: "#163805",
   whiteColor: "#ebebeb",
   dangerColor: "#c0392b",
+  manualLightTextColor: "#d3d3d3",
+  manualDarkTextColor: "#121212"
 };
 
 export default manualGradientColors;

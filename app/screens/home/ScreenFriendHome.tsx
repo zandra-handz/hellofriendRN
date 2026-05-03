@@ -195,10 +195,10 @@ const ScreenFriendHome = ({
 
             <TopLayerButton
               onPress={handleNavigateToCreateNew}
-              backgroundColor={manualGradientColors.lightColor}
+              backgroundColor={selectedFriend.lightColor}
               iconColor={manualGradientColors.homeDarkColor}
               spaceFromBottom={110}
-              hidden={false}
+              hidden={false} 
             />
 
             <AnimatedTogglerBig

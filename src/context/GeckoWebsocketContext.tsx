@@ -1031,7 +1031,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   );
 
   const sendCapsuleProgress = useCallback(
-    (capsule_id: string, new_progress: number) => {
+   ({ capsule_id, new_progress }: { capsule_id: string; new_progress: number }) => {
       if (wsRef.current?.readyState !== WebSocket.OPEN) {
         return false;
       }
@@ -1044,6 +1044,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
           data: { capsule_id, new_progress, timestamp: now },
         }),
       );
+      console.log('SENDING PROGRESS OVER SOCKET')
       return true;
     },
     [],

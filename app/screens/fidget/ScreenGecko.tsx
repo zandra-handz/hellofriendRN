@@ -240,12 +240,81 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   }, [registerOnRemoveCapsule, handleRemoveMoment]);
 
   // and for background -> foreground
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") requestPresenceStatus();
-    });
-    return () => sub.remove();
-  }, [requestPresenceStatus]);
+//   useEffect(() => {
+//     const sub = AppState.addEventListener("change", (state) => {
+//       if (state === "active") {
+//         showFlashMessage(`Appstate active, requesting presence status`, false, 1000);
+
+// requestPresenceStatus();
+//       } 
+//     });
+//     return () => sub.remove();
+//   }, [requestPresenceStatus]);
+
+
+
+// NEW THING TO TRY INSTEAD OF APP STATE ABOVE
+// IF ITS STILL HERE I HAVENT TRIED IT YET
+
+// const resumePresenceCheck = useCallback(() => {
+//   console.log("[GECKO] resumePresenceCheck");
+
+//   setWantsConnection(true);
+
+//   connect().then(() => {
+//     if (selectedFriend?.id) {
+//       bindFriend(
+//         selectedFriend.id,
+//         selectedFriend.lightColor,
+//         selectedFriend.darkColor,
+//       );
+//     }
+
+//     requestPresenceStatus();
+
+//     setTimeout(() => {
+//       requestPresenceStatus();
+
+//       if (isHost && scatteredMoments?.length) {
+//         sendAllHostCapsules(scatteredMoments);
+//       }
+//     }, 350);
+//   });
+// }, [
+//   setWantsConnection,
+//   connect,
+//   selectedFriend?.id,
+//   selectedFriend?.lightColor,
+//   selectedFriend?.darkColor,
+//   bindFriend,
+//   requestPresenceStatus,
+//   isHost,
+//   scatteredMoments,
+//   sendAllHostCapsules,
+// ]);
+
+// useEffect(() => {
+//   const sub = AppState.addEventListener("change", (state) => {
+//     console.log("[GECKO] AppState:", state);
+
+//     if (state === "active") {
+//       resumePresenceCheck();
+//     }
+//   });
+
+//   return () => sub.remove();
+// }, [resumePresenceCheck]);
+
+
+
+
+
+
+
+
+
+
+
 
   useFocusEffect(
     useCallback(() => {
@@ -1501,6 +1570,38 @@ useEffect(() => {
   //   console.log(`  >> nothing tracked changed (likely untracked context)`);
   // }
   // ~~~ end diagnostics ~~~
+
+
+  useEffect(() => {
+  const sub = AppState.addEventListener("change", (state) => {
+    if (state !== "active") return;
+
+    showFlashMessage(
+      `ACTIVE HOST | socket:${socketStatusSV.value} | peer:${peerJoinedStatusSV.value ? "Y" : "N"} | host:${isHost ? "Y" : "N"} | friend:${selectedFriend?.id ?? "none"} | moments:${scatteredMoments?.length ?? 0}`,
+      false,
+      3000
+    );
+
+    requestPresenceStatus();
+
+    setTimeout(() => {
+      showFlashMessage(
+        `+350 HOST | socket:${socketStatusSV.value} | peer:${peerJoinedStatusSV.value ? "Y" : "N"} | moments:${scatteredMoments?.length ?? 0}`,
+        false,
+        3000
+      );
+    }, 350);
+  });
+
+  return () => sub.remove();
+}, [
+  requestPresenceStatus,
+  socketStatusSV,
+  peerJoinedStatusSV,
+  isHost,
+  selectedFriend?.id,
+  scatteredMoments?.length,
+]);
 
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
