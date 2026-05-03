@@ -459,7 +459,7 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
          
           sendCapsuleProgressRef?.current?.({
             capsule_id: mirrorMoments.current.selected.id,
-            new_progress: mirrorMoments.current.trigger_update_host_with_guest_progress
+            new_progress: mirrorMoments.current.newProgress
           })
            lastGuestProgressUpdateRef.current = mirrorMoments.current.trigger_update_host_with_guest_progress;
         }
