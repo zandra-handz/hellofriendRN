@@ -356,6 +356,14 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const onGuestGeckoCoordsRef = useRef<
     ((data: GuestGeckoCoordsMessage) => void) | null
   >(null);
+  const onCapsuleProgressCompleteRef = useRef<
+    | ((data: {
+        capsule_id: string;
+        new_progress: number;
+        from_user?: number;
+      }) => void)
+    | null
+  >(null);
   const onJoinLiveSeshRef = useRef<((partnerId: number | null) => void) | null>(
     null,
   );
@@ -515,6 +523,25 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const registerOnGuestGeckoCoords = useCallback(
     (cb: (data: GuestGeckoCoordsMessage) => void) => {
       onGuestGeckoCoordsRef.current = cb;
+    },
+    [],
+  );
+
+  const registerOnCapsuleProgressComplete = useCallback(
+    (
+      cb: (data: {
+        capsule_id: string;
+        new_progress: number;
+        from_user?: number;
+      }) => void,
+    ) => {
+      onCapsuleProgressCompleteRef.current = cb;
+
+      return () => {
+        if (onCapsuleProgressCompleteRef.current === cb) {
+          onCapsuleProgressCompleteRef.current = null;
+        }
+      };
     },
     [],
   );
@@ -1031,7 +1058,13 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   );
 
   const sendCapsuleProgress = useCallback(
-   ({ capsule_id, new_progress }: { capsule_id: string; new_progress: number }) => {
+    ({
+      capsule_id,
+      new_progress,
+    }: {
+      capsule_id: string;
+      new_progress: number;
+    }) => {
       if (wsRef.current?.readyState !== WebSocket.OPEN) {
         return false;
       }
@@ -1044,7 +1077,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
           data: { capsule_id, new_progress, timestamp: now },
         }),
       );
-      console.log('SENDING PROGRESS OVER SOCKET')
+      console.log("SENDING PROGRESS OVER SOCKET");
       return true;
     },
     [],
@@ -1069,26 +1102,41 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     return true;
   }, []);
 
-  const proposeGeckoWin = useCallback(
-    (capsuleId: string, geckoGameType: number) => {
-      if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
+  // const proposeGeckoWin = useCallback(
+  //   (capsuleId: string, geckoGameType: number) => {
+  //     if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
 
-      console.log(
-        "sending propseGeckoWin in socket: ",
-        capsuleId,
-        geckoGameType,
-      );
+  //     console.log(
+  //       "sending propseGeckoWin in socket: ",
+  //       capsuleId,
+  //       geckoGameType,
+  //     );
 
-      wsRef.current.send(
-        JSON.stringify({
-          action: "propose_gecko_win",
-          data: { capsule_id: capsuleId, gecko_game_type: geckoGameType },
-        }),
-      );
-      return true;
-    },
-    [],
-  );
+  //     wsRef.current.send(
+  //       JSON.stringify({
+  //         action: "propose_gecko_win",
+  //         data: { capsule_id: capsuleId, gecko_game_type: geckoGameType },
+  //       }),
+  //     );
+  //     return true;
+  //   },
+  //   [],
+  // );
+
+  const proposeGeckoWin = useCallback((capsuleId: string) => {
+    if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
+
+    console.log("sending propseGeckoWin in socket: ", capsuleId);
+
+    wsRef.current.send(
+      JSON.stringify({
+        action: "propose_gecko_win",
+        data: { capsule_id: capsuleId },
+      }),
+    );
+    return true;
+  }, []);
+
   const proposeGeckoMatchWin = useCallback((geckoGameType: number) => {
     console.log(`gecko game type sending: `, geckoGameType);
     if (wsRef.current?.readyState !== WebSocket.OPEN) return false;
@@ -1480,12 +1528,31 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
         return;
       }
-      if (message.action === "capsule_progress") {
-        console.log(
-          `HURRAY! capsule progress update received: `,
-          message?.data,
-        );
-      }
+if (message.action === "capsule_progress") {
+  console.log("HURRAY! capsule progress update received:", message.data);
+
+  const capsuleId = message.data?.capsule_id;
+  const newProgress = Number(message.data?.new_progress);
+  const fromUser = Number(message.data?.from_user);
+  const partnerUserId = Number(liveSeshPartner?.userId);
+
+  const cameFromPartner =
+    Number.isFinite(fromUser) &&
+    Number.isFinite(partnerUserId) &&
+    fromUser === partnerUserId;
+
+  if (
+    capsuleId &&
+    Number.isFinite(newProgress) &&
+    newProgress >= 100 &&
+    cameFromPartner //
+  ) {
+    console.log("proposing win (host side)");
+    proposeGeckoWin(capsuleId);
+  }
+
+  return;
+}
 
       if (message.action === "guest_gecko_coords") {
         if (
@@ -1684,7 +1751,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendCapsuleProgress,
       sendAllHostCapsules,
       hostCapsulesSV,
-      registerOnPeerPresence
+      registerOnPeerPresence,
     }),
     [
       bindFriend,
@@ -1733,7 +1800,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendCapsuleProgress,
       sendAllHostCapsules,
       hostCapsulesSV,
-      registerOnPeerPresence
+      registerOnPeerPresence,
     ],
   );
 

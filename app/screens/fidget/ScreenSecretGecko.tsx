@@ -109,7 +109,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   useEffect(() => {
     sendCapsuleProgressRef.current = !isHost ? sendCapsuleProgress : () => {};
 
-  }, [sendCapsuleProgress]);
+  }, [sendCapsuleProgress, isHost]);
 
   const sendGuestGeckoPositionRef = useRef(
     !isHost ? sendGuestGeckoPosition : noopSendGuestGeckoPosition,
