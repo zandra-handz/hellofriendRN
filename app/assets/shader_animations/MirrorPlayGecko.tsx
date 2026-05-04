@@ -530,10 +530,12 @@ const MirrorPlayGecko = ({
         }
       }
 
-      sendGuestGeckoPositionRef?.current?.(
-        leadPoint.current.lead,
-        workingBuffers.stepTargets,
-      );
+      if (shouldUpdate) {
+        sendGuestGeckoPositionRef?.current?.(
+          leadPoint.current.lead,
+          workingBuffers.stepTargets,
+        );
+      }
 
       frame = requestAnimationFrame(animate);
     };

@@ -55,11 +55,13 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendGeckoPosition,
     sendGuestGeckoPosition,
     registerOnHostGeckoCoords,
+    
     requestPresenceStatus,
     registerOnGeckoWinProposed,
     registerOnGeckoMatchWinNavigate,
     sendCapsuleProgress,
-    hostCapsulesSV
+    hostCapsulesSV,
+    registerOnPeerPresence
     
   } = useGeckoWebsocket();
   const { user } = useUser();
@@ -74,6 +76,20 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { handleCancelCurrentLiveSesh } = useCancelCurrentLiveSesh({
     userId: user?.id,
   });
+
+    useEffect(() => {
+    const wasOnlineRef = { current: false };
+    const unsub = registerOnPeerPresence((online) => {
+      if (wasOnlineRef.current && !online) {
+        showFlashMessage(`You are alone...`, false, 1000)
+     
+      }
+      wasOnlineRef.current = online;
+    });
+    return unsub;
+  }, [registerOnPeerPresence]);
+
+
   const handleCancelPress = React.useCallback(() => {
     Alert.alert(
       "End session?",

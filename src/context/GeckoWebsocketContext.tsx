@@ -417,6 +417,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     null,
   );
   const flushIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const PING_INTERVAL_MS = 3000;
   const shouldReconnectRef = useRef(true);
   const wantsConnectionRef = useRef(false);
 
@@ -690,6 +692,23 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       }
     }, FLUSH_INTERVAL_MS);
   }, [flush, stopFlushInterval]);
+
+  const stopPingInterval = useCallback(() => {
+    if (pingIntervalRef.current) {
+      clearInterval(pingIntervalRef.current);
+      pingIntervalRef.current = null;
+    }
+  }, []);
+
+  const startPingInterval = useCallback(() => {
+    stopPingInterval();
+
+    pingIntervalRef.current = setInterval(() => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ action: "ping" }));
+      }
+    }, PING_INTERVAL_MS);
+  }, [stopPingInterval]);
 
   const getScoreState = useCallback(() => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) {
@@ -1200,6 +1219,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     shouldReconnectRef.current = false;
     clearReconnectTimeout();
     stopFlushInterval();
+    stopPingInterval();
 
     if (streakExpiryTimeoutRef.current) {
       clearTimeout(streakExpiryTimeoutRef.current);
@@ -1224,7 +1244,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     pendingFriendIdRef.current = null;
 
     setLiveSeshPartner(null);
-  }, [clearReconnectTimeout, socketStatusSV, stopFlushInterval]);
+  }, [clearReconnectTimeout, socketStatusSV, stopFlushInterval, stopPingInterval]);
 
   const connect = useCallback(async () => {
     console.log(
@@ -1269,6 +1289,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     ws.onopen = () => {
       socketStatusSV.value = "connected";
       startFlushInterval();
+      startPingInterval();
 
       const fid = pendingFriendIdRef.current;
       const fLightColor = pendingFriendLightColorRef.current;
@@ -1629,6 +1650,7 @@ if (message.action === "capsule_progress") {
     ws.onclose = (event) => {
       socketStatusSV.value = "disconnected";
       stopFlushInterval();
+      stopPingInterval();
 
       isFriendBoundRef.current = false;
       boundFriendIdRef.current = null;
@@ -1669,6 +1691,8 @@ if (message.action === "capsule_progress") {
     socketStatusSV,
     startFlushInterval,
     stopFlushInterval,
+    startPingInterval,
+    stopPingInterval,
   ]);
 
   const setWantsConnection = useCallback(
