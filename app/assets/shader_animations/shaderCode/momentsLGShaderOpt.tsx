@@ -849,76 +849,6 @@ half4 main(float2 fragCoord) {
 
 `;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const MIRROR_MOMENTS_BG_SKSL_OPT_BOXED = `
 
 uniform float2 u_resolution;
@@ -1358,6 +1288,10 @@ uniform int u_mirrorMomentsLength;
 
 uniform float2 u_selected;
 uniform float2 u_lastSelected;
+//uniform float u_selectedProgress;
+
+uniform float u_mirrorMomentProgress[30];
+
 
 uniform vec3 u_sharedColorLight;
 uniform vec3 u_sharedColorDark;
@@ -1630,10 +1564,25 @@ half4 main(float2 fragCoord) {
         float2 deNormalizedCenter = u_mirrorMoments[i] * u_resolution;
         float2 d = fragCoord - deNormalizedCenter;
         float dist2 = dot(d, d);
-        float maxR = 19.0;
+
+
+        // A: CODE FOR NO PROGRESS VALUES 
+        // float maxR = 19.0;
+        // if (dist2 > maxR * maxR) continue;
+
+        // color = applyDotSq(dist2, 5.0, color);
+        // END A ////////////////////////////////////////////////////
+
+
+        // B: WITH PROGRESS VALUES
+        float progress = clamp(u_mirrorMomentProgress[i], 0.0, 100.0) / 100.0;
+        float radius = mix(5.0, 60.0, progress);
+        float maxR = max(19.0, radius);
+
         if (dist2 > maxR * maxR) continue;
 
-        color = applyDotSq(dist2, 5.0, color);
+        color = applyDotSq(dist2, radius, color);
+        // END B ///////////////////////////////////////
     }
 
     return half4(color, 1.0);

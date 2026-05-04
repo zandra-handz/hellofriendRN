@@ -16,7 +16,10 @@ import {
 import { GECKO_ONLY_TRANSPARENT_SKSL_OPT_COMPACT_BOX } from "./shaderCode/geckoMomentsLGShaderOpt_Compact";
 import { PEER_DOT_SKSL } from "./shaderCode/peerDotShader";
 import { BackHandler } from "react-native";
-import { MIRROR_MOMENTS_BG_SKSL_OPT_BOXED, MIRROR_MOMENTS_WITH_BG_SKSL_OPT_BOXED } from "./shaderCode/momentsLGShaderOpt";
+import {
+  MIRROR_MOMENTS_BG_SKSL_OPT_BOXED,
+  MIRROR_MOMENTS_WITH_BG_SKSL_OPT_BOXED,
+} from "./shaderCode/momentsLGShaderOpt";
 import { GECKO_FINGERS_ONLY_SKSL } from "./shaderCode/geckoFingersOnlyShader";
 import { useFocusEffect } from "@react-navigation/native";
 import MirrorMoments from "./momentsMirrorClass";
@@ -28,7 +31,11 @@ import {
   useAnimatedReaction,
 } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
-import { hexToVec3,hexToVec3Int, toGeckoPointerScaled_inPlace } from "./animUtils";
+import {
+  hexToVec3,
+  hexToVec3Int,
+  toGeckoPointerScaled_inPlace,
+} from "./animUtils";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
   Canvas,
@@ -76,8 +83,8 @@ const MirrorPlayGecko = ({
   color2,
   bckgColor1,
   bckgColor2,
-  sharedColorLightSV, 
-  sharedColorDarkSV, 
+  sharedColorLightSV,
+  sharedColorDarkSV,
   startingCoord0,
   startingCoord1,
   restPoint0,
@@ -93,7 +100,6 @@ const MirrorPlayGecko = ({
   sendCapsuleProgressRef,
   dotColor = "#7FE629",
   dotRadius = 14,
-  
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -130,13 +136,25 @@ const MirrorPlayGecko = ({
       [0, 0],
       [0, 0],
     ] as [number, number][],
+    selected: new Float32Array(2),
+    lastSelected: new Float32Array(2),
+    selectedProgress: 0,
   }).current;
 
   const peerWorkingBuffers = useRef({
     packedSteps: new Float32Array(PEER_STEP_COUNT * 2), // 8 floats
     packedFirstFingers: new Float32Array(PEER_STEP_COUNT * 2), // 8 floats
     mirrorMoments: new Float32Array(MAX_MOMENTS * 2),
+    mirrorMomentProgress: new Float32Array(MAX_MOMENTS),
   }).current;
+
+  const selectedUniformSV = useSharedValue<number[]>([0, 0]);
+  const lastSelectedUniformSV = useSharedValue<number[]>([0, 0]);
+
+  const selectedProgressUniformSV = useSharedValue<number>(0);
+  const mirrorMomentProgressSV = useSharedValue<number[]>(
+    Array(MAX_MOMENTS).fill(0),
+  );
 
   const mirrorMomentsUniformSV = useSharedValue<number[]>(
     Array(MAX_MOMENTS * 2).fill(0),
@@ -177,7 +195,6 @@ const MirrorPlayGecko = ({
   const wasTapSV = useSharedValue(false);
   const wasDoubleTapSV = useSharedValue(false);
 
-
   const newTapSV = useSharedValue(null);
 
   const panGesture = Gesture.Pan()
@@ -202,7 +219,7 @@ const MirrorPlayGecko = ({
       if (success) {
         wasTapSV.value = true;
         newTapSV.value = performance.now();
-       
+
         setTimeout(() => {
           wasTapSV.value = false;
         }, 10); //100
@@ -221,9 +238,6 @@ const MirrorPlayGecko = ({
       }
     });
 
-
-
-
   // const taps = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
   const composedGesture = Gesture.Simultaneous(panGesture, singleTapGesture);
 
@@ -232,12 +246,10 @@ const MirrorPlayGecko = ({
   const bckgColor1Converted = hexToVec3(bckgColor1);
   const bckgColor2Converted = hexToVec3(bckgColor2);
 
-
- 
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
   const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
   const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, {}));
-const hasInitialLoadedMirrorMomentsRef = useRef(false);
+  const hasInitialLoadedMirrorMomentsRef = useRef(false);
   const mirrorMoments = useRef(
     new MirrorMoments([], playMode, gecko_size, [0.5, 0.5], 0.05),
   );
@@ -314,7 +326,7 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
 
   useEffect(() => {
     if (aspect) {
-      mirrorMoments.current.setAspect(aspect); 
+      mirrorMoments.current.setAspect(aspect);
     }
   }, [aspect]);
 
@@ -328,12 +340,23 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
     gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06, {});
 
     workingBuffers.geckoPoints.fill(0);
+    workingBuffers.selected.fill(0);
+    workingBuffers.lastSelected.fill(0);
+    workingBuffers.selectedProgress = 0;
+
+    selectedUniformSV.value = [0, 0];
+    lastSelectedUniformSV.value = [0, 0];
+    selectedProgressUniformSV.value = 0;
+
     geckoPointsUniformSV.value = Array(TOTAL_GECKO_POINTS_COMPACT * 2).fill(0);
 
     peerWorkingBuffers.packedSteps.fill(-1000);
     peerWorkingBuffers.packedFirstFingers.fill(0);
     packedPeerStepsSV.value = Array(PEER_STEP_COUNT * 2).fill(-1000);
     packedPeerfirstFingersSV.value = Array(PEER_STEP_COUNT * 2).fill(0);
+
+    peerWorkingBuffers.mirrorMomentProgress.fill(0);
+    mirrorMomentProgressSV.value = Array(MAX_MOMENTS).fill(0);
 
     // to add
     // peerWorkingBuffers.mirrorMoments.fill(0)
@@ -348,8 +371,6 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
     startMsRef.current = nowMs();
   }, [reset, internalReset]);
 
-
-
   useAnimatedReaction(
     () => hostPeerGeckoPositionSV.value === null,
     (isNull, prev) => {
@@ -360,8 +381,6 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
     [],
   );
 
-
-
   const clearMomentDots = useCallback(() => {
     momentsMapRef.current.clear();
     mirrorMomentsLenRef.current = 0;
@@ -369,6 +388,8 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
     peerWorkingBuffers.mirrorMoments.fill(0);
     mirrorMomentsUniformSV.value = Array(MAX_MOMENTS * 2).fill(0);
     mirrorMomentsLengthSV.value = 0;
+    peerWorkingBuffers.mirrorMomentProgress.fill(0);
+    mirrorMomentProgressSV.value = Array(MAX_MOMENTS).fill(0);
     updateTrigger.value += 1;
   }, []);
 
@@ -419,11 +440,25 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
         leadPoint.current.isMoving,
       );
 
-      const shouldUpdate = leadPoint.current.isMoving || isDragging.value || wasTapSV.value;
+      const shouldUpdate =
+        leadPoint.current.isMoving || isDragging.value || wasTapSV.value;
 
       shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
       if (shouldUpdate) {
+        selectedUniformSV.value = [
+          workingBuffers.selected[0],
+          workingBuffers.selected[1],
+        ];
+        lastSelectedUniformSV.value = [
+          workingBuffers.lastSelected[0],
+          workingBuffers.lastSelected[1],
+        ];
+
+        selectedProgressUniformSV.value = workingBuffers.selectedProgress;
+
+        //HERE
+
         workingBuffers.geckoPoints.fill(0);
         packGeckoOnlyProdCompact_56(
           gecko.current,
@@ -440,30 +475,51 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
         workingBuffers.stepTargets[3] =
           gecko.current.legs.backLegs.stepTargets[1];
 
-
-
-
         mirrorMoments.current.update(
-        userPointSV.value,
-        // false, //just set isdragging to always false for rn
-        newTapSV.value,
-        // wasDoubleTapSV.value,
-        leadPoint.current.lead,
- 
-      );
+          userPointSV.value,
+          // false, //just set isdragging to always false for rn
+          newTapSV.value,
+          // wasDoubleTapSV.value,
+          leadPoint.current.lead,
+        );
 
 
-      if (mirrorMoments.current.trigger_update_host_with_guest_progress) {
-        if (mirrorMoments.current.trigger_update_host_with_guest_progress != lastGuestProgressUpdateRef.current) {
-          console.log('update guests progress data', mirrorMoments.current.newProgress, mirrorMoments.current.selected.id);
-         
-          sendCapsuleProgressRef?.current?.({
-            capsule_id: mirrorMoments.current.selected.id,
-            new_progress: mirrorMoments.current.newProgress
-          })
-           lastGuestProgressUpdateRef.current = mirrorMoments.current.trigger_update_host_with_guest_progress;
+        // new
+        peerWorkingBuffers.mirrorMomentProgress.fill(0);
+
+        for (let i = 0; i < mirrorMoments.current.momentsLength; i++) {
+          peerWorkingBuffers.mirrorMomentProgress[i] =
+            mirrorMoments.current.moments[i]?.guest_progress ?? 0;
         }
-      }
+
+        mirrorMomentProgressSV.value = Array.from(
+          peerWorkingBuffers.mirrorMomentProgress,
+        );
+        ///////////////////////////
+
+        workingBuffers.selected[0] = mirrorMoments.current.selected.coord[0];
+        workingBuffers.selected[1] = mirrorMoments.current.selected.coord[1];
+        workingBuffers.selectedProgress = mirrorMoments.current.newProgress;
+
+        if (mirrorMoments.current.trigger_update_host_with_guest_progress) {
+          if (
+            mirrorMoments.current.trigger_update_host_with_guest_progress !=
+            lastGuestProgressUpdateRef.current
+          ) {
+            console.log(
+              "update guests progress data",
+              mirrorMoments.current.newProgress,
+              mirrorMoments.current.selected.id,
+            );
+
+            sendCapsuleProgressRef?.current?.({
+              capsule_id: mirrorMoments.current.selected.id,
+              new_progress: mirrorMoments.current.newProgress,
+            });
+            lastGuestProgressUpdateRef.current =
+              mirrorMoments.current.trigger_update_host_with_guest_progress;
+          }
+        }
 
         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
 
@@ -601,54 +657,46 @@ const hasInitialLoadedMirrorMomentsRef = useRef(false);
       u_selected: [0.5, 5],
       u_lastSelected: [0.5, 0.5],
     };
+  }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
+
+  const mirrorBgUniforms = useDerivedValue(() => {
+    updateTrigger.value;
+
+    return {
+      u_resolution: [size.width || width, size.height || height],
+      u_aspect: aspect || 1,
+      u_scale: scale,
+      u_time: shaderTimeSV.value,
+      u_gecko_scale: gecko_scale,
+      u_gecko_size: gecko_size,
+      u_mirrorMoments: mirrorMomentsUniformSV.value,
+      u_mirrorMomentsLength: mirrorMomentsLengthSV.value,
+      u_heldMoments: [0, 0, 0, 0, 0, 0, 0, 0],
+      u_selected: selectedUniformSV.value,
+      u_lastSelected: lastSelectedUniformSV.value,
+      u_selectedProgress: selectedProgressUniformSV.value,
+      u_sharedColorLight: hexToVec3Int(sharedColorLightSV.value),
+      u_sharedColorDark: hexToVec3Int(sharedColorDarkSV.value),
+      u_mirrorMomentProgress: mirrorMomentProgressSV.value,
+    };
   }, [
-    scale,
-    gecko_scale,
-    aspect,
     size.width,
     size.height,
     width,
     height,
+    aspect,
+    scale,
+    gecko_scale,
+    gecko_size,
   ]);
- 
 
-
-const mirrorBgUniforms = useDerivedValue(() => {
-  updateTrigger.value;
-
-  return {
-    u_resolution: [size.width || width, size.height || height],
-    u_aspect: aspect || 1,
-    u_scale: scale,
-    u_time: shaderTimeSV.value,
-    u_gecko_scale: gecko_scale,
-    u_gecko_size: gecko_size,
-    u_mirrorMoments: mirrorMomentsUniformSV.value,
-    u_mirrorMomentsLength: mirrorMomentsLengthSV.value,
-    u_heldMoments: [0, 0, 0, 0, 0, 0, 0, 0],
-    u_selected: [0.5, 0.5],
-    u_lastSelected: [0.5, 0.5],
-    u_sharedColorLight: hexToVec3Int(sharedColorLightSV.value),
-    u_sharedColorDark: hexToVec3Int(sharedColorDarkSV.value),
-  };
-}, [
-  size.width,
-  size.height,
-  width,
-  height,
-  aspect,
-  scale,
-  gecko_scale,
-  gecko_size,
-]);
-
-useAnimatedReaction(
-  () => `${sharedColorLightSV.value}|${sharedColorDarkSV.value}`,
-  () => {
-    updateTrigger.value += 1;
-  },
-  [],
-);
+  useAnimatedReaction(
+    () => `${sharedColorLightSV.value}|${sharedColorDarkSV.value}`,
+    () => {
+      updateTrigger.value += 1;
+    },
+    [],
+  );
   const stepDotsUniforms = useDerivedValue(() => {
     return {
       u_resolution: [size.width || width, size.height || height],
@@ -683,164 +731,189 @@ useAnimatedReaction(
     };
   }, [size.width, size.height, width, height, aspect, gecko_scale, gecko_size]);
 
-const momentsMapRef = useRef<
-  Map<string | number, { x: number; y: number; stored_index: number | null; guest_progress: number }>
->(new Map());
+  const momentsMapRef = useRef<
+    Map<
+      string | number,
+      {
+        x: number;
+        y: number;
+        stored_index: number | null;
+        guest_progress: number;
+      }
+    >
+  >(new Map());
   const packCtxRef = useRef({ aspect, scale, w: size.width, h: size.height });
   packCtxRef.current.aspect = aspect;
   packCtxRef.current.scale = scale;
   packCtxRef.current.w = size.width;
   packCtxRef.current.h = size.height;
 
-//   const applyMirrorMomentsDelta = useCallback((delta: number[][]) => {
-//     const map = momentsMapRef.current;
-//     for (const [id, x, y] of delta) {
-//       map.set(id, { x, y });
-//     }
+  //   const applyMirrorMomentsDelta = useCallback((delta: number[][]) => {
+  //     const map = momentsMapRef.current;
+  //     for (const [id, x, y] of delta) {
+  //       map.set(id, { x, y });
+  //     }
 
-//     let i = 0;
-//     for (const [id, pt] of map) {
-//       if (i >= MAX_MOMENTS) break;
-//       mirrorMomentsBuffer[i].id = id;
-//       mirrorMomentsBuffer[i].coord[0] = pt.x;
-//       mirrorMomentsBuffer[i].coord[1] = pt.y;
-//       mirrorMomentsBuffer[i].stored_index = i;
-//       i++;
-//     }
-//     mirrorMomentsLenRef.current = i;
+  //     let i = 0;
+  //     for (const [id, pt] of map) {
+  //       if (i >= MAX_MOMENTS) break;
+  //       mirrorMomentsBuffer[i].id = id;
+  //       mirrorMomentsBuffer[i].coord[0] = pt.x;
+  //       mirrorMomentsBuffer[i].coord[1] = pt.y;
+  //       mirrorMomentsBuffer[i].stored_index = i;
+  //       i++;
+  //     }
+  //     mirrorMomentsLenRef.current = i;
 
-//     const slice = mirrorMomentsBuffer.slice(0, i);
+  //     const slice = mirrorMomentsBuffer.slice(0, i);
 
- 
+  // if (!hasInitialLoadedMirrorMomentsRef.current) {
+  //   mirrorMoments.current.initialLoad(slice);
+  //   hasInitialLoadedMirrorMomentsRef.current = true;
+  // } else {
+  //   mirrorMoments.current.updateOrAddMoments(slice);
+  //   mirrorMoments.current.updateAllCoords(slice);
+  // }
+  //    // mirrorMoments.current._markAllDirty?.();
 
-// if (!hasInitialLoadedMirrorMomentsRef.current) {
-//   mirrorMoments.current.initialLoad(slice);
-//   hasInitialLoadedMirrorMomentsRef.current = true;
-// } else {
-//   mirrorMoments.current.updateOrAddMoments(slice);
-//   mirrorMoments.current.updateAllCoords(slice);
-// }
-//    // mirrorMoments.current._markAllDirty?.();
+  //     const { aspect: a, scale: s, w, h } = packCtxRef.current;
+  //     if (a && w && h) {
+  //       peerWorkingBuffers.mirrorMoments.fill(0);
+  //       packVec2Uniform_withRecenter_moments(
+  //         mirrorMoments.current.moments,
+  //         peerWorkingBuffers.mirrorMoments as any,
+  //         mirrorMoments.current.momentsLength,
+  //         a,
+  //         s,
+  //       );
+  //       mirrorMomentsUniformSV.value = Array.from(
+  //         peerWorkingBuffers.mirrorMoments,
+  //       );
+  //       mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
+  //     }
 
-//     const { aspect: a, scale: s, w, h } = packCtxRef.current;
-//     if (a && w && h) {
-//       peerWorkingBuffers.mirrorMoments.fill(0);
-//       packVec2Uniform_withRecenter_moments(
-//         mirrorMoments.current.moments,
-//         peerWorkingBuffers.mirrorMoments as any,
-//         mirrorMoments.current.momentsLength,
-//         a,
-//         s,
-//       );
-//       mirrorMomentsUniformSV.value = Array.from(
-//         peerWorkingBuffers.mirrorMoments,
-//       );
-//       mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
-//     }
+  //     updateTrigger.value += 1;
+  //   }, []);
 
-//     updateTrigger.value += 1;
-//   }, []);
+  const applyMirrorMomentsDelta = useCallback((delta: any[][]) => {
+    const map = momentsMapRef.current;
 
-const applyMirrorMomentsDelta = useCallback((delta: any[][]) => {
-  const map = momentsMapRef.current;
+    for (const [id, x, y, storedIndex, incomingProgress] of delta) {
+      if (id == null) continue;
 
-  for (const [id, x, y, storedIndex, incomingProgress] of delta) {
-    if (id == null) continue;
+      const existing = map.get(id);
 
-    const existing = map.get(id);
-
-    map.set(id, {
-      x,
-      y,
-      stored_index:
-        storedIndex !== undefined && storedIndex !== null
-          ? storedIndex
-          : existing?.stored_index ?? -1,
-      guest_progress:
-        incomingProgress !== undefined && incomingProgress !== null
-          ? incomingProgress
-          : existing?.guest_progress ?? 0,
-    });
-  }
-
-  let i = 0;
-
-  for (const [id, pt] of map) {
-    if (i >= MAX_MOMENTS) break;
-
-    mirrorMomentsBuffer[i].id = id;
-    mirrorMomentsBuffer[i].coord[0] = pt.x;
-    mirrorMomentsBuffer[i].coord[1] = pt.y;
-    mirrorMomentsBuffer[i].stored_index = pt.stored_index ?? -1;
-    mirrorMomentsBuffer[i].guest_progress = pt.guest_progress ?? 0;
-
-    i++;
-  }
-
-  mirrorMomentsLenRef.current = i;
-
-  const slice = mirrorMomentsBuffer.slice(0, i);
-
-  if (!hasInitialLoadedMirrorMomentsRef.current) {
-    mirrorMoments.current.initialLoad(slice);
-    hasInitialLoadedMirrorMomentsRef.current = true;
-  } else {
-    mirrorMoments.current.updateOrAddMoments(slice);
-    mirrorMoments.current.updateAllCoords(slice);
-  }
-
-  const { aspect: a, scale: s, w, h } = packCtxRef.current;
-
-  if (a && w && h) {
-    peerWorkingBuffers.mirrorMoments.fill(0);
-
-    packVec2Uniform_withRecenter_moments(
-      mirrorMoments.current.moments,
-      peerWorkingBuffers.mirrorMoments as any,
-      mirrorMoments.current.momentsLength,
-      a,
-      s,
-    );
-
-    mirrorMomentsUniformSV.value = Array.from(
-      peerWorkingBuffers.mirrorMoments,
-    );
-
-    mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
-  }
-
-  updateTrigger.value += 1;
-}, []);
-
-    useAnimatedReaction(
-  () => {
-    const v = hostCapsulesSV.value;
-    if (!v?.moments) return null;
-
-    const len = v.moments_len ?? v.moments.length;
-    const out: number[][] = [];
-
-    for (let i = 0; i < len; i++) {
-      const m = v.moments[i];
-      if (!m) continue;
-
-      out.push([
-        m[0], // id
-        m[1], // x
-        m[2], // y
-        m[3], // stored_index
-        m[4], // guest_progress
-      ]);
+      map.set(id, {
+        x,
+        y,
+        stored_index:
+          storedIndex !== undefined && storedIndex !== null
+            ? storedIndex
+            : (existing?.stored_index ?? -1),
+        guest_progress:
+          incomingProgress !== undefined && incomingProgress !== null
+            ? incomingProgress
+            : (existing?.guest_progress ?? 0),
+      });
     }
 
-    return out;
-  },
-  (next) => {
-    if (!next || next.length === 0) return;
-    runOnJS(applyMirrorMomentsDelta)(next);
-  },
-  [],
-);
+    let i = 0;
+
+    for (const [id, pt] of map) {
+      if (i >= MAX_MOMENTS) break;
+
+      mirrorMomentsBuffer[i].id = id;
+      mirrorMomentsBuffer[i].coord[0] = pt.x;
+      mirrorMomentsBuffer[i].coord[1] = pt.y;
+      mirrorMomentsBuffer[i].stored_index = pt.stored_index ?? -1;
+      mirrorMomentsBuffer[i].guest_progress = pt.guest_progress ?? 0;
+
+      i++;
+    }
+
+    mirrorMomentsLenRef.current = i;
+
+    const slice = mirrorMomentsBuffer.slice(0, i);
+
+    if (!hasInitialLoadedMirrorMomentsRef.current) {
+      mirrorMoments.current.initialLoad(slice);
+      hasInitialLoadedMirrorMomentsRef.current = true;
+    } else {
+      mirrorMoments.current.updateOrAddMoments(slice);
+      mirrorMoments.current.updateAllCoords(slice);
+    }
+
+    const { aspect: a, scale: s, w, h } = packCtxRef.current;
+
+    if (a && w && h) {
+      peerWorkingBuffers.mirrorMoments.fill(0);
+
+      packVec2Uniform_withRecenter_moments(
+        mirrorMoments.current.moments,
+        peerWorkingBuffers.mirrorMoments as any,
+        mirrorMoments.current.momentsLength,
+        a,
+        s,
+      );
+
+      // new
+      const progBuf = peerWorkingBuffers.mirrorMomentProgress;
+      const len = mirrorMoments.current.momentsLength;
+      let progressDirty = false;
+
+      for (let i = 0; i < MAX_MOMENTS; i++) {
+        const next =
+          i < len ? (mirrorMoments.current.moments[i]?.guest_progress ?? 0) : 0;
+        if (progBuf[i] !== next) {
+          progBuf[i] = next;
+          progressDirty = true;
+        }
+      }
+
+      if (progressDirty) {
+        mirrorMomentProgressSV.value = Array.from(progBuf);
+      }
+      ////////////////////////
+
+      mirrorMomentsUniformSV.value = Array.from(
+        peerWorkingBuffers.mirrorMoments,
+      );
+
+      mirrorMomentsLengthSV.value = mirrorMoments.current.momentsLength;
+    }
+
+    updateTrigger.value += 1;
+  }, []);
+
+  useAnimatedReaction(
+    () => {
+      const v = hostCapsulesSV.value;
+      if (!v?.moments) return null;
+
+      const len = v.moments_len ?? v.moments.length;
+      const out: number[][] = [];
+
+      for (let i = 0; i < len; i++) {
+        const m = v.moments[i];
+        if (!m) continue;
+
+        out.push([
+          m[0], // id
+          m[1], // x
+          m[2], // y
+          m[3], // stored_index
+          m[4], // guest_progress
+        ]);
+      }
+
+      return out;
+    },
+    (next) => {
+      if (!next || next.length === 0) return;
+      runOnJS(applyMirrorMomentsDelta)(next);
+    },
+    [],
+  );
 
   // 2. THEN the reactions that reference them
   useAnimatedReaction(
@@ -853,11 +926,6 @@ const applyMirrorMomentsDelta = useCallback((delta: any[][]) => {
     [],
   );
 
- 
- 
-
-
-
   useAnimatedReaction(
     () => {
       const v = hostPeerGeckoPositionSV.value;
@@ -867,7 +935,7 @@ const applyMirrorMomentsDelta = useCallback((delta: any[][]) => {
       for (let i = 0; i < len; i++) {
         const m = v.moments[i];
         if (!m) continue;
-       out.push([m[0], m[1], m[2], m[3], m[4]]);
+        out.push([m[0], m[1], m[2], m[3], m[4]]);
       }
       return out;
     },
@@ -888,10 +956,10 @@ const applyMirrorMomentsDelta = useCallback((delta: any[][]) => {
             y={0}
             width={size.width}
             height={size.height}
-           color="white"
+            color="white"
           >
             <Shader
-             // style={{ backgroundColor: "transparent" }}
+              // style={{ backgroundColor: "transparent" }}
               source={sourceTwo!}
               uniforms={mirrorBgUniforms}
             />

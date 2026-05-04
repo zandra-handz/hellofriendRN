@@ -203,7 +203,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnGeckoMatchWinNavigate,
     registerOnRemoveCapsule,
     sendAllHostCapsules,
-    registerOnPeerPresence
+    registerOnPeerPresence,
+    capsuleProgressSV,registerOnCapsuleProgress, 
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -213,6 +214,30 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     // navigateToQRCode,
     navigateToFriendHome,
   } = useAppNavigations();
+
+
+ 
+
+const proposeGeckoWinRef = useRef(proposeGeckoWin);
+
+useEffect(() => {
+  proposeGeckoWinRef.current = proposeGeckoWin;
+}, [proposeGeckoWin]);
+
+useEffect(() => {
+  const unregister = registerOnCapsuleProgress(
+    ({ capsule_id, new_progress, from_user }) => {
+      console.log("REGISTER FIRED", capsule_id, new_progress, from_user);
+
+      if (new_progress >= 100) {
+        console.log("PROPOSING FROM REGISTER");
+        proposeGeckoWinRef.current(capsule_id);
+      }
+    },
+  );
+
+  return unregister;
+}, [registerOnCapsuleProgress]);
 
   useFocusEffect(
     useCallback(() => {
@@ -1659,6 +1684,7 @@ useEffect(() => {
           backTrigger={backTrigger}
           geckoScoreState={geckoScoreState}
           liveScoreStateRef={scoreStateRef}
+          
           // geckoScoreStateRef={geckoScoreStateRef}
         />
       </View>

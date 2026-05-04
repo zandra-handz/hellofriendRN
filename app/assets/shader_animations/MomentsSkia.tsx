@@ -35,6 +35,7 @@ import {
   runOnJS,
   useSharedValue,
   useDerivedValue,
+  SharedValue,
 } from "react-native-reanimated";
 
 import { useWindowDimensions } from "react-native";
@@ -110,6 +111,15 @@ type Props = {
   randomMomentIds: any;
   pointsEarnedList: any;
   reset?: number | null;
+
+  capsuleProgressSV?: SharedValue<{
+  from_user?: number;
+  capsule_id: string;
+  new_progress: number;
+  received_at: number;
+} | null>;
+
+proposeGeckoWin?: (capsuleId: string) => boolean;
 };
 
 const MomentsSkia = ({
@@ -154,6 +164,7 @@ const MomentsSkia = ({
   hasReceivedInitialScoreStateRef,
   initialBackendEnergyUpdatedAtRef,
   latestBackendEnergyUpdatedAtRef,
+
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -410,6 +421,9 @@ const MomentsSkia = ({
 
     return () => clearInterval(id);
   }, []);
+
+
+  
 
   useEffect(() => {
     if (backTrigger) {

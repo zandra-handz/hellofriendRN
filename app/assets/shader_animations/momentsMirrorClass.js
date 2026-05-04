@@ -44,7 +44,6 @@ export default class MirrorMoments {
     this.lastSelected = { id: null, coord: new Float32Array([-100, -100]) };
     this.lastSelectedCoord = [0, 0];
 
-
     this.newProgress = null;
 
     this.trigger_update_host_with_guest_progress = null;
@@ -146,7 +145,6 @@ export default class MirrorMoments {
       coord: new Float32Array(m.coord),
       // stored_index: m.stored_index ?? null,
       guest_progress: m.guest_progress ?? 0,
-   
     }));
 
     this.momentsLength = this.moments.length;
@@ -385,6 +383,17 @@ export default class MirrorMoments {
     altCoord,
     // holdingCoords,
   ) {
+    for (let i = 0; i < this.moments.length; i++) {
+      // skip currently tapped moment so it doesn’t fight growth
+      if (i === this.selectedMomentIndex) continue;
+
+      this.moments[i].guest_progress *= 0.85; //  rapid decay
+
+      if (this.moments[i].guest_progress < 0.5) {
+        this.moments[i].guest_progress = 0;
+      }
+    }
+
     let ux = userPointer[0];
     let uy = userPointer[1];
 
@@ -471,9 +480,10 @@ export default class MirrorMoments {
           // CHECK IF THIS IS A DIFFERENT MOMENT WE ARE TAPPING ON
 
           if (this.lastTapIndex != closestIndex) {
-            if (this.lastTapIndex) {
-              this.moments[this.lastTapIndex].guest_progress = 0;
-            }
+            // DONT DELETE, BRING BACK IF NEEDED, JUST TRYING SOMETHING ELSE/ SLOW DECAY AT TOP OF THIS FUNCTION INSTEAD
+            // if (this.lastTapIndex) {
+            //   this.moments[this.lastTapIndex].guest_progress = 0;
+            // }
 
             this.subsequentTapCount = 0;
           } else {
@@ -484,9 +494,9 @@ export default class MirrorMoments {
           this.lastTapId = this.moments[closestIndex].id; // reset after use
           // console.log(this.moments[closestIndex]);
           if (this.moments[closestIndex].guest_progress % 25 === 0) {
-           // console.log('DIVISIBEL BY 10', this.moments[closestIndex].guest_progress)
-           this.newProgress = this.moments[closestIndex].guest_progress;
-            this.trigger_update_host_with_guest_progress = performance.now()
+            // console.log('DIVISIBEL BY 10', this.moments[closestIndex].guest_progress)
+            this.newProgress = this.moments[closestIndex].guest_progress;
+            this.trigger_update_host_with_guest_progress = performance.now();
           }
         }
       }

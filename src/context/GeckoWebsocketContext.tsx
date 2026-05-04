@@ -197,6 +197,13 @@ type EnergyState = {
   surplusEnergy: number;
 };
 
+type CapsuleProgress = {
+  from_user?: number;
+  capsule_id: string;
+  new_progress: number;
+  received_at: number;
+} | null;
+
 type GeckoMatchWinNavigatePayload = {
   pending_id: number;
   sender_user_id?: number;
@@ -307,6 +314,7 @@ type GeckoWebsocketContextValue = {
   registerOnRemoveCapsule: (capsuleId: string) => void;
   onRemoveCapsuleRef: React.MutableRefObject<string>;
   sendCapsuleProgress: (capsule_id: string, new_progress: number) => boolean;
+  capsuleProgressSV: SharedValue<CapsuleProgress>;
   sendAllHostCapsules: (moments?: HostCapsuleMoment[]) => boolean; // used for initial load
 };
 
@@ -330,6 +338,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const sharedColorDarkSV = useSharedValue(manualGradientColors.darkColor);
   const sharedColorLightSV = useSharedValue(manualGradientColors.lightColor);
+
+  const capsuleProgressSV = useSharedValue<CapsuleProgress>(null);
 
   const geckoMessageSV = useSharedValue<GeckoMessage>(null);
 
@@ -356,7 +366,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const onGuestGeckoCoordsRef = useRef<
     ((data: GuestGeckoCoordsMessage) => void) | null
   >(null);
-  const onCapsuleProgressCompleteRef = useRef<
+  const onCapsuleProgressRef = useRef<
     | ((data: {
         capsule_id: string;
         new_progress: number;
@@ -527,7 +537,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [],
   );
 
-  const registerOnCapsuleProgressComplete = useCallback(
+  const registerOnCapsuleProgress = useCallback(
     (
       cb: (data: {
         capsule_id: string;
@@ -535,11 +545,11 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         from_user?: number;
       }) => void,
     ) => {
-      onCapsuleProgressCompleteRef.current = cb;
+      onCapsuleProgressRef.current = cb;
 
       return () => {
-        if (onCapsuleProgressCompleteRef.current === cb) {
-          onCapsuleProgressCompleteRef.current = null;
+        if (onCapsuleProgressRef.current === cb) {
+          onCapsuleProgressRef.current = null;
         }
       };
     },
@@ -1528,27 +1538,36 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
         return;
       }
+// if (message.action === "capsule_progress") {
+//   const capsuleId = message.data?.capsule_id;
+//   const newProgress = Number(message.data?.new_progress);
+
+//   console.log("HURRAY! capsule progress update received:", message.data);
+
+//   if (capsuleId && Number.isFinite(newProgress)) {
+//     capsuleProgressSV.value = {
+//       from_user: message.data?.from_user,
+//       capsule_id: capsuleId,
+//       new_progress: newProgress,
+//       received_at: performance.now(),
+//     };
+//   }
+
+//   return;
+// }
+
 if (message.action === "capsule_progress") {
   console.log("HURRAY! capsule progress update received:", message.data);
 
   const capsuleId = message.data?.capsule_id;
   const newProgress = Number(message.data?.new_progress);
-  const fromUser = Number(message.data?.from_user);
-  const partnerUserId = Number(liveSeshPartner?.userId);
 
-  const cameFromPartner =
-    Number.isFinite(fromUser) &&
-    Number.isFinite(partnerUserId) &&
-    fromUser === partnerUserId;
-
-  if (
-    capsuleId &&
-    Number.isFinite(newProgress) &&
-    newProgress >= 100 &&
-    cameFromPartner //
-  ) {
-    console.log("proposing win (host side)");
-    proposeGeckoWin(capsuleId);
+  if (capsuleId && Number.isFinite(newProgress)) {
+    onCapsuleProgressRef.current?.({
+      capsule_id: capsuleId,
+      new_progress: newProgress,
+      from_user: message.data?.from_user,
+    });
   }
 
   return;
@@ -1752,6 +1771,8 @@ if (message.action === "capsule_progress") {
       sendAllHostCapsules,
       hostCapsulesSV,
       registerOnPeerPresence,
+      registerOnCapsuleProgress,
+      capsuleProgressSV
     }),
     [
       bindFriend,
@@ -1801,6 +1822,8 @@ if (message.action === "capsule_progress") {
       sendAllHostCapsules,
       hostCapsulesSV,
       registerOnPeerPresence,
+      registerOnCapsuleProgress,
+      capsuleProgressSV
     ],
   );
 
