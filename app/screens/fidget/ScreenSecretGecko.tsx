@@ -22,7 +22,7 @@ import useUser from "@/src/hooks/useUser";
 import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
 import GlassTopBarLight from "./GlassTopBarLight";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useRustGeckoSocket } from "@/src/context/useRustGeckoSocketContext";
+ 
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import SafeViewSecretGecko from "@/app/components/appwide/format/SafeViewSecretGecko";
@@ -64,8 +64,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     hostCapsulesSV,
     registerOnPeerPresence,
   } = useGeckoWebsocket();
-
-  const rustSocket = useRustGeckoSocket();
+ 
   const { user } = useUser();
 
   
@@ -128,34 +127,8 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   );
 
 
-  const sendRustGuestGeckoPositionRef = useRef(
-  !isHost ? rustSocket.sendGuestGeckoPosition : noopSendGuestGeckoPosition,
-);
-
-useEffect(() => {
-  sendRustGuestGeckoPositionRef.current = !isHost
-    ? rustSocket.sendGuestGeckoPosition
-    : noopSendGuestGeckoPosition;
-}, [rustSocket.sendGuestGeckoPosition, isHost, noopSendGuestGeckoPosition]);
-
-useEffect(() => {
-  return rustSocket.registerOnHostGeckoCoords((data) => {
-    hostPeerGeckoPositionSV.value = {
-      from_user: data.from_user,
-      position: data.position,
-      steps: data.steps,
-      first_fingers: data.first_fingers,
-      held_moments: data.held_moments,
-      held_moments_len: data.held_moments_len,
-      moments: data.moments,
-      moments_len: data.moments_len,
-      received_at: performance.now(),
-    };
-  });
-}, [rustSocket, hostPeerGeckoPositionSV]);
-
-
-
+ 
+ 
 
   useEffect(() => {
     sendCapsuleProgressRef.current = !isHost ? sendCapsuleProgress : () => {};
@@ -322,14 +295,7 @@ useEffect(() => {
       sharedColorLightSV={sharedColorLightSV}
       sharedColorDarkSV={sharedColorDarkSV}
     >
-      <View style={{width: '100%', height:100, position: 'absolute', top: 200, zIndex: 3000, backgroundColor: 'hotpink'}}>
-        <Button title="Connect Rust" onPress={rustSocket.connect} />
 
-        <Button
-          title="Send Rust Position"
-          onPress={() => rustSocket.updateGeckoPosition([0.3, 0.8])}
-        />
-      </View>
 
       {/* <View style={{ width: "100%", alignItems: "center", bottom: -50 }}>
         <Text style={styles.label}>socket: {socketStatus}</Text>

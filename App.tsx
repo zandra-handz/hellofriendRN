@@ -54,8 +54,7 @@ import {
  
 } from "./src/context/GeckoWebsocketContext";
 
-import { RustGeckoSocketProvider } from "./src/context/useRustGeckoSocketContext";
-
+ 
 import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
 import * as MediaLibrary from "expo-media-library";
@@ -832,7 +831,7 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
 
       {user?.id && !isInitializing ? (
-        <RustGeckoSocketProvider>
+    
    
         <GeckoWebsocketProvider>
           <NotificationsHandler
@@ -853,8 +852,7 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
             skiaFontSmall={skiaFontSmall}
           />
         </GeckoWebsocketProvider>
-               
-        </RustGeckoSocketProvider>
+                
       ) : (
         // : userIsPending ? (
         //   <PeacefulGradientSpinner />
