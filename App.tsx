@@ -51,8 +51,10 @@ import { LDThemeProvider } from "./src/context/LDThemeContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   GeckoWebsocketProvider,
-  useGeckoWebsocket,
+ 
 } from "./src/context/GeckoWebsocketContext";
+
+import { RustGeckoSocketProvider } from "./src/context/useRustGeckoSocketContext";
 
 import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
@@ -370,7 +372,7 @@ import { useSelectedFriend } from "./src/context/SelectedFriendContext";
 
 const SelectedFriendNavigator = ({ skiaFontLarge, skiaFontSmall }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { bindFriend, clearFriendBinding } = useGeckoWebsocket();
+ 
   const { lightDarkTheme } = useLDTheme();
   const previousBranchRef = useRef<"home" | "friend" | null>(null);
   const spinnerShownRef = useRef(false);
@@ -830,6 +832,8 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
       <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
 
       {user?.id && !isInitializing ? (
+        <RustGeckoSocketProvider>
+   
         <GeckoWebsocketProvider>
           <NotificationsHandler
             receiveNotifications={receiveNotifications}
@@ -849,6 +853,8 @@ const LayoutInner = ({ skiaFontLarge, skiaFontSmall }) => {
             skiaFontSmall={skiaFontSmall}
           />
         </GeckoWebsocketProvider>
+               
+        </RustGeckoSocketProvider>
       ) : (
         // : userIsPending ? (
         //   <PeacefulGradientSpinner />

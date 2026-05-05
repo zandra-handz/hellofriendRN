@@ -7,6 +7,7 @@ import {
   Alert,
   AppState,
   Pressable,
+  Button,
 } from "react-native";
 import useCancelCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCancelLiveSesh";
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
@@ -21,7 +22,7 @@ import useUser from "@/src/hooks/useUser";
 import GlassPreviewBottomSecret from "./GlassPreviewBottomSecret";
 import GlassTopBarLight from "./GlassTopBarLight";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import { useRustGeckoSocket } from "@/src/context/useRustGeckoSocketContext";
 import SafeViewFriendHome from "@/app/components/appwide/format/SafeViewFriendHome";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import SafeViewSecretGecko from "@/app/components/appwide/format/SafeViewSecretGecko";
@@ -45,7 +46,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     guestPeerGeckoPositionSV,
     hostPeerGeckoPositionSV,
     sharedColorLightSV,
-    sharedColorDarkSV, 
+    sharedColorDarkSV,
 
     connect,
     disconnect,
@@ -55,16 +56,19 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendGeckoPosition,
     sendGuestGeckoPosition,
     registerOnHostGeckoCoords,
-    
+
     requestPresenceStatus,
     registerOnGeckoWinProposed,
     registerOnGeckoMatchWinNavigate,
     sendCapsuleProgress,
     hostCapsulesSV,
-    registerOnPeerPresence
-    
+    registerOnPeerPresence,
   } = useGeckoWebsocket();
+
+  const rustSocket = useRustGeckoSocket();
   const { user } = useUser();
+
+  
 
   const { lightDarkTheme } = useLDTheme();
 
@@ -77,18 +81,16 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     userId: user?.id,
   });
 
-    useEffect(() => {
+  useEffect(() => {
     const wasOnlineRef = { current: false };
     const unsub = registerOnPeerPresence((online) => {
       if (wasOnlineRef.current && !online) {
-        showFlashMessage(`You are alone...`, false, 1000)
-     
+        showFlashMessage(`You are alone...`, false, 1000);
       }
       wasOnlineRef.current = online;
     });
     return unsub;
   }, [registerOnPeerPresence]);
-
 
   const handleCancelPress = React.useCallback(() => {
     Alert.alert(
@@ -108,23 +110,55 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       ],
     );
   }, [handleCancelCurrentLiveSesh, leaveLiveSesh, navigateBack]);
-  const { isHost, playMode, playModeLabel } = useCurrentLiveSesh({ userId: user?.id, enabled: true });
+  const { isHost, playMode, playModeLabel } = useCurrentLiveSesh({
+    userId: user?.id,
+    enabled: true,
+  });
 
-    const rerenderCountRef = useRef(0);
-   
-  
-    rerenderCountRef.current += 1;
-  
-    console.log(`ScreenGecko renders: `, rerenderCountRef.current);
+  const rerenderCountRef = useRef(0);
+
+  rerenderCountRef.current += 1;
+
+  console.log(`ScreenGecko renders: `, rerenderCountRef.current);
 
   const noopSendGuestGeckoPosition = useRef(() => {}).current;
 
-  const sendCapsuleProgressRef = useRef(!isHost ? sendCapsuleProgress : () => {});
+  const sendCapsuleProgressRef = useRef(
+    !isHost ? sendCapsuleProgress : () => {},
+  );
+
+
+  const sendRustGuestGeckoPositionRef = useRef(
+  !isHost ? rustSocket.sendGuestGeckoPosition : noopSendGuestGeckoPosition,
+);
+
+useEffect(() => {
+  sendRustGuestGeckoPositionRef.current = !isHost
+    ? rustSocket.sendGuestGeckoPosition
+    : noopSendGuestGeckoPosition;
+}, [rustSocket.sendGuestGeckoPosition, isHost, noopSendGuestGeckoPosition]);
+
+useEffect(() => {
+  return rustSocket.registerOnHostGeckoCoords((data) => {
+    hostPeerGeckoPositionSV.value = {
+      from_user: data.from_user,
+      position: data.position,
+      steps: data.steps,
+      first_fingers: data.first_fingers,
+      held_moments: data.held_moments,
+      held_moments_len: data.held_moments_len,
+      moments: data.moments,
+      moments_len: data.moments_len,
+      received_at: performance.now(),
+    };
+  });
+}, [rustSocket, hostPeerGeckoPositionSV]);
+
+
 
 
   useEffect(() => {
     sendCapsuleProgressRef.current = !isHost ? sendCapsuleProgress : () => {};
-
   }, [sendCapsuleProgress, isHost]);
 
   const sendGuestGeckoPositionRef = useRef(
@@ -151,30 +185,33 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }, [requestPresenceStatus]),
   );
 
-useEffect(() => {
-  registerOnGeckoMatchWinNavigate((payload) => {
-    if (!payload?.pending_id) return;
-    navigateToSecretGeckoWinAccept({ pendingId: payload.pending_id, oneDirectional: false });
-  });
+  useEffect(() => {
+    registerOnGeckoMatchWinNavigate((payload) => {
+      if (!payload?.pending_id) return;
+      navigateToSecretGeckoWinAccept({
+        pendingId: payload.pending_id,
+        oneDirectional: false,
+      });
+    });
 
-  registerOnGeckoWinProposed(() => {
-    navigateToSecretGeckoWinAccept({ pendingId: null, oneDirectional: true });
-  });
+    registerOnGeckoWinProposed(() => {
+      navigateToSecretGeckoWinAccept({ pendingId: null, oneDirectional: true });
+    });
 
-  return () => {
-    registerOnGeckoMatchWinNavigate(() => {});
-    registerOnGeckoWinProposed(() => {});
-  };
-}, [
-  registerOnGeckoMatchWinNavigate,
-  registerOnGeckoWinProposed,
-  navigateToSecretGeckoWinAccept,
-]);
+    return () => {
+      registerOnGeckoMatchWinNavigate(() => {});
+      registerOnGeckoWinProposed(() => {});
+    };
+  }, [
+    registerOnGeckoMatchWinNavigate,
+    registerOnGeckoWinProposed,
+    navigateToSecretGeckoWinAccept,
+  ]);
 
   // useEffect(() => {
   //   const sub = AppState.addEventListener("change", (state) => {
   //     if (state === "active") {
-        
+
   //         showFlashMessage(`Appstate active, requesting presence status`, false, 1000);
   //       requestPresenceStatus();
   //     }
@@ -182,42 +219,40 @@ useEffect(() => {
   //   return () => sub.remove();
   // }, [requestPresenceStatus]);
 
+  // NEW THING TO TRY INSTEAD OF APP STATE ABOVE
+  // IF ITS STILL HERE I HAVENT TRIED IT YET
 
+  //   const resumePresenceCheck = useCallback(() => {
+  //   console.log("[SECRET GECKO] resumePresenceCheck");
 
-// NEW THING TO TRY INSTEAD OF APP STATE ABOVE
-// IF ITS STILL HERE I HAVENT TRIED IT YET
+  //   setWantsConnection(true);
 
-//   const resumePresenceCheck = useCallback(() => {
-//   console.log("[SECRET GECKO] resumePresenceCheck");
+  //   connect().then(() => {
+  //     joinLiveSesh();
+  //     requestPresenceStatus();
 
-//   setWantsConnection(true);
+  //     setTimeout(() => {
+  //       requestPresenceStatus();
+  //     }, 350);
+  //   });
+  // }, [
+  //   setWantsConnection,
+  //   connect,
+  //   joinLiveSesh,
+  //   requestPresenceStatus,
+  // ]);
 
-//   connect().then(() => {
-//     joinLiveSesh();
-//     requestPresenceStatus();
+  // useEffect(() => {
+  //   const sub = AppState.addEventListener("change", (state) => {
+  //     console.log("[SECRET GECKO] AppState:", state);
 
-//     setTimeout(() => {
-//       requestPresenceStatus();
-//     }, 350);
-//   });
-// }, [
-//   setWantsConnection,
-//   connect,
-//   joinLiveSesh,
-//   requestPresenceStatus,
-// ]);
+  //     if (state === "active") {
+  //       resumePresenceCheck();
+  //     }
+  //   });
 
-// useEffect(() => {
-//   const sub = AppState.addEventListener("change", (state) => {
-//     console.log("[SECRET GECKO] AppState:", state);
-
-//     if (state === "active") {
-//       resumePresenceCheck();
-//     }
-//   });
-
-//   return () => sub.remove();
-// }, [resumePresenceCheck]);
+  //   return () => sub.remove();
+  // }, [resumePresenceCheck]);
 
   useFocusEffect(
     useCallback(() => {
@@ -247,49 +282,54 @@ useEffect(() => {
     }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
   );
 
-
-
   useEffect(() => {
-  const sub = AppState.addEventListener("change", (state) => {
-    const socketStatus = socketStatusSV.value;
-    const peerJoined = peerJoinedStatusSV.value;
-    const hasPartner = !!liveSeshPartner;
+    const sub = AppState.addEventListener("change", (state) => {
+      const socketStatus = socketStatusSV.value;
+      const peerJoined = peerJoinedStatusSV.value;
+      const hasPartner = !!liveSeshPartner;
 
-    if (state === "active") {
-      showFlashMessage(
-        `ACTIVE | socket:${socketStatus} | peer:${peerJoined ? "Y" : "N"} | partner:${hasPartner ? "Y" : "N"} | host:${isHost ? "Y" : "N"}`,
-        false,
-        2500
-      );
-
-      requestPresenceStatus();
-
-      setTimeout(() => {
+      if (state === "active") {
         showFlashMessage(
-          `+350ms | socket:${socketStatusSV.value} | peer:${peerJoinedStatusSV.value ? "Y" : "N"} | partner:${liveSeshPartner ? "Y" : "N"}`,
+          `ACTIVE | socket:${socketStatus} | peer:${peerJoined ? "Y" : "N"} | partner:${hasPartner ? "Y" : "N"} | host:${isHost ? "Y" : "N"}`,
           false,
-          2500
+          2500,
         );
-      }, 350);
-    }
-  });
 
-  return () => sub.remove();
-}, [
-  requestPresenceStatus,
-  socketStatusSV,
-  peerJoinedStatusSV,
-  liveSeshPartner,
-  isHost,
-]);
+        requestPresenceStatus();
+
+        setTimeout(() => {
+          showFlashMessage(
+            `+350ms | socket:${socketStatusSV.value} | peer:${peerJoinedStatusSV.value ? "Y" : "N"} | partner:${liveSeshPartner ? "Y" : "N"}`,
+            false,
+            2500,
+          );
+        }, 350);
+      }
+    });
+
+    return () => sub.remove();
+  }, [
+    requestPresenceStatus,
+    socketStatusSV,
+    peerJoinedStatusSV,
+    liveSeshPartner,
+    isHost,
+  ]);
 
   return (
     // <GradientBackgroundAppDefault style={styles.backgroundContainer}>
-      <SafeViewSecretGecko
+    <SafeViewSecretGecko
       sharedColorLightSV={sharedColorLightSV}
-      sharedColorDarkSV={sharedColorDarkSV}>
+      sharedColorDarkSV={sharedColorDarkSV}
+    >
+      <View style={{width: '100%', height:100, position: 'absolute', top: 200, zIndex: 3000, backgroundColor: 'hotpink'}}>
+        <Button title="Connect Rust" onPress={rustSocket.connect} />
 
-
+        <Button
+          title="Send Rust Position"
+          onPress={() => rustSocket.updateGeckoPosition([0.3, 0.8])}
+        />
+      </View>
 
       {/* <View style={{ width: "100%", alignItems: "center", bottom: -50 }}>
         <Text style={styles.label}>socket: {socketStatus}</Text>
@@ -355,9 +395,8 @@ useEffect(() => {
         friendName={"Unknown"}
         highlight={false}
         fontSmall={skiaFontSmall}
-
       />
-{/* 
+      {/* 
       <Pressable
       onPress={navigateToSecretGeckoWinAccept}
         style={{
@@ -377,8 +416,8 @@ useEffect(() => {
         onPress_exit={handleExit}
         onPress_cancel={handleCancelPress}
       />
-    {/* </GradientBackgroundAppDefault> */}
-          </SafeViewSecretGecko>
+      {/* </GradientBackgroundAppDefault> */}
+    </SafeViewSecretGecko>
   );
 };
 
