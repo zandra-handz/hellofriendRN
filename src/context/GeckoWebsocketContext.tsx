@@ -1890,6 +1890,7 @@ import * as SecureStore from "expo-secure-store";
 import notepack from "notepack.io";
 
 import manualGradientColors from "@/app/styles/StaticColors";
+import { helloFriendApiClient } from "../calls/helloFriendApiClient";
 
 // ---------------------------------------------------------------------------
 // Rust gecko socket migration notes
@@ -3177,28 +3178,54 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
     const token = await SecureStore.getItemAsync("accessToken");
 
-    if (!token) {
-      socketStatusSV.value = "disconnected";
-      return;
-    }
+    // if (!token) {
+    //   socketStatusSV.value = "disconnected";
+    //   return;
+    // }
 
-    // Rust socket auth: extract user_id from the JWT we already have.
-    // NOTE: the Rust server currently trusts this query param. Validate
-    // tokens server-side before opening this URL to the public internet.
-    const userId = decodeJwtUserId(token);
-    if (userId == null) {
-      console.log("[WS] could not extract user_id from token — abort connect");
-      socketStatusSV.value = "disconnected";
-      return;
-    }
+    // // Rust socket auth: extract user_id from the JWT we already have.
+    // // NOTE: the Rust server currently trusts this query param. Validate
+    // // tokens server-side before opening this URL to the public internet.
+    // const userId = decodeJwtUserId(token);
+    // if (userId == null) {
+    //   console.log("[WS] could not extract user_id from token — abort connect");
+    //   socketStatusSV.value = "disconnected";
+    //   return;
+    // }
+
+    
+  const accessToken = await SecureStore.getItemAsync("accessToken");
+  if (!accessToken) {
+    socketStatusSV.value = "disconnected";
+    return;
+  }
+
+  let socketToken: string | null = null;
+  try {
+    const res = await helloFriendApiClient.get("/users/gecko-socket-token/");
+    socketToken = res.data?.token ?? null;
+  } catch (e) {
+    console.log("[WS] gecko-socket-token fetch error", e);
+    socketStatusSV.value = "disconnected";
+    return;
+  }
+
+  if (!socketToken) {
+    socketStatusSV.value = "disconnected";
+    return;
+  }
 
     socketStatusSV.value = "connecting";
 
     isFriendBoundRef.current = false;
     boundFriendIdRef.current = null;
 
-    const url = `${RUST_SOCKET_HOST}${RUST_SOCKET_PATH}?user_id=${userId}`;
-    const ws = new WebSocket(url);
+    // const url = `${RUST_SOCKET_HOST}${RUST_SOCKET_PATH}?user_id=${userId}`;
+    // const ws = new WebSocket(url);
+
+      const url = `${RUST_SOCKET_HOST}${RUST_SOCKET_PATH}`;
+  const ws = new WebSocket(url, ["gecko.v1", `jwt.${socketToken}`]);
+
     ws.binaryType = "arraybuffer";
 
     ws.onopen = () => {
