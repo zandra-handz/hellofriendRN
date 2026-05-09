@@ -1657,7 +1657,7 @@ useEffect(() => {
           // handleUpdateGeckoData={handleUpdateGeckoData}
           handleGetMoment={handleGetMoment}
           color1={manualGradientColors.lightColor}
-          color2={manualGradientColors.homeDarkColor}
+          color2={selectedFriend?.lightColor}
           bckgColor1={selectedFriend?.lightColor}
           bckgColor2={selectedFriend?.darkColor}
           momentsData={scatteredMoments}
@@ -1667,7 +1667,7 @@ useEffect(() => {
           restPoint1={0.6}
           scale={1}
           gecko_scale={1}
-          gecko_size={1.7}
+          gecko_size={2.8} //1.7
           lightDarkTheme={lightDarkTheme}
           reset={resetSkia}
           manualOnly={manualOnlyRef}
@@ -1728,19 +1728,19 @@ useEffect(() => {
           onSelect={proposeGeckoMatchWin}
         />
       </View>
-      <View style={styles.yieldContainer}>
+      {/* <View style={styles.yieldContainer}>
         <YieldMoment
           color={lightDarkTheme.primaryText}
           momentSV={momentSV}
           onSelect={proposeGeckoWin}
         />
-      </View>
-      <DebugButton
+      </View> */}
+      {/* <DebugButton
         onPress={handleSendAllHostCapsules}
         bottom={460}
         left={32}
         color={"yellow"}
-      />
+      /> */}
 
       <GlassPreviewBottom
         fontSmall={skiaFontSmall}

@@ -26,9 +26,9 @@ export default class Body {
     let headNeckChestRadii = [0.064, 0.023, 0.022]; // joints 0 -2
     // this.unchainedDist = headNeckChestRadii.reduce((sum, r) => sum + r, 0); // distance above center joint to declare head joint
 
-    this.unchainedDist = 0.07;
+    this.unchainedDist = 0.07; //.07
 
-    this.snoutDist = 0.03;
+    this.snoutDist = 0.043;
     this.hintDist = hintDist;
     let bodyWeights = [
       0.01, 0.025, 0.022, 0.022, 0.02, 0.02, 0.01, 0.003, 0.001,

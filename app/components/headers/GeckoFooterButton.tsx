@@ -271,10 +271,10 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
       return;
     }
 
-    if ( geckoEnergyLevel === 0) {
-      showFlashMessage(`Gecko is resting for a little bit!`, false, 1000);
-      return;
-    }
+    // if ( geckoEnergyLevel === 0) {
+    //   showFlashMessage(`Gecko is resting for a little bit!`, false, 1000);
+    //   return;
+    // }
 
     if (confirmationRequired) {
       Alert.alert(confirmationTitle, confirmationMessage, [

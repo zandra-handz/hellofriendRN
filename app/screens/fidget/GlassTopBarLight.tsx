@@ -10,6 +10,7 @@
   import type { SkFont } from "@shopify/react-native-skia";
   import SocketStatusLight from "@/app/components/liveSesh/SocketStatusLight";
   import BoolSocketStatusLight from "@/app/components/liveSesh/BoolSocketStatusLight";
+  import PlayModeLabel from "@/app/components/liveSesh/PlayModeLabel";
   import ChatBubblesSkia from "@/app/components/liveSesh/ChatBubblesSkia";
   import SvgIcon from "@/app/styles/SvgIcons";
   import useUser from "@/src/hooks/useUser";
@@ -117,9 +118,10 @@
               label={peerLabel}
               labelColor={textColor}
             />
-                <Text style={{color: textColor}}>Play mode:{" "}
-            {playModeLabel}
-          </Text>
+            <PlayModeLabel
+              label={`Play mode: ${playModeLabel}`}
+              labelColor={textColor}
+            />
           </View>
       
           <View

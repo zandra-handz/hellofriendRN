@@ -94,7 +94,7 @@ export default class MotionGlobal {
 
   // updated in body because goes off of radii set there
   update_headPosition(sumRadii) {
-    let dist = 0.01;
+    let dist = 0.0;
     let dirVec = _getDirVec_inPlace(
       this.frontStepsTCenter,
       this.frontStepsSLine[1],

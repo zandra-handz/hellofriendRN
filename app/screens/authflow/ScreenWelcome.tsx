@@ -69,13 +69,13 @@ const ScreenWelcome = () => {
               restPoint1={0.7}
               scale={1}
               gecko_scale={1}
-              gecko_size={1.6}
+              gecko_size={2}
               reset={resetAnimation}
             />
           </View>
         )}
         <View style={styles.logoContainer}>
-          <AppTitle labelColor={manualGradientColors.homeDarkColor} />
+          <AppTitle labelColor={manualGradientColors.homeLightColor} />
         </View>
         <View style={styles.signInButtonContainer}>
           <Pressable

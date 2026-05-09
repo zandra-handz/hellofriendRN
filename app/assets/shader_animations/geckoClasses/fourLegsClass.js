@@ -88,7 +88,7 @@ export default class FourLegs {
       reverseStepThreshold,
       this.stepWiggleRoom,
       this.reverseStepWiggleRoom,
-      stepWideness,
+      stepWideness, // + .8, // added 5/9
       reverseStepWideness,
       stepReach,
       reverseStepReach,
@@ -120,9 +120,9 @@ export default class FourLegs {
 
       this.stepWiggleRoom,
       this.reverseStepWiggleRoom,
-      stepWideness,
+      stepWideness + .1,
       reverseStepWideness,
-      stepReach,
+      stepReach - .01, // ADDED 5/9
       reverseStepReach,
       backUpLegLen,
       backLowLegLen,

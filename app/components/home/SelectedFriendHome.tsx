@@ -161,6 +161,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   userId={userId}
                   friendId={friendId}
                   friendName={friendName}
+                  friendLightColor={friendLightColor}
                   friendNextDate={friendNextDate}
                   darkGlassBackground={darkGlassBackground}
                   darkerGlassBackground={darkerGlassBackground}

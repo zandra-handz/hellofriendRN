@@ -162,6 +162,8 @@ const HelloFriendFooter = ({
 
   const RenderGeckoPointsButton = useCallback(
     () => (
+
+      
       <GeckoPointsFooterButton 
       userId={userId}
         skiaFontLarge={skiaFontSmall}

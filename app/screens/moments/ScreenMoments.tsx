@@ -269,7 +269,7 @@ const ScreenMoments = () => {
         <TopLayerButton
           iconName={`draw_pen`}
           onPress={handleNavigateToCreateNew}
-          backgroundColor={manualGradientColors.lightColor}
+              backgroundColor={selectedFriend.lightColor}
           iconColor={manualGradientColors.homeDarkColor}
           hidden={categoryNavigatorVisible}
           spaceFromBottom={110}
@@ -280,20 +280,7 @@ const ScreenMoments = () => {
         iconName="magnify"
         onPress={handleToggleCatNav}
         backgroundColorValue={topCategoryColor}
-        // colors={
-        //   Object.values(friendCategoryColorsMap).length > 1
-        //     ? Object.values(friendCategoryColorsMap)
-        //     : [
-        //         manualGradientColors.lightColor,
-        //         manualGradientColors.lightColor,
-        //       ]
-        // } // fallback with 2 values
-
-        colors={
-          Object.values(capsuleColors.categoryColorsMap).length > 1
-            ? Object.values(capsuleColors.categoryColorsMap)
-            : [manualGradientColors.lightColor, manualGradientColors.lightColor]
-        }
+ 
         iconColor={manualGradientColors.homeDarkColor}
         hidden={categoryNavigatorVisible}
         spaceFromBottom={62}

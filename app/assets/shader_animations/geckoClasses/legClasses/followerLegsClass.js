@@ -232,7 +232,7 @@ this.fingers = [
 
 solveStepTargetsBackPaired() {
   const distanceOut = (this.stepCenterRadius + this.stepReach) * 1.4;
-  const widenessAdj = 1.3;
+  const widenessAdj = 2.3; // prev 1.3 before 5/9
 
   let calcStep0 = this._calcStepBuffer0;  
   let calcStep1 = this._calcStepBuffer1; 

@@ -35,6 +35,7 @@ const FriendHeaderMessageUI: React.FC<any> = ({
   friendName,
   friendNextDate,
   selectedFriendName,
+  friendLightColor,
   friendDarkColor,
   userId,
   primaryColor,
@@ -189,7 +190,7 @@ const FriendHeaderMessageUI: React.FC<any> = ({
           style={[
             animatedPinStyle,
             styles.animatedIcon,
-            { backgroundColor: manualGradientColors.lightColor },
+            { backgroundColor: friendLightColor },
           ]}
         >
           <SvgIcon
@@ -202,7 +203,7 @@ const FriendHeaderMessageUI: React.FC<any> = ({
           style={[
             animatedSecondPinStyle,
             styles.animatedIcon,
-            { backgroundColor: manualGradientColors.lightColor },
+            { backgroundColor: friendLightColor },
           ]}
         >
           <SvgIcon

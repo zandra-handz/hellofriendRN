@@ -2839,23 +2839,23 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     float circleSizeDiv = .8;
 
     // Main body circles (0-11)
-    float circle0  = distFCircle(gecko_uv, u_geckoPoints[0],  0.003 * s / circleSizeDiv);
-    float circle1  = distFCircle(gecko_uv, u_geckoPoints[1],  0.019 * s / circleSizeDiv);
-    float circle1b = distFCircle(gecko_uv, u_geckoPoints[2],  0.0   / circleSizeDiv);
-    float circle2  = distFCircle(gecko_uv, u_geckoPoints[3],  0.001 * s / circleSizeDiv);
-    float circle3  = distFCircle(gecko_uv, u_geckoPoints[4],  0.004 * s / circleSizeDiv);
-    float circle4  = distFCircle(gecko_uv, u_geckoPoints[5],  0.004 * s / circleSizeDiv);
-    float circle5  = distFCircle(gecko_uv, u_geckoPoints[6],  0.004 * s / circleSizeDiv);
-    float circle6  = distFCircle(gecko_uv, u_geckoPoints[7],  0.004 * s / circleSizeDiv);
-    float circle7  = distFCircle(gecko_uv, u_geckoPoints[8],  0.003 * s / circleSizeDiv);
-    float circle8  = distFCircle(gecko_uv, u_geckoPoints[9],  0.003 * s / circleSizeDiv);
-    float circle9  = distFCircle(gecko_uv, u_geckoPoints[10], 0.003 * s / circleSizeDiv);
-    float circle13 = distFCircle(gecko_uv, u_geckoPoints[11], 0.002 * s / circleSizeDiv);
+    float circle0  = distFCircle(gecko_uv, u_geckoPoints[0],  0.006 * s / circleSizeDiv);
+    float circle1  = distFCircle(gecko_uv, u_geckoPoints[1],  0.026 * s / circleSizeDiv);
+    float circle1b = distFCircle(gecko_uv, u_geckoPoints[2],  0.001    / circleSizeDiv);
+    float circle2  = distFCircle(gecko_uv, u_geckoPoints[3],  0.00 * s / circleSizeDiv);
+    float circle3  = distFCircle(gecko_uv, u_geckoPoints[4],  0.00 * s / circleSizeDiv);
+    float circle4  = distFCircle(gecko_uv, u_geckoPoints[5],  0.009 * s / circleSizeDiv);
+    float circle5  = distFCircle(gecko_uv, u_geckoPoints[6],  0.010 * s / circleSizeDiv);
+    float circle6  = distFCircle(gecko_uv, u_geckoPoints[7],  0.009 * s / circleSizeDiv);
+    float circle7  = distFCircle(gecko_uv, u_geckoPoints[8],  0.007 * s / circleSizeDiv);
+    float circle8  = distFCircle(gecko_uv, u_geckoPoints[9],  0.00 * s / circleSizeDiv);
+    float circle9  = distFCircle(gecko_uv, u_geckoPoints[10], 0.00 * s / circleSizeDiv);
+    float circle13 = distFCircle(gecko_uv, u_geckoPoints[11], 0.00 * s / circleSizeDiv);
 
     float circleMerge = smoothMin(
         smoothMin(circle0, circle1, 0.03),
         smoothMin(circle1b, circle2, 0.05),
-        0.005
+        0.05
     );
 
     float spineBlend = .054 * s;
@@ -2869,21 +2869,21 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     circleMerge = smoothMin(circleMerge, circle13, spineBlend);
 
     // Tail circles (12-23)
-    float tailCircle0  = distFCircle(gecko_uv, u_geckoPoints[12], 0.002  * s / circleSizeDiv);
-    float tailCircle1  = distFCircle(gecko_uv, u_geckoPoints[13], 0.005  * s / circleSizeDiv);
-    float tailCircle2  = distFCircle(gecko_uv, u_geckoPoints[14], 0.004  * s / circleSizeDiv);
-    float tailCircle3  = distFCircle(gecko_uv, u_geckoPoints[15], 0.0042 * s / circleSizeDiv);
-    float tailCircle4  = distFCircle(gecko_uv, u_geckoPoints[16], 0.005  * s / circleSizeDiv);
-    float tailCircle5  = distFCircle(gecko_uv, u_geckoPoints[17], 0.005  * s / circleSizeDiv);
+    float tailCircle0  = distFCircle(gecko_uv, u_geckoPoints[12], 0.0  * s / circleSizeDiv);
+    float tailCircle1  = distFCircle(gecko_uv, u_geckoPoints[13], 0.01  * s / circleSizeDiv);
+    float tailCircle2  = distFCircle(gecko_uv, u_geckoPoints[14], 0.01 * s / circleSizeDiv);
+    float tailCircle3  = distFCircle(gecko_uv, u_geckoPoints[15], 0.01 * s / circleSizeDiv);
+    float tailCircle4  = distFCircle(gecko_uv, u_geckoPoints[16], 0.01  * s / circleSizeDiv);
+    float tailCircle5  = distFCircle(gecko_uv, u_geckoPoints[17], 0.01  * s / circleSizeDiv);
     float tailCircle6  = distFCircle(gecko_uv, u_geckoPoints[18], 0.005  * s / circleSizeDiv);
-    float tailCircle7  = distFCircle(gecko_uv, u_geckoPoints[19], 0.004  * s / circleSizeDiv);
-    float tailCircle8  = distFCircle(gecko_uv, u_geckoPoints[20], 0.0027 * s / circleSizeDiv);
+    float tailCircle7  = distFCircle(gecko_uv, u_geckoPoints[19], 0.005  * s / circleSizeDiv);
+    float tailCircle8  = distFCircle(gecko_uv, u_geckoPoints[20], 0.0037 * s / circleSizeDiv);
     float tailCircle9  = distFCircle(gecko_uv, u_geckoPoints[21], 0.002  * s / circleSizeDiv);
     float tailCircle10 = distFCircle(gecko_uv, u_geckoPoints[22], 0.001  * s / circleSizeDiv);
     float tailCircle11 = distFCircle(gecko_uv, u_geckoPoints[23], 0.0001 * s / circleSizeDiv);
 
     float tailCircleMerge = smoothMin(
-        smoothMin(tailCircle0, tailCircle1, 0.03),
+        smoothMin(tailCircle0, tailCircle1, 0.05),
         smoothMin(tailCircle2, tailCircle3, 0.05),
         0.005
     );
@@ -2901,7 +2901,7 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     float bodySDF = smoothMin(circleMerge, tailCircleMerge, 0.0003 * s);
 
     // Arms
-    float armThickness = 0.005 * s;
+    float armThickness = 0.0064 * s;
     float backArmThickness = .007 * s;
     float shoulderBlend = 0.01 * s;
 
@@ -3111,6 +3111,19 @@ half4 main(float2 fragCoord) {
         totalMask = max(geckoMask, fingerMask);
         vec3 geckoColor = endColor * totalMask;
         color = mix(color, geckoColor, totalMask);
+
+        // Eyes
+        vec2 headDir = u_geckoPoints[1] - u_geckoPoints[0];
+        vec2 headPerp = vec2(-headDir.y, headDir.x) * inversesqrt(max(dot(headDir, headDir), 1e-8));
+        vec2 headMid = mix(u_geckoPoints[0], u_geckoPoints[1], 0.7);
+        float eyeOffset = 0.015 * s / 0.8;
+        float eyeRadius = 0.012 * s;
+        vec2 d = gecko_uv - headMid;
+        vec2 closerEye = headMid + headPerp * (dot(d, headPerp) >= 0.0 ? eyeOffset : -eyeOffset);
+        float eyeSDF = length(gecko_uv - closerEye) - eyeRadius;
+        float eyeMask = smoothstep(0.0, 0.001, -eyeSDF);
+        color = mix(color, endColor, eyeMask);
+        totalMask = max(totalMask, eyeMask);
     }
 
     return half4(color + hintOut, totalMask);

@@ -338,7 +338,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           scale={1}
           gecko_scale={1}
           //   gecko_size={1.6}
-          gecko_size={1.7}
+          gecko_size={2.7} //{1.7}
           reset={0}
           hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
           hostCapsulesSV={hostCapsulesSV}

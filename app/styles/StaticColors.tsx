@@ -8,7 +8,9 @@ const manualGradientColors = {
   whiteColor: "#ebebeb",
   dangerColor: "#c0392b",
   manualLightTextColor: "#d3d3d3",
-  manualDarkTextColor: "#121212"
+  manualDarkTextColor: "#121212",
+  geckoOrange: "#e07a3c",
+  geckoBrown: "#6b4423"
 };
 
 export default manualGradientColors;

@@ -26,9 +26,9 @@ import {
 
 import FooterButtonRowConditional from "./FooterButtonRowConditional";
 
-const HORIZONTAL_PADDING = 60;
-const CANVAS_HEIGHT = 40;
-const MAX_LINES = 4; // 1 category + 3 capsule lines
+const HORIZONTAL_PADDING = 100;
+const CANVAS_HEIGHT = 20;
+const MAX_LINES = 1;
 
 const GlassPreviewBottom = ({
   fontSmall,
@@ -159,14 +159,15 @@ capsuleSV.value = isValidType
     };
 
     const paraStyle = {
-      textAlign: TextAlign.Center,
+      textAlign: TextAlign.Left,
       maxLines: MAX_LINES,
     };
 
     const builder = Skia.ParagraphBuilder.Make(paraStyle, fontMgr);
     builder.pushStyle(textStyle);
-    if (cat) builder.addText(cat + "\n");
-    if (cap) builder.addText(cap);
+    if (cat && cap) builder.addText(cat + "  ·  " + cap);
+    else if (cat) builder.addText(cat);
+    else if (cap) builder.addText(cap);
     builder.pop();
     const p = builder.build();
     p.layout(canvasWidth);
@@ -318,12 +319,12 @@ capsuleSV.value = isValidType
 const styles = StyleSheet.create({
   previewOuter: {
     width: "100%",
-    height: 120,
+    height: 60,
     paddingBottom: 230,
   },
   previewWrapper: {
     width: "100%",
-    height: 280,
+    height: 220,
     borderRadius: 70,
     padding: 30,
     paddingHorizontal: 10,
@@ -333,9 +334,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   scrollViewContainer: {
-    height: 40,
- 
+    height: 20,
     width: "100%",
+    alignItems: "center",
   },
   momentViewButton: {
     padding: 20,

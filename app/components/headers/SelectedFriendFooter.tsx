@@ -149,14 +149,27 @@ const SelectedFriendFooter = ({
         </View>
 
         <View style={styles.section}>
-          <GeckoFooterButton
+
+                    <FooterButtonIconVersion
+            primaryColor={primaryColor}
+            label="Play!"
+            icon={
+              <SvgIcon
+                name={"scatter_plot"}
+                size={footerIconSize}
+                color={primaryColor}
+              />
+            }
+            onPress={handleNavigateToGecko}
+          />
+          {/* <GeckoFooterButton
             userId={userId}
             friendId={friendId}
             friendName={friendName}
             primaryColor={primaryColor}
             size={footerIconSize + 130}
             onPress={handleNavigateToGecko}
-          />
+          /> */}
         </View>
       </View>
 

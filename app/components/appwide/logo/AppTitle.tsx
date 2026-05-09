@@ -8,7 +8,7 @@ type Props = {
 };
 
 const AppTitle = ({
-  label = "Welcome to the FriendKeeper App!",
+  label = "Gecko Friends",
   labelColor,
 }: Props) => {
   return (
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   label: {
-    fontSize: 24,
+    fontSize: 32,
     lineHeight: 36,
     textAlign: "center",
     // fontWeight: "bold",
