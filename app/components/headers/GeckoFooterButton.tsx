@@ -191,7 +191,7 @@ import GeckoMineSvg from "@/app/styles/svgs/gecko-mine";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { showModalMessage, showModalMessageAndList } from "@/src/utils/ShowModalMessage";
 import useFriendDash from "@/src/hooks/useFriendDash";
-import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
+import useGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useGeckoSessionsTimeRange";
 import ScrollList from "../helloes/ScrollList";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds"; 
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
@@ -249,9 +249,9 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
  
 
   const {
-    friendGeckoSessionsTimeRange,
+    sessions: friendGeckoSessionsTimeRange,
     sessionTotals,
-  } = useFriendGeckoSessionsTimeRange({ friendId, minutes });
+  } = useGeckoSessionsTimeRange({ friendId, minutes });
 
  
 
@@ -263,7 +263,7 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
 
   // Time range totals
   const rangeLabel = formatMinutesLabel(minutes);
-  const formattedRangeDuration = formatDurationFromSeconds(sessionTotals.totalDurationSeconds);
+  const formattedRangeDuration = formatDurationFromSeconds(sessionTotals?.total_duration_seconds ?? 0);
 
   const handleOnPress = useCallback(() => {
     if (isHighlighted) {
@@ -300,9 +300,9 @@ const GeckoFooterButton: React.FC<GeckoFooterButtonProps> = ({
         `  Steps: ${geckoTotalSteps}  •  Distance: ${geckoTotalDistance}\n` +
         `  Duration: ${formattedTotalDuration}\n\n` +
         `Last ${rangeLabel}:\n` +
-        `  Steps: ${sessionTotals.totalSteps} (${sessionTotals.stepsPerHour}/hr)\n` +
-        `  Distance: ${sessionTotals.totalDistance} (${sessionTotals.distancePerHour}/hr)\n` +
-        `  Duration: ${formattedRangeDuration}  •  Sessions: ${sessionTotals.sessionCount}`,
+        `  Steps: ${sessionTotals?.total_steps ?? 0} (${sessionTotals?.steps_per_hour ?? 0}/hr)\n` +
+        `  Distance: ${sessionTotals?.total_distance ?? 0} (${sessionTotals?.distance_per_hour ?? 0}/hr)\n` +
+        `  Duration: ${formattedRangeDuration}  •  Sessions: ${sessionTotals?.session_count ?? 0}`,
       confirmLabel: "Got it!",
       onConfirm: () => setIsHighlighted(false),
       floatingElement: (

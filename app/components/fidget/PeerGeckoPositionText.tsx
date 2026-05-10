@@ -9,6 +9,7 @@ import Animated, {
 type PeerGeckoPosition = {
   from_user: number;
   position: [number, number];
+  energy?: number;
   received_at: number;
 } | null;
 
@@ -34,7 +35,10 @@ const PeerGeckoPositionText = ({
       }
 
       const [x, y] = current.position ?? [0, 0];
-      return `peer ${current.from_user}: ${x.toFixed(1)}, ${y.toFixed(1)}`;
+      const energy = current.energy;
+      const energyStr =
+        energy === undefined || energy === null ? "—" : energy.toFixed(1);
+      return `peer ${current.from_user}: ${x.toFixed(1)}, ${y.toFixed(1)}  ⚡${energyStr}`;
     },
     (next, prev) => {
       if (next !== prev) {

@@ -33,9 +33,9 @@ import EnergyText from "@/app/components/fidget/EnergyText";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
 import DebugButton from "./DebugButton";
 import useGeckoRead from "@/src/hooks/useGeckoRead";
-import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
-import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
-import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
+// import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+// import useFriendGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useFriendGeckoSessionsTimeRange";
+// import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
 import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
@@ -109,12 +109,12 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     friendId: selectedFriend?.id,
   });
 
-  const { geckoCombinedData } = useUserGeckoCombinedData();
-  const { sessionTotals } = useFriendGeckoSessionsTimeRange({
-    friendId: selectedFriend?.id,
-    minutes: 720,
-  });
-  const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
+  // const { geckoCombinedData } = useUserGeckoCombinedData();
+  // const { sessionTotals } = useFriendGeckoSessionsTimeRange({
+  //   friendId: selectedFriend?.id,
+  //   minutes: 720,
+  // });
+  // const { userSessionTotals } = useUserGeckoSessionsTimeRange({ minutes: 720 });
 
   const { geckoScoreState } = useGeckoScoreState();
 
@@ -169,6 +169,8 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     // pendingFriendId,
     // boundFriendId,
     liveSeshPartner,
+    peerGeckoPositionSV,
+    hostPeerGeckoPositionSV,
     guestPeerGeckoPositionSV,
     // registerOnGeckoCoords,
     registerOnHostGeckoCoords,
@@ -204,7 +206,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnRemoveCapsule,
     sendAllHostCapsules,
     registerOnPeerPresence,
-    capsuleProgressSV,registerOnCapsuleProgress, 
+    capsuleProgressSV,registerOnCapsuleProgress,
+    seed24hRef,
+    registerOnSeed24h,
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -422,10 +426,6 @@ useEffect(() => {
     markInitialized,
   } = useGeckoRead({
     userId: user?.id,
-    geckoCombinedData,
-    geckoScoreState,
-    sessionTotals,
-    userSessionTotals,
     friendId: selectedFriend?.id,
     capsuleCount: capsuleList.length,
   });
@@ -899,8 +899,8 @@ useEffect(() => {
   const momentCoords = useMemo(() => {
     if (!capsuleList) return [];
 
-    const useTypeCapsulesOnly =
-      geckoScoreState?.use_game_type_capsules_only ?? false;
+    const useTypeCapsulesOnly = false;
+      // geckoScoreState?.use_game_type_capsules_only ?? false;
 
     return [...capsuleList]
       .filter((m) => {
@@ -921,7 +921,8 @@ useEffect(() => {
         stored_index: m.stored_index,
         guest_progress: 0,
       }));
-  }, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
+        }, [capsuleList]);
+  // }, [capsuleList, geckoScoreState?.use_game_type_capsules_only]);
 
   // const momentCoords = useMemo(() => {
   //   if (!capsuleList) return [];
@@ -1401,6 +1402,7 @@ useEffect(() => {
         coord: [number, number];
         stored_index: number;
       }[] = [],
+      energy = 1.0,
       force = false,
     ) => {
       if (isHost) {
@@ -1410,11 +1412,12 @@ useEffect(() => {
           step_angles,
           held_moments,
           moments,
+          energy,
           force,
         );
       } else {
         console.log("NOT UPDATING HOST !!!! UPDATING REGULAR");
-        return sendGeckoPosition(position, force);
+        return sendGeckoPosition(position, energy, force);
       }
     },
     [isHost, sendHostGeckoPosition, sendGeckoPosition],
@@ -1684,6 +1687,8 @@ useEffect(() => {
           backTrigger={backTrigger}
           geckoScoreState={geckoScoreState}
           liveScoreStateRef={scoreStateRef}
+          seed24hRef={seed24hRef}
+          registerOnSeed24h={registerOnSeed24h}
           
           // geckoScoreStateRef={geckoScoreStateRef}
         />
@@ -1716,9 +1721,30 @@ useEffect(() => {
           />
         )}
         {/* <Text>{liveScoreState?.energy?.toFixed(2)}</Text>  */}
-        {/* <EnergyText energySV={energySV} />
-        <PeerGeckoPositionText peerGeckoPositionSV={hostPeerGeckoPositionSV} />
-        <PeerGeckoPositionText peerGeckoPositionSV={guestPeerGeckoPositionSV} /> */}
+        {/* <EnergyText energySV={energySV} /> */}
+      </View>
+
+      <View
+        style={{
+          position: "absolute",
+          top: 80,
+          left: 12,
+          zIndex: 999,
+        }}
+        pointerEvents="none"
+      >
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={peerGeckoPositionSV}
+          color="white"
+        />
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={hostPeerGeckoPositionSV}
+          color="white"
+        />
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={guestPeerGeckoPositionSV}
+          color="white"
+        />
       </View>
 
       <View style={styles.matchesContainer}>

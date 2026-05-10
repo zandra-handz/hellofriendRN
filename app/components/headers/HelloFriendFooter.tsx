@@ -8,7 +8,7 @@ import UserSettingsModal from "./UserSettingsModal.";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import GeckoSessionsFooterButton from "../buttons/friends/GeckoSessionsFooterButton";
 import GeckoPointsFooterButton from "../buttons/friends/GeckoPointsFooterButton";
-  import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+ 
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
@@ -39,7 +39,7 @@ const HelloFriendFooter = ({
   const [geckoDataVisible, setGeckoDataVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-    const { geckoCombinedData } = useUserGeckoCombinedData();
+    // const { geckoCombinedData } = useUserGeckoCombinedData();
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -48,34 +48,19 @@ const HelloFriendFooter = ({
 
   const primaryColor = lightDarkTheme.primaryText;
 
-   
+ 
+
+
   // useEffect(() => {
-  //   if (!geckoCombinedData) return;
+  //   if (geckoDataVisible && geckoCombinedData) {
 
-  //   console.log(`gecko combined data`, geckoCombinedData);
-
-  //   const geckoTotalDuration = geckoCombinedData?.total_duration || 0;
-  //   const formattedDuration = formatDurationFromSeconds(geckoTotalDuration);
-
-  //   setTimeout(() => {
-  //     showModalMessage({
-  //       title: "Your gecko stats",
-  //       body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance} \nTotal duration: ${formattedDuration}`,
-  //     });
-  //   }, 700);
-  // }, [geckoCombinedData]);
-
-
-  useEffect(() => {
-    if (geckoDataVisible && geckoCombinedData) {
-
-         showModalMessage({
-          onConfirm: setGeckoDataVisible(false),
-      title: "Your gecko stats",
-      body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance}`,
-    });
-    }
-  }, [geckoDataVisible]);
+  //        showModalMessage({
+  //         onConfirm: setGeckoDataVisible(false),
+  //     title: "Your gecko stats",
+  //     body: `Total steps: ${geckoCombinedData.total_steps}\nTotal distance: ${geckoCombinedData.total_distance}`,
+  //   });
+  //   }
+  // }, [geckoDataVisible]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -160,34 +145,34 @@ const HelloFriendFooter = ({
     setGeckoDataVisible((prev) => !prev);
   };
 
-  const RenderGeckoPointsButton = useCallback(
-    () => (
+  // const RenderGeckoPointsButton = useCallback(
+  //   () => (
 
       
-      <GeckoPointsFooterButton 
-      userId={userId}
-        skiaFontLarge={skiaFontSmall}
-        textColor={primaryColor}
-        geckoCombinedData={geckoCombinedData}
-      />
-    ),
-    [], // was theme colors but I'm not sure why
-  );
+  //     // <GeckoPointsFooterButton 
+  //     // userId={userId}
+  //     //   skiaFontLarge={skiaFontSmall}
+  //     //   textColor={primaryColor}
+  //     //   geckoCombinedData={geckoCombinedData}
+  //     // />
+  //   ),
+  //   [], // was theme colors but I'm not sure why
+  // );
 
 
-    const RenderGeckoHistoryButton = useCallback(
-    () => (
-      <GeckoSessionsFooterButton
-      userId={userId}
-        skiaFontLarge={skiaFontSmall}
-        textColor={primaryColor}
-        onPress={() => handleCenterButtonToggle()}
-        geckoCombinedData={geckoCombinedData}
+  //   const RenderGeckoHistoryButton = useCallback(
+  //   () => (
+  //     <GeckoSessionsFooterButton
+  //     userId={userId}
+  //       skiaFontLarge={skiaFontSmall}
+  //       textColor={primaryColor}
+  //       onPress={() => handleCenterButtonToggle()}
+  //       geckoCombinedData={geckoCombinedData}
      
-      />
-    ),
-    [], // was theme colors but I'm not sure why
-  );
+  //     />
+  //   ),
+  //   [], // was theme colors but I'm not sure why
+  // );
 
   const RenderAboutAppButton = useCallback(
     () => (
@@ -238,14 +223,14 @@ const HelloFriendFooter = ({
             <RenderSettingsButton />
           </View>
         </>
-        <>
+        {/* <>
           <View style={styles.section}>
             <RenderGeckoPointsButton />
           </View>
-        </>
-            <View style={styles.section}>
+        </> */}
+            {/* <View style={styles.section}>
             <RenderGeckoHistoryButton />
-          </View>
+          </View> */}
 
         <View style={styles.section}>
           <RenderReportIssueButton />

@@ -33,6 +33,8 @@ import TopLayerButton from "@/app/components/home/TopLayerButton";
 import AnimatedTogglerBig from "@/app/components/alerts/AnimatedTogglerBig";
 import { Pressable } from "react-native";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
+import DebugButton from "@/app/screens/fidget/DebugButton";
+import useGeckoStepsLast24Hrs from "@/src/hooks/GeckoCalls/useGeckoStepsLast24Hrs";
 
 const ScreenFriendHome = ({
   skiaFontLarge,
@@ -129,6 +131,15 @@ const ScreenFriendHome = ({
     coloredDotsModeValue.value = !coloredDotsModeValue.value;
   }, []);
 
+  const { data: geckoStepsLast24Hrs, refetch: refetchGeckoStepsLast24Hrs } =
+    useGeckoStepsLast24Hrs();
+
+  const handleDebugGeckoSteps = useCallback(async () => {
+    console.log("[geckoStepsLast24Hrs - cached]", geckoStepsLast24Hrs);
+    const result = await refetchGeckoStepsLast24Hrs();
+    console.log("[geckoStepsLast24Hrs - refetch result]", result.data);
+  }, [geckoStepsLast24Hrs, refetchGeckoStepsLast24Hrs]);
+
   const { lightDarkTheme } = useLDTheme();
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;
@@ -220,6 +231,8 @@ const ScreenFriendHome = ({
               outlineColorA="transparent"
             />
             {/* <DevEnergyButtons/> */}
+
+            <DebugButton bottom={400} onPress={handleDebugGeckoSteps} />
 
             <SelectedFriendFooter
               userId={user.id}

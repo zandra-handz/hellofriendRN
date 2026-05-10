@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import GeckoMineSvg from "@/app/styles/svgs/gecko-mine";
 import { showModalMessageAndList } from "@/src/utils/ShowModalMessage";
-import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
+import useGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useGeckoSessionsTimeRange";
 import InfiniteScrollList from "../helloes/InfiniteScrollList";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
 
@@ -58,12 +58,12 @@ const UserGeckoFooterButton: React.FC<UserGeckoFooterButtonProps> = ({
   const [isHighlighted, setIsHighlighted] = useState(false);
 
   const {
-    userGeckoSessionsTimeRange,
-    userSessionTotals,
+    sessions: userGeckoSessionsTimeRange,
+    sessionTotals: userSessionTotals,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useUserGeckoSessionsTimeRange({ minutes });
+  } = useGeckoSessionsTimeRange({ minutes });
 
   const geckoTotalSteps = geckoCombinedData?.total_steps || 0;
   const geckoTotalDistance = geckoCombinedData?.total_distance || 0;

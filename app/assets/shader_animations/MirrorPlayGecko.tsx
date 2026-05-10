@@ -71,7 +71,7 @@ type Props = {
   reset?: number | null;
   hostPeerGeckoPositionSV: SharedValue<hostPeerGeckoPosition>;
   sendGuestGeckoPositionRef?: React.MutableRefObject<
-    (position: [number, number], force?: boolean) => void
+    (position: [number, number], energy?: number, force?: boolean) => void
   > | null;
   dotColor?: string;
   dotRadius?: number;
@@ -100,6 +100,8 @@ const MirrorPlayGecko = ({
   sendCapsuleProgressRef,
   dotColor = "#7FE629",
   dotRadius = 14,
+  seed24hRef,
+  registerOnSeed24h,
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -248,7 +250,20 @@ const MirrorPlayGecko = ({
 
   const soul = useRef(new Soul(restPoint0, restPoint1, 0.02));
   const leadPoint = useRef(new Mover(startingCoord0, startingCoord1));
-  const gecko = useRef(new Gecko(startingCoord0, startingCoord1, 0.06, {}));
+  const gecko = useRef(
+    new Gecko(startingCoord0, startingCoord1, 0.06, {}, seed24hRef?.current ?? {}),
+  );
+
+  useEffect(() => {
+    if (!registerOnSeed24h) return;
+    const unsub = registerOnSeed24h((data) => {
+      console.log("[SEED applied to mirror gait]", data);
+      if (!gecko.current) return;
+      gecko.current.gait.stepsLast24h = data.steps_last_24h ?? 0.0;
+      gecko.current.gait.sustenanceLast24h = data.sustenance_last_24h ?? 0.0;
+    });
+    return unsub;
+  }, [registerOnSeed24h]);
   const hasInitialLoadedMirrorMomentsRef = useRef(false);
   const mirrorMoments = useRef(
     new MirrorMoments([], playMode, gecko_size, [0.5, 0.5], 0.05),
@@ -337,7 +352,13 @@ const MirrorPlayGecko = ({
 
     soul.current = new Soul(restPoint0, restPoint1, 0.02);
     leadPoint.current = new Mover(startingCoord0, startingCoord1);
-    gecko.current = new Gecko(startingCoord0, startingCoord1, 0.06, {});
+    gecko.current = new Gecko(
+      startingCoord0,
+      startingCoord1,
+      0.06,
+      {},
+      seed24hRef?.current ?? {},
+    );
 
     workingBuffers.geckoPoints.fill(0);
     workingBuffers.selected.fill(0);
@@ -533,7 +554,7 @@ const MirrorPlayGecko = ({
       if (shouldUpdate) {
         sendGuestGeckoPositionRef?.current?.(
           leadPoint.current.lead,
-          workingBuffers.stepTargets,
+          gecko.current.gait.energy,
         );
       }
 

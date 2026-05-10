@@ -4,7 +4,7 @@ import Body from "./geckoClasses/bodyClass.js";
 import FourLegs from "./geckoClasses/fourLegsClass.js";
 
 export default class Gecko {
-  constructor(startingCoord0, startingCoord1, hintDist=.04, energyConfig={}) {
+  constructor(startingCoord0, startingCoord1, hintDist=.04, energyConfig={}, seed24h={}) {
     this.gaitSpeedScalar = 9;
     this.reverseGaitSpeedScalar = 40;
 
@@ -23,6 +23,7 @@ export default class Gecko {
     this.startingCoord = [startingCoord0, startingCoord1];
     this.hintDist = hintDist;
     this.energyConfig = energyConfig;
+    this.seed24h = seed24h;
 
  
     this.valuesForReversing = {
@@ -62,7 +63,8 @@ export default class Gecko {
     this.oneTimeEnterComplete = false; // set only once
     this.sleepWalkMode = false;
 
-    this.gait = new GaitState(this.gaitSpeedScalar, this.reverseGaitSpeedScalar, this.energyConfig);
+    this.gait = new GaitState(this.gaitSpeedScalar, this.reverseGaitSpeedScalar, this.energyConfig, this.seed24h);
+  
     this.motion = new MotionGlobal(
       this.gait,
       this.valuesForReversing,
@@ -120,6 +122,7 @@ export default class Gecko {
   }
 
   update(leadPoint_lead, leadPoint_angles, leadPoint_distanceTraveled, leadPoint_isMoving) {
+ 
 
  
  

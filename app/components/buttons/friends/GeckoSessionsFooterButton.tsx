@@ -105,7 +105,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Text, StyleSheet } from "react-native";
 import SvgIcon from "@/app/styles/SvgIcons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
-import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
+import useGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useGeckoSessionsTimeRange";
 import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 import { showModalMessageAndList } from "@/src/utils/ShowModalMessage";
 import InfiniteScrollList from "../../helloes/InfiniteScrollList";
@@ -144,12 +144,12 @@ const GeckoSessionsFooterButton = ({
   // }, [friendListAndUpcoming?.friends]);
 
   const {
-    userGeckoSessionsTimeRange,
-    userSessionTotals,
+    sessions: userGeckoSessionsTimeRange,
+    sessionTotals: userSessionTotals,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useUserGeckoSessionsTimeRange({ minutes });
+  } = useGeckoSessionsTimeRange({ minutes });
 
   const sessionsWithFriendNames = useMemo(() => {
     return userGeckoSessionsTimeRange.map((session) => ({

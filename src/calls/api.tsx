@@ -219,7 +219,7 @@ export const getUserSettings = async () => {
     // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
 
     const response = await helloFriendApiClient.get(`/users/settings/`);
-    console.log("API GET Call getUserSettings", response.data);
+   // console.log("API GET Call getUserSettings", response.data);
     // const end = Date.now(); // log end time
     // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
     // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
@@ -347,22 +347,13 @@ export const decideGeckoGameMatchWinPending = async (
   }
 };
 
-export const getUserGeckoCombinedData = async () => {
-  try {
-    const response = await helloFriendApiClient.get(`/users/gecko/totals/`);
-    // console.log("API GET Call getGeckoData", response.data);
-    return response.data;
-  } catch (e: unknown) {
-    handleApiError(e, "Error during getGeckoData");
-  }
-};
-
+ 
 export const getGeckoScoreState = async () => {
   try {
     const response = await helloFriendApiClient.get(
       `/users/gecko/score-state/`,
     );
-    // console.log(" API GET Call getGeckoScoreState", response.data);
+// console.log(" API GET Call getGeckoScoreState", response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getGeckoScoreState");
@@ -617,17 +608,23 @@ export const fetchdGeckoCombinedSessions = async ({
 
 export const fetchGeckoCombinedSessionsTimeRange = async ({
   minutes,
+  friendId,
   page = 1,
 }: {
   minutes: number;
+  friendId?: number | null;
   page?: number;
 }) => {
   try {
+    const params = new URLSearchParams();
+    params.append("minutes", String(minutes));
+    params.append("page", String(page));
+    if (friendId) params.append("friend_id", String(friendId));
+
     const response = await helloFriendApiClient.get(
-      `/users/gecko/sessions/range/?minutes=${minutes}&page=${page}`,
+      `/users/gecko/sessions/range/?${params.toString()}`,
     );
     if (response?.data && response?.data?.results) {
-      // console.log(`USER GECKO SESSIONS`,response.data)
       return response.data;
     } else {
       console.log("No data returned from fetchGeckoCombinedSessionsTimeRange.");
@@ -635,6 +632,22 @@ export const fetchGeckoCombinedSessionsTimeRange = async ({
     }
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchGeckoCombinedSessionsTimeRange");
+  }
+};
+
+export const fetchGeckoStepsLast24Hrs = async () => {
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/gecko/steps/last-24-hrs/`,
+    );
+    if (response?.data) {
+      return response.data;
+    } else {
+      console.log("No data returned from fetchGeckoStepsLast24Hrs.");
+      return null;
+    }
+  } catch (e: unknown) {
+    handleApiError(e, "Error during fetchGeckoStepsLast24Hrs");
   }
 };
 
@@ -663,29 +676,6 @@ export const fetchFriendGeckoSessions = async ({
     }
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendGeckoSessions");
-  }
-};
-
-export const fetchFriendGeckoSessionsTimeRange = async ({
-  friendId,
-  minutes,
-}: {
-  friendId: number;
-  minutes: number;
-}) => {
-  try {
-    const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/gecko/sessions/range/?minutes=${minutes}`,
-    );
-    if (response?.data) {
-      // console.log(`gecko sessions time range: `, response.data);
-      return response.data;
-    } else {
-      console.log("No data returned from fetchFriendGeckoSessionsTimeRange.");
-      return [];
-    }
-  } catch (e: unknown) {
-    handleApiError(e, "Error during fetchFriendGeckoSessionsTimeRange");
   }
 };
 
@@ -1275,7 +1265,7 @@ export const fetchFriendDashboard = async (friendId: number) => {
   export const getCurrentLiveSesh = async () => { 
      try {
       const response = await helloFriendApiClient.get(`/users/live-sesh/current/`);   
-    console.log(`livesession`, response.data)                                                                                                                                                               
+    //console.log(`livesession`, response.data)                                                                                                                                                               
       return response.data;
     } catch (e: unknown) {
       handleApiError(e, "Error during getCurrentLiveSesh");
@@ -1598,44 +1588,17 @@ export const enableManualColorTheme = async (friendId: number) => {
 //   }
 // };
 
-export const fetchUpcomingHelloes = async () => {
-  try {
-    // const start = Date.now(); // log start time
-    // console.log(
-    //   "\x1b[32m%s\x1b[32m",
-    //   "FETCHING UPCOMING at",
-    //   new Date(start).toISOString()
-    // );
+// export const fetchUpcomingHelloes = async () => {
+//   try { 
 
-    const response = await helloFriendApiClient.get("/friends/upcoming/");
-    // console.log(`UPCOMING HELLOES: `, response.data);
-    // const end = Date.now(); // log end time
-    // console.log(
-    //   "\x1b[32m%s\x1b[32m",
-    //   "FETCHED UPCOMING at",
-    //   new Date(end).toISOString()
-    // );
-    // console.log("\x1b[32m%s\x1b[32m", "Duration (ms):", end - start);
-
-    return response.data;
-  } catch (e: unknown) {
-    handleApiError(e, "Error during fetchUpcomingHelloes");
-  }
-};
-
-// export const fetchUpcomingHelloesAndFriends = async () => {
-//   //use keys 'friends' = old friendlist data. 'upcoming' =old upcoming data
-//   //this endpoint just combines the queries on backend
-//   try {
-//     const response = await helloFriendApiClient.get(
-//       "/friends/upcoming/friends-included/"
-//     );
-//   // console.error(`NEW ENDPOINT`, response.data.upcoming[0] )
+//     const response = await helloFriendApiClient.get("/friends/upcoming/");
+ 
 //     return response.data;
 //   } catch (e: unknown) {
 //     handleApiError(e, "Error during fetchUpcomingHelloes");
 //   }
 // };
+ 
 
 export const fetchUpcomingHelloesAndFriends = async () => {
   const today = new Date();
@@ -1646,7 +1609,7 @@ export const fetchUpcomingHelloesAndFriends = async () => {
       "/friends/upcoming/friends-included/",
       { params: { local_date: localDate } },
     );
-    console.log(`API CALL: fetchUpcomingHelloesAndFriends`, response.data);
+   // console.log(`API CALL: fetchUpcomingHelloesAndFriends`, response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");

@@ -3,10 +3,10 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
-import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
+ 
 import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
-import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
+ 
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import FourButtons from "./FourButtons";
 import CategoriesCard from "./CategoriesCard";

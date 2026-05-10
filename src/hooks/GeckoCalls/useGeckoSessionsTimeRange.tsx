@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { fetchGeckoCombinedSessionsTimeRange } from "../../calls/api";
 import useUser from "../useUser";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -23,27 +23,27 @@ type SessionTotals = {
 
 type Props = {
   minutes: number;
+  friendId?: number | null;
 };
 
-const useUserGeckoSessionsTimeRange = ({ minutes }: Props) => {
+const useGeckoSessionsTimeRange = ({ minutes, friendId = null }: Props) => {
   const { user } = useUser();
-
-  const HARD_CODED_MINUTES = 720; //last 12 hours
 
   const {
     data,
-    isLoading: userGeckoSessionsTimeRangeIsLoading,
-    isFetching: userGeckoSessionsTimeRangeIsFetching,
+    isLoading,
+    isFetching,
     isFetchingNextPage,
-    isSuccess: userGeckoSessionsTimeRangeIsSuccess,
-    isError: userGeckoSessionsTimeRangeIsError,
+    isSuccess,
+    isError,
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["userGeckoSessionsTimeRange", user?.id], //add minutes to this only if querying different ranges
+    queryKey: ["geckoSessionsTimeRange", user?.id, friendId ?? null],
     queryFn: async ({ pageParam = 1 }) => {
       return await fetchGeckoCombinedSessionsTimeRange({
         minutes,
+        friendId,
         page: pageParam,
       });
     },
@@ -56,24 +56,24 @@ const useUserGeckoSessionsTimeRange = ({ minutes }: Props) => {
     enabled: !!(user?.id && minutes > 0),
   });
 
-  const sessions = useMemo(
+  const sessions: GeckoSession[] = useMemo(
     () => data?.pages.flatMap((page) => page.results) ?? [],
     [data]
   );
 
-  const userSessionTotals: SessionTotals | null = data?.pages[0]?.totals ?? null;
+  const sessionTotals: SessionTotals | null = data?.pages[0]?.totals ?? null;
 
   return {
-    userGeckoSessionsTimeRange: sessions,
-    userSessionTotals,
-    userGeckoSessionsTimeRangeIsLoading,
-    userGeckoSessionsTimeRangeIsFetching,
+    sessions,
+    sessionTotals,
+    isLoading,
+    isFetching,
     isFetchingNextPage,
-    userGeckoSessionsTimeRangeIsSuccess,
-    userGeckoSessionsTimeRangeIsError,
+    isSuccess,
+    isError,
     fetchNextPage,
     hasNextPage,
   };
 };
 
-export default useUserGeckoSessionsTimeRange;
+export default useGeckoSessionsTimeRange;

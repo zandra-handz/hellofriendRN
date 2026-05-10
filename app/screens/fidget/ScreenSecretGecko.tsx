@@ -63,6 +63,8 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     sendCapsuleProgress,
     hostCapsulesSV,
     registerOnPeerPresence,
+    seed24hRef,
+    registerOnSeed24h,
   } = useGeckoWebsocket();
  
   const { user } = useUser();
@@ -308,6 +310,29 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
         />
       </View> */}
 
+      <View
+        style={{
+          position: "absolute",
+          top: 80,
+          left: 12,
+          zIndex: 999,
+        }}
+        pointerEvents="none"
+      >
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={peerGeckoPositionSV}
+          color="white"
+        />
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={hostPeerGeckoPositionSV}
+          color="white"
+        />
+        <PeerGeckoPositionText
+          peerGeckoPositionSV={guestPeerGeckoPositionSV}
+          color="white"
+        />
+      </View>
+
       {/* <EnergyText
         energySV={energySV}
         color="white"
@@ -345,6 +370,8 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}
           playMode={playMode}
           sendCapsuleProgressRef={sendCapsuleProgressRef}
+          seed24hRef={seed24hRef}
+          registerOnSeed24h={registerOnSeed24h}
         />
       </View>
 
