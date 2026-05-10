@@ -371,15 +371,9 @@ half4 main(float2 fragCoord) {
     float halfH = 0.25 * s;
     float boxSDF = max(abs(gecko_uv.x - boxCenter.x) - halfW, abs(gecko_uv.y - boxCenter.y) - halfH);
 
-    // float borderThick = 0.002 * s;
-    // float boxOutline = step(boxSDF, 0.0) - step(boxSDF + borderThick, 0.0);
-    // if (boxOutline > 0.0) {
-    //     return half4(1.0, 0.0, 0.0, 1.0);
-    // }
-
-    // if (boxSDF > 0.0) {
-    //     return half4(0.0, 0.0, 0.0, 0.0);
-    // }
+    if (boxSDF > 0.0) {
+        return half4(0.0, 0.0, 0.0, 0.0);
+    }
 
     // Everything below only runs for pixels INSIDE the box
     float3 color = sampleBackground(fragCoord);
