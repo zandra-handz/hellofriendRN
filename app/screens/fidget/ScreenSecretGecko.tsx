@@ -313,7 +313,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
       <View
         style={{
           position: "absolute",
-          top: 80,
+          top: 280,
           left: 12,
           zIndex: 999,
         }}

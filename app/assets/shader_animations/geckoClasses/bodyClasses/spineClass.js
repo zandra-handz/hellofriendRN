@@ -198,9 +198,12 @@ export default class Spine {
     const anchorJoint = this.joints[this.unchainedAnchorIndex];
     const frontStepsEnd = this.motion.frontStepsSLine[1];
     
-    // Calculate midpoint directly into buffer
-    const midX = (frontStepsEnd[0] + leadPoint_lead[0]) * 0.5;
-    const midY = (frontStepsEnd[1] + leadPoint_lead[1]) * 0.5;
+    // Bias the blend toward the cursor (which doesn't bob) instead of the
+    // S-line endpoint (which jumps laterally with each forelimb step).
+    const stepBias = 0.25;
+    const leadBias = 0.75;
+    const midX = frontStepsEnd[0] * stepBias + leadPoint_lead[0] * leadBias;
+    const midY = frontStepsEnd[1] * stepBias + leadPoint_lead[1] * leadBias;
     
     // Calculate direction vector directly
     let dirX = midX - anchorJoint[0];
