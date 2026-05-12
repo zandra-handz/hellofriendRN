@@ -206,6 +206,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     registerOnRemoveCapsule,
     sendAllHostCapsules,
     registerOnPeerPresence,
+    registerOnPartnerReconnected,
     capsuleProgressSV,registerOnCapsuleProgress,
     seed24hRef,
     registerOnSeed24h,
@@ -1296,11 +1297,35 @@ useEffect(() => {
   const [scatteredMoments, setScatteredMoments] = useState(momentCoords);
 
   const handleSendAllHostCapsules = useCallback(() => {
+
     if (!isHost) return false;
     if (!scatteredMoments || scatteredMoments.length === 0) return false;
 
     return sendAllHostCapsules(scatteredMoments);
   }, [isHost, scatteredMoments, sendAllHostCapsules]);
+
+  // Always-current ref to the socket send function — MomentsSkia uses this
+  // so it can call send with its live `moments.current` state.
+  const sendAllHostCapsulesRef = useRef(sendAllHostCapsules);
+  useEffect(() => {
+    sendAllHostCapsulesRef.current = sendAllHostCapsules;
+  }, [sendAllHostCapsules]);
+
+  // MomentsSkia assigns the resend callable here so peers' reconnect / presence
+  // handlers can fire a snapshot built from the live Moments class instance.
+  const triggerSendAllHostCapsulesRef = useRef<(() => boolean) | null>(null);
+
+  // Mirror of scatteredMoments for MomentsSkia to read guest_progress at send
+  // time without re-rendering on every change.
+  const scatteredMomentsRef = useRef(scatteredMoments);
+  useEffect(() => {
+    scatteredMomentsRef.current = scatteredMoments;
+  }, [scatteredMoments]);
+
+  const isHostRef = useRef(isHost);
+  useEffect(() => {
+    isHostRef.current = isHost;
+  }, [isHost]);
 
 // useEffect(() => {
 //   if (!isHost) return;
@@ -1313,14 +1338,23 @@ useEffect(() => {
 useEffect(() => {
   const unregister = registerOnPeerPresence((online) => {
     if (!online) return;
-    if (!isHost) return;
-    if (!scatteredMoments?.length) return;
-
-    sendAllHostCapsules(scatteredMoments);
+    if (!isHostRef.current) return;
+    triggerSendAllHostCapsulesRef.current?.();
   });
 
   return unregister;
-}, [registerOnPeerPresence, isHost, scatteredMoments, sendAllHostCapsules]);
+}, [registerOnPeerPresence]);
+
+useEffect(() => {
+  const unregister = registerOnPartnerReconnected((data) => {
+    console.log("[ScreenGecko] partner_reconnected received", data);
+    if (!isHostRef.current) return;
+    const result = triggerSendAllHostCapsulesRef.current?.();
+    console.log("[ScreenGecko] live resend result:", result);
+  });
+
+  return unregister;
+}, [registerOnPartnerReconnected]);
 
   const handleRescatterMoments_insideMS = useCallback((newData) => {
     const minY = 0.2;
@@ -1689,7 +1723,9 @@ useEffect(() => {
           liveScoreStateRef={scoreStateRef}
           seed24hRef={seed24hRef}
           registerOnSeed24h={registerOnSeed24h}
-          
+          sendAllHostCapsulesRef={sendAllHostCapsulesRef}
+          triggerSendAllHostCapsulesRef={triggerSendAllHostCapsulesRef}
+          scatteredMomentsRef={scatteredMomentsRef}
           // geckoScoreStateRef={geckoScoreStateRef}
         />
       </View>
@@ -1761,12 +1797,12 @@ useEffect(() => {
           onSelect={proposeGeckoWin}
         />
       </View> */}
-      {/* <DebugButton
+     <DebugButton
         onPress={handleSendAllHostCapsules}
         bottom={460}
         left={32}
         color={"yellow"}
-      /> */}
+      />  
 
       <GlassPreviewBottom
         fontSmall={skiaFontSmall}

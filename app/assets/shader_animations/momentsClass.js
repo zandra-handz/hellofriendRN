@@ -611,6 +611,8 @@
         { id: null, coord: new Float32Array(2), stored_index: null },
       ];
 
+      this.heldCount = 0;
+
       // Tracks moment ids whose coord changed since last flushDirty().
       // Producer marks writes; the rAF loop consumes via flushDirty() before
       // sending the host broadcast so only changed moments go on the wire.
@@ -661,8 +663,10 @@
           moment.stored_index >= 0 &&
           moment.stored_index < 4
         ) {
-          this.holdings[moment.stored_index].id = moment.id;
-          this.holdings[moment.stored_index].stored_index = moment.stored_index;
+          const slot = this.holdings[moment.stored_index];
+          if (slot.id === null) this.heldCount++;
+          slot.id = moment.id;
+          slot.stored_index = moment.stored_index;
         }
       }
 
@@ -718,6 +722,7 @@
         this.holdings[i].coord[1] = -100;
       }
 
+      this.heldCount = 0;
       this.initializeHoldings();
 
       // Full rebuild → peer needs the whole set.
@@ -824,6 +829,7 @@
       holding.stored_index = null;
       holding.coord[0] = -100;
       holding.coord[1] = -100;
+      this.heldCount--;
 
       this.holdingsVersion++;
 
@@ -863,6 +869,8 @@
       if (targetHolding.id != null && targetHolding.id !== moment.id) {
         this.clearHolding(holdIndex);
       }
+
+      if (targetHolding.id === null) this.heldCount++;
 
       targetHolding.id = moment.id;
       targetHolding.stored_index = holdIndex;
@@ -912,6 +920,8 @@
         holding.coord[0] = -100;
         holding.coord[1] = -100;
       }
+
+      this.heldCount = 0;
 
       return this.holdings;
     }

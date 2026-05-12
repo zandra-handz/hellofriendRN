@@ -568,6 +568,21 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [],
   );
 
+  const onPartnerReconnectedRef = useRef<((data: any) => void) | null>(null);
+
+  const registerOnPartnerReconnected = useCallback(
+    (cb: (data: any) => void) => {
+      onPartnerReconnectedRef.current = cb;
+
+      return () => {
+        if (onPartnerReconnectedRef.current === cb) {
+          onPartnerReconnectedRef.current = null;
+        }
+      };
+    },
+    [],
+  );
+
   const registerOnRemoveCapsule = useCallback(
     (cb: (capsuleId: string) => void) => {
       onRemoveCapsuleRef.current = cb;
@@ -1154,6 +1169,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
   const sendAllHostCapsules = useCallback(
     (moments: HostCapsuleMoment[] = []) => {
+ 
       if (wsRef.current?.readyState !== WebSocket.OPEN) {
         return false;
       }
@@ -1508,6 +1524,12 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         return;
       }
 
+      if (message.action === "partner_reconnected") {
+        console.log("[WS] partner_reconnected", message.data);
+        onPartnerReconnectedRef.current?.(message.data ?? {});
+        return;
+      }
+
       if (message.action === "peer_presence") {
         console.log(`PEER PRESENCE!`, message.data);
         const online = message.data?.online ?? false;
@@ -1696,6 +1718,8 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       }
 
       if (message.action === "all_host_capsules") {
+
+        console.log('HOST CAPSULES SENT')
         const moments = message.data?.moments ?? [];
         const momentsLen = message.data?.moments_len ?? moments.length;
 
@@ -1935,6 +1959,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendAllHostCapsules,
       hostCapsulesSV,
       registerOnPeerPresence,
+      registerOnPartnerReconnected,
       registerOnCapsuleProgress,
       capsuleProgressSV,
       repullCapsuleMatches,
@@ -1978,6 +2003,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       registerOnLeaveLiveSesh,
       registerOnLiveSeshCancelled,
       registerOnPeerPresence,
+      registerOnPartnerReconnected,
       registerOnRemoveCapsule,
       registerOnScoreState,
       registerOnSync,

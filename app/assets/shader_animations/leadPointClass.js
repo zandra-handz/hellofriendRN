@@ -140,6 +140,9 @@ export default class Mover {
     // keep same behavior unless you truly use prevLead elsewhere.
     this.prevLead = [...this.lead];
 
+    this.prevHeldCount = 0;
+    this.heldCount = 0;
+
     this.leadVelocity = [0, 0];
 
     this.defaultDampening = 6.4;
@@ -168,12 +171,31 @@ export default class Mover {
     this.spring = this.defaultSpring;
   }
 
+  applyHeldCount(heldCount) {
+    if (heldCount <= 0) {
+      this.spring = 30;
+      this.dampening = 5.4;
+      return;
+    }
+    const t = heldCount >= 4 ? 1 : heldCount * 0.25;
+    this.spring = 30 + (20 - 30) * t;
+    this.dampening = 5.4 + (6.4 - 5.4) * t;
+  }
+
   isLeadStationary() {
     return this.speed < this.stillModeThreshhold;
   }
 
   // dt=1 by default (MATCHES OLD)
-  updateLeadPointSmooth(path, dt = 1, currentTime = Date.now()) {
+  updateLeadPointSmooth(path, heldCount = 0, dt = 1, currentTime = Date.now()) {
+    
+    if (this.heldCount != heldCount) {
+      this.heldCount = heldCount;
+      // console.log('changing gecko speed')
+       this.applyHeldCount(heldCount)
+    } 
+
+
     const target = path;
     const pos = this.lead;
 
@@ -227,8 +249,9 @@ export default class Mover {
   }
 
   // IMPORTANT: keep signature like old (don’t pass dt)
-  update(path) {
-    this.updateLeadPointSmooth(path);
+  update(path, heldCount=0) {
+ 
+    this.updateLeadPointSmooth(path, heldCount);
   }
 }
 

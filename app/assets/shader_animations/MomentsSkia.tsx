@@ -164,6 +164,9 @@ seed24hRef,
   hasReceivedInitialScoreStateRef,
   initialBackendEnergyUpdatedAtRef,
   latestBackendEnergyUpdatedAtRef,
+  sendAllHostCapsulesRef,
+  triggerSendAllHostCapsulesRef,
+  scatteredMomentsRef,
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -520,6 +523,17 @@ seed24hRef,
     .onUpdate((e) => {
       userPointSV.value = [e.x / size.width, e.y / size.height];
     })
+    .onTouchesUp((e, manager) => {
+      // iOS: when a simultaneous Tap wins, Pan never activates so onEnd
+      // doesn't fire and onFinalize is unreliable — clear here once the
+      // last finger lifts so isDragging can't get stuck.
+      if (e.numberOfTouches === 0) {
+        isDragging.value = false;
+      }
+    })
+    .onTouchesCancelled(() => {
+      isDragging.value = false;
+    })
     .onEnd(() => {
       isDragging.value = false;
     })
@@ -584,6 +598,54 @@ seed24hRef,
   const moments = useRef(
     new Moments(momentsData, gecko_size, sleepWalk0, [0.5, 0.5], 0.05),
   );
+
+  // Build a snapshot from the live Moments instance and send via the socket
+  // ref. Held moments report coord [-100, -100] to match ScreenGecko's
+  // scatter convention; guest_progress is overlaid from scatteredMomentsRef
+  // by id (the class doesn't track that field itself).
+  useEffect(() => {
+    if (!triggerSendAllHostCapsulesRef) return;
+
+    triggerSendAllHostCapsulesRef.current = () => {
+      const live = moments.current?.moments;
+      const send = sendAllHostCapsulesRef?.current;
+      if (!live || !send) return false;
+
+      const progressById = new Map<number, number>();
+      const scattered = scatteredMomentsRef?.current;
+      if (scattered) {
+        for (let i = 0; i < scattered.length; i++) {
+          const s = scattered[i];
+          if (s && s.id != null) {
+            progressById.set(s.id, s.guest_progress ?? 0);
+          }
+        }
+      }
+
+      const snapshot = new Array(live.length);
+      for (let i = 0; i < live.length; i++) {
+        const m = live[i];
+        const held =
+          m.stored_index != null &&
+          m.stored_index >= 0 &&
+          m.stored_index < 4;
+        snapshot[i] = {
+          id: m.id,
+          coord: held ? [-100, -100] : [m.coord[0], m.coord[1]],
+          stored_index: m.stored_index ?? -1,
+          guest_progress: progressById.get(m.id) ?? 0,
+        };
+      }
+
+      return send(snapshot);
+    };
+
+    return () => {
+      if (triggerSendAllHostCapsulesRef.current) {
+        triggerSendAllHostCapsulesRef.current = null;
+      }
+    };
+  }, [triggerSendAllHostCapsulesRef, sendAllHostCapsulesRef, scatteredMomentsRef]);
 
   const handleGetMomentRef = useRef(handleGetMoment);
   useEffect(() => {
@@ -861,15 +923,15 @@ seed24hRef,
       }
 
       if (!gecko.current.oneTimeEnterComplete && !gecko.current.sleepWalkMode) {
-        leadPoint.current.update(soul.current.soul);
+        leadPoint.current.update(soul.current.soul, 0);
       } else if (
         gecko.current.oneTimeEnterComplete &&
         !gecko.current.sleepWalkMode
       ) {
-        leadPoint.current.update(userPoint_geckoSpaceRef.current); //, dt, now);
+        leadPoint.current.update(userPoint_geckoSpaceRef.current, moments.current.heldCount); //, dt, now);
       } else {
         sleepWalk0.current.update(moments);
-        leadPoint.current.update(sleepWalk0.current.walk); //, dt, now);
+        leadPoint.current.update(sleepWalk0.current.walk, moments.current.heldCount); //, dt, now);
       }
 
       // ---- sim update ----
