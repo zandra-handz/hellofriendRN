@@ -522,6 +522,17 @@ const MirrorPlayGecko = ({
         workingBuffers.selected[1] = mirrorMoments.current.selected.coord[1];
         workingBuffers.selectedProgress = mirrorMoments.current.newProgress;
 
+        if (mirrorMoments.current.pendingZeroResets.length > 0) {
+          const resets = mirrorMoments.current.pendingZeroResets;
+          for (let i = 0; i < resets.length; i++) {
+            sendCapsuleProgressRef?.current?.({
+              capsule_id: resets[i],
+              new_progress: 0,
+            });
+          }
+          resets.length = 0;
+        }
+
         if (mirrorMoments.current.trigger_update_host_with_guest_progress) {
           if (
             mirrorMoments.current.trigger_update_host_with_guest_progress !=

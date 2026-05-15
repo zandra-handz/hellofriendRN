@@ -1,9 +1,10 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
+import devSettings from "@/app/styles/DevMode";
 
 const helloFriendApiClient = axios.create({
-  baseURL: "https://badrainbowz.com/",
+  baseURL: devSettings.baseURL,
   timeout: 10000,
 });
 

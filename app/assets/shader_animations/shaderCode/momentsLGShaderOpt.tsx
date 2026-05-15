@@ -482,7 +482,9 @@ uniform float u_time;
 uniform float u_gecko_scale;
 uniform float u_gecko_size;
 uniform float2 u_moments[30];
+uniform float u_momentProgress[30];
 uniform float2 u_heldMoments[4];
+
 
 uniform int u_momentsLength;
 
@@ -830,20 +832,28 @@ half4 main(float2 fragCoord) {
  
     for (int i = 0; i < 30; i++) {
         if (i >= u_momentsLength) break;
-          
+
 
         float2 dm = u_moments[i] - u_lastSelected;
         if (dot(dm, dm) < 1e-6) continue;
-        
+
         float2 deNormalizedCenter = u_moments[i] * u_resolution;
         float2 d = fragCoord - deNormalizedCenter;
         float dist2 = dot(d, d);
         float maxR = 19.0;
         if (dist2 > maxR * maxR) continue;
-    
-        color = applyDotSq(dist2, 5.0, color);
-    } 
- 
+
+        // Progress in [0, 1] from a 0..100 input; clamped so stale/missing entries fall back to fresh.
+        float progress = clamp(u_momentProgress[i] / 100.0, 0.0, 1.0);
+        float3 momentColor = mix(startColor, endColor, progress);
+
+        float radius = 5.0;
+        float r0 = radius - 1.0;
+        float r1 = radius + 1.0;
+        float a = smoothstep(r1 * r1, r0 * r0, dist2);
+        color = mix(color, momentColor, a);
+    }
+
     return half4(color, 1.0);
 }
 

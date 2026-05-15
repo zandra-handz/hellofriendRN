@@ -159,7 +159,7 @@ const MomentsSkia = ({
   recenterTrigger,
   backTrigger,
   geckoScoreState,
-seed24hRef,
+  seed24hRef,
   registerOnSeed24h,
   hasReceivedInitialScoreStateRef,
   initialBackendEnergyUpdatedAtRef,
@@ -167,6 +167,8 @@ seed24hRef,
   sendAllHostCapsulesRef,
   triggerSendAllHostCapsulesRef,
   scatteredMomentsRef,
+  guestCapsuleProgressMapRef,
+  guestCapsuleProgressVersionRef,
 }: Props) => {
   const { width, height } = useWindowDimensions();
   const { ref, size } = useCanvasSize();
@@ -259,11 +261,10 @@ seed24hRef,
     }
   }, [recenterTrigger]);
 
-
   useEffect(() => {
     if (!registerOnSeed24h) return;
     const unsub = registerOnSeed24h((data) => {
-      console.log('[SEED applied to gait]', data);
+      console.log("[SEED applied to gait]", data);
       if (!gecko.current) return;
       gecko.current.gait.stepsLast24h = data.steps_last_24h ?? 0.0;
       gecko.current.gait.sustenanceLast24h = data.sustenance_last_24h ?? 0.0;
@@ -323,15 +324,16 @@ seed24hRef,
   //   applyLiveScoreStateToGait();
   // }, [applyLiveScoreStateToGait]);
 
-
-  
   const handleUpdateGeckoDataState = async () => {
     sessionStartRef.current = sessionEndRef.current;
     sessionEndRef.current = Date.now();
 
     const startPointsIndex = prevPointsLengthRef.current;
     const endPointsIndex = pointsEarnedList.current.length;
-    const newPoints = pointsEarnedList.current.slice(startPointsIndex, endPointsIndex);
+    const newPoints = pointsEarnedList.current.slice(
+      startPointsIndex,
+      endPointsIndex,
+    );
 
     const payload = {
       steps: gecko.current.gait.stepCount - stepsRef.current,
@@ -347,7 +349,6 @@ seed24hRef,
     distanceRef.current = leadPoint.current.leadDistanceTraveled;
     prevPointsLengthRef.current = endPointsIndex;
   };
-
 
   // const handleUpdateGeckoDataState = async () => {
   //   if (!didInitSessionWindowRef.current) {
@@ -445,6 +446,7 @@ seed24hRef,
 
     geckoPoints: new Float32Array(TOTAL_GECKO_POINTS_COMPACT * 2),
     moments: new Float32Array(MAX_MOMENTS * 2),
+    momentProgress: new Float32Array(MAX_MOMENTS),
 
     stepTargets: new Float32Array(8),
     // stepTargets: [null, null, null, null] as any[],
@@ -459,6 +461,9 @@ seed24hRef,
   // Big uniforms (still SharedValues, but we will only update them when needed)
   const momentsUniformSV = useSharedValue<number[]>(
     Array(MAX_MOMENTS * 2).fill(0),
+  );
+  const momentProgressUniformSV = useSharedValue<number[]>(
+    Array(MAX_MOMENTS).fill(0),
   );
   const heldMomentUniformSV = useSharedValue<number[]>(
     Array(MAX_HELD * 2).fill(0),
@@ -580,7 +585,7 @@ seed24hRef,
       startingCoord1,
       0.06,
       geckoScoreStateRef.current ?? {},
-       seed24hRef.current ?? {},
+      seed24hRef.current ?? {},
     ),
   );
   const sleepWalk0 = useRef(
@@ -626,9 +631,7 @@ seed24hRef,
       for (let i = 0; i < live.length; i++) {
         const m = live[i];
         const held =
-          m.stored_index != null &&
-          m.stored_index >= 0 &&
-          m.stored_index < 4;
+          m.stored_index != null && m.stored_index >= 0 && m.stored_index < 4;
         snapshot[i] = {
           id: m.id,
           coord: held ? [-100, -100] : [m.coord[0], m.coord[1]],
@@ -645,7 +648,11 @@ seed24hRef,
         triggerSendAllHostCapsulesRef.current = null;
       }
     };
-  }, [triggerSendAllHostCapsulesRef, sendAllHostCapsulesRef, scatteredMomentsRef]);
+  }, [
+    triggerSendAllHostCapsulesRef,
+    sendAllHostCapsulesRef,
+    scatteredMomentsRef,
+  ]);
 
   const handleGetMomentRef = useRef(handleGetMoment);
   useEffect(() => {
@@ -787,7 +794,7 @@ seed24hRef,
       startingCoord1,
       0.06,
       geckoScoreStateRef.current ?? {},
-        seed24hRef.current ?? {},
+      seed24hRef.current ?? {},
     );
 
     workingBuffers.soul.fill(0);
@@ -818,6 +825,7 @@ seed24hRef,
   const syncPawsInUIRef = useRef<() => void>(() => {});
 
   const lastHoldingsVersionRef = useRef(0);
+  const lastProgressVersionRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -928,10 +936,16 @@ seed24hRef,
         gecko.current.oneTimeEnterComplete &&
         !gecko.current.sleepWalkMode
       ) {
-        leadPoint.current.update(userPoint_geckoSpaceRef.current, moments.current.heldCount); //, dt, now);
+        leadPoint.current.update(
+          userPoint_geckoSpaceRef.current,
+          moments.current.heldCount,
+        ); //, dt, now);
       } else {
         sleepWalk0.current.update(moments);
-        leadPoint.current.update(sleepWalk0.current.walk, moments.current.heldCount); //, dt, now);
+        leadPoint.current.update(
+          sleepWalk0.current.walk,
+          moments.current.heldCount,
+        ); //, dt, now);
       }
 
       // ---- sim update ----
@@ -1028,16 +1042,20 @@ seed24hRef,
 
       const holdingsVersion = moments.current.holdingsVersion;
 
+      const progressVersion = guestCapsuleProgressVersionRef.current;
+
       const shouldUpdateBigUniforms =
         leadPoint.current.isMoving ||
         isDragging.value ||
         wasTapSV.value ||
         wasDoubleTapSV.value ||
         moments.current.trigger_remote ||
-        holdingsVersion !== lastHoldingsVersionRef.current;
+        holdingsVersion !== lastHoldingsVersionRef.current ||
+        progressVersion !== lastProgressVersionRef.current;
 
       if (shouldUpdateBigUniforms) {
         lastHoldingsVersionRef.current = holdingsVersion;
+        lastProgressVersionRef.current = progressVersion;
         shaderTimeSV.value = (nowMs() - startMsRef.current) / 1000;
 
         // .
@@ -1075,6 +1093,21 @@ seed24hRef,
         geckoPointsUniformSV.value = Array.from(workingBuffers.geckoPoints);
         momentsUniformSV.value = Array.from(workingBuffers.moments);
         momentsLengthSV.value = moments.current.momentsLength;
+
+        // NEW
+        workingBuffers.momentProgress.fill(0);
+        const map = guestCapsuleProgressMapRef.current;
+        const live = moments.current.moments;
+        const len = moments.current.momentsLength;
+        for (let i = 0; i < len; i++) {
+          const id = live[i]?.id;
+          workingBuffers.momentProgress[i] =
+            (id != null ? map.get(id) : 0) ?? 0;
+        }
+        momentProgressUniformSV.value = Array.from(
+          workingBuffers.momentProgress,
+        );
+        /////////////////////////////
 
         // Trigger shader update (throttle a bit)
         const now = Date.now();
@@ -1146,6 +1179,7 @@ seed24hRef,
         u_moments: momentsUniformSV.value,
         u_heldMoments: heldMomentUniformSV.value,
         u_geckoPoints: geckoPointsUniformSV.value,
+        u_momentProgress: momentProgressUniformSV.value,
       };
     }
 
@@ -1165,6 +1199,7 @@ seed24hRef,
       u_moments: momentsUniformSV.value,
       u_heldMoments: heldMomentUniformSV.value,
       u_geckoPoints: geckoPointsUniformSV.value,
+      u_momentProgress: momentProgressUniformSV.value,
     };
   }, [scale, gecko_scale, aspect, size.width, size.height, width, height]);
 

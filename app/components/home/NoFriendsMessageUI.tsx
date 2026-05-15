@@ -30,14 +30,15 @@ const NoFriendsMessageUI = ({
         {new Date(userCreatedOn).toDateString() === new Date().toDateString()
           ? `Hi ${username}!`
           : `Hi ${username}!`}
-      </Text>
-      <Text style={[welcomeTextStyle, { color: primaryColor, fontSize: 20 }]}>
+      </Text> 
+        <GlobalPressable onPress={navigateToAddFirstFriend} style={styles.pressable}>
+        {/* <SvgIcon name={`plus`} size={30} color={primaryColor}/> */}
+         <Text style={[ { color: primaryColor, fontSize: 18, fontWeight: 'bold' }]}>
         Add a friend to get started.
       </Text> 
-      </>
-      <GlobalPressable onPress={navigateToAddFirstFriend} style={styles.pressable}>
-        <SvgIcon name={`plus`} size={30} color={primaryColor}/>
       </GlobalPressable>
+      </>
+    
    
     </View>
   );
@@ -46,7 +47,7 @@ const NoFriendsMessageUI = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 200,
+    height: 100,
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "column", 
@@ -54,8 +55,8 @@ const styles = StyleSheet.create({
   },
   pressable: {
     height: 40,
-    width: 40,
-    marginTop: 40
+    width: '100%',
+    marginTop: 0
   }
 });
 

@@ -34,7 +34,7 @@ const deleteMomentMutation = useMutation({
   onSuccess: (responseData, variables) => {
     // responseData = what the API returned
     // variables = the original data passed to mutateAsync
-
+console.log(responseData)
     queryClient.setQueryData(["Moments", userId, friendId], (old) => {
       return old ? old.filter((moment) => moment.id !== responseData.id) : [];
     });

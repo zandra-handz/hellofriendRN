@@ -144,11 +144,7 @@ useEffect(() => {
     }
   }, [startWithBackdropTimestamp]);
 
-  const { handleDeleteMoment, deleteMomentMutation } = useDeleteMoment({
-    userId: user.id,
-    friendId: selectedFriend?.id,
-  });
-
+ 
   const { handlePreAddMoment, preAddMomentMutation } = usePreAddMoment({
     userId: user.id,
     friendId: selectedFriend?.id,
@@ -160,18 +156,7 @@ useEffect(() => {
     }
   }, [preAddMomentMutation.isError]);
 
-  const deleteMoment = useCallback(() => {
-    if (!selectedFriend?.id || !moment?.id) {
-      showFlashMessage(`Moment not deleted`, true, 1000);
-      return;
-    }
-    showFlashMessage("Moment deleted", false, 1000);
-    handleDeleteMoment({
-      friend: selectedFriend.id,
-      id: moment?.id,
-      user_category_name: moment.user_category_name,
-    });
-  }, [selectedFriend, moment]);
+ 
 
   useEffect(() => {
     if (preAddMomentMutation.isSuccess) {
@@ -179,11 +164,7 @@ useEffect(() => {
     }
   }, [preAddMomentMutation.isSuccess]);
 
-  useEffect(() => {
-    if (deleteMomentMutation.isSuccess) {
-      setTriggerClose(true);
-    }
-  }, [deleteMomentMutation.isSuccess]);
+ 
 
   const TIME_SCORE = 100;
 
@@ -217,11 +198,12 @@ useEffect(() => {
         moment={moment?.id ? moment : null}
         hasContent={true}
         noContentText={""}
+        userId={user?.id}
         friendId={selectedFriend.id}
         onPressBack={navigateBack}
         onPressShare={handleSendAlert}
         saveToHello={saveToHello}
-        deleteMoment={deleteMoment}
+      
         triggerClose={triggerClose}
         inputNumberVisible={inputNumberVisible}
         // onPressEdit={(handleNavigateToMoment)}

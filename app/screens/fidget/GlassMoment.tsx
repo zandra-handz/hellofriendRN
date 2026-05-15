@@ -23,6 +23,7 @@ import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
 import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import manualGradientColors from "@/app/styles/StaticColors";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const PEEK_HEIGHT = 0;
@@ -62,14 +63,14 @@ const GlassMoment = ({
   userId,
   friendId,
   saveToHello,
-  deleteMoment,
+  
   triggerClose,
 }: Props) => {
   const translateY = useSharedValue(START_Y);
   const hasAnimated = useRef(false);
   const navigation = useNavigation();
   const welcomeTextStyle = AppFontStyles.welcomeText;
-  const { handleDeleteMoment } = useDeleteMoment({ userId, friendId });
+  const { handleDeleteMoment, deleteMomentMutation } = useDeleteMoment({ userId, friendId });
   const { navigateToFriendHome } = useAppNavigations();
 
   const [dangerVisible, setDangerVisible] = useState(false);
@@ -95,6 +96,13 @@ const GlassMoment = ({
     }, []),
   );
 
+    useEffect(() => {
+      if (deleteMomentMutation.isSuccess) {
+        showFlashMessage(`Moment deleted`, false, 1000);
+        handlePressBack();
+        
+      }
+    }, [deleteMomentMutation.isSuccess]);
   const containerAnimationStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));

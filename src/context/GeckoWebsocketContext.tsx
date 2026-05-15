@@ -18,7 +18,7 @@ import {
 } from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import notepack from "notepack.io";
-
+import devSettings from "@/app/styles/DevMode";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { helloFriendApiClient } from "../calls/helloFriendApiClient";
 
@@ -42,8 +42,8 @@ import { helloFriendApiClient } from "../calls/helloFriendApiClient";
 //   * Two new server-pushed actions for the win-match flow:
 //     `gecko_win_match_pending_accept_partner` and `gecko_win_match_finalized`.
 // ---------------------------------------------------------------------------
-
-const RUST_SOCKET_HOST = "wss://badrainbowz.com";
+ 
+const RUST_SOCKET_HOST = devSettings.socketURL;
 const RUST_SOCKET_PATH = "/ws/gecko-rust-test/";
 
 function decodeJwtUserId(token: string): number | null {
@@ -105,11 +105,14 @@ type GuestGeckoCoordsMessage = {
   timestamp?: number;
 };
 
-type GeckoMessage = {
-  from_user: number;
-  message: string | null;
-  received_at: number;
-} | null;
+  type GeckoMessage = {
+    from_user: number;
+    message: string | null;
+    kind: string | null;
+    ref_id: string | null;
+    timestamp: number | null;  // server-side unix ms
+    received_at: number;        // FE-side performance.now()
+  } | null;
 
 type ScoreState = {
   user?: number;
@@ -343,11 +346,17 @@ type GeckoWebsocketContextValue = {
   registerOnLeaveLiveSesh: (cb: () => void) => void;
   registerOnLiveSeshCancelled: (cb: (data: any) => void) => void;
   registerOnGeckoMessage: (
-    cb: (data: { from_user: number; message: string | null }) => void,
+    cb: (data: {
+      from_user: number;
+      message: string | null;
+      kind?: string | null;
+      ref_id?: string | null;
+      timestamp?: number | null;
+    }) => void,
   ) => void;
-
   requestPresenceStatus: () => boolean;
   sendReadStatusToGecko: (messageCode: 0 | 1 | 2) => boolean;
+  sendLosingWarningToGecko: (messageCode: 0 | 1 | 2 | 3) => boolean;
   sendFETextToGecko: (message: string) => boolean;
 
   proposeGeckoWin: (capsuleId: string) => boolean;
@@ -379,6 +388,9 @@ type ProviderProps = {
 };
 
 export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
+
+  const devMode = devSettings;
+
   const [liveSeshPartner, setLiveSeshPartner] = useState<LiveSeshPartner>(null);
 
   const socketStatusSV = useSharedValue<SocketStatus>("disconnected");
@@ -431,8 +443,15 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const onLeaveLiveSeshRef = useRef<(() => void) | null>(null);
   const onLiveSeshCancelledRef = useRef<((data: any) => void) | null>(null);
   const onGeckoMessageRef = useRef<
-    ((d: { from_user: number; message: string | null }) => void) | null
+    ((d: {
+      from_user: number;
+      message: string | null;
+      kind?: string | null;
+      ref_id?: string | null;
+      timestamp?: number | null;
+    }) => void) | null
   >(null);
+
 
   const peerGeckoPositionSV = useSharedValue<PeerGeckoPosition>(null);
   const hostPeerGeckoPositionSV = useSharedValue<HostPeerGeckoPosition>(null);
@@ -873,7 +892,6 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     wsRef.current.send(JSON.stringify({ action: "request_peer_presence" }));
     return true;
   }, [peerJoinedStatusSV, sharedColorLightSV, sharedColorDarkSV]);
-
   const sendReadStatusToGecko = useCallback((messageCode: 0 | 1 | 2) => {
     console.log("sending read status?");
 
@@ -884,27 +902,53 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     wsRef.current.send(
       JSON.stringify({
         action: "send_read_status_to_gecko",
-        data: { message_code: messageCode },
+        data: {
+          message_code: messageCode,
+          kind: "read_status",
+          ref_id: String(messageCode),
+        },
       }),
     );
 
     return true;
   }, []);
 
-  const sendFETextToGecko = useCallback((message: string) => {
+  const sendLosingWarningToGecko = useCallback((messageCode: 0 | 1 | 2 | 3) => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) {
       return false;
     }
 
     wsRef.current.send(
       JSON.stringify({
-        action: "send_front_end_text_to_gecko",
-        data: { message },
+        action: "send_losing_warning_to_gecko",
+        data: {
+          message_code: messageCode,
+          kind: "losing_warning",
+          ref_id: String(messageCode),
+        },
       }),
     );
 
     return true;
   }, []);
+
+  const sendFETextToGecko = useCallback(
+    (message: string, kind?: string, refId?: string) => {
+      if (wsRef.current?.readyState !== WebSocket.OPEN) {
+        return false;
+      }
+
+      wsRef.current.send(
+        JSON.stringify({
+          action: "send_front_end_text_to_gecko",
+          data: { message, kind, ref_id: refId },
+        }),
+      );
+
+      return true;
+    },
+    [],
+  );
 
   const flushPendingUpdateGeckoData = useCallback(() => {
     if (
@@ -1664,17 +1708,19 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
         return;
       }
 
-      if (message.action === "gecko_message") {
-        geckoMessageSV.value = {
-          from_user: message.data?.from_user,
-          message: message.data?.message ?? null,
-          received_at: performance.now(),
-        };
+  if (message.action === "gecko_message") {
+    geckoMessageSV.value = {
+      from_user: message.data?.from_user,
+      message: message.data?.message ?? null,
+      kind: message.data?.kind ?? null,
+      ref_id: message.data?.ref_id ?? null,
+      timestamp: message.data?.timestamp ?? null,
+      received_at: performance.now(),
+    };
 
-        onGeckoMessageRef.current?.(message.data);
-        return;
-      }
-
+    onGeckoMessageRef.current?.(message.data);
+    return;
+  }
       if (message.action === "gecko_coords") {
         if (
           Array.isArray(message.data?.position) &&
@@ -1944,6 +1990,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
       requestPresenceStatus,
       sendReadStatusToGecko,
+      sendLosingWarningToGecko,
       sendFETextToGecko,
       matchesSV,
       sendMatchRequest,
@@ -2018,6 +2065,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
       sendMatchRequest,
       sendRaw,
       sendReadStatusToGecko,
+      sendLosingWarningToGecko,
       setWantsConnection,
       sharedColorDarkSV,
       sharedColorLightSV,

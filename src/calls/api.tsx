@@ -20,33 +20,70 @@ export type addressTypeVariant = {
   longitude: string;
 };
 
-export function handleApiError(e: unknown, contextMessage = "API error") {
-  console.error(`${contextMessage}:`, e);
 
-  if (axios.isAxiosError(e)) {
-    if (e.response) {
-      console.log("Server responded with: REMOVED THIS it is html doc"); //, e.response.data);
 
-      const msg =
-        (e.response.data as { msg?: string; error?: string })?.msg ||
-        (e.response.data as { error?: string })?.error;
-      throw new Error(msg || "Something went wrong");
-    } else if (e.request) {
-      console.log("No response from server:", e.request);
-      throw new Error("No response from server, please check your network");
-    } else {
-      console.log("Axios error without response or request:", e.message);
+
+  export function handleApiError(e: unknown, contextMessage = "API error"): never {
+    console.error(`${contextMessage}:`, e);
+
+    if (axios.isAxiosError(e)) {
+      if (e.response) {
+        const data = e.response.data;
+        let msg: string | undefined;
+
+        if (typeof data === "string") {
+          msg = data;
+        } else if (data && typeof data === "object") {
+          msg = (data as { detail?: string }).detail;
+          // serializer.errors fallback: {"email": ["already exists"]}
+          if (!msg) {
+            const firstField = Object.values(data)[0];
+            if (Array.isArray(firstField) && typeof firstField[0] === "string") {
+              msg = firstField[0];
+            }
+          }
+        }
+
+        throw new Error(msg || "Something went wrong");
+      } else if (e.request) {
+        throw new Error("No response from server, please check your network");
+      }
       throw new Error("Unexpected Axios error");
     }
+
+    if (e instanceof Error) throw new Error("Unexpected error occurred");
+    throw new Error("An unknown error occurred");
   }
 
-  if (e instanceof Error) {
-    console.log("Unexpected non-Axios error:", e.message);
-    throw new Error("Unexpected error occurred");
-  }
 
-  throw new Error("An unknown error occurred");
-}
+  // old
+// export function handleApiError(e: unknown, contextMessage = "API error") {
+//   console.error(`${contextMessage}:`, e);
+
+//   if (axios.isAxiosError(e)) {
+//     if (e.response) {
+//       console.log("Server responded with: REMOVED THIS it is html doc"); //, e.response.data);
+
+//       const msg =
+//         (e.response.data as { msg?: string; error?: string })?.msg ||
+//         (e.response.data as { error?: string })?.error;
+//       throw new Error(msg || "Something went wrong");
+//     } else if (e.request) {
+//       console.log("No response from server:", e.request);
+//       throw new Error("No response from server, please check your network");
+//     } else {
+//       console.log("Axios error without response or request:", e.message);
+//       throw new Error("Unexpected Axios error");
+//     }
+//   }
+
+//   if (e instanceof Error) {
+//     console.log("Unexpected non-Axios error:", e.message);
+//     throw new Error("Unexpected error occurred");
+//   }
+
+//   throw new Error("An unknown error occurred");
+// }
 
 //axios.defaults.baseURL = API_URL;
 

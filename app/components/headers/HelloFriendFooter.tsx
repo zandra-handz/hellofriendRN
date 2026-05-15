@@ -140,6 +140,24 @@ const HelloFriendFooter = ({
     [primaryColor],
   );
 
+
+    const RenderGeckoWinsButton = useCallback(
+    () => (
+      <FooterButtonIconVersion
+        primaryColor={primaryColor}
+        label="Wins"
+        icon={
+          <SvgIcon
+            name={"heart"}
+            size={footerIconSize}
+            color={primaryColor}
+          />
+        }
+        onPress={onPress_navigateToGeckoWins}
+      />
+    ),
+    [primaryColor],
+  );
   const handleCenterButtonToggle = () => {
     console.log("button pressed!");
     setGeckoDataVisible((prev) => !prev);
@@ -231,6 +249,9 @@ const HelloFriendFooter = ({
             {/* <View style={styles.section}>
             <RenderGeckoHistoryButton />
           </View> */}
+              <View style={styles.section}>
+          <RenderGeckoWinsButton />
+        </View>
 
         <View style={styles.section}>
           <RenderReportIssueButton />

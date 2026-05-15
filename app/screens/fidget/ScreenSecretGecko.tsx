@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
@@ -257,6 +257,15 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     }, [connect, setWantsConnection, joinLiveSesh, leaveLiveSesh]),
   );
 
+  const [resetSkia, setResetSkia] = useState<number | null>(null);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (s) => {
+      if (s === "active") setResetSkia(Date.now());
+    });
+    return () => sub.remove();
+  }, []);
+
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
       const socketStatus = socketStatusSV.value;
@@ -364,7 +373,7 @@ const ScreenSecretGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
           gecko_scale={1}
           //   gecko_size={1.6}
           gecko_size={2.7} //{1.7}
-          reset={0}
+          reset={resetSkia}
           hostPeerGeckoPositionSV={hostPeerGeckoPositionSV}
           hostCapsulesSV={hostCapsulesSV}
           sendGuestGeckoPositionRef={sendGuestGeckoPositionRef}

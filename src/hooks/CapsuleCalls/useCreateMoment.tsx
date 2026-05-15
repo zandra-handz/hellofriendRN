@@ -65,7 +65,7 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
         user: userId,
         friend: momentData.friend,
         capsule: momentData.moment,
-        user_category: momentData.selectedUserCategory,
+        user_category: momentData.selectedUserCategory || null,
 
         screen_x: 0.5,
         screen_y: 0.5,
@@ -169,11 +169,13 @@ const useCreateMoment = ({ userId, friendId }: Props) => {
       return;
     }
 
+    console.log('MOMENT TRYING TO SAVE: ', momentData)
+
     const moment = {
       user: userId,
       friend: momentData.friend,
       capsule: momentData.moment,
-      user_category: momentData.selectedUserCategory,
+      user_category: momentData.selectedUserCategory || null,
       gecko_game_type: momentData.geckoGameType,
       screen_x: 0.5,
       screen_y: 0.5,

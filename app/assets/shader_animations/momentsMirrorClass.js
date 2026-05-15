@@ -48,6 +48,12 @@ export default class MirrorMoments {
 
     this.trigger_update_host_with_guest_progress = null;
 
+    // ids of moments whose guest_progress decayed from non-zero back to 0
+    // this frame. MirrorPlayGecko drains this each rAF and notifies the host
+    // so its capsule progress map resets — otherwise host keeps the last
+    // non-zero value forever.
+    this.pendingZeroResets = [];
+
     // this.holdings = [
     //   { id: null, coord: new Float32Array(2), stored_index: null },
     //   { id: null, coord: new Float32Array(2), stored_index: null },
@@ -387,10 +393,15 @@ export default class MirrorMoments {
       // skip currently tapped moment so it doesn’t fight growth
       if (i === this.selectedMomentIndex) continue;
 
-      this.moments[i].guest_progress *= 0.85; //  rapid decay
+      const m = this.moments[i];
+      const wasNonZero = m.guest_progress > 0;
+      m.guest_progress *= 0.85; //  rapid decay
 
-      if (this.moments[i].guest_progress < 0.5) {
-        this.moments[i].guest_progress = 0;
+      if (m.guest_progress < 0.5) {
+        m.guest_progress = 0;
+        if (wasNonZero) {
+          this.pendingZeroResets.push(m.id);
+        }
       }
     }
 

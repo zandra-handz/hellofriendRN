@@ -210,6 +210,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     capsuleProgressSV,registerOnCapsuleProgress,
     seed24hRef,
     registerOnSeed24h,
+    sendLosingWarningToGecko,
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
@@ -224,25 +225,46 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
  
 
 const proposeGeckoWinRef = useRef(proposeGeckoWin);
+const warnLoseRef = useRef(sendLosingWarningToGecko);
 
 useEffect(() => {
   proposeGeckoWinRef.current = proposeGeckoWin;
 }, [proposeGeckoWin]);
 
 useEffect(() => {
-  const unregister = registerOnCapsuleProgress(
-    ({ capsule_id, new_progress, from_user }) => {
-      console.log("REGISTER FIRED", capsule_id, new_progress, from_user);
+  warnLoseRef.current = sendLosingWarningToGecko;
+}, [sendLosingWarningToGecko]);
 
-      if (new_progress >= 100) {
-        console.log("PROPOSING FROM REGISTER");
-        proposeGeckoWinRef.current(capsule_id);
-      }
-    },
-  );
+  const guestCapsuleProgressMapRef = useRef<Map<number, number>>(new Map());
+  const guestCapsuleProgressVersionRef = useRef(0);
 
-  return unregister;
-}, [registerOnCapsuleProgress]);
+  
+    useEffect(() => {
+    const unregister = registerOnCapsuleProgress(
+      ({ capsule_id, new_progress, from_user }) => {
+        guestCapsuleProgressMapRef.current.set(capsule_id, new_progress);
+        guestCapsuleProgressVersionRef.current += 1;
+
+        if (new_progress == 25) {
+          warnLoseRef.current(1);
+        }
+
+        if (new_progress == 50) {
+          warnLoseRef.current(2);
+        }
+
+        if (new_progress == 75) {
+          warnLoseRef.current(2);
+        }
+
+        if (new_progress >= 100) {
+             warnLoseRef.current(3);
+          proposeGeckoWinRef.current(capsule_id);
+        }
+      },
+    );
+    return unregister;
+  }, [registerOnCapsuleProgress]);
 
   useFocusEffect(
     useCallback(() => {
@@ -1726,6 +1748,8 @@ useEffect(() => {
           sendAllHostCapsulesRef={sendAllHostCapsulesRef}
           triggerSendAllHostCapsulesRef={triggerSendAllHostCapsulesRef}
           scatteredMomentsRef={scatteredMomentsRef}
+          guestCapsuleProgressMapRef={guestCapsuleProgressMapRef}
+          guestCapsuleProgressVersionRef={guestCapsuleProgressVersionRef}
           // geckoScoreStateRef={geckoScoreStateRef}
         />
       </View>

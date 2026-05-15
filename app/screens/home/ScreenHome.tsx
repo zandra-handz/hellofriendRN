@@ -1,12 +1,13 @@
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserSettings from "@/src/hooks/useUserSettings";
- 
+ import manualGradientColors from "@/app/styles/StaticColors";
 import useGeckoStaticData from "@/src/hooks/useGeckoStaticData";
 import useCurrentLiveSesh from "@/src/hooks/LiveSeshCalls/useCurrentLiveSesh";
- 
+ import MemoizedGeckoSkia from "@/app/assets/shader_animations/GeckoSkia";
+ import MemoizedBraveGeckoSkia from "@/app/assets/shader_animations/BraveGeckoSkia";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import FourButtons from "./FourButtons";
 import CategoriesCard from "./CategoriesCard";
@@ -48,6 +49,8 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
   // ─── all hooks first, no exceptions ────────────────────────────────────────
   const { user } = useUser();
   const { settings } = useUserSettings();
+
+  const [resetSkia, setResetSkia] = useState<number | null>(null);
   // const { geckoCombinedData } = useUserGeckoCombinedData();
 
   const { welcomeScripts } = useGeckoStaticData();
@@ -209,7 +212,26 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
       {friendListAndUpcomingIsSuccess && !isDelaying && (
         <>
           {settings?.id && friendListLength < 1 && (
-            <View style={styles.noFriendsView}>
+
+                      <View style={[StyleSheet.absoluteFill]}>
+                        <MemoizedBraveGeckoSkia
+                          color1={manualGradientColors.lightColor}
+                          color2={lightDarkTheme.shadowGeckoColor
+
+                          }
+                          bckgColor1={manualGradientColors.lightColor}
+                          bckgColor2={manualGradientColors.homeLightColor}
+                          startingCoord0={0.2}
+                          startingCoord1={-1}
+                          restPoint0={0.5}
+                          restPoint1={0.7}
+                          scale={1}
+                          gecko_scale={1}
+          gecko_size={2.8} //1.7
+                          reset={resetSkia}
+                        />
+
+                                 <View style={styles.noFriendsView}>
               <NoFriendsMessageUI
                 backgroundColor={overlayColor}
                 primaryColor={textColor}
@@ -218,6 +240,8 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
                 userCreatedOn={userCreatedOn || ""}
               />
             </View>
+                      </View>
+   
           )}
           <View
             style={[
@@ -290,7 +314,7 @@ const ScreenHome = ({ skiaFontLarge, skiaFontSmall, shouldDelayAnimation }) => {
             )}
           </View>
 
-          {/* <DebugButton onPress={navigateToGeckoWins} /> */}
+    
 
           <HelloFriendFooter
             userId={user.id}

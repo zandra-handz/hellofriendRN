@@ -7,6 +7,7 @@ type ThemeColors = {
   lighterOverlayBackground: string;
   primaryText: string;
   primaryBackground: string;
+  shadowGeckoColor: string;
   signInButton?: string;
   darkerBackground: string;
   darkestBackground: string;
@@ -72,43 +73,45 @@ export const LDThemeProvider: React.FC<{ children: React.ReactNode }> = ({ child
 };
 
 export const lightTheme: ThemeColors = {
-  overlayBackground: "rgba(255, 255, 255, 0.3)",
-  darkerOverlayBackground: "rgba(255, 255, 255, 0.6)",
-  lighterOverlayBackground: "rgba(0, 0, 0, 0.6)",
+  overlayBackground: "#FFFFFF4D",
+  darkerOverlayBackground: "#FFFFFF99",
+  lighterOverlayBackground: "#00000099",
   primaryText: "#121212",
-  primaryBackground: "#ffffff",
-  darkerBackground: "#ccc",
-  darkestBackground: "#ccc",
-  darkGlassBackground: "rgba(240, 240, 255, 0.8)",
-  darkerGlassBackground: "rgba(230, 230, 245, 0.83)",
+  primaryBackground: "#FFFFFF",
+  shadowGeckoColor: "#D8D8D8",
+  darkerBackground: "#CCCCCC",
+  darkestBackground: "#CCCCCC",
+  darkGlassBackground: "#F0F0FFCC",
+  darkerGlassBackground: "#E6E6F5D4",
   dangerZoneText: "#B22222",
-  toggleButtonColor: "#ccc",
-  toggleOn: "#4cd137",
-  toggleOff: "#dcdde1",
-  divider: { width: 1, backgroundColor: "gray" },
-  header: { backgroundColor: "white", borderBottomColor: "gray", borderBottomWidth: 1 },
+  toggleButtonColor: "#CCCCCC",
+  toggleOn: "#4CD137",
+  toggleOff: "#DCDDE1",
+  divider: { width: 1, backgroundColor: "#808080" },
+  header: { backgroundColor: "#FFFFFF", borderBottomColor: "#808080", borderBottomWidth: 1 },
   headerTextColor: "#121212",
-  backdropColor: "rgba(255,255,255,.85)",
+  backdropColor: "#FFFFFFD9",
 };
 
 export const darkTheme: ThemeColors = {
-  overlayBackground: "rgba(0, 0, 0, 0.46)",
-  darkerOverlayBackground: "rgba(0, 0, 0, 0.75)",
-  lighterOverlayBackground: "rgba(255, 255, 255, 0.3)",
-  primaryText: "#d3d3d3",
+  overlayBackground: "#00000075",
+  darkerOverlayBackground: "#000000BF",
+  lighterOverlayBackground: "#FFFFFF4D",
+  primaryText: "#D3D3D3",
   primaryBackground: "#121212",
-  signInButton: "#ebebeb",
+  shadowGeckoColor: "#2E2E2E",
+  signInButton: "#EBEBEB",
   darkerBackground: "#2B2B2B",
   darkestBackground: "#242424",
-  darkGlassBackground: "rgba(0,0,0,0.8)",
-  darkerGlassBackground: "rgba(0,0,0,0.83)",
+  darkGlassBackground: "#000000CC",
+  darkerGlassBackground: "#000000D4",
   dangerZoneText: "#B22222",
   borderColor: "#121212",
-  toggleButtonColor: "#ccc",
-  toggleOn: "#4cd137",
-  toggleOff: "#dcdde1",
-  divider: { width: 0.4, backgroundColor: "#ccc" },
-  header: { backgroundColor: "black", borderBottomColor: "darkgray", borderBottomWidth: 1 },
-  headerTextColor: "#d3d3d3",
-  backdropColor: "rgba(0,0,0,.85)",
+  toggleButtonColor: "#CCCCCC",
+  toggleOn: "#4CD137",
+  toggleOff: "#DCDDE1",
+  divider: { width: 0.4, backgroundColor: "#CCCCCC" },
+  header: { backgroundColor: "#000000", borderBottomColor: "#A9A9A9", borderBottomWidth: 1 },
+  headerTextColor: "#D3D3D3",
+  backdropColor: "#000000D9",
 };

@@ -288,7 +288,7 @@ const ScreenMoments = () => {
 <AnimatedTogglerBig
   colorA={textColor}
   colorB={textColor}
-  backgroundColor={overlayColor}
+  backgroundColor={'transparent'}
   onPress={navigateBack}
   labelA="Back"
   labelB="Back"
@@ -299,6 +299,8 @@ const ScreenMoments = () => {
     timing={300}      // A↔B crossfade speed (default 200)
   hideTiming={400}  // show/hide fade speed (default 200)
   labelSide={'bottom'}
+  shadowColorA={'transparent'}
+  shadowColorB={'transparent'}
 />
     </SafeViewFriendHome>
   );
