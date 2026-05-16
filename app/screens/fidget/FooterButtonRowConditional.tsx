@@ -16,6 +16,9 @@ type ButtonConfig = {
 type FooterButtonRowConditionalProps = {
   primaryButtons: ButtonConfig[];
   secondaryButtons: ButtonConfig[];
+  /** Rendered dead-center of the row, on top of and independent of the
+   *  crossfading primary/secondary rows. Used for the PawSetter. */
+  centerContent?: React.ReactNode;
   showSecondary: boolean;
   backgroundColor?: string;
   color?: string;
@@ -30,6 +33,7 @@ type FooterButtonRowConditionalProps = {
 const FooterButtonRowConditional = ({
   primaryButtons,
   secondaryButtons,
+  centerContent,
   showSecondary,
   backgroundColor = "rgba(0,0,0,0.3)",
   color = "#fff",
@@ -119,6 +123,12 @@ const FooterButtonRowConditional = ({
         >
           {renderButtons(secondaryButtons)}
         </Animated.View>
+
+        {centerContent && (
+          <View pointerEvents="box-none" style={styles.centerOverlay}>
+            {centerContent}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -148,6 +158,15 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     justifyContent: "space-around",
+  },
+  centerOverlay: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

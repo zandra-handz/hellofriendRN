@@ -1,6 +1,17 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
+import { getSocketURL, subscribeStagingMode } from "@/app/styles/DevMode";
+
+// FOR DEV ONLY, REMOVE FOR PROD
+// Mirrors GeckoWebsocketContext: resolve the host from staging mode and
+// refresh it once whenever staging mode is toggled/hydrated. The next
+// connect() picks up the new host.
+let NOTIFICATIONS_SOCKET_HOST = getSocketURL();
+subscribeStagingMode(() => {
+  NOTIFICATIONS_SOCKET_HOST = getSocketURL();
+});
+const NOTIFICATIONS_SOCKET_PATH = "/ws/notifications/";
 
 type InviteData = {
   from_user: number;
@@ -170,7 +181,7 @@ export function useNotificationsSocket() {
     socketStatusSV.value = "connecting";
 
     const ws = new WebSocket(
-      `wss://badrainbowz.com/ws/notifications/?token=${token}`,
+      `${NOTIFICATIONS_SOCKET_HOST}${NOTIFICATIONS_SOCKET_PATH}?token=${token}`,
     );
 
     ws.onopen = () => {

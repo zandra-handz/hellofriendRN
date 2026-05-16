@@ -49,7 +49,6 @@ import AnimatedCounter from "./AnimatedCounter";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import NoGradientBackground from "@/app/components/appwide/format/NoGradientBackground";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
-import GlassPreviewBottom from "./GlassPreviewBottom";
 import GlassTopBarLight from "./GlassTopBarLight";
 import MomentsSkia from "@/app/assets/shader_animations/MomentsSkia";
 import { LightSensor, DeviceMotion } from "expo-sensors";
@@ -525,13 +524,6 @@ useEffect(() => {
   const textColor = lightDarkTheme.primaryText;
   const darkerOverlayColor = lightDarkTheme.darkerOverlayBackground;
 
-  const [rescatterTrigger, setRescatterTrigger] = useState(0);
-  const [recenterTrigger, setRecenterTrigger] = useState(0);
-  const [backTrigger, setBackTrigger] = useState(0);
-
-  const triggerRescatter = () => setRescatterTrigger((prev) => prev + 1);
-  const triggerRecenter = () => setRecenterTrigger((prev) => prev + 1);
-  const triggerBack = () => setBackTrigger((prev) => prev + 1);
 
   const GROQ_MESSAGE_PAUSE_TIME = 10000;
   const { askGroq, onModalCloseRef } = useGroqBeta({
@@ -1692,6 +1684,35 @@ useEffect(() => {
   scatteredMoments?.length,
 ]);
 
+  // Non-engine props for GlassPreviewBottom, which now lives inside
+  // MomentsSkia (co-located with the moments engine + PawSetter).
+  // Memoized so MomentsSkia/GlassPreviewBottom only re-render when the
+  // reactive bits (readingMode/speedSetting) actually change.
+  const glassPreviewProps = useMemo(
+    () => ({
+      fontSmall: skiaFontSmall,
+      readingMode: !manualOnly,
+      speedSetting,
+      color: textColor,
+      momentSV,
+      onPressEdit: handleNavigateToMoment,
+      onPressToggleReadMode: handleToggleManual,
+      onPressChangeSpeed: handleChangeSpeed,
+      onPressGeckoVoice: handleGeckoReadAndAsk,
+    }),
+    [
+      skiaFontSmall,
+      manualOnly,
+      speedSetting,
+      textColor,
+      momentSV,
+      handleNavigateToMoment,
+      handleToggleManual,
+      handleChangeSpeed,
+      handleGeckoReadAndAsk,
+    ],
+  );
+
   return (
     <NoGradientBackground style={styles.backgroundContainer}>
       <View style={[StyleSheet.absoluteFill]}>
@@ -1743,9 +1764,7 @@ useEffect(() => {
           handleRescatterMomentsInternal={handleRescatterMoments_insideMS}
           handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
           handleNavBack={handleNavBack}
-          rescatterTrigger={rescatterTrigger}
-          recenterTrigger={recenterTrigger}
-          backTrigger={backTrigger}
+          glassPreview={glassPreviewProps}
           geckoScoreState={geckoScoreState}
           liveScoreStateRef={scoreStateRef}
           seed24hRef={seed24hRef}
@@ -1833,31 +1852,6 @@ useEffect(() => {
         color={"yellow"}
       />   */}
 
-      <GlassPreviewBottom
-        fontSmall={skiaFontSmall}
-        readingMode={!manualOnly}
-        speedSetting={speedSetting}
-        autoPickUp={autoPickUp}
-        color={textColor}
-        highlightColor={selectedFriend.lightColor}
-        backgroundColor={darkerOverlayColor}
-        borderColor={"transparent"}
-        // moment={moment.id ? moment : null}
-        momentSV={momentSV}
-        hasContent={scatteredMoments.length > 0}
-        noContentText={BLANK_WINDOW_MESSAGE}
-        onPressEdit={handleNavigateToMoment}
-        onPressNew={handleNavigateToCreateNew}
-        onPress_rescatterMoments={triggerRescatter}
-        onPress_recenterMoments={triggerRecenter}
-        onPress_saveAndExit={triggerBack}
-        onPress_toggleReadMode={handleToggleManual}
-        onPress_changeSpeed={handleChangeSpeed}
-        onPress_geckoVoice={handleGeckoReadAndAsk}
-        onPress_debugSendWin={proposeGeckoWin}
-        // onPress_autoPickUpScreen={handleNavToSelect}
-        // onPress_QRCodeScreen={handleNavToQRCode}
-      />
     </NoGradientBackground>
   );
 };

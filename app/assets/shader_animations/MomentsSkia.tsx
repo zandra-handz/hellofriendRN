@@ -17,7 +17,7 @@ import {
   // packGeckoOnlyProdCompact40,
   packGeckoOnlyProdCompact_56,
 } from "./animUtils";
-import PawSetter from "@/app/screens/fidget/PawSetter";
+import GlassPreviewBottom from "@/app/screens/fidget/GlassPreviewBottom";
 import {
   MOMENTS_BG_SKSL_OPT,
   MOMENTS_BG_SKSL_OPT_BOXED,
@@ -155,9 +155,10 @@ const MomentsSkia = ({
   handleRescatterMomentsInternal,
   handleRecenterMomentsInternal,
   handleNavBack,
-  rescatterTrigger,
-  recenterTrigger,
-  backTrigger,
+  // Non-engine props for the (now nested) GlassPreviewBottom bottom bar:
+  // { fontSmall, readingMode, speedSetting, color, momentSV,
+  //   onPressEdit, onPressToggleReadMode, onPressChangeSpeed, onPressGeckoVoice }
+  glassPreview,
   geckoScoreState,
   seed24hRef,
   registerOnSeed24h,
@@ -235,31 +236,12 @@ const MomentsSkia = ({
     // });
   }, [hasReceivedInitialScoreStateRef, initialBackendEnergyUpdatedAtRef]);
 
-  const handleRescatterMoments_useMomentClass = () => {
+  // Bottom-bar actions call straight into the moments engine (no trigger
+  // counters / cross-component setState round-trip).
+  const handleRescatterPress = () =>
     handleRescatterMomentsInternal(moments.current.moments);
-  };
-
-  useEffect(() => {
-    if (rescatterTrigger) {
-      handleRescatterMoments_useMomentClass();
-    }
-  }, [rescatterTrigger]);
-
-  const handleRecenterMoments_useMomentClass = () => {
+  const handleRecenterPress = () =>
     handleRecenterMomentsInternal(moments.current.moments);
-  };
-
-  useEffect(() => {
-    if (rescatterTrigger) {
-      handleRescatterMomentsInternal(moments.current.moments);
-    }
-  }, [rescatterTrigger]);
-
-  useEffect(() => {
-    if (recenterTrigger) {
-      handleRecenterMomentsInternal(moments.current.moments);
-    }
-  }, [recenterTrigger]);
 
   useEffect(() => {
     if (!registerOnSeed24h) return;
@@ -415,16 +397,11 @@ const MomentsSkia = ({
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    if (backTrigger) {
-      const run = async () => {
-        await handleUpdateMomentsState();
-        await handleUpdateGeckoDataState();
-        handleNavBack();
-      };
-      run();
-    }
-  }, [backTrigger]);
+  const handleSaveAndExitPress = async () => {
+    await handleUpdateMomentsState();
+    await handleUpdateGeckoDataState();
+    handleNavBack();
+  };
 
   // const TOTAL_GECKO_POINTS = 71;
   const MAX_MOMENTS = 30;
@@ -1248,41 +1225,52 @@ const MomentsSkia = ({
           )}
         </View>
       </GestureDetector>
-
-      <View style={styles.pawSetterContainer}>
-        <PawSetter
-          color={lightDarkTheme.primaryText}
-          backgroundColor={lightDarkTheme.darkerOverlayBackground}
-          borderColor={lightDarkTheme.lighterOverlayBackground}
-          momentsData={moments.current.moments}
-          lastSelected={moments.current.lastSelected}
-          updatePaw={(moment, holdIndex) =>
-            moments.current.updateHold(moment, holdIndex)
-          }
-          clearPaw={(holdIndex) => moments.current.clearHolding(holdIndex)}
-          autoUpdatePaw={(holdIndex) =>
-            moments.current.updateHold(moment, holdIndex)
-          }
-          updateSelected={(holdIndex) =>
-            moments.current.updateSelected(holdIndex)
-          }
-          registerClearAll={(fn) => {
+ 
+  <View style={{bottom: 0, position: 'absolute', width: '100%'}}>
+    
+      <GlassPreviewBottom
+        fontSmall={glassPreview?.fontSmall}
+        readingMode={glassPreview?.readingMode}
+        speedSetting={glassPreview?.speedSetting}
+        color={glassPreview?.color}
+        backgroundColor="hotpink"
+        borderColor="transparent"
+        momentSV={glassPreview?.momentSV}
+        onPressEdit={glassPreview?.onPressEdit}
+        onPress_toggleReadMode={glassPreview?.onPressToggleReadMode}
+        onPress_changeSpeed={glassPreview?.onPressChangeSpeed}
+        onPress_geckoVoice={glassPreview?.onPressGeckoVoice}
+        onPress_rescatterMoments={handleRescatterPress}
+        onPress_recenterMoments={handleRecenterPress}
+        onPress_saveAndExit={handleSaveAndExitPress}
+        pawSetter={{
+          color: lightDarkTheme.primaryText,
+          backgroundColor: lightDarkTheme.darkerOverlayBackground,
+          borderColor: lightDarkTheme.lighterOverlayBackground,
+          momentsData: moments.current.moments,
+          lastSelected: moments.current.lastSelected,
+          updatePaw: (moment, holdIndex) =>
+            moments.current.updateHold(moment, holdIndex),
+          clearPaw: (holdIndex) => moments.current.clearHolding(holdIndex),
+          autoUpdatePaw: (holdIndex) =>
+            moments.current.updateHold(moment, holdIndex),
+          updateSelected: (holdIndex) =>
+            moments.current.updateSelected(holdIndex),
+          registerClearAll: (fn) => {
             clearAllPawsInUIRef.current = fn;
-          }}
-          registerSyncPaws={(fn) => {
+          },
+          registerSyncPaws: (fn) => {
             syncPawsInUIRef.current = fn;
-          }}
-          clearAllPaws={() => moments.current.clearAllHoldings()}
-          handleGetMoment={handleGetMoment}
-        />
-      </View>
+          },
+          clearAllPaws: () => moments.current.clearAllHoldings(),
+          handleGetMoment: handleGetMoment,
+        }}
+      />
+        
+  </View>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  pawSetterContainer: { position: "absolute", bottom: 240, left: 16 },
-});
 
 const MemoizedMomentsSkia = React.memo(MomentsSkia);
 export default MemoizedMomentsSkia;
