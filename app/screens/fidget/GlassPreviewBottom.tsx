@@ -1,10 +1,5 @@
-import React, { useRef, useMemo } from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet,
-  useWindowDimensions,
-} from "react-native";
+import React, { useRef, useMemo, useState } from "react";
+import { View, Pressable, StyleSheet, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
 import Animated, {
@@ -24,12 +19,15 @@ import {
   TextAlign,
 } from "@shopify/react-native-skia";
 
-import FooterButtonRowConditional from "./FooterButtonRowConditional";
+import FooterButtonItem from "./FooterButtomItem";
 import PawSetter from "./PawSetter";
+import SvgIcon from "@/app/styles/SvgIcons";
+import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
 
-const HORIZONTAL_PADDING = 100;
-const CANVAS_HEIGHT = 20;
-const MAX_LINES = 1;
+const CAPSULE_BOX_WIDTH = 170; // right-side capsule text box
+const CAPSULE_LEFT_PAD = 24; // gap between paw and capsule text
+const CANVAS_HEIGHT = 60; // ~3 lines so the capsule text isn't clipped
+const MAX_LINES = 3;
 
 const GlassPreviewBottom = ({
   fontSmall,
@@ -105,8 +103,11 @@ const GlassPreviewBottom = ({
     transform: [{ translateY: translateY.value }],
   }));
 
-  const { width: screenWidth } = useWindowDimensions();
-  const canvasWidth = screenWidth - HORIZONTAL_PADDING;
+  // Capsule cell width is measured (it's a flex:1 cell), so the text always
+  // lays out to whatever space is actually left next to buttons + paw.
+  const [canvasWidth, setCanvasWidth] = useState(CAPSULE_BOX_WIDTH);
+  // Drawable text width = cell width minus its left padding.
+  const textWidth = Math.max(0, canvasWidth - CAPSULE_LEFT_PAD);
 
   const paragraph = useDerivedValue(() => {
     const cat = categorySV.value;
@@ -122,7 +123,7 @@ const GlassPreviewBottom = ({
     else if (cap) builder.addText(cap);
     builder.pop();
     const p = builder.build();
-    p.layout(canvasWidth);
+    p.layout(textWidth);
     return p;
   });
 
@@ -132,7 +133,96 @@ const GlassPreviewBottom = ({
     <>
       <Animated.View style={[containerAnimationStyle, styles.previewOuter]}>
         <View style={[styles.previewWrapper, { backgroundColor, borderColor }]}>
-          <View style={styles.momentContentWrapper}>
+          {/* LEFT: buttons. Icon-only and uniformly sized so they stay even.
+              Labels intentionally omitted (commented inline) — re-add the
+              <Text> lines if you want labels back. */}
+          <View style={styles.leftButtons}>
+            <GlobalPressable
+              onPress={onPress_toggleReadMode}
+              style={styles.buttonSlot}
+              hitSlop={8}
+            >
+              <SvgIcon
+                name={
+                  readingMode ? "motion_pause_outline" : "motion_play_outline"
+                }
+                size={18}
+                color={color}
+              />
+              {/* <Text style={{ color, fontSize: 9 }}>
+                {readingMode ? "Reading..." : "Resting"}
+              </Text> */}
+            </GlobalPressable>
+
+            <GlobalPressable
+              onPress={onPress_rescatterMoments}
+              style={styles.buttonSlot}
+              hitSlop={8}
+            >
+              <SvgIcon name="scatter_plot" size={18} color={color} />
+              {/* <Text style={{ color, fontSize: 9 }}>Scatter</Text> */}
+            </GlobalPressable>
+
+            <GlobalPressable
+              onPress={() =>
+                Alert.alert("Just to be sure", "Save game and exit?", [
+                  { text: "Cancel", style: "cancel" },
+                  { text: "Yes", onPress: onPress_saveAndExit },
+                ])
+              }
+              style={styles.buttonSlot}
+              hitSlop={8}
+            >
+              <SvgIcon name="close" size={18} color={color} />
+              {/* <Text style={{ color, fontSize: 9 }}>Exit</Text> */}
+            </GlobalPressable>
+
+            {/* COMMENTED OUT — recenter ("Reset") button:
+            <View style={styles.buttonSlot}>
+              <FooterButtonItem
+                iconName="image_filter_center_focus"
+                label="Reset"
+                onPress={onPress_recenterMoments}
+                color={color}
+                iconSize={20}
+              />
+            </View>
+            */}
+
+            {/* COMMENTED OUT — speed button:
+            <View style={styles.buttonSlot}>
+              <FooterButtonItem
+                iconName={
+                  speedSetting === 0
+                    ? "speedometer_slow"
+                    : speedSetting === 1
+                    ? "speedometer_medium"
+                    : "speedometer"
+                }
+                label="Speed"
+                onPress={onPress_changeSpeed}
+                color={color}
+                iconSize={20}
+              />
+            </View>
+            */}
+          </View>
+
+          {/* CENTER: PawSetter. Fixed 110x80 box (its real size) reserved
+              in flow so it can't overlap the buttons or capsule text. */}
+          <View style={styles.centerZone}>
+            <PawSetter {...pawSetter} />
+          </View>
+
+          {/* RIGHT: capsule text box (keeps tap-to-edit overlay).
+              flex:1 + onLayout so the text uses whatever width is left. */}
+          <View
+            style={styles.capsuleBox}
+            onLayout={(e) => {
+              const w = Math.floor(e.nativeEvent.layout.width);
+              if (w > 0 && w !== canvasWidth) setCanvasWidth(w);
+            }}
+          >
             {momentIdRef.current && (
               <Pressable
                 onPress={() => onPressEdit({ id: momentIdRef.current })}
@@ -140,70 +230,27 @@ const GlassPreviewBottom = ({
               />
             )}
 
-            <View style={styles.scrollViewContainer}>
-              <Canvas style={{ width: canvasWidth, height: CANVAS_HEIGHT }}>
-                <Group opacity={hasMoment}>
-                  <Paragraph
-                    paragraph={paragraph}
-                    x={0}
-                    y={0}
-                    width={canvasWidth}
-                  />
-                </Group>
-              </Canvas>
-            </View>
-          </View>
+            {/* Ask button — small, icon-only, absolutely positioned in the
+                top-right corner. Absolute => does NOT affect capsule text. */}
+            <GlobalPressable
+              onPress={onPress_geckoVoice}
+              style={styles.askButton}
+              hitSlop={8}
+            >
+              <SvgIcon name="chat" size={18} color={color} />
+            </GlobalPressable>
 
-          <FooterButtonRowConditional
-            backgroundColor="transparent"
-            color={color}
-            style={{ marginBottom: 0 }}
-            iconSize={20}
-            showSecondary={readingMode}
-            centerContent={<PawSetter {...pawSetter} />}
-            primaryButtons={[
-              {
-                iconName: "motion_play_outline",
-                label: "Resting",
-                onPress: onPress_toggleReadMode,
-              },
-              { iconName: "chat", label: "Ask", onPress: onPress_geckoVoice },
-              {
-                iconName: "close",
-                label: "Exit",
-                onPress: onPress_saveAndExit,
-                confirmationRequired: true,
-                confirmationMessage: "Save game and exit?",
-              },
-              {
-                iconName: "image_filter_center_focus",
-                label: "Reset",
-                onPress: onPress_recenterMoments,
-              },
-            ]}
-            secondaryButtons={[
-              {
-                iconName: "motion_pause_outline",
-                label: "Reading...",
-                onPress: onPress_toggleReadMode,
-              },
-              {
-                iconName:
-                  speedSetting === 0
-                    ? "speedometer_slow"
-                    : speedSetting === 1
-                    ? "speedometer_medium"
-                    : "speedometer",
-                label: "Speed",
-                onPress: onPress_changeSpeed,
-              },
-              {
-                iconName: "scatter_plot",
-                label: "Scatter",
-                onPress: onPress_rescatterMoments,
-              },
-            ]}
-          />
+            <Canvas style={{ width: textWidth, height: CANVAS_HEIGHT }}>
+              <Group opacity={hasMoment}>
+                <Paragraph
+                  paragraph={paragraph}
+                  x={0}
+                  y={0}
+                  width={textWidth}
+                />
+              </Group>
+            </Canvas>
+          </View>
         </View>
       </Animated.View>
     </>
@@ -215,31 +262,77 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 60,
     paddingBottom: 230,
-    bottom: 0,
-    backgroundColor: 'red'
+    bottom: 0, 
   },
   previewWrapper: {
     width: "100%",
     height: 220,
     borderRadius: 70,
-    padding: 30,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     paddingTop: 20,
-  },
-  momentContentWrapper: {
-    paddingHorizontal: 20,
-  },
-  scrollViewContainer: {
-    height: 20,
-    width: "100%",
+    paddingBottom: 30,
+    flexDirection: "row",
+    // Every cell is the paw's height and vertically centered as a block, so
+    // the buttons / paw / capsule text all share the SAME top edge and the
+    // buttons can never sit higher than the paw.
     alignItems: "center",
   },
-  momentViewButton: {
-    padding: 20,
-    width: "100%",
-    height: 50,
-    right: 10,
+  // LEFT — equal flex with the capsule cell so the fixed-width paw stays
+  // centered in the bar; buttons left-aligned, top-aligned within this cell.
+  leftButtons: {
+    flex: 1,
+    height: 80,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "flex-start",
+  },
+  buttonSlot: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  // CENTER — PawSetter's real footprint (110x80) reserved IN FLOW, so it
+  // physically can't overlap the buttons or the capsule text.
+  centerZone: {
+    width: 110,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  // RIGHT — takes all remaining width; capsule text measured to fit it.
+  // Same height as the paw, top-aligned so its top matches the buttons/paw.
+  capsuleBox: {
+    flex: 1,
+    height: 80,
+    justifyContent: "flex-start",
+    paddingLeft: CAPSULE_LEFT_PAD,
+    // overflow visible so the Ask button can sit ABOVE the capsule text
+    // (negative top) without being clipped. The text itself is still bounded
+    // by the fixed-size Canvas + single-line paragraph.
+    overflow: "visible",
+  },
+  // Ask button — absolutely positioned ABOVE the capsule text (negative top),
+  // top-right of the capsule side.
+  // zIndex above momentViewButton (9000) so the edit overlay can't eat taps.
+  askButton: {
     position: "absolute",
+    top: -28,
+    right: 0,
+    width: 28,
+    height: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9001,
+  },
+  momentViewButton: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     zIndex: 9000,
   },
 });

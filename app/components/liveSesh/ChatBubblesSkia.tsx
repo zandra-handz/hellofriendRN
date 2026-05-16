@@ -98,10 +98,19 @@ const ChatBubblesSkia = ({
         color: Skia.Color(textColor),
         fontSize: resolvedFontSize,
         fontFamilies: ["Poppins", "System"],
-        fontStyle: { weight: 500 },
+        fontStyle: { weight: 400 }, // message body: normal weight
+        heightMultiplier: 1.35, // looser line height -> more readable
+      };
+      const boldStyle = {
+        ...textStyle,
+        fontStyle: { weight: 700 },
       };
       const paraStyle = { textAlign: TextAlign.Left, maxLines: 20 };
       const builder = Skia.ParagraphBuilder.Make(paraStyle, fontMgr);
+      // Every message starts with a bold "Gecko:" prefix.
+      builder.pushStyle(boldStyle);
+      builder.addText("Gecko: ");
+      builder.pop();
       builder.pushStyle(textStyle);
       builder.addText(m.text);
       builder.pop();

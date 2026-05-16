@@ -1787,6 +1787,7 @@ useEffect(() => {
         backgroundColor={lightDarkTheme.darkerOverlayBackground}
         friendId={selectedFriend.id}
         friendName={selectedFriend.name}
+        liveSeshPartner={liveSeshPartner}
         requestPresenceStatus={requestPresenceStatus}
         highlight={false}
         fontSmall={skiaFontSmall}

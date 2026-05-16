@@ -1226,14 +1226,14 @@ const MomentsSkia = ({
         </View>
       </GestureDetector>
  
-  <View style={{bottom: 0, position: 'absolute', width: '100%'}}>
+  <View style={{bottom: 50, position: 'absolute', width: '100%'}}>
     
       <GlassPreviewBottom
         fontSmall={glassPreview?.fontSmall}
         readingMode={glassPreview?.readingMode}
         speedSetting={glassPreview?.speedSetting}
         color={glassPreview?.color}
-        backgroundColor="hotpink"
+        backgroundColor="transparent"
         borderColor="transparent"
         momentSV={glassPreview?.momentSV}
         onPressEdit={glassPreview?.onPressEdit}

@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
-    height: 100,
-    width: 100,
+    height: 80,
+    width: 110,
     padding: 10,
     alignItems: "center",
     borderRadius: 30,
