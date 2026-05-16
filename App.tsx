@@ -75,15 +75,15 @@ import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
 
 import ScreenFriendHistory from "./app/screens/helloes/ScreenFriendHistory";
-import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
-import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
+// import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
+// import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
 import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
 import ScreenAuth from "./app/screens/authflow/ScreenAuth";
 import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
 import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
-import ScreenLocationCreate from "./app/screens/locations/ScreenLocationCreate";
-import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
-import ScreenLocationSend from "./app/screens/locations/ScreenLocationSend";
+// import ScreenLocationCreate from "./app/screens/locations/ScreenLocationCreate";
+// import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
+// import ScreenLocationSend from "./app/screens/locations/ScreenLocationSend";
 import ScreenAddFriend from "./app/screens/friends/ScreenAddFriend";
 import ScreenAddImage from "./app/screens/images/ScreenAddImage";
 import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
@@ -105,6 +105,8 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signout } from "./src/calls/api";
+// FOR DEV ONLY, REMOVE FOR PROD
+import { hydrateStagingMode } from "./app/styles/DevMode";
 
 // const queryClient = new QueryClient();
 
@@ -180,6 +182,14 @@ export default Sentry.wrap(function App() {
   const skiaFontLarge = useFont(Poppins_400Regular, 34);
   const skiaFontSmall = useFont(Poppins_400Regular, 16);
 
+  // FOR DEV ONLY, REMOVE FOR PROD
+  // Restore persisted staging mode before any API/socket calls fire so the
+  // axios clients + gecko socket resolve the correct host on cold start.
+  const [stagingHydrated, setStagingHydrated] = useState(false);
+  useEffect(() => {
+    hydrateStagingMode().finally(() => setStagingHydrated(true));
+  }, []);
+
   useEffect(() => {
     async function requestPermissions() {
       if (Platform.OS === "android" && Platform.Version >= 33) {
@@ -201,7 +211,8 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-  const allFontsLoaded = fontsLoaded && skiaFontLarge && skiaFontSmall;
+  const allFontsLoaded =
+    fontsLoaded && skiaFontLarge && skiaFontSmall && stagingHydrated;
 
   useEffect(() => {
     if (allFontsLoaded) {
@@ -211,6 +222,13 @@ export default Sentry.wrap(function App() {
       return () => clearTimeout(t);
     }
   }, [allFontsLoaded]);
+
+  // FOR DEV ONLY, REMOVE FOR PROD
+  // Hold the tree (native splash stays up) until staging mode is restored so
+  // no request/socket connects with the wrong host.
+  if (!stagingHydrated) {
+    return null;
+  }
 
   return (
     <ShareIntentProvider>

@@ -25,9 +25,10 @@ import { Text as RNText } from "react-native";
 import DotPaths from "./DotPaths";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useIsFocused } from "@react-navigation/native";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 type Props = {
-  onCategoryPress: () => void;
+  // onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
   // onPlusPress: () => void;
@@ -55,7 +56,7 @@ const DotsCanvas = ({
   totalJS,
   positions,
   canvasWidth,
-  onCategoryPress,
+  // onCategoryPress,
   catDecimalsValue,
   onCenterPress,
   onCenterSinglePress,
@@ -76,6 +77,8 @@ const DotsCanvas = ({
     onSinglePress: onCenterSinglePress,
     onDoublePress: onCenterPress,
   });
+
+  const { capsuleList } = useCapsuleList();
 
   const [labelsJS, setLabelsJS] = useState([]);
   // const [decimalsJS, setDecimalsJS] = useState([]);
@@ -114,6 +117,19 @@ const DotsCanvas = ({
 
   const [highLightedColor, setHighlightedColor] = useState(null);
   const [highlightCatID, setHighlightID] = useState(null);
+  const [highlightCapsuleId, setHighlightCapsuleId] = useState(null);
+
+  const prevHighlightCapsuleIdRef = useRef(highlightCapsuleId)
+
+  const highlightedCapsuleText = useMemo(() => {
+    if (!capsuleList.length || !highlightCapsuleId || !prevHighlightCapsuleIdRef) return '';
+    if (highlightCapsuleId === prevHighlightCapsuleIdRef?.current) return '';
+    
+    let match = capsuleList.find((capsule) => capsule.id === highlightCapsuleId);
+    return match.capsule;
+
+  }, [highlightCapsuleId, capsuleList]);
+
   const [highlightPosition, setHighlightPosition] = useState<{
     x: number;
     y: number;
@@ -125,6 +141,7 @@ const DotsCanvas = ({
     if (!coloredDotsMode) {
       setHighlightedColor(null);
       setHighlightID(null);
+      setHighlightCapsuleId(null);
       setHighlightPosition(null);
     } else if (sortedCategories.length > 0 && positions.length > 0) {
       const targetCatId =
@@ -154,12 +171,12 @@ const DotsCanvas = ({
   const friendIdValue = useSharedValue(selectedFriend?.id ?? -1);
 
 
-const handleCategoryPress = useCallback((label) => {
-  lastSelectedCatId.current = label.user_category;
-  const hit = positions.find((p) => p.catId === label.user_category);
-  if (hit) onDotPress(hit);
-  onCategoryPress(label.name);
-}, [onCategoryPress, positions, onDotPress]);
+// const handleCategoryPress = useCallback((label) => {
+//   lastSelectedCatId.current = label.user_category;
+//   const hit = positions.find((p) => p.catId === label.user_category);
+//   if (hit) onDotPress(hit);
+//   onCategoryPress(label.name);
+// }, [onCategoryPress, positions, onDotPress]);
 
   useEffect(() => {
     // Update shared value whenever selectedFriend changes
@@ -176,10 +193,12 @@ const handleCategoryPress = useCallback((label) => {
     if (hit) {
       console.log("single press!");
       setHighlightID(hit.catId);
+      setHighlightCapsuleId(hit.capsuleId ?? null);
       setHighlightedColor(hit.color);
       setHighlightPosition({ x: hit.x, y: hit.y });
     } else {
       setHighlightID(null);
+      setHighlightCapsuleId(null);
       setHighlightedColor(null);
       setHighlightPosition(null);
     }
@@ -261,7 +280,20 @@ const handleCategoryPress = useCallback((label) => {
           ]}
         >
           <ScrollView>
-            {sortedCategories.map(({ label, decimal }, index) => {
+        <RNText
+                //  onPress={() => handleCategoryPress(label)}
+                    style={{
+                      color: color,
+                      lineHeight: 30,
+                      opacity:   0.8,
+                      fontFamily: "Poppins-Regular",
+                      fontSize: 13,
+                    }}
+                  >
+                  {highlightedCapsuleText}
+                  </RNText>
+
+            {/* {sortedCategories.map(({ label, decimal }, index) => {
               const percentage = decimal ? Math.round(decimal * 100) : 0;
               const isHighlighted = label.user_category === highlightCatID;
 
@@ -292,7 +324,7 @@ const handleCategoryPress = useCallback((label) => {
                   </RNText>
                 </View>
               );
-            })}
+            })} */}
           </ScrollView>
         </View>
       )}
@@ -310,7 +342,7 @@ const handleCategoryPress = useCallback((label) => {
             <CategoryTooltip
               label={labelText}
               color={color}
-              onPress={onCategoryPress}
+              // onPress={onCategoryPress}
               borderColor={highLightedColor}
               backgroundColor={darkerOverlayBackgroundColor}
               containerStyle={{

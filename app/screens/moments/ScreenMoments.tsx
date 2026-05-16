@@ -269,7 +269,7 @@ const ScreenMoments = () => {
         <TopLayerButton
           iconName={`draw_pen`}
           onPress={handleNavigateToCreateNew}
-              backgroundColor={selectedFriend.lightColor}
+          backgroundColor={selectedFriend.lightColor}
           iconColor={manualGradientColors.homeDarkColor}
           hidden={categoryNavigatorVisible}
           spaceFromBottom={110}
@@ -280,28 +280,27 @@ const ScreenMoments = () => {
         iconName="magnify"
         onPress={handleToggleCatNav}
         backgroundColorValue={topCategoryColor}
- 
         iconColor={manualGradientColors.homeDarkColor}
         hidden={categoryNavigatorVisible}
         spaceFromBottom={62}
       />
-<AnimatedTogglerBig
-  colorA={textColor}
-  colorB={textColor}
-  backgroundColor={'transparent'}
-  onPress={navigateBack}
-  labelA="Back"
-  labelB="Back"
-  iconAName="chevron_left"
-  iconBName="chevron_left"
-  valueAB={false}
-  hidden={categoryNavigatorVisible}
-    timing={300}      // A↔B crossfade speed (default 200)
-  hideTiming={400}  // show/hide fade speed (default 200)
-  labelSide={'bottom'}
-  shadowColorA={'transparent'}
-  shadowColorB={'transparent'}
-/>
+      <AnimatedTogglerBig
+        colorA={textColor}
+        colorB={textColor}
+        backgroundColor={"transparent"}
+        onPress={navigateBack}
+        labelA="Back"
+        labelB="Back"
+        iconAName="chevron_left"
+        iconBName="chevron_left"
+        valueAB={false}
+        hidden={categoryNavigatorVisible}
+        timing={300} // A↔B crossfade speed (default 200)
+        hideTiming={400} // show/hide fade speed (default 200)
+        labelSide={"bottom"}
+        shadowColorA={"transparent"}
+        shadowColorB={"transparent"}
+      />
     </SafeViewFriendHome>
   );
 };

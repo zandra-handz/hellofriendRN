@@ -367,8 +367,8 @@ half4 main(float2 fragCoord) {
     // Early exit: skip pixels outside bounding box
     // ------------------------------------------------
     vec2 boxCenter = u_geckoPoints[10];
-    float halfW = 0.25 * s;
-    float halfH = 0.25 * s;
+    float halfW = 0.27 * s;
+    float halfH = 0.27 * s;
     float boxSDF = max(abs(gecko_uv.x - boxCenter.x) - halfW, abs(gecko_uv.y - boxCenter.y) - halfH);
 
     if (boxSDF > 0.0) {
@@ -382,6 +382,35 @@ half4 main(float2 fragCoord) {
     float geckoSDF = buildGeckoSDF(gecko_uv, s);
     float geckoMask = smoothstep(0.0, 0.002, -geckoSDF);
 
+    // =====================================================================
+    // THIN BORDER AROUND THE GECKO BODY
+    // ---------------------------------------------------------------------
+    // >>> TO TURN THE BORDER OFF: <<<
+    //   Easiest / fully removes it: set the next line to
+    //       float borderWidth = 0.0;
+    //   (a zero-width ring produces no pixels, so there is zero cost and
+    //    no visual border at all.)
+    //
+    //   Alternatively, comment out the whole block between the
+    //   "BORDER START" and "BORDER END" markers below AND the single line
+    //   totalMask = max(totalMask, borderMask); further down (it is
+    //   tagged with the same "BORDER" note). Nothing else depends on it.
+    //
+    //   To re-enable later: restore borderWidth to ~0.006 * s (thicker =
+    //   bigger number) or uncomment the block(s).
+    // ---------------------------------------------------------------------
+    // BORDER START
+    // Ring lives just OUTSIDE the body: geckoSDF in (0, borderWidth].
+    float borderWidth = 0.003 * s;   // 0.0 = OFF. Higher = thicker border.
+    float borderAA    = 0.0015;      // edge softness
+    float borderMask =
+        smoothstep(borderWidth, borderWidth - borderAA, geckoSDF) *
+        smoothstep(0.0, borderAA, geckoSDF);
+    vec3 borderColor = startColor;   // contrasts with endColor fill
+    color = mix(color, borderColor, borderMask);
+    // BORDER END
+    // =====================================================================
+
     // Finger mask (cheap)
     float fingerMask = buildFingerMask(gecko_uv, s);
 
@@ -389,6 +418,14 @@ half4 main(float2 fragCoord) {
     float totalMask = max(geckoMask, fingerMask);
     vec3 geckoColor = endColor * totalMask;
     color = mix(color, geckoColor, totalMask);
+
+    // BORDER: fold the border into the layer alpha so the rim isn't
+    // transparent. If you DISABLE the border by commenting out the
+    // "BORDER START..BORDER END" block above, also comment out THIS line
+    // (it references borderMask, which would no longer exist).
+    // Note: leaving float borderWidth = 0.0; instead does NOT require
+    // touching this line — it stays valid and simply contributes nothing.
+    totalMask = max(totalMask, borderMask);
 
     // Eyes: midpoint between points[0] and [1], offset perpendicular by [1]'s radius
     vec2 headDir = u_geckoPoints[1] - u_geckoPoints[0];
@@ -1527,7 +1564,7 @@ float buildGeckoSDF(vec2 gecko_uv, float s) {
     bodySDF = smoothMin(bodySDF, stepSDF3, stepBlend);
 
     // ------------------------------------------------
-    // ✅ FINGERS COMPLETELY REMOVED - NO CALCULATION AT ALL
+    //  FINGERS COMPLETELY REMOVED - NO CALCULATION AT ALL
     // ------------------------------------------------
 
     return bodySDF;

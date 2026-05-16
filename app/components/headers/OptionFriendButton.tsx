@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     height: "auto",
-    borderRadius: 10,
+    borderRadius: 40,
     borderWidth: 1.5,
     overflow: "visible",
   },
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     left: -1.5,
     right: -1.5,
     bottom: -1.5,
-    borderRadius: 10,
+    borderRadius: 40,
     borderWidth: 1.5,
   },
   text: {

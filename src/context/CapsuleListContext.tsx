@@ -14,6 +14,7 @@ type CategorySize = {
 };
 
 type CapsuleChartItem = {
+  id: number;
   name: string;
   size: number;
   user_category: number;
@@ -125,6 +126,7 @@ const transformCapsuleData = (
   };
 
   const capsuleChartData: CapsuleChartItem[] = capsules.map((c) => ({
+    id: c.id,
     name: c.capsule?.slice(0, 20) ?? 'untitled',
     size: c.charCount ?? c.capsule?.length ?? 1,
     user_category: Number(c.user_category),

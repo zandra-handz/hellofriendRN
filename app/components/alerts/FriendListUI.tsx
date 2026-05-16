@@ -1,8 +1,7 @@
 import { View, StyleSheet, FlatList, ListRenderItemInfo } from "react-native";
 import React, { useCallback, useEffect, useRef } from "react";
 import OptionFriendButton from "../headers/OptionFriendButton";
-import { Vibration } from "react-native";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { Vibration } from "react-native"; 
 import { Friend } from "@/src/types/FriendTypes";
 import manualGradientColors from "@/app/styles/StaticColors";
 import SvgIcon from "@/app/styles/SvgIcons";
@@ -99,7 +98,7 @@ const FriendListUI = ({
   backgroundColor,
   itemColor,
 }: any) => {
-  const { navigateToAddFriend } = useAppNavigations();
+  // const { navigateToAddFriend } = useAppNavigations();
   const { settings } = useUserSettings({ userId });
 
   const pinnedFriend = settings?.pinned_friend;

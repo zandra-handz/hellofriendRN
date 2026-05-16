@@ -16,7 +16,7 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { Vibration } from "react-native";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import GoOptionsModal from "../headers/GoOptionsModal";
+// import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
 import { formatDayOfWeekAbbrevMonth } from "@/src/utils/dateUtils";
 import useUserSettings from "@/src/hooks/useUserSettings";
@@ -243,7 +243,8 @@ const FriendHeaderMessageUI: React.FC<any> = ({
               </View>
 
               <GeckoGoButton
-                onSinglePress={() => setOptionsModalVisible(true)}
+                // onSinglePress={() => setOptionsModalVisible(true)}
+                onSinglePress={navigateToFinalize}
                 onDoublePress={navigateToFinalize}
                 color={primaryColor}
                 backgroundColor={"transparent"}
@@ -253,7 +254,7 @@ const FriendHeaderMessageUI: React.FC<any> = ({
         )}
       </Pressable>
 
-      {optionsModalVisible && (
+      {/* {optionsModalVisible && (
         <GoOptionsModal
           primaryColor={primaryColor}
           backgroundColor="red"
@@ -261,7 +262,7 @@ const FriendHeaderMessageUI: React.FC<any> = ({
           isVisible={optionsModalVisible}
           closeModal={() => setOptionsModalVisible(false)}
         />
-      )}
+      )} */}
     </View>
   );
 };

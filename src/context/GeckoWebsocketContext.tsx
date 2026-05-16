@@ -18,7 +18,8 @@ import {
 } from "react-native-reanimated";
 import * as SecureStore from "expo-secure-store";
 import notepack from "notepack.io";
-import devSettings from "@/app/styles/DevMode";
+// import devSettings from "@/app/styles/DevMode";
+import { getSocketURL, subscribeStagingMode } from "@/app/styles/DevMode";
 import manualGradientColors from "@/app/styles/StaticColors";
 import { helloFriendApiClient } from "../calls/helloFriendApiClient";
 
@@ -43,7 +44,14 @@ import { helloFriendApiClient } from "../calls/helloFriendApiClient";
 //     `gecko_win_match_pending_accept_partner` and `gecko_win_match_finalized`.
 // ---------------------------------------------------------------------------
  
-const RUST_SOCKET_HOST = devSettings.socketURL;
+// const RUST_SOCKET_HOST = devSettings.socketURL;
+let RUST_SOCKET_HOST = getSocketURL();
+// FOR DEV ONLY, REMOVE FOR PROD
+// Refresh the host once whenever staging mode is toggled/hydrated. The next
+// connect() (sockets only run post-auth) picks up the new host.
+subscribeStagingMode(() => {
+  RUST_SOCKET_HOST = getSocketURL();
+});
 const RUST_SOCKET_PATH = "/ws/gecko-rust-test/";
 
 function decodeJwtUserId(token: string): number | null {
@@ -356,7 +364,7 @@ type GeckoWebsocketContextValue = {
   ) => void;
   requestPresenceStatus: () => boolean;
   sendReadStatusToGecko: (messageCode: 0 | 1 | 2) => boolean;
-  sendLosingWarningToGecko: (messageCode: 0 | 1 | 2 | 3) => boolean;
+  sendLosingWarningToGecko: (messageCode: 0 | 1 | 2 | 3| 4) => boolean;
   sendFETextToGecko: (message: string) => boolean;
 
   proposeGeckoWin: (capsuleId: string) => boolean;
@@ -389,7 +397,7 @@ type ProviderProps = {
 
 export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
 
-  const devMode = devSettings;
+  // const devMode = devSettings;
 
   const [liveSeshPartner, setLiveSeshPartner] = useState<LiveSeshPartner>(null);
 
@@ -913,7 +921,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     return true;
   }, []);
 
-  const sendLosingWarningToGecko = useCallback((messageCode: 0 | 1 | 2 | 3) => {
+  const sendLosingWarningToGecko = useCallback((messageCode: 0 | 1 | 2 | 3 | 4) => {
     if (wsRef.current?.readyState !== WebSocket.OPEN) {
       return false;
     }

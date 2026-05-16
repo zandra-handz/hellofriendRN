@@ -5,15 +5,15 @@ import { useRoute } from "@react-navigation/native";
 
 import {
   useSharedValue,
-  useDerivedValue,
+  useAnimatedReaction,
   runOnJS,
 } from "react-native-reanimated";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
-import DevEnergyButtons from "@/app/components/buttons/DevEnergyButtons";
+// import DevEnergyButtons from "@/app/components/buttons/DevEnergyButtons";
 import SelectedFriendFooter from "@/app/components/headers/SelectedFriendFooter";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+// import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import AnimatedBackdrop from "@/app/components/appwide/format/AnimatedBackdrop";
 // import useGroqBeta from "@/src/hooks/useGroqBeta";
 import useUser from "@/src/hooks/useUser";
@@ -31,9 +31,9 @@ import useFriendListAndUpcoming from "@/src/hooks/usefriendListAndUpcoming";
 
 import TopLayerButton from "@/app/components/home/TopLayerButton";
 import AnimatedTogglerBig from "@/app/components/alerts/AnimatedTogglerBig";
-import { Pressable } from "react-native";
-import { showModalMessage } from "@/src/utils/ShowModalMessage";
-import DebugButton from "@/app/screens/fidget/DebugButton";
+// import { Pressable } from "react-native";
+// import { showModalMessage } from "@/src/utils/ShowModalMessage";
+// import DebugButton from "@/app/screens/fidget/DebugButton";
 import useGeckoStepsLast24Hrs from "@/src/hooks/GeckoCalls/useGeckoStepsLast24Hrs";
 
 const ScreenFriendHome = ({
@@ -42,6 +42,10 @@ const ScreenFriendHome = ({
   shouldDelayAnimation,
 }) => {
   const { user } = useUser();
+
+  const rerenderCountRef = React.useRef(0);
+  rerenderCountRef.current += 1;
+  console.log(`Screen friend rerender count: `, rerenderCountRef.current);
 
   const [isDelaying, setIsDelaying] = React.useState(
     () => shouldDelayAnimation ?? false,
@@ -57,7 +61,7 @@ const ScreenFriendHome = ({
  
 
   const resetTimestamp = route?.params?.resetTimestamp ?? null;
-  const idToSelect = route?.params?.idToSelect ?? null;
+  // const idToSelect = route?.params?.idToSelect ?? null;
   const friendNextDate = route?.params?.friendNextDate ?? null;
   const friendChangeTimestamp = route?.params?.friendChangeTimestamp ?? null;
   const { selectedFriend } = useSelectedFriend();
@@ -73,18 +77,24 @@ const ScreenFriendHome = ({
   //   );
   //   console.log(reply);
   // };
-  const { friendListAndUpcoming, friendListAndUpcomingIsSuccess } =
-    useFriendListAndUpcoming({ userId: user?.id });
-  const friendList = friendListAndUpcoming?.friends;
+  // const { friendListAndUpcomingIsSuccess } =
+  //   useFriendListAndUpcoming({ userId: user?.id });
+  // const friendList = friendListAndUpcoming?.friends;
 
   const coloredDotsModeValue = useSharedValue(false);
   const turnBackdropOnValue = useSharedValue(false);
 
   const [coloredDotsMode, setColoredDotsMode] = React.useState(false);
 
-  useDerivedValue(() => {
-    runOnJS(setColoredDotsMode)(coloredDotsModeValue.value);
-  }, [coloredDotsModeValue]);
+  useAnimatedReaction(
+    () => coloredDotsModeValue.value,
+    (curr, prev) => {
+      // skip initial run (prev === null) and no-op changes
+      if (prev !== null && curr !== prev) {
+        runOnJS(setColoredDotsMode)(curr);
+      }
+    },
+  );
 
   useEffect(() => {
     if (resetTimestamp && coloredDotsModeValue.value) {
@@ -131,19 +141,19 @@ const ScreenFriendHome = ({
     coloredDotsModeValue.value = !coloredDotsModeValue.value;
   }, []);
 
-  const { data: geckoStepsLast24Hrs, refetch: refetchGeckoStepsLast24Hrs } =
-    useGeckoStepsLast24Hrs();
+  // const { data: geckoStepsLast24Hrs, refetch: refetchGeckoStepsLast24Hrs } =
+  //   useGeckoStepsLast24Hrs();
 
-  const handleDebugGeckoSteps = useCallback(async () => {
-    console.log("[geckoStepsLast24Hrs - cached]", geckoStepsLast24Hrs);
-    const result = await refetchGeckoStepsLast24Hrs();
-    console.log("[geckoStepsLast24Hrs - refetch result]", result.data);
-  }, [geckoStepsLast24Hrs, refetchGeckoStepsLast24Hrs]);
+  // const handleDebugGeckoSteps = useCallback(async () => {
+  //   console.log("[geckoStepsLast24Hrs - cached]", geckoStepsLast24Hrs);
+  //   const result = await refetchGeckoStepsLast24Hrs();
+  //   console.log("[geckoStepsLast24Hrs - refetch result]", result.data);
+  // }, [geckoStepsLast24Hrs, refetchGeckoStepsLast24Hrs]);
 
   const { lightDarkTheme } = useLDTheme();
   const backgroundColor = lightDarkTheme.primaryBackground;
   const textColor = lightDarkTheme.primaryText;
-  const overlayColor = lightDarkTheme.overlayBackground;
+  // const overlayColor = lightDarkTheme.overlayBackground;
 
   const PADDING_HORIZONTAL = 6;
 
@@ -157,7 +167,8 @@ const ScreenFriendHome = ({
 
   return (
     <>
-      {friendListAndUpcomingIsSuccess && !isDelaying && (
+      {/* {friendListAndUpcomingIsSuccess && !isDelaying && ( */}
+         {/* {!isDelaying && ( */}
         <SafeViewFriendHome
           friendColorLight={selectedFriend.lightColor}
           friendColorDark={selectedFriend.darkColor}
@@ -169,6 +180,7 @@ const ScreenFriendHome = ({
             {/* <Pressable onPress={handlePress} style={{width: 100, top: 230, zIndex: 10, position: 'absolute', height: 50, backgroundColor: 'red'}}>
 
           </Pressable> */}
+       
             <SelectedFriendHome
               canvasKey={route.key}
               friendName={selectedFriend.name}
@@ -191,6 +203,7 @@ const ScreenFriendHome = ({
               handleMomentScreenNoScroll={handleMomentScreenNoScroll}
               handleNavigateToGecko={handleNavigateToGecko}
             />
+        
 
             <AnimatedBackdrop
               color={lightDarkTheme.backdropColor}
@@ -215,7 +228,7 @@ const ScreenFriendHome = ({
             <AnimatedTogglerBig
               colorA={"transparent"}
               colorB={textColor}
-              backgroundColor={overlayColor}
+              backgroundColor={'transparent'}
               onPress={handleToggleColoredDots}
               labelA="Back"
               labelB="Back"
@@ -226,13 +239,11 @@ const ScreenFriendHome = ({
               labelSide={"bottom"}
               hideTiming={10} // disappear fast
               shadowColorB="transparent"
-              outlineColorB="transparent"
               shadowColorA="transparent"
-              outlineColorA="transparent"
             />
             {/* <DevEnergyButtons/> */}
 
-            <DebugButton bottom={400} onPress={handleDebugGeckoSteps} />
+            {/* <DebugButton bottom={400} onPress={handleDebugGeckoSteps} /> */}
 
             <SelectedFriendFooter
               userId={user.id}
@@ -247,7 +258,7 @@ const ScreenFriendHome = ({
             />
           </>
         </SafeViewFriendHome>
-      )}
+   {/* )} */}
     </>
   );
 };

@@ -1,6 +1,17 @@
- 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { View, StyleSheet, Keyboard, ScrollView } from "react-native";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -9,8 +20,11 @@ import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 import useUser from "@/src/hooks/useUser";
 import { useLDTheme } from "@/src/context/LDThemeContext";
-import { showSpinner, hideSpinner } from "@/app/components/appwide/button/showSpinner";
- 
+import {
+  showSpinner,
+  hideSpinner,
+} from "@/app/components/appwide/button/showSpinner";
+
 import OptionInput from "@/app/components/headers/OptionInput";
 import BouncyEntrance from "@/app/components/headers/BouncyEntrance";
 import SafeViewAppDefault from "@/app/components/appwide/format/SafeViewAppDefault";
@@ -19,10 +33,10 @@ import AuthScreenHeader from "@/app/components/user/AuthScreenHeader";
 import AuthBottomButton from "@/app/components/appwide/button/AuthBottomButton";
 import AnimatedReverseBackdrop from "@/app/components/appwide/format/AnimatedReverseBackdrop";
 import StaticBackdrop from "@/app/components/appwide/format/StaticBackdrop";
- 
+import { setStagingMode, isStagingMode } from "@/app/styles/DevMode";
 import manualGradientColors from "@/app/styles/StaticColors";
-import { AppFontStyles } from "@/app/styles/AppFonts";
- 
+import { AppFontStyles } from "@/app/styles/AppFonts"; 
+import DebugToggle from "@/app/components/headers/DebugToggle";
 
 const MODE_SIGNIN = "signin";
 const MODE_CREATE = "create";
@@ -35,7 +49,8 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
 
   const { lightDarkTheme } = useLDTheme();
   const { refetch, isInitializing } = useUser();
-  const { navigateToWelcome, navigateToRecoverCredentials } = useAppNavigations();
+  const { navigateToWelcome, navigateToRecoverCredentials } =
+    useAppNavigations();
 
   const ActivateBackdrop = useSharedValue(prevScreenHasBackdrop ? 1 : 0);
   const ReverseBackdrop = useSharedValue(triggerReverseBackdrop ? 1 : 0);
@@ -85,35 +100,53 @@ const ScreenAuth = ({ onAuthSuccess, navigation, route }) => {
   const darkColor = manualGradientColors.homeDarkColor;
   const inputTextStyle = AppFontStyles.subWelcomeText;
 
-  const { onSignIn, signinMutation } = useSignIn({ refetchUser: onAuthSuccess ?? refetch });
+  const { onSignIn, signinMutation } = useSignIn({
+    refetchUser: onAuthSuccess ?? refetch,
+  });
   const { onSignUp, signupMutation } = useSignUp({ signInNewUser: onSignIn });
 
-const [isNavigating, setIsNavigating] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
- 
+  const [stagingEnabled, setStagingEnabled] = useState(isStagingMode());
 
-const isPending = isInitializing || isNavigating || signinMutation.isPending || signinMutation.isLoading || signupMutation.isPending;
+  const toggleStaging = useCallback(async () => {
+    const next = !stagingEnabled;
+    setStagingEnabled(next);
+    await setStagingMode(next);
+  }, [stagingEnabled]);
 
+  const isPending =
+    isInitializing ||
+    isNavigating ||
+    signinMutation.isPending ||
+    signinMutation.isLoading ||
+    signupMutation.isPending;
 
-
-// 0=tray, 1=header, 2=username, 3=password (signin) / email (create), 4=password (create), 5=verify (create)
+  // 0=tray, 1=header, 2=username, 3=password (signin) / email (create), 4=password (create), 5=verify (create)
   const staggeredDelays = useMemo(() => {
     const count = isSignIn ? 4 : 6;
     return Array.from({ length: count }, (_, i) => i * BOUNCE_SPEED);
   }, [isSignIn]);
 
   useEffect(() => {
-    const show = Keyboard.addListener("keyboardDidShow", () => setIsKeyboardVisible(true));
-    const hide = Keyboard.addListener("keyboardDidHide", () => setIsKeyboardVisible(false));
-    return () => { show.remove(); hide.remove(); };
+    const show = Keyboard.addListener("keyboardDidShow", () =>
+      setIsKeyboardVisible(true),
+    );
+    const hide = Keyboard.addListener("keyboardDidHide", () =>
+      setIsKeyboardVisible(false),
+    );
+    return () => {
+      show.remove();
+      hide.remove();
+    };
   }, []);
 
-useEffect(() => {
-  if (signinMutation.isSuccess) {
-    showFlashMessage("Success!", false, 2000);
-    setIsNavigating(true);
-  }
-}, [signinMutation.isSuccess]);
+  useEffect(() => {
+    if (signinMutation.isSuccess) {
+      showFlashMessage("Success!", false, 2000);
+      setIsNavigating(true);
+    }
+  }, [signinMutation.isSuccess]);
   useEffect(() => {
     if (signinMutation.isError) {
       showFlashMessage("Oops! Couldn't sign in", true, 2000);
@@ -139,7 +172,7 @@ useEffect(() => {
       return () => {
         if (focusTimeoutRef.current) clearTimeout(focusTimeoutRef.current);
       };
-    }, [usernameEntered, signinMutation.isSuccess])
+    }, [usernameEntered, signinMutation.isSuccess]),
   );
 
   const switchMode = (newMode) => {
@@ -158,7 +191,10 @@ useEffect(() => {
   const focusNextInput = (index, inputRef) => {
     if (!inputRef.current) return;
     inputRef.current.focus();
-    scrollRef.current?.scrollTo({ y: index * (INPUT_HEIGHT + INPUT_GAP), animated: true });
+    scrollRef.current?.scrollTo({
+      y: index * (INPUT_HEIGHT + INPUT_GAP),
+      animated: true,
+    });
   };
 
   const handleUsernameSubmit = () => {
@@ -207,19 +243,25 @@ useEffect(() => {
       console.error(e);
     }
   };
-const handleCreateAccount = async () => {
-  if (password !== verifyPassword) return;
-  const result = await onSignUp(username, email, password);
-  if (result?.status === 201) {
-    showFlashMessage("Account created!", false, 2000);
-    setIsNavigating(true);
-  } else if (result?.error) {
-    showFlashMessage("Error: " + result.error, true, 2000);
-  }
-};
+  const handleCreateAccount = async () => {
+    if (password !== verifyPassword) return;
+    const result = await onSignUp(username, email, password);
+    if (result?.status === 201) {
+      showFlashMessage("Account created!", false, 2000);
+      setIsNavigating(true);
+    } else if (result?.error) {
+      showFlashMessage("Error: " + result.error, true, 2000);
+    }
+  };
 
   const canSubmitSignIn = username && password && !isPending;
-  const canSubmitCreate = username && email && password && passwordsMatch && !isPending && !isKeyboardVisible;
+  const canSubmitCreate =
+    username &&
+    email &&
+    password &&
+    passwordsMatch &&
+    !isPending &&
+    !isKeyboardVisible;
 
   const activeInputProps = {
     textStyle: inputTextStyle,
@@ -229,8 +271,7 @@ const handleCreateAccount = async () => {
     buttonColor: textColor,
   };
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (isPending) {
       showSpinner(backgroundColor);
     } else {
@@ -240,7 +281,7 @@ const handleCreateAccount = async () => {
 
   return (
     <>
-{/* 
+      {/* 
     {isPending && (
       <AppCustomSpinner
       backgroundColor={
@@ -250,9 +291,12 @@ const handleCreateAccount = async () => {
       color2={manualGradientColors.darkColor}
       />
     )} */}
-{/* {isPending ? showSpinner(backgroundColor) : hideSpinner()} */}
+      {/* {isPending ? showSpinner(backgroundColor) : hideSpinner()} */}
 
-      <SafeViewAppDefault customStatusIsDarkMode={true} style={styles.container}>
+      <SafeViewAppDefault
+        customStatusIsDarkMode={true}
+        style={styles.container}
+      >
         <StaticBackdrop
           color={backgroundColor}
           zIndex={0}
@@ -269,9 +313,25 @@ const handleCreateAccount = async () => {
 
         {!isPending && (
           <View style={styles.outerContainer}>
-            <BouncyEntrance delay={staggeredDelays[0]} style={{ width: "100%" }}>
+        
+              <DebugToggle
+                value={stagingEnabled}
+                onToggle={toggleStaging}
+                textColor={textColor}
+                backgroundColor={backgroundColor}
+                top={50}
+                left={100}
+   
+              />
+ 
+            <BouncyEntrance
+              delay={staggeredDelays[0]}
+              style={{ width: "100%" }}
+            >
               <AuthScreenTray
-                onBackPress={() => switchMode(isSignIn ? MODE_CREATE : MODE_SIGNIN)}
+                onBackPress={() =>
+                  switchMode(isSignIn ? MODE_CREATE : MODE_SIGNIN)
+                }
                 rightLabel={isSignIn ? "Forgot password" : null}
                 onRightPress={isSignIn ? navigateToRecoverCredentials : null}
                 onHomePress={navigateToWelcome}
@@ -279,7 +339,10 @@ const handleCreateAccount = async () => {
               />
             </BouncyEntrance>
 
-            <BouncyEntrance delay={staggeredDelays[1]} style={{ width: "100%" }}>
+            <BouncyEntrance
+              delay={staggeredDelays[1]}
+              style={{ width: "100%" }}
+            >
               <AuthScreenHeader
                 color={textColor}
                 label={isSignIn ? "Sign in" : "Create new account"}
@@ -294,7 +357,10 @@ const handleCreateAccount = async () => {
                 showsVerticalScrollIndicator={false}
               >
                 <View style={styles.inputRow}>
-                  <BouncyEntrance delay={staggeredDelays[2]} style={{ width: "100%" }}>
+                  <BouncyEntrance
+                    delay={staggeredDelays[2]}
+                    style={{ width: "100%" }}
+                  >
                     <OptionInput
                       {...activeInputProps}
                       inputRef={usernameInputRef}
@@ -315,7 +381,10 @@ const handleCreateAccount = async () => {
 
                 {!isSignIn && username && usernameSubmitted && (
                   <View style={styles.inputRow}>
-                    <BouncyEntrance delay={staggeredDelays[3]} style={{ width: "100%" }}>
+                    <BouncyEntrance
+                      delay={staggeredDelays[3]}
+                      style={{ width: "100%" }}
+                    >
                       <OptionInput
                         {...activeInputProps}
                         inputRef={emailInputRef}
@@ -338,7 +407,10 @@ const handleCreateAccount = async () => {
                 {((isSignIn && username && usernameSubmitted) ||
                   (!isSignIn && email && emailSubmitted)) && (
                   <View style={styles.inputRow}>
-                    <BouncyEntrance delay={staggeredDelays[isSignIn ? 3 : 4]} style={{ width: "100%" }}>
+                    <BouncyEntrance
+                      delay={staggeredDelays[isSignIn ? 3 : 4]}
+                      style={{ width: "100%" }}
+                    >
                       <OptionInput
                         {...activeInputProps}
                         inputRef={passwordInputRef}
@@ -346,9 +418,13 @@ const handleCreateAccount = async () => {
                         onChangeText={handlePasswordChange}
                         placeholder="Password"
                         secureTextEntry={true}
-                        autoComplete={isSignIn ? "current-password" : "new-password"}
+                        autoComplete={
+                          isSignIn ? "current-password" : "new-password"
+                        }
                         enterKeyHint={isSignIn ? "enter" : "next"}
-                        onSubmitEditing={isSignIn ? handleSignIn : handleFirstPasswordSubmit}
+                        onSubmitEditing={
+                          isSignIn ? handleSignIn : handleFirstPasswordSubmit
+                        }
                         onFocus={() => setFocusedField("password")}
                         onBlur={() => setFocusedField(null)}
                         accessibilityLabel="Password input"
@@ -360,11 +436,18 @@ const handleCreateAccount = async () => {
 
                 {!isSignIn && password && passwordSubmitted && (
                   <View style={styles.inputRow}>
-                    <BouncyEntrance delay={staggeredDelays[5]} style={{ width: "100%" }}>
+                    <BouncyEntrance
+                      delay={staggeredDelays[5]}
+                      style={{ width: "100%" }}
+                    >
                       <OptionInput
                         {...activeInputProps}
-                        primaryColor={!passwordsMatch && verifyPassword ? "red" : textColor}
-                        buttonColor={!passwordsMatch && verifyPassword ? "red" : textColor}
+                        primaryColor={
+                          !passwordsMatch && verifyPassword ? "red" : textColor
+                        }
+                        buttonColor={
+                          !passwordsMatch && verifyPassword ? "red" : textColor
+                        }
                         inputRef={verifyPasswordInputRef}
                         value={verifyPassword}
                         onChangeText={handleVerifyPasswordChange}
@@ -423,6 +506,21 @@ const styles = StyleSheet.create({
   inputRow: {
     width: "100%",
     marginVertical: 6,
+  },
+  devModeTogContainer: {
+    width: 70,
+    height: 50,
+    position: "absolute",
+    top: 50,
+    left: 90,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 100000,
+    elevation: 10000,
+    // backgroundColor: 'red',
+    // borderWidth: 1,
+    // borderColor: 'orange',
+    borderRadius: 999,
   },
   bottomButtonWrapper: {
     width: "100%",

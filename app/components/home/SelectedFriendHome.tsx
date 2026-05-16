@@ -14,6 +14,7 @@ import MomentsField from "./MomentsField";
 import History from "./History";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
+import Momes from "./Momes";
 // import Moments from "./Moments";
 
 interface SelectedFriendHomeProps {
@@ -169,13 +170,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   friendDarkColor={friendDarkColor}
                   primaryColor={primaryColor}
                   welcomeTextStyle={welcomeTextStyle}
-                  backgroundColor={primaryOverlayColor}
-                  onPress={() => console.log("nada!")}
+                  backgroundColor={primaryOverlayColor} 
                 />
               </View>
 
               <View style={styles.itemsContainer}>
-                {capsuleList && !coloredDotsMode && (
+                {/* {capsuleList && !coloredDotsMode && (
                   <View
                     pointerEvents="none"
                     style={styles.animatedClimberWrapper}
@@ -187,7 +187,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                       containerStyle={styles.aniamtedClimberPosition}
                     />
                   </View>
-                )}
+                )} */}
 
                 <View
                   ref={momentsFieldRef}
@@ -198,7 +198,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     },
                   ]}
                 >
-                  <View style={styles.momentsFieldTopBar}>
+                  {/* <View style={styles.momentsFieldTopBar}>
                     <AnimatedToggler
                       labelA={`Categories`}
                       labelB={``}
@@ -214,7 +214,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                       onPressA={handleToggleColoredDots}
                       onPressB={handleToggleColoredDots}
                     />
-                  </View>
+                  </View> */}
 
                   <MomentsField
                     friendId={friendId}
@@ -238,6 +238,16 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 </View>
 
                 <View style={{ opacity: coloredDotsMode ? 0 : 1 }}>
+                      <View
+                    style={{ width: "100%", marginBottom: 6, zIndex: 10000 }}
+                  >
+                    <Momes
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={ELEMENTS_BACKGROUND}
+                      userId={userId}
+                      friendId={friendId}
+                    />
+                  </View>
                   <View
                     style={{ width: "100%", marginBottom: 6, zIndex: 10000 }}
                   >
@@ -257,14 +267,14 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                       friendId={friendId}
                     />
                   </View>
-                  <View style={{ width: "100%", marginTop: 6, zIndex: 2 }}>
+                  {/* <View style={{ width: "100%", marginTop: 6, zIndex: 2 }}>
                     <History
                       primaryColor={primaryColor}
                       primaryOverlayColor={ELEMENTS_BACKGROUND}
                       userId={userId}
                       friendId={friendId}
                     />
-                  </View>
+                  </View> */}
                 </View>
 
                 <View style={styles.scrollViewSpacer}></View>

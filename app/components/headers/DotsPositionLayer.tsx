@@ -16,7 +16,14 @@ import { calculatePercentage } from "@/src/hooks/GradientColorsUril";
 // OUTSIDE the component, module level
 const positionsCache = new Map<
   string,
-  { x: number; y: number; size: number; color: string; catId: number }[]
+  {
+    x: number;
+    y: number;
+    size: number;
+    color: string;
+    catId: number;
+    capsuleId: number;
+  }[]
 >();
 
 const DotsPositionLayer = ({
@@ -26,8 +33,7 @@ const DotsPositionLayer = ({
   darkerOverlayBackgroundColor,
   friendId,
   catDecimals,
-  catLabels,
-  onCategoryPress, 
+  catLabels, 
   onCenterPress,
   onCenterSinglePress,
   totalJS,
@@ -44,7 +50,14 @@ const DotsPositionLayer = ({
   smallFont,
 }) => {
   const [positions, setPositions] = useState<
-    { x: number; y: number; size: number; color: string }[]
+    {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      catId: number;
+      capsuleId: number;
+    }[]
   >([]);
 
   const { width: screenWidth } = useWindowDimensions();
@@ -57,6 +70,7 @@ const DotsPositionLayer = ({
   // NEW: category -> color map
   // const categoryColorMapValue = useSharedValue<Record<number, string>>({});
   const categoryIdsValue = useSharedValue<number[]>([]);
+  const capsuleIdsValue = useSharedValue<number[]>([]);
 
   // NEED THIS TO STOP THE 'FLASH' OF OLD SHARED VALUES IN LEAVES WHEN FRIEND CHANGES
   // useFocusEffect(
@@ -113,10 +127,6 @@ const DotsPositionLayer = ({
 //   categoryColorMapValue.value = categoryColorsMap;
 // }, [categoryColorsMap]);
 
-  useEffect(() => {
-    if (!data) return;
-    categoryIdsValue.value = data.map((d) => d.user_category);
-  }, [data]);
 
   const RADIUS = radius;
 
@@ -146,6 +156,11 @@ const DotsPositionLayer = ({
     const dataCountList = data.filter((item) => Number(item.size) > 0);
     if (dataCountList.length === 0) return;
 
+    // Derive id arrays from the SAME filtered list as decimals so
+    // categoryIds[i] / capsuleIds[i] stay aligned with decimals[i] (and the dot loop).
+    categoryIdsValue.value = dataCountList.map((d) => d.user_category);
+    capsuleIdsValue.value = dataCountList.map((d) => d.id);
+
     decimalsValue.value = [];
     catDecimalsValue.value = [];
     labelsValue.value = [];
@@ -173,6 +188,7 @@ const DotsPositionLayer = ({
     }
 
     const categoryIds = categoryIdsValue.value;
+    const capsuleIds = capsuleIdsValue.value;
     const colorMap = categoryColorMapValue.value;
 
     const centerX = leafCenterXValue.value;
@@ -186,6 +202,7 @@ const DotsPositionLayer = ({
       size: number;
       color: string;
       catId: number;
+      capsuleId: number;
     }[] = [];
 
     const n = decimals.length;
@@ -235,9 +252,17 @@ const DotsPositionLayer = ({
         (Math.random() - 0.5) * cellH * 0.9;
 
       const categoryId = categoryIds[dataIndex];
+      const capsuleId = capsuleIds[dataIndex];
       const dotColor = colorMap[categoryId] ?? colors?.[0];
 
-      arr.push({ x, y, size: finalSize, color: dotColor, catId: categoryId });
+      arr.push({
+        x,
+        y,
+        size: finalSize,
+        color: dotColor,
+        catId: categoryId,
+        capsuleId,
+      });
     }
 
     runOnJS(setPositionsWithCache)(arr);
@@ -268,7 +293,7 @@ const DotsPositionLayer = ({
         totalJS={totalJS}
         canvasWidth={screenWidth}
         darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-        onCategoryPress={onCategoryPress} 
+        // onCategoryPress={onCategoryPress} 
         onCenterPress={onCenterPress}
         onCenterSinglePress={onCenterSinglePress} 
         smallFont={smallFont}

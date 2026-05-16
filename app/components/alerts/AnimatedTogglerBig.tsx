@@ -13,8 +13,6 @@ import SvgIcon from "@/app/styles/SvgIcons";
 import FadeDisappear from "../moments/FadeDisappear";
 
 const DEFAULT_SHADOW_COLOR = "rgba(0,0,0,0.95)";
-const DEFAULT_OUTLINE_COLOR = "rgba(0,0,0,0.95)";
-const OUTLINE_R = 1;
 
 interface Props {
   onPress: () => void;
@@ -32,8 +30,6 @@ interface Props {
   hideTiming?: number;
   shadowColorA?: string;
   shadowColorB?: string;
-  outlineColorA?: string;
-  outlineColorB?: string;
 }
 
 const AnimatedTogglerBig: React.FC<Props> = ({
@@ -52,8 +48,6 @@ const AnimatedTogglerBig: React.FC<Props> = ({
   hideTiming = 200,
   shadowColorA = DEFAULT_SHADOW_COLOR,
   shadowColorB = DEFAULT_SHADOW_COLOR,
-  outlineColorA = DEFAULT_OUTLINE_COLOR,
-  outlineColorB = DEFAULT_OUTLINE_COLOR,
 }) => {
   const pressScale = useSharedValue(1);
 
@@ -133,16 +127,9 @@ const AnimatedTogglerBig: React.FC<Props> = ({
 
   const isVertical = labelSide === "top" || labelSide === "bottom";
 
-  const renderLabel = (label: string, color: string, slotShadowColor: string, slotOutlineColor: string, animStyle: any) => (
+  const renderLabel = (label: string, color: string, animStyle: any) => (
     <Animated.View style={animStyle}>
-      <View style={styles.labelContainer}>
-        <Text style={[styles.label, styles.noWrap, { color: slotOutlineColor, position: "absolute", left: -OUTLINE_R }]}>{label}</Text>
-        <Text style={[styles.label, styles.noWrap, { color: slotOutlineColor, position: "absolute", left: OUTLINE_R }]}>{label}</Text>
-        <Text style={[styles.label, styles.noWrap, { color: slotOutlineColor, position: "absolute", top: -OUTLINE_R }]}>{label}</Text>
-        <Text style={[styles.label, styles.noWrap, { color: slotOutlineColor, position: "absolute", top: OUTLINE_R }]}>{label}</Text>
-        <Text style={[styles.label, styles.noWrap, { color: slotShadowColor, position: "absolute", top: 3 }]}>{label}</Text>
-        <Text style={[styles.label, styles.noWrap, { color }]}>{label}</Text>
-      </View>
+      <Text style={[styles.label, styles.noWrap, { color }]}>{label}</Text>
     </Animated.View>
   );
 
@@ -159,7 +146,6 @@ const AnimatedTogglerBig: React.FC<Props> = ({
     color: string,
     label: string | undefined,
     slotShadowColor: string,
-    slotOutlineColor: string,
     wrapperStyle: any,
     iconStyle: any,
     labelStyle: any,
@@ -174,10 +160,10 @@ const AnimatedTogglerBig: React.FC<Props> = ({
     return (
       <Animated.View style={[slotStyle, wrapperStyle]}>
         {labelSide === "right" && renderIcon(iconName, color, slotShadowColor, iconStyle)}
-        {labelSide === "top" && label && renderLabel(label, color, slotShadowColor, slotOutlineColor, labelStyle)}
-        {(labelSide === "left" || labelSide === "right") && label && renderLabel(label, color, slotShadowColor, slotOutlineColor, labelStyle)}
+        {labelSide === "top" && label && renderLabel(label, color, labelStyle)}
+        {(labelSide === "left" || labelSide === "right") && label && renderLabel(label, color, labelStyle)}
         {(labelSide === "top" || labelSide === "bottom") && renderIcon(iconName, color, slotShadowColor, iconStyle)}
-        {labelSide === "bottom" && label && renderLabel(label, color, slotShadowColor, slotOutlineColor, labelStyle)}
+        {labelSide === "bottom" && label && renderLabel(label, color, labelStyle)}
         {labelSide === "left" && renderIcon(iconName, color, slotShadowColor, iconStyle)}
       </Animated.View>
     );
@@ -197,8 +183,8 @@ const AnimatedTogglerBig: React.FC<Props> = ({
         ]}
       >
         <Animated.View style={[styles.innerContent, isVertical && styles.innerContentVertical, pressStyle]}>
-          {renderSlot(iconAName, colorA, labelA, shadowColorA, outlineColorA, aWrapperStyle, aIconStyle, aLabelStyle, !valueAB)}
-          {renderSlot(iconBName, colorB, labelB, shadowColorB, outlineColorB, bWrapperStyle, bIconStyle, bLabelStyle, valueAB)}
+          {renderSlot(iconAName, colorA, labelA, shadowColorA, aWrapperStyle, aIconStyle, aLabelStyle, !valueAB)}
+          {renderSlot(iconBName, colorB, labelB, shadowColorB, bWrapperStyle, bIconStyle, bLabelStyle, valueAB)}
         </Animated.View>
       </Pressable>
     </View>
@@ -292,11 +278,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-  },
-  labelContainer: {
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
   },
   label: {
     fontSize: 16,

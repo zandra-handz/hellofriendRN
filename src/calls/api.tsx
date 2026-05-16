@@ -991,7 +991,7 @@ export const fetchMomentsAPI = async (
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/`,
     );
-    console.log(response?.data)
+    // console.log(response?.data)
     return response?.data ?? [];
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchMomentsAPI");
@@ -1283,8 +1283,8 @@ export const fetchFriendDashboard = async (friendId: number) => {
     // const duration = endTime - startTime;
 
     // console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
-
-     console.log(response.data[0])
+    console.log('API CALL: frienddashboard');
+    //  console.log(response.data[0])
 
     return response.data[0] || null;
   } catch (error) {

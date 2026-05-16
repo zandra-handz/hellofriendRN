@@ -409,11 +409,11 @@ const MomentsList = ({
               preAdded={preAdded}
             />
 
-            <GoHomeButton
+            {/* <GoHomeButton
               primaryColor={textColor}
               darkerOverlayColor={'transparent'}
               shouldResetRef={shouldResetRef}
-            /> 
+            />  */}
         </View>
 
         <>

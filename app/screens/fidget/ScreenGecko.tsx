@@ -261,6 +261,11 @@ useEffect(() => {
              warnLoseRef.current(3);
           proposeGeckoWinRef.current(capsule_id);
         }
+
+
+        if (new_progress == 0) {
+          warnLoseRef.current(4);
+        }
       },
     );
     return unregister;
@@ -1821,12 +1826,12 @@ useEffect(() => {
           onSelect={proposeGeckoWin}
         />
       </View> */}
-     <DebugButton
+     {/* <DebugButton
         onPress={handleSendAllHostCapsules}
         bottom={460}
         left={32}
         color={"yellow"}
-      />  
+      />   */}
 
       <GlassPreviewBottom
         fontSmall={skiaFontSmall}

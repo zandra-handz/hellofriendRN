@@ -53,6 +53,7 @@ const ToggleButton = ({ value, textColor='oragne', backgroundColor='hotpink', on
         },
       ]}
       onPress={() => {
+        console.log('toggling!')
         onToggle();
       }}
     >

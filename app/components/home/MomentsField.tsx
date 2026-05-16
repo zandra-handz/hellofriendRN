@@ -34,9 +34,9 @@ const MomentsField = ({
 
   const capsuleListCount = capsuleList?.length;
 
-  const handleCenterPress = () => {
-    console.log("disabled nav function in MomentsField");
-  };
+  // const handleCenterPress = () => {
+  //   console.log("disabled nav function in MomentsField");
+  // };
 
   const HEIGHT = 408;
   const CHART_RADIUS = 150;
@@ -97,7 +97,7 @@ const MomentsField = ({
               catDecimals={categorySizes.catDecimals}
               canvasHeight={canvasHeight}
               heightFull={heightFull}
-              onCategoryPress={handleMomentViewScrollTo}
+              // onCategoryPress={handleMomentViewScrollTo}
               onCenterPress={handleToggleColoredDots}
               onCenterSinglePress={handleToggleColoredDots}
               totalJS={capsuleListCount}
