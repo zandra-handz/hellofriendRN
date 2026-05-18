@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
+import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
 
 type Props = {
   onPress: () => void;
@@ -11,7 +12,7 @@ type Props = {
 
 const DebugButton = ({ onPress, bottom=120, left=20, color="orange", zIndex=10000 }: Props) => {
   return (
-    <Pressable
+    <GlobalPressable
       onPress={onPress}
       style={{
         zIndex: zIndex,
@@ -23,7 +24,7 @@ const DebugButton = ({ onPress, bottom=120, left=20, color="orange", zIndex=1000
         backgroundColor: color,
         borderRadius: 999,
       }}
-    ></Pressable>
+    ></GlobalPressable>
   );
 };
 

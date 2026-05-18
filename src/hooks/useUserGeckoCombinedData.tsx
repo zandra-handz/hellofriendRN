@@ -1,31 +1,31 @@
-// import { useQuery } from "@tanstack/react-query";
-// import useUser from "./useUser";
-// import { getUserGeckoCombinedData } from "@/src/calls/api";
+import { useQuery } from "@tanstack/react-query";
+import useUser from "./useUser";
+import { getUserGeckoCombinedData } from "@/src/calls/api";
 
-// const userGeckoCombinedDataQueryOptions = (userId: number) => ({
-//   queryKey: ["userGeckoCombinedData", userId],
-//   queryFn: () => getUserGeckoCombinedData(),
-//   enabled: !!userId,
-//   retry: 3,
-// });
+const userGeckoCombinedDataQueryOptions = (userId: number) => ({
+  queryKey: ["userGeckoCombinedData", userId],
+  queryFn: () => getUserGeckoCombinedData(),
+  enabled: !!userId,
+  retry: 3,
+});
 
-// const useUserGeckoCombinedData = () => {
-//   const { user, isInitializing } = useUser();
+const useUserGeckoCombinedData = () => {
+  const { user, isInitializing } = useUser();
 
-//   const {
-//     data: geckoCombinedData,
-//     isLoading: loadingGeckoCombinedData,
-//     isSuccess: geckoCombinedDataLoaded,
-//   } = useQuery({
-//     ...userGeckoCombinedDataQueryOptions(user?.id ?? 0),
-//     enabled: !!user?.id && !isInitializing,
-//   });
+  const {
+    data: geckoCombinedData,
+    isLoading: loadingGeckoCombinedData,
+    isSuccess: geckoCombinedDataLoaded,
+  } = useQuery({
+    ...userGeckoCombinedDataQueryOptions(user?.id ?? 0),
+    enabled: !!user?.id && !isInitializing,
+  });
 
-//   return {
-//     geckoCombinedData,
-//     loadingGeckoCombinedData,
-//     geckoCombinedDataLoaded,
-//   };
-// };
+  return {
+    geckoCombinedData,
+    loadingGeckoCombinedData,
+    geckoCombinedDataLoaded,
+  };
+};
 
-// export default useUserGeckoCombinedData;
+export default useUserGeckoCombinedData;

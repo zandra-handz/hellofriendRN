@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, AppState } from "react-native";
 import React, {
   useEffect,
   useRef,
@@ -35,6 +35,7 @@ import {
   runOnJS,
   useSharedValue,
   useDerivedValue,
+  useAnimatedReaction,
   SharedValue,
 } from "react-native-reanimated";
 
@@ -84,6 +85,10 @@ export function frameBudgetMonitor() {
   }
 }
 
+// Grace period for peer-presence flips: a flip that reverses within this
+// window does not cut the session (debounced segmentation).
+const PRESENCE_GRACE_MS = 20000;
+
 type Props = {
   handleUpdateMomentCoords: any;
   handleGetMoment: any;
@@ -100,9 +105,8 @@ type Props = {
   gecko_scale: number;
   gecko_size: number;
   lightDarkTheme: any;
-  hasReceivedInitialScoreStateRef: React.MutableRefObject<boolean>;
-  initialBackendEnergyUpdatedAtRef: React.MutableRefObject<string | null>;
-  latestBackendEnergyUpdatedAtRef: React.MutableRefObject<string | null>;
+  sessionStartedAtRef: React.MutableRefObject<number | null>;
+  peerJoinedStatusSV: SharedValue<boolean>;
   // handleRescatterMoments: any;
   // handleRecenterMoments: any;
   manualOnly: any;
@@ -123,12 +127,10 @@ type Props = {
 };
 
 const MomentsSkia = ({
-  updateGeckoData,
-  // sendGeckoPositionRef,
+  updateGeckoData, 
   sendHostGeckoPositionRef,
   peerGeckoPositionSV,
   handleUpdateMomentCoords,
-  handleUpdateGeckoData,
   handleGetMoment,
   color1,
   color2,
@@ -162,9 +164,8 @@ const MomentsSkia = ({
   geckoScoreState,
   seed24hRef,
   registerOnSeed24h,
-  hasReceivedInitialScoreStateRef,
-  initialBackendEnergyUpdatedAtRef,
-  latestBackendEnergyUpdatedAtRef,
+  sessionStartedAtRef,
+  peerJoinedStatusSV,
   sendAllHostCapsulesRef,
   triggerSendAllHostCapsulesRef,
   scatteredMomentsRef,
@@ -215,26 +216,15 @@ const MomentsSkia = ({
 
   const didInitSessionWindowRef = useRef(false);
 
-  useEffect(() => {
-    if (didInitSessionWindowRef.current) return;
-    if (!hasReceivedInitialScoreStateRef.current) return;
+  // Session window is anchored to when the socket connected (stamped in
+  // GeckoWebsocketContext on ws.onopen). Seeded lazily on the first save.
 
-    const iso = initialBackendEnergyUpdatedAtRef.current;
-    if (!iso) return;
-
-    const ms = new Date(iso).getTime();
-    if (!Number.isFinite(ms)) return;
-
-    sessionStartRef.current = ms;
-    sessionEndRef.current = ms;
-    didInitSessionWindowRef.current = true;
-
-    // console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
-    //   initialBackendEnergyUpdatedAt: iso,
-    //   sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-    //   sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-    // });
-  }, [hasReceivedInitialScoreStateRef, initialBackendEnergyUpdatedAtRef]);
+  // Whether the currently-accruing window should be attributed to the friend.
+  // Tracks peer presence; a debounced presence flip cuts the window so each
+  // saved segment carries the attribution that was true while it accrued.
+  const windowWithFriendRef = useRef(false);
+  const pendingPresenceRef = useRef<boolean | null>(null);
+  const presenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Bottom-bar actions call straight into the moments engine (no trigger
   // counters / cross-component setState round-trip).
@@ -253,60 +243,18 @@ const MomentsSkia = ({
     });
     return unsub;
   }, [registerOnSeed24h]);
+ 
+  // Closes the current window: saves [last end, now] attributed to whatever
+  // peer-presence state the window accrued under. Empty windows are skipped.
+  const flushGeckoData = () => {
+    if (!didInitSessionWindowRef.current) {
+      const ms = sessionStartedAtRef.current ?? Date.now();
+      sessionStartRef.current = ms;
+      sessionEndRef.current = ms;
+      didInitSessionWindowRef.current = true;
+      windowWithFriendRef.current = !!peerJoinedStatusSV.value;
+    }
 
-  // const applyLiveScoreStateToGait = useCallback(() => {
-  //   const live = liveScoreStateRef?.current;
-  //   if (!live || !gecko.current) return;
-
-  //   gecko.current.gait.energy = live.energy ?? gecko.current.gait.energy;
-  //   gecko.current.gait.surplusEnergy =
-  //     live.surplus_energy ?? gecko.current.gait.surplusEnergy;
-  //   gecko.current.gait.expiresAt = live.expires_at
-  //     ? new Date(live.expires_at).getTime()
-  //     : 0;
-  //   gecko.current.gait.multiplier = live.multiplier ?? 1;
-  //   gecko.current.gait.baseMultiplier = live.base_multiplier ?? 1;
-  //   gecko.current.gait.stepFatiguePerStep =
-  //     live.step_fatigue_per_step ?? gecko.current.gait.stepFatiguePerStep;
-  //   gecko.current.gait.rechargePerSecond =
-  //     live.recharge_per_second ?? gecko.current.gait.rechargePerSecond;
-  //   gecko.current.gait.streakFatigueMultiplier =
-  //     live.streak_fatigue_multiplier ??
-  //     gecko.current.gait.streakFatigueMultiplier;
-  //   gecko.current.gait.streakRechargePerSecond =
-  //     live.streak_recharge_per_second ??
-  //     gecko.current.gait.streakRechargePerSecond;
-  //   gecko.current.gait.surplusCap =
-  //     live.surplus_cap ?? gecko.current.gait.surplusCap;
-  //   gecko.current.gait.stamina = live.stamina ?? gecko.current.gait.stamina;
-
-  //   // Re-anchor gait's local timing to the latest backend truth
-  //   gecko.current.gait.lastUpdateTime =
-  //     global.performance?.now?.() ?? Date.now();
-
-  //   // One-time session window init from backend
-  //   if (!didInitSessionWindowRef.current && live.energy_updated_at) {
-  //     const ms = new Date(live.energy_updated_at).getTime();
-
-  //     if (Number.isFinite(ms)) {
-  //       sessionStartRef.current = ms;
-  //       sessionEndRef.current = ms;
-  //       didInitSessionWindowRef.current = true;
-
-  //       console.log("[FRONTEND WINDOW INIT FROM SOCKET]", {
-  //         backendEnergyUpdatedAt: live.energy_updated_at,
-  //         sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-  //         sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-  //       });
-  //     }
-  //   }
-  // }, [liveScoreStateRef]);
-
-  // useEffect(() => {
-  //   applyLiveScoreStateToGait();
-  // }, [applyLiveScoreStateToGait]);
-
-  const handleUpdateGeckoDataState = async () => {
     sessionStartRef.current = sessionEndRef.current;
     sessionEndRef.current = Date.now();
 
@@ -317,84 +265,89 @@ const MomentsSkia = ({
       endPointsIndex,
     );
 
-    const payload = {
-      steps: gecko.current.gait.stepCount - stepsRef.current,
-      distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
-      started_on: new Date(sessionStartRef.current).toISOString(),
-      ended_on: new Date(sessionEndRef.current).toISOString(),
-      points_earned: newPoints,
-    };
+    const steps = gecko.current.gait.stepCount - stepsRef.current;
+    const distance =
+      leadPoint.current.leadDistanceTraveled - distanceRef.current;
 
-    updateGeckoData?.(payload);
+    const isEmpty = steps <= 0 && distance <= 0 && newPoints.length === 0;
+    if (!isEmpty) {
+      updateGeckoData?.(
+        {
+          steps,
+          distance,
+          started_on: new Date(sessionStartRef.current).toISOString(),
+          ended_on: new Date(sessionEndRef.current).toISOString(),
+          points_earned: newPoints,
+        },
+        { attributeFriend: windowWithFriendRef.current },
+      );
+    }
 
     stepsRef.current = gecko.current.gait.stepCount;
     distanceRef.current = leadPoint.current.leadDistanceTraveled;
     prevPointsLengthRef.current = endPointsIndex;
   };
 
-  // const handleUpdateGeckoDataState = async () => {
-  //   if (!didInitSessionWindowRef.current) {
-  //     const iso =
-  //       initialBackendEnergyUpdatedAtRef.current ??
-  //       liveScoreStateRef?.current?.energy_updated_at;
+  const handleUpdateGeckoDataState = async () => {
+    flushGeckoData();
+  };
 
-  //     if (iso) {
-  //       const ms = new Date(iso).getTime();
-  //       if (Number.isFinite(ms)) {
-  //         sessionStartRef.current = ms;
-  //         sessionEndRef.current = ms;
-  //         didInitSessionWindowRef.current = true;
+  // Peer presence flipped: cut the current window under its old attribution,
+  // then accrue the next one under the new attribution.
+  const applyPresenceCut = (online: boolean) => {
+    if (online === windowWithFriendRef.current) return;
+    flushGeckoData();
+    windowWithFriendRef.current = online;
+  };
 
-  //         console.log("[FRONTEND WINDOW INIT FROM SOCKET - FORCED IN SEND]", {
-  //           backendEnergyUpdatedAt: iso,
-  //           sessionStartIso: new Date(sessionStartRef.current).toISOString(),
-  //           sessionEndIso: new Date(sessionEndRef.current).toISOString(),
-  //         });
-  //       }
-  //     }
-  //   }
-  //   sessionStartRef.current = sessionEndRef.current;
-  //   sessionEndRef.current = Date.now();
+  const onPresenceFlip = (online: boolean) => {
+    // Flipped back to the open window's attribution before the grace elapsed
+    // → treat as one continuous session, cancel any pending cut.
+    if (online === windowWithFriendRef.current) {
+      if (presenceTimerRef.current) {
+        clearTimeout(presenceTimerRef.current);
+        presenceTimerRef.current = null;
+      }
+      pendingPresenceRef.current = null;
+      return;
+    }
 
-  //   console.log("[FRONTEND VS BACKEND START]", {
-  //     frontend_started_on: new Date(sessionStartRef.current).toISOString(),
-  //     frontend_ended_on: new Date(sessionEndRef.current).toISOString(),
-  //     initial_backend_energy_updated_at:
-  //       initialBackendEnergyUpdatedAtRef.current,
-  //     latest_backend_energy_updated_at: latestBackendEnergyUpdatedAtRef.current,
-  //     didInitSessionWindow: didInitSessionWindowRef.current,
-  //   });
+    pendingPresenceRef.current = online;
+    if (presenceTimerRef.current) clearTimeout(presenceTimerRef.current);
+    presenceTimerRef.current = setTimeout(() => {
+      presenceTimerRef.current = null;
+      const target = pendingPresenceRef.current;
+      pendingPresenceRef.current = null;
+      if (target == null) return;
+      applyPresenceCut(target);
+    }, PRESENCE_GRACE_MS);
+  };
 
-  //   const startPointsIndex = prevPointsLengthRef.current;
-  //   const endPointsIndex = pointsEarnedList.current.length;
-
-  //   const newPoints = pointsEarnedList.current.slice(
-  //     startPointsIndex,
-  //     endPointsIndex,
-  //   );
-
-  //   const payload = {
-  //     steps: gecko.current.gait.stepCount - stepsRef.current,
-  //     distance: leadPoint.current.leadDistanceTraveled - distanceRef.current,
-  //     started_on: new Date(sessionStartRef.current).toISOString(),
-  //     ended_on: new Date(sessionEndRef.current).toISOString(),
-  //     points_earned: newPoints,
-  //   };
-
-  //   console.log("[FRONTEND SEND PAYLOAD]", payload);
-
-  //   updateGeckoData?.(payload);
-
-  //   stepsRef.current = gecko.current.gait.stepCount;
-  //   distanceRef.current = leadPoint.current.leadDistanceTraveled;
-  //   prevPointsLengthRef.current = endPointsIndex;
-  // };
+  useAnimatedReaction(
+    () => peerJoinedStatusSV.value,
+    (cur, prev) => {
+      if (prev == null || cur === prev) return;
+      runOnJS(onPresenceFlip)(cur);
+    },
+  );
 
   useEffect(() => {
     const oneMinute = 60000;
     const id = setInterval(handleUpdateGeckoDataState, oneMinute);
 
-    return () => clearInterval(id);
+    // Flush the in-progress window when the app goes to background, so a
+    // kill/swipe-away from background doesn't lose it.
+    const sub = AppState.addEventListener("change", (next) => {
+      if (next === "background") flushGeckoData();
+    });
+
+    return () => {
+      clearInterval(id);
+      if (presenceTimerRef.current) clearTimeout(presenceTimerRef.current);
+      sub.remove();
+      // Last flush on unmount (covers nav-away that isn't save-and-exit).
+      flushGeckoData();
+    };
   }, []);
 
   const handleSaveAndExitPress = async () => {

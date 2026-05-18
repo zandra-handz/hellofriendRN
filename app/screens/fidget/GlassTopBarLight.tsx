@@ -14,6 +14,7 @@
   import BoolSocketStatusLight from "@/app/components/liveSesh/BoolSocketStatusLight";
   import PlayModeLabel from "@/app/components/liveSesh/PlayModeLabel";
   import ChatBubblesSkia from "@/app/components/liveSesh/ChatBubblesSkia";
+  import ChatBubblesSkiaTopScroll from "@/app/components/liveSesh/ChatBubblesSkiaTopScroll";
   import SvgIcon from "@/app/styles/SvgIcons";
   import useUser from "@/src/hooks/useUser";
 
@@ -117,7 +118,7 @@
               onLayout={onBubblesLayout}
             >
               {bubblesWidth > 0 && fontSmall && (
-                <ChatBubblesSkia
+                <ChatBubblesSkiaTopScroll
                   geckoMessageSV={geckoMessageSV}
                   width={bubblesWidth}
                   height={CHAT_HEIGHT}

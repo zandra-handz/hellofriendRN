@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View,  StyleSheet  } from "react-native";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useLDTheme } from "@/src/context/LDThemeContext";
 import useUser from "@/src/hooks/useUser";
@@ -13,12 +13,7 @@ import OptionChoiceEdit from "@/app/components/headers/OptionChoiceEdit";
 import HoursSelector from "./HoursSelector";
 import OptionToggle from "@/app/components/headers/OptionToggle";
 import SvgIcon from "@/app/styles/SvgIcons";
-import manualGradientColors from "@/app/styles/StaticColors";
-import GeckoEnergyLogList from "@/app/components/helloes/GeckoEnergyLogList";
-import GeckoSyncLogList from "@/app/components/helloes/GeckoSyncLogList";
-import GeckoSyncLogChartStack from "@/app/components/helloes/GeckoSyncLogChartStack";
-import useUserGeckoSyncLog from "@/src/hooks/GeckoCalls/useUserGeckoSyncLog";
-import useUserGeckoEnergyLog from "@/src/hooks/GeckoCalls/useUserGeckoEnergyLog";
+import manualGradientColors from "@/app/styles/StaticColors"; 
 // ─── Map gecko section ids to backend field names ───────────────
 const SECTION_CONFIG_MAP = {
   head: {
@@ -57,12 +52,7 @@ const ScreenGeckoManage = (props: Props) => {
   const { user } = useUser();
   const { lightDarkTheme } = useLDTheme();
   const { geckoConfigs } = useGeckoScoreState();
-  const {
-    userGeckoEnergyLogFlattened,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useUserGeckoEnergyLog({ fetchAll: false });
+ 
 
   const [viewCategoryId, setViewCategoryId] = useState<string | null>(null);
   const [syncLogView, setSyncLogView] = useState<"list" | "chart">("chart");
@@ -116,9 +106,9 @@ const ScreenGeckoManage = (props: Props) => {
   const currentValue =
     activeConfig && geckoConfigs ? geckoConfigs[activeConfig.valueField] : null;
 
-  const THRESHOLDS = geckoConfigs ? geckoConfigs?.thresholds : null;
+  // const THRESHOLDS = geckoConfigs ? geckoConfigs?.thresholds : null;
 
-  const activeHours = geckoConfigs ? geckoConfigs?.active_hours : [];
+  // const activeHours = geckoConfigs ? geckoConfigs?.active_hours : [];
 
   const [typeCapsulesOnly, setTypeCapsulesOnly] = useState(false);
 
@@ -241,249 +231,7 @@ useEffect(() => {
             )}
           </Animated.View>
         )}
-        {/* 
-        <View style={styles.syncToggleRow}>
-          <Pressable
-            onPress={() => setSyncLogView("list")}
-            style={[
-              styles.syncToggleBtn,
-              {
-                borderColor: textColor,
-                backgroundColor:
-                  syncLogView === "list" ? textColor : "transparent",
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.syncToggleText,
-                {
-                  color:
-                    syncLogView === "list"
-                      ? lightDarkTheme.primaryBackground
-                      : textColor,
-                },
-              ]}
-            >
-              list
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => setSyncLogView("chart")}
-            style={[
-              styles.syncToggleBtn,
-              {
-                borderColor: textColor,
-                backgroundColor:
-                  syncLogView === "chart" ? textColor : "transparent",
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.syncToggleText,
-                {
-                  color:
-                    syncLogView === "chart"
-                      ? lightDarkTheme.primaryBackground
-                      : textColor,
-                },
-              ]}
-            >
-              chart
-            </Text>
-          </Pressable>
-        </View> */}
-
-        {/* <View style={styles.syncToggleRow}>
-          {(["24h", "7d", "30d", "all"] as const).map((r) => {
-            const active = syncRange === r;
-            return (
-              <Pressable
-                key={r}
-                onPress={() => setSyncRange(r)}
-                style={[
-                  styles.syncToggleBtn,
-                  {
-                    borderColor: textColor,
-                    backgroundColor: active ? textColor : "transparent",
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.syncToggleText,
-                    {
-                      color: active
-                        ? lightDarkTheme.primaryBackground
-                        : textColor,
-                    },
-                  ]}
-                >
-                  {r}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View> */}
-
-        {/* {syncLogView === "list" ? (
-          <GeckoSyncLogList
-            userId={user?.id}
-            listData={userGeckoSyncLogFlattened}
-            isFetchingNextPage={syncLogIsFetchingNextPage}
-            fetchNextPage={fetchNextSyncLogPage}
-            hasNextPage={hasNextSyncLogPage}
-            primaryColor={textColor}
-          />
-        ) : (
-          <ScrollView
-            style={styles.chartScroll}
-            contentContainerStyle={styles.chartScrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-          <GeckoSyncLogChartStack
-            listData={userGeckoSyncLogFlattened}
-            primaryColor={textColor}
-            charts={[
-              {
-                key: "energy",
-                title: "energy",
-                series: [
-                  {
-                    key: "client_energy",
-                    label: "client_energy",
-                    color: "#4FC3F7",
-                    accessor: (e) => e.client_energy,
-                  },
-                  {
-                    key: "server_energy_after",
-                    label: "server_energy_after",
-                    color: "#FF8A65",
-                    accessor: (e) => e.server_energy_after,
-                  },
-                ],
-              },
-              {
-                key: "energy_variance",
-                title: "client divergence (client − server)",
-                series: [
-                  {
-                    key: "energy_variance",
-                    label: "+ ahead / − behind",
-                    color: "#BA68C8",
-                    accessor: (e) =>
-                      e.client_energy != null && e.server_energy_after != null
-                        ? e.client_energy - e.server_energy_after
-                        : null,
-                  },
-                ],
-              },
-              {
-                key: "surplus",
-                title: "surplus energy",
-                yMin: -1,
-                yMax: 2,
-                series: [
-                  {
-                    key: "server_surplus_after",
-                    label: "server",
-                    color: "#FF8A65",
-                    accessor: (e) => e.server_surplus_after,
-                  },
-                  {
-                    key: "client_surplus",
-                    label: "client",
-                    color: "#4FC3F7",
-                    accessor: (e) => e.client_surplus,
-                  },
-                ],
-              },
-              {
-                key: "recharge",
-                title: "recharge",
-                series: [
-                  {
-                    key: "server_recharge",
-                    label: "server",
-                    color: "#FF8A65",
-                    accessor: (e) => e.recompute_recharge,
-                  },
-                  {
-                    key: "client_recharge",
-                    label: "client",
-                    color: "#4FC3F7",
-                    accessor: (e) => e.client_recharge,
-                  },
-                ],
-              },
-              {
-                key: "fatigue",
-                title: "fatigue",
-                series: [
-                  {
-                    key: "server_fatigue",
-                    label: "server",
-                    color: "#FF8A65",
-                    accessor: (e) => e.recompute_fatigue,
-                  },
-                  {
-                    key: "client_fatigue",
-                    label: "client",
-                    color: "#4FC3F7",
-                    accessor: (e) => e.client_fatigue,
-                  },
-                ],
-              },
-              {
-                kind: "strip",
-                key: "variance_strip",
-                title: "energy divergence: frontend − backend (green = in sync, red = drift)",
-                height: 60,
-                okColor: "#A5D6A7",
-                accessor: (e) =>
-                  e.client_energy != null && e.server_energy_after != null
-                    ? e.client_energy - e.server_energy_after
-                    : null,
-              },
-              {
-                kind: "dualRange",
-                key: "time_ranges",
-                title: "sync window: server (top) vs client (bottom) — width = duration",
-                height: 50,
-                topLabel: "server",
-                topColor: "#FF8A65",
-                topRange: (e) => ({
-                  start: e.server_updated_at_before,
-                  end: e.server_updated_at_after,
-                }),
-                bottomLabel: "client",
-                bottomColor: "#4FC3F7",
-                bottomRange: (e) => ({
-                  start: e.client_started_on,
-                  end: e.client_ended_on,
-                }),
-              },
-              {
-                kind: "strip",
-                key: "start_time_gap_strip",
-                title: "start-time gap: client_started_on − server_updated_at_before (sec, red > 2s)",
-                height: 60,
-                redThreshold: 2,
-                accessor: (e) => {
-                  if (!e.client_started_on || !e.server_updated_at_before)
-                    return null;
-                  const client = new Date(e.client_started_on).getTime();
-                  const server = new Date(e.server_updated_at_before).getTime();
-                  if (!Number.isFinite(client) || !Number.isFinite(server))
-                    return null;
-                  return (client - server) / 1000;
-                },
-              },
-            ]}
-          />
-          </ScrollView>
-        )} */}
+      
       </View>
     </SafeAreaView>
   );

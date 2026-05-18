@@ -18,6 +18,7 @@ import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 // import GoOptionsModal from "../headers/GoOptionsModal";
 import GeckoGoButton from "./GeckoGoButton";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import { formatDayOfWeekAbbrevMonth } from "@/src/utils/dateUtils";
 import useUserSettings from "@/src/hooks/useUserSettings";
 
@@ -47,7 +48,7 @@ const FriendHeaderMessageUI: React.FC<any> = ({
   const { navigateToSelectFriend, navigateToFinalize } = useAppNavigations();
   const { updateSettings } = useUpdateSettings({ userId });
   const { settings } = useUserSettings();
-  const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+  // const [optionsModalVisible, setOptionsModalVisible] = useState(false);
   const [showName, setShowName] = useState(false);
 
   const isFocused = useSharedValue(false);
@@ -232,24 +233,25 @@ const FriendHeaderMessageUI: React.FC<any> = ({
 
             <View style={[styles.divider, { backgroundColor: primaryColor }]} />
 
-            <View style={styles.helloRow}>
+               <GlobalPressable onPress={navigateToFinalize}  style={styles.helloRow}>
               <View style={styles.helloTextContainer}>
-                <Text style={[styles.helloLabel, { color: primaryColor }]}>
+                {/* <Text style={[styles.helloLabel, { color: primaryColor }]}>
                   Say hi on
+                </Text> */}
+                <Text style={[styles.helloLabel, { color: primaryColor }]}>
+                 Say hi on {friendNextDate ? friendNextDate : helloDate}
                 </Text>
-                <Text style={[styles.helloDate, { color: primaryColor }]}>
-                  {friendNextDate ? friendNextDate : helloDate}
-                </Text>
-              </View>
-
+         
+{/* 
               <GeckoGoButton
                 // onSinglePress={() => setOptionsModalVisible(true)}
                 onSinglePress={navigateToFinalize}
                 onDoublePress={navigateToFinalize}
                 color={primaryColor}
                 backgroundColor={"transparent"}
-              />
+              /> */}
             </View>
+                 </GlobalPressable>
           </Animated.View>
         )}
       </Pressable>
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-    minHeight: 150,
+    minHeight: 130,
     overflow: "visible",
   },
   friendName: {
@@ -317,13 +319,15 @@ const styles = StyleSheet.create({
     opacity: 0.2,
   },
   helloRow: {
+    paddingTop: 14,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
   helloTextContainer: {
-    flex: 1,
-    alignItems: "center",
+    // flex: 1,
+    width: '100%',
+    alignItems: "center", 
   },
   helloLabel: {
     fontFamily: "Poppins_700Bold",

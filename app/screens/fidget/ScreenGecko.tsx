@@ -38,11 +38,11 @@ import useGeckoRead from "@/src/hooks/useGeckoRead";
 // import useUserGeckoSessionsTimeRange from "@/src/hooks/GeckoCalls/useUserGeckoSessionsTimeRange";
 
 import useGeckoScoreState from "@/src/hooks/useGeckoScoreState";
-import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
-import SvgIcon from "@/app/styles/SvgIcons";
-import SpeedButtons from "./SpeedButtons";
-import AutoPickUpButton from "./AutoPickUpButton";
-import QRCodeButton from "./QRCodeButton";
+// import useUpdateGeckoScoreState from "@/src/hooks/useUpdateGeckoScoreState";
+// import SvgIcon from "@/app/styles/SvgIcons";
+// import SpeedButtons from "./SpeedButtons";
+// import AutoPickUpButton from "./AutoPickUpButton";
+// import QRCodeButton from "./QRCodeButton";
 import useFriendDash from "@/src/hooks/useFriendDash";
 import useUser from "@/src/hooks/useUser";
 import AnimatedCounter from "./AnimatedCounter";
@@ -59,7 +59,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { freezeEnabled } from "react-native-screens";
 import { useGeckoWebsocket } from "@/src/context/GeckoWebsocketContext";
 import PeerGeckoPositionText from "@/app/components/fidget/PeerGeckoPositionText";
-
+ 
 type Props = {
   skiaFontLarge: SkFont;
   skiaFontSmall: SkFont;
@@ -79,6 +79,7 @@ const scorePickup = (moment: any, lastCategory: string | null): number => {
 
 const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const { totalPoints } = useUserPoints();
+  console.log(`user points!`, totalPoints)
   const count = useSharedValue(totalPoints);
   const scoreLabelRef = useRef("");
 
@@ -160,9 +161,9 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
   const {
     socketStatusSV,
     peerJoinedStatusSV,
-    scoreStateRef,
+    // scoreStateRef,
     multiplierRef,
-    energySV,
+    // energySV,
     updateGeckoData,
     // isFriendBound,
     // pendingFriendId,
@@ -181,9 +182,7 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     flush,
     registerOnScoreState,
     registerOnSync,
-    hasReceivedInitialScoreStateRef,
-    initialBackendEnergyUpdatedAtRef,
-    latestBackendEnergyUpdatedAtRef,
+    sessionStartedAtRef,
 
     connect,
     disconnect,
@@ -210,13 +209,14 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
     seed24hRef,
     registerOnSeed24h,
     sendLosingWarningToGecko,
+    requestPoints,
+    myPointsSV,
+    partnerPointsSV
   } = useGeckoWebsocket();
   const {
     navigateToMomentView,
-    navigateToMomentFocus,
-    navigateToGeckoSelectSettings,
-    navigateToGeckoWinAccept,
-    // navigateToQRCode,
+    navigateToMomentFocus, 
+    navigateToGeckoWinAccept, 
     navigateToFriendHome,
   } = useAppNavigations();
 
@@ -224,11 +224,27 @@ const ScreenGecko = ({ skiaFontLarge, skiaFontSmall }: Props) => {
  
 
 const proposeGeckoWinRef = useRef(proposeGeckoWin);
+const requestPointsRef = useRef(requestPoints);
 const warnLoseRef = useRef(sendLosingWarningToGecko);
 
 useEffect(() => {
   proposeGeckoWinRef.current = proposeGeckoWin;
 }, [proposeGeckoWin]);
+
+
+useEffect(() => {
+
+  requestPointsRef.current = requestPoints;
+
+}, [requestPoints]);
+
+
+
+const handleTestRequestPoints = useCallback(() => {
+console.log('hiiiiiiiiiiiiiiiiiiiiiiiiiiii')
+  requestPoints(2);
+
+}, [requestPoints]);
 
 useEffect(() => {
   warnLoseRef.current = sendLosingWarningToGecko;
@@ -1548,10 +1564,15 @@ useEffect(() => {
           timestamp_earned: new Date().toISOString(),
         });
 
+
+        console.log(`MULTIPLIER REF:`, multiplierRef.current)
+
         count.value +=
           (scoreRulesRef.current[scoreLabelRef.current]?.points || 0) *
           multiplierRef.current;
         scoreLabelRef.current = "";
+
+        console.log(`count.value`, count.value);
       }
       lastPickedCategoryRef.current = foundMoment.user_category_name;
       const h = momentHistoryRef.current;
@@ -1734,12 +1755,12 @@ useEffect(() => {
           // peerGeckoPositionSV={
           //   shouldUseGuestPeer ? guestPeerGeckoPositionSV : null
           // }
-          liveScoreStateRef={scoreStateRef}
-          hasReceivedInitialScoreStateRef={hasReceivedInitialScoreStateRef}
-          initialBackendEnergyUpdatedAtRef={initialBackendEnergyUpdatedAtRef}
-          latestBackendEnergyUpdatedAtRef={latestBackendEnergyUpdatedAtRef}
+       
+          sessionStartedAtRef={sessionStartedAtRef}
+          peerJoinedStatusSV={peerJoinedStatusSV}
+      
           handleUpdateMomentCoords={handleUpdateMomentCoords}
-          // handleUpdateGeckoData={handleUpdateGeckoData}
+ 
           handleGetMoment={handleGetMoment}
           color1={manualGradientColors.lightColor}
           color2={selectedFriend?.lightColor}
@@ -1765,8 +1786,7 @@ useEffect(() => {
           handleRecenterMomentsInternal={handleRecenterMoments_insideMS}
           handleNavBack={handleNavBack}
           glassPreview={glassPreviewProps}
-          geckoScoreState={geckoScoreState}
-          liveScoreStateRef={scoreStateRef}
+          geckoScoreState={geckoScoreState} 
           seed24hRef={seed24hRef}
           registerOnSeed24h={registerOnSeed24h}
           sendAllHostCapsulesRef={sendAllHostCapsulesRef}
@@ -1793,6 +1813,13 @@ useEffect(() => {
         fontSmall={skiaFontSmall}
       />
 
+<DebugButton
+onPress={handleTestRequestPoints}
+bottom={200}
+left={20}
+color={'red'}
+zIndex={100000}
+/>
       <View style={styles.animatedCounterWrapper}>
         {selectedFriend && count && (
           <AnimatedCounter
@@ -1800,7 +1827,7 @@ useEffect(() => {
             subtractColor={selectedFriend.darkColor}
             glowCenterColor={manualGradientColors.whiteColor}
             glowEdgeColor={selectedFriend.lightColor}
-            countValue={count}
+            countValue={myPointsSV}
             fontLarge={skiaFontLarge}
             fontSmall={skiaFontSmall}
           />

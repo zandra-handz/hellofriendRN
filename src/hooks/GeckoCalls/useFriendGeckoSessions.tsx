@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef  } from "react";
 import {  fetchFriendGeckoSessions } from "../../calls/api"; 
 import useUser from "../useUser";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const useFriendGeckoSessions = ({ friendId, fetchAll = false, indexNeeded = 0 }: Props) => {
-  const { user, isInitializing } = useUser();
+  const { user } = useUser();
 
   const itemsPerPageOnBackend = 30;
 

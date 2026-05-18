@@ -45,10 +45,10 @@ const ScreenGeckoAcceptInvite = () => {
 
   const [playModeSelected, setPlayModeSelected] = useState(2);
 
-  const handleUpdatePlayMode = (newValue: number) => {
-    console.log(newValue);
-    setPlayModeSelected(newValue);
-  };
+  // const handleUpdatePlayMode = (newValue: number) => {
+ 
+  //   setPlayModeSelected(newValue);
+  // };
 
   const { handleAcceptInvite, acceptMutation } = useAcceptLiveSeshInvite({
     userId: user?.id ?? 0,
@@ -80,7 +80,8 @@ const ScreenGeckoAcceptInvite = () => {
         {
           text: "Accept",
           style: "default",
-          onPress: () => handleAcceptInvite(inviteId, playModeSelected),
+          // onPress: () => handleAcceptInvite(inviteId, playModeSelected),
+              onPress: () => handleAcceptInvite(inviteId, 1), // hardcode dig for now
         },
       ],
       { cancelable: true },
@@ -110,7 +111,7 @@ const ScreenGeckoAcceptInvite = () => {
       />
 
       <View style={styles.innerContainer}>
-        {playModeChoices && (
+        {/* {playModeChoices && (
           <OptionChoiceEdit
             label={"test"}
             value={playModeSelected}
@@ -122,7 +123,7 @@ const ScreenGeckoAcceptInvite = () => {
             buttonColor={lightDarkTheme.darkerGlassBackground}
             textStyle={subWelcomeTextStyle}
           />
-        )}
+        )} */}
 
         <Pressable
           onPress={confirmAccept}
@@ -130,6 +131,7 @@ const ScreenGeckoAcceptInvite = () => {
           style={[
             styles.acceptBtn,
             acceptMutation.isPending && { opacity: 0.5 },
+            { backgroundColor: manualGradientColors.lightColor}
           ]}
         >
           <Text style={styles.acceptText}>Go</Text>
@@ -140,8 +142,7 @@ const ScreenGeckoAcceptInvite = () => {
 };
 
 const styles = StyleSheet.create({
-  acceptBtn: {
-    backgroundColor: "#7FE629",
+  acceptBtn: { 
     borderRadius: 50,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -162,8 +163,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   rowContainer: { flexDirection: "row" },
-  labelWrapper: {},
-  label: {},
 });
 
 export default ScreenGeckoAcceptInvite;

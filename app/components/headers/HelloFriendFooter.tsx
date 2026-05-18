@@ -8,7 +8,7 @@ import UserSettingsModal from "./UserSettingsModal.";
 import { showModalMessage } from "@/src/utils/ShowModalMessage";
 import GeckoSessionsFooterButton from "../buttons/friends/GeckoSessionsFooterButton";
 import GeckoPointsFooterButton from "../buttons/friends/GeckoPointsFooterButton";
- 
+ // import useUserGeckoCombinedData from "@/src/hooks/useUserGeckoCombinedData";
 import { formatDurationFromSeconds } from "./util_formatDurationFromSeconds";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
@@ -178,19 +178,19 @@ const HelloFriendFooter = ({
   // );
 
 
-  //   const RenderGeckoHistoryButton = useCallback(
-  //   () => (
-  //     <GeckoSessionsFooterButton
-  //     userId={userId}
-  //       skiaFontLarge={skiaFontSmall}
-  //       textColor={primaryColor}
-  //       onPress={() => handleCenterButtonToggle()}
-  //       geckoCombinedData={geckoCombinedData}
-     
-  //     />
-  //   ),
-  //   [], // was theme colors but I'm not sure why
-  // );
+    const RenderGeckoHistoryButton = useCallback(
+    () => (
+      <GeckoSessionsFooterButton
+      userId={userId}
+        skiaFontLarge={skiaFontSmall}
+        textColor={primaryColor}
+        onPress={() => handleCenterButtonToggle()}
+        // geckoCombinedData={geckoCombinedData}
+
+      />
+    ),
+    [], // was theme colors but I'm not sure why
+  );
 
   const RenderAboutAppButton = useCallback(
     () => (
@@ -246,9 +246,9 @@ const HelloFriendFooter = ({
             <RenderGeckoPointsButton />
           </View>
         </> */}
-            {/* <View style={styles.section}>
+            <View style={styles.section}>
             <RenderGeckoHistoryButton />
-          </View> */}
+          </View>
               <View style={styles.section}>
           <RenderGeckoWinsButton />
         </View>
