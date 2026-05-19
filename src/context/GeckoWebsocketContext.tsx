@@ -939,18 +939,50 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
     [],
   );
 
-  const requestPoints = useCallback((code: number, proof?: unknown) => {
-    let safeCode = Number(code);
-    if (wsRef.current?.readyState !== WebSocket.OPEN || !safeCode) {
-      console.log('[WS] requestPoints missing required input. Aborting send')
-   return false;
-    }
+  // const requestPoints = useCallback((code: number, proof?: unknown) => {
+  //   let safeCode = Number(code);
+  //   if (wsRef.current?.readyState !== WebSocket.OPEN || !safeCode) {
+  //     console.log('[WS] requestPoints missing required input. Aborting send')
+  //  return false;
+  //   }
     
-    wsRef.current.send(
-      JSON.stringify({ action: "request_points", data: { code, proof } }),
-    );
-    return true;
-  }, []);
+  //   wsRef.current.send(
+  //     JSON.stringify({ action: "request_points", data: { code, proof } }),
+  //   );
+  //   return true;
+  // }, []);
+
+
+  // new
+    const requestPoints = useCallback(
+    (code: number, opts?: { attributeFriend?: boolean; proof?: unknown }) => {
+    console.log(`request points`,opts?.attributeFriend)
+      const safeCode = Number(code);
+      if (wsRef.current?.readyState !== WebSocket.OPEN || !safeCode) {
+        console.log('[WS] requestPoints missing required input. Aborting send');
+        return false;
+      }
+
+      const fid = boundFriendIdRef.current ?? pendingFriendIdRef.current;
+      const effectiveFid =
+        typeof opts?.attributeFriend === "boolean"
+          ? opts.attributeFriend
+            ? fid
+            : null
+          : isFriendBoundRef.current
+            ? fid
+            : null;
+
+      wsRef.current.send(
+        JSON.stringify({
+          action: "request_points",
+          data: { code, proof: opts?.proof, friend_id: effectiveFid },
+        }),
+      );
+      return true;
+    },
+    [],
+  );
 
   const sendFETextToGecko = useCallback(
     (message: string, kind?: string, refId?: string) => {
@@ -1077,6 +1109,7 @@ export const GeckoWebsocketProvider = ({ children }: ProviderProps) => {
   const updateGeckoData = useCallback(
     (payload: UpdateGeckoDataPayload, opts?: { attributeFriend?: boolean }) => {
       const fid = boundFriendIdRef.current ?? pendingFriendIdRef.current;
+      console.log(`updategeckodata`, opts?.attributeFriend)
       // Caller can pin attribution to what was true *during* the saved window
       // (peer-presence based). Falls back to live binding for legacy callers.
       const effectiveFid =

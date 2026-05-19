@@ -106,6 +106,8 @@ type Props = {
   gecko_size: number;
   lightDarkTheme: any;
   sessionStartedAtRef: React.MutableRefObject<number | null>;
+  // Owned by ScreenGecko so requestPoints can read the same live attribution.
+  windowWithFriendRef: React.MutableRefObject<boolean>;
   peerJoinedStatusSV: SharedValue<boolean>;
   // handleRescatterMoments: any;
   // handleRecenterMoments: any;
@@ -165,6 +167,7 @@ const MomentsSkia = ({
   seed24hRef,
   registerOnSeed24h,
   sessionStartedAtRef,
+  windowWithFriendRef,
   peerJoinedStatusSV,
   sendAllHostCapsulesRef,
   triggerSendAllHostCapsulesRef,
@@ -183,8 +186,7 @@ const MomentsSkia = ({
   // For interval saving while staying on screen
 
   // Offset so we can keep the original list
-
-  const prevPointsLengthRef = useRef<number>(0);
+ 
 
   const stepsRef = useRef<number>(0);
   const distanceRef = useRef<number>(0);
@@ -222,7 +224,8 @@ const MomentsSkia = ({
   // Whether the currently-accruing window should be attributed to the friend.
   // Tracks peer presence; a debounced presence flip cuts the window so each
   // saved segment carries the attribution that was true while it accrued.
-  const windowWithFriendRef = useRef(false);
+  // The ref object is created in ScreenGecko and passed down so requestPoints
+  // (called there) reads the exact same live value updateGeckoData uses here.
   const pendingPresenceRef = useRef<boolean | null>(null);
   const presenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -244,6 +247,17 @@ const MomentsSkia = ({
     return unsub;
   }, [registerOnSeed24h]);
  
+  // Seed attribution from current peer presence at mount. Without this the ref
+  // stays false until the first flushGeckoData (up to 60s away): updateGeckoData
+  // only fires from inside flush so it sees the seeded value, but requestPoints
+  // fires on moment pick and would read a stale false before the first flush.
+  useEffect(() => {
+    if (!didInitSessionWindowRef.current) {
+      windowWithFriendRef.current = !!peerJoinedStatusSV.value;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Closes the current window: saves [last end, now] attributed to whatever
   // peer-presence state the window accrued under. Empty windows are skipped.
   const flushGeckoData = () => {
@@ -257,19 +271,13 @@ const MomentsSkia = ({
 
     sessionStartRef.current = sessionEndRef.current;
     sessionEndRef.current = Date.now();
-
-    const startPointsIndex = prevPointsLengthRef.current;
-    const endPointsIndex = pointsEarnedList.current.length;
-    const newPoints = pointsEarnedList.current.slice(
-      startPointsIndex,
-      endPointsIndex,
-    );
-
+ 
+ 
     const steps = gecko.current.gait.stepCount - stepsRef.current;
     const distance =
       leadPoint.current.leadDistanceTraveled - distanceRef.current;
 
-    const isEmpty = steps <= 0 && distance <= 0 && newPoints.length === 0;
+    const isEmpty = steps <= 0 && distance <= 0;
     if (!isEmpty) {
       updateGeckoData?.(
         {
@@ -277,7 +285,7 @@ const MomentsSkia = ({
           distance,
           started_on: new Date(sessionStartRef.current).toISOString(),
           ended_on: new Date(sessionEndRef.current).toISOString(),
-          points_earned: newPoints,
+    
         },
         { attributeFriend: windowWithFriendRef.current },
       );
@@ -285,7 +293,7 @@ const MomentsSkia = ({
 
     stepsRef.current = gecko.current.gait.stepCount;
     distanceRef.current = leadPoint.current.leadDistanceTraveled;
-    prevPointsLengthRef.current = endPointsIndex;
+ 
   };
 
   const handleUpdateGeckoDataState = async () => {

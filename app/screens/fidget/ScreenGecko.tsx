@@ -1457,6 +1457,12 @@ useEffect(() => {
   const pointsGivenForReadAllRef = useRef(false);
 
   const categoryStreakRef = useRef(0);
+
+  // Live peer-presence attribution for the currently-accruing window.
+  // MomentsSkia owns the cut logic and mutates this ref; requestPoints reads
+  // it here so points and updateGeckoData attribute to the same friend window.
+  const windowWithFriendRef = useRef(false);
+
   const updateGeckoDataRef = useRef(updateGeckoData);
 
   // const sendGeckoPositionRef = useRef(sendGeckoPosition);
@@ -1508,7 +1514,103 @@ useEffect(() => {
     sendHostGeckoPositionRef.current = sendHostOrSoloPosition;
   }, [sendHostOrSoloPosition]);
 
-  const handleGetMoment = useCallback(
+  // const handleGetMoment = useCallback(
+  //   (id) => {
+  //     const foundMoment = capsuleMap.get(id);
+
+  //     if (!foundMoment?.id) {
+  //       momentSV.value = {
+  //         category: null,
+  //         capsule: null,
+  //         uniqueIndex: null,
+  //         id: null,
+  //         geckoGameType: null,
+  //       };
+  //       return;
+  //     }
+
+  //     // const prevSize = readDataRef.current.size;
+  //     readDataRef.current.set(`${foundMoment.id}`, {
+  //       id: `${foundMoment.id}`,
+  //       category: foundMoment.user_category_name,
+  //       capsule: foundMoment.capsule,
+  //     });
+
+  //     if (
+  //       !pointsGivenForReadAllRef.current &&
+  //       readDataRef.current.size >= capsuleMap.size
+  //     ) {
+  //       setLocalHasReadAll(true);
+  //       scoreLabelRef.current = "GECKO_READ_ALL_NOTES";
+  //       pointsGivenForReadAllRef.current = true;
+  //     } else {
+  //       const match = scorePickup(foundMoment, lastPickedCategoryRef.current);
+  //       if (match) {
+  //         scoreLabelRef.current = "CATEGORY_MATCHES_PREVIOUS";
+  //         categoryStreakRef.current += 1;
+  //         if (categoryStreakRef.current >= 5) {
+  //           categoryStreakRef.current = 0;
+  //           setTimeout(
+  //             () =>
+  //               updateGeckoDataRef.current({
+  //                 event_type: "streak_activate",
+  //                 score_state: { multiplier: 2 },
+  //               }),
+  //             0,
+  //           );
+  //         }
+  //       } else {
+  //         categoryStreakRef.current = 0;
+  //       }
+  //     }
+  //     if (scoreLabelRef && scoreLabelRef.current) {
+  //       pointsEarnedListRef.current.push({
+  //         code: scoreRulesRef.current[scoreLabelRef.current]?.code || 2,
+  //         label: scoreLabelRef.current,
+  //         timestamp_earned: new Date().toISOString(),
+  //       });
+
+
+  //       console.log(`MULTIPLIER REF:`, multiplierRef.current)
+
+  //       count.value +=
+  //         (scoreRulesRef.current[scoreLabelRef.current]?.points || 0) *
+  //         multiplierRef.current;
+  //       scoreLabelRef.current = "";
+
+  //       console.log(`count.value`, count.value);
+  //     }
+  //     lastPickedCategoryRef.current = foundMoment.user_category_name;
+  //     const h = momentHistoryRef.current;
+  //     h.buffer[h.pointer] = {
+  //       id: `${foundMoment.id}`,
+  //       category: foundMoment.user_category_name,
+  //       capsule: foundMoment.capsule,
+  //     };
+  //     h.pointer = (h.pointer + 1) % HISTORY_SIZE;
+  //     h.count = Math.min(h.count + 1, HISTORY_SIZE);
+  //     // console.log(`history: ${h.count} / ${HISTORY_SIZE}`, h.buffer.slice(0, h.count));
+
+  //     momentSV.value = {
+  //       category: foundMoment.user_category_name,
+  //       capsule: foundMoment.capsule,
+  //       uniqueIndex: foundMoment.uniqueIndex,
+  //       id: foundMoment.id,
+  //       geckoGameType: foundMoment.gecko_game_type,
+  //     };
+
+  //     pickupCountInCurrentLoop.current += 1;
+  //     if (pickupCountInCurrentLoop.current >= capsuleMap.size) {
+  //       loopCount.current += 1;
+  //       pickupCountInCurrentLoop.current = 0;
+  //     }
+
+  //     Vibration.vibrate(50);
+  //   },
+  //   [capsuleMap, count, setLocalHasReadAll],
+  // );
+
+    const handleGetMoment = useCallback(
     (id) => {
       const foundMoment = capsuleMap.get(id);
 
@@ -1523,7 +1625,6 @@ useEffect(() => {
         return;
       }
 
-      // const prevSize = readDataRef.current.size;
       readDataRef.current.set(`${foundMoment.id}`, {
         id: `${foundMoment.id}`,
         category: foundMoment.user_category_name,
@@ -1557,23 +1658,15 @@ useEffect(() => {
           categoryStreakRef.current = 0;
         }
       }
-      if (scoreLabelRef && scoreLabelRef.current) {
-        pointsEarnedListRef.current.push({
-          code: scoreRulesRef.current[scoreLabelRef.current]?.code || 2,
-          label: scoreLabelRef.current,
-          timestamp_earned: new Date().toISOString(),
+
+      if (scoreLabelRef.current) {
+        const code = scoreRulesRef.current[scoreLabelRef.current]?.code || 2;
+        requestPointsRef.current(code, {
+          attributeFriend: windowWithFriendRef.current,
         });
-
-
-        console.log(`MULTIPLIER REF:`, multiplierRef.current)
-
-        count.value +=
-          (scoreRulesRef.current[scoreLabelRef.current]?.points || 0) *
-          multiplierRef.current;
         scoreLabelRef.current = "";
-
-        console.log(`count.value`, count.value);
       }
+
       lastPickedCategoryRef.current = foundMoment.user_category_name;
       const h = momentHistoryRef.current;
       h.buffer[h.pointer] = {
@@ -1583,7 +1676,6 @@ useEffect(() => {
       };
       h.pointer = (h.pointer + 1) % HISTORY_SIZE;
       h.count = Math.min(h.count + 1, HISTORY_SIZE);
-      // console.log(`history: ${h.count} / ${HISTORY_SIZE}`, h.buffer.slice(0, h.count));
 
       momentSV.value = {
         category: foundMoment.user_category_name,
@@ -1601,7 +1693,7 @@ useEffect(() => {
 
       Vibration.vibrate(50);
     },
-    [capsuleMap, count, setLocalHasReadAll],
+    [capsuleMap, setLocalHasReadAll],
   );
 
   const BLANK_WINDOW_MESSAGE = useMemo(() => {
@@ -1757,6 +1849,7 @@ useEffect(() => {
           // }
        
           sessionStartedAtRef={sessionStartedAtRef}
+          windowWithFriendRef={windowWithFriendRef}
           peerJoinedStatusSV={peerJoinedStatusSV}
       
           handleUpdateMomentCoords={handleUpdateMomentCoords}
